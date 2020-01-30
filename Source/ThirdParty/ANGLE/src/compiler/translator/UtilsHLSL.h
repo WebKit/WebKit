@@ -123,7 +123,8 @@ TString TypeString(const TType &type);
 TString StructNameString(const TStructure &structure);
 TString QualifiedStructNameString(const TStructure &structure,
                                   bool useHLSLRowMajorPacking,
-                                  bool useStd140Packing);
+                                  bool useStd140Packing,
+                                  bool forcePackingEnd);
 const char *InterpolationString(TQualifier qualifier);
 const char *QualifierString(TQualifier qualifier);
 // Parameters may need to be included in function names to disambiguate between overloaded

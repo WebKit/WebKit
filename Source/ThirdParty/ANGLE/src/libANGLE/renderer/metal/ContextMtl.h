@@ -64,12 +64,25 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                GLsizei count,
                                gl::DrawElementsType type,
                                const void *indices) override;
+    angle::Result drawElementsBaseVertex(const gl::Context *context,
+                                         gl::PrimitiveMode mode,
+                                         GLsizei count,
+                                         gl::DrawElementsType type,
+                                         const void *indices,
+                                         GLint baseVertex) override;
     angle::Result drawElementsInstanced(const gl::Context *context,
                                         gl::PrimitiveMode mode,
                                         GLsizei count,
                                         gl::DrawElementsType type,
                                         const void *indices,
                                         GLsizei instanceCount) override;
+    angle::Result drawElementsInstancedBaseVertex(const gl::Context *context,
+                                                  gl::PrimitiveMode mode,
+                                                  GLsizei count,
+                                                  gl::DrawElementsType type,
+                                                  const void *indices,
+                                                  GLsizei instanceCount,
+                                                  GLint baseVertex) override;
     angle::Result drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
                                                               gl::PrimitiveMode mode,
                                                               GLsizei count,
@@ -85,6 +98,14 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                     GLsizei count,
                                     gl::DrawElementsType type,
                                     const void *indices) override;
+    angle::Result drawRangeElementsBaseVertex(const gl::Context *context,
+                                              gl::PrimitiveMode mode,
+                                              GLuint start,
+                                              GLuint end,
+                                              GLsizei count,
+                                              gl::DrawElementsType type,
+                                              const void *indices,
+                                              GLint baseVertex) override;
     angle::Result drawArraysIndirect(const gl::Context *context,
                                      gl::PrimitiveMode mode,
                                      const void *indirect) override;
@@ -212,7 +233,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     uint32_t getClearStencilValue() const;
     // Return front facing stencil write mask
     uint32_t getStencilMask() const;
-    bool isDepthWriteEnabled() const;
+    bool getDepthMask() const;
 
     const mtl::Format &getPixelFormat(angle::FormatID angleFormatId) const;
     // See mtl::FormatTable::getVertexFormat()
@@ -276,15 +297,36 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                          const void *indices,
                                          mtl::BufferRef *lastSegmentIndexBufferOut);
 
-    angle::Result drawTriFanArrays(const gl::Context *context, GLint first, GLsizei count);
+    angle::Result drawTriFanArrays(const gl::Context *context,
+                                   GLint first,
+                                   GLsizei count,
+                                   GLsizei instances);
     angle::Result drawTriFanArraysWithBaseVertex(const gl::Context *context,
                                                  GLint first,
-                                                 GLsizei count);
-    angle::Result drawTriFanArraysLegacy(const gl::Context *context, GLint first, GLsizei count);
+                                                 GLsizei count,
+                                                 GLsizei instances);
+    angle::Result drawTriFanArraysLegacy(const gl::Context *context,
+                                         GLint first,
+                                         GLsizei count,
+                                         GLsizei instances);
     angle::Result drawTriFanElements(const gl::Context *context,
                                      GLsizei count,
                                      gl::DrawElementsType type,
-                                     const void *indices);
+                                     const void *indices,
+                                     GLsizei instances);
+
+    angle::Result drawArraysImpl(const gl::Context *context,
+                                 gl::PrimitiveMode mode,
+                                 GLint first,
+                                 GLsizei count,
+                                 GLsizei instanceCount);
+
+    angle::Result drawElementsImpl(const gl::Context *context,
+                                   gl::PrimitiveMode mode,
+                                   GLsizei count,
+                                   gl::DrawElementsType type,
+                                   const void *indices,
+                                   GLsizei instanceCount);
 
     void updateViewport(FramebufferMtl *framebufferMtl,
                         const gl::Rectangle &viewport,
@@ -339,11 +381,14 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
         // NOTE(hqle): Transform feedsback is not supported yet.
         uint32_t xfbActiveUnpaused;
+        uint32_t xfbVerticesPerDraw;
+        // NOTE: Explicit padding. Fill in with useful data when needed in the future.
+        int32_t padding[3];
 
         int32_t xfbBufferOffsets[4];
         uint32_t acbBufferOffsets[4];
 
-        // We'll use x, y, z for near / far / diff respectively.
+        // We'll use x, y, z, w for near / far / diff / zscale respectively.
         float depthRange[4];
     };
 
@@ -379,6 +424,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::DepthStencilDesc mDepthStencilDesc;
     mtl::BlendDesc mBlendDesc;
     MTLClearColor mClearColor;
+    uint32_t mClearStencil    = 0;
+    uint32_t mStencilRefFront = 0;
+    uint32_t mStencilRefBack  = 0;
     MTLViewport mViewport;
     MTLScissorRect mScissorRect;
     MTLWinding mWinding;

@@ -65,4 +65,24 @@ TEST(BinaryInputStream, Overflow)
         stream.readBytes(outputData.data(), std::numeric_limits<size_t>::max() - dataSize - 2);
     }
 }
+
+// Test that readIntVector and writeIntVector match.
+TEST(BinaryStream, IntVector)
+{
+    std::vector<unsigned int> writeData = {1, 2, 3, 4, 5};
+    std::vector<unsigned int> readData;
+
+    gl::BinaryOutputStream out;
+    out.writeIntVector(writeData);
+
+    gl::BinaryInputStream in(out.data(), out.length());
+    in.readIntVector<unsigned int>(&readData);
+
+    ASSERT_EQ(writeData.size(), readData.size());
+
+    for (size_t i = 0; i < writeData.size(); ++i)
+    {
+        ASSERT_EQ(writeData[i], readData[i]);
+    }
+}
 }  // namespace angle

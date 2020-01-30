@@ -837,7 +837,8 @@ ImageD3D *TextureD3D_2D::getImage(const gl::ImageIndex &index) const
 {
     ASSERT(index.getLevelIndex() < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
     ASSERT(!index.hasLayer());
-    ASSERT(index.getType() == gl::TextureType::_2D);
+    ASSERT(index.getType() == gl::TextureType::_2D ||
+           index.getType() == gl::TextureType::VideoImage);
     return mImageArray[index.getLevelIndex()].get();
 }
 
@@ -890,7 +891,9 @@ angle::Result TextureD3D_2D::setImage(const gl::Context *context,
                                       const gl::PixelUnpackState &unpack,
                                       const uint8_t *pixels)
 {
-    ASSERT(index.getTarget() == gl::TextureTarget::_2D && size.depth == 1);
+    ASSERT((index.getTarget() == gl::TextureTarget::_2D ||
+            index.getTarget() == gl::TextureTarget::VideoImage) &&
+           size.depth == 1);
 
     const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(internalFormat, type);
 

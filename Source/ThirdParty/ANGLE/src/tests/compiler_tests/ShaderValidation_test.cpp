@@ -1281,24 +1281,48 @@ TEST_F(FragmentShaderValidationTest, DynamicallyIndexedFragmentOutput)
     }
 }
 
-// Test that indexing an interface block array with a non-constant expression is forbidden, even if
+// Test that indexing a uniform buffer array with a non-constant expression is forbidden, even if
 // ANGLE is able to constant fold the index expression. ESSL 3.00 section 4.3.7.
-TEST_F(FragmentShaderValidationTest, DynamicallyIndexedInterfaceBlock)
+TEST_F(FragmentShaderValidationTest, DynamicallyIndexedUniformBuffer)
 {
     const std::string &shaderString =
-        "#version 300 es\n"
-        "precision mediump float;\n"
-        "uniform int a;\n"
-        "uniform B\n"
-        "{\n"
-        "    vec4 f;\n"
-        "}\n"
-        "blocks[2];\n"
-        "out vec4 my_FragColor;\n"
-        "void main()\n"
-        "{\n"
-        "    my_FragColor = blocks[true ? 0 : a].f;\n"
-        "}\n";
+        R"(#version 300 es
+        precision mediump float;
+        uniform int a;
+        uniform B
+        {
+            vec4 f;
+        }
+        blocks[2];
+        out vec4 my_FragColor;
+        void main()
+        {
+            my_FragColor = blocks[true ? 0 : a].f;
+        })";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Test that indexing a storage buffer array with a non-constant expression is forbidden, even if
+// ANGLE is able to constant fold the index expression. ESSL 3.10 section 4.3.9.
+TEST_F(FragmentShaderValidationTest, DynamicallyIndexedStorageBuffer)
+{
+    const std::string &shaderString =
+        R"(#version 310 es
+        precision mediump float;
+        uniform int a;
+        layout(std140) buffer B
+        {
+            vec4 f;
+        }
+        blocks[2];
+        out vec4 my_FragColor;
+        void main()
+        {
+            my_FragColor = blocks[true ? 0 : a].f;
+        })";
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
@@ -1310,15 +1334,35 @@ TEST_F(FragmentShaderValidationTest, DynamicallyIndexedInterfaceBlock)
 TEST_F(FragmentShaderValidationTest, DynamicallyIndexedSampler)
 {
     const std::string &shaderString =
-        "#version 300 es\n"
-        "precision mediump float;\n"
-        "uniform int a;\n"
-        "uniform sampler2D s[2];\n"
-        "out vec4 my_FragColor;\n"
-        "void main()\n"
-        "{\n"
-        "    my_FragColor = texture(s[true ? 0 : a], vec2(0));\n"
-        "}\n";
+        R"(#version 300 es
+        precision mediump float;
+        uniform int a;
+        uniform sampler2D s[2];
+        out vec4 my_FragColor;
+        void main()
+        {
+            my_FragColor = texture(s[true ? 0 : a], vec2(0));
+        })";
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
+// Test that indexing an image array with a non-constant expression is forbidden, even if ANGLE is
+// able to constant fold the index expression. ESSL 3.10 section 4.1.7.2.
+TEST_F(FragmentShaderValidationTest, DynamicallyIndexedImage)
+{
+    const std::string &shaderString =
+        R"(#version 310 es
+        precision mediump float;
+        uniform int a;
+        layout(rgba32f) uniform highp readonly image2D image[2];
+        out vec4 my_FragColor;
+        void main()
+        {
+            my_FragColor = imageLoad(image[true ? 0 : a], ivec2(0));
+        })";
     if (compile(shaderString))
     {
         FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;

@@ -207,6 +207,53 @@ void ExecuteCommands(PrimaryCommandBuffer *primCmdBuffer, priv::CommandBuffer *s
 }
 
 ANGLE_MAYBE_UNUSED
+void InsertBeginTransformFeedback(PrimaryCommandBuffer *primCmdBuffer,
+                                  priv::SecondaryCommandBuffer &commandBuffer,
+                                  uint32_t validBufferCount,
+                                  const VkBuffer *counterBuffers,
+                                  bool rebindBuffer)
+{
+    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets = {0, 0, 0, 0};
+    uint32_t counterBufferSize                              = (rebindBuffer) ? 0 : validBufferCount;
+
+    vkCmdBeginTransformFeedbackEXT(primCmdBuffer->getHandle(), 0, counterBufferSize, counterBuffers,
+                                   offsets.data());
+}
+
+ANGLE_MAYBE_UNUSED
+void InsertEndTransformFeedback(PrimaryCommandBuffer *primCmdBuffer,
+                                priv::SecondaryCommandBuffer &commandBuffer,
+                                uint32_t validBufferCount,
+                                const VkBuffer *counterBuffers)
+{
+    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets = {0, 0, 0, 0};
+
+    vkCmdEndTransformFeedbackEXT(primCmdBuffer->getHandle(), 0, validBufferCount, counterBuffers,
+                                 offsets.data());
+}
+
+ANGLE_MAYBE_UNUSED
+void InsertCounterBufferPipelineBarrier(PrimaryCommandBuffer *primCmdBuffer,
+                                        priv::SecondaryCommandBuffer &commandBuffer,
+                                        const VkBuffer *counterBuffers)
+{
+    VkBufferMemoryBarrier bufferBarrier = {};
+    bufferBarrier.sType                 = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+    bufferBarrier.pNext                 = nullptr;
+    bufferBarrier.srcAccessMask         = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT;
+    bufferBarrier.dstAccessMask         = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT;
+    bufferBarrier.srcQueueFamilyIndex   = VK_QUEUE_FAMILY_IGNORED;
+    bufferBarrier.dstQueueFamilyIndex   = VK_QUEUE_FAMILY_IGNORED;
+    bufferBarrier.buffer                = counterBuffers[0];
+    bufferBarrier.offset                = 0;
+    bufferBarrier.size                  = VK_WHOLE_SIZE;
+
+    vkCmdPipelineBarrier(primCmdBuffer->getHandle(), VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT,
+                         VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0u, 0u, nullptr, 1u, &bufferBarrier,
+                         0u, nullptr);
+}
+
+ANGLE_MAYBE_UNUSED
 std::string DumpCommands(const priv::SecondaryCommandBuffer &commandBuffer, const char *separator)
 {
     return commandBuffer.dumpCommands(separator);
@@ -381,7 +428,8 @@ CommandGraphNode::CommandGraphNode(CommandGraphNodeFunction function,
       mGlobalMemoryBarrierSrcAccess(0),
       mGlobalMemoryBarrierDstAccess(0),
       mGlobalMemoryBarrierStages(0),
-      mRenderPassOwner(nullptr)
+      mRenderPassOwner(nullptr),
+      mValidTransformFeedbackBufferCount(0)
 {}
 
 CommandGraphNode::~CommandGraphNode()
@@ -604,8 +652,26 @@ angle::Result CommandGraphNode::visitAndExecute(vk::Context *context,
                 beginInfo.pClearValues = mRenderPassClearValues.data();
 
                 primaryCommandBuffer->beginRenderPass(beginInfo, kRenderPassContents);
-                ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
-                primaryCommandBuffer->endRenderPass();
+                if (mValidTransformFeedbackBufferCount == 0)
+                {
+                    ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
+                    primaryCommandBuffer->endRenderPass();
+                }
+                else
+                {
+                    InsertBeginTransformFeedback(primaryCommandBuffer, mInsideRenderPassCommands,
+                                                 mValidTransformFeedbackBufferCount,
+                                                 mTransformFeedbackCounterBuffers.data(),
+                                                 mRebindTransformFeedbackBuffers);
+                    ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
+                    InsertEndTransformFeedback(primaryCommandBuffer, mInsideRenderPassCommands,
+                                               mValidTransformFeedbackBufferCount,
+                                               mTransformFeedbackCounterBuffers.data());
+                    primaryCommandBuffer->endRenderPass();
+                    InsertCounterBufferPipelineBarrier(primaryCommandBuffer,
+                                                       mInsideRenderPassCommands,
+                                                       mTransformFeedbackCounterBuffers.data());
+                }
             }
             break;
 
@@ -1102,6 +1168,14 @@ void CommandGraph::makeHostVisibleBufferWriteAvailable()
 {
     allocateBarrierNode(CommandGraphNodeFunction::HostAvailabilityOperation,
                         CommandGraphResourceType::HostAvailabilityOperation, 0);
+}
+
+void CommandGraph::syncExternalMemory()
+{
+    // Add an all-inclusive memory barrier.
+    memoryBarrier(VK_ACCESS_MEMORY_WRITE_BIT,
+                  VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+                  VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 }
 
 // Dumps the command graph into a dot file that works with graphviz.

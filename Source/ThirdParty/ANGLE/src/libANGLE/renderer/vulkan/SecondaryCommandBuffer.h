@@ -11,7 +11,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 
-#include <vulkan/vulkan.h>
+#include "volk.h"
 
 #include "common/PoolAlloc.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
@@ -34,8 +34,10 @@ enum class CommandID : uint16_t
     BindDescriptorSets,
     BindGraphicsPipeline,
     BindIndexBuffer,
+    BindTransformFeedbackBuffers,
     BindVertexBuffers,
     BlitImage,
+    BufferBarrier,
     ClearAttachments,
     ClearColorImage,
     ClearDepthStencilImage,
@@ -47,7 +49,9 @@ enum class CommandID : uint16_t
     DispatchIndirect,
     Draw,
     DrawIndexed,
+    DrawIndexedBaseVertex,
     DrawIndexedInstanced,
+    DrawIndexedInstancedBaseVertex,
     DrawIndexedInstancedBaseVertexBaseInstance,
     DrawInstanced,
     DrawInstancedBaseInstance,
@@ -98,6 +102,13 @@ struct BindIndexBufferParams
     VkIndexType indexType;
 };
 VERIFY_4_BYTE_ALIGNMENT(BindIndexBufferParams)
+
+struct BindTransformFeedbackBuffersParams
+{
+    // ANGLE always has firstBinding of 0 so not storing that currently
+    uint32_t bindingCount;
+};
+VERIFY_4_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
 
 struct BindVertexBuffersParams
 {
@@ -215,12 +226,27 @@ struct DrawIndexedParams
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedParams)
 
+struct DrawIndexedBaseVertexParams
+{
+    uint32_t indexCount;
+    uint32_t vertexOffset;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawIndexedBaseVertexParams)
+
 struct DrawIndexedInstancedParams
 {
     uint32_t indexCount;
     uint32_t instanceCount;
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedParams)
+
+struct DrawIndexedInstancedBaseVertexParams
+{
+    uint32_t indexCount;
+    uint32_t instanceCount;
+    uint32_t vertexOffset;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexParams)
 
 struct DrawIndexedInstancedBaseVertexBaseInstanceParams
 {
@@ -294,6 +320,14 @@ struct ExecutionBarrierParams
     VkPipelineStageFlags stageMask;
 };
 VERIFY_4_BYTE_ALIGNMENT(ExecutionBarrierParams)
+
+struct BufferBarrierParams
+{
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    VkBufferMemoryBarrier bufferMemoryBarrier;
+};
+VERIFY_4_BYTE_ALIGNMENT(BufferBarrierParams)
 
 struct ImageBarrierParams
 {
@@ -417,6 +451,11 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void bindIndexBuffer(const Buffer &buffer, VkDeviceSize offset, VkIndexType indexType);
 
+    void bindTransformFeedbackBuffers(size_t bindingCount,
+                                      const VkBuffer *buffers,
+                                      const VkDeviceSize *offsets,
+                                      const VkDeviceSize *sizes);
+
     void bindVertexBuffers(uint32_t firstBinding,
                            uint32_t bindingCount,
                            const VkBuffer *buffers,
@@ -429,6 +468,10 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                    uint32_t regionCount,
                    const VkImageBlit *regions,
                    VkFilter filter);
+
+    void bufferBarrier(VkPipelineStageFlags srcStageMask,
+                       VkPipelineStageFlags dstStageMask,
+                       const VkBufferMemoryBarrier *bufferMemoryBarrier);
 
     void clearAttachments(uint32_t attachmentCount,
                           const VkClearAttachment *attachments,
@@ -478,8 +521,12 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void draw(uint32_t vertexCount, uint32_t firstVertex);
 
     void drawIndexed(uint32_t indexCount);
+    void drawIndexedBaseVertex(uint32_t indexCount, uint32_t vertexOffset);
 
     void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount);
+    void drawIndexedInstancedBaseVertex(uint32_t indexCount,
+                                        uint32_t instanceCount,
+                                        uint32_t vertexOffset);
     void drawIndexedInstancedBaseVertexBaseInstance(uint32_t indexCount,
                                                     uint32_t instanceCount,
                                                     uint32_t firstIndex,
@@ -743,6 +790,26 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindIndexBuffer(const Buffer &buffer,
     paramStruct->indexType = indexType;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(size_t bindingCount,
+                                                                       const VkBuffer *buffers,
+                                                                       const VkDeviceSize *offsets,
+                                                                       const VkDeviceSize *sizes)
+{
+    uint8_t *writePtr;
+    size_t buffersSize = bindingCount * sizeof(VkBuffer);
+    size_t offsetsSize = bindingCount * sizeof(VkDeviceSize);
+    size_t sizesSize   = offsetsSize;
+    BindTransformFeedbackBuffersParams *paramStruct =
+        initCommand<BindTransformFeedbackBuffersParams>(CommandID::BindTransformFeedbackBuffers,
+                                                        buffersSize + offsetsSize + sizesSize,
+                                                        &writePtr);
+    // Copy params
+    paramStruct->bindingCount = static_cast<uint32_t>(bindingCount);
+    writePtr                  = storePointerParameter(writePtr, buffers, buffersSize);
+    writePtr                  = storePointerParameter(writePtr, offsets, offsetsSize);
+    storePointerParameter(writePtr, sizes, sizesSize);
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::bindVertexBuffers(uint32_t firstBinding,
                                                             uint32_t bindingCount,
                                                             const VkBuffer *buffers,
@@ -777,6 +844,17 @@ ANGLE_INLINE void SecondaryCommandBuffer::blitImage(const Image &srcImage,
     paramStruct->dstImage        = dstImage.getHandle();
     paramStruct->filter          = filter;
     paramStruct->region          = regions[0];
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::bufferBarrier(
+    VkPipelineStageFlags srcStageMask,
+    VkPipelineStageFlags dstStageMask,
+    const VkBufferMemoryBarrier *bufferMemoryBarrier)
+{
+    BufferBarrierParams *paramStruct = initCommand<BufferBarrierParams>(CommandID::BufferBarrier);
+    paramStruct->srcStageMask        = srcStageMask;
+    paramStruct->dstStageMask        = dstStageMask;
+    paramStruct->bufferMemoryBarrier = *bufferMemoryBarrier;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::clearAttachments(uint32_t attachmentCount,
@@ -920,6 +998,15 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexed(uint32_t indexCount)
     paramStruct->indexCount        = indexCount;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedBaseVertex(uint32_t indexCount,
+                                                                uint32_t vertexOffset)
+{
+    DrawIndexedBaseVertexParams *paramStruct =
+        initCommand<DrawIndexedBaseVertexParams>(CommandID::DrawIndexedBaseVertex);
+    paramStruct->indexCount   = indexCount;
+    paramStruct->vertexOffset = vertexOffset;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCount,
                                                                uint32_t instanceCount)
 {
@@ -928,6 +1015,19 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCou
     paramStruct->indexCount    = indexCount;
     paramStruct->instanceCount = instanceCount;
 }
+
+ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertex(uint32_t indexCount,
+                                                                         uint32_t instanceCount,
+                                                                         uint32_t vertexOffset)
+{
+    DrawIndexedInstancedBaseVertexParams *paramStruct =
+        initCommand<DrawIndexedInstancedBaseVertexParams>(
+            CommandID::DrawIndexedInstancedBaseVertex);
+    paramStruct->indexCount    = indexCount;
+    paramStruct->instanceCount = instanceCount;
+    paramStruct->vertexOffset  = vertexOffset;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertexBaseInstance(
     uint32_t indexCount,
     uint32_t instanceCount,

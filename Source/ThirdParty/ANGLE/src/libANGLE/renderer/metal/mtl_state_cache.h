@@ -48,6 +48,10 @@ struct StencilDesc
 struct DepthStencilDesc
 {
     DepthStencilDesc();
+    DepthStencilDesc(const DepthStencilDesc &src);
+    DepthStencilDesc(DepthStencilDesc &&src);
+
+    DepthStencilDesc &operator=(const DepthStencilDesc &src);
 
     bool operator==(const DepthStencilDesc &rhs) const;
 
@@ -78,8 +82,12 @@ struct DepthStencilDesc
 struct SamplerDesc
 {
     SamplerDesc();
+    SamplerDesc(const SamplerDesc &src);
+    SamplerDesc(SamplerDesc &&src);
 
     explicit SamplerDesc(const gl::SamplerState &glState);
+
+    SamplerDesc &operator=(const SamplerDesc &src);
 
     // Set default values. All filters are nearest, and addresModes are clamp to edge.
     void reset();
@@ -207,6 +215,10 @@ constexpr PrimitiveTopologyClass kPrimitiveTopologyClassPoint = MTLPrimitiveTopo
 struct RenderPipelineDesc
 {
     RenderPipelineDesc();
+    RenderPipelineDesc(const RenderPipelineDesc &src);
+    RenderPipelineDesc(RenderPipelineDesc &&src);
+
+    RenderPipelineDesc &operator=(const RenderPipelineDesc &src);
 
     bool operator==(const RenderPipelineDesc &rhs) const;
 

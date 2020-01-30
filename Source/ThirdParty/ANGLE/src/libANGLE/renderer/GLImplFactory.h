@@ -22,6 +22,7 @@
 #include "libANGLE/Texture.h"
 #include "libANGLE/TransformFeedback.h"
 #include "libANGLE/VertexArray.h"
+#include "libANGLE/renderer/serial_utils.h"
 
 namespace gl
 {
@@ -53,8 +54,8 @@ class VertexArrayImpl;
 class GLImplFactory : angle::NonCopyable
 {
   public:
-    GLImplFactory() {}
-    virtual ~GLImplFactory() {}
+    GLImplFactory();
+    virtual ~GLImplFactory();
 
     // Shader creation
     virtual CompilerImpl *createCompiler()                           = 0;
@@ -101,7 +102,16 @@ class GLImplFactory : angle::NonCopyable
 
     // Overlay creation
     virtual OverlayImpl *createOverlay(const gl::OverlayState &state) = 0;
+
+    rx::Serial generateSerial() { return mSerialFactory.generate(); }
+
+  private:
+    rx::SerialFactory mSerialFactory;
 };
+
+inline GLImplFactory::GLImplFactory() = default;
+
+inline GLImplFactory::~GLImplFactory() = default;
 
 }  // namespace rx
 

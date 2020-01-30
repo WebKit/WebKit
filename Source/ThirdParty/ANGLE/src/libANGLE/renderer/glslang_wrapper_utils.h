@@ -33,6 +33,10 @@ struct GlslangSourceOptions
 
     // Binding index start for transform feedback buffers:
     uint32_t xfbBindingIndexStart = 16;
+
+    bool useOldRewriteStructSamplers        = false;
+    bool supportsTransformFeedbackExtension = false;
+    bool emulateTransformFeedback           = false;
 };
 
 using GlslangErrorCallback = std::function<angle::Result(GlslangError)>;
@@ -46,7 +50,6 @@ std::string GlslangGetMappedSamplerName(const std::string &originalName);
 // Transform the source to include actual binding points for various shader
 // resources (textures, buffers, xfb, etc)
 void GlslangGetShaderSource(const GlslangSourceOptions &options,
-                            bool useOldRewriteStructSamplers,
                             const gl::ProgramState &programState,
                             const gl::ProgramLinkedResources &resources,
                             gl::ShaderMap<std::string> *shaderSourcesOut);

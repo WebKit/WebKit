@@ -44,14 +44,14 @@ if (enable_java_templates) {
       ]
       if (symbol_level != 0) {
         deps += [ ":compressed_symbols" ]
-        if (build_apk_secondary_abi && android_64bit_target_cpu) {
+        if (android_64bit_target_cpu) {
           deps += [ ":compressed_symbols($android_secondary_abi_toolchain)" ]
         }
       }
 
       uncompress_shared_libraries = true
 
-      if (build_apk_secondary_abi && android_64bit_target_cpu) {
+      if (android_64bit_target_cpu) {
         if (symbol_level == 0) {
           secondary_abi_shared_libraries = []
           foreach(_library, angle_libraries) {

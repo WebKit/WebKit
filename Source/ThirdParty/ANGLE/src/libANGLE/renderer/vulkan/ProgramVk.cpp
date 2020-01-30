@@ -566,7 +566,7 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     // assignment done in that function.
     linkResources(resources);
 
-    GlslangWrapperVk::GetShaderSource(contextVk->useOldRewriteStructSamplers(), mState, resources,
+    GlslangWrapperVk::GetShaderSource(contextVk->getRenderer()->getFeatures(), mState, resources,
                                       &mShaderSources);
 
     reset(contextVk);
@@ -606,7 +606,8 @@ angle::Result ProgramVk::linkImpl(const gl::Context *glContext, gl::InfoLog &inf
     if (mState.hasLinkedShaderStage(gl::ShaderType::Vertex) && transformFeedback &&
         !mState.getLinkedTransformFeedbackVaryings().empty())
     {
-        vk::GetImpl(transformFeedback)->updateDescriptorSetLayout(mState, &uniformsAndXfbSetDesc);
+        TransformFeedbackVk *transformFeedbackVk = vk::GetImpl(transformFeedback);
+        transformFeedbackVk->updateDescriptorSetLayout(contextVk, mState, &uniformsAndXfbSetDesc);
     }
 
     ANGLE_TRY(renderer->getDescriptorSetLayout(
@@ -688,7 +689,12 @@ angle::Result ProgramVk::linkImpl(const gl::Context *glContext, gl::InfoLog &inf
     }
     if (storageBlockCount > 0 || atomicCounterBufferCount > 0)
     {
-        const uint32_t storageBufferDescCount = storageBlockCount + atomicCounterBufferCount;
+        // Note that we always use an array of IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS storage
+        // buffers for emulating atomic counters, so if there are any atomic counter buffers, we
+        // need to allocate IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS descriptors.
+        const uint32_t atomicCounterStorageBufferCount =
+            atomicCounterBufferCount > 0 ? gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS : 0;
+        const uint32_t storageBufferDescCount = storageBlockCount + atomicCounterStorageBufferCount;
         resourceSetSize.emplace_back(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, storageBufferDescCount);
     }
     if (imageCount > 0)
@@ -1338,8 +1344,9 @@ void ProgramVk::updateBuffersDescriptorSet(ContextVk *contextVk,
 
         if (isStorageBuffer)
         {
-            bufferHelper.onWrite(contextVk, recorder, VK_ACCESS_SHADER_READ_BIT,
-                                 VK_ACCESS_SHADER_WRITE_BIT);
+            // We set the SHADER_READ_BIT to be conservative.
+            bufferHelper.onWrite(contextVk, recorder,
+                                 VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT);
         }
         else
         {
@@ -1401,8 +1408,9 @@ void ProgramVk::updateAtomicCounterBuffersDescriptorSet(ContextVk *contextVk,
         BufferVk *bufferVk             = vk::GetImpl(bufferBinding.get());
         vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-        bufferHelper.onWrite(contextVk, recorder, VK_ACCESS_SHADER_READ_BIT,
-                             VK_ACCESS_SHADER_WRITE_BIT);
+        // We set SHADER_READ_BIT to be conservative.
+        bufferHelper.onWrite(contextVk, recorder,
+                             VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT);
 
         writtenBindings.set(binding);
     }
@@ -1716,9 +1724,10 @@ angle::Result ProgramVk::updateDescriptorSets(ContextVk *contextVk,
     // Find the maximum non-null descriptor set.  This is used in conjunction with a driver
     // workaround to bind empty descriptor sets only for gaps in between 0 and max and avoid
     // binding unnecessary empty descriptor sets for the sets beyond max.
-    size_t descriptorSetRange = 0;
-    for (size_t descriptorSetIndex = 0; descriptorSetIndex < mDescriptorSets.size();
-         ++descriptorSetIndex)
+    const size_t descriptorSetStart = kUniformsAndXfbDescriptorSetIndex;
+    size_t descriptorSetRange       = 0;
+    for (size_t descriptorSetIndex = descriptorSetStart;
+         descriptorSetIndex < mDescriptorSets.size(); ++descriptorSetIndex)
     {
         if (mDescriptorSets[descriptorSetIndex] != VK_NULL_HANDLE)
         {
@@ -1729,7 +1738,7 @@ angle::Result ProgramVk::updateDescriptorSets(ContextVk *contextVk,
     const VkPipelineBindPoint pipelineBindPoint =
         mState.isCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-    for (uint32_t descriptorSetIndex = 0; descriptorSetIndex < descriptorSetRange;
+    for (uint32_t descriptorSetIndex = descriptorSetStart; descriptorSetIndex < descriptorSetRange;
          ++descriptorSetIndex)
     {
         VkDescriptorSet descSet = mDescriptorSets[descriptorSetIndex];

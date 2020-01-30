@@ -70,19 +70,7 @@
 #endif  // defined(ANGLE_ENABLE_NULL)
 
 #if defined(ANGLE_ENABLE_VULKAN)
-#    if defined(ANGLE_PLATFORM_WINDOWS)
-#        include "libANGLE/renderer/vulkan/win32/DisplayVkWin32.h"
-#    elif defined(ANGLE_PLATFORM_LINUX)
-#        include "libANGLE/renderer/vulkan/xcb/DisplayVkXcb.h"
-#    elif defined(ANGLE_PLATFORM_ANDROID)
-#        include "libANGLE/renderer/vulkan/android/DisplayVkAndroid.h"
-#    elif defined(ANGLE_PLATFORM_FUCHSIA)
-#        include "libANGLE/renderer/vulkan/fuchsia/DisplayVkFuchsia.h"
-#    elif defined(ANGLE_PLATFORM_GGP)
-#        include "libANGLE/renderer/vulkan/ggp/DisplayVkGGP.h"
-#    else
-#        error Unsupported Vulkan platform.
-#    endif
+#    include "libANGLE/renderer/vulkan/DisplayVk_api.h"
 #endif  // defined(ANGLE_ENABLE_VULKAN)
 
 #if defined(ANGLE_ENABLE_METAL)
@@ -159,7 +147,8 @@ EGLAttrib GetDisplayTypeFromEnvironment()
     angle::ToLower(&angleDefaultEnv);
 
 #if defined(ANGLE_ENABLE_VULKAN)
-    if (angleDefaultEnv == "vulkan")
+    if ((angleDefaultEnv == "vulkan") || (angleDefaultEnv == "vulkan-null") ||
+        (angleDefaultEnv == "swiftshader"))
     {
         return EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE;
     }
@@ -209,16 +198,28 @@ EGLAttrib GetDisplayTypeFromEnvironment()
 #endif
 }
 
-rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const DisplayState &state)
+EGLAttrib GetDeviceTypeFromEnvironment()
 {
-    rx::DisplayImpl *impl = nullptr;
-    EGLAttrib displayType =
-        attribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
+    std::string angleDefaultEnv = angle::GetEnvironmentVar("ANGLE_DEFAULT_PLATFORM");
+    angle::ToLower(&angleDefaultEnv);
 
-    if (displayType == EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE)
+#if defined(ANGLE_ENABLE_VULKAN)
+    if (angleDefaultEnv == "vulkan-null")
     {
-        displayType = GetDisplayTypeFromEnvironment();
+        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE;
     }
+    else if (angleDefaultEnv == "swiftshader")
+    {
+        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+    }
+#endif
+    return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+}
+
+rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType, const DisplayState &state)
+{
+    ASSERT(displayType != EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
+    rx::DisplayImpl *impl = nullptr;
 
     switch (displayType)
     {
@@ -281,15 +282,35 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap, const D
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
 #if defined(ANGLE_ENABLE_VULKAN)
 #    if defined(ANGLE_PLATFORM_WINDOWS)
-            impl = new rx::DisplayVkWin32(state);
+            if (rx::IsVulkanWin32DisplayAvailable())
+            {
+                impl = rx::CreateVulkanWin32Display(state);
+            }
 #    elif defined(ANGLE_PLATFORM_LINUX)
-            impl = new rx::DisplayVkXcb(state);
+            if (rx::IsVulkanXcbDisplayAvailable())
+            {
+                impl = rx::CreateVulkanXcbDisplay(state);
+            }
 #    elif defined(ANGLE_PLATFORM_ANDROID)
-            impl = new rx::DisplayVkAndroid(state);
+            if (rx::IsVulkanAndroidDisplayAvailable())
+            {
+                impl = rx::CreateVulkanAndroidDisplay(state);
+            }
 #    elif defined(ANGLE_PLATFORM_FUCHSIA)
-            impl = new rx::DisplayVkFuchsia(state);
+            if (rx::IsVulkanFuchsiaDisplayAvailable())
+            {
+                impl = rx::CreateVulkanFuchsiaDisplay(state);
+            }
 #    elif defined(ANGLE_PLATFORM_GGP)
-            impl = new rx::DisplayVkGGP(state);
+            if (rx::IsVulkanGGPDisplayAvailable())
+            {
+                impl = rx::CreateVulkanGGPDisplay(state);
+            }
+#    elif defined(ANGLE_PLATFORM_APPLE)
+            if (rx::IsVulkanMacDisplayAvailable())
+            {
+                impl = rx::CreateVulkanMacDisplay(state);
+            }
 #    else
 #        error Unsupported Vulkan platform.
 #    endif
@@ -401,14 +422,19 @@ Display *Display::GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay
     // Apply new attributes if the display is not initialized yet.
     if (!display->isInitialized())
     {
-        rx::DisplayImpl *impl = CreateDisplayFromAttribs(attribMap, display->getState());
+        display->setAttributes(attribMap);
+
+        display->updateAttribsFromEnvironment(attribMap);
+
+        EGLAttrib displayType = display->mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
+        rx::DisplayImpl *impl = CreateDisplayFromAttribs(displayType, display->getState());
         if (impl == nullptr)
         {
             // No valid display implementation for these attributes
             return nullptr;
         }
 
-        display->setAttributes(impl, attribMap);
+        display->setupDisplayPlatform(impl);
     }
 
     return display;
@@ -469,8 +495,9 @@ Display *Display::GetDisplayFromDevice(Device *device, const AttributeMap &attri
     // Apply new attributes if the display is not initialized yet.
     if (!display->isInitialized())
     {
+        display->setAttributes(attribMap);
         rx::DisplayImpl *impl = CreateDisplayFromDevice(device, display->getState());
-        display->setAttributes(impl, attribMap);
+        display->setupDisplayPlatform(impl);
     }
 
     return display;
@@ -540,15 +567,13 @@ EGLLabelKHR Display::getLabel() const
     return mState.label;
 }
 
-void Display::setAttributes(rx::DisplayImpl *impl, const AttributeMap &attribMap)
+void Display::setupDisplayPlatform(rx::DisplayImpl *impl)
 {
     ASSERT(!mInitialized);
 
     ASSERT(impl != nullptr);
     SafeDelete(mImplementation);
     mImplementation = impl;
-
-    mAttributeMap = attribMap;
 
     // TODO(jmadill): Store Platform in Display and init here.
     const angle::PlatformMethods *platformMethods =
@@ -571,6 +596,23 @@ void Display::setAttributes(rx::DisplayImpl *impl, const AttributeMap &attribMap
     mState.featureOverridesDisabled = EGLStringArrayToStringVector(featuresForceDisabled);
     mState.featuresAllDisabled =
         static_cast<bool>(mAttributeMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0));
+}
+
+void Display::updateAttribsFromEnvironment(const AttributeMap &attribMap)
+{
+    EGLAttrib displayType =
+        attribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
+    if (displayType == EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE)
+    {
+        displayType = GetDisplayTypeFromEnvironment();
+        mAttributeMap.insert(EGL_PLATFORM_ANGLE_TYPE_ANGLE, displayType);
+    }
+    EGLAttrib deviceType = attribMap.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, 0);
+    if (deviceType == 0)
+    {
+        deviceType = GetDeviceTypeFromEnvironment();
+        mAttributeMap.insert(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, deviceType);
+    }
 }
 
 Error Display::initialize()
@@ -1280,7 +1322,10 @@ static ClientExtensions GenerateClientExtensions()
 #endif
 
 #if defined(ANGLE_ENABLE_VULKAN)
-    extensions.platformANGLEVulkan                = true;
+    extensions.platformANGLEVulkan = true;
+#endif
+
+#if defined(ANGLE_ENABLE_SWIFTSHADER)
     extensions.platformANGLEDeviceTypeSwiftShader = true;
 #endif
 

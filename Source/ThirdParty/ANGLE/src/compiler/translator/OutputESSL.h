@@ -27,6 +27,8 @@ class TOutputESSL : public TOutputGLSLBase
 
   protected:
     bool writeVariablePrecision(TPrecision precision) override;
+    ImmutableString translateTextureFunction(const ImmutableString &name,
+                                             const ShCompileOptions &option) override;
 
   private:
     bool mForceHighp;

@@ -145,6 +145,7 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
 
         // Failed to create the renderer, try the next
         SafeDelete(renderer);
+        ERR() << "Failed to create D3D renderer: " << result.getMessage();
     }
 
     return egl::EglNotInitialized() << "No available renderers.";

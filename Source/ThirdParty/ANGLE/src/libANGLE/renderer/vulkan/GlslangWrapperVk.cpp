@@ -22,7 +22,7 @@ angle::Result ErrorHandler(vk::Context *context, GlslangError)
     return angle::Result::Stop;
 }
 
-GlslangSourceOptions CreateSourceOptions()
+GlslangSourceOptions CreateSourceOptions(const angle::FeaturesVk &features)
 {
     GlslangSourceOptions options;
     options.uniformsAndXfbDescriptorSetIndex = kUniformsAndXfbDescriptorSetIndex;
@@ -30,18 +30,22 @@ GlslangSourceOptions CreateSourceOptions()
     options.shaderResourceDescriptorSetIndex = kShaderResourceDescriptorSetIndex;
     options.driverUniformsDescriptorSetIndex = kDriverUniformsDescriptorSetIndex;
     options.xfbBindingIndexStart             = kXfbBindingIndexStart;
+    options.useOldRewriteStructSamplers      = features.forceOldRewriteStructSamplers.enabled;
+    options.supportsTransformFeedbackExtension =
+        features.supportsTransformFeedbackExtension.enabled;
+    options.emulateTransformFeedback = features.emulateTransformFeedback.enabled;
     return options;
 }
 }  // namespace
 
 // static
-void GlslangWrapperVk::GetShaderSource(bool useOldRewriteStructSamplers,
+void GlslangWrapperVk::GetShaderSource(const angle::FeaturesVk &features,
                                        const gl::ProgramState &programState,
                                        const gl::ProgramLinkedResources &resources,
                                        gl::ShaderMap<std::string> *shaderSourcesOut)
 {
-    GlslangGetShaderSource(CreateSourceOptions(), useOldRewriteStructSamplers, programState,
-                           resources, shaderSourcesOut);
+    GlslangGetShaderSource(CreateSourceOptions(features), programState, resources,
+                           shaderSourcesOut);
 }
 
 // static

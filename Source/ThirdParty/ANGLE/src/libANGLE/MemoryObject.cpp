@@ -15,7 +15,7 @@ namespace gl
 {
 
 MemoryObject::MemoryObject(rx::GLImplFactory *factory, MemoryObjectID id)
-    : RefCountObject(id), mImplementation(factory->createMemoryObject())
+    : RefCountObject(factory->generateSerial(), id), mImplementation(factory->createMemoryObject())
 {}
 
 MemoryObject::~MemoryObject() {}

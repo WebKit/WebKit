@@ -112,6 +112,26 @@ TextureManager *AllocateOrGetSharedTextureManager(const State *shareContextState
     }
 }
 
+// TODO(https://anglebug.com/3889): Remove this helper function after blink and chromium part
+// refactory done.
+bool IsTextureCompatibleWithSampler(TextureType texture, TextureType sampler)
+{
+    if (sampler == texture)
+    {
+        return true;
+    }
+
+    if (sampler == TextureType::VideoImage)
+    {
+        if (texture == TextureType::VideoImage || texture == TextureType::_2D)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 int gIDCounter = 1;
 }  // namespace
 
@@ -303,6 +323,7 @@ State::State(ContextID contextIn,
       mFramebufferSRGB(true),
       mRobustResourceInit(robustResourceInit),
       mProgramBinaryCacheEnabled(programBinaryCacheEnabled),
+      mTextureRectangleEnabled(true),
       mMaxShaderCompilerThreads(std::numeric_limits<GLuint>::max()),
       mOverlay(overlay)
 {}
@@ -400,6 +421,10 @@ void State::initialize(Context *context)
     if (nativeExtensions.eglImageExternal || nativeExtensions.eglStreamConsumerExternal)
     {
         mSamplerTextures[TextureType::External].resize(caps.maxCombinedTextureImageUnits);
+    }
+    if (nativeExtensions.webglVideoTexture)
+    {
+        mSamplerTextures[TextureType::VideoImage].resize(caps.maxCombinedTextureImageUnits);
     }
     mCompleteTextureBindings.reserve(caps.maxCombinedTextureImageUnits);
     for (int32_t textureIndex = 0; textureIndex < caps.maxCombinedTextureImageUnits; ++textureIndex)
@@ -939,6 +964,9 @@ void State::setEnableFeature(GLenum feature, bool enabled)
         case GL_FRAMEBUFFER_SRGB_EXT:
             setFramebufferSRGB(enabled);
             break;
+        case GL_TEXTURE_RECTANGLE_ANGLE:
+            mTextureRectangleEnabled = enabled;
+            break;
 
         // GLES1 emulation
         case GL_ALPHA_TEST:
@@ -1046,6 +1074,8 @@ bool State::getEnableFeature(GLenum feature) const
             return mRobustResourceInit;
         case GL_PROGRAM_CACHE_ENABLED_ANGLE:
             return mProgramBinaryCacheEnabled;
+        case GL_TEXTURE_RECTANGLE_ANGLE:
+            return mTextureRectangleEnabled;
 
         // GLES1 emulation
         case GL_ALPHA_TEST:
@@ -1144,7 +1174,7 @@ void State::setSamplerTexture(const Context *context, TextureType type, Texture 
     mSamplerTextures[type][mActiveSampler].set(context, texture);
 
     if (mProgram && mProgram->getActiveSamplersMask()[mActiveSampler] &&
-        mProgram->getActiveSamplerTypes()[mActiveSampler] == type)
+        IsTextureCompatibleWithSampler(type, mProgram->getActiveSamplerTypes()[mActiveSampler]))
     {
         updateActiveTexture(context, mActiveSampler, texture);
     }
@@ -1919,6 +1949,9 @@ void State::getBooleanv(GLenum pname, GLboolean *params)
         case GL_PROGRAM_CACHE_ENABLED_ANGLE:
             *params = mProgramBinaryCacheEnabled ? GL_TRUE : GL_FALSE;
             break;
+        case GL_TEXTURE_RECTANGLE_ANGLE:
+            *params = mTextureRectangleEnabled ? GL_TRUE : GL_FALSE;
+            break;
         case GL_LIGHT_MODEL_TWO_SIDE:
             *params = IsLightModelTwoSided(&mGLES1State);
             break;
@@ -2617,6 +2650,28 @@ void State::getBooleani_v(GLenum target, GLuint index, GLboolean *data)
     }
 }
 
+// TODO(https://anglebug.com/3889): Remove this helper function after blink and chromium part
+// refactory done.
+Texture *State::getTextureForActiveSampler(TextureType type, size_t index)
+{
+    if (type != TextureType::VideoImage)
+    {
+        return mSamplerTextures[type][index].get();
+    }
+
+    ASSERT(type == TextureType::VideoImage);
+
+    Texture *candidateTexture = mSamplerTextures[type][index].get();
+    if (candidateTexture->getWidth(TextureTarget::VideoImage, 0) == 0 ||
+        candidateTexture->getHeight(TextureTarget::VideoImage, 0) == 0 ||
+        candidateTexture->getDepth(TextureTarget::VideoImage, 0) == 0)
+    {
+        return mSamplerTextures[TextureType::_2D][index].get();
+    }
+
+    return mSamplerTextures[type][index].get();
+}
+
 angle::Result State::syncTexturesInit(const Context *context)
 {
     ASSERT(mRobustResourceInit);
@@ -2825,7 +2880,7 @@ angle::Result State::onProgramExecutableChange(const Context *context, Program *
         if (type == TextureType::InvalidEnum)
             continue;
 
-        Texture *texture = mSamplerTextures[type][textureIndex].get();
+        Texture *texture = getTextureForActiveSampler(type, textureIndex);
         updateActiveTexture(context, textureIndex, texture);
     }
 
@@ -2893,7 +2948,7 @@ void State::onActiveTextureChange(const Context *context, size_t textureUnit)
         TextureType type = mProgram->getActiveSamplerTypes()[textureUnit];
         if (type != TextureType::InvalidEnum)
         {
-            Texture *activeTexture = mSamplerTextures[type][textureUnit].get();
+            Texture *activeTexture = getTextureForActiveSampler(type, textureUnit);
             updateActiveTexture(context, textureUnit, activeTexture);
         }
     }
@@ -2906,7 +2961,7 @@ void State::onActiveTextureStateChange(const Context *context, size_t textureUni
         TextureType type = mProgram->getActiveSamplerTypes()[textureUnit];
         if (type != TextureType::InvalidEnum)
         {
-            Texture *activeTexture = mSamplerTextures[type][textureUnit].get();
+            Texture *activeTexture = getTextureForActiveSampler(type, textureUnit);
             const Sampler *sampler = mSamplers[textureUnit].get();
             updateActiveTextureState(context, textureUnit, sampler, activeTexture);
         }
@@ -2918,7 +2973,11 @@ void State::onImageStateChange(const Context *context, size_t unit)
     if (mProgram)
     {
         const ImageUnit &image = mImageUnits[unit];
-        ASSERT(image.texture.get());
+
+        // Have nothing to do here if no texture bound
+        if (!image.texture.get())
+            return;
+
         if (image.texture->hasAnyDirtyBit())
         {
             mDirtyImages.set(unit);

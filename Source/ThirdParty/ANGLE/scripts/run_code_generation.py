@@ -73,6 +73,10 @@ generators = {
         'src/libANGLE/renderer/gen_angle_format_table.py',
     'ANGLE load functions table':
         'src/libANGLE/renderer/gen_load_functions_table.py',
+    'ANGLE shader preprocessor':
+        'src/compiler/preprocessor/generate_parser.py',
+    'ANGLE shader translator':
+        'src/compiler/translator/generate_parser.py',
     'D3D11 blit shader selection':
         'src/libANGLE/renderer/d3d/d3d11/gen_blit11helper.py',
     'D3D11 format':

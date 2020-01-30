@@ -29,7 +29,7 @@ TType *GetStructSamplerParameterType(TSymbolTable *symbolTable, const TVariable 
 
     if (param.getType().isArray())
     {
-        structType->makeArrays(*param.getType().getArraySizes());
+        structType->makeArrays(param.getType().getArraySizes());
     }
 
     ASSERT(!structType->isStructureContainingSamplers());
@@ -210,7 +210,7 @@ TFunction *GenerateFunctionFromArguments(const TFunction *function,
         if (type.isArray() && type.isSampler())
         {
             ASSERT(type.getNumArraySizes() == 1);
-            instantiation.push_back((*type.getArraySizes())[0]);
+            instantiation.push_back(type.getArraySizes()[0]);
         }
     }
 
@@ -267,8 +267,8 @@ class ArrayTraverser
     {
         if (!arrayType.isArray())
             return;
-        size_t currentArraySize = mCumulativeArraySizeStack.back();
-        const auto &arraySizes  = *arrayType.getArraySizes();
+        size_t currentArraySize                     = mCumulativeArraySizeStack.back();
+        const TSpan<const unsigned int> &arraySizes = arrayType.getArraySizes();
         for (auto it = arraySizes.rbegin(); it != arraySizes.rend(); ++it)
         {
             unsigned int arraySize = *it;
@@ -552,7 +552,7 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
                     newType                       = new TType(fieldStruct, true);
                     if (fieldType.isArray())
                     {
-                        newType->makeArrays(*fieldType.getArraySizes());
+                        newType->makeArrays(fieldType.getArraySizes());
                     }
                 }
                 else
@@ -759,9 +759,9 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
         // Also includes samplers in arrays of arrays.
         virtual void visitSamplerInStructParam(const ImmutableString &name,
                                                const TType *type,
-                                               size_t paramIndex)                              = 0;
-        virtual void visitStructParam(const TFunction *function, size_t paramIndex)            = 0;
-        virtual void visitNonStructParam(const TFunction *function, size_t paramIndex)         = 0;
+                                               size_t paramIndex)                      = 0;
+        virtual void visitStructParam(const TFunction *function, size_t paramIndex)    = 0;
+        virtual void visitNonStructParam(const TFunction *function, size_t paramIndex) = 0;
 
       private:
         bool traverseStructContainingSamplers(const ImmutableString &baseName,

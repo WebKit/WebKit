@@ -24,6 +24,7 @@ class ResourcesHLSL : angle::NonCopyable
   public:
     ResourcesHLSL(StructureHLSL *structureHLSL,
                   ShShaderOutput outputType,
+                  ShCompileOptions compileOptions,
                   const std::vector<ShaderVariable> &uniforms,
                   unsigned int firstUniformRegister);
 
@@ -54,6 +55,12 @@ class ResourcesHLSL : angle::NonCopyable
     {
         return mUniformBlockRegisterMap;
     }
+
+    const std::map<std::string, bool> &getUniformBlockUseStructuredBufferMap() const
+    {
+        return mUniformBlockUseStructuredBufferMap;
+    }
+
     const std::map<std::string, unsigned int> &getUniformRegisterMap() const
     {
         return mUniformRegisterMap;
@@ -67,6 +74,8 @@ class ResourcesHLSL : angle::NonCopyable
                                const TVariable *instanceVariable,
                                unsigned int registerIndex,
                                unsigned int arrayIndex);
+    TString uniformBlockWithOneLargeArrayMemberString(const TInterfaceBlock &interfaceBlock,
+                                                      unsigned int registerIndex);
 
     TString shaderStorageBlockString(const TInterfaceBlock &interfaceBlock,
                                      const TVariable *instanceVariable,
@@ -116,21 +125,24 @@ class ResourcesHLSL : angle::NonCopyable
                                      const HLSLRWTextureGroup textureGroup,
                                      const TVector<const TVariable *> &group,
                                      unsigned int *groupTextureRegisterIndex);
+    bool shouldTranslateUniformBlockToStructuredBuffer(const TInterfaceBlock &interfaceBlock);
 
     unsigned int mUniformRegister;
     unsigned int mUniformBlockRegister;
-    unsigned int mTextureRegister;
+    unsigned int mSRVRegister;
     unsigned int mUAVRegister;
     unsigned int mSamplerCount;
     unsigned int mReadonlyImageCount;
     unsigned int mImageCount;
     StructureHLSL *mStructureHLSL;
     ShShaderOutput mOutputType;
+    ShCompileOptions mCompileOptions;
 
     const std::vector<ShaderVariable> &mUniforms;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
+    std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
     unsigned int mReadonlyImage2DRegisterIndex;
     unsigned int mImage2DRegisterIndex;
 };

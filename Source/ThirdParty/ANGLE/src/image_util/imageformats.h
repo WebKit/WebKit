@@ -726,8 +726,8 @@ static_assert(sizeof(R11G11B10F) == 4, "R11G11B10F struct not 32-bits.");
 
 struct D24S8
 {
-    uint32_t D : 24;
     uint32_t S : 8;
+    uint32_t D : 24;
 
     static void ReadDepthStencil(DepthStencil *dst, const D24S8 *src);
     static void WriteDepthStencil(D24S8 *dst, const DepthStencil *src);

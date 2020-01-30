@@ -29,6 +29,9 @@
 // fails on Nexus5X with GLES backend (hangs)
 //  91531 NEXUS5X GLES : conformance_more_* = SKIP
 
+// Globally disable Metal testing for now
+4235 METAL : dEQP-GLES2.* = SKIP
+
 // Skip these tests due to timeouts
 1034 : dEQP-GLES2.functional.flush_finish.* = SKIP
 

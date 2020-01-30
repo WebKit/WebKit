@@ -637,6 +637,10 @@ TEST_P(ComputeShaderTest, DispatchComputeIndirect)
     // Flaky crash on teardown, see http://anglebug.com/3349
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel() && IsWindows());
 
+    // ASAN error on vulkan backend; ASAN tests only enabled on Mac Swangle
+    // (http://crbug.com/1029378)
+    ANGLE_SKIP_TEST_IF(IsOSX() && isSwiftshader());
+
     GLTexture texture;
     GLFramebuffer framebuffer;
     const char kCSSource[] = R"(#version 310 es
@@ -3592,14 +3596,14 @@ void main(void) {
     glEnableVertexAttribArray(posTex);
     glVertexAttribPointer(posTex, 2, GL_FLOAT, GL_FALSE, 0, texCoords);
 
-    // Draw with level 0, the whole frame buffer should be Red.
+    // Draw with level 0, the whole framebuffer should be Red.
     glViewport(0, 0, getWindowWidth(), getWindowHeight());
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
-    // Draw with level 1, the whole frame buffer should be Green.
+    // Draw with level 1, a quarter of the framebuffer should be Green.
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -3622,7 +3626,7 @@ void main(void) {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
-    // Draw with level 1, the whole frame buffer should be Green.
+    // Draw with level 1, a quarter of the framebuffer should be Green.
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);

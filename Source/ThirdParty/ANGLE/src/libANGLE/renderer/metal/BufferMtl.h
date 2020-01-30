@@ -36,6 +36,10 @@ struct ConversionBufferMtl
 
     // The conversion is stored in a dynamic buffer.
     mtl::BufferPool data;
+
+    // These properties are to be filled by user of this buffer conversion
+    mtl::BufferRef convertedBuffer;
+    size_t convertedOffset;
 };
 
 struct IndexConversionBufferMtl : public ConversionBufferMtl
@@ -46,10 +50,6 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
 
     const gl::DrawElementsType type;
     const size_t offset;
-
-    // These properties are to be filled by user of this buffer conversion
-    mtl::BufferRef convertedBuffer;
-    size_t convertedOffset;
 };
 
 class BufferHolderMtl
@@ -128,7 +128,7 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
                                                        gl::DrawElementsType type,
                                                        size_t offset);
 
-    size_t size() const { return mState.getSize(); }
+    size_t size() const { return static_cast<size_t>(mState.getSize()); }
 
   private:
     angle::Result setSubDataImpl(const gl::Context *context,
@@ -137,8 +137,11 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
                                  size_t offset);
 
     angle::Result commitShadowCopy(const gl::Context *context);
+    angle::Result commitShadowCopy(const gl::Context *context, size_t size);
 
     void markConversionBuffersDirty();
+
+    void clearConversionBuffers();
 
     // Client side shadow buffer
     angle::MemoryBuffer mShadowCopy;

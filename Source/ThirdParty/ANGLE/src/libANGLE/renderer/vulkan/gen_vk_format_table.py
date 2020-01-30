@@ -149,13 +149,17 @@ def gen_format_case(angle, internal_format, vk_json_data):
         (angle not in vk_fallbacks)) or angle == 'NONE':
         return empty_format_entry_template.format(**args)
 
+    # get_formats returns override format (if any) + fallbacks
+    # this was necessary to support D32_UNORM. There is no appropriate override that allows
+    # us to fallback to D32_FLOAT, so now we leave the image override empty and function will
+    # give us the fallbacks.
     def get_formats(format, type):
         format = vk_overrides.get(format, {}).get(type, format)
-        if format not in vk_map:
-            return []
         fallbacks = vk_fallbacks.get(format, {}).get(type, [])
         if not isinstance(fallbacks, list):
             fallbacks = [fallbacks]
+        if format not in vk_map:
+            return fallbacks
         return [format] + fallbacks
 
     def image_args(format):

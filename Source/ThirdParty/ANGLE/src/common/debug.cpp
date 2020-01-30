@@ -233,7 +233,29 @@ void Trace(LogSeverity severity, const char *message)
         __android_log_print(android_priority, "ANGLE", "%s: %s\n", LogSeverityName(severity),
                             str.c_str());
 #elif defined(ANGLE_PLATFORM_APPLE)
-        os_log(OS_LOG_DEFAULT, "ANGLE: %s: %s\n", LogSeverityName(severity), str.c_str());
+        if (__builtin_available(macOS 10.12, iOS 10.0, *))
+        {
+            os_log_type_t apple_log_type = OS_LOG_TYPE_DEFAULT;
+            switch (severity)
+            {
+                case LOG_INFO:
+                    apple_log_type = OS_LOG_TYPE_INFO;
+                    break;
+                case LOG_WARN:
+                    apple_log_type = OS_LOG_TYPE_DEFAULT;
+                    break;
+                case LOG_ERR:
+                    apple_log_type = OS_LOG_TYPE_ERROR;
+                    break;
+                case LOG_FATAL:
+                    // OS_LOG_TYPE_FAULT is too severe - grabs the entire process tree.
+                    apple_log_type = OS_LOG_TYPE_ERROR;
+                    break;
+                default:
+                    UNREACHABLE();
+            }
+            os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n", LogSeverityName(severity), str.c_str());
+        }
 #else
         // Note: we use fprintf because <iostream> includes static initializers.
         fprintf((severity >= LOG_ERR) ? stderr : stdout, "%s: %s\n", LogSeverityName(severity),

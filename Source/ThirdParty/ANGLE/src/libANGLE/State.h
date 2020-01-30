@@ -722,6 +722,7 @@ class State : angle::NonCopyable
                                   size_t textureIndex,
                                   const Sampler *sampler,
                                   Texture *texture);
+    Texture *getTextureForActiveSampler(TextureType type, size_t index);
 
     // Functions to synchronize dirty states
     angle::Result syncTexturesInit(const Context *context);
@@ -912,6 +913,9 @@ class State : angle::NonCopyable
 
     // GL_ANGLE_program_cache_control
     const bool mProgramBinaryCacheEnabled;
+
+    // GL_ANGLE_webgl_compatibility
+    bool mTextureRectangleEnabled;
 
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;

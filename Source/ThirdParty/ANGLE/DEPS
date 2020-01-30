@@ -16,18 +16,16 @@ vars = {
   'build_with_chromium': False,
 
   # Only check out public sources by default. This can be overridden with custom_vars.
-  # We overload Chromium's 'src-internal' for simplicity.
-  # TOOD(ynovikov): Use checkout_angle_internal custom variable instead.
-  'checkout_src_internal': False,
+  'checkout_angle_internal': False,
 
   # Version of Chromium our Chromium-based DEPS are mirrored from.
-  'chromium_revision': '5fe256ab5e5eb3d73d23ab52c69ba113145d921b',
+  'chromium_revision': 'e1633af636fa3bc0bf93ccaf5ccc1c9691439703',
 
   # Current revision of VK-GL-CTS (a.k.a dEQP).
-  'vk_gl_cts_revision': '54ec6f2b1390bf33ea10424dca610f8bcbfefa06',
+  'vk_gl_cts_revision': 'd99a765d38d35deeb3f27cf30d9d6fe4f183510e',
 
   # Current revision of glslang, the Khronos SPIRV compiler.
-  'glslang_revision': '43fe7bafb14e6e455310ca67134ab914242116b3',
+  'glslang_revision': 'd203754bc1160cbb14e80de238042a2b9b439917',
 
   # Current revision of googletest.
   # Note: this dep cannot be auto-rolled b/c of nesting.
@@ -42,25 +40,25 @@ vars = {
   'patched_yasm_revision': '720b70524a4424b15fc57e82263568c8ba0496ad',
 
   # Current revision of spirv-cross, the Khronos SPIRV cross compiler.
-  'spirv_cross_revision': 'd253f41e17e27285756d031d8ba43bf370264e1f',
+  'spirv_cross_revision': 'fd5aa3ad51ece55a1b51fe6bfb271db6844ae291',
 
   # Current revision fo the SPIRV-Headers Vulkan support library.
   'spirv_headers_revision': 'af64a9e826bf5bb5fcd2434dd71be1e41e922563',
 
   # Current revision of SPIRV-Tools for Vulkan.
-  'spirv_tools_revision': '45dde9ad6dde133db9bd6942c46df692ca539186',
+  'spirv_tools_revision': '8013d477aeac6b596216b0c68134d11561f8b05f',
 
   # Current revision of Khronos Vulkan-Headers.
-  'vulkan_headers_revision': '24347673152e093a48efbf65dfd3b06026b6ed33',
+  'vulkan_headers_revision': 'f63dd5c9d874310c8403f3aef9302b761efedd18',
 
   # Current revision of Khronos Vulkan-Loader.
-  'vulkan_loader_revision': '79e03670c2a328bea3c1a3f80ea913f296a487e6',
+  'vulkan_loader_revision': '2d6f74c6d4319e94cf1fa33954c619ab4428f2b8',
 
   # Current revision of Khronos Vulkan-Tools.
-  'vulkan_tools_revision': '39b3005ba560da72e2c71cab9c793af2c2bed511',
+  'vulkan_tools_revision': '2c436960d2c0d06a1838f8428886db369b2e4f56',
 
   # Current revision of Khronos Vulkan-ValidationLayers.
-  'vulkan_validation_revision': '5efc3922e3e863cc69fb487b040c1d1e563de1bc',
+  'vulkan_validation_revision': '834baaf8b22782d38b8da2bf52d046df2eed794f',
 
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
@@ -71,17 +69,23 @@ vars = {
 deps = {
 
   'build': {
-    'url': '{chromium_git}/chromium/src/build.git@258e22bc612da7425c3a64d733041683a9d123f1',
+    'url': '{chromium_git}/chromium/src/build.git@dfe5662014cf45982441c8a767092934dfecfa9e',
     'condition': 'not build_with_chromium',
   },
 
   'buildtools': {
-    'url': '{chromium_git}/chromium/src/buildtools.git@cf454b247c611167388742c7a31ef138a6031172',
+    'url': '{chromium_git}/chromium/src/buildtools.git@6b3e658d6fe8cd9c2588796d296f07312b776054',
     'condition': 'not build_with_chromium',
   },
 
+  # Closed-source ANGLE capture files and tests
+  'src/tests/internal_capture_tests': {
+    'url': '{chrome_internal_git}/angle/angle-captures.git@e2fa6fa80de07f784da7214e933c8565ebfc34da',
+    'condition': 'checkout_angle_internal',
+  },
+
   'testing': {
-    'url': '{chromium_git}/chromium/src/testing@85152663b9e65c5372e8eb080d936e1b6fbd3b6b',
+    'url': '{chromium_git}/chromium/src/testing@c1b508625d47f26cfc04eab47747a792a5ee765b',
     'condition': 'not build_with_chromium',
   },
 
@@ -103,7 +107,7 @@ deps = {
   # Closed-source OpenGL ES 1.1 Conformance tests.
   'third_party/gles1_conform': {
     'url': '{chrome_internal_git}/angle/es-cts.git@dc9f502f709c9cd88d7f8d3974f1c77aa246958e',
-    'condition': 'checkout_src_internal',
+    'condition': 'checkout_angle_internal',
   },
 
   # glmark2 is a GPL3-licensed OpenGL ES 2.0 benchmark. We use it for testing.
@@ -117,7 +121,7 @@ deps = {
   },
 
   'third_party/googletest': {
-    'url': '{chromium_git}/chromium/src/third_party/googletest@60616473f7d8414aeb7575b487beecc7369fd52f',
+    'url': '{chromium_git}/chromium/src/third_party/googletest@f8eeeb06c0e306257817ae2b719a65cae648090e',
     'condition': 'not build_with_chromium',
   },
 
@@ -184,7 +188,7 @@ deps = {
   },
 
   'third_party/SwiftShader': {
-    'url': '{swiftshader_git}/SwiftShader@131a1ba8d06a669ac48fb792b76c78d20f9e2e74',
+    'url': '{swiftshader_git}/SwiftShader@488d35ac0b1c66c79a6a8511111ad5b6296a2ffb',
     'condition': 'not build_with_chromium',
   },
 
@@ -210,12 +214,12 @@ deps = {
   },
 
   'third_party/zlib': {
-    'url': '{chromium_git}/chromium/src/third_party/zlib@403ca5ad3a324530113a89a20fcabcea92242721',
+    'url': '{chromium_git}/chromium/src/third_party/zlib@f262c1b3c4196a2fee98c113142faff525b8d884',
     'condition': 'not build_with_chromium',
   },
 
   'tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang.git@662cbb8d60f813b110f637f38adf60d9b2c57418',
+    'url': '{chromium_git}/chromium/src/tools/clang.git@a9190d6699c6e6517025c9f69cd74bd3d96a6f0f',
     'condition': 'not build_with_chromium',
   },
 
@@ -383,6 +387,34 @@ hooks = [
                 '--no_auth',
                 '--bucket', 'angle-glslang-validator',
                 '-s', 'tools/glslang/glslang_validator.exe.sha1',
+    ],
+  },
+
+  # Download flex/bison binaries for Linux.
+  {
+    'name': 'linux_flex_bison',
+    'pattern': '.',
+    'condition': 'checkout_linux and not build_with_chromium',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=linux*',
+                '--no_auth',
+                '--bucket', 'angle-flex-bison',
+                '-d', 'tools/flex-bison/linux/',
+    ],
+  },
+
+  # Download flex/bison binaries for Windows.
+  {
+    'name': 'win_flex_bison',
+    'pattern': '.',
+    'condition': 'checkout_win and not build_with_chromium',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=win32*',
+                '--no_auth',
+                '--bucket', 'angle-flex-bison',
+                '-d', 'tools/flex-bison/windows/',
     ],
   },
 ]

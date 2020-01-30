@@ -98,10 +98,11 @@ endif()
 
 
 if(is_win)
+    list(APPEND angle_system_utils_sources "src/common/system_utils_win.cpp" )
     if(current_os STREQUAL "winuwp")
         list(APPEND angle_system_utils_sources "src/common/system_utils_winuwp.cpp" )
     else()
-        list(APPEND angle_system_utils_sources "src/common/system_utils_win.cpp" )
+        list(APPEND angle_system_utils_sources "src/common/system_utils_win32.cpp" )
     endif()
 endif()
 
@@ -146,7 +147,7 @@ set(libangle_gpu_info_util_libpci_sources
 set(libangle_gpu_info_util_x11_sources "src/gpu_info_util/SystemInfo_x11.cpp" )
 
 
-set(libangle_gpu_info_util_mac_sources "src/gpu_info_util/SystemInfo_mac.mm" )
+set(libangle_gpu_info_util_mac_sources "src/gpu_info_util/SystemInfo_macos.mm" )
 
 
 set(libangle_includes
@@ -323,6 +324,7 @@ set(libangle_headers
     "src/libANGLE/renderer/copyvertex.inc.h"
     "src/libANGLE/renderer/load_functions_table.h"
     "src/libANGLE/renderer/renderer_utils.h"
+    "src/libANGLE/renderer/serial_utils.h"
     "src/libANGLE/validationEGL.h"
     "src/libANGLE/validationES.h"
     "src/libANGLE/validationES1.h"

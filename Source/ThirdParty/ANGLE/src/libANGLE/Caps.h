@@ -145,6 +145,9 @@ struct Extensions
     // GL_NV_pixel_buffer_object
     bool pixelBufferObject = false;
 
+    // GL_ARB_sync
+    bool glSync = false;
+
     // GL_OES_mapbuffer and GL_EXT_map_buffer_range
     bool mapBuffer      = false;
     bool mapBufferRange = false;
@@ -544,6 +547,21 @@ struct Extensions
 
     // GL_ANGLE_get_image
     bool getImageANGLE = false;
+
+    // GL_OES_draw_elements_base_vertex
+    bool drawElementsBaseVertexOES = false;
+    // GL_EXT_draw_elements_base_vertex
+    bool drawElementsBaseVertexEXT = false;
+    // Any version of the base vertex extension
+    bool drawElementsBaseVertexAny() const
+    {
+        return (drawElementsBaseVertexOES || drawElementsBaseVertexEXT);
+    }
+
+    // GL_EXT_gpu_shader5
+    bool gpuShader5EXT = false;
+    // WEBGL_video_texture
+    bool webglVideoTexture = false;
 };
 
 // Pointer to a boolean memeber of the Extensions struct
@@ -954,6 +972,27 @@ struct DisplayExtensions
 
     // EGL_ANGLE_swap_with_frame_token
     bool swapWithFrameToken = false;
+
+    // EGL_KHR_gl_colorspace
+    bool glColorspace = false;
+
+    // EGL_EXT_gl_colorspace_display_p3_linear
+    bool glColorspaceDisplayP3Linear = false;
+
+    // EGL_EXT_gl_colorspace_display_p3
+    bool glColorspaceDisplayP3 = false;
+
+    // EGL_EXT_gl_colorspace_scrgb
+    bool glColorspaceScrgb = false;
+
+    // EGL_EXT_gl_colorspace_scrgb_linear
+    bool glColorspaceScrgbLinear = false;
+
+    // EGL_EXT_gl_colorspace_display_p3_passthrough
+    bool glColorspaceDisplayP3Passthrough = false;
+
+    // EGL_ANDROID_framebuffer_target
+    bool framebufferTargetANDROID = false;
 };
 
 struct DeviceExtensions

@@ -18,11 +18,10 @@
 #include "compiler/translator/OutputVulkanGLSL.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/tree_ops/NameEmbeddedUniformStructs.h"
-#include "compiler/translator/tree_ops/NameNamelessUniformBuffers.h"
+#include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
 #include "compiler/translator/tree_ops/RewriteCubeMapSamplersAs2DArray.h"
 #include "compiler/translator/tree_ops/RewriteDfdy.h"
-#include "compiler/translator/tree_ops/RewriteRowMajorMatrices.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/FindFunction.h"
@@ -167,14 +166,15 @@ constexpr const char kHalfRenderAreaHeight[] = "halfRenderAreaHeight";
 constexpr const char kViewportYScale[]       = "viewportYScale";
 constexpr const char kNegViewportYScale[]    = "negViewportYScale";
 constexpr const char kXfbActiveUnpaused[]    = "xfbActiveUnpaused";
+constexpr const char kXfbVerticesPerDraw[]   = "xfbVerticesPerDraw";
 constexpr const char kXfbBufferOffsets[]     = "xfbBufferOffsets";
 constexpr const char kAcbBufferOffsets[]     = "acbBufferOffsets";
 constexpr const char kDepthRange[]           = "depthRange";
 
-constexpr size_t kNumGraphicsDriverUniforms                                                = 8;
+constexpr size_t kNumGraphicsDriverUniforms                                                = 9;
 constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
     {kViewport, kHalfRenderAreaHeight, kViewportYScale, kNegViewportYScale, kXfbActiveUnpaused,
-     kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
+     kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
 
 constexpr size_t kNumComputeDriverUniforms                                               = 1;
 constexpr std::array<const char *, kNumComputeDriverUniforms> kComputeDriverUniformNames = {
@@ -351,8 +351,9 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTa
     depthRangeParamsFields->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1),
                                                  ImmutableString("diff"), TSourceLoc(),
                                                  SymbolType::AngleInternal));
+    // This additional field might be used by subclass such as TranslatorMetal.
     depthRangeParamsFields->push_back(new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1),
-                                                 ImmutableString("dummyPacker"), TSourceLoc(),
+                                                 ImmutableString("reserved"), TSourceLoc(),
                                                  SymbolType::AngleInternal));
     TStructure *emulatedDepthRangeParams = new TStructure(
         symbolTable, kEmulatedDepthRangeParams, depthRangeParamsFields, SymbolType::AngleInternal);
@@ -374,6 +375,8 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTa
         new TType(EbtFloat),
         new TType(EbtFloat),
         new TType(EbtUInt),
+        new TType(EbtUInt),
+        // NOTE: There's a vec3 gap here that can be used in the future
         new TType(EbtInt, 4),
         new TType(EbtUInt, 4),
         emulatedDepthRangeType,
@@ -711,10 +714,18 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
             ++aggregateTypesUsedForUniforms;
         }
 
-        if (gl::IsAtomicCounterType(uniform.type))
+        if (uniform.active && gl::IsAtomicCounterType(uniform.type))
         {
             ++atomicCounterCount;
         }
+    }
+
+    // Remove declarations of inactive shader interface variables so glslang wrapper doesn't need to
+    // replace them.  Note: this is done before extracting samplers from structs, as removing such
+    // inactive samplers is not yet supported.
+    if (!RemoveInactiveInterfaceVariables(this, root, getUniforms(), getInterfaceBlocks()))
+    {
+        return false;
     }
 
     // TODO(lucferron): Refactor this function to do fewer tree traversals.
@@ -761,25 +772,6 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     {
         if (!RewriteCubeMapSamplersAs2DArray(this, root, &getSymbolTable(),
                                              getShaderType() == GL_FRAGMENT_SHADER))
-        {
-            return false;
-        }
-    }
-
-    if (getShaderVersion() >= 300)
-    {
-        // Make sure every uniform buffer variable has a name.  The following transformation relies
-        // on this.
-        if (!NameNamelessUniformBuffers(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-
-        // In GLES3+, matrices can be declared row- or column-major.  Transform all to column-major
-        // as interface block field layout qualifiers are not allowed.  This should be done after
-        // samplers are taken out of structs (as structs could be rewritten), but before uniforms
-        // are collected in a uniform buffer as they are handled especially.
-        if (!RewriteRowMajorMatrices(this, root, &getSymbolTable()))
         {
             return false;
         }
@@ -857,10 +849,13 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
             }
         }
 
-        if (!AddBresenhamEmulationFS(this, sink, root, &getSymbolTable(), driverUniforms,
-                                     usesFragCoord))
+        if (compileOptions & SH_ADD_BRESENHAM_LINE_RASTER_EMULATION)
         {
-            return false;
+            if (!AddBresenhamEmulationFS(this, sink, root, &getSymbolTable(), driverUniforms,
+                                         usesFragCoord))
+            {
+                return false;
+            }
         }
 
         bool hasGLFragColor = false;
@@ -923,9 +918,12 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     }
     else if (getShaderType() == GL_VERTEX_SHADER)
     {
-        if (!AddBresenhamEmulationVS(this, root, &getSymbolTable(), driverUniforms))
+        if (compileOptions & SH_ADD_BRESENHAM_LINE_RASTER_EMULATION)
         {
-            return false;
+            if (!AddBresenhamEmulationVS(this, root, &getSymbolTable(), driverUniforms))
+            {
+                return false;
+            }
         }
 
         // Add a macro to declare transform feedback buffers.
@@ -938,6 +936,10 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         }
 
         // Append depth range translation to main.
+        if (!transformDepthBeforeCorrection(root, driverUniforms))
+        {
+            return false;
+        }
         if (!AppendVertexShaderDepthCorrectionToMain(this, root, &getSymbolTable()))
         {
             return false;
@@ -999,6 +1001,14 @@ TIntermBinary *TranslatorVulkan::getDriverUniformNegViewportYScaleRef(
     const TVariable *driverUniforms) const
 {
     return CreateDriverUniformRef(driverUniforms, kNegViewportYScale);
+}
+
+TIntermBinary *TranslatorVulkan::getDriverUniformDepthRangeReservedFieldRef(
+    const TVariable *driverUniforms) const
+{
+    TIntermBinary *depthRange = CreateDriverUniformRef(driverUniforms, kDepthRange);
+
+    return new TIntermBinary(EOpIndexDirectStruct, depthRange, CreateIndexNode(3));
 }
 
 }  // namespace sh

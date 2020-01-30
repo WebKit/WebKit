@@ -161,6 +161,7 @@ class TextureMtl : public TextureImpl
 
   private:
     void releaseTexture(bool releaseImages);
+    angle::Result ensureSamplerStateCreated(const gl::Context *context);
     // Ensure image at given index is created:
     angle::Result ensureImageCreated(const gl::Context *context, const gl::ImageIndex &index);
     angle::Result checkForEmulatedChannels(const gl::Context *context,

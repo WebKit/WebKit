@@ -94,6 +94,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.OES_EGL_image_external_essl3 = extensions.eglImageExternalEssl3;
     mResources.NV_EGL_stream_consumer_external = extensions.eglStreamConsumerExternal;
     mResources.ARB_texture_rectangle           = extensions.textureRectangle;
+    mResources.EXT_gpu_shader5                 = extensions.gpuShader5EXT;
     mResources.OES_texture_storage_multisample_2d_array =
         extensions.textureStorageMultisample2DArray;
     mResources.OES_texture_3D                  = extensions.texture3DOES;
@@ -114,6 +115,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
 
     // EXT_multisampled_render_to_texture
     mResources.EXT_multisampled_render_to_texture = extensions.multisampledRenderToTexture;
+
+    // WEBGL_video_texture
+    mResources.WEBGL_video_texture = extensions.webglVideoTexture;
 
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;

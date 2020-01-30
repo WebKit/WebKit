@@ -101,6 +101,7 @@ class FramebufferGL : public FramebufferImpl
 
     angle::Result readPixelsRowByRow(const gl::Context *context,
                                      const gl::Rectangle &area,
+                                     GLenum originalReadFormat,
                                      GLenum format,
                                      GLenum type,
                                      const gl::PixelPackState &pack,
@@ -108,6 +109,7 @@ class FramebufferGL : public FramebufferImpl
 
     angle::Result readPixelsAllAtOnce(const gl::Context *context,
                                       const gl::Rectangle &area,
+                                      GLenum originalReadFormat,
                                       GLenum format,
                                       GLenum type,
                                       const gl::PixelPackState &pack,

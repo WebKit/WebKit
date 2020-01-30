@@ -51,31 +51,6 @@ bool SetCWD(const char *dirName)
     return (SetCurrentDirectoryA(dirName) == TRUE);
 }
 
-bool UnsetEnvironmentVar(const char *variableName)
-{
-    return (SetEnvironmentVariableA(variableName, nullptr) == TRUE);
-}
-
-bool SetEnvironmentVar(const char *variableName, const char *value)
-{
-    return (SetEnvironmentVariableA(variableName, value) == TRUE);
-}
-
-std::string GetEnvironmentVar(const char *variableName)
-{
-    std::array<char, MAX_PATH> oldValue;
-    DWORD result =
-        GetEnvironmentVariableA(variableName, oldValue.data(), static_cast<DWORD>(oldValue.size()));
-    if (result == 0)
-    {
-        return std::string();
-    }
-    else
-    {
-        return std::string(oldValue.data());
-    }
-}
-
 const char *GetPathSeparatorForEnvironmentVar()
 {
     return ";";
@@ -90,56 +65,6 @@ double GetCurrentTime()
     QueryPerformanceCounter(&curTime);
 
     return static_cast<double>(curTime.QuadPart) / frequency.QuadPart;
-}
-
-class Win32Library : public Library
-{
-  public:
-    Win32Library(const char *libraryName, SearchType searchType)
-    {
-        char buffer[MAX_PATH];
-        int ret = snprintf(buffer, MAX_PATH, "%s.%s", libraryName, GetSharedLibraryExtension());
-        if (ret > 0 && ret < MAX_PATH)
-        {
-            switch (searchType)
-            {
-                case SearchType::ApplicationDir:
-                    mModule = LoadLibraryA(buffer);
-                    break;
-                case SearchType::SystemDir:
-                    mModule = LoadLibraryExA(buffer, nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-                    break;
-            }
-        }
-    }
-
-    ~Win32Library() override
-    {
-        if (mModule)
-        {
-            FreeLibrary(mModule);
-        }
-    }
-
-    void *getSymbol(const char *symbolName) override
-    {
-        if (!mModule)
-        {
-            return nullptr;
-        }
-
-        return reinterpret_cast<void *>(GetProcAddress(mModule, symbolName));
-    }
-
-    void *getNative() const override { return reinterpret_cast<void *>(mModule); }
-
-  private:
-    HMODULE mModule = nullptr;
-};
-
-Library *OpenSharedLibrary(const char *libraryName, SearchType searchType)
-{
-    return new Win32Library(libraryName, searchType);
 }
 
 bool IsDirectory(const char *filename)
@@ -166,4 +91,13 @@ void BreakDebugger()
     __debugbreak();
 }
 
+const char *GetExecutableExtension()
+{
+    return ".exe";
+}
+
+char GetPathSeparator()
+{
+    return '\\';
+}
 }  // namespace angle

@@ -14,15 +14,19 @@ function print_rebase_message_and_exit {
 
 function cleanup_after_successful_rebase_and_exit {
     cd "$ANGLE_DIR"
+    echo
+    echo "Regenerating changes.diff"
+    git diff origin/master --diff-filter=a > changes.diff
     rm -rf .git
     git add -A .
     echo
-    git diff --cached --no-pager Compiler.cmake GLESv2.cmake
+    git --no-pager diff --cached Compiler.cmake GLESv2.cmake
     echo
     echo "Success! Rebase complete."
     echo "Above are the changes to Compiler.cmake and GLESv2.cmake."
     echo "Now you'll need to apply the equivalent changes to the ANGLE XCode"
     echo "project. Once that's done you should be ready to upload your patch."
+    echo
     exit 0
 }
 
