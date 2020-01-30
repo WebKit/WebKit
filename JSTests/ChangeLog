@@ -1,3 +1,16 @@
+2020-01-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Incomplete braced quantifiers should be banned in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=206776
+
+        Reviewed by Darin Adler.
+
+        Although the change does not affect Unicode property escapes, a few
+        test/built-ins/RegExp/property-escapes/non-existent-property-value*.js files
+        are now passing because they had \\p or \\P instead of CharacterClassEscape.
+
+        * test262/expectations.yaml: Mark 18 test cases as passing.
+
 2020-01-30  Keith Miller  <keith_miller@apple.com>
 
         Parser needs to restore unary stack state when backtracking
@@ -85,7 +98,7 @@
 
 2020-01-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
-        Invalid ranges in character classes should be banned in unicode patterns
+        Invalid ranges in character classes should be banned in Unicode patterns only
         https://bugs.webkit.org/show_bug.cgi?id=206768
 
         Reviewed by Darin Adler.

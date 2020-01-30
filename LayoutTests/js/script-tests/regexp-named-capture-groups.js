@@ -85,9 +85,9 @@ shouldBe('"Give me a \\\'k\\\'!".match(/Give me a \\\'\\\k\\\'/)[0]', '"Give me 
 shouldBe('"Give me \\\'k2\\\'!".match(/Give me \\\'\\\k2\\\'/)[0]', '"Give me \\\'k2\\\'"');
 shouldBe('"Give me a \\\'kat\\\'!".match(/Give me a \\\'\\\kat\\\'/)[0]', '"Give me a \\\'kat\\\'"');
 // Verify that named back references for non-existing named group matches the k<groupName> throw for unicode patterns.
-shouldThrow('"Give me a \\\'k\\\'!".match(/Give me a \\\'\\\k\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern"');
-shouldThrow('"Give me \\\'k2\\\'!".match(/Give me \\\'\\\k2\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern"');
-shouldThrow('"Give me a \\\'kat\\\'!".match(/Give me a \\\'\\\kat\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern"');
+shouldThrow('"Give me a \\\'k\\\'!".match(/Give me a \\\'\\\k\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern"');
+shouldThrow('"Give me \\\'k2\\\'!".match(/Give me \\\'\\\k2\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern"');
+shouldThrow('"Give me a \\\'kat\\\'!".match(/Give me a \\\'\\\kat\\\'/u)[0]', '"SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern"');
 
 // Check invalid group name specifiers in a replace string.
 shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\d{4})/, "$<day>-$<mouth>-$<year>")', '"20--1930"');
@@ -113,4 +113,4 @@ shouldBe('"1122332211".match(/\\\k<ones>\\\k<twos>\\\k<threes>(?<ones>1*)(?<twos
 // Check that a named forward reference for a non-existent named capture
 // matches for non-unicode patterns and throws for unicode patterns.
 shouldBe('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/)', '["k<z>XzzX", "zz"]');
-shouldThrow('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/u)', '"SyntaxError: Invalid regular expression: invalid backreference for unicode pattern"');
+shouldThrow('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/u)', '"SyntaxError: Invalid regular expression: invalid backreference for Unicode pattern"');

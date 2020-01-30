@@ -817,10 +817,15 @@ private:
                     }
                 }
 
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::QuantifierIncomplete;
+                    break;
+                }
+
                 restoreState(state);
+                // if we did not find a complete quantifer, fall through to the default case.
+                FALLTHROUGH;
             }
-            // if we did not find a complete quantifer, fall through to the default case.
-            FALLTHROUGH;
 
             default:
                 m_delegate.atomPatternCharacter(consumePossibleSurrogatePair());

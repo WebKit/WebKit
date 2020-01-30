@@ -39,6 +39,7 @@ enum class ErrorCode : uint8_t {
     QuantifierOutOfOrder,
     QuantifierWithoutAtom,
     QuantifierTooLarge,
+    QuantifierIncomplete,
     MissingParentheses,
     ParenthesesUnmatched,
     ParenthesesTypeInvalid,

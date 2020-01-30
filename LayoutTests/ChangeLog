@@ -1,3 +1,19 @@
+2020-01-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Incomplete braced quantifiers should be banned in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=206776
+
+        Reviewed by Darin Adler.
+
+        An error message test is added for this change and for webkit.org/b/206768.
+        Other tests are adjusted for capitalized "Unicode" in error messages.
+
+        * js/regexp-named-capture-groups-expected.txt:
+        * js/regexp-unicode-expected.txt:
+        * js/regress-158080-expected.txt:
+        * js/script-tests/regexp-named-capture-groups.js:
+        * js/script-tests/regexp-unicode.js:
+
 2020-01-30  Doug Kelly  <dougk@apple.com>
 
         Crash in RenderElement::selectionPseudoStyle with detail element set to display: contents

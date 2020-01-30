@@ -11,9 +11,6 @@ test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment
 test/annexB/built-ins/RegExp/prototype/Symbol.split/Symbol.match-getter-recompiles-source.js:
   default: 'Test262Error: Expected SameValue(«», «a») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «a») to be true'
-test/annexB/built-ins/RegExp/prototype/compile/pattern-string-invalid-u.js:
-  default: 'Test262Error: invalid pattern: { Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: invalid pattern: { Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -1519,24 +1516,6 @@ test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
 test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
   default: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-General_Category-negated.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-Script-negated.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-Script.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-Script_Extensions-negated.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-Script_Extensions.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/built-ins/RegExp/property-escapes/non-existent-property-value-general-category.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/built-ins/RegExp/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«/(?:)/», «/(?:)/») to be true'
   strict mode: 'Test262Error: Expected SameValue(«/(?:)/», «/(?:)/») to be true'
@@ -1606,9 +1585,6 @@ test/built-ins/RegExp/unicode_restricted_identity_escape_alpha.js:
 test/built-ins/RegExp/unicode_restricted_identity_escape_c.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/unicode_restricted_incomple_quantifier.js:
-  default: 'Test262Error: RegExp("a{", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: RegExp("a{", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/unicode_restricted_octal_escape.js:
   default: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
@@ -3400,9 +3376,6 @@ test/language/literals/regexp/u-dec-esc.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-class-escape.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-extended-pattern-char.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-legacy-octal-escape.js:

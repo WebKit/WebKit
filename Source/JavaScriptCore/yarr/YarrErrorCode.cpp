@@ -40,6 +40,7 @@ const char* errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",                // QuantifierOutOfOrder
         REGEXP_ERROR_PREFIX "nothing to repeat",                                    // QuantifierWithoutAtom
         REGEXP_ERROR_PREFIX "number too large in {} quantifier",                    // QuantifierTooLarge
+        REGEXP_ERROR_PREFIX "incomplete {} quantifier for Unicode pattern",         // QuantifierIncomplete
         REGEXP_ERROR_PREFIX "missing )",                                            // MissingParentheses
         REGEXP_ERROR_PREFIX "unmatched parentheses",                                // ParenthesesUnmatched
         REGEXP_ERROR_PREFIX "unrecognized character after (?",                      // ParenthesesTypeInvalid
@@ -47,11 +48,11 @@ const char* errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "duplicate group specifier name",                       // DuplicateGroupName
         REGEXP_ERROR_PREFIX "missing terminating ] for character class",            // CharacterClassUnmatched
         REGEXP_ERROR_PREFIX "range out of order in character class",                // CharacterClassRangeOutOfOrder
-        REGEXP_ERROR_PREFIX "invalid range in character class for unicode pattern", // CharacterClassRangeInvalid
+        REGEXP_ERROR_PREFIX "invalid range in character class for Unicode pattern", // CharacterClassRangeInvalid
         REGEXP_ERROR_PREFIX "\\ at end of pattern",                                 // EscapeUnterminated
-        REGEXP_ERROR_PREFIX "invalid unicode {} escape",                            // InvalidUnicodeEscape
-        REGEXP_ERROR_PREFIX "invalid backreference for unicode pattern",            // InvalidBackreference
-        REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",        // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "invalid Unicode {} escape",                            // InvalidUnicodeEscape
+        REGEXP_ERROR_PREFIX "invalid backreference for Unicode pattern",            // InvalidBackreference
+        REGEXP_ERROR_PREFIX "invalid escaped character for Unicode pattern",        // InvalidIdentityEscape
         REGEXP_ERROR_PREFIX "invalid property expression",                          // InvalidUnicodePropertyExpression
         REGEXP_ERROR_PREFIX "too many nested disjunctions",                         // TooManyDisjunctions
         REGEXP_ERROR_PREFIX "pattern exceeds string length limits",                 // OffsetTooLarge
@@ -71,6 +72,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::QuantifierOutOfOrder:
     case ErrorCode::QuantifierWithoutAtom:
     case ErrorCode::QuantifierTooLarge:
+    case ErrorCode::QuantifierIncomplete:
     case ErrorCode::MissingParentheses:
     case ErrorCode::ParenthesesUnmatched:
     case ErrorCode::ParenthesesTypeInvalid:
