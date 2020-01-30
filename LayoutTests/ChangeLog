@@ -1,3 +1,12 @@
+2020-01-30  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac ] fast/history/page-cache-webdatabase-pending-transaction.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207010
+
+        unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r255424.
