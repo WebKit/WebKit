@@ -28,7 +28,6 @@
 #include "BytecodeBasicBlock.h"
 #include "BytecodeGraph.h"
 #include "CodeBlock.h"
-#include <wtf/Bitmap.h>
 #include <wtf/FastBitVector.h>
 
 namespace JSC {
@@ -97,8 +96,6 @@ private:
 
     BytecodeGraph m_graph;
 };
-
-Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
 
 inline bool operandIsAlwaysLive(int operand);
 inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand);

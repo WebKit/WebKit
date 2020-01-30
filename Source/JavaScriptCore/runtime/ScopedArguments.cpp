@@ -148,9 +148,9 @@ void ScopedArguments::unmapArgument(VM& vm, uint32_t i)
         storage()[i - namedLength].clear();
 }
 
-void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElementDest, unsigned offset, unsigned length)
+void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
-    GenericArguments::copyToArguments(globalObject, firstElementDest, offset, length);
+    GenericArguments::copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
 }
 
 } // namespace JSC

@@ -43,7 +43,7 @@ void VariableEventStream::logEvent(const VariableEvent& event)
 {
     dataLogF("seq#%u:", static_cast<unsigned>(size()));
     event.dump(WTF::dataFile());
-    dataLogLn(" ");
+    dataLogF(" ");
 }
 
 namespace {
@@ -120,12 +120,10 @@ unsigned VariableEventStream::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
     unsigned index, Operands<ValueRecovery>& valueRecoveries, Vector<UndefinedOperandSpan>* undefinedOperandSpans) const
 {
-    constexpr bool verbose = false;
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
     CodeBlock* baselineCodeBlock = codeBlock->baselineVersion();
 
     unsigned numVariables;
-    unsigned numTmps;
     static constexpr unsigned invalidIndex = std::numeric_limits<unsigned>::max();
     unsigned firstUndefined = invalidIndex;
     bool firstUndefinedIsArgument = false;
@@ -133,42 +131,37 @@ unsigned VariableEventStream::reconstruct(
     auto flushUndefinedOperandSpan = [&] (unsigned i) {
         if (firstUndefined == invalidIndex)
             return;
-        int firstOffset = valueRecoveries.operandForIndex(firstUndefined).virtualRegister().offset();
-        int lastOffset = valueRecoveries.operandForIndex(i - 1).virtualRegister().offset();
+        int firstOffset = valueRecoveries.virtualRegisterForIndex(firstUndefined).offset();
+        int lastOffset = valueRecoveries.virtualRegisterForIndex(i - 1).offset();
         int minOffset = std::min(firstOffset, lastOffset);
         undefinedOperandSpans->append({ firstUndefined, minOffset, i - firstUndefined });
         firstUndefined = invalidIndex;
     };
     auto recordUndefinedOperand = [&] (unsigned i) {
         // We want to separate the span of arguments from the span of locals even if they have adjacent operands indexes.
-        if (firstUndefined != invalidIndex && firstUndefinedIsArgument != valueRecoveries.operandForIndex(i).isArgument())
+        if (firstUndefined != invalidIndex && firstUndefinedIsArgument != valueRecoveries.isArgument(i))
             flushUndefinedOperandSpan(i);
 
         if (firstUndefined == invalidIndex) {
             firstUndefined = i;
-            firstUndefinedIsArgument = valueRecoveries.operandForIndex(i).isArgument();
+            firstUndefinedIsArgument = valueRecoveries.isArgument(i);
         }
     };
 
     auto* inlineCallFrame = codeOrigin.inlineCallFrame();
-    if (inlineCallFrame) {
-        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
-        numVariables = codeBlock->numCalleeLocals() + VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1;
-        numTmps = codeBlock->numTmps() + inlineCallFrame->tmpOffset;
-    } else {
+    if (inlineCallFrame)
+        numVariables = baselineCodeBlockForInlineCallFrame(inlineCallFrame)->numCalleeLocals() + VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1;
+    else
         numVariables = baselineCodeBlock->numCalleeLocals();
-        numTmps = baselineCodeBlock->numTmps();
-    }
     
     // Crazy special case: if we're at index == 0 then this must be an argument check
     // failure, in which case all variables are already set up. The recoveries should
     // reflect this.
     if (!index) {
-        // We don't include tmps here because they can't be used yet.
-        valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables, 0);
+        valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
         for (size_t i = 0; i < valueRecoveries.size(); ++i) {
             valueRecoveries[i] = ValueRecovery::displacedInJSStack(
-                valueRecoveries.operandForIndex(i).virtualRegister(), DataFormatJS);
+                VirtualRegister(valueRecoveries.operandForIndex(i)), DataFormatJS);
         }
         return numVariables;
     }
@@ -179,13 +172,12 @@ unsigned VariableEventStream::reconstruct(
         startIndex--;
     
     // Step 2: Create a mock-up of the DFG's state and execute the events.
-    Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables, numTmps);
+    Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables);
     for (unsigned i = operandSources.size(); i--;)
         operandSources[i] = ValueSource(SourceIsDead);
     HashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
     for (unsigned i = startIndex; i < index; ++i) {
         const VariableEvent& event = at(i);
-        dataLogLnIf(verbose, "Processing event ", event);
         switch (event.kind()) {
         case Reset:
             // nothing to do.
@@ -207,23 +199,21 @@ unsigned VariableEventStream::reconstruct(
             break;
         }
         case MovHintEvent:
-            if (operandSources.hasOperand(event.operand()))
-                operandSources.setOperand(event.operand(), ValueSource(event.id()));
+            if (operandSources.hasOperand(event.bytecodeRegister()))
+                operandSources.setOperand(event.bytecodeRegister(), ValueSource(event.id()));
             break;
         case SetLocalEvent:
-            if (operandSources.hasOperand(event.operand()))
-                operandSources.setOperand(event.operand(), ValueSource::forDataFormat(event.machineRegister(), event.dataFormat()));
+            if (operandSources.hasOperand(event.bytecodeRegister()))
+                operandSources.setOperand(event.bytecodeRegister(), ValueSource::forDataFormat(event.machineRegister(), event.dataFormat()));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
     }
-
-    dataLogLnIf(verbose, "Operand sources: ", operandSources);
     
     // Step 3: Compute value recoveries!
-    valueRecoveries = Operands<ValueRecovery>(OperandsLike, operandSources);
+    valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
     for (unsigned i = 0; i < operandSources.size(); ++i) {
         ValueSource& source = operandSources[i];
         if (source.isTriviallyRecoverable()) {
@@ -241,7 +231,6 @@ unsigned VariableEventStream::reconstruct(
         MinifiedNode* node = graph.at(source.id());
         MinifiedGenerationInfo info = generationInfos.get(source.id());
         if (!info.alive) {
-            dataLogLnIf(verbose, "Operand ", valueRecoveries.operandForIndex(i), " is dead.");
             valueRecoveries[i] = ValueRecovery::constant(jsUndefined());
             if (style == ReconstructionStyle::Separated)
                 recordUndefinedOperand(i);
@@ -249,7 +238,6 @@ unsigned VariableEventStream::reconstruct(
         }
 
         if (tryToSetConstantRecovery(valueRecoveries[i], node)) {
-            dataLogLnIf(verbose, "Operand ", valueRecoveries.operandForIndex(i), " is constant.");
             if (style == ReconstructionStyle::Separated) {
                 if (node->hasConstant() && node->constant() == jsUndefined())
                     recordUndefinedOperand(i);
@@ -279,7 +267,7 @@ unsigned VariableEventStream::reconstruct(
         }
         
         valueRecoveries[i] =
-            ValueRecovery::displacedInJSStack(info.u.operand.virtualRegister(), info.format);
+            ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info.u.virtualReg), info.format);
     }
     if (style == ReconstructionStyle::Separated)
         flushUndefinedOperandSpan(operandSources.size());

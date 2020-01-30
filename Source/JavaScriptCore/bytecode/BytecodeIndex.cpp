@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "BytecodeIndex.h"
-
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -33,8 +32,6 @@ namespace JSC {
 void BytecodeIndex::dump(WTF::PrintStream& out) const
 {
     out.print("bc#", offset());
-    if (checkpoint())
-        out.print("cp#", checkpoint());
 }
 
 } // namespace JSC

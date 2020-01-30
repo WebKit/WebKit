@@ -158,8 +158,8 @@ void JIT::emit_op_jbeloweq(const Instruction* currentInstruction)
 void JIT::emit_op_unsigned(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpUnsigned>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_operand;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_operand.offset();
     
     emitGetVirtualRegister(op1, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -172,13 +172,13 @@ template<typename Op>
 void JIT::emit_compareAndJump(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     emit_compareAndJumpImpl(op1, op2, target, condition);
 }
 
-void JIT::emit_compareAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition condition)
+void JIT::emit_compareAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition condition)
 {
     // We generate inline code for the following cases in the fast path:
     // - int immediate to constant int immediate
@@ -230,13 +230,13 @@ template<typename Op>
 void JIT::emit_compareUnsignedAndJump(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     emit_compareUnsignedAndJumpImpl(op1, op2, target, condition);
 }
 
-void JIT::emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition condition)
+void JIT::emit_compareUnsignedAndJumpImpl(int op1, int op2, unsigned target, RelationalCondition condition)
 {
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
@@ -256,13 +256,13 @@ template<typename Op>
 void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int dst = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
     emit_compareUnsignedImpl(dst, op1, op2, condition);
 }
 
-void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, VirtualRegister op2, RelationalCondition condition)
+void JIT::emit_compareUnsignedImpl(int dst, int op1, int op2, RelationalCondition condition)
 {
     if (isOperandConstantInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
@@ -284,13 +284,13 @@ template<typename Op>
 void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
     emit_compareAndJumpSlowImpl(op1, op2, target, instruction->size(), condition, operation, invert, iter);
 }
 
-void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_compareAndJumpSlowImpl(int op1, int op2, unsigned target, size_t instructionSize, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
 
     // We generate inline code for the following cases in the slow path:
@@ -387,7 +387,7 @@ void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, 
 void JIT::emit_op_inc(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInc>();
-    VirtualRegister srcDst = bytecode.m_srcDst;
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -399,7 +399,7 @@ void JIT::emit_op_inc(const Instruction* currentInstruction)
 void JIT::emit_op_dec(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDec>();
-    VirtualRegister srcDst = bytecode.m_srcDst;
+    int srcDst = bytecode.m_srcDst.offset();
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotInt(regT0);
@@ -415,9 +415,9 @@ void JIT::emit_op_dec(const Instruction* currentInstruction)
 void JIT::emit_op_mod(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpMod>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
@@ -491,9 +491,9 @@ template<typename Op, typename SnippetGenerator>
 void JIT::emitBitBinaryOpFastPath(const Instruction* currentInstruction, ProfilingPolicy profilingPolicy)
 {
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -538,8 +538,8 @@ void JIT::emitBitBinaryOpFastPath(const Instruction* currentInstruction, Profili
 void JIT::emit_op_bitnot(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpBitnot>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_operand;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_operand.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -599,9 +599,9 @@ template<typename Op>
 void JIT::emitRightShiftFastPath(const Instruction* currentInstruction, JITRightShiftGenerator::ShiftType snippetShiftType)
 {
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);
@@ -674,8 +674,8 @@ template <typename Op, typename Generator, typename ProfiledFunction, typename N
 void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister operand = bytecode.m_operand;
+    int result = bytecode.m_dst.offset();
+    int operand = bytecode.m_operand.offset();
 
 #if USE(JSVALUE64)
     // ArithNegate benefits from using the same register as src and dst.
@@ -724,9 +724,9 @@ template <typename Op, typename Generator, typename ProfiledFunction, typename N
 void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT1);
@@ -799,7 +799,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
     mathICGenerationState.slowPathStart = label();
 
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
+    int result = bytecode.m_dst.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs srcRegs = JSValueRegs(regT1);
@@ -845,9 +845,9 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     mathICGenerationState.slowPathStart = label();
 
     auto bytecode = currentInstruction->as<Op>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT1);
@@ -906,9 +906,9 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 void JIT::emit_op_div(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDiv>();
-    VirtualRegister result = bytecode.m_dst;
-    VirtualRegister op1 = bytecode.m_lhs;
-    VirtualRegister op2 = bytecode.m_rhs;
+    int result = bytecode.m_dst.offset();
+    int op1 = bytecode.m_lhs.offset();
+    int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
     JSValueRegs leftRegs = JSValueRegs(regT0);

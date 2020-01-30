@@ -36,11 +36,6 @@ namespace JSC {
 
 JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, const ArgList& args, const char* errorMessage)
 {
-    return construct(globalObject, constructorObject, constructorObject, args, errorMessage);
-}
-
-JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, JSValue newTarget, const ArgList& args, const char* errorMessage)
-{
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -51,8 +46,9 @@ JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, JSV
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(scope, construct(globalObject, constructorObject, constructType, constructData, args, newTarget));  
+    RELEASE_AND_RETURN(scope, construct(globalObject, constructorObject, constructType, constructData, args, constructorObject));
 }
+
 
 JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {

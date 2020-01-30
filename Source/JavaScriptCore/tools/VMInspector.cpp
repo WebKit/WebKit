@@ -397,8 +397,8 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     const Register* it;
     const Register* end;
 
-    it = callFrame->registers() + (CallFrameSlot::thisArgument + callFrame->argumentCount());
-    end = callFrame->registers() + (CallFrameSlot::thisArgument - 1);
+    it = callFrame->registers() + CallFrameSlot::thisArgument + callFrame->argumentCount();
+    end = callFrame->registers() + CallFrameSlot::thisArgument - 1;
     while (it > end) {
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();

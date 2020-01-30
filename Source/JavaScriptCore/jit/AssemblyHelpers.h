@@ -647,28 +647,28 @@ public:
     }
 #endif
 
-    void emitGetFromCallFrameHeaderPtr(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
+    void emitGetFromCallFrameHeaderPtr(int entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
-        loadPtr(Address(from, entry.offset() * sizeof(Register)), to);
+        loadPtr(Address(from, entry * sizeof(Register)), to);
     }
-    void emitGetFromCallFrameHeader32(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
+    void emitGetFromCallFrameHeader32(int entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
-        load32(Address(from, entry.offset() * sizeof(Register)), to);
+        load32(Address(from, entry * sizeof(Register)), to);
     }
 #if USE(JSVALUE64)
-    void emitGetFromCallFrameHeader64(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
+    void emitGetFromCallFrameHeader64(int entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
-        load64(Address(from, entry.offset() * sizeof(Register)), to);
+        load64(Address(from, entry * sizeof(Register)), to);
     }
 #endif // USE(JSVALUE64)
-    void emitPutToCallFrameHeader(GPRReg from, VirtualRegister entry)
+    void emitPutToCallFrameHeader(GPRReg from, int entry)
     {
-        storePtr(from, Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
+        storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 
-    void emitPutToCallFrameHeader(void* value, VirtualRegister entry)
+    void emitPutToCallFrameHeader(void* value, int entry)
     {
-        storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
+        storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 
     void emitGetCallerFrameFromCallFrameHeaderPtr(RegisterID to)
@@ -696,19 +696,19 @@ public:
     // caller's frame pointer. On some platforms, the callee is responsible for pushing the
     // "link register" containing the return address in the function prologue.
 #if USE(JSVALUE64)
-    void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
+    void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, int entry)
     {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
+        storePtr(from, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
     }
 #else
-    void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
+    void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, int entry)
     {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        storePtr(from, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     }
 
-    void emitPutTagToCallFrameHeaderBeforePrologue(TrustedImm32 tag, VirtualRegister entry)
+    void emitPutTagToCallFrameHeaderBeforePrologue(TrustedImm32 tag, int entry)
     {
-        storePtr(tag, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+        storePtr(tag, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
     
@@ -1148,10 +1148,9 @@ public:
         ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register));
     }
-    static Address addressFor(Operand operand)
+    static Address addressFor(int operand)
     {
-        ASSERT(!operand.isTmp());
-        return addressFor(operand.virtualRegister());
+        return addressFor(static_cast<VirtualRegister>(operand));
     }
 
     static Address tagFor(VirtualRegister virtualRegister, GPRReg baseGPR)
@@ -1164,10 +1163,9 @@ public:
         ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + TagOffset);
     }
-    static Address tagFor(Operand operand)
+    static Address tagFor(int operand)
     {
-        ASSERT(!operand.isTmp());
-        return tagFor(operand.virtualRegister());
+        return tagFor(static_cast<VirtualRegister>(operand));
     }
 
     static Address payloadFor(VirtualRegister virtualRegister, GPRReg baseGPR)
@@ -1180,31 +1178,30 @@ public:
         ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + PayloadOffset);
     }
-    static Address payloadFor(Operand operand)
+    static Address payloadFor(int operand)
     {
-        ASSERT(!operand.isTmp());
-        return payloadFor(operand.virtualRegister());
+        return payloadFor(static_cast<VirtualRegister>(operand));
     }
 
     // Access to our fixed callee CallFrame.
-    static Address calleeFrameSlot(VirtualRegister slot)
+    static Address calleeFrameSlot(int slot)
     {
-        ASSERT(slot.offset() >= CallerFrameAndPC::sizeInRegisters);
-        return Address(stackPointerRegister, sizeof(Register) * (slot - CallerFrameAndPC::sizeInRegisters).offset());
+        ASSERT(slot >= CallerFrameAndPC::sizeInRegisters);
+        return Address(stackPointerRegister, sizeof(Register) * (slot - CallerFrameAndPC::sizeInRegisters));
     }
 
     // Access to our fixed callee CallFrame.
     static Address calleeArgumentSlot(int argument)
     {
-        return calleeFrameSlot(virtualRegisterForArgument(argument));
+        return calleeFrameSlot(virtualRegisterForArgument(argument).offset());
     }
 
-    static Address calleeFrameTagSlot(VirtualRegister slot)
+    static Address calleeFrameTagSlot(int slot)
     {
         return calleeFrameSlot(slot).withOffset(TagOffset);
     }
 
-    static Address calleeFramePayloadSlot(VirtualRegister slot)
+    static Address calleeFramePayloadSlot(int slot)
     {
         return calleeFrameSlot(slot).withOffset(PayloadOffset);
     }
@@ -1221,7 +1218,7 @@ public:
 
     static Address calleeFrameCallerFrame()
     {
-        return calleeFrameSlot(VirtualRegister(0)).withOffset(CallFrame::callerFrameOffset());
+        return calleeFrameSlot(0).withOffset(CallFrame::callerFrameOffset());
     }
 
     static GPRReg selectScratchGPR(RegisterSet preserved)
@@ -1530,7 +1527,7 @@ public:
     {
         ASSERT(!inlineCallFrame || inlineCallFrame->isVarargs());
         if (!inlineCallFrame)
-            return CallFrameSlot::argumentCountIncludingThis;
+            return VirtualRegister(CallFrameSlot::argumentCountIncludingThis);
         return inlineCallFrame->argumentCountRegister;
     }
 

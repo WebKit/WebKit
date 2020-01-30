@@ -143,19 +143,11 @@ macro cCall4(function)
     end
 end
 
-macro prepareStateForCCall()
-    move PC, a1
-end
-
-macro restoreStateAfterCCall()
-    move r0, PC
-end
-
 macro callSlowPath(slowPath)
     move cfr, a0
-    prepareStateForCCall()
+    move PC, a1
     cCall2(slowPath)
-    restoreStateAfterCCall()
+    move r0, PC
 end
 
 macro doVMEntry(makeCall)

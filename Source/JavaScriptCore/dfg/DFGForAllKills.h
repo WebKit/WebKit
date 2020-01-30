@@ -32,10 +32,6 @@
 
 namespace JSC { namespace DFG {
 
-namespace ForAllKillsInternal {
-constexpr bool verbose = false;
-}
-
 // Utilities for finding the last points where a node is live in DFG SSA. This accounts for liveness due
 // to OSR exit. This is usually used for enumerating over all of the program points where a node is live,
 // by exploring all blocks where the node is live at tail and then exploring all program points where the
@@ -57,13 +53,13 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
     
     CodeOrigin after = nodeAfter->origin.forExit;
     
-    Operand alreadyNoted;
+    VirtualRegister alreadyNoted;
     // If we MovHint something that is live at the time, then we kill the old value.
     if (nodeAfter->containsMovHint()) {
-        Operand operand = nodeAfter->unlinkedOperand();
-        if (graph.isLiveInBytecode(operand, after)) {
-            functor(operand);
-            alreadyNoted = operand;
+        VirtualRegister reg = nodeAfter->unlinkedLocal();
+        if (graph.isLiveInBytecode(reg, after)) {
+            functor(reg);
+            alreadyNoted = reg;
         }
     }
     
@@ -74,48 +70,29 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
     // other loop, below.
     auto* beforeInlineCallFrame = before.inlineCallFrame();
     if (beforeInlineCallFrame == after.inlineCallFrame()) {
+        int stackOffset = beforeInlineCallFrame ? beforeInlineCallFrame->stackOffset : 0;
         CodeBlock* codeBlock = graph.baselineCodeBlockFor(beforeInlineCallFrame);
-        if (after.bytecodeIndex().checkpoint()) {
-            ASSERT(before.bytecodeIndex().checkpoint() != after.bytecodeIndex().checkpoint());
-            ASSERT_WITH_MESSAGE(before.bytecodeIndex().offset() == after.bytecodeIndex().offset(), "When the DFG does code motion it should change the forExit origin to match the surrounding bytecodes.");
-
-            auto liveBefore = tmpLivenessForCheckpoint(*codeBlock, before.bytecodeIndex());
-            auto liveAfter = tmpLivenessForCheckpoint(*codeBlock, after.bytecodeIndex());
-            liveAfter.invert();
-            liveBefore.filter(liveAfter);
-
-            liveBefore.forEachSetBit([&] (size_t tmp) {
-                functor(remapOperand(beforeInlineCallFrame, Operand::tmp(tmp)));
-            });
-            // No locals can die at a checkpoint.
-            return;
-        }
-
         FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
         const FastBitVector& liveBefore = fullLiveness.getLiveness(before.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
         const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex(), LivenessCalculationPoint::BeforeUse);
         
         (liveBefore & ~liveAfter).forEachSetBit(
             [&] (size_t relativeLocal) {
-                functor(remapOperand(beforeInlineCallFrame, virtualRegisterForLocal(relativeLocal)));
+                functor(virtualRegisterForLocal(relativeLocal) + stackOffset);
             });
         return;
     }
-
-    ASSERT_WITH_MESSAGE(!after.bytecodeIndex().checkpoint(), "Transitioning across a checkpoint but before and after don't share an inlineCallFrame.");
-
+    
     // Detect kills the super conservative way: it is killed if it was live before and dead after.
-    BitVector liveAfter = graph.localsAndTmpsLiveInBytecode(after);
-    unsigned numLocals = graph.block(0)->variablesAtHead.numberOfLocals();
-    graph.forAllLocalsAndTmpsLiveInBytecode(
+    BitVector liveAfter = graph.localsLiveInBytecode(after);
+    graph.forAllLocalsLiveInBytecode(
         before,
-        [&] (Operand operand) {
-            if (operand == alreadyNoted)
+        [&] (VirtualRegister reg) {
+            if (reg == alreadyNoted)
                 return;
-            unsigned offset = operand.isTmp() ? numLocals + operand.value() : operand.toLocal();
-            if (liveAfter.get(offset))
+            if (liveAfter.get(reg.toLocal()))
                 return;
-            functor(operand);
+            functor(reg);
         });
 }
     
@@ -128,8 +105,7 @@ void forAllKilledNodesAtNodeIndex(
     static constexpr unsigned seenInClosureFlag = 1;
     static constexpr unsigned calledFunctorFlag = 2;
     HashMap<Node*, unsigned> flags;
-
-    ASSERT(nodeIndex);
+    
     Node* node = block->at(nodeIndex);
     
     graph.doToChildren(
@@ -144,13 +120,15 @@ void forAllKilledNodesAtNodeIndex(
             }
         });
 
-    Node* before = block->at(nodeIndex - 1);
+    Node* before = nullptr;
+    if (nodeIndex)
+        before = block->at(nodeIndex - 1);
 
     forAllKilledOperands(
         graph, before, node,
-        [&] (Operand operand) {
+        [&] (VirtualRegister reg) {
             availabilityMap.closeStartingWithLocal(
-                operand,
+                reg,
                 [&] (Node* node) -> bool {
                     return flags.get(node) & seenInClosureFlag;
                 },
@@ -181,7 +159,6 @@ void forAllKillsInBlock(
     // Start at the second node, because the functor is expected to only inspect nodes from the start of
     // the block up to nodeIndex (exclusive), so if nodeIndex is zero then the functor has nothing to do.
     for (unsigned nodeIndex = 1; nodeIndex < block->size(); ++nodeIndex) {
-        dataLogLnIf(ForAllKillsInternal::verbose, "local availability at index: ", nodeIndex, " ", localAvailability.m_availability);
         forAllKilledNodesAtNodeIndex(
             graph, localAvailability.m_availability, block, nodeIndex,
             [&] (Node* node) {

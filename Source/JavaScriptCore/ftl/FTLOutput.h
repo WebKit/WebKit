@@ -39,7 +39,6 @@
 #include "FTLAbbreviatedTypes.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLCommonValues.h"
-#include "FTLSelectPredictability.h"
 #include "FTLState.h"
 #include "FTLSwitchCase.h"
 #include "FTLTypedPointer.h"
@@ -366,7 +365,7 @@ public:
     LValue testIsZeroPtr(LValue value, LValue mask) { return isNull(bitAnd(value, mask)); }
     LValue testNonZeroPtr(LValue value, LValue mask) { return notNull(bitAnd(value, mask)); }
 
-    LValue select(LValue value, LValue taken, LValue notTaken, SelectPredictability = SelectPredictability::NotPredictable);
+    LValue select(LValue value, LValue taken, LValue notTaken);
     
     // These are relaxed atomics by default. Use AbstractHeapRepository::decorateFencedAccess() with a
     // non-null heap to make them seq_cst fenced.
