@@ -1,3 +1,24 @@
+2020-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        Can still get stuck after swipe backwards with a slow server, even after r254552
+        https://bugs.webkit.org/show_bug.cgi?id=207017
+        <rdar://problem/59016256>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        There's a second case where you can get stuck with the "swipe gesture"
+        layer tree freeze reason in the web process: when doing a cross-origin
+        navigation where the load takes more than 3 seconds (the swipe
+        snapshot timeout) to commit, the provisional page will have mirrored
+        the original page's frozen state upon creation, but will not ever
+        receive the unfreeze, because it is sent while still provisional.
+
+        To fix this, just forward the unfreeze message to the provisional page.
+
 2020-01-30  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach sandbox extension to the frontboard and icon service when the attachment element is enabled
