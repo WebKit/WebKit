@@ -51,7 +51,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << loadThrottleLatency;
     encoder << httpProxy;
     encoder << httpsProxy;
-    encoder << enableLegacyTLS;
 #endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
@@ -137,11 +136,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<URL> httpsProxy;
     decoder >> httpsProxy;
     if (!httpsProxy)
-        return WTF::nullopt;
-
-    Optional<bool> enableLegacyTLS;
-    decoder >> enableLegacyTLS;
-    if (!enableLegacyTLS)
         return WTF::nullopt;
 #endif
 
@@ -288,7 +282,6 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*loadThrottleLatency)
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)
-        , WTFMove(*enableLegacyTLS)
 #endif
 #if USE(SOUP)
         , WTFMove(*cookiePersistentStoragePath)

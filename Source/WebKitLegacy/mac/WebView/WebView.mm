@@ -1421,19 +1421,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if (WebCore::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
-
-        bool enableLegacyTLS = false;
-        if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitEnableLegacyTLS"])
-            enableLegacyTLS = [value boolValue];
-        if (!enableLegacyTLS) {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-            enableLegacyTLS = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitTLS"] == MCRestrictedBoolExplicitYes;
-#elif PLATFORM(MAC)
-            enableLegacyTLS = CFPreferencesGetAppBooleanValue(CFSTR("allowDeprecatedWebKitTLS"), CFSTR("com.apple.applicationaccess"), nullptr);
-#endif
-        }
-        WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(enableLegacyTLS);
-
         didOneTimeInitialization = true;
     }
 
