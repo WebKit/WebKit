@@ -1,3 +1,26 @@
+2020-01-29  Sunny He  <sunny_he@apple.com>
+
+        Clamp paddingBoxWidth/Height to a minimum of zero
+        https://bugs.webkit.org/show_bug.cgi?id=206317
+        rdar://57102010
+
+        Reviewed by Zalan Bujtas.
+
+        Source/WebCore:
+
+        Test: fast/multicol/crash-negative-paddingBoxWidth.html
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::paddingBoxWidth const):
+        (WebCore::RenderBox::paddingBoxHeight const):
+
+        LayoutTests:
+
+        * fast/multicol/crash-negative-paddingBoxWidth-expected.txt: Added.
+        * fast/multicol/crash-negative-paddingBoxWidth.html: Added.
+
+        * web-platform-tests/css/cssom-view/scrollLeft-of-scroller-with-wider-scrollbar-expected.txt:
+
 2020-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for css-easing (previously known as css-timing)

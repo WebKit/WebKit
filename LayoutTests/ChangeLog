@@ -1,3 +1,14 @@
+2020-01-29  Sunny He  <sunny_he@apple.com>
+
+        Clamp paddingBoxWidth/Height to a minimum of zero
+        https://bugs.webkit.org/show_bug.cgi?id=206317
+        rdar://57102010
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/multicol/crash-negative-paddingBoxWidth-expected.txt: Added.
+        * fast/multicol/crash-negative-paddingBoxWidth.html: Added.
+
 2020-01-29  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Skip ANGLE-dependent WebGL 2 expected progressions on WebGL bot
