@@ -3712,9 +3712,6 @@ void QueryConfigAttrib(const Config *config, EGLint attribute, EGLint *value)
         case EGL_RECORDABLE_ANDROID:
             *value = config->recordable;
             break;
-        case EGL_FRAMEBUFFER_TARGET_ANDROID:
-            *value = config->framebufferTarget;
-            break;
         default:
             UNREACHABLE();
             break;

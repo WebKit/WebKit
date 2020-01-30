@@ -57,8 +57,7 @@ class TIntermTraverser : angle::NonCopyable
     }
     virtual bool visitAggregate(Visit visit, TIntermAggregate *node) { return true; }
     virtual bool visitBlock(Visit visit, TIntermBlock *node) { return true; }
-    virtual bool visitGlobalQualifierDeclaration(Visit visit,
-                                                 TIntermGlobalQualifierDeclaration *node)
+    virtual bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node)
     {
         return true;
     }

@@ -130,11 +130,4 @@
 #    endif
 #endif
 
-// Define ANGLE_WITH_ASAN macro.
-#if defined(__has_feature)
-#    if __has_feature(address_sanitizer)
-#        define ANGLE_WITH_ASAN 1
-#    endif
-#endif
-
 #endif  // COMMON_PLATFORM_H_

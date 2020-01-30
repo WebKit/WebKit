@@ -119,7 +119,6 @@ class ProgramVk : public ProgramImpl
 
     const vk::PipelineLayout &getPipelineLayout() const { return mPipelineLayout.get(); }
 
-    bool hasDefaultUniforms() const { return !mState.getDefaultUniformRange().empty(); }
     bool hasTextures() const { return !mState.getSamplerBindings().empty(); }
     bool hasUniformBuffers() const { return !mState.getUniformBlocks().empty(); }
     bool hasStorageBuffers() const { return !mState.getShaderStorageBlocks().empty(); }

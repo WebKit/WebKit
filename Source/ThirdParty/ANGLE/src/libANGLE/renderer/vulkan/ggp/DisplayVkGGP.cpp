@@ -44,14 +44,4 @@ const char *DisplayVkGGP::getWSIExtension() const
 {
     return VK_GGP_STREAM_DESCRIPTOR_SURFACE_EXTENSION_NAME;
 }
-
-bool IsVulkanGGPDisplayAvailable()
-{
-    return true;
-}
-
-DisplayImpl *CreateVulkanGGPDisplay(const egl::DisplayState &state)
-{
-    return new DisplayVkGGP(state);
-}
 }  // namespace rx

@@ -77,10 +77,6 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_geometry_shader] = EBhUndefined;
     }
-    if (resources.EXT_gpu_shader5)
-    {
-        extBehavior[TExtension::EXT_gpu_shader5] = EBhUndefined;
-    }
     if (resources.OES_texture_storage_multisample_2d_array)
     {
         extBehavior[TExtension::OES_texture_storage_multisample_2d_array] = EBhUndefined;
@@ -100,10 +96,6 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.ANGLE_base_vertex_base_instance)
     {
         extBehavior[TExtension::ANGLE_base_vertex_base_instance] = EBhUndefined;
-    }
-    if (resources.WEBGL_video_texture)
-    {
-        extBehavior[TExtension::WEBGL_video_texture] = EBhUndefined;
     }
 }
 

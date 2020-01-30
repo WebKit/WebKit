@@ -51,8 +51,7 @@ TEST_P(MemorySizeTest, BasicUsageTexture)
     EXPECT_GL_NO_ERROR();
     EXPECT_GT(result, 0);
 
-    if (getClientMajorVersion() > 3 ||
-        (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1))
+    if (getClientMajorVersion() > 3)
     {
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 1, GL_MEMORY_SIZE_ANGLE, &result);
         EXPECT_GL_NO_ERROR();
@@ -77,8 +76,7 @@ TEST_P(MemorySizeTest, BasicUsageBuffer)
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(0, result);
 
-    if (getClientMajorVersion() > 3 ||
-        (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1))
+    if (getClientMajorVersion() > 3)
     {
         GLint64 result64;
         glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_MEMORY_SIZE_ANGLE, &result64);
@@ -98,8 +96,7 @@ TEST_P(MemorySizeTest, BasicUsageBuffer)
 
     EXPECT_GT(result, kExpectedMinBufMemorySize);
 
-    if (getClientMajorVersion() > 3 ||
-        (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1))
+    if (getClientMajorVersion() > 3)
     {
         GLint64 result64;
         glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_MEMORY_SIZE_ANGLE, &result64);

@@ -40,36 +40,34 @@
 3605 VULKAN : KHR-GLES31.core.texture_gather.* = FAIL
 
 // Dispatch indirect:
-3570 VULKAN : KHR-GLES31.core.compute_shader.build-separable = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-compute-pipeline = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-case2 = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-case3 = SKIP
-4188 VULKAN : KHR-GLES31.core.compute_shader.resource-image = FAIL
-4189 VULKAN : KHR-GLES31.core.compute_shader.shared-struct = SKIP
-4191 VULKAN : KHR-GLES31.core.compute_shader.resources-max = FAIL
-4192 VULKAN : KHR-GLES31.core.compute_shader.pipeline-post-xfb = FAIL
-3726 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.pipeline-compute-chain = FAIL
-4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.resource-ubo = FAIL
-4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.built-in-variables = FAIL
+3601 VULKAN : KHR-GLES31.core.compute_shader* = SKIP
 
 // Multisampled textures:
-// --gtest_filter=dEQP.KHR_GLES31/core_texture_storage_multisample_FunctionalTests_verify_sample_masking_for_non_integer_color_renderable_internalformats* --use-angle=swiftshader
-4259 SWIFTSHADER : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.verify_sample_masking_for_non_integer_color_renderable_internalformats = FAIL
+3565 VULKAN : KHR-GLES31.core.texture_storage_multisample.* = SKIP
+
+// 2D array and 3D textures for compute shaders:
+3810 VULKAN : KHR-GLES31.core.layout_binding.sampler2DArray_layout_binding_texture_ComputeShader = SKIP
+3810 VULKAN : KHR-GLES31.core.layout_binding.sampler3D_layout_binding_texture_ComputeShader = SKIP
 
 // Program Pipeline Objects:
 3570 VULKAN : KHR-GLES31.core.shader_atomic_counters.advanced-usage-many-draw-calls2 = FAIL
 3570 VULKAN : KHR-GLES31.core.shader_atomic_counters.advanced-usage-many-dispatches = FAIL
-3570 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-usage = FAIL
 
 // Separate shader objects:
 3570 VULKAN : KHR-GLES31.core.sepshaderobjs* = FAIL
 
 // Shader support:
-3596 : KHR-GLES31.core.shader_bitfield_operation.frexp.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.uaddCarry.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.usubBorrow.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.umulExtended.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.imulExtended.* = SKIP
+3569 : KHR-GLES31.core.shader_integer_mix.* = FAIL
+3569 : KHR-GLES31.core.shader_image* = SKIP
+3569 : KHR-GLES31.core.shader_macros* = FAIL
+3569 : KHR-GLES31.core.shader_bitfield_operation.frexp.* = SKIP
+3569 : KHR-GLES31.core.shader_bitfield_operation.uaddCarry.* = SKIP
+3569 : KHR-GLES31.core.shader_bitfield_operation.usubBorrow.* = SKIP
+3569 : KHR-GLES31.core.shader_bitfield_operation.umulExtended.* = SKIP
+3569 : KHR-GLES31.core.shader_bitfield_operation.imulExtended.* = SKIP
+
+// Trigger Vulkan validation errors:
+4145 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-* = FAIL
 
 // Crashes in libnvidia-glvkspirv.so, fixed in newer drivers
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-cs-*-matC* = SKIP
@@ -82,6 +80,9 @@
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-vs-*-matR* = SKIP
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
+// Bug with binding the zero buffer and glBindBufferRange:
+4147 : KHR-GLES31.core.shader_storage_buffer_object.basic-binding = FAIL
+
 // Error with detecting some atomic counter buffer uses:
 4150 : KHR-GLES31.core.shader_storage_buffer_object.basic-atomic-case3-cs = FAIL
 4150 : KHR-GLES31.core.shader_storage_buffer_object.basic-atomic-case3-vsfs = FAIL
@@ -91,9 +92,11 @@
 4146 : KHR-GLES31.core.vertex_attrib_binding.advanced-bindingUpdate = FAIL
 4146 : KHR-GLES31.core.vertex_attrib_binding.advanced-largeStrideAndOffsetsNewAndLegacyAPI = FAIL
 
-// Explicit uniform locations:
-4219 VULKAN PIXEL2ORXL : KHR-GLES31.core.explicit_uniform_location.uniform-loc-mix-with-implicit-max = FAIL
-4219 VULKAN PIXEL2ORXL : KHR-GLES31.core.explicit_uniform_location.uniform-loc-mix-with-implicit-max-array = FAIL
+// Draw indirect:
+3564 VULKAN : KHR-GLES31.core.draw_indirect.* = SKIP
+
+// Explicit uniform locations: triggers ASSERT.
+4132 : KHR-GLES31.core.explicit_uniform_location.* = SKIP
 
 // Program interface query.
 3596 VULKAN : KHR-GLES31.core.program_interface_query.* = FAIL
@@ -107,9 +110,14 @@
 // Blend equations:
 3586 VULKAN : KHR-GLES31.core.blend_equation_advanced.* = SKIP
 
-// Fails on Pixel2 and Pixel2 XL
-4159 VULKAN PIXEL2ORXL : KHR-GLES31.core.draw_indirect.advanced-twoPass-transformFeedback-elements = FAIL
-4159 VULKAN PIXEL2ORXL : KHR-GLES31.core.draw_indirect.advanced-twoPass-transformFeedback-arrays = FAIL
+// Storage image front-end crash when unbinding images (given texture 0)
+4124 VULKAN : KHR-GLES31.core.layout_binding.sampler2D_layout_binding_texture_ComputeShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.block_layout_binding_block_ComputeShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.buffer_layout_binding_atomicAdd_ComputeShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.atomic_uint_layout_binding_atomic_ComputeShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.image2D_layout_binding_imageLoad_ComputeShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.image2D_layout_binding_imageLoad_FragmentShader = SKIP
+4124 VULKAN : KHR-GLES31.core.layout_binding.image2D_layout_binding_imageLoad_VertexShader = SKIP
 
 // Passing on recent drivers:
 3726 VULKAN ANDROID : KHR-GLES31.core.shader_atomic_counters.* = FAIL
@@ -118,9 +126,9 @@
 // Crashes on Android
 3520 VULKAN ANDROID : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength* = SKIP
 
-// Shader support:
-4108 : KHR-GLES31.core.shader_image* = SKIP
-4108 SWIFTSHADER : KHR-GLES31.core.shader_image_size.*-nonMS-* = SKIP
-4300 : KHR-GLES31.core.shader_integer_mix.* = FAIL
+// OpenGL ES 3.1 conformance failures
+4107 SWIFTSHADER : KHR-GLES31.core.shader_storage_buffer_object.advanced-switchBuffers-vs = FAIL
 
-// OpenGL ES 3.2 / 3.1 extensions
+4106 SWIFTSHADER : KHR-GLES31.core.layout_binding.sampler*_layout_binding_texture_* = FAIL
+
+4108 SWIFTSHADER : KHR-GLES31.core.shader_image_size.*-nonMS-* = SKIP

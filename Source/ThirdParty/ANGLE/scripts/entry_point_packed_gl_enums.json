@@ -333,10 +333,6 @@
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },
-    "glDrawElementsBaseVertex": {
-        "mode": "PrimitiveMode",
-        "type": "DrawElementsType"
-    },
     "glDrawElementsIndirect": {
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
@@ -345,19 +341,11 @@
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },
-    "glDrawElementsInstancedBaseVertex": {
-        "mode": "PrimitiveMode",
-        "type": "DrawElementsType"
-    },
     "glDrawElementsInstancedBaseVertexBaseInstance": {
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },
     "glDrawRangeElements": {
-        "mode": "PrimitiveMode",
-        "type": "DrawElementsType"
-    },
-    "glDrawRangeElementsBaseVertex": {
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },
@@ -1020,10 +1008,6 @@
         "mode": "PrimitiveMode"
     },
     "glMultiDrawElements": {
-        "mode": "PrimitiveMode",
-        "type": "DrawElementsType"
-    },
-    "glMultiDrawElementsBaseVertex": {
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },

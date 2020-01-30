@@ -674,8 +674,7 @@ bool FramebufferState::isDefault() const
 const FramebufferID Framebuffer::kDefaultDrawFramebufferHandle = {0};
 
 Framebuffer::Framebuffer(const Caps &caps, rx::GLImplFactory *factory, FramebufferID id)
-    : mSerial(factory->generateSerial()),
-      mState(caps, id),
+    : mState(caps, id),
       mImpl(factory->createFramebuffer(mState)),
       mCachedStatus(),
       mDirtyDepthAttachmentBinding(this, DIRTY_BIT_DEPTH_ATTACHMENT),
@@ -693,8 +692,7 @@ Framebuffer::Framebuffer(const Caps &caps, rx::GLImplFactory *factory, Framebuff
 }
 
 Framebuffer::Framebuffer(const Context *context, egl::Surface *surface, egl::Surface *readSurface)
-    : mSerial(context->getImplementation()->generateSerial()),
-      mState(),
+    : mState(),
       mImpl(surface->getImplementation()->createDefaultFramebuffer(context, mState)),
       mCachedStatus(GL_FRAMEBUFFER_COMPLETE),
       mDirtyDepthAttachmentBinding(this, DIRTY_BIT_DEPTH_ATTACHMENT),

@@ -81,6 +81,8 @@ void GenerateCaps(ID3D11Device *device,
                   gl::Extensions *extensions,
                   gl::Limitations *limitations);
 
+void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy);
+
 D3D_FEATURE_LEVEL GetMinimumFeatureLevelForES31();
 
 }  // namespace d3d11_gl

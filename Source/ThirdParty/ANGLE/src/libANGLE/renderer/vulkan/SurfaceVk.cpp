@@ -191,8 +191,6 @@ angle::Result OffscreenSurfaceVk::initializeImpl(DisplayVk *displayVk)
     RendererVk *renderer      = displayVk->getRenderer();
     const egl::Config *config = mState.config;
 
-    renderer->reloadVolkIfNeeded();
-
     GLint samples = GetSampleCount(mState.config);
     ANGLE_VK_CHECK(displayVk, samples > 0, VK_ERROR_INITIALIZATION_FAILED);
 
@@ -457,21 +455,12 @@ egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
     angle::Result result = initializeImpl(displayVk);
-    if (result == angle::Result::Incomplete)
-    {
-        return angle::ToEGL(result, displayVk, EGL_BAD_MATCH);
-    }
-    else
-    {
-        return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
-    }
+    return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
 }
 
 angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
 {
     RendererVk *renderer = displayVk->getRenderer();
-
-    renderer->reloadVolkIfNeeded();
 
     gl::Extents windowSize;
     ANGLE_TRY(createSurfaceVk(displayVk, &windowSize));
@@ -556,12 +545,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
             }
         }
 
-        // If a non-linear colorspace was requested but the non-linear format is
-        // not supported as a vulkan surface format, treat it as a non-fatal error
-        if (!foundFormat)
-        {
-            return angle::Result::Incomplete;
-        }
+        ANGLE_VK_CHECK(displayVk, foundFormat, VK_ERROR_INITIALIZATION_FAILED);
     }
 
     mCompositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -691,29 +675,6 @@ angle::Result WindowSurfaceVk::newPresentSemaphore(vk::Context *context,
     return angle::Result::Continue;
 }
 
-static VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(EGLenum EGLColorspace)
-{
-    switch (EGLColorspace)
-    {
-        case EGL_NONE:
-        case EGL_GL_COLORSPACE_LINEAR:
-        case EGL_GL_COLORSPACE_SRGB_KHR:
-        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
-            return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-        case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:
-            return VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
-        case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
-            return VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT;
-        case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:
-            return VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
-        case EGL_GL_COLORSPACE_SCRGB_EXT:
-            return VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT;
-        default:
-            UNREACHABLE();
-            return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-    }
-}
-
 angle::Result WindowSurfaceVk::resizeSwapchainImages(vk::Context *context, uint32_t imageCount)
 {
     mSwapchainImages.resize(imageCount);
@@ -764,8 +725,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     swapchainInfo.surface                  = mSurface;
     swapchainInfo.minImageCount            = mMinImageCount;
     swapchainInfo.imageFormat              = nativeFormat;
-    swapchainInfo.imageColorSpace          = MapEglColorSpaceToVkColorSpace(
-        static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
+    swapchainInfo.imageColorSpace          = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
     // Note: Vulkan doesn't allow 0-width/height swapchains.
     swapchainInfo.imageExtent.width     = std::max(extents.width, 1);
     swapchainInfo.imageExtent.height    = std::max(extents.height, 1);

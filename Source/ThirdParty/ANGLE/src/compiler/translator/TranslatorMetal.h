@@ -29,9 +29,6 @@ class TranslatorMetal : public TranslatorVulkan
     ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
                                     ShCompileOptions compileOptions,
                                     PerformanceDiagnostics *perfDiagnostics) override;
-
-    ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock *root,
-                                                         const TVariable *driverUniforms) override;
 };
 
 }  // namespace sh

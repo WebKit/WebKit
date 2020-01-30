@@ -12,12 +12,21 @@ declare_args() {
   angle_capture_replay_sample_context_id = 1
 }
 
+angle_executable("shader_translator") {
+  sources = [
+    "shader_translator/shader_translator.cpp",
+  ]
+  include_dirs = [ "../include" ]
+  deps = [
+    "../:translator",
+  ]
+}
+
 config("sample_util_config") {
   include_dirs = [ "sample_util" ]
 }
 
-angle_source_set("sample_util") {
-  testonly = true
+angle_static_library("sample_util") {
   sources = [
     "sample_util/SampleApplication.cpp",
     "sample_util/SampleApplication.h",
@@ -33,9 +42,8 @@ angle_source_set("sample_util") {
   ]
   public_deps = [
     "../:angle_common",
-    "../util:angle_test_utils",
-    "../util:angle_util",
-    "../util:angle_util_loader_headers",
+    "../:angle_util",
+    "../:angle_util_loader_headers",
   ]
   configs += [ "../:library_name_config" ]
   public_configs = [
@@ -55,7 +63,6 @@ template("angle_sample") {
   }
 
   angle_executable(target_name) {
-    testonly = true
     forward_variables_from(invoker,
                            [
                              "cflags",
@@ -248,7 +255,7 @@ if (angle_build_capture_replay_sample) {
   }
 }
 
-group("angle_samples") {
+group("all") {
   testonly = true
   deps = [
     ":gles1_draw_texture",

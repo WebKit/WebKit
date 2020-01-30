@@ -58,7 +58,9 @@ void TestPlatform_logError(PlatformMethods *platform, const char *errorMessage)
 
     GTEST_NONFATAL_FAILURE_(errorMessage);
 
+    // Print the stack and stop any crash handling to prevent duplicate reports.
     PrintStackBacktrace();
+    TerminateCrashHandler();
 }
 
 void TestPlatform_logWarning(PlatformMethods *platform, const char *warningMessage)
@@ -479,6 +481,8 @@ void ANGLETestBase::ANGLETestSetUp()
 {
     mSetUpCalled = true;
 
+    InitCrashHandler(nullptr);
+
     gDefaultPlatformMethods.overrideWorkaroundsD3D = TestPlatform_overrideWorkaroundsD3D;
     gDefaultPlatformMethods.overrideFeaturesVk     = TestPlatform_overrideFeaturesVk;
     gDefaultPlatformMethods.logError               = TestPlatform_logError;
@@ -611,6 +615,8 @@ void ANGLETestBase::ANGLETestTearDown()
         mFixture->eglWindow->destroyContext();
         mFixture->eglWindow->destroySurface();
     }
+
+    TerminateCrashHandler();
 
     // Check for quit message
     Event myEvent;
@@ -985,11 +991,6 @@ void ANGLETestBase::draw3DTexturedQuad(GLfloat positionAttribZ,
     }
 }
 
-bool ANGLETestBase::platformSupportsMultithreading() const
-{
-    return (IsOpenGLES() && IsAndroid()) || IsVulkan();
-}
-
 void ANGLETestBase::checkD3D11SDKLayersMessages()
 {
 #if defined(ANGLE_PLATFORM_WINDOWS)
@@ -1220,6 +1221,86 @@ void ANGLETestBase::setWindowVisible(bool isVisible)
     mFixture->osWindow->setVisible(isVisible);
 }
 
+bool IsAdreno()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("Adreno") != std::string::npos);
+}
+
+bool IsD3D11()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("Direct3D11 vs_5_0") != std::string::npos);
+}
+
+bool IsD3D11_FL93()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("Direct3D11 vs_4_0_") != std::string::npos);
+}
+
+bool IsD3D9()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("Direct3D9") != std::string::npos);
+}
+
+bool IsD3DSM3()
+{
+    return IsD3D9() || IsD3D11_FL93();
+}
+
+bool IsDesktopOpenGL()
+{
+    return IsOpenGL() && !IsOpenGLES();
+}
+
+bool IsOpenGLES()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("OpenGL ES") != std::string::npos);
+}
+
+bool IsOpenGL()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("OpenGL") != std::string::npos);
+}
+
+bool IsNULL()
+{
+    std::string rendererString(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    return (rendererString.find("NULL") != std::string::npos);
+}
+
+bool IsVulkan()
+{
+    const char *renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+    std::string rendererString(renderer);
+    return (rendererString.find("Vulkan") != std::string::npos);
+}
+
+bool IsMetal()
+{
+    const char *renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+    std::string rendererString(renderer);
+    return (rendererString.find("Metal") != std::string::npos);
+}
+
+bool IsDebug()
+{
+#if !defined(NDEBUG)
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool IsRelease()
+{
+    return !IsDebug();
+}
+
 ANGLETestBase::TestFixture::TestFixture()  = default;
 ANGLETestBase::TestFixture::~TestFixture() = default;
 
@@ -1325,4 +1406,41 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
             exit(1);
         }
     }
+}
+
+bool EnsureGLExtensionEnabled(const std::string &extName)
+{
+    if (IsGLExtensionEnabled("GL_ANGLE_request_extension") && IsGLExtensionRequestable(extName))
+    {
+        glRequestExtensionANGLE(extName.c_str());
+    }
+
+    return IsGLExtensionEnabled(extName);
+}
+
+bool IsEGLClientExtensionEnabled(const std::string &extName)
+{
+    return CheckExtensionExists(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS), extName);
+}
+
+bool IsEGLDeviceExtensionEnabled(EGLDeviceEXT device, const std::string &extName)
+{
+    return CheckExtensionExists(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), extName);
+}
+
+bool IsEGLDisplayExtensionEnabled(EGLDisplay display, const std::string &extName)
+{
+    return CheckExtensionExists(eglQueryString(display, EGL_EXTENSIONS), extName);
+}
+
+bool IsGLExtensionEnabled(const std::string &extName)
+{
+    return CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
+                                extName);
+}
+
+bool IsGLExtensionRequestable(const std::string &extName)
+{
+    return CheckExtensionExists(
+        reinterpret_cast<const char *>(glGetString(GL_REQUESTABLE_EXTENSIONS_ANGLE)), extName);
 }

@@ -152,7 +152,6 @@ bool CanFoldAggregateBuiltInOp(TOperator op)
         case EOpMix:
         case EOpStep:
         case EOpSmoothstep:
-        case EOpFma:
         case EOpLdexp:
         case EOpMulMatrixComponentWise:
         case EOpOuterProduct:
@@ -351,20 +350,19 @@ bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacem
     return false;
 }
 
-size_t TIntermGlobalQualifierDeclaration::getChildCount() const
+size_t TIntermInvariantDeclaration::getChildCount() const
 {
     return 1;
 }
 
-TIntermNode *TIntermGlobalQualifierDeclaration::getChildNode(size_t index) const
+TIntermNode *TIntermInvariantDeclaration::getChildNode(size_t index) const
 {
     ASSERT(mSymbol);
     ASSERT(index == 0);
     return mSymbol;
 }
 
-bool TIntermGlobalQualifierDeclaration::replaceChildNode(TIntermNode *original,
-                                                         TIntermNode *replacement)
+bool TIntermInvariantDeclaration::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     REPLACE_IF_IS(mSymbol, TIntermSymbol, original, replacement);
     return false;
@@ -1334,20 +1332,17 @@ TIntermBinary *TIntermBinary::CreateComma(TIntermTyped *left,
     return node;
 }
 
-TIntermGlobalQualifierDeclaration::TIntermGlobalQualifierDeclaration(TIntermSymbol *symbol,
-                                                                     bool isPrecise,
-                                                                     const TSourceLoc &line)
-    : TIntermNode(), mSymbol(symbol), mIsPrecise(isPrecise)
+TIntermInvariantDeclaration::TIntermInvariantDeclaration(TIntermSymbol *symbol,
+                                                         const TSourceLoc &line)
+    : TIntermNode(), mSymbol(symbol)
 {
     ASSERT(symbol);
     setLine(line);
 }
 
-TIntermGlobalQualifierDeclaration::TIntermGlobalQualifierDeclaration(
-    const TIntermGlobalQualifierDeclaration &node)
-    : TIntermGlobalQualifierDeclaration(static_cast<TIntermSymbol *>(node.mSymbol->deepCopy()),
-                                        node.mIsPrecise,
-                                        node.mLine)
+TIntermInvariantDeclaration::TIntermInvariantDeclaration(const TIntermInvariantDeclaration &node)
+    : TIntermInvariantDeclaration(static_cast<TIntermSymbol *>(node.mSymbol->deepCopy()),
+                                  node.mLine)
 {}
 
 TIntermTernary::TIntermTernary(TIntermTyped *cond,
@@ -3615,22 +3610,6 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
                     float t = gl::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
                     resultArray[i].setFConst(t * t * (3.0f - 2.0f * t));
                 }
-            }
-            break;
-        }
-
-        case EOpFma:
-        {
-            ASSERT(basicType == EbtFloat);
-            resultArray = new TConstantUnion[maxObjectSize];
-            for (size_t i = 0; i < maxObjectSize; i++)
-            {
-                float a = unionArrays[0][i].getFConst();
-                float b = unionArrays[1][i].getFConst();
-                float c = unionArrays[2][i].getFConst();
-
-                // Returns a * b + c.
-                resultArray[i].setFConst(a * b + c);
             }
             break;
         }

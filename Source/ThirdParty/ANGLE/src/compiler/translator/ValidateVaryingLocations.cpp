@@ -53,13 +53,9 @@ int GetLocationCount(const TIntermSymbol *varying, bool ignoreVaryingArraySize)
         ASSERT(!varyingType.isArrayOfArrays());
         return varyingType.getSecondarySize();
     }
-    else if (varyingType.isMatrix())
-    {
-        return varyingType.getNominalSize() * static_cast<int>(varyingType.getArraySizeProduct());
-    }
     else
     {
-        return static_cast<int>(varyingType.getArraySizeProduct());
+        return varyingType.getSecondarySize() * static_cast<int>(varyingType.getArraySizeProduct());
     }
 }
 

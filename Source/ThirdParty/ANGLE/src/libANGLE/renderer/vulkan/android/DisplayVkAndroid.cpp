@@ -99,13 +99,4 @@ const char *DisplayVkAndroid::getWSIExtension() const
     return VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
 }
 
-bool IsVulkanAndroidDisplayAvailable()
-{
-    return true;
-}
-
-DisplayImpl *CreateVulkanAndroidDisplay(const egl::DisplayState &state)
-{
-    return new DisplayVkAndroid(state);
-}
 }  // namespace rx

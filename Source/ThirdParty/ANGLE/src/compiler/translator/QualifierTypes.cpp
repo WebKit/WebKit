@@ -20,8 +20,6 @@ namespace
 constexpr const ImmutableString kSpecifiedMultipleTimes(" specified multiple times");
 constexpr const ImmutableString kInvariantMultipleTimes(
     "The invariant qualifier specified multiple times.");
-constexpr const ImmutableString kPreciseMultipleTimes(
-    "The precise qualifier specified multiple times.");
 constexpr const ImmutableString kPrecisionMultipleTimes(
     "The precision qualifier specified multiple times.");
 constexpr const ImmutableString kLayoutMultipleTimes(
@@ -71,7 +69,7 @@ bool IsScopeQualifierWrapper(const TQualifierWrapperBase *qualifier)
     return IsScopeQualifier(q);
 }
 
-// Returns true if the invariant/precise for the qualifier sequence holds
+// Returns true if the invariant for the qualifier sequence holds
 bool IsInvariantCorrect(const TTypeQualifierBuilder::QualifierSequence &qualifiers)
 {
     // We should have at least one qualifier.
@@ -93,7 +91,6 @@ bool HasRepeatingQualifiers(const TTypeQualifierBuilder::QualifierSequence &qual
                             ImmutableString *errorMessage)
 {
     bool invariantFound     = false;
-    bool preciseFound       = false;
     bool precisionFound     = false;
     bool layoutFound        = false;
     bool interpolationFound = false;
@@ -115,16 +112,6 @@ bool HasRepeatingQualifiers(const TTypeQualifierBuilder::QualifierSequence &qual
                     return true;
                 }
                 invariantFound = true;
-                break;
-            }
-            case QtPrecise:
-            {
-                if (preciseFound)
-                {
-                    *errorMessage = kPreciseMultipleTimes;
-                    return true;
-                }
-                preciseFound = true;
                 break;
             }
             case QtPrecision:
@@ -244,19 +231,9 @@ bool HasRepeatingQualifiers(const TTypeQualifierBuilder::QualifierSequence &qual
 // The correct order of qualifiers is:
 // invariant-qualifier interpolation-qualifier storage-qualifier precision-qualifier
 // layout-qualifier has to be before storage-qualifier.
-//
-// GLSL ES 3.1 relaxes the order of qualification:
-// When multiple qualifiers are present in a declaration, they may appear in any order, but they
-// must all appear before the type.
 bool AreQualifiersInOrder(const TTypeQualifierBuilder::QualifierSequence &qualifiers,
-                          int shaderVersion,
                           ImmutableString *errorMessage)
 {
-    if (shaderVersion >= 310)
-    {
-        return true;
-    }
-
     bool foundInterpolation = false;
     bool foundStorage       = false;
     bool foundPrecision     = false;
@@ -313,12 +290,6 @@ bool AreQualifiersInOrder(const TTypeQualifierBuilder::QualifierSequence &qualif
                 break;
             case QtPrecision:
                 foundPrecision = true;
-                break;
-            case QtPrecise:
-                // This keyword is available in ES3.1 (with extension) or in ES3.2, but the function
-                // should early-out in such a case as the spec doesn't require a particular order to
-                // the qualifiers.
-                UNREACHABLE();
                 break;
             default:
                 UNREACHABLE();
@@ -497,10 +468,6 @@ TTypeQualifier GetVariableTypeQualifierFromSortedSequence(
                 isQualifierValid        = true;
                 typeQualifier.invariant = true;
                 break;
-            case QtPrecise:
-                isQualifierValid      = true;
-                typeQualifier.precise = true;
-                break;
             case QtInterpolation:
             {
                 switch (typeQualifier.qualifier)
@@ -568,7 +535,6 @@ TTypeQualifier GetParameterTypeQualifierFromSortedSequence(
         switch (qualifier->getType())
         {
             case QtInvariant:
-            case QtPrecise:
             case QtInterpolation:
             case QtLayout:
                 break;
@@ -735,19 +701,14 @@ unsigned int TInvariantQualifierWrapper::getRank() const
     return 0u;
 }
 
-unsigned int TPreciseQualifierWrapper::getRank() const
+unsigned int TInterpolationQualifierWrapper::getRank() const
 {
     return 1u;
 }
 
-unsigned int TInterpolationQualifierWrapper::getRank() const
-{
-    return 2u;
-}
-
 unsigned int TLayoutQualifierWrapper::getRank() const
 {
-    return 3u;
+    return 2u;
 }
 
 unsigned int TStorageQualifierWrapper::getRank() const
@@ -756,22 +717,22 @@ unsigned int TStorageQualifierWrapper::getRank() const
     // qualifiers.
     if (mStorageQualifier == EvqCentroid)
     {
-        return 4u;
+        return 3u;
     }
     else
     {
-        return 5u;
+        return 4u;
     }
 }
 
 unsigned int TMemoryQualifierWrapper::getRank() const
 {
-    return 5u;
+    return 4u;
 }
 
 unsigned int TPrecisionQualifierWrapper::getRank() const
 {
-    return 6u;
+    return 5u;
 }
 
 TTypeQualifier::TTypeQualifier(TQualifier scope, const TSourceLoc &loc)
@@ -780,7 +741,6 @@ TTypeQualifier::TTypeQualifier(TQualifier scope, const TSourceLoc &loc)
       precision(EbpUndefined),
       qualifier(scope),
       invariant(false),
-      precise(false),
       line(loc)
 {
     ASSERT(IsScopeQualifier(qualifier));
@@ -809,8 +769,7 @@ bool TTypeQualifierBuilder::checkSequenceIsValid(TDiagnostics *diagnostics) cons
         return false;
     }
 
-    if (!areQualifierChecksRelaxed &&
-        !AreQualifiersInOrder(mQualifiers, mShaderVersion, &errorMessage))
+    if (!areQualifierChecksRelaxed && !AreQualifiersInOrder(mQualifiers, &errorMessage))
     {
         diagnostics->error(mQualifiers[0]->getLine(), errorMessage.data(), "qualifier sequence");
         return false;

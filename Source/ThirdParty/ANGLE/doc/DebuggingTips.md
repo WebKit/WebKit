@@ -41,6 +41,13 @@ qapitrace mytrace
 ## Running ANGLE under GAPID on Linux
 
 [GAPID](https://github.com/google/gapid) can be used to capture trace of Vulkan commands on Linux.
+For it to work, libvulkan has to be a shared library, instead of being statically linked into ANGLE,
+which is the default behavior.  This is done with the gn arg:
+
+```
+angle_shared_libvulkan = true
+```
+
 When capturing traces of gtest based tests built inside Chromium checkout, make sure to run the
 tests with `--single-process-tests` argument.
 
@@ -117,6 +124,13 @@ $ QT_SELECT=5 make -j -C build
 
 # Run RenderDoc from the build directory:
 $ ./build/bin/qrenderdoc
+```
+
+Additionally, libvulkan has to be a shared library, instead of being statically linked into ANGLE,
+which is the default behavior.  This is done with the gn arg:
+
+```
+angle_shared_libvulkan = true
 ```
 
 If your distribution does not provide a recent Vulkan SDK package, you would need to manually

@@ -10,10 +10,10 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 
+#include <vulkan/vulkan.h>
 #include <memory>
 #include <mutex>
 #include "vk_ext_provoking_vertex.h"
-#include "volk.h"
 
 #include "common/PoolAlloc.h"
 #include "common/angleutils.h"
@@ -68,8 +68,6 @@ class RendererVk : angle::NonCopyable
                              egl::Display *display,
                              const char *wsiExtension,
                              const char *wsiLayer);
-    // Reload volk vk* function ptrs if needed for an already initialized RendererVk
-    void reloadVolkIfNeeded() const;
     void onDestroy(vk::Context *context);
 
     void notifyDeviceLost();
@@ -107,10 +105,6 @@ class RendererVk : angle::NonCopyable
     const gl::Limitations &getNativeLimitations() const;
 
     uint32_t getQueueFamilyIndex() const { return mCurrentQueueFamilyIndex; }
-    const VkQueueFamilyProperties &getQueueFamilyProperties() const
-    {
-        return mQueueFamilyProperties[mCurrentQueueFamilyIndex];
-    }
 
     const vk::MemoryProperties &getMemoryProperties() const { return mMemoryProperties; }
 
@@ -146,7 +140,6 @@ class RendererVk : angle::NonCopyable
         return mFeatures;
     }
     uint32_t getMaxVertexAttribDivisor() const { return mMaxVertexAttribDivisor; }
-    VkDeviceSize getMaxVertexAttribStride() const { return mMaxVertexAttribStride; }
 
     bool isMockICDEnabled() const { return mEnabledICD == vk::ICD::Mock; }
 
@@ -261,7 +254,6 @@ class RendererVk : angle::NonCopyable
     VkQueue mQueue;
     uint32_t mCurrentQueueFamilyIndex;
     uint32_t mMaxVertexAttribDivisor;
-    VkDeviceSize mMaxVertexAttribStride;
     VkDevice mDevice;
     AtomicSerialFactory mQueueSerialFactory;
     AtomicSerialFactory mShaderSerialFactory;

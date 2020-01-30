@@ -15,7 +15,7 @@ namespace gl
 {
 
 Semaphore::Semaphore(rx::GLImplFactory *factory, SemaphoreID id)
-    : RefCountObject(factory->generateSerial(), id), mImplementation(factory->createSemaphore())
+    : RefCountObject(id), mImplementation(factory->createSemaphore())
 {}
 
 Semaphore::~Semaphore() {}

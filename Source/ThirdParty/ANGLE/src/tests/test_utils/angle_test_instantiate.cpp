@@ -96,7 +96,7 @@ bool HasSystemVendorID(VendorID vendorID)
 {
     SystemInfo *systemInfo = GetTestSystemInfo();
     // Unfortunately sometimes GPU info collection can fail.
-    if (systemInfo->gpus.empty())
+    if (systemInfo->activeGPUIndex < 0 || systemInfo->gpus.empty())
     {
         return false;
     }
@@ -260,8 +260,7 @@ bool IsNVIDIA()
 
 bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters &param)
 {
-    VendorID vendorID =
-        systemInfo.gpus.empty() ? 0 : systemInfo.gpus[systemInfo.activeGPUIndex].vendorId;
+    VendorID vendorID = systemInfo.gpus[systemInfo.activeGPUIndex].vendorId;
 
     // We support the default and null back-ends on every platform.
     if (param.driver == GLESDriverType::AngleEGL)
@@ -314,29 +313,23 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
             return false;
         }
 
-        switch (param.getRenderer())
+        // OSX does not support ES 3.1 features.
+        if (param.majorVersion == 3 && param.minorVersion > 0)
         {
-            case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
-                // ES 3.1+ back-end is not supported properly.
-                if (param.majorVersion == 3 && param.minorVersion > 0)
-                {
-                    return false;
-                }
-                return true;
-            case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
-                if (!IsMetalRendererAvailable() || IsIntel(vendorID))
-                {
-                    // TODO(hqle): Intel metal tests seem to have problems. Disable for now.
-                    // http://anglebug.com/4133
-                    return false;
-                }
-                return true;
-            case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
-                // OSX does not support native vulkan
-                return param.getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
-            default:
-                return false;
+            return false;
         }
+
+        if (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE &&
+            (!IsMetalRendererAvailable() || IsIntel(vendorID)))
+        {
+            // TODO(hqle): Intel metal tests seem to have problems. Disable for now.
+            // http://anglebug.com/4133
+            return false;
+        }
+
+        // Currently we only support the OpenGL & Metal back-end on OSX.
+        return (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE ||
+                param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
 #endif  // #if defined(ANGLE_PLATFORM_APPLE)
 
@@ -408,11 +401,6 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
         {
             case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
             case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
-                // Swiftshader's vulkan frontend doesn't build on Android.
-                if (param.getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE)
-                {
-                    return false;
-                }
                 return true;
             default:
                 return false;

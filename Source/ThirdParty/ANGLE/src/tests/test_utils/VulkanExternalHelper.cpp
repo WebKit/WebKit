@@ -8,6 +8,7 @@
 
 #include "test_utils/VulkanExternalHelper.h"
 
+#include <vulkan/vulkan.h>
 #include <vector>
 
 #include "common/bitset_utils.h"
@@ -141,8 +142,7 @@ VulkanExternalHelper::~VulkanExternalHelper()
 void VulkanExternalHelper::initialize()
 {
     ASSERT(mInstance == VK_NULL_HANDLE);
-    VkResult result = volkInitialize();
-    ASSERT(result == VK_SUCCESS);
+
     std::vector<VkExtensionProperties> instanceExtensionProperties =
         EnumerateInstanceExtensionProperties(nullptr);
 
@@ -185,10 +185,9 @@ void VulkanExternalHelper::initialize()
         /* .ppEnabledExtensionName = */ enabledInstanceExtensions.data(),
     };
 
-    result = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
+    VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
     ASSERT(result == VK_SUCCESS);
     ASSERT(mInstance != VK_NULL_HANDLE);
-    volkLoadInstance(mInstance);
 
     std::vector<VkPhysicalDevice> physicalDevices = EnumeratePhysicalDevices(mInstance);
     ASSERT(physicalDevices.size() > 0);
@@ -262,7 +261,6 @@ void VulkanExternalHelper::initialize()
     result = vkCreateDevice(mPhysicalDevice, &deviceCreateInfo, nullptr, &mDevice);
     ASSERT(result == VK_SUCCESS);
     ASSERT(mDevice != VK_NULL_HANDLE);
-    volkLoadDevice(mDevice);
 
     constexpr uint32_t kGraphicsQueueIndex = 0;
     static_assert(kGraphicsQueueIndex < kGraphicsQueueCount, "must be in range");

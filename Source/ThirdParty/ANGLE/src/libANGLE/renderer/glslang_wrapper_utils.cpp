@@ -45,24 +45,23 @@ namespace rx
 {
 namespace
 {
-constexpr char kMarkerStart[]                      = "@@ ";
-constexpr char kQualifierMarkerBegin[]             = "@@ QUALIFIER-";
-constexpr char kLayoutMarkerBegin[]                = "@@ LAYOUT-";
-constexpr char kXfbDeclMarkerBegin[]               = "@@ XFB-DECL";
-constexpr char kXfbOutMarkerBegin[]                = "@@ XFB-OUT";
-constexpr char kMarkerEnd[]                        = " @@";
-constexpr char kParamsBegin                        = '(';
-constexpr char kParamsEnd                          = ')';
-constexpr char kUniformQualifier[]                 = "uniform";
-constexpr char kSSBOQualifier[]                    = "buffer";
-constexpr char kUnusedUniformSubstitution[]        = "// ";
-constexpr char kVersionDefine[]                    = "#version 450 core\n";
-constexpr char kLineRasterDefine[]                 = R"(#version 450 core
+constexpr char kMarkerStart[]               = "@@ ";
+constexpr char kQualifierMarkerBegin[]      = "@@ QUALIFIER-";
+constexpr char kLayoutMarkerBegin[]         = "@@ LAYOUT-";
+constexpr char kXfbDeclMarkerBegin[]        = "@@ XFB-DECL";
+constexpr char kXfbOutMarkerBegin[]         = "@@ XFB-OUT";
+constexpr char kMarkerEnd[]                 = " @@";
+constexpr char kParamsBegin                 = '(';
+constexpr char kParamsEnd                   = ')';
+constexpr char kUniformQualifier[]          = "uniform";
+constexpr char kSSBOQualifier[]             = "buffer";
+constexpr char kUnusedBlockSubstitution[]   = "struct";
+constexpr char kUnusedUniformSubstitution[] = "// ";
+constexpr char kVersionDefine[]             = "#version 450 core\n";
+constexpr char kLineRasterDefine[]          = R"(#version 450 core
 
 #define ANGLE_ENABLE_LINE_SEGMENT_RASTERIZATION
 )";
-constexpr uint32_t kANGLEPositionLocationOffset    = 1;
-constexpr uint32_t kXfbANGLEPositionLocationOffset = 2;
 
 template <size_t N>
 constexpr size_t ConstStrLen(const char (&)[N])
@@ -107,30 +106,13 @@ void GetBuiltInResourcesFromCaps(const gl::Caps &caps, TBuiltInResource *outBuil
     outBuiltInResources->maxVertexUniformVectors          = caps.maxVertexUniformVectors;
 }
 
-// Information used for Xfb layout qualifier
-struct XFBBufferInfo
-{
-    GLuint index;
-    GLuint offset;
-    GLuint stride;
-};
-
-struct VaryingNameEquals
-{
-    VaryingNameEquals(const std::string &name_) : name(name_) {}
-    bool operator()(const gl::TransformFeedbackVarying &var) const { return var.name == name; }
-
-    std::string name;
-};
-
-using XfbBufferMap = std::map<std::string, XFBBufferInfo>;
-
 class IntermediateShaderSource final : angle::NonCopyable
 {
   public:
     void init(const std::string &source);
     bool empty() const { return mTokens.empty(); }
 
+    bool findTokenName(const std::string &name);
     // Find @@ LAYOUT-name(extra, args) @@ and replace it with:
     //
     //     layout(specifier, extra, args)
@@ -309,6 +291,18 @@ void IntermediateShaderSource::init(const std::string &source)
     }
 }
 
+bool IntermediateShaderSource::findTokenName(const std::string &name)
+{
+    for (Token &block : mTokens)
+    {
+        if (block.text == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void IntermediateShaderSource::insertLayoutSpecifier(const std::string &name,
                                                      const std::string &specifier)
 {
@@ -316,8 +310,7 @@ void IntermediateShaderSource::insertLayoutSpecifier(const std::string &name,
     {
         if (block.type == TokenType::Layout && block.text == name)
         {
-            ASSERT(!specifier.empty());
-            const char *separator = block.args.empty() ? "" : ", ";
+            const char *separator = specifier.empty() || block.args.empty() ? "" : ", ";
 
             block.type = TokenType::Text;
             block.text = "layout(" + block.args + separator + specifier + ")";
@@ -335,7 +328,7 @@ void IntermediateShaderSource::insertQualifierSpecifier(const std::string &name,
         {
             block.type = TokenType::Text;
             block.text = specifier;
-            if (!block.args.empty())
+            if (!specifier.empty() && !block.args.empty())
             {
                 block.text += " " + block.args;
             }
@@ -444,11 +437,8 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
             for (int row = 0; row < info.rowCount; ++row)
             {
                 result << "xfbOut" << bufferIndex << "[ANGLEUniforms.xfbBufferOffsets["
-                       << bufferIndex
-                       << "] + (gl_VertexIndex + gl_InstanceIndex * "
-                          "ANGLEUniforms.xfbVerticesPerDraw) * "
-                       << stride << " + " << offset << "] = " << info.glslAsFloat << "("
-                       << varying.mappedName;
+                       << bufferIndex << "] + gl_VertexIndex * " << stride << " + " << offset
+                       << "] = " << info.glslAsFloat << "(" << varying.mappedName;
 
                 if (varying.isArray())
                 {
@@ -474,9 +464,9 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
     return result.str();
 }
 
-void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &options,
-                                               const gl::ProgramState &programState,
-                                               IntermediateShaderSource *vertexShader)
+void GenerateTransformFeedbackOutputs(const GlslangSourceOptions &options,
+                                      const gl::ProgramState &programState,
+                                      IntermediateShaderSource *vertexShader)
 {
     const std::vector<gl::TransformFeedbackVarying> &varyings =
         programState.getLinkedTransformFeedbackVaryings();
@@ -524,142 +514,6 @@ void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &optio
     vertexShader->insertTransformFeedbackOutput(std::move(xfbOut));
 }
 
-// Calculates XFB layout qualifier arguments for each tranform feedback varying, inserts
-// layout quailifier for built-in varyings here and gathers calculated arguments for non built-in
-// varyings for later use.
-void GenerateTransformFeedbackExtensionOutputs(const gl::ProgramState &programState,
-                                               IntermediateShaderSource *vertexShader,
-                                               XfbBufferMap *xfbBufferMap,
-                                               const gl::ProgramLinkedResources &resources)
-{
-    const std::vector<gl::TransformFeedbackVarying> &tfVaryings =
-        programState.getLinkedTransformFeedbackVaryings();
-    const std::vector<GLsizei> &varyingStrides = programState.getTransformFeedbackStrides();
-    const bool isInterleaved =
-        programState.getTransformFeedbackBufferMode() == GL_INTERLEAVED_ATTRIBS;
-
-    std::string xfbDecl;
-    bool hasBuiltInVaryings     = false;
-    bool replacePositionVarying = false;
-    uint32_t currentOffset      = 0;
-    uint32_t currentStride      = 0;
-    uint32_t bufferIndex        = 0;
-    std::string varyingType;
-    std::string xfbIndices;
-    std::string xfbOffsets;
-    std::string xfbStrides;
-    std::string replacedPositionLayout;
-
-    for (uint32_t varyingIndex = 0; varyingIndex < tfVaryings.size(); ++varyingIndex)
-    {
-        if (isInterleaved)
-        {
-            bufferIndex = 0;
-            if (varyingIndex > 0)
-            {
-                const gl::TransformFeedbackVarying &prev = tfVaryings[varyingIndex - 1];
-                currentOffset += prev.size() * gl::VariableExternalSize(prev.type);
-            }
-            currentStride = varyingStrides[0];
-        }
-        else
-        {
-            bufferIndex   = varyingIndex;
-            currentOffset = 0;
-            currentStride = varyingStrides[varyingIndex];
-        }
-
-        if (tfVaryings[varyingIndex].isBuiltIn())
-        {
-            xfbIndices  = Str(bufferIndex);
-            xfbOffsets  = Str(currentOffset);
-            xfbStrides  = Str(currentStride);
-            varyingType = gl::GetGLSLTypeString(tfVaryings[varyingIndex].type);
-
-            if (tfVaryings[varyingIndex].name.compare("gl_Position") == 0)
-            {
-                replacePositionVarying = true;
-
-                std::string xfbReplacedPositionLocation =
-                    Str(resources.varyingPacking.getMaxSemanticIndex() +
-                        kXfbANGLEPositionLocationOffset);
-
-                replacedPositionLayout = "layout(location = " + xfbReplacedPositionLocation +
-                                         ", xfb_buffer = " + xfbIndices +
-                                         ", xfb_offset = " + xfbOffsets +
-                                         ", xfb_stride = " + xfbStrides + ") out " + varyingType +
-                                         " xfbANGLEPosition;\n";
-            }
-            else
-            {
-                // Since built-in varyings are not in RegisterList, we can add layout qualifier
-                // here.
-                if (!hasBuiltInVaryings)
-                {
-                    hasBuiltInVaryings = true;
-
-                    xfbDecl += "out gl_PerVertex\n{\n";
-                    for (uint32_t index = 0; index < tfVaryings.size(); ++index)
-                    {
-                        // need to add gl_Position to gl_Pervertex because we declared layout for
-                        // replaced xfbANGLEPosition instead
-                        if (tfVaryings[index].name.compare("gl_Position") == 0)
-                        {
-                            xfbDecl += "vec4 gl_Position;\n";
-                            break;
-                        }
-                    }
-                }
-                xfbDecl += "layout(xfb_buffer = " + xfbIndices + ", xfb_offset = " + xfbOffsets +
-                           ", xfb_stride = " + xfbStrides + ") " + varyingType + " " +
-                           tfVaryings[varyingIndex].name + ";\n";
-            }
-        }
-        else
-        {
-            // Layout qualifier for non built-in varying will be written later, so we just save
-            // Xfb layout qualifier information into the xfbBufferMap.
-            XFBBufferInfo bufferInfo;
-            bufferInfo.index  = bufferIndex;
-            bufferInfo.offset = currentOffset;
-            bufferInfo.stride = currentStride;
-            xfbBufferMap->insert(make_pair(tfVaryings[varyingIndex].name, bufferInfo));
-        }
-    }
-
-    if (hasBuiltInVaryings)
-    {
-        // We should add non transform feedback built-in varyings to gl_PerVertex because once
-        // we declare gl_PerVertex, all built-in varyings used in shaders should be included
-        // in gl_PerVertex struct.
-        for (const sh::ShaderVariable &varying : resources.varyingPacking.getInputVaryings())
-        {
-            if (varying.isBuiltIn())
-            {
-                auto iter = std::find_if(tfVaryings.begin(), tfVaryings.end(),
-                                         VaryingNameEquals(varying.name));
-                if (iter == tfVaryings.end())
-                {
-                    xfbDecl += gl::GetGLSLTypeString(varying.type) + " " + varying.name + ";\n";
-                }
-            }
-        }
-        xfbDecl += "\n};\n";
-    }
-
-    xfbDecl += replacedPositionLayout;
-
-    vertexShader->insertTransformFeedbackDeclaration(std::move(xfbDecl));
-
-    std::string xfbOut;
-    if (replacePositionVarying)
-    {
-        xfbOut += "xfbANGLEPosition = gl_Position;\n";
-    }
-
-    vertexShader->insertTransformFeedbackOutput(std::move(xfbOut));
-}
-
 void AssignAttributeLocations(const gl::ProgramState &programState,
                               IntermediateShaderSource *shaderSource)
 {
@@ -669,11 +523,13 @@ void AssignAttributeLocations(const gl::ProgramState &programState,
     // See corresponding code in OutputVulkanGLSL.cpp.
     for (const sh::ShaderVariable &attribute : programState.getProgramInputs())
     {
+        // Warning: If we end up supporting ES 3.0 shaders and up, Program::linkAttributes is
+        // going to bring us all attributes in this list instead of only the active ones.
         ASSERT(attribute.active);
 
         std::string locationString = "location = " + Str(attribute.location);
         shaderSource->insertLayoutSpecifier(attribute.name, locationString);
-        shaderSource->insertQualifierSpecifier(attribute.name, "");
+        shaderSource->insertQualifierSpecifier(attribute.name, "in");
     }
 }
 
@@ -716,10 +572,9 @@ void AssignOutputLocations(const gl::ProgramState &programState,
 
 void AssignVaryingLocations(const gl::ProgramState &programState,
                             const gl::ProgramLinkedResources &resources,
-                            gl::ShaderMap<IntermediateShaderSource> *shaderSources,
-                            XfbBufferMap *xfbBufferMap)
+                            IntermediateShaderSource *outStageSource,
+                            IntermediateShaderSource *inStageSource)
 {
-
     // Assign varying locations.
     for (const gl::PackedVaryingRegister &varyingReg : resources.varyingPacking.getRegisterList())
     {
@@ -738,6 +593,14 @@ void AssignVaryingLocations(const gl::ProgramState &programState,
             continue;
         }
 
+        std::string locationString = "location = " + Str(varyingReg.registerRow);
+        if (varyingReg.registerColumn > 0)
+        {
+            ASSERT(!varying.varying->isStruct());
+            ASSERT(!gl::IsMatrixType(varying.varying->type));
+            locationString += ", component = " + Str(varyingReg.registerColumn);
+        }
+
         // In the following:
         //
         //     struct S { vec4 field; };
@@ -748,72 +611,52 @@ void AssignVaryingLocations(const gl::ProgramState &programState,
         const std::string &name =
             varying.isStructField() ? varying.parentStructName : varying.varying->name;
 
-        std::string locationString = "location = " + Str(varyingReg.registerRow);
-        if (varyingReg.registerColumn > 0)
+        // Varings are from 3 stage of shader sources
+        // To match pair of (out - in) qualifier, varying should be in the pair of shader source
+        if (!outStageSource->findTokenName(name) || !inStageSource->findTokenName(name))
         {
-            ASSERT(!varying.varying->isStruct());
-            ASSERT(!gl::IsMatrixType(varying.varying->type));
-            locationString += ", component = " + Str(varyingReg.registerColumn);
-        }
-
-        std::string *layoutSpecifier = &locationString;
-
-        std::string xfbSpecifier;
-        XfbBufferMap::iterator iter;
-        iter = xfbBufferMap->find(name);
-        if (iter != xfbBufferMap->end())
-        {
-            XFBBufferInfo item = iter->second;
-            xfbSpecifier       = "xfb_buffer = " + Str(item.index) +
-                           ", xfb_offset = " + Str(item.offset) +
-                           ", xfb_stride = " + Str(item.stride) + ", " + locationString;
-            layoutSpecifier = &xfbSpecifier;
-        }
-
-        for (const gl::ShaderType stage : gl::kAllGraphicsShaderTypes)
-        {
-            IntermediateShaderSource *shaderSource = &(*shaderSources)[stage];
-            if (shaderSource->empty())
-            {
-                ASSERT(!varying.shaderStages[stage]);
+            // Pair can be unmatching at transform feedback case,
+            // But it requires qualifier.
+            if (!varying.vertexOnly)
                 continue;
-            }
-
-            if (!varying.shaderStages[stage])
-            {
-                // If not active in this stage, remove the varying declaration.  Imagine the
-                // following scenario:
-                //
-                //  - VS: declare out varying used for transform feedback
-                //  - FS: declare corresponding in varying which is not active
-                //
-                // Then varying.shaderStages would only contain Vertex, but the varying is not
-                // present in the list of inactive varyings since it _is_ active in some stages.
-                // As a result, we remove the varying from any stage that's not active.
-                // CleanupUnusedEntities will remove the varyings that are inactive in all stages.
-                shaderSource->eraseLayoutAndQualifierSpecifiers(name, "");
-                continue;
-            }
-
-            shaderSource->insertLayoutSpecifier(
-                name, stage == gl::ShaderType::Fragment ? locationString : *layoutSpecifier);
-            shaderSource->insertQualifierSpecifier(name, "");
         }
+
+        outStageSource->insertLayoutSpecifier(name, locationString);
+        inStageSource->insertLayoutSpecifier(name, locationString);
+
+        const char *outQualifier = "out";
+        const char *inQualifier  = "in";
+        switch (varying.interpolation)
+        {
+            case sh::INTERPOLATION_SMOOTH:
+                break;
+            case sh::INTERPOLATION_CENTROID:
+                outQualifier = "centroid out";
+                inQualifier  = "centroid in";
+                break;
+            case sh::INTERPOLATION_FLAT:
+                outQualifier = "flat out";
+                inQualifier  = "flat in";
+                break;
+            default:
+                UNREACHABLE();
+        }
+        outStageSource->insertQualifierSpecifier(name, outQualifier);
+        inStageSource->insertQualifierSpecifier(name, inQualifier);
     }
 
     // Substitute layout and qualifier strings for the position varying. Use the first free
     // varying register after the packed varyings.
     constexpr char kVaryingName[] = "ANGLEPosition";
     std::stringstream layoutStream;
-    layoutStream << "location = "
-                 << (resources.varyingPacking.getMaxSemanticIndex() + kANGLEPositionLocationOffset);
+    layoutStream << "location = " << (resources.varyingPacking.getMaxSemanticIndex() + 1);
     const std::string layout = layoutStream.str();
 
-    for (IntermediateShaderSource &shaderSource : *shaderSources)
-    {
-        shaderSource.insertLayoutSpecifier(kVaryingName, layout);
-        shaderSource.insertQualifierSpecifier(kVaryingName, "");
-    }
+    outStageSource->insertLayoutSpecifier(kVaryingName, layout);
+    inStageSource->insertLayoutSpecifier(kVaryingName, layout);
+
+    outStageSource->insertQualifierSpecifier(kVaryingName, "out");
+    inStageSource->insertQualifierSpecifier(kVaryingName, "in");
 }
 
 void AssignUniformBindings(const GlslangSourceOptions &options,
@@ -867,7 +710,7 @@ void AssignResourceBinding(gl::ShaderBitSet activeShaders,
                 shaderSource.insertLayoutSpecifier(name, bindingString);
                 shaderSource.insertQualifierSpecifier(name, qualifier);
             }
-            else if (unusedSubstitution)
+            else
             {
                 shaderSource.eraseLayoutAndQualifierSpecifiers(name, unusedSubstitution);
             }
@@ -893,7 +736,7 @@ uint32_t AssignInterfaceBlockBindings(const GlslangSourceOptions &options,
                 resourcesDescriptorSet + ", binding = " + Str(bindingIndex++);
 
             AssignResourceBinding(block.activeShaders(), block.name, bindingString, qualifier,
-                                  nullptr, shaderSources);
+                                  kUnusedBlockSubstitution, shaderSources);
         }
     }
 
@@ -952,7 +795,7 @@ uint32_t AssignImageBindings(const GlslangSourceOptions &options,
         }
 
         AssignResourceBinding(imageUniform.activeShaders(), name, bindingString, kUniformQualifier,
-                              nullptr, shaderSources);
+                              kUnusedUniformSubstitution, shaderSources);
     }
 
     return bindingIndex;
@@ -984,6 +827,7 @@ void AssignNonTextureBindings(const GlslangSourceOptions &options,
 }
 
 void AssignTextureBindings(const GlslangSourceOptions &options,
+                           bool useOldRewriteStructSamplers,
                            const gl::ProgramState &programState,
                            gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
@@ -997,7 +841,7 @@ void AssignTextureBindings(const GlslangSourceOptions &options,
     {
         const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
 
-        if (!options.useOldRewriteStructSamplers &&
+        if (!useOldRewriteStructSamplers &&
             gl::SamplerNameContainsNonZeroArrayElement(samplerUniform.name))
         {
             continue;
@@ -1007,7 +851,7 @@ void AssignTextureBindings(const GlslangSourceOptions &options,
             texturesDescriptorSet + ", binding = " + Str(bindingIndex++);
 
         // Samplers in structs are extracted and renamed.
-        const std::string samplerName = options.useOldRewriteStructSamplers
+        const std::string samplerName = useOldRewriteStructSamplers
                                             ? GetMappedSamplerNameOld(samplerUniform.name)
                                             : GlslangGetMappedSamplerName(samplerUniform.name);
 
@@ -1019,25 +863,26 @@ void AssignTextureBindings(const GlslangSourceOptions &options,
 void CleanupUnusedEntities(bool useOldRewriteStructSamplers,
                            const gl::ProgramState &programState,
                            const gl::ProgramLinkedResources &resources,
+                           gl::ShaderType shaderType,
                            gl::ShaderMap<IntermediateShaderSource> *shaderSources)
 {
-    IntermediateShaderSource &vertexSource = (*shaderSources)[gl::ShaderType::Vertex];
-    if (!vertexSource.empty())
+    gl::Shader *shader               = programState.getAttachedShader(shaderType);
+    IntermediateShaderSource &source = (*shaderSources)[shaderType];
+    if (!source.empty())
     {
-        gl::Shader *glVertexShader = programState.getAttachedShader(gl::ShaderType::Vertex);
-        ASSERT(glVertexShader != nullptr);
+        ASSERT(shader != nullptr);
 
         // The attributes in the programState could have been filled with active attributes only
         // depending on the shader version. If there is inactive attributes left, we have to remove
         // their @@ QUALIFIER and @@ LAYOUT markers.
-        for (const sh::ShaderVariable &attribute : glVertexShader->getAllAttributes())
+        for (const sh::ShaderVariable &attribute : shader->getAllAttributes())
         {
             if (attribute.active)
             {
                 continue;
             }
 
-            vertexSource.eraseLayoutAndQualifierSpecifiers(attribute.name, "");
+            source.eraseLayoutAndQualifierSpecifiers(attribute.name, "");
         }
     }
 
@@ -1050,15 +895,20 @@ void CleanupUnusedEntities(bool useOldRewriteStructSamplers,
         }
     }
 
-    // Comment out unused default uniforms.  This relies on the fact that the shader compiler
-    // outputs uniforms to a single line.
+    // Remove all the markers for unused interface blocks, and replace them with |struct|.
+    for (const std::string &unusedInterfaceBlock : resources.unusedInterfaceBlocks)
+    {
+        for (IntermediateShaderSource &shaderSource : *shaderSources)
+        {
+            shaderSource.eraseLayoutAndQualifierSpecifiers(unusedInterfaceBlock,
+                                                           kUnusedBlockSubstitution);
+        }
+    }
+
+    // Comment out unused uniforms.  This relies on the fact that the shader compiler outputs
+    // uniforms to a single line.
     for (const gl::UnusedUniform &unusedUniform : resources.unusedUniforms)
     {
-        if (unusedUniform.isImage || unusedUniform.isAtomicCounter)
-        {
-            continue;
-        }
-
         std::string uniformName = unusedUniform.isSampler
                                       ? useOldRewriteStructSamplers
                                             ? GetMappedSamplerNameOld(unusedUniform.name)
@@ -1194,6 +1044,7 @@ std::string GlslangGetMappedSamplerName(const std::string &originalName)
 }
 
 void GlslangGetShaderSource(const GlslangSourceOptions &options,
+                            bool useOldRewriteStructSamplers,
                             const gl::ProgramState &programState,
                             const gl::ProgramLinkedResources &resources,
                             gl::ShaderMap<std::string> *shaderSourcesOut)
@@ -1211,9 +1062,39 @@ void GlslangGetShaderSource(const GlslangSourceOptions &options,
 
     IntermediateShaderSource *vertexSource   = &intermediateSources[gl::ShaderType::Vertex];
     IntermediateShaderSource *fragmentSource = &intermediateSources[gl::ShaderType::Fragment];
-    IntermediateShaderSource *computeSource  = &intermediateSources[gl::ShaderType::Compute];
+    IntermediateShaderSource *geometrySource = &intermediateSources[gl::ShaderType::Geometry];
 
-    XfbBufferMap xfbBufferMap;
+    if (!geometrySource->empty())
+    {
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, geometrySource, fragmentSource);
+        if (!vertexSource->empty())
+        {
+            AssignAttributeLocations(programState, vertexSource);
+            AssignVaryingLocations(programState, resources, vertexSource, geometrySource);
+        }
+    }
+    else if (!vertexSource->empty())
+    {
+        AssignAttributeLocations(programState, vertexSource);
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
+    }
+    else if (!fragmentSource->empty())
+    {
+        AssignAttributeLocations(programState, fragmentSource);
+        AssignOutputLocations(programState, fragmentSource);
+        AssignVaryingLocations(programState, resources, vertexSource, fragmentSource);
+    }
+    AssignUniformBindings(options, &intermediateSources);
+    AssignTextureBindings(options, useOldRewriteStructSamplers, programState, &intermediateSources);
+    AssignNonTextureBindings(options, programState, &intermediateSources);
+
+    for (const auto shaderType : gl::kAllGraphicsShaderTypes)
+    {
+        CleanupUnusedEntities(useOldRewriteStructSamplers, programState, resources, shaderType,
+                              &intermediateSources);
+    }
 
     // Write transform feedback output code.
     if (!vertexSource->empty())
@@ -1225,42 +1106,9 @@ void GlslangGetShaderSource(const GlslangSourceOptions &options,
         }
         else
         {
-            if (options.supportsTransformFeedbackExtension)
-            {
-                GenerateTransformFeedbackExtensionOutputs(programState, vertexSource, &xfbBufferMap,
-                                                          resources);
-            }
-            else if (options.emulateTransformFeedback)
-            {
-                GenerateTransformFeedbackEmulationOutputs(options, programState, vertexSource);
-            }
+            GenerateTransformFeedbackOutputs(options, programState, vertexSource);
         }
     }
-
-    // Assign outputs to the fragment shader, if any.
-    if (!fragmentSource->empty())
-    {
-        AssignOutputLocations(programState, fragmentSource);
-    }
-
-    // Assign attributes to the vertex shader, if any.
-    if (!vertexSource->empty())
-    {
-        AssignAttributeLocations(programState, vertexSource);
-    }
-
-    if (computeSource->empty())
-    {
-        // Assign varying locations.
-        AssignVaryingLocations(programState, resources, &intermediateSources, &xfbBufferMap);
-    }
-
-    AssignUniformBindings(options, &intermediateSources);
-    AssignTextureBindings(options, programState, &intermediateSources);
-    AssignNonTextureBindings(options, programState, &intermediateSources);
-
-    CleanupUnusedEntities(options.useOldRewriteStructSamplers, programState, resources,
-                          &intermediateSources);
 
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
@@ -1280,16 +1128,22 @@ angle::Result GlslangGetShaderSpirvCode(GlslangErrorCallback callback,
 
         gl::ShaderMap<std::string> patchedSources = shaderSources;
 
-        for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
+        // #defines must come after the #version directive.
+        ANGLE_GLSLANG_CHECK(callback,
+                            angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Vertex],
+                                                    kVersionDefine, kLineRasterDefine),
+                            GlslangError::InvalidShader);
+        ANGLE_GLSLANG_CHECK(callback,
+                            angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Fragment],
+                                                    kVersionDefine, kLineRasterDefine),
+                            GlslangError::InvalidShader);
+
+        if (!shaderSources[gl::ShaderType::Geometry].empty())
         {
-            if (!shaderSources[shaderType].empty())
-            {
-                // #defines must come after the #version directive.
-                ANGLE_GLSLANG_CHECK(callback,
-                                    angle::ReplaceSubstring(&patchedSources[shaderType],
-                                                            kVersionDefine, kLineRasterDefine),
-                                    GlslangError::InvalidShader);
-            }
+            ANGLE_GLSLANG_CHECK(callback,
+                                angle::ReplaceSubstring(&patchedSources[gl::ShaderType::Geometry],
+                                                        kVersionDefine, kLineRasterDefine),
+                                GlslangError::InvalidShader);
         }
 
         return GetShaderSpirvCode(callback, glCaps, patchedSources, shaderCodeOut);

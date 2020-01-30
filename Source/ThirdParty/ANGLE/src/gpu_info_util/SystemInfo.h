@@ -59,9 +59,8 @@ struct SystemInfo
     std::vector<GPUDeviceInfo> gpus;
 
     // Index of the GPU expected to be used for 3D graphics. Based on a best-guess heuristic on
-    // some platforms. On Windows, this is accurate. Note `gpus` must be checked for empty before
-    // indexing.
-    int activeGPUIndex = 0;
+    // some platforms. On windows, this is accurate.
+    int activeGPUIndex = -1;
 
     bool isOptimus       = false;
     bool isAMDSwitchable = false;
@@ -86,7 +85,6 @@ bool GetSystemInfo(SystemInfo *info);
 // Known PCI vendor IDs
 constexpr VendorID kVendorID_AMD      = 0x1002;
 constexpr VendorID kVendorID_ARM      = 0x13B5;
-constexpr VendorID kVendorID_Broadcom = 0x14E4;
 constexpr VendorID kVendorID_GOOGLE   = 0x1AE0;
 constexpr VendorID kVendorID_ImgTec   = 0x1010;
 constexpr VendorID kVendorID_Intel    = 0x8086;
@@ -105,7 +103,6 @@ constexpr DeviceID kDeviceID_Swiftshader = 0xC0DE;
 // Predicates on vendor IDs
 bool IsAMD(VendorID vendorId);
 bool IsARM(VendorID vendorId);
-bool IsBroadcom(VendorID vendorId);
 bool IsImgTec(VendorID vendorId);
 bool IsIntel(VendorID vendorId);
 bool IsKazan(VendorID vendorId);
@@ -123,8 +120,6 @@ void GetDualGPUInfo(SystemInfo *info);
 
 // Dumps the system info to stdout.
 void PrintSystemInfo(const SystemInfo &info);
-
-VersionInfo ParseNvidiaDriverVersion(uint32_t version);
 }  // namespace angle
 
 #endif  // GPU_INFO_UTIL_SYSTEM_INFO_H_

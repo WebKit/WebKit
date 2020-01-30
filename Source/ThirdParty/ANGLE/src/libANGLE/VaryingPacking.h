@@ -16,7 +16,6 @@
 
 #include "angle_gl.h"
 #include "common/angleutils.h"
-#include "libANGLE/angletypes.h"
 
 #include <map>
 
@@ -27,17 +26,22 @@ struct ProgramVaryingRef;
 
 using ProgramMergedVaryings = std::map<std::string, ProgramVaryingRef>;
 
-struct PackedVarying : angle::NonCopyable
+struct PackedVarying
 {
-    PackedVarying(const sh::ShaderVariable &varyingIn, sh::InterpolationType interpolationIn);
+    PackedVarying(const sh::ShaderVariable &varyingIn, sh::InterpolationType interpolationIn)
+        : PackedVarying(varyingIn, interpolationIn, "", false)
+    {}
     PackedVarying(const sh::ShaderVariable &varyingIn,
                   sh::InterpolationType interpolationIn,
                   const std::string &parentStructNameIn,
-                  GLuint fieldIndexIn);
-    PackedVarying(PackedVarying &&other);
-    ~PackedVarying();
-
-    PackedVarying &operator=(PackedVarying &&other);
+                  GLuint fieldIndexIn)
+        : varying(&varyingIn),
+          vertexOnly(false),
+          interpolation(interpolationIn),
+          parentStructName(parentStructNameIn),
+          arrayIndex(GL_INVALID_INDEX),
+          fieldIndex(fieldIndexIn)
+    {}
 
     bool isStructField() const { return !parentStructName.empty(); }
 
@@ -59,17 +63,10 @@ struct PackedVarying : angle::NonCopyable
         return fullNameStr.str();
     }
 
-    // Transform feedback varyings can be only referenced in the VS.
-    bool vertexOnly() const
-    {
-        ShaderBitSet vertex;
-        vertex.set(ShaderType::Vertex);
-        return shaderStages == vertex;
-    }
-
     const sh::ShaderVariable *varying;
 
-    ShaderBitSet shaderStages;
+    // Transform feedback varyings can be only referenced in the VS.
+    bool vertexOnly;
 
     // Cached so we can store sh::ShaderVariable to point to varying fields.
     sh::InterpolationType interpolation;
@@ -185,8 +182,6 @@ class VaryingPacking final : angle::NonCopyable
         return mInactiveVaryingNames;
     }
 
-    const std::vector<sh::ShaderVariable> &getInputVaryings() const { return mInputVaryings; }
-
   private:
     bool packVarying(const PackedVarying &packedVarying);
     bool isFree(unsigned int registerRow,
@@ -199,7 +194,6 @@ class VaryingPacking final : angle::NonCopyable
 
     std::vector<Register> mRegisterMap;
     std::vector<PackedVaryingRegister> mRegisterList;
-    std::vector<sh::ShaderVariable> mInputVaryings;
     std::vector<PackedVarying> mPackedVaryings;
     std::vector<std::string> mInactiveVaryingNames;
 

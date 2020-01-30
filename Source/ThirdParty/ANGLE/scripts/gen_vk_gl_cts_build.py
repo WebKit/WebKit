@@ -150,7 +150,7 @@ def main():
                 dataFiles.append(os.path.join(relativeDirectory, filename))
 
     dataFiles.sort()
-    relativeDirectories.sort(key=convertPathToVarName)
+    relativeDirectories.sort()
 
     #
     # BUILD.gn
@@ -175,13 +175,13 @@ copy("vk_gl_cts_data_{relDir}") {{
         for dataFile in dataFiles:
             path, filename = os.path.split(dataFile)
             if relativeDirectory == path:
-                filesToCopy += templateFilesToCopy.format(dataFile=dataFile.replace(os.sep, '/'))
+                filesToCopy += templateFilesToCopy.format(dataFile=dataFile)
         copyCommand = ""
         destDir = fixDestinationDirectory(pathReplacements, relativeDirectory)
         copyCommand += templateCopyCommand.format(
             relDir=convertPathToVarName(relativeDirectory),
             filesToCopy=filesToCopy,
-            destDir=destDir.replace(os.sep, '/'))
+            destDir=destDir)
         buildGnFile.write(copyCommand)
 
     #
@@ -205,8 +205,7 @@ copy("vk_gl_cts_data_{relDir}") {{
         for dataFile in dataFiles:
             if dataDirectory + os.sep in dataFile:
                 files += templateDataFiles.format(
-                    dataFile=fixDestinationDirectory(pathReplacements, dataFile).replace(
-                        os.sep, '/'))
+                    dataFile=fixDestinationDirectory(pathReplacements, dataFile))
         dataDepName = "angle_deqp_" + convertPathToVarName(dataDirectory)
         fileDeps = templateDataFileDeps.format(dataDepName=dataDepName, files=files)
         gniFile.write(fileDeps)

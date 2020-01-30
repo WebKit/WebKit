@@ -795,8 +795,7 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     VkPipelineRasterizationLineStateCreateInfoEXT rasterLineState = {};
     rasterLineState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
     // Always enable Bresenham line rasterization if available.
-    if (rasterAndMS.bits.rasterizationSamples <= 1 &&
-        contextVk->getFeatures().bresenhamLineRasterization.enabled)
+    if (contextVk->getFeatures().bresenhamLineRasterization.enabled)
     {
         rasterLineState.lineRasterizationMode = VK_LINE_RASTERIZATION_MODE_BRESENHAM_EXT;
         *pNextPtr                             = &rasterLineState;
@@ -812,13 +811,6 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
         provokingVertexState.provokingVertexMode = VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT;
         *pNextPtr                                = &provokingVertexState;
         pNextPtr                                 = &provokingVertexState.pNext;
-    }
-    VkPipelineRasterizationStateStreamCreateInfoEXT rasterStreamState = {};
-    rasterStreamState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT;
-    if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
-    {
-        rasterStreamState.rasterizationStream = 0;
-        rasterState.pNext                     = &rasterLineState;
     }
 
     // Multisample state.
@@ -988,11 +980,6 @@ void GraphicsPipelineDesc::updateRasterizerDiscardEnabled(
     mRasterizationAndMultisampleStateInfo.bits.rasterizationDiscardEnable =
         static_cast<uint32_t>(rasterizerDiscardEnabled);
     transition->set(ANGLE_GET_TRANSITION_BIT(mRasterizationAndMultisampleStateInfo, bits));
-}
-
-uint32_t GraphicsPipelineDesc::getRasterizationSamples() const
-{
-    return mRasterizationAndMultisampleStateInfo.bits.rasterizationSamples;
 }
 
 void GraphicsPipelineDesc::setRasterizationSamples(uint32_t rasterizationSamples)

@@ -7,7 +7,9 @@
 #ifndef SAMPLE_UTIL_TIMER_H
 #define SAMPLE_UTIL_TIMER_H
 
-class Timer final
+#include "util/util_export.h"
+
+class ANGLE_UTIL_EXPORT Timer final
 {
   public:
     Timer();

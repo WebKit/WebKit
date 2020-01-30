@@ -290,12 +290,7 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
             (iter.first == TExtension::OVR_multiview) || (iter.first == TExtension::OVR_multiview2);
         if (isMultiview)
         {
-            // Only either OVR_multiview or OVR_multiview2 should be emitted.
-            if ((iter.first != TExtension::OVR_multiview) ||
-                !IsExtensionEnabled(extBehavior, TExtension::OVR_multiview2))
-            {
-                EmitMultiviewGLSL(*this, compileOptions, iter.first, iter.second, sink);
-            }
+            EmitMultiviewGLSL(*this, compileOptions, iter.second, sink);
         }
 
         // Support ANGLE_texture_multisample extension on GLSL300

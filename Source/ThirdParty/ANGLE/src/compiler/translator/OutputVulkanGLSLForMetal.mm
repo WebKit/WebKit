@@ -74,9 +74,7 @@ TOutputVulkanGLSLForMetal::TOutputVulkanGLSLForMetal(TInfoSinkBase &objSink,
                         compileOptions)
 {}
 
-void TOutputVulkanGLSLForMetal::writeVariableType(const TType &type,
-                                                  const TSymbol *symbol,
-                                                  bool isFunctionArgument)
+void TOutputVulkanGLSLForMetal::writeVariableType(const TType &type, const TSymbol *symbol)
 {
     TType overrideType(type);
 
@@ -86,20 +84,15 @@ void TOutputVulkanGLSLForMetal::writeVariableType(const TType &type,
         overrideType.setInvariant(false);
     }
 
-    TOutputVulkanGLSL::writeVariableType(overrideType, symbol, isFunctionArgument);
+    TOutputVulkanGLSL::writeVariableType(overrideType, symbol);
 }
 
-bool TOutputVulkanGLSLForMetal::visitGlobalQualifierDeclaration(
-    Visit visit,
-    TIntermGlobalQualifierDeclaration *node)
+bool TOutputVulkanGLSLForMetal::visitInvariantDeclaration(Visit visit,
+                                                          TIntermInvariantDeclaration *node)
 {
     TInfoSinkBase &out = objSink();
     ASSERT(visit == PreVisit);
     const TIntermSymbol *symbol = node->getSymbol();
-
-    // No support for the |precise| keyword from EXT_gpu_shader5 (or ES3.2).
-    ASSERT(node->isInvariant());
-
     if (!ShoudRemoveInvariant(symbol->getType()))
     {
         out << "invariant ";

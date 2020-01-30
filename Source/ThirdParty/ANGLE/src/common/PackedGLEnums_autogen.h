@@ -513,10 +513,9 @@ enum class TextureTarget : uint8_t
     CubeMapNegativeY    = 10,
     CubeMapPositiveZ    = 11,
     CubeMapNegativeZ    = 12,
-    VideoImage          = 13,
 
-    InvalidEnum = 14,
-    EnumCount   = 14,
+    InvalidEnum = 13,
+    EnumCount   = 13,
 };
 
 template <>
@@ -534,10 +533,9 @@ enum class TextureType : uint8_t
     External            = 5,
     Rectangle           = 6,
     CubeMap             = 7,
-    VideoImage          = 8,
 
-    InvalidEnum = 9,
-    EnumCount   = 9,
+    InvalidEnum = 8,
+    EnumCount   = 8,
 };
 
 template <>

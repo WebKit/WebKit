@@ -210,8 +210,7 @@ class EXTBlendFuncExtendedDrawTestES3 : public EXTBlendFuncExtendedDrawTest
     void testSetUp() override
     {
         EXTBlendFuncExtendedDrawTest::testSetUp();
-        if (getClientMajorVersion() > 3 ||
-            (getClientMajorVersion() == 3 && getClientMinorVersion() >= 1))
+        if (getClientMajorVersion() > 3 || getClientMinorVersion() >= 1)
         {
             mIsES31OrNewer = true;
         }

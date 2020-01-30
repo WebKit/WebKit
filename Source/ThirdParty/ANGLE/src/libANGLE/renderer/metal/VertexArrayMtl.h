@@ -59,8 +59,6 @@ class VertexArrayMtl : public VertexArrayImpl
                                  gl::DrawElementsType *indexTypeOut);
 
   private:
-    void reset(ContextMtl *context);
-
     angle::Result syncDirtyAttrib(const gl::Context *glContext,
                                   const gl::VertexAttribute &attrib,
                                   const gl::VertexBinding &binding,
@@ -103,7 +101,7 @@ class VertexArrayMtl : public VertexArrayImpl
     gl::AttribArray<SimpleWeakBufferHolderMtl> mConvertedArrayBufferHolders;
     gl::AttribArray<size_t> mCurrentArrayBufferOffsets;
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
-    gl::AttribArray<const mtl::VertexFormat *> mCurrentArrayBufferFormats;
+    gl::AttribArray<MTLVertexFormat> mCurrentArrayBufferFormats;
 
     mtl::BufferPool mDynamicVertexData;
     mtl::BufferPool mDynamicIndexData;

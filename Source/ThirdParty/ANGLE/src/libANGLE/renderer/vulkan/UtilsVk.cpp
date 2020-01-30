@@ -80,11 +80,16 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
     bool srcIsFixed = params.srcFormat->isFixed;
     bool srcIsFloat = params.srcFormat->isFloat();
     bool srcIsA2BGR10 =
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010 ||
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010;
+        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010) ||
+         (params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010));
     bool srcIsRGB10A2 =
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102 ||
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102;
+        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
+         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
+        params.srcFormat->alphaBits;
+    bool srcIsRGB10X2 =
+        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
+         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
+        !params.srcFormat->alphaBits;
     bool srcIsHalfFloat = params.srcFormat->isVertexTypeHalfFloat();
 
     bool destIsSint      = params.destFormat->isSint();
@@ -158,6 +163,29 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
         else if (srcIsUnorm)
         {
             flags |= ConvertVertex_comp::kRGB10A2UnormToFloat;
+        }
+        else
+        {
+            UNREACHABLE();
+        }
+    }
+    else if (srcIsRGB10X2)
+    {
+        if (srcIsSint)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2SintToFloat;
+        }
+        else if (srcIsUint)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2UintToFloat;
+        }
+        else if (srcIsSnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2SnormToFloat;
+        }
+        else if (srcIsUnorm)
+        {
+            flags |= ConvertVertex_comp::kRGB10X2UnormToFloat;
         }
         else
         {
@@ -774,7 +802,7 @@ angle::Result UtilsVk::clearBuffer(ContextVk *contextVk,
     ANGLE_TRY(dest->recordCommands(contextVk, &commandBuffer));
 
     // Tell dest it's being written to.
-    dest->onSelfReadWrite(contextVk, VK_ACCESS_SHADER_WRITE_BIT);
+    dest->onSelfReadWrite(contextVk, 0, VK_ACCESS_SHADER_WRITE_BIT);
 
     const vk::Format &destFormat = dest->getViewFormat();
 
@@ -1120,6 +1148,10 @@ angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
     shaderParams.destOffset  = static_cast<uint32_t>(params.destOffset);
 
     uint32_t flags = GetConvertVertexFlags(params);
+
+    bool isAligned =
+        shaderParams.outputCount % 64 == 0 && shaderParams.componentCount % shaderParams.Ed == 0;
+    flags |= isAligned ? ConvertVertex_comp::kIsAligned : 0;
 
     VkDescriptorSet descriptorSet;
     vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;

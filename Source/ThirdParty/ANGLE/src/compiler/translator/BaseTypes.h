@@ -105,8 +105,7 @@ enum TBasicType
     EbtUSampler2DRect,
     EbtUSamplerBuffer,
     EbtUSamplerCubeArray,
-    EbtSamplerVideoWEBGL,
-    EbtGuardSamplerEnd = EbtSamplerVideoWEBGL,  // non type: see implementation of IsSampler()
+    EbtGuardSamplerEnd = EbtUSamplerCubeArray,  // non type: see implementation of IsSampler()
 
     // images
     EbtGuardImageBegin,
@@ -273,7 +272,6 @@ inline bool IsIntegerSampler(TBasicType type)
         case EbtSamplerCubeArrayShadow:
         case EbtSampler1DShadow:
         case EbtSampler2DRectShadow:
-        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -436,7 +434,6 @@ inline bool IsSampler2D(TBasicType type)
         case EbtSampler2DMS:
         case EbtISampler2DMS:
         case EbtUSampler2DMS:
-        case EbtSamplerVideoWEBGL:
             return true;
         case EbtSampler2DArray:
         case EbtISampler2DArray:
@@ -522,7 +519,6 @@ inline bool IsSamplerCube(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
-        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -578,7 +574,6 @@ inline bool IsSampler3D(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
-        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -634,7 +629,6 @@ inline bool IsSamplerArray(TBasicType type)
         case EbtUSampler1D:
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
-        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -690,7 +684,6 @@ inline bool IsShadowSampler(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
-        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -1006,9 +999,6 @@ enum TQualifier
     EvqPrimitiveID,    // gl_PrimitiveID
     EvqLayer,          // gl_Layer
 
-    // GLSL ES 3.1 extension EXT_gpu_shader5 qualifiers
-    EvqPrecise,
-
     // end of list
     EvqLast
 };
@@ -1021,41 +1011,6 @@ inline bool IsQualifierUnspecified(TQualifier qualifier)
 inline bool IsStorageBuffer(TQualifier qualifier)
 {
     return qualifier == EvqBuffer;
-}
-
-inline bool IsShaderIn(TQualifier qualifier)
-{
-    switch (qualifier)
-    {
-        case EvqVertexIn:
-        case EvqGeometryIn:
-        case EvqFragmentIn:
-        case EvqAttribute:
-        case EvqVaryingIn:
-        case EvqSmoothIn:
-        case EvqFlatIn:
-        case EvqCentroidIn:
-            return true;
-        default:
-            return false;
-    }
-}
-
-inline bool IsShaderOut(TQualifier qualifier)
-{
-    switch (qualifier)
-    {
-        case EvqVertexOut:
-        case EvqGeometryOut:
-        case EvqFragmentOut:
-        case EvqVaryingOut:
-        case EvqSmoothOut:
-        case EvqFlatOut:
-        case EvqCentroidOut:
-            return true;
-        default:
-            return false;
-    }
 }
 
 enum TLayoutImageInternalFormat
@@ -1314,7 +1269,6 @@ inline const char *getQualifierString(TQualifier q)
     case EvqGeometryIn:             return "in";
     case EvqGeometryOut:            return "out";
     case EvqPerVertexIn:            return "gl_in";
-    case EvqPrecise:                return "precise";
     default: UNREACHABLE();         return "unknown qualifier";
     }
     // clang-format on

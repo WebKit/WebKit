@@ -449,7 +449,7 @@ class LineLoopHelper final : angle::NonCopyable
     void release(ContextVk *contextVk);
     void destroy(VkDevice device);
 
-    static void Draw(uint32_t count, uint32_t baseVertex, CommandBuffer *commandBuffer);
+    static void Draw(uint32_t count, CommandBuffer *commandBuffer);
 
   private:
     DynamicBuffer mDynamicIndexBuffer;
@@ -485,10 +485,13 @@ class BufferHelper final : public CommandGraphResource
         addReadDependency(contextVk, reader);
         onReadAccess(reader, readAccessType);
     }
-    void onWrite(ContextVk *contextVk, CommandGraphResource *writer, VkAccessFlags writeAccessType)
+    void onWrite(ContextVk *contextVk,
+                 CommandGraphResource *writer,
+                 VkAccessFlags readAccessType,
+                 VkAccessFlags writeAccessType)
     {
         addWriteDependency(contextVk, writer);
-        onWriteAccess(contextVk, writeAccessType);
+        onWriteAccess(contextVk, readAccessType, writeAccessType);
     }
     // Helper for setting a graph dependency between two buffers.  This is a specialized function as
     // both buffers may incur a memory barrier.  Using |onRead| followed by |onWrite| between the
@@ -500,17 +503,19 @@ class BufferHelper final : public CommandGraphResource
     {
         addReadDependency(contextVk, reader);
         onReadAccess(reader, readAccessType);
-        reader->onWriteAccess(contextVk, writeAccessType);
+        reader->onWriteAccess(contextVk, 0, writeAccessType);
     }
     // Helper for setting a barrier when different parts of the same buffer is being read from and
-    // written to in the same command.
-    void onSelfReadWrite(ContextVk *contextVk, VkAccessFlags writeAccessType)
+    // written to.
+    void onSelfReadWrite(ContextVk *contextVk,
+                         VkAccessFlags readAccessType,
+                         VkAccessFlags writeAccessType)
     {
         if (mCurrentReadAccess || mCurrentWriteAccess)
         {
             finishCurrentCommands(contextVk);
         }
-        onWriteAccess(contextVk, writeAccessType);
+        onWriteAccess(contextVk, readAccessType, writeAccessType);
     }
     // Set write access mask when the buffer is modified externally, e.g. by host.  There is no
     // graph resource to create a dependency to.
@@ -555,8 +560,6 @@ class BufferHelper final : public CommandGraphResource
     // After a sequence of writes, call invalidate to ensure the data is visible to the host.
     angle::Result invalidate(ContextVk *contextVk, VkDeviceSize offset, VkDeviceSize size);
 
-    void changeQueue(uint32_t newQueueFamilyIndex, CommandBuffer *commandBuffer);
-
   private:
     angle::Result mapImpl(ContextVk *contextVk);
     bool needsOnReadBarrier(VkAccessFlags readAccessType,
@@ -581,10 +584,13 @@ class BufferHelper final : public CommandGraphResource
                                            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
         }
     }
-    bool needsOnWriteBarrier(VkAccessFlags writeAccessType,
+    bool needsOnWriteBarrier(VkAccessFlags readAccessType,
+                             VkAccessFlags writeAccessType,
                              VkAccessFlags *barrierSrcOut,
                              VkAccessFlags *barrierDstOut);
-    void onWriteAccess(ContextVk *contextVk, VkAccessFlags writeAccessType);
+    void onWriteAccess(ContextVk *contextVk,
+                       VkAccessFlags readAccessType,
+                       VkAccessFlags writeAccessType);
 
     // Vulkan objects.
     Buffer mBuffer;
@@ -596,7 +602,6 @@ class BufferHelper final : public CommandGraphResource
     VkDeviceSize mSize;
     uint8_t *mMappedMemory;
     const Format *mViewFormat;
-    uint32_t mCurrentQueueFamilyIndex;
 
     // For memory barriers.
     VkFlags mCurrentWriteAccess;
@@ -637,20 +642,18 @@ enum class ImageLayout
 {
     Undefined                  = 0,
     ExternalPreInitialized     = 1,
-    ExternalShadersReadOnly    = 2,
-    ExternalShadersWrite       = 3,
-    TransferSrc                = 4,
-    TransferDst                = 5,
-    ComputeShaderReadOnly      = 6,
-    ComputeShaderWrite         = 7,
-    AllGraphicsShadersReadOnly = 8,
-    AllGraphicsShadersWrite    = 9,
-    ColorAttachment            = 10,
-    DepthStencilAttachment     = 11,
-    Present                    = 12,
+    TransferSrc                = 2,
+    TransferDst                = 3,
+    ComputeShaderReadOnly      = 4,
+    ComputeShaderWrite         = 5,
+    AllGraphicsShadersReadOnly = 6,
+    AllGraphicsShadersWrite    = 7,
+    ColorAttachment            = 8,
+    DepthStencilAttachment     = 9,
+    Present                    = 10,
 
-    InvalidEnum = 13,
-    EnumCount   = 13,
+    InvalidEnum = 11,
+    EnumCount   = 11,
 };
 
 class ImageHelper final : public CommandGraphResource
@@ -749,7 +752,6 @@ class ImageHelper final : public CommandGraphResource
     const Format &getFormat() const { return *mFormat; }
     GLint getSamples() const { return mSamples; }
 
-    ImageLayout getCurrentImageLayout() const { return mCurrentLayout; }
     VkImageLayout getCurrentLayout() const;
 
     // Helper function to calculate the extents of a render target created for a certain mip of the
@@ -893,10 +895,6 @@ class ImageHelper final : public CommandGraphResource
                               ImageLayout newLayout,
                               uint32_t newQueueFamilyIndex,
                               CommandBuffer *commandBuffer);
-
-    // If the image is used externally to GL, its layout could be different from ANGLE's internal
-    // state.  This function is used to inform ImageHelper of an external layout change.
-    void onExternalLayoutChange(ImageLayout newLayout);
 
     uint32_t getBaseLevel();
     void setBaseAndMaxLevels(uint32_t baseLevel, uint32_t maxLevel);

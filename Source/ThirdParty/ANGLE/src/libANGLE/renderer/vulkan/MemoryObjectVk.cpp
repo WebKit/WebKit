@@ -7,7 +7,7 @@
 
 #include "libANGLE/renderer/vulkan/MemoryObjectVk.h"
 
-#include "volk.h"
+#include <vulkan/vulkan.h>
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"

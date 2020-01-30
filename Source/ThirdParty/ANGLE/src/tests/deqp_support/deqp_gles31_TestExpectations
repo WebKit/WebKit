@@ -525,13 +525,6 @@
 // Failing with dEQP roll
 3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.22 = FAIL
 3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.41 = FAIL
-4234 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = FAIL
-4234 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = FAIL
-4234 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = FAIL
-4234 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = FAIL
-4234 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.buffer.renderbuffer_storage_multisample = FAIL
-4234 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = FAIL
-4234 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = FAIL
 
 // OPENGL Failing Tests
 1665 WIN NVIDIA OPENGL : dEQP-GLES31.functional.draw_indirect.negative.command_offset_not_in_buffer_unsigned32_wrap = FAIL
@@ -554,6 +547,9 @@
 1442 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 
+// OpenGL/D3D11/Vulkan Failing Tests
+1442 : dEQP-GLES31.functional.synchronization.inter_call.without_memory_barrier.atomic_counter_dispatch_100_calls_1k_invocations = FAIL
+
 // Waiting for Program pipeline functionality
 3570 : dEQP-GLES31.functional.state_query.integer.program_pipeline_binding_* = FAIL
 3570 : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
@@ -561,7 +557,17 @@
 3570 : dEQP-GLES31.functional.debug.object_labels.program_pipeline = FAIL
 3570 : dEQP-GLES31.functional.separate_shader.* = FAIL
 
+// The following passes with Vulkan (with warning), but fails otherwise.  We'll keep the file simple by expecting it to fail.
+2324 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.vertex_array.draw_range_elements = FAIL
+2324 : dEQP-GLES31.functional.debug.negative_coverage.get_error.vertex_array.draw_range_elements_incomplete_primitive = FAIL
+
 // These tests are failing because of compile errors with SSBOs in compute shaders.
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.exceed_shared_memory_size_limit = FAIL
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.exceed_shared_memory_size_limit = FAIL
+1951 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.exceed_shared_memory_size_limit = FAIL
 
 1442 D3D11 : dEQP-GLES31.functional.stencil_texturing.* = SKIP
 // TODO(xinghua.cao@intel.com): FAIL expectation instead of SKIP should be sufficient for OpenGL, but the
@@ -577,18 +583,11 @@
 1729 D3D11 : dEQP-GLES31.functional.state_query.program.active_atomic_counter_buffers_get_programiv = SKIP
 
 // Vulkan Android failures
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_dfdx = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdx = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdy = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_fwidth = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_dfdy = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_8_samples_dfdy = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_max_samples_dfdy = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_points_8_samples_dfdy = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = FAIL
-4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = FAIL
 4110 ANDROID VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = FAIL
 4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = FAIL
 4110 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = FAIL
@@ -622,14 +621,14 @@
 2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_vertex = FAIL
 2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_fragment = FAIL
 2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_compute = FAIL
-2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.*uniform_vertex = FAIL
-2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.*uniform_fragment = FAIL
-2703 VULKAN ANDROID : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.*uniform_compute = FAIL
 
 // General Vulkan failures
 
 // Front-end query bugs:
 3596 VULKAN : dEQP-GLES31.functional.program_interface_query.shader_storage_block.buffer_data_size.* = FAIL
+
+// Shader support:
+3565 VULKAN : dEQP-GLES31.functional.shaders.builtin_functions.texture_size.samples_* = SKIP
 
 // SSBO synchronization:
 4097 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_alias_overwrite = FAIL
@@ -644,23 +643,18 @@
 3579 ANDROID VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
 
 // Debug:
-3590 SWIFTSHADER : dEQP-GLES31.functional.debug.negative_coverage.get_error.buffer.framebuffer_texture2d = FAIL
+3590 VULKAN : dEQP-GLES31.functional.debug.negative_coverage.*exceed_shared_memory_size_limit = FAIL
 
 // Stencil textures (some missing support for base level):
 3683 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.stencil_texturing.format.* = FAIL
 3683 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.stencil_texturing.misc.compare_mode_effect = FAIL
 
-// Instanced lines with base vertex:
-4166 VULKAN PIXEL2ORXL : dEQP-GLES31.functional.draw_base_vertex.draw_elements_instanced_base_vertex.lines.instanced_attributes = FAIL
-
 // Need to support non-color when staging image updates
 4080 ANDROID VULKAN : dEQP-GLES31.functional.stencil_texturing.misc.base_level = SKIP
 
-// The following are failing because of pixel/sub-pixel rendering differences than what is expected:
-4213 SWIFTSHADER : dEQP-GLES31.functional.texture.multisample.samples_1.sample_position = FAIL
-4213 SWIFTSHADER : dEQP-GLES31.functional.texture.multisample.samples_2.sample_position = FAIL
-4213 SWIFTSHADER : dEQP-GLES31.functional.texture.multisample.samples_3.sample_position = FAIL
-4213 SWIFTSHADER : dEQP-GLES31.functional.texture.multisample.samples_4.sample_position = FAIL
+// Multisampled textures:
+3565 VULKAN : dEQP-GLES31.functional.texture.multisample.* = SKIP
+3565 VULKAN : dEQP-GLES31.functional.state_query.texture*multisample.* = SKIP
 
 // Vulkan creates the image view with the same format as the texture.
 3885 VULKAN : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.* = FAIL
@@ -668,8 +662,33 @@
 // Cannot create 2D (array) view of 3D texture.
 3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*layer = FAIL
 
+// Inactive SSBOs with flexible array member (about 20% of these tests are affected):
+3714 VULKAN : dEQP-GLES31.functional.ssbo.layout.random.* = FAIL
+
 // OpenGL ES 3.1 conformance failures
 4098 SWIFTSHADER : dEQP-GLES31.functional.compute.basic.write_multiple_unsized_arr_multiple_groups = FAIL
 4098 SWIFTSHADER : dEQP-GLES31.functional.compute.basic.write_multiple_unsized_arr_single_invocation = FAIL
 
-// OpenGL ES 3.2 / 3.1 extensions
+4099 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.draw_elements_indirect.base_vertex.index_neg_* = FAIL
+
+4100 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.random.30 = FAIL
+4100 SWIFTSHADER : dEQP-GLES31.functional.draw_indirect.random.39 = FAIL
+
+4101 SWIFTSHADER : dEQP-GLES31.functional.multisample.default_framebuffer.sample_position = FAIL
+
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getfloat = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getinteger = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_height_getinteger64 = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getfloat = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getinteger = FAIL
+4102 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.max_framebuffer_width_getinteger64 = FAIL
+
+4103 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture_level.texture_2d_multisample.* = FAIL
+
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_format_float = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_format_integer = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_levels_float = FAIL
+4104 SWIFTSHADER : dEQP-GLES31.functional.state_query.texture.texture_2d_multisample.texture_immutable_levels_integer = FAIL
+
+4105 SWIFTSHADER : dEQP-GLES31.functional.stencil_texturing.format.depth24_stencil8_cube = FAIL
+4105 SWIFTSHADER : dEQP-GLES31.functional.stencil_texturing.format.depth32f_stencil8_cube = FAIL

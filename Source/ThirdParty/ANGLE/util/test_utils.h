@@ -15,51 +15,56 @@
 
 #include "common/angleutils.h"
 #include "util/Timer.h"
+#include "util/util_export.h"
 
 namespace angle
 {
 // Cross platform equivalent of the Windows Sleep function
-void Sleep(unsigned int milliseconds);
+ANGLE_UTIL_EXPORT void Sleep(unsigned int milliseconds);
 
-void SetLowPriorityProcess();
+ANGLE_UTIL_EXPORT void SetLowPriorityProcess();
 
 // Write a debug message, either to a standard output or Debug window.
-void WriteDebugMessage(const char *format, ...);
+ANGLE_UTIL_EXPORT void WriteDebugMessage(const char *format, ...);
 
 // Set thread affinity and priority.
-bool StabilizeCPUForBenchmarking();
+ANGLE_UTIL_EXPORT bool StabilizeCPUForBenchmarking();
 
 // Set a crash handler to print stack traces.
 using CrashCallback = std::function<void()>;
-void InitCrashHandler(CrashCallback *callback);
-void TerminateCrashHandler();
+ANGLE_UTIL_EXPORT void InitCrashHandler(CrashCallback *callback);
+ANGLE_UTIL_EXPORT void TerminateCrashHandler();
 
 // Print a stack back trace.
-void PrintStackBacktrace();
+ANGLE_UTIL_EXPORT void PrintStackBacktrace();
 
 // Get temporary directory.
-bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen);
+ANGLE_UTIL_EXPORT bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen);
 
 // Creates a temporary file. The full path is placed in |path|, and the
 // function returns true if was successful in creating the file. The file will
 // be empty and all handles closed after this function returns.
-bool CreateTemporaryFile(char *tempFileNameOut, uint32_t maxFileNameLen);
+ANGLE_UTIL_EXPORT bool CreateTemporaryFile(char *tempFileNameOut, uint32_t maxFileNameLen);
 
 // Same as CreateTemporaryFile but the file is created in |dir|.
-bool CreateTemporaryFileInDir(const char *dir, char *tempFileNameOut, uint32_t maxFileNameLen);
+ANGLE_UTIL_EXPORT bool CreateTemporaryFileInDir(const char *dir,
+                                                char *tempFileNameOut,
+                                                uint32_t maxFileNameLen);
 
 // Deletes a file or directory.
-bool DeleteFile(const char *path);
+ANGLE_UTIL_EXPORT bool DeleteFile(const char *path);
 
 // Reads a file contents into a string.
-bool ReadEntireFileToString(const char *filePath, char *contentsOut, uint32_t maxLen);
+ANGLE_UTIL_EXPORT bool ReadEntireFileToString(const char *filePath,
+                                              char *contentsOut,
+                                              uint32_t maxLen);
 
 // Compute a file's size.
-bool GetFileSize(const char *filePath, uint32_t *sizeOut);
+ANGLE_UTIL_EXPORT bool GetFileSize(const char *filePath, uint32_t *sizeOut);
 
-class ProcessHandle;
+class ANGLE_UTIL_EXPORT ProcessHandle;
 
-class Process : angle::NonCopyable
+class ANGLE_UTIL_EXPORT Process : angle::NonCopyable
 {
   public:
     virtual bool started()    = 0;
@@ -73,7 +78,7 @@ class Process : angle::NonCopyable
     const std::string &getStderr() const { return mStderr; }
 
   protected:
-    friend class ProcessHandle;
+    friend class ANGLE_UTIL_EXPORT ProcessHandle;
     virtual ~Process();
 
     Timer mTimer;
@@ -81,7 +86,7 @@ class Process : angle::NonCopyable
     std::string mStderr;
 };
 
-class ProcessHandle final : angle::NonCopyable
+class ANGLE_UTIL_EXPORT ProcessHandle final : angle::NonCopyable
 {
   public:
     ProcessHandle();
@@ -110,11 +115,11 @@ class ProcessHandle final : angle::NonCopyable
 //
 // On success, returns a Process pointer with started() == true.
 // On failure, returns a Process pointer with started() == false.
-Process *LaunchProcess(const std::vector<const char *> &args,
-                       bool captureStdout,
-                       bool captureStderr);
+ANGLE_UTIL_EXPORT Process *LaunchProcess(const std::vector<const char *> &args,
+                                         bool captureStdout,
+                                         bool captureStderr);
 
-int NumberOfProcessors();
+ANGLE_UTIL_EXPORT int NumberOfProcessors();
 
 }  // namespace angle
 

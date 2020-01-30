@@ -141,9 +141,6 @@ class TCompiler : public TShHandleBase
         return mGeometryShaderOutputPrimitiveType;
     }
 
-    unsigned int getStructSize(const ShaderVariable &var) const;
-    unsigned int getSharedMemorySize() const;
-
     sh::GLenum getShaderType() const { return mShaderType; }
 
     bool validateAST(TIntermNode *root);
@@ -178,7 +175,6 @@ class TCompiler : public TShHandleBase
     std::vector<sh::ShaderVariable> mUniforms;
     std::vector<sh::ShaderVariable> mInputVaryings;
     std::vector<sh::ShaderVariable> mOutputVaryings;
-    std::vector<sh::ShaderVariable> mSharedVariables;
     std::vector<sh::InterfaceBlock> mInterfaceBlocks;
     std::vector<sh::InterfaceBlock> mUniformBlocks;
     std::vector<sh::InterfaceBlock> mShaderStorageBlocks;
@@ -305,11 +301,7 @@ TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput 
 void DeleteCompiler(TCompiler *);
 
 void EmitWorkGroupSizeGLSL(const TCompiler &, TInfoSinkBase &sink);
-void EmitMultiviewGLSL(const TCompiler &,
-                       const ShCompileOptions &,
-                       const TExtension,
-                       const TBehavior,
-                       TInfoSinkBase &sink);
+void EmitMultiviewGLSL(const TCompiler &, const ShCompileOptions &, TBehavior, TInfoSinkBase &sink);
 
 }  // namespace sh
 

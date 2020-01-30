@@ -346,7 +346,6 @@ class ProgramState final : angle::NonCopyable
     const std::vector<SamplerBinding> &getSamplerBindings() const { return mSamplerBindings; }
     const std::vector<ImageBinding> &getImageBindings() const { return mImageBindings; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
-    const RangeUI &getDefaultUniformRange() const { return mDefaultUniformRange; }
     const RangeUI &getSamplerUniformRange() const { return mSamplerUniformRange; }
     const RangeUI &getImageUniformRange() const { return mImageUniformRange; }
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
@@ -456,7 +455,6 @@ class ProgramState final : angle::NonCopyable
     std::vector<BufferVariable> mBufferVariables;
     std::vector<InterfaceBlock> mShaderStorageBlocks;
     std::vector<AtomicCounterBuffer> mAtomicCounterBuffers;
-    RangeUI mDefaultUniformRange;
     RangeUI mSamplerUniformRange;
     RangeUI mImageUniformRange;
     RangeUI mAtomicCounterUniformRange;
@@ -571,8 +569,6 @@ struct ProgramVaryingRef
 
     const sh::ShaderVariable *frontShader = nullptr;
     const sh::ShaderVariable *backShader  = nullptr;
-    ShaderType frontShaderStage           = ShaderType::InvalidEnum;
-    ShaderType backShaderStage            = ShaderType::InvalidEnum;
 };
 
 using ProgramMergedVaryings = std::map<std::string, ProgramVaryingRef>;
@@ -973,8 +969,6 @@ class Program final : angle::NonCopyable, public LabeledObject
     // Writes a program's binary to the output memory buffer.
     void serialize(const Context *context, angle::MemoryBuffer *binaryOut) const;
 
-    rx::Serial serial() const { return mSerial; }
-
   private:
     struct LinkingState;
 
@@ -996,7 +990,6 @@ class Program final : angle::NonCopyable, public LabeledObject
     bool linkVaryings(InfoLog &infoLog) const;
 
     bool linkUniforms(const Caps &caps,
-                      const Version &version,
                       InfoLog &infoLog,
                       const ProgramAliasedBindings &uniformLocationBindings,
                       GLuint *combinedImageUniformsCount,
@@ -1082,7 +1075,6 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     void postResolveLink(const gl::Context *context);
 
-    rx::Serial mSerial;
     ProgramState mState;
     rx::ProgramImpl *mProgram;
 

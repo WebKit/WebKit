@@ -36,6 +36,8 @@
 //     floor(c / Ns) * Ss + mod(c, Ns) * Bs
 //
 //   - Flags:
+//     * IsAligned: if true, assumes the workgroup size divides the output count, so there is no
+//                  need for bound checking.
 //     * IsBigEndian
 //   - Conversion:
 //     * SintToSint: covers byte, short and int types (distinguished by Bs and Bd).
@@ -59,6 +61,11 @@
 //                           Converts to float.
 //     * RGB10A2SnormToFloat: Similar to IntToFloat, but normalized and only for RGB10A2.
 //     * RGB10A2UnormToFloat: Similar to UintToFloat, but normalized and only for RGB10A2.
+//     * RGB10X2SintToFloat: Same types as RGB10X2SintToSint for source (including scaled).
+//                           Converts to float.
+//     * RGB10X2UintToFloat: Same types as RGB10X2UintToUint for source (including uscaled).
+//                           Converts to float.
+//     * RGB10X2SnormToFloat: Similar to IntToFloat, but normalized and only for RGB10X2.
 //
 // SintToSint, UintToUint and FloatToFloat correspond to CopyNativeVertexData() and
 // Copy8SintTo16SintVertexData() in renderer/copyvertex.inc, FixedToFloat corresponds to
@@ -66,20 +73,22 @@
 // normalized=false and SnormToFloat and UnormToFloat correspond to CopyTo32FVertexData with
 // normalized=true. A2BGR10SintToSint, A2BGR10UintToUint, A2BGR10SintToFloat, A2BGR10UintToFloat
 // and A2BGR10SnormToFloat correspond to CopyXYZ10W2ToXYZW32FVertexData with the proper options.
-// RGB10A2SintToFloat, RGB10A2UintToFloat and RGB10A2SnormToFloat correspond to
-// CopyW2XYZ10ToXYZW32FVertexData. RGB10UintToFloat corresponds to CopyXYZ10ToXYZW32FVertexData
-// with the proper options.
+// RGB10A2SintToFloat, RGB10A2UintToFloat, RGB10A2SnormToFloat, and RGB10X2UnormToFloat correspond
+// to CopyW2XYZ10ToXYZW32FVertexData, and RGB10X2SintToFloat, RGB10UintToFloat,
+// RGB10X2SnormToFloat, and RGB10X2UnormToFloat correspond to CopyXYZ10ToXYZW32FVertexData with
+// the proper options.
 
 #version 450 core
 
 // Source type
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat
+#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat || \
+    RGB10X2SintToFloat
 #define SrcType int
 #elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || \
-    RGB10A2UintToFloat
+    RGB10A2UintToFloat || RGB10X2UintToFloat
 #define SrcType uint
 #elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || A2BGR10SnormToFloat || \
-    RGB10A2SnormToFloat || RGB10A2UnormToFloat
+    RGB10A2SnormToFloat || RGB10A2UnormToFloat || RGB10X2SnormToFloat || RGB10X2UnormToFloat
 #define SrcType float
 #else
 #error "Not all conversions are accounted for"
@@ -94,7 +103,8 @@
 #define IsDestFloat 0
 #elif SintToFloat || UintToFloat || SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || \
     A2BGR10SintToFloat || A2BGR10UintToFloat || A2BGR10SnormToFloat || \
-    RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat
+    RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat || \
+    RGB10X2SintToFloat || RGB10X2UintToFloat || RGB10X2SnormToFloat || RGB10X2UnormToFloat
 #define DestType float
 #define IsDestFloat 1
 #else
@@ -212,11 +222,13 @@ SrcType loadSourceComponent(uint cd)
     uint component = cd % Nd;
 
     // Fill the alpha channel with 1.0f in case of the source format doesn't have an alpha channel
-    // For all other components fill in 0.
-    if (component >= Ns && component < 3)
+    // For all other components fill in 0
+#if !(RGB10X2SintToFloat || RGB10X2UintToFloat || RGB10X2SnormToFloat || RGB10X2UnormToFloat)
+    if (component >= Ns)
     {
         return 0;
     }
+#endif
 
     // Load the source component
     uint offset = getSourceComponentOffset(vertex, component);
@@ -227,7 +239,8 @@ SrcType loadSourceComponent(uint cd)
     uint valueBits = component == 3 ? 2 : 10;
     uint shiftBits = 10 * component;
     uint valueMask = component == 3 ? 0x03 : 0x3FF;
-#elif RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat
+#elif RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat || \
+    RGB10X2SintToFloat || RGB10X2UintToFloat || RGB10X2SnormToFloat || RGB10X2UnormToFloat
     uint valueBits = component == 3 ? 2 : 10;
     // channel order is reversed
     uint shiftBits = component == 3 ? 0 : (valueBits * (2 - component) + 2);
@@ -238,37 +251,18 @@ SrcType loadSourceComponent(uint cd)
     uint valueMask = valueBits == 32 ? -1 : (1 << valueBits) - 1;
 #endif
 
-    uint valueAsUint;
-
-    if (component >= Ns && component == 3)
-    {
-        // See GLES3.0 section 2.9.1 Transferring Array Elements
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat || \
-    UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat
-        // For integers, alpha should take a value of 1.
-        valueAsUint = 1;
-#elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat
-        // The largest signed number is 0b011...1 which is valueMask >> 1
-        valueAsUint = valueMask >> 1;
-#elif UnormToFloat || RGB10A2UnormToFloat
-        // The largest unsigned number is 0b11...1 which is valueMask
-        valueAsUint = valueMask;
-#elif FixedToFloat
-        // 1.0 in fixed point is 0x10000
-        valueAsUint = 0x10000;
-#elif FloatToFloat
-        valueAsUint = floatBitsToUint(1.0);
+    // When alpha channel is dummy, fill it with 1.0f
+#if RGB10X2SintToFloat || RGB10X2UintToFloat || RGB10X2SnormToFloat
+    uint valueAsUint = component == 3 ? 0x01 : (block >> shiftBits) & valueMask;
+#elif RGB10X2UnormToFloat
+    uint valueAsUint = component == 3 ? 0x03 : (block >> shiftBits) & valueMask;
 #else
-#error "Not all conversions are accounted for"
+    uint valueAsUint = (block >> shiftBits) & valueMask;
 #endif
-    }
-    else
-    {
-        valueAsUint = (block >> shiftBits) & valueMask;
-    }
 
     // Convert to SrcType
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat
+#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat \
+    || RGB10X2SintToFloat
     if (valueBits < 32)
     {
         bool isNegative = (valueAsUint & (1 << (valueBits - 1))) != 0;
@@ -279,9 +273,10 @@ SrcType loadSourceComponent(uint cd)
         valueAsUint |= signExtension;
     }
     SrcType value = SrcType(valueAsUint);
-#elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat
+#elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat \
+    || RGB10X2UintToFloat
     SrcType value = valueAsUint;
-#elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat
+#elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat || RGB10X2SnormToFloat
     if (valueBits < 32)
     {
         bool isNegative = (valueAsUint & (1 << (valueBits - 1))) != 0;
@@ -291,7 +286,7 @@ SrcType loadSourceComponent(uint cd)
     int valueAsInt = int(valueAsUint);
     SrcType value = float(valueAsInt) / (valueMask >> 1);
     value = max(value, float(-1));
-#elif UnormToFloat || RGB10A2UnormToFloat
+#elif UnormToFloat || RGB10A2UnormToFloat || RGB10X2UnormToFloat
     float positiveMax = valueMask;
     // Scale [0, P] to [0, 1]
     SrcType value = valueAsUint / positiveMax;
@@ -349,17 +344,21 @@ void storeDestinationComponents(uint valueAsUint)
 
 void main()
 {
+#if !IsAligned
     if (gl_GlobalInvocationID.x >= params.outputCount)
         return;
+#endif // IsAligned
 
     uint valueOut = 0;
     for (uint i = 0; i < Ed; ++i)
     {
         uint cd = gl_GlobalInvocationID.x * Ed + i;
+#if !IsAligned
         if (cd >= params.componentCount)
         {
             break;
         }
+#endif
 
         SrcType srcValue = loadSourceComponent(cd);
         DestType destValue = convertComponent(srcValue);

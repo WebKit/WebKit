@@ -21,11 +21,9 @@
 *.vsp
 *~
 .*.sw*
-.sw*
 .cipd
 .gclient
 .gclient_entries
-.git_cl_description_backup
 /src/tests/third_party/gles_conformance_tests
 /testing
 /third_party/android_ndk
@@ -56,12 +54,6 @@
 /third_party/yasm
 /third_party/zlib
 /tools/clang
-/tools/flex-bison/linux/bison
-/tools/flex-bison/linux/flex
-/tools/flex-bison/windows/bison.exe
-/tools/flex-bison/windows/flex.exe
-/tools/flex-bison/windows/m4.exe
-/tools/flex-bison/windows/msys*.dll
 /tools/glslang/glslang_validator
 /tools/glslang/glslang_validator.exe
 /tools/md_browser

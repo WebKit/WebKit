@@ -74,51 +74,5 @@ TEST_P(RenderbufferMultisampleTest, IntegerInternalformat)
     }
 }
 
-// Ensure that the following spec language is correctly implemented:
-//
-//   the resulting value for RENDERBUFFER_SAMPLES is guaranteed to be greater than or equal to
-//   samples and no more than the next larger sample count supported by the implementation.
-//
-// For example, if 2, 4, and 8 samples are supported, if 5 samples are requested, ANGLE will
-// use 8 samples, and return 8 when GL_RENDERBUFFER_SAMPLES is queried.
-TEST_P(RenderbufferMultisampleTest, OddSampleCount)
-{
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
-    ASSERT_GL_NO_ERROR();
-
-    // Lookup the supported number of sample counts
-    GLint numSampleCounts = 0;
-    std::vector<GLint> sampleCounts;
-    GLsizei queryBufferSize = 1;
-    glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, queryBufferSize,
-                          &numSampleCounts);
-    ANGLE_SKIP_TEST_IF((numSampleCounts < 2));
-    sampleCounts.resize(numSampleCounts);
-    queryBufferSize = numSampleCounts;
-    glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_SAMPLES, queryBufferSize,
-                          sampleCounts.data());
-
-    // Look for two sample counts that are not 1 apart (e.g. 2 and 4).  Request a sample count
-    // that's between those two samples counts (e.g. 3) and ensure that GL_RENDERBUFFER_SAMPLES
-    // is the higher number.
-    for (int i = 1; i < numSampleCounts; i++)
-    {
-        if (sampleCounts[i - 1] > (sampleCounts[i] + 1))
-        {
-            glRenderbufferStorageMultisample(GL_RENDERBUFFER, sampleCounts[i] + 1, GL_RGBA8, 64,
-                                             64);
-            ASSERT_GL_NO_ERROR();
-            GLint renderbufferSamples = 0;
-            glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_SAMPLES,
-                                         &renderbufferSamples);
-            ASSERT_GL_NO_ERROR();
-            EXPECT_EQ(renderbufferSamples, sampleCounts[i - 1]);
-            break;
-        }
-    }
-}
-
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(RenderbufferMultisampleTest);
 }  // namespace

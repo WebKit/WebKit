@@ -21,11 +21,12 @@
 
 namespace gl
 {
+
 class Buffer;
-class Context;
 struct Box;
 struct Extents;
 struct PixelUnpackState;
+
 }  // namespace gl
 
 namespace rx

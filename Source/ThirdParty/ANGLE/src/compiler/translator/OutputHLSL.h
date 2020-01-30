@@ -58,7 +58,6 @@ class OutputHLSL : public TIntermTraverser
 
     const std::map<std::string, unsigned int> &getShaderStorageBlockRegisterMap() const;
     const std::map<std::string, unsigned int> &getUniformBlockRegisterMap() const;
-    const std::map<std::string, bool> &getUniformBlockUseStructuredBufferMap() const;
     const std::map<std::string, unsigned int> &getUniformRegisterMap() const;
     unsigned int getReadonlyImage2DRegisterIndex() const;
     unsigned int getImage2DRegisterIndex() const;
@@ -101,8 +100,7 @@ class OutputHLSL : public TIntermTraverser
     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *) override;
     bool visitBlock(Visit visit, TIntermBlock *node) override;
-    bool visitGlobalQualifierDeclaration(Visit visit,
-                                         TIntermGlobalQualifierDeclaration *node) override;
+    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node) override;
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
     bool visitLoop(Visit visit, TIntermLoop *) override;
     bool visitBranch(Visit visit, TIntermBranch *) override;

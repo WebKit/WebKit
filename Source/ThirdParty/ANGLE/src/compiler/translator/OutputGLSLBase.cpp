@@ -111,12 +111,6 @@ void TOutputGLSLBase::writeInvariantQualifier(const TType &type)
     }
 }
 
-void TOutputGLSLBase::writePreciseQualifier(const TType &type)
-{
-    TInfoSinkBase &out = objSink();
-    out << "precise ";
-}
-
 void TOutputGLSLBase::writeFloat(TInfoSinkBase &out, float f)
 {
     if ((gl::isInf(f) || gl::isNaN(f)) && mShaderVersion >= 300)
@@ -212,8 +206,7 @@ std::string TOutputGLSLBase::getCommonLayoutQualifiers(TIntermTyped *variable)
     return out.str();
 }
 
-// Outputs memory qualifiers applied to images, buffers and its fields, as well as image function
-// arguments.
+// Outputs what comes after in/out/uniform/buffer storage qualifier.
 std::string TOutputGLSLBase::getMemoryQualifiers(const TType &type)
 {
     std::ostringstream out;
@@ -221,26 +214,31 @@ std::string TOutputGLSLBase::getMemoryQualifiers(const TType &type)
     const TMemoryQualifier &memoryQualifier = type.getMemoryQualifier();
     if (memoryQualifier.readonly)
     {
+        ASSERT(IsImage(type.getBasicType()) || IsStorageBuffer(type.getQualifier()));
         out << "readonly ";
     }
 
     if (memoryQualifier.writeonly)
     {
+        ASSERT(IsImage(type.getBasicType()) || IsStorageBuffer(type.getQualifier()));
         out << "writeonly ";
     }
 
     if (memoryQualifier.coherent)
     {
+        ASSERT(IsImage(type.getBasicType()) || IsStorageBuffer(type.getQualifier()));
         out << "coherent ";
     }
 
     if (memoryQualifier.restrictQualifier)
     {
+        ASSERT(IsImage(type.getBasicType()) || IsStorageBuffer(type.getQualifier()));
         out << "restrict ";
     }
 
     if (memoryQualifier.volatileQualifier)
     {
+        ASSERT(IsImage(type.getBasicType()) || IsStorageBuffer(type.getQualifier()));
         out << "volatile ";
     }
 
@@ -371,9 +369,7 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
     return sh::getQualifierString(qualifier);
 }
 
-void TOutputGLSLBase::writeVariableType(const TType &type,
-                                        const TSymbol *symbol,
-                                        bool isFunctionArgument)
+void TOutputGLSLBase::writeVariableType(const TType &type, const TSymbol *symbol)
 {
     TQualifier qualifier = type.getQualifier();
     TInfoSinkBase &out   = objSink();
@@ -381,19 +377,9 @@ void TOutputGLSLBase::writeVariableType(const TType &type,
     {
         writeInvariantQualifier(type);
     }
-    if (type.isPrecise())
-    {
-        writePreciseQualifier(type);
-    }
     if (qualifier != EvqTemporary && qualifier != EvqGlobal)
     {
         writeQualifier(qualifier, type, symbol);
-    }
-    if (isFunctionArgument)
-    {
-        // Function arguments are the only place (other than image/SSBO/field declaration) where
-        // memory qualifiers can appear.
-        out << getMemoryQualifiers(type);
     }
 
     // Declare the struct if we have not done so already.
@@ -424,7 +410,7 @@ void TOutputGLSLBase::writeFunctionParameters(const TFunction *func)
     {
         const TVariable *param = func->getParam(i);
         const TType &type      = param->getType();
-        writeVariableType(type, param, true);
+        writeVariableType(type, param);
 
         if (param->symbolType() != SymbolType::Empty)
             out << " " << hashName(param);
@@ -966,13 +952,12 @@ bool TOutputGLSLBase::visitFunctionDefinition(Visit visit, TIntermFunctionDefini
     return false;
 }
 
-bool TOutputGLSLBase::visitGlobalQualifierDeclaration(Visit visit,
-                                                      TIntermGlobalQualifierDeclaration *node)
+bool TOutputGLSLBase::visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node)
 {
     TInfoSinkBase &out = objSink();
     ASSERT(visit == PreVisit);
     const TIntermSymbol *symbol = node->getSymbol();
-    out << (node->isPrecise() ? "precise " : "invariant ") << hashName(&symbol->variable());
+    out << "invariant " << hashName(&symbol->variable());
     return false;
 }
 
@@ -981,7 +966,7 @@ void TOutputGLSLBase::visitFunctionPrototype(TIntermFunctionPrototype *node)
     TInfoSinkBase &out = objSink();
 
     const TType &type = node->getType();
-    writeVariableType(type, node->getFunction(), false);
+    writeVariableType(type, node->getFunction());
     if (type.isArray())
         out << ArrayString(type);
 
@@ -1006,7 +991,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
             {
                 if (node->getOp() == EOpCallBuiltInFunction)
                 {
-                    out << translateTextureFunction(node->getFunction()->name(), mCompileOptions);
+                    out << translateTextureFunction(node->getFunction()->name());
                 }
                 else
                 {
@@ -1039,7 +1024,6 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         case EOpMix:
         case EOpStep:
         case EOpSmoothstep:
-        case EOpFma:
         case EOpFrexp:
         case EOpLdexp:
         case EOpDistance:
@@ -1092,8 +1076,7 @@ bool TOutputGLSLBase::visitDeclaration(Visit visit, TIntermDeclaration *node)
         TIntermTyped *variable          = sequence.front()->getAsTyped();
         writeLayoutQualifier(variable);
         TIntermSymbol *symbolNode = variable->getAsSymbolNode();
-        writeVariableType(variable->getType(), symbolNode ? &symbolNode->variable() : nullptr,
-                          false);
+        writeVariableType(variable->getType(), symbolNode ? &symbolNode->variable() : nullptr);
         if (variable->getAsSymbolNode() == nullptr ||
             variable->getAsSymbolNode()->variable().symbolType() != SymbolType::Empty)
         {
@@ -1238,13 +1221,6 @@ void TOutputGLSLBase::visitPreprocessorDirective(TIntermPreprocessorDirective *n
 
 ImmutableString TOutputGLSLBase::getTypeName(const TType &type)
 {
-    if (type.getBasicType() == EbtSamplerVideoWEBGL)
-    {
-        // TODO(http://anglebug.com/3889): translate SamplerVideoWEBGL into different token
-        // when necessary (e.g. on Android devices)
-        return ImmutableString("sampler2D");
-    }
-
     return GetTypeName(type, mHashFunction, &mNameMap);
 }
 
@@ -1366,7 +1342,6 @@ void TOutputGLSLBase::declareInterfaceBlock(const TInterfaceBlock *interfaceBloc
     for (const TField *field : fields)
     {
         writeFieldLayoutQualifier(field);
-        out << getMemoryQualifiers(*field->type());
 
         if (writeVariablePrecision(field->type()->getPrecision()))
             out << " ";

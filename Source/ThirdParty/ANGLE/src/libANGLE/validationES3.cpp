@@ -400,7 +400,6 @@ bool ValidateES3TexImageParametersBase(Context *context,
     {
         case TextureType::_2D:
         case TextureType::External:
-        case TextureType::VideoImage:
             if (width > (caps.max2DTextureSize >> level) ||
                 height > (caps.max2DTextureSize >> level))
             {
@@ -3090,7 +3089,7 @@ bool ValidateGetSynciv(Context *context,
                        GLsizei *length,
                        GLint *values)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -3977,7 +3976,7 @@ bool ValidateDrawArraysInstanced(Context *context,
 
 bool ValidateFenceSync(Context *context, GLenum condition, GLbitfield flags)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4000,7 +3999,7 @@ bool ValidateFenceSync(Context *context, GLenum condition, GLbitfield flags)
 
 bool ValidateIsSync(Context *context, GLsync sync)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4011,7 +4010,7 @@ bool ValidateIsSync(Context *context, GLsync sync)
 
 bool ValidateDeleteSync(Context *context, GLsync sync)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4028,7 +4027,7 @@ bool ValidateDeleteSync(Context *context, GLsync sync)
 
 bool ValidateClientWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4052,7 +4051,7 @@ bool ValidateClientWaitSync(Context *context, GLsync sync, GLbitfield flags, GLu
 
 bool ValidateWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4082,7 +4081,7 @@ bool ValidateWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 
 
 bool ValidateGetInteger64v(Context *context, GLenum pname, GLint64 *params)
 {
-    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSync)
+    if (context->getClientMajorVersion() < 3)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;

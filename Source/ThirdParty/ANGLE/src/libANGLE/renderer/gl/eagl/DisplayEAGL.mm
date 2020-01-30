@@ -1,8 +1,27 @@
-//
-// Copyright 2020 The ANGLE Project Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-//
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 // DisplayEAGL.cpp: EAGL implementation of egl::Display
 
@@ -10,29 +29,30 @@
 
 #if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
-#    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
+#import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
-#    import "common/debug.h"
-#    import "gpu_info_util/SystemInfo.h"
-#    import "libANGLE/Display.h"
-#    import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
+#import "common/debug.h"
+#import "gpu_info_util/SystemInfo.h"
+#import "libANGLE/Display.h"
+#import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
+#import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
+#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
-#    import <Foundation/Foundation.h>
-#    import <OpenGLES/EAGL.h>
-#    import <QuartzCore/QuartzCore.h>
-#    import <dlfcn.h>
+#import <Foundation/Foundation.h>
+#import <OpenGLES/EAGL.h>
+#import <QuartzCore/QuartzCore.h>
+#import <dlfcn.h>
 
-#    define GLES_SILENCE_DEPRECATION
+#define GLES_SILENCE_DEPRECATION
 
 namespace
 {
 
-const char *kOpenGLESDylibName = "/System/Library/Frameworks/OpenGLES.framework/OpenGLES";
+const char *kOpenGLESDylibName =
+    "/System/Library/Frameworks/OpenGLES.framework/OpenGLES";
 
 }
 
@@ -56,7 +76,9 @@ class FunctionsGLEAGL : public FunctionsGL
 };
 
 DisplayEAGL::DisplayEAGL(const egl::DisplayState &state)
-    : DisplayGL(state), mEGLDisplay(nullptr), mContext(nullptr)
+    : DisplayGL(state),
+      mEGLDisplay(nullptr),
+      mContext(nullptr)
 {}
 
 DisplayEAGL::~DisplayEAGL() {}
@@ -113,14 +135,14 @@ void DisplayEAGL::terminate()
 }
 
 SurfaceImpl *DisplayEAGL::createWindowSurface(const egl::SurfaceState &state,
-                                              EGLNativeWindowType window,
-                                              const egl::AttributeMap &attribs)
+                                             EGLNativeWindowType window,
+                                             const egl::AttributeMap &attribs)
 {
     return new WindowSurfaceEAGL(state, mRenderer.get(), window, mContext);
 }
 
 SurfaceImpl *DisplayEAGL::createPbufferSurface(const egl::SurfaceState &state,
-                                               const egl::AttributeMap &attribs)
+                                              const egl::AttributeMap &attribs)
 {
     EGLint width  = static_cast<EGLint>(attribs.get(EGL_WIDTH, 0));
     EGLint height = static_cast<EGLint>(attribs.get(EGL_HEIGHT, 0));
@@ -128,27 +150,27 @@ SurfaceImpl *DisplayEAGL::createPbufferSurface(const egl::SurfaceState &state,
 }
 
 SurfaceImpl *DisplayEAGL::createPbufferFromClientBuffer(const egl::SurfaceState &state,
-                                                        EGLenum buftype,
-                                                        EGLClientBuffer clientBuffer,
-                                                        const egl::AttributeMap &attribs)
+                                                       EGLenum buftype,
+                                                       EGLClientBuffer clientBuffer,
+                                                       const egl::AttributeMap &attribs)
 {
     ASSERT(buftype == EGL_IOSURFACE_ANGLE);
     return new IOSurfaceSurfaceEAGL(state, mContext, clientBuffer, attribs);
 }
 
 SurfaceImpl *DisplayEAGL::createPixmapSurface(const egl::SurfaceState &state,
-                                              NativePixmapType nativePixmap,
-                                              const egl::AttributeMap &attribs)
+                                             NativePixmapType nativePixmap,
+                                             const egl::AttributeMap &attribs)
 {
     UNIMPLEMENTED();
     return nullptr;
 }
 
 ContextImpl *DisplayEAGL::createContext(const gl::State &state,
-                                        gl::ErrorSet *errorSet,
-                                        const egl::Config *configuration,
-                                        const gl::Context *shareContext,
-                                        const egl::AttributeMap &attribs)
+                                       gl::ErrorSet *errorSet,
+                                       const egl::Config *configuration,
+                                       const gl::Context *shareContext,
+                                       const egl::AttributeMap &attribs)
 {
     return new ContextEAGL(state, errorSet, mRenderer);
 }
@@ -243,9 +265,9 @@ bool DisplayEAGL::isValidNativeWindow(EGLNativeWindowType window) const
 }
 
 egl::Error DisplayEAGL::validateClientBuffer(const egl::Config *configuration,
-                                             EGLenum buftype,
-                                             EGLClientBuffer clientBuffer,
-                                             const egl::AttributeMap &attribs) const
+                                            EGLenum buftype,
+                                            EGLClientBuffer clientBuffer,
+                                            const egl::AttributeMap &attribs) const
 {
     ASSERT(buftype == EGL_IOSURFACE_ANGLE);
 
@@ -335,7 +357,7 @@ WorkerContextEAGL::~WorkerContextEAGL()
 
 bool WorkerContextEAGL::makeCurrent()
 {
-    if (![EAGLContext setCurrentContext:static_cast<EAGLContext *>(mContext)])
+    if (![EAGLContext setCurrentContext:static_cast<EAGLContext*>(mContext)])
     {
         ERR() << "Unable to make gl context current.";
         return false;
@@ -351,7 +373,7 @@ void WorkerContextEAGL::unmakeCurrent()
 WorkerContext *DisplayEAGL::createWorkerContext(std::string *infoLog)
 {
     EAGLContextObj context = nullptr;
-    context                = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     if (!context)
     {
         *infoLog += "Could not create the EAGL context.";
