@@ -46,7 +46,6 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, CoreMedia)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBlockBufferGetDataLength, size_t, (CMBlockBufferRef theBuffer), (theBuffer))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBlockBufferReplaceDataBytes, OSStatus, (const void* sourceBytes, CMBlockBufferRef destinationBuffer, size_t offsetIntoDestination, size_t dataLength), (sourceBytes, destinationBuffer, offsetIntoDestination, dataLength))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, (CMSampleBufferRef sbuf), (sbuf))
@@ -137,7 +136,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBufferQueueGetBufferCount, CMIte
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBufferQueueGetFirstPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBufferQueueGetEndPresentationTimeStamp, CMTime, (CMBufferQueueRef queue), (queue))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBufferQueueInstallTriggerWithIntegerThreshold, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerCallback triggerCallback, void* triggerRefcon, CMBufferQueueTriggerCondition triggerCondition, CMItemCount triggerThreshold, CMBufferQueueTriggerToken* triggerTokenOut), (queue, triggerCallback, triggerRefcon, triggerCondition, triggerThreshold, triggerTokenOut))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMBufferQueueMarkEndOfData, OSStatus, (CMBufferQueueRef queue), (queue))
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMSampleAttachmentKey_DoNotDisplay, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, CoreMedia, kCMSampleAttachmentKey_NotSync, CFStringRef)
@@ -165,9 +163,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioSampleBufferCreateWithPacke
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferSetDataBufferFromAudioBufferList, OSStatus, (CMSampleBufferRef sbuf, CFAllocatorRef bbufStructAllocator, CFAllocatorRef bbufMemoryAllocator, uint32_t flags, const AudioBufferList *bufferList), (sbuf, bbufStructAllocator, bbufMemoryAllocator, flags, bufferList))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferSetDataReady, OSStatus, (CMSampleBufferRef sbuf), (sbuf))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioFormatDescriptionCreate, OSStatus, (CFAllocatorRef allocator, const AudioStreamBasicDescription* asbd, size_t layoutSize, const AudioChannelLayout* layout, size_t magicCookieSize, const void* magicCookie, CFDictionaryRef extensions, CMAudioFormatDescriptionRef* outDesc), (allocator, asbd, layoutSize, layout, magicCookieSize, magicCookie, extensions, outDesc))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioFormatDescriptionGetMagicCookie, const void*, (CMAudioFormatDescriptionRef desc, size_t* sizeOut), (desc, sizeOut))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioFormatDescriptionGetRichestDecodableFormat, const AudioFormatListItem *, (CMAudioFormatDescriptionRef desc), (desc))
-
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMClockGetHostTimeClock, CMClockRef, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMClockGetTime, CMTime, (CMClockRef clock), (clock))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMSampleBufferCallForEachSample, OSStatus, (CMSampleBufferRef sbuf, OSStatus (* CMSAMPLEBUFFERCALL_NOESCAPE callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon), void *refcon), (sbuf, callback, refcon))
