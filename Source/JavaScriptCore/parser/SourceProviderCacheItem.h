@@ -95,12 +95,12 @@ public:
     unsigned innerArrowFunctionFeatures : 6; // InnerArrowFunctionCodeFeatures
     unsigned constructorKind : 2; // ConstructorKind
 
-    UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
+    PackedPtr<UniquedStringImpl>* usedVariables() const { return const_cast<PackedPtr<UniquedStringImpl>*>(m_variables); }
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
 
-    UniquedStringImpl* m_variables[0];
+    PackedPtr<UniquedStringImpl> m_variables[0];
 };
 
 inline SourceProviderCacheItem::~SourceProviderCacheItem()
@@ -140,8 +140,9 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     ASSERT(constructorKind == static_cast<unsigned>(parameters.constructorKind));
     ASSERT(expectedSuperBinding == static_cast<unsigned>(parameters.expectedSuperBinding));
     for (unsigned i = 0; i < usedVariablesCount; ++i) {
-        m_variables[i] = parameters.usedVariables[i];
-        m_variables[i]->ref();
+        auto* pointer = parameters.usedVariables[i];
+        pointer->ref();
+        m_variables[i] = pointer;
     }
 }
 

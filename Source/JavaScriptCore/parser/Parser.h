@@ -724,7 +724,7 @@ public:
         m_needsSuperBinding = info->needsSuperBinding;
         UniquedStringImplPtrSet& destSet = m_usedVariables.last();
         for (unsigned i = 0; i < info->usedVariablesCount; ++i)
-            destSet.add(info->usedVariables()[i]);
+            destSet.add(info->usedVariables()[i].get());
     }
 
     class MaybeParseAsGeneratorForScope;
