@@ -6,92 +6,66 @@ Direction: LTR vs LTR
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Direction: RTL vs LTR
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Direction: LTR vs RTL
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Direction: RTL vs RTL
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Orthogonal flows: HORIZONTAL-TB vs VERTICAL-LR
 
 Direction: LTR vs LTR
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Direction: RTL vs LTR
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
 Direction: RTL vs RTL
 
 end
 center
-left
-right
-PASS
-
-s-end
 start
-default
+s-end
 s-start
-PASS
+default
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+

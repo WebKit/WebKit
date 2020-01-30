@@ -1,3 +1,19 @@
+2020-01-30  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-item-alignment tests to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=206831
+
+        Reviewed by Javier Fernandez.
+
+        Remove from css-grid-layout folder some grid-item-alignment tests, that are being replaced by adapted tests in the corresponding WPT test folder.
+
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-lr-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-lr.html: Removed.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-rl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows-vertical-rl.html: Removed.
+        * fast/css-grid-layout/grid-item-alignment-with-orthogonal-flows.html: Removed.
+
 2020-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: [Mac wk1] imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html is a flakey failure

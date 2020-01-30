@@ -1,3 +1,28 @@
+2020-01-30  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-item-alignment tests to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=206831
+
+        Reviewed by Javier Fernandez.
+
+        Add grid-item-alignment tests, checked and adapted, to WPT.
+        Add .thirdRowFirstColumn class to grid.css support file and update all tests using this class by removing the duplicated class
+        from their <style> section.
+        Imported to WPT with this PR: https://github.com/web-platform-tests/wpt/pull/21440
+
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-distribution-vertical-lr.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-distribution-vertical-rl.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-content-distribution.html:
+        * web-platform-tests/css/css-grid/alignment/grid-align-justify-overflow.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-lr-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-rl-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-lr.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-rl.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows.html: Added.
+        * web-platform-tests/css/support/grid.css:
+        (.thirdRowFirstColumn):
+
 2020-01-29  Sunny He  <sunny_he@apple.com>
 
         Clamp paddingBoxWidth/Height to a minimum of zero
