@@ -1,3 +1,18 @@
+2020-01-29  Jonathan Bedard  <jbedard@apple.com>
+
+        run-safari / run-webkit-tests --ios-simulator not working with XCode 13.3.1 (11C504)
+        https://bugs.webkit.org/show_bug.cgi?id=206932
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.get_runtime_for_device_type): Request for a device running
+        some version will return a runtime of the same major version with a minor version
+        that is equal to or greater than the specified minor version.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (test_matching_up_success):
+        (test_matching_up_failure):
+
 2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Give up IC when unknown structure transition happens

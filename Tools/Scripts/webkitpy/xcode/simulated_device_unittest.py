@@ -626,6 +626,23 @@ class SimulatedDeviceTest(unittest.TestCase):
         SimulatedDeviceManager.tear_down(host)
         self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
 
+    def test_matching_up_success(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        runtime = SimulatedDeviceManager.get_runtime_for_device_type(DeviceType.from_string('iphone 5s', Version(9, 2)))
+        self.assertEquals(runtime.os_variant, 'iOS')
+        self.assertEquals(runtime.version, Version(9, 3))
+
+    def test_matching_up_failure(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        runtime = SimulatedDeviceManager.get_runtime_for_device_type(DeviceType.from_string('iphone 5s', Version(9, 4)))
+        self.assertEquals(runtime, None)
+
     @staticmethod
     def change_state_to(device, state):
         assert isinstance(state, int)
