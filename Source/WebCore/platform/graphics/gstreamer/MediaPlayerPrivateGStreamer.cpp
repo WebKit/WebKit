@@ -137,6 +137,10 @@
 #include "TextureMapperPlatformLayerProxy.h"
 #if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 #include <cairo-gl.h>
+#include "GLContext.h"
+#include "PlatformDisplay.h"
+// cairo-gl.h ends up including X.h, which defines None, breaking MediaPlayer:: enums.
+#undef None
 #endif
 #endif // USE(TEXTURE_MAPPER_GL)
 
