@@ -25,6 +25,7 @@
 #pragma once
 
 #if ENABLE(MEDIA_STREAM)
+#include "AudioStreamDescription.h"
 
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
@@ -34,11 +35,16 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
+#include <CoreAudio/CoreAudioTypes.h>
+#include <CoreMedia/CMTime.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+typedef struct opaqueCMBufferQueueTriggerToken *CMBufferQueueTriggerToken;
 
 OBJC_CLASS AVAssetWriter;
 OBJC_CLASS AVAssetWriterInput;
+OBJC_CLASS WebAVAssetWriterDelegate;
 
 namespace WTF {
 class MediaTime;
@@ -46,29 +52,83 @@ class MediaTime;
 
 namespace WebCore {
 
+class AudioSampleBufferCompressor;
 class AudioStreamDescription;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
+class VideoSampleBufferCompressor;
 
-class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
+class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter, WeakPtrFactoryInitialization::Eager> {
 public:
-    static RefPtr<MediaRecorderPrivateWriter> create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack);
     static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, int width, int height);
     ~MediaRecorderPrivateWriter();
-    
-    bool setupWriter();
-    bool setVideoInput(int width, int height);
-    bool setAudioInput();
+
     void appendVideoSampleBuffer(CMSampleBufferRef);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
     void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
 
+#if USE(APPLE_INTERNAL_SDK)
+    void appendData(const char*, size_t);
+    void appendData(Ref<SharedBuffer>&&);
+#endif
+
 private:
+#if USE(APPLE_INTERNAL_SDK)
+    MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
+    void clear();
+
+    bool initialize();
+
+    static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
+    static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
+
+    void startAssetWriter();
+    void appendCompressedSampleBuffers();
+
+    bool appendCompressedAudioSampleBuffer();
+    bool appendCompressedVideoSampleBuffer();
+
+    void processNewCompressedAudioSampleBuffers();
+    void processNewCompressedVideoSampleBuffers();
+
+    void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
+    void appendEndOfVideoSampleDurationIfNeeded(CompletionHandler<void()>&&);
+#else
     MediaRecorderPrivateWriter(RetainPtr<AVAssetWriter>&&, String&& path);
     void clear();
 
+    bool setupWriter();
+    bool setVideoInput(int width, int height);
+    bool setAudioInput();
+#endif
+
+    bool m_hasStartedWriting { false };
+    bool m_isStopped { false };
+
     RetainPtr<AVAssetWriter> m_writer;
+
+    bool m_isStopping { false };
+    RefPtr<SharedBuffer> m_data;
+    CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
+
+#if USE(APPLE_INTERNAL_SDK)
+    bool m_hasAudio;
+    bool m_hasVideo;
+
+    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
+    std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;
+    RetainPtr<AVAssetWriterInput> m_audioAssetWriterInput;
+
+    RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
+    std::unique_ptr<VideoSampleBufferCompressor> m_videoCompressor;
+    RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
+    CMTime m_lastVideoPresentationTime;
+    CMTime m_lastVideoDecodingTime;
+    bool m_hasEncodedVideoSamples { false };
+
+    RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
+#else
     RetainPtr<AVAssetWriterInput> m_videoInput;
     RetainPtr<AVAssetWriterInput> m_audioInput;
 
@@ -78,17 +138,13 @@ private:
     BinarySemaphore m_finishWritingSemaphore;
     BinarySemaphore m_finishWritingAudioSemaphore;
     BinarySemaphore m_finishWritingVideoSemaphore;
-    bool m_hasStartedWriting { false };
-    bool m_isStopped { false };
     bool m_isFirstAudioSample { true };
     dispatch_queue_t m_audioPullQueue;
     dispatch_queue_t m_videoPullQueue;
     Deque<RetainPtr<CMSampleBufferRef>> m_videoBufferPool;
     Deque<RetainPtr<CMSampleBufferRef>> m_audioBufferPool;
 
-    bool m_isStopping { false };
-    RefPtr<SharedBuffer> m_data;
-    CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
+#endif
 };
 
 } // namespace WebCore
