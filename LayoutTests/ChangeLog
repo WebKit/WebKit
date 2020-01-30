@@ -1,3 +1,12 @@
+2020-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Regression: fast/hidpi/image-srcset-relative-svg-canvas-2x.html is consistently failing on iOS EWS
+        https://bugs.webkit.org/show_bug.cgi?id=206993
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Mark test as failing.
+
 2020-01-30  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach sandbox extension to the frontboard and icon service when the attachment element is enabled
