@@ -846,7 +846,7 @@ webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Fa
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 
-webkit.org/b/206503 [ Mojave ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
+webkit.org/b/206503 [ Mojave Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Failure Timeout ]
 
