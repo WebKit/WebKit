@@ -3,6 +3,11 @@ webgl [ Pass Slow ]
 # Currently skipped due to fetching external resources.
 webgl/1.0.3/conformance/more/functions [ Skip ]
 
+# Expected ANGLE-based 2.0.0 progressions; mark as "failing" until ANGLE re-enabled.
+webgl/2.0.0/conformance2/samplers [ Fail ]
+webgl/2.0.0/conformance2/transform_feedback [ Fail ]
+webgl/2.0.0/conformance2/textures/misc/tex-image-and-sub-image-with-array-buffer-view-sub-source.html [ Fail ]
+
 # Tests crashing
 webgl/2.0.0/conformance2/renderbuffers/framebuffer-object-attachment.html [ Skip ]
 webgl/2.0.0/conformance2/rendering/draw-buffers.html [ Skip ]

@@ -1,3 +1,15 @@
+2020-01-29  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Skip ANGLE-dependent WebGL 2 expected progressions on WebGL bot
+        https://bugs.webkit.org/show_bug.cgi?id=206977
+
+        Unreviewed test gardening.
+
+        These tests are expected to progress with ANGLE enabled, but since ANGLE is not enabled,
+        expect failure for now.
+
+        * webgl/TestExpectations:
+
 2020-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         imported/w3c/web-platform-tests/html/dom/idlharness.worker.html is timing out on Mojave wk1 debug EWS
