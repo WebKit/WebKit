@@ -56,7 +56,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
     std::unique_ptr<WebKit::NativeWebMouseEvent> _lastEvent;
     Optional<CGPoint> _lastLocation;
-    Optional<UIEventButtonMask> _pressedButtonMask;
 }
 
 - (instancetype)initWithTarget:(id)target action:(SEL)action
@@ -120,10 +119,10 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return NO;
 }
 
-- (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type
+- (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type forEvent:(UIEvent *)uiEvent
 {
     auto modifiers = webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
-    BOOL isRightButton = modifiers.contains(WebKit::WebEvent::Modifier::ControlKey) || (_pressedButtonMask && (*_pressedButtonMask & UIEventButtonMaskSecondary));
+    BOOL isRightButton = modifiers.contains(WebKit::WebEvent::Modifier::ControlKey) || ([uiEvent _buttonMask] & UIEventButtonMaskSecondary);
 
     auto button = [&] {
         if (!_touching)
@@ -152,9 +151,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     _touching = YES;
-    _pressedButtonMask = [event _buttonMask];
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseDown];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseDown forEvent:event];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -162,7 +160,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove forEvent:event];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -170,11 +168,10 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseU];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp forEvent:event];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
-    _pressedButtonMask = WTF::nullopt;
 
     self.state = UIGestureRecognizerStateChanged;
 }
@@ -186,7 +183,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove forEvent:event];
 
     if (_currentHoverEvent == nil && touches.count == 1 && [event isKindOfClass:NSClassFromString(@"UIHoverEvent")]) {
         _currentHoverEvent = (UIHoverEvent *)event;
@@ -205,7 +202,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         return;
     }
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove forEvent:event];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event && [touches containsObject:_currentTouch.get()])
@@ -216,7 +213,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove forEvent:event];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event) {
