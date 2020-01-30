@@ -945,3 +945,5 @@ webkit.org/b/206940 [ Mojave+ Debug ] tiled-drawing/scrolling/fast-scroll-select
 webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Failure Timeout ]
 
 webkit.org/b/206961 [ Mojave ] media/media-fragments/TC0035.html [ Pass Failure ]
+
+webkit.org/b/206839 http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html [ Pass Failure ]
