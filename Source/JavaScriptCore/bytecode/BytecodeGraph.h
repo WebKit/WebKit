@@ -39,7 +39,7 @@ class BytecodeGraph {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BytecodeGraph);
 public:
-    typedef Vector<std::unique_ptr<BytecodeBasicBlock>> BasicBlocksVector;
+    using BasicBlocksVector = BytecodeBasicBlock::BasicBlockVector;
 
     typedef WTF::IndexedContainerIterator<BytecodeGraph> iterator;
 
@@ -51,53 +51,53 @@ public:
         return WTF::makeIteratorRange(m_basicBlocks.rbegin(), m_basicBlocks.rend());
     }
 
-    static bool blockContainsBytecodeOffset(BytecodeBasicBlock* block, InstructionStream::Offset bytecodeOffset)
+    static bool blockContainsBytecodeOffset(const BytecodeBasicBlock& block, InstructionStream::Offset bytecodeOffset)
     {
-        unsigned leaderOffset = block->leaderOffset();
-        return bytecodeOffset >= leaderOffset && bytecodeOffset < leaderOffset + block->totalLength();
+        unsigned leaderOffset = block.leaderOffset();
+        return bytecodeOffset >= leaderOffset && bytecodeOffset < leaderOffset + block.totalLength();
     }
 
     BytecodeBasicBlock* findBasicBlockForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
     {
         /*
             for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
-                if (blockContainsBytecodeOffset(m_basicBlocks[i].get(), bytecodeOffset))
-                    return m_basicBlocks[i].get();
+                if (blockContainsBytecodeOffset(m_basicBlocks[i], bytecodeOffset))
+                    return &m_basicBlocks[i];
             }
             return 0;
         */
 
-        std::unique_ptr<BytecodeBasicBlock>* basicBlock = approximateBinarySearch<std::unique_ptr<BytecodeBasicBlock>, unsigned>(m_basicBlocks, m_basicBlocks.size(), bytecodeOffset, [] (std::unique_ptr<BytecodeBasicBlock>* basicBlock) { return (*basicBlock)->leaderOffset(); });
+        BytecodeBasicBlock* basicBlock = approximateBinarySearch<BytecodeBasicBlock, unsigned>(m_basicBlocks, m_basicBlocks.size(), bytecodeOffset, [] (BytecodeBasicBlock* basicBlock) { return basicBlock->leaderOffset(); });
         // We found the block we were looking for.
-        if (blockContainsBytecodeOffset((*basicBlock).get(), bytecodeOffset))
-            return (*basicBlock).get();
+        if (blockContainsBytecodeOffset(*basicBlock, bytecodeOffset))
+            return basicBlock;
 
         // Basic block is to the left of the returned block.
-        if (bytecodeOffset < (*basicBlock)->leaderOffset()) {
+        if (bytecodeOffset < basicBlock->leaderOffset()) {
             ASSERT(basicBlock - 1 >= m_basicBlocks.data());
-            ASSERT(blockContainsBytecodeOffset(basicBlock[-1].get(), bytecodeOffset));
-            return basicBlock[-1].get();
+            ASSERT(blockContainsBytecodeOffset(basicBlock[-1], bytecodeOffset));
+            return &basicBlock[-1];
         }
 
         // Basic block is to the right of the returned block.
         ASSERT(&basicBlock[1] <= &m_basicBlocks.last());
-        ASSERT(blockContainsBytecodeOffset(basicBlock[1].get(), bytecodeOffset));
-        return basicBlock[1].get();
+        ASSERT(blockContainsBytecodeOffset(basicBlock[1], bytecodeOffset));
+        return &basicBlock[1];
     }
 
     BytecodeBasicBlock* findBasicBlockWithLeaderOffset(InstructionStream::Offset leaderOffset)
     {
-        return (*tryBinarySearch<std::unique_ptr<BytecodeBasicBlock>, unsigned>(m_basicBlocks, m_basicBlocks.size(), leaderOffset, [] (std::unique_ptr<BytecodeBasicBlock>* basicBlock) { return (*basicBlock)->leaderOffset(); })).get();
+        return tryBinarySearch<BytecodeBasicBlock, unsigned>(m_basicBlocks, m_basicBlocks.size(), leaderOffset, [] (BytecodeBasicBlock* basicBlock) { return basicBlock->leaderOffset(); });
     }
 
     unsigned size() const { return m_basicBlocks.size(); }
-    BytecodeBasicBlock* at(unsigned index) const { return m_basicBlocks[index].get(); }
-    BytecodeBasicBlock* operator[](unsigned index) const { return at(index); }
+    BytecodeBasicBlock& at(unsigned index) const { return const_cast<BytecodeGraph*>(this)->m_basicBlocks[index]; }
+    BytecodeBasicBlock& operator[](unsigned index) const { return at(index); }
 
-    iterator begin() const { return iterator(*this, 0); }
-    iterator end() const { return iterator(*this, size()); }
-    BytecodeBasicBlock* first() { return at(0); }
-    BytecodeBasicBlock* last() { return at(size() - 1); }
+    iterator begin() { return iterator(*this, 0); }
+    iterator end() { return iterator(*this, size()); }
+    BytecodeBasicBlock& first() { return at(0); }
+    BytecodeBasicBlock& last() { return at(size() - 1); }
 
 private:
     BasicBlocksVector m_basicBlocks;
@@ -106,8 +106,8 @@ private:
 
 template<typename CodeBlockType>
 BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, const InstructionStream& instructions)
+    : m_basicBlocks(BytecodeBasicBlock::compute(codeBlock, instructions))
 {
-    BytecodeBasicBlock::compute(codeBlock, instructions, m_basicBlocks);
     ASSERT(m_basicBlocks.size());
 }
 

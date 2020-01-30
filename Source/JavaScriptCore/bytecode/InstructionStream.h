@@ -111,7 +111,9 @@ public:
     public:
         Ref freeze() const  { return Ref { m_instructions, m_index }; }
         inline Instruction* operator->() { return unwrap(); }
+        inline const Instruction* operator->() const { return unwrap(); }
         inline Instruction* ptr() { return unwrap(); }
+        inline const Instruction* ptr() const { return unwrap(); }
         inline operator Ref()
         {
             return Ref { m_instructions, m_index };
@@ -119,6 +121,7 @@ public:
 
     private:
         inline Instruction* unwrap() { return reinterpret_cast<Instruction*>(&m_instructions[m_index]); }
+        inline const Instruction* unwrap() const { return reinterpret_cast<const Instruction*>(&m_instructions[m_index]); }
     };
 
 private:

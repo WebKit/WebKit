@@ -69,6 +69,7 @@ class Section
           out << "\n"
 
           out.write("#define NUMBER_OF_#{config[:macro_name_component]}_IDS #{opcodes.length}\n")
+          out.write("#define MAX_LENGTH_OF_#{config[:macro_name_component]}_IDS #{(opcodes.max {|a, b| a.length <=> b.length }).length}\n")
       end
 
       if config[:emit_in_structs_file]

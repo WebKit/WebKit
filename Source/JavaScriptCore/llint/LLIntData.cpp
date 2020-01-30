@@ -81,7 +81,7 @@ void initialize()
     }
 
     ASSERT(llint_throw_from_slow_path_trampoline < UINT8_MAX);
-    for (int i = 0; i < maxOpcodeLength + 1; ++i) {
+    for (unsigned i = 0; i < maxOpcodeLength + 1; ++i) {
         Data::s_exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
         Data::s_wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;
     }

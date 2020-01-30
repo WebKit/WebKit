@@ -72,41 +72,38 @@ public:
         , m_generatorFrameSymbolTable(codeBlock->vm(), generatorFrameSymbolTable)
         , m_generatorFrameSymbolTableIndex(generatorFrameSymbolTableIndex)
     {
-        for (BytecodeBasicBlock* block : m_graph) {
-            for (const auto offset : block->offsets()) {
-                const auto instruction = m_instructions.at(offset);
-                switch (instruction->opcodeID()) {
-                case op_enter: {
-                    m_enterPoint = instruction.offset();
-                    break;
-                }
+        for (const auto& instruction : m_instructions) {
+            switch (instruction->opcodeID()) {
+            case op_enter: {
+                m_enterPoint = instruction.offset();
+                break;
+            }
 
-                case op_yield: {
-                    auto bytecode = instruction->as<OpYield>();
-                    unsigned liveCalleeLocalsIndex = bytecode.m_yieldPoint;
-                    if (liveCalleeLocalsIndex >= m_yields.size())
-                        m_yields.resize(liveCalleeLocalsIndex + 1);
-                    YieldData& data = m_yields[liveCalleeLocalsIndex];
-                    data.point = instruction.offset();
-                    data.argument = bytecode.m_argument;
-                    break;
-                }
+            case op_yield: {
+                auto bytecode = instruction->as<OpYield>();
+                unsigned liveCalleeLocalsIndex = bytecode.m_yieldPoint;
+                if (liveCalleeLocalsIndex >= m_yields.size())
+                    m_yields.resize(liveCalleeLocalsIndex + 1);
+                YieldData& data = m_yields[liveCalleeLocalsIndex];
+                data.point = instruction.offset();
+                data.argument = bytecode.m_argument;
+                break;
+            }
 
-                case op_create_generator_frame_environment: {
-                    auto bytecode = instruction->as<OpCreateGeneratorFrameEnvironment>();
-                    GeneratorFrameData data;
-                    data.m_point = instruction.offset();
-                    data.m_dst = bytecode.m_dst;
-                    data.m_scope = bytecode.m_scope;
-                    data.m_symbolTable = bytecode.m_symbolTable;
-                    data.m_initialValue = bytecode.m_initialValue;
-                    m_generatorFrameData = WTFMove(data);
-                    break;
-                }
+            case op_create_generator_frame_environment: {
+                auto bytecode = instruction->as<OpCreateGeneratorFrameEnvironment>();
+                GeneratorFrameData data;
+                data.m_point = instruction.offset();
+                data.m_dst = bytecode.m_dst;
+                data.m_scope = bytecode.m_scope;
+                data.m_symbolTable = bytecode.m_symbolTable;
+                data.m_initialValue = bytecode.m_initialValue;
+                m_generatorFrameData = WTFMove(data);
+                break;
+            }
 
-                default:
-                    break;
-                }
+            default:
+                break;
             }
         }
     }
