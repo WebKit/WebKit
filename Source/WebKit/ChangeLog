@@ -1,3 +1,17 @@
+2020-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r253267): Swipe from edge on Twitter images no longer goes back
+        https://bugs.webkit.org/show_bug.cgi?id=207011
+        <rdar://problem/58966044>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        The new touch-event async deferring gesture recognizer was erroneously deferring
+        edge swipes, which are not allowed to be blocked by touch events.
+        Opt them out of the new gesture gate mechanism.
+
 2020-01-30  Jonathan Bedard  <jbedard@apple.com>
 
         PAL: Remove old iOS version macros
