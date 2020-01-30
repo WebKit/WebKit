@@ -4528,3 +4528,4 @@ webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Time
 
 webkit.org/b/206165 fast/dom/Range/getBoundingClientRect.html [ Failure ]
 
+webkit.org/b/206995 webanimations/seeking-by-changing-delay-accelerated.html [ Failure ]

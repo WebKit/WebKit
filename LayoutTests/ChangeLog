@@ -1,3 +1,18 @@
+2020-01-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Changing the delay of an accelerated animation doesn't seek the animation
+        https://bugs.webkit.org/show_bug.cgi?id=206990
+        <rdar://problem/58675608>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test which would fail prior to this patch where we pause an animation after it has started playing accelerated and
+        change its delay to check that it correctly seeks the animation.
+
+        * webanimations/seeking-by-changing-delay-accelerated-expected.html: Added.
+        * webanimations/seeking-by-changing-delay-accelerated.html: Added.
+        * platform/win/TestExpectations: Mark the new test as failing.
+
 2020-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r253636): [GTK] Mouse cursor changes using onMouseXYZ are erratic
