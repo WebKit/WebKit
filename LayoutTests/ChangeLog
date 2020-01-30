@@ -1,3 +1,13 @@
+2020-01-30  Doug Kelly  <dougk@apple.com>
+
+        Crash in RenderBlockFlow::adjustLinePositionForPagination() with complex line without root box
+        https://bugs.webkit.org/show_bug.cgi?id=206610
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/complex-without-root-box-expected.txt: Added.
+        * fast/text/complex-without-root-box.html: Added.
+
 2020-01-30  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html is flaky failing
