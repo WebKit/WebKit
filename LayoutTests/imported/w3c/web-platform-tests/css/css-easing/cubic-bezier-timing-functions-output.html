@@ -4,7 +4,7 @@
 content="This test checks the output of Cubic Bézier functions" />
 <title>Tests for the output of Cubic Bézier timing functions</title>
 <link rel="help"
-href="https://drafts.csswg.org/css-timing/#cubic-bezier-timing-functions">
+href="https://drafts.csswg.org/css-easing/#cubic-bezier-timing-functions">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="testcommon.js"></script>
@@ -15,7 +15,7 @@ href="https://drafts.csswg.org/css-timing/#cubic-bezier-timing-functions">
 
 function assert_style_left_at(animation, time, easingFunction) {
   animation.currentTime = time;
-  var portion = time / animation.effect.getTiming().duration;
+  var portion = time / animation.effect.getTiming()['duration'];
   assert_approx_equals(pxToNum(getComputedStyle(animation.effect.target).left),
                        easingFunction(portion) * 100,
                        0.01,
