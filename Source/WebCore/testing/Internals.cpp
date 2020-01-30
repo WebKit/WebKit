@@ -5455,4 +5455,10 @@ String Internals::mediaMIMETypeForExtension(const String& extension)
     return MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
 }
 
+String Internals::focusRingColor()
+{
+    OptionSet<StyleColor::Options> options;
+    return RenderTheme::singleton().focusRingColor(options).cssText();
+}
+
 } // namespace WebCore

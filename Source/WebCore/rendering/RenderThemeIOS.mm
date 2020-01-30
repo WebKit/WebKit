@@ -1130,9 +1130,18 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
     return Color::transparent;
 }
 
+static Optional<Color>& cachedFocusRingColor()
+{
+    static NeverDestroyed<Optional<Color>> color;
+    return color;
+}
+
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
 {
+    if (cachedFocusRingColor().hasValue())
+        return *cachedFocusRingColor();
+
     // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
     return colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
 }
@@ -1536,6 +1545,11 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
 void RenderThemeIOS::setCSSValueToSystemColorMap(CSSValueToSystemColorMap&& colorMap)
 {
     globalCSSValueToSystemColorMap() = WTFMove(colorMap);
+}
+
+void RenderThemeIOS::setFocusRingColor(const Color& color)
+{
+    cachedFocusRingColor() = color;
 }
 
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const

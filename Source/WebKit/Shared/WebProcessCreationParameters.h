@@ -215,6 +215,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     bool currentUserInterfaceIdiomIsPad { false };
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
+    WebCore::Color focusRingColor;
 #endif
 };
 

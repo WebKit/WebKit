@@ -360,6 +360,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsPad = currentUserInterfaceIdiomIsPad();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
+    parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
 #endif
 }
 

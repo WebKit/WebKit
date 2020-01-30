@@ -354,6 +354,11 @@ public:
     UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
+    bool hasIssuedAttachmentElementRelatedSandboxExtensions() const { return m_hasIssuedAttachmentElementRelatedSandboxExtensions; }
+    void setHasIssuedAttachmentElementRelatedSandboxExtensions() { m_hasIssuedAttachmentElementRelatedSandboxExtensions = true; }
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
@@ -532,6 +537,9 @@ private:
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
     bool m_hasAudibleWebPage { false };
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
+    bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
+#endif
 
 #if PLATFORM(WATCHOS)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;

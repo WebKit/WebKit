@@ -152,6 +152,8 @@ struct WebPageCreationParameters {
     double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     Optional<WebCore::ViewportArguments> overrideViewportArguments;
+    Optional<SandboxExtension::Handle> frontboardExtensionHandle;
+    Optional<SandboxExtension::Handle> iconServicesExtensionHandle;
 #endif
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;

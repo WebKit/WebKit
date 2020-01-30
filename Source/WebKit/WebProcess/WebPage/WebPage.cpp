@@ -526,6 +526,13 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     pageConfiguration.corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);
 
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
+    if (parameters.frontboardExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.frontboardExtensionHandle);
+    if (parameters.iconServicesExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.iconServicesExtensionHandle);
+#endif
+
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
     updatePreferences(parameters.store);

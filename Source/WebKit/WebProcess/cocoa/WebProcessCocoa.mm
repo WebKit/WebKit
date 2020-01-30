@@ -267,6 +267,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
+    RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
 #endif
 }
 

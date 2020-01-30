@@ -92,6 +92,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewportConfigurationMinimumEffectiveDeviceWidth;
     encoder << viewportConfigurationViewSize;
     encoder << overrideViewportArguments;
+    encoder << frontboardExtensionHandle;
+    encoder << iconServicesExtensionHandle;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -299,6 +301,18 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!overrideViewportArguments)
         return WTF::nullopt;
     parameters.overrideViewportArguments = WTFMove(*overrideViewportArguments);
+
+    Optional<Optional<SandboxExtension::Handle>> frontboardExtensionHandle;
+    decoder >> frontboardExtensionHandle;
+    if (!frontboardExtensionHandle)
+        return WTF::nullopt;
+    parameters.frontboardExtensionHandle = WTFMove(*frontboardExtensionHandle);
+
+    Optional<Optional<SandboxExtension::Handle>> iconServicesExtensionHandle;
+    decoder >> iconServicesExtensionHandle;
+    if (!iconServicesExtensionHandle)
+        return WTF::nullopt;
+    parameters.iconServicesExtensionHandle = WTFMove(*iconServicesExtensionHandle);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

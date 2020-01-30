@@ -933,6 +933,8 @@ public:
 
     String mediaMIMETypeForExtension(const String& extension);
 
+    String focusRingColor();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

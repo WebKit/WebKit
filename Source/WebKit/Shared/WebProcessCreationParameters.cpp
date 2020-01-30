@@ -173,6 +173,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS_FAMILY)
     encoder << currentUserInterfaceIdiomIsPad;
     encoder << cssValueToSystemColorMap;
+    encoder << focusRingColor;
 #endif
 }
 
@@ -458,6 +459,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!cssValueToSystemColorMap)
         return false;
     parameters.cssValueToSystemColorMap = WTFMove(*cssValueToSystemColorMap);
+
+    Optional<WebCore::Color> focusRingColor;
+    decoder >> focusRingColor;
+    if (!focusRingColor)
+        return false;
+    parameters.focusRingColor = WTFMove(*focusRingColor);
 #endif
 
     return true;

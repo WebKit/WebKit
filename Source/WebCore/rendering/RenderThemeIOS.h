@@ -64,7 +64,9 @@ public:
 
     WEBCORE_EXPORT static const CSSValueToSystemColorMap& cssValueToSystemColorMap();
     WEBCORE_EXPORT static void setCSSValueToSystemColorMap(CSSValueToSystemColorMap&&);
-    
+
+    WEBCORE_EXPORT static void setFocusRingColor(const Color&);
+
 protected:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
     

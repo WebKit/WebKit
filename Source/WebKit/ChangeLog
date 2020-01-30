@@ -1,3 +1,27 @@
+2020-01-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Issue mach sandbox extension to the frontboard and icon service when the attachment element is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=205443
+        <rdar://problem/58074291>
+
+        Reviewed by Brent Fulgham.
+
+        When support for the html attachment element is enabled, issue a mach lookup extension to the frontboard and icon service
+        for the WebContent process, since these daemons are being contacted when icons for attachments are being queried. Also,
+        retrieve the focus ring color in the UI process, since getting this color requires access to the frontboard daemon.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup-attachment-element.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-01-30  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r253267): Swipe from edge on Twitter images no longer goes back
