@@ -10,6 +10,18 @@ PASS cssRule is null
 No x : url('#a') 1
 PASS cssRule is null
 
+No raw string URLs with prefixed image-set : 'image.png' 1x
+PASS cssRule is null
+
+Combination of valid and invalid with prefixed image-set : 'image.png' 1x, url(image.png) 2x
+PASS cssRule is null
+
+Combination of valid and invalid with unprefixed image-set : '' 1x, url(image.png) 2x
+FAIL cssRule should be null. Was [object CSSValueList].
+
+No gradients with prefixed image-set : linear-gradient(black, white) 1x
+PASS cssRule is null
+
 No comma : url('#a') 1x url('#b') 2x
 PASS cssRule is null
 

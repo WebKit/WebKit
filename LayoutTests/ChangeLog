@@ -1,3 +1,18 @@
+2020-01-30  Noam Rosenthal  <noam@webkit.org>
+
+        REGRESSION (r254406): Gmail.com star/favorite icons are not rendering
+        https://bugs.webkit.org/show_bug.cgi?id=206909
+
+        Reviewed by Simon Fraser.
+
+        Added empty URLs and new syntax with prefixed image-set to invalid tests.
+        Modified valid image-set parsing test to separate prefixed/non-prefixed.
+
+        * fast/css/image-set-parsing-generated.html:
+        * fast/css/image-set-parsing-invalid-expected.txt:
+        * fast/css/image-set-parsing-invalid.html:
+        * fast/css/image-set-parsing.html:
+
 2020-01-30  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Move grid-item-alignment tests to WPT folder

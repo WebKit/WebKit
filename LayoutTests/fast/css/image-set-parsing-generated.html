@@ -72,7 +72,7 @@ function testImageSetRule(description, property, rule, expectedLength, expectedT
 }
 
 testImageSetRule("Single value for background-image with gradient",
-                "background-image",
+                "background-image", 
                 "linear-gradient(green, white) 1x", 2,
                 ["linear-gradient(green, white)", "1dppx"]);
 testImageSetRule("Single value for content with gradient",

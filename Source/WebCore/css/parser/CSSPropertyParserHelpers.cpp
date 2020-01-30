@@ -1482,13 +1482,13 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
     return result;
 }
 
-static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageType)
+static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
 {
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
     RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
     do {
-        auto image = consumeImage(args, context, (allowedImageType | AllowedImageType::RawStringAsURL) - AllowedImageType::ImageSet);
+        auto image = consumeImage(args, context, allowedImageTypes);
         if (!image)
             return nullptr;
 
@@ -1701,20 +1701,27 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, CSSParser
     return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
 }
 
-RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, OptionSet<AllowedImageType> AllowedImageType)
+RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext context, OptionSet<AllowedImageType> allowedImageTypes)
 {
-    if ((range.peek().type() == StringToken) && (AllowedImageType & AllowedImageType::RawStringAsURL))
-        return CSSImageValue::create(completeURL(context, range.consumeIncludingWhitespace().value().toAtomString()), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
-
-    if (range.peek().type() == FunctionToken) {
-        CSSValueID id = range.peek().functionId();
-        if ((AllowedImageType & AllowedImageType::ImageSet) && (id == CSSValueWebkitImageSet || id == CSSValueImageSet))
-            return consumeImageSet(range, context, AllowedImageType);
-        if ((AllowedImageType & AllowedImageType::GeneratedImage) && isGeneratedImage(id))
-            return consumeGeneratedImage(range, context);
+    if ((range.peek().type() == StringToken) && (allowedImageTypes.contains(AllowedImageType::RawStringAsURL))) {
+        auto urlStringView = range.consumeIncludingWhitespace().value();
+        return CSSImageValue::create(completeURL(context, urlStringView.toAtomString()), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     }
 
-    if (AllowedImageType & AllowedImageType::URLFunction) {
+    if (range.peek().type() == FunctionToken) {
+        CSSValueID functionId = range.peek().functionId();
+        if ((allowedImageTypes.contains(AllowedImageType::GeneratedImage)) && isGeneratedImage(functionId))
+            return consumeGeneratedImage(range, context);
+
+        if (allowedImageTypes.contains(AllowedImageType::ImageSet)) {
+            if (functionId == CSSValueImageSet)
+                return consumeImageSet(range, context, (allowedImageTypes | AllowedImageType::RawStringAsURL) - AllowedImageType::ImageSet);
+            if (functionId == CSSValueWebkitImageSet)
+                return consumeImageSet(range, context, AllowedImageType::URLFunction);
+        }
+    }
+
+    if (allowedImageTypes.contains(AllowedImageType::URLFunction)) {
         auto uri = consumeUrlAsStringView(range);
         if (!uri.isNull())
             return CSSImageValue::create(completeURL(context, uri.toAtomString()), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
