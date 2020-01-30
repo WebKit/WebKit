@@ -1,3 +1,20 @@
+2020-01-30  Jonathan Bedard  <jbedard@apple.com>
+
+        PAL: Remove old iOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=206905
+
+        Reviewed by Darin Adler.
+
+        * pal/cocoa/AVFoundationSoftLink.mm: Remove iOS 13 version checks.
+        * pal/spi/cf/CFNetworkSPI.h: Remove iOS 11 version checks.
+        * pal/spi/cg/CoreGraphicsSPI.h: Use HAVE macro instead of version checks.
+        * pal/spi/cocoa/IOSurfaceSPI.h: Remove iOS 11 version checks.
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h: Remove USE(SECURE_ARCHIVER_API) and
+        USE(SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING).
+        * pal/spi/cocoa/NSProgressSPI.h: Replace USE(NSPROGRESS_PUBLISHING_SPI) with
+        HAVE(NSPROGRESS_PUBLISHING_SPI).
+        * pal/spi/ios/MediaPlayerSPI.h: Remove iOS 11 version checks.
+
 2020-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r255424.

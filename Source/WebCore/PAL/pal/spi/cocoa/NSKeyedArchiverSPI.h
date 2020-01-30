@@ -29,11 +29,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
-#define USE_SECURE_ARCHIVER_API (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110200) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
-
-#define USE_SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
-
-#if USE(SECURE_ARCHIVER_API)
 #if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSKeyedArchiver_Private.h>
 #else
@@ -56,32 +51,23 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif /* USE(APPLE_INTERNAL_SDK) */
-#endif /* USE(SECURE_ARCHIVER_API) */
 
 inline NSData *_Nullable securelyArchivedDataWithRootObject(id _Nonnull object)
 {
-#if USE(SECURE_ARCHIVER_API)
     NSError *error;
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
     if (!data)
         LOG_ERROR("Unable to archive data: %@", error);
     return data;
-#else
-    return [NSKeyedArchiver archivedDataWithRootObject:object];
-#endif
 }
 
 inline NSData *_Nullable insecurelyArchivedDataWithRootObject(id _Nonnull object)
 {
-#if USE(SECURE_ARCHIVER_API)
     NSError *error;
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
     if (!data)
         LOG_ERROR("Unable to archive data: %@", error);
     return data;
-#else
-    return [NSKeyedArchiver archivedDataWithRootObject:object];
-#endif
 }
 
 inline id _Nullable insecurelyUnarchiveObjectFromData(NSData * _Nonnull data)
@@ -93,52 +79,27 @@ inline id _Nullable insecurelyUnarchiveObjectFromData(NSData * _Nonnull data)
 
 inline id _Nullable unarchivedObjectOfClassesFromData(NSSet<Class> * _Nonnull classes, NSData * _Nonnull data)
 {
-#if USE(SECURE_ARCHIVER_API)
-#if !USE(SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING)
-    // Remove this code when the fix from <rdar://problem/31376830> is deployed to all relevant build targets.
-    if ([classes containsObject:[NSAttributedString class]])
-        return insecurelyUnarchiveObjectFromData(data);
-#endif
     NSError *error;
     id value = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
     if (!value)
         LOG_ERROR("Unable to unarchive data: %@", error);
     return value;
-#else
-    UNUSED_PARAM(classes);
-    return insecurelyUnarchiveObjectFromData(data);
-#endif
 }
 
 inline RetainPtr<NSKeyedArchiver> secureArchiver()
 {
-#if USE(SECURE_ARCHIVER_API)
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initRequiringSecureCoding:YES];
-#else
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] init];
-    [archiver setRequiresSecureCoding:YES];
-#endif
     return adoptNS(archiver);
 }
 
 inline RetainPtr<NSKeyedUnarchiver> secureUnarchiverFromData(NSData *_Nonnull data)
 {
-#if USE(SECURE_ARCHIVER_API)
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingFromData:data error:nil];
     unarchiver.decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-#else
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    [unarchiver setRequiresSecureCoding:YES];
-#endif
     return adoptNS(unarchiver);
 }
 
 inline id _Nullable decodeObjectOfClassForKeyFromCoder(Class _Nonnull cls, NSString * _Nonnull key, NSCoder * _Nonnull coder)
 {
-#if USE(SECURE_ARCHIVER_API)
     return [coder decodeObjectOfClass:cls forKey:key];
-#else
-    UNUSED_PARAM(cls);
-    return [coder decodeObjectForKey:key];
-#endif
 }

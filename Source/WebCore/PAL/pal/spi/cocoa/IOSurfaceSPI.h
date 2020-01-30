@@ -103,7 +103,7 @@ WTF_EXTERN_C_END
 
 #else
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 110000
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 typedef uint32_t IOSurfaceID;
 #endif
 

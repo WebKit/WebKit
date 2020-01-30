@@ -1,5 +1,15 @@
 2020-01-30  Jonathan Bedard  <jbedard@apple.com>
 
+        PAL: Remove old iOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=206905
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm: Remove USE(NSPROGRESS_PUBLISHING_SPI)
+        with HAVE(NSPROGRESS_PUBLISHING_SPI)
+
+2020-01-30  Jonathan Bedard  <jbedard@apple.com>
+
         TestWebKitAPI: Re-baseline AccessibilityTests for Catalyst
         https://bugs.webkit.org/show_bug.cgi?id=206997
 

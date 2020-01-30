@@ -43,16 +43,9 @@ namespace WebCoreTestSupport {
 static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     NSURLResponse *response;
-#if USE(SECURE_ARCHIVER_API)
     auto unarchiver = secureUnarchiverFromData((__bridge NSData *)responseData);
     @try {
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-#else
-    // Because of <rdar://problem/34063313> we can't use secure coding for decoding in older OS's.
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
-    @try {
-        response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-#endif
         [unarchiver finishDecoding];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);

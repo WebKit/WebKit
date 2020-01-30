@@ -282,7 +282,7 @@ void CGContextSetStyle(CGContextRef, CGStyleRef);
 
 void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT)
 void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform *, CGRect, const CGSize corners[4]);
 #endif
 

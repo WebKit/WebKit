@@ -1,3 +1,13 @@
+2020-01-30  Jonathan Bedard  <jbedard@apple.com>
+
+        PAL: Remove old iOS version macros
+        https://bugs.webkit.org/show_bug.cgi?id=206905
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm: Remove USE(NSPROGRESS_PUBLISHING_SPI)
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm: Ditto.
+
 2020-01-30  youenn fablet  <youenn@apple.com>
 
         Disable Service Workers before terminating an unresponsive service worker process

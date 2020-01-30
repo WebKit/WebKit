@@ -34,11 +34,11 @@
 
 #import <MediaPlayer/MPAVRoutingController.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #import <MediaPlayer/MPMediaControlsConfiguration.h>
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #import <MediaPlayer/MPMediaControlsViewController.h>
 #else
 #import <MediaPlayer/MPAVRoutingSheet.h>
@@ -64,7 +64,7 @@ typedef NSInteger MPRouteDiscoveryMode;
 @property (nonatomic, assign) MPRouteDiscoveryMode discoveryMode;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 @interface MPMediaControlsViewController : UIViewController
 @property (nonatomic, copy, nullable) void (^didDismissHandler)(void);

@@ -173,7 +173,7 @@ static void* progressObservingContext = &progressObservingContext;
     }
 
     if (m_progressSubscriber) {
-#if USE(NSPROGRESS_PUBLISHING_SPI)
+#if HAVE(NSPROGRESS_PUBLISHING_SPI)
         [NSProgress _removeSubscriber:m_progressSubscriber.get()];
 #else
         [NSProgress removeSubscriber:m_progressSubscriber.get()];
@@ -216,7 +216,7 @@ static void* progressObservingContext = &progressObservingContext;
             return static_cast<NSProgressUnpublishingHandler>(nil);
         });
 
-#if USE(NSPROGRESS_PUBLISHING_SPI)
+#if HAVE(NSPROGRESS_PUBLISHING_SPI)
         m_progressSubscriber = [NSProgress _addSubscriberForFileURL:m_progressURL.get() withPublishingHandler:publishingHandler.get()];
 #else
         m_progressSubscriber = [NSProgress addSubscriberForFileURL:m_progressURL.get() withPublishingHandler:publishingHandler.get()];
