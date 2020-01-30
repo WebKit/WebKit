@@ -1,3 +1,14 @@
+2020-01-30  Keith Miller  <keith_miller@apple.com>
+
+        Parser needs to restore unary stack state when backtracking
+        https://bugs.webkit.org/show_bug.cgi?id=206972
+
+        Reviewed by Saam Barati.
+
+        * stress/parser-save-state-remove-stale-entries.js: Added.
+        * stress/parser-syntax-checker-assignments-are-not-resolve-expressions.js: Added.
+        (foo):
+
 2020-01-29  Mark Lam  <mark.lam@apple.com>
 
         Fix bad assertion in InternalFunctionAllocationProfile::createAllocationStructureFromBase().

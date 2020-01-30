@@ -1417,10 +1417,11 @@ private:
         m_token.m_type = m_lexer->lexExpectIdentifier(&m_token, lexerFlags, strictMode());
     }
 
-    ALWAYS_INLINE void lexCurrentTokenAgainUnderCurrentContext()
+    template <class TreeBuilder>
+    ALWAYS_INLINE void lexCurrentTokenAgainUnderCurrentContext(TreeBuilder& context)
     {
-        auto savePoint = createSavePoint();
-        restoreSavePoint(savePoint);
+        auto savePoint = createSavePoint(context);
+        restoreSavePoint(context, savePoint);
     }
 
     ALWAYS_INLINE bool nextTokenIsColon()
@@ -1685,7 +1686,7 @@ private:
     enum class FunctionDefinitionType { Expression, Declaration, Method };
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
     
-    ALWAYS_INLINE bool isArrowFunctionParameters();
+    template <class TreeBuilder> ALWAYS_INLINE bool isArrowFunctionParameters(TreeBuilder&);
     
     template <class TreeBuilder, class FunctionInfoType> NEVER_INLINE typename TreeBuilder::FormalParameterList parseFunctionParameters(TreeBuilder&, SourceParseMode, FunctionInfoType&);
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&, unsigned& parameterCount);
@@ -1791,6 +1792,7 @@ private:
         int assignmentCount { 0 };
         int nonLHSCount { 0 };
         int nonTrivialExpressionCount { 0 };
+        int unaryTokenStackDepth { 0 };
         FunctionParsePhase functionParsePhase { FunctionParsePhase::Body };
         const Identifier* lastIdentifier { nullptr };
         const Identifier* lastFunctionName { nullptr };
@@ -1800,14 +1802,19 @@ private:
 
     // If you're using this directly, you probably should be using
     // createSavePoint() instead.
-    ALWAYS_INLINE ParserState internalSaveParserState()
+    template <class TreeBuilder>
+    ALWAYS_INLINE ParserState internalSaveParserState(TreeBuilder& context)
     {
-        return m_parserState;
+        auto parserState = m_parserState;
+        parserState.unaryTokenStackDepth = context.unaryTokenStackDepth();
+        return parserState;
     }
 
-    ALWAYS_INLINE void restoreParserState(const ParserState& state)
+    template <class TreeBuilder>
+    ALWAYS_INLINE void restoreParserState(TreeBuilder& context, const ParserState& state)
     {
         m_parserState = state;
+        context.setUnaryTokenStackDepth(m_parserState.unaryTokenStackDepth);
     }
 
     struct LexerState {
@@ -1855,47 +1862,56 @@ private:
         String parserErrorMessage;
     };
 
-    ALWAYS_INLINE void internalSaveState(SavePoint& savePoint)
+    template <class TreeBuilder>
+    ALWAYS_INLINE void internalSaveState(TreeBuilder& context, SavePoint& savePoint)
     {
-        savePoint.parserState = internalSaveParserState();
+        savePoint.parserState = internalSaveParserState(context);
         savePoint.lexerState = internalSaveLexerState();
     }
     
-    ALWAYS_INLINE SavePointWithError createSavePointForError()
+    template <class TreeBuilder>
+    ALWAYS_INLINE SavePointWithError swapSavePointForError(TreeBuilder& context, SavePoint& oldSavePoint)
     {
         SavePointWithError savePoint;
-        internalSaveState(savePoint);
+        internalSaveState(context, savePoint);
         savePoint.lexerError = m_lexer->sawError();
         savePoint.lexerErrorMessage = m_lexer->getErrorMessage();
         savePoint.parserErrorMessage = m_errorMessage;
+        // Make sure we set our new savepoints unary stack to what oldSavePoint had as it currently may contain stale info.
+        savePoint.parserState.unaryTokenStackDepth = oldSavePoint.parserState.unaryTokenStackDepth;
+        restoreSavePoint(context, oldSavePoint);
         return savePoint;
     }
     
-    ALWAYS_INLINE SavePoint createSavePoint()
+    template <class TreeBuilder>
+    ALWAYS_INLINE SavePoint createSavePoint(TreeBuilder& context)
     {
         ASSERT(!hasError());
         SavePoint savePoint;
-        internalSaveState(savePoint);
+        internalSaveState(context, savePoint);
         return savePoint;
     }
 
-    ALWAYS_INLINE void internalRestoreState(const SavePoint& savePoint)
+    template <class TreeBuilder>
+    ALWAYS_INLINE void internalRestoreState(TreeBuilder& context, const SavePoint& savePoint)
     {
         restoreLexerState(savePoint.lexerState);
-        restoreParserState(savePoint.parserState);
+        restoreParserState(context, savePoint.parserState);
     }
 
-    ALWAYS_INLINE void restoreSavePointWithError(const SavePointWithError& savePoint)
+    template <class TreeBuilder>
+    ALWAYS_INLINE void restoreSavePointWithError(TreeBuilder& context, const SavePointWithError& savePoint)
     {
-        internalRestoreState(savePoint);
+        internalRestoreState(context, savePoint);
         m_lexer->setSawError(savePoint.lexerError);
         m_lexer->setErrorMessage(savePoint.lexerErrorMessage);
         m_errorMessage = savePoint.parserErrorMessage;
     }
 
-    ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
+    template <class TreeBuilder>
+    ALWAYS_INLINE void restoreSavePoint(TreeBuilder& context, const SavePoint& savePoint)
     {
-        internalRestoreState(savePoint);
+        internalRestoreState(context, savePoint);
         m_errorMessage = String();
     }
 

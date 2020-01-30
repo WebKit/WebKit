@@ -1,3 +1,76 @@
+2020-01-30  Keith Miller  <keith_miller@apple.com>
+
+        Parser needs to restore unary stack state when backtracking
+        https://bugs.webkit.org/show_bug.cgi?id=206972
+
+        Reviewed by Saam Barati.
+
+        Previously we would try to parse possibly stale unary operator
+        stack entries after backtracking from a parse error.  This would
+        cause us to think one token was a different token while reparsing
+        after backtracking. Additionally, this patch fixes an issue where
+        the syntax checker would think assignment expressions were resolve
+        expressions. Intrestingly, this was not tested in test262.
+
+        Lastly, I tried adding some assertions to improve help diagnose
+        when our source text locations are incorrect.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::DefineFieldNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::unaryTokenStackDepth const):
+        (JSC::ASTBuilder::setUnaryTokenStackDepth):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        * parser/Lexer.h:
+        (JSC::Lexer::setLineNumber):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::operator== const):
+        * parser/Nodes.h:
+        (JSC::ThrowableExpressionData::ThrowableExpressionData):
+        (JSC::ThrowableExpressionData::setExceptionSourceCode):
+        (JSC::ThrowableExpressionData::checkConsistency const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseYieldExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/Parser.h:
+        (JSC::Parser::lexCurrentTokenAgainUnderCurrentContext):
+        (JSC::Parser::internalSaveParserState):
+        (JSC::Parser::restoreParserState):
+        (JSC::Parser::internalSaveState):
+        (JSC::Parser::swapSavePointForError):
+        (JSC::Parser::createSavePoint):
+        (JSC::Parser::internalRestoreState):
+        (JSC::Parser::restoreSavePointWithError):
+        (JSC::Parser::restoreSavePoint):
+        (JSC::Parser::createSavePointForError): Deleted.
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::JSTextPosition):
+        (JSC::JSTextPosition::checkConsistency):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2020-01-29  Mark Lam  <mark.lam@apple.com>
 
         Fix bad assertion in InternalFunctionAllocationProfile::createAllocationStructureFromBase().

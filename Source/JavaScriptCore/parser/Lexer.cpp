@@ -494,7 +494,8 @@ static constexpr const LChar singleCharacterEscapeValuesForASCII[128] = {
 
 template <typename T>
 Lexer<T>::Lexer(VM& vm, JSParserBuiltinMode builtinMode, JSParserScriptMode scriptMode)
-    : m_isReparsingFunction(false)
+    : m_positionBeforeLastNewline(0,0,0)
+    , m_isReparsingFunction(false)
     , m_vm(vm)
     , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin)
     , m_scriptMode(scriptMode)

@@ -109,6 +109,7 @@ public:
     }
     void setLineNumber(int line)
     {
+        ASSERT(line >= 0);
         m_lineNumber = line;
     }
     void setHasLineTerminatorBeforeToken(bool terminator)

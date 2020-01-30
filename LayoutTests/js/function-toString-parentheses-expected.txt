@@ -211,7 +211,7 @@ PASS compileAndSerialize('a || b || c') is 'a || b || c'
 PASS compileAndSerialize('(a || b) || c') is '(a || b) || c'
 PASS compileAndSerialize('a || (b || c)') is 'a || (b || c)'
 PASS compileAndSerialize('a = b = c') is 'a = b = c'
-PASS compileAndSerialize('(a = b) = c') is '(a = b) = c'
+PASS compileAndSerialize("(a = b) = c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b = c)') is 'a = (b = c)'
 PASS compileAndSerialize('a = b + c') is 'a = b + c'
 PASS compileAndSerialize('(a = b) + c') is '(a = b) + c'
@@ -220,10 +220,10 @@ PASS compileAndSerialize('a + b = c') threw exception SyntaxError: Left hand sid
 PASS compileAndSerialize('(a + b) = c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b = c)') is 'a + (b = c)'
 PASS compileAndSerialize('a *= b *= c') is 'a *= b *= c'
-PASS compileAndSerialize('(a *= b) *= c') is '(a *= b) *= c'
+PASS compileAndSerialize("(a *= b) *= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a *= (b *= c)') is 'a *= (b *= c)'
 PASS compileAndSerialize('a = b *= c') is 'a = b *= c'
-PASS compileAndSerialize('(a = b) *= c') is '(a = b) *= c'
+PASS compileAndSerialize("(a = b) *= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b *= c)') is 'a = (b *= c)'
 PASS compileAndSerialize('a *= b + c') is 'a *= b + c'
 PASS compileAndSerialize('(a *= b) + c') is '(a *= b) + c'
@@ -232,10 +232,10 @@ PASS compileAndSerialize('a + b *= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) *= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b *= c)') is 'a + (b *= c)'
 PASS compileAndSerialize('a /= b /= c') is 'a /= b /= c'
-PASS compileAndSerialize('(a /= b) /= c') is '(a /= b) /= c'
+PASS compileAndSerialize("(a /= b) /= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a /= (b /= c)') is 'a /= (b /= c)'
 PASS compileAndSerialize('a = b /= c') is 'a = b /= c'
-PASS compileAndSerialize('(a = b) /= c') is '(a = b) /= c'
+PASS compileAndSerialize("(a = b) /= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b /= c)') is 'a = (b /= c)'
 PASS compileAndSerialize('a /= b + c') is 'a /= b + c'
 PASS compileAndSerialize('(a /= b) + c') is '(a /= b) + c'
@@ -244,10 +244,10 @@ PASS compileAndSerialize('a + b /= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) /= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b /= c)') is 'a + (b /= c)'
 PASS compileAndSerialize('a %= b %= c') is 'a %= b %= c'
-PASS compileAndSerialize('(a %= b) %= c') is '(a %= b) %= c'
+PASS compileAndSerialize("(a %= b) %= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a %= (b %= c)') is 'a %= (b %= c)'
 PASS compileAndSerialize('a = b %= c') is 'a = b %= c'
-PASS compileAndSerialize('(a = b) %= c') is '(a = b) %= c'
+PASS compileAndSerialize("(a = b) %= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b %= c)') is 'a = (b %= c)'
 PASS compileAndSerialize('a %= b + c') is 'a %= b + c'
 PASS compileAndSerialize('(a %= b) + c') is '(a %= b) + c'
@@ -256,10 +256,10 @@ PASS compileAndSerialize('a + b %= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) %= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b %= c)') is 'a + (b %= c)'
 PASS compileAndSerialize('a += b += c') is 'a += b += c'
-PASS compileAndSerialize('(a += b) += c') is '(a += b) += c'
+PASS compileAndSerialize("(a += b) += c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a += (b += c)') is 'a += (b += c)'
 PASS compileAndSerialize('a = b += c') is 'a = b += c'
-PASS compileAndSerialize('(a = b) += c') is '(a = b) += c'
+PASS compileAndSerialize("(a = b) += c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b += c)') is 'a = (b += c)'
 PASS compileAndSerialize('a += b + c') is 'a += b + c'
 PASS compileAndSerialize('(a += b) + c') is '(a += b) + c'
@@ -268,10 +268,10 @@ PASS compileAndSerialize('a + b += c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) += c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b += c)') is 'a + (b += c)'
 PASS compileAndSerialize('a -= b -= c') is 'a -= b -= c'
-PASS compileAndSerialize('(a -= b) -= c') is '(a -= b) -= c'
+PASS compileAndSerialize("(a -= b) -= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a -= (b -= c)') is 'a -= (b -= c)'
 PASS compileAndSerialize('a = b -= c') is 'a = b -= c'
-PASS compileAndSerialize('(a = b) -= c') is '(a = b) -= c'
+PASS compileAndSerialize("(a = b) -= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b -= c)') is 'a = (b -= c)'
 PASS compileAndSerialize('a -= b + c') is 'a -= b + c'
 PASS compileAndSerialize('(a -= b) + c') is '(a -= b) + c'
@@ -280,10 +280,10 @@ PASS compileAndSerialize('a + b -= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) -= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b -= c)') is 'a + (b -= c)'
 PASS compileAndSerialize('a <<= b <<= c') is 'a <<= b <<= c'
-PASS compileAndSerialize('(a <<= b) <<= c') is '(a <<= b) <<= c'
+PASS compileAndSerialize("(a <<= b) <<= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a <<= (b <<= c)') is 'a <<= (b <<= c)'
 PASS compileAndSerialize('a = b <<= c') is 'a = b <<= c'
-PASS compileAndSerialize('(a = b) <<= c') is '(a = b) <<= c'
+PASS compileAndSerialize("(a = b) <<= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b <<= c)') is 'a = (b <<= c)'
 PASS compileAndSerialize('a <<= b + c') is 'a <<= b + c'
 PASS compileAndSerialize('(a <<= b) + c') is '(a <<= b) + c'
@@ -292,10 +292,10 @@ PASS compileAndSerialize('a + b <<= c') threw exception SyntaxError: Left hand s
 PASS compileAndSerialize('(a + b) <<= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b <<= c)') is 'a + (b <<= c)'
 PASS compileAndSerialize('a >>= b >>= c') is 'a >>= b >>= c'
-PASS compileAndSerialize('(a >>= b) >>= c') is '(a >>= b) >>= c'
+PASS compileAndSerialize("(a >>= b) >>= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a >>= (b >>= c)') is 'a >>= (b >>= c)'
 PASS compileAndSerialize('a = b >>= c') is 'a = b >>= c'
-PASS compileAndSerialize('(a = b) >>= c') is '(a = b) >>= c'
+PASS compileAndSerialize("(a = b) >>= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b >>= c)') is 'a = (b >>= c)'
 PASS compileAndSerialize('a >>= b + c') is 'a >>= b + c'
 PASS compileAndSerialize('(a >>= b) + c') is '(a >>= b) + c'
@@ -304,10 +304,10 @@ PASS compileAndSerialize('a + b >>= c') threw exception SyntaxError: Left hand s
 PASS compileAndSerialize('(a + b) >>= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b >>= c)') is 'a + (b >>= c)'
 PASS compileAndSerialize('a >>>= b >>>= c') is 'a >>>= b >>>= c'
-PASS compileAndSerialize('(a >>>= b) >>>= c') is '(a >>>= b) >>>= c'
+PASS compileAndSerialize("(a >>>= b) >>>= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a >>>= (b >>>= c)') is 'a >>>= (b >>>= c)'
 PASS compileAndSerialize('a = b >>>= c') is 'a = b >>>= c'
-PASS compileAndSerialize('(a = b) >>>= c') is '(a = b) >>>= c'
+PASS compileAndSerialize("(a = b) >>>= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b >>>= c)') is 'a = (b >>>= c)'
 PASS compileAndSerialize('a >>>= b + c') is 'a >>>= b + c'
 PASS compileAndSerialize('(a >>>= b) + c') is '(a >>>= b) + c'
@@ -316,10 +316,10 @@ PASS compileAndSerialize('a + b >>>= c') threw exception SyntaxError: Left hand 
 PASS compileAndSerialize('(a + b) >>>= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b >>>= c)') is 'a + (b >>>= c)'
 PASS compileAndSerialize('a &= b &= c') is 'a &= b &= c'
-PASS compileAndSerialize('(a &= b) &= c') is '(a &= b) &= c'
+PASS compileAndSerialize("(a &= b) &= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a &= (b &= c)') is 'a &= (b &= c)'
 PASS compileAndSerialize('a = b &= c') is 'a = b &= c'
-PASS compileAndSerialize('(a = b) &= c') is '(a = b) &= c'
+PASS compileAndSerialize("(a = b) &= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b &= c)') is 'a = (b &= c)'
 PASS compileAndSerialize('a &= b + c') is 'a &= b + c'
 PASS compileAndSerialize('(a &= b) + c') is '(a &= b) + c'
@@ -328,10 +328,10 @@ PASS compileAndSerialize('a + b &= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) &= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b &= c)') is 'a + (b &= c)'
 PASS compileAndSerialize('a ^= b ^= c') is 'a ^= b ^= c'
-PASS compileAndSerialize('(a ^= b) ^= c') is '(a ^= b) ^= c'
+PASS compileAndSerialize("(a ^= b) ^= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a ^= (b ^= c)') is 'a ^= (b ^= c)'
 PASS compileAndSerialize('a = b ^= c') is 'a = b ^= c'
-PASS compileAndSerialize('(a = b) ^= c') is '(a = b) ^= c'
+PASS compileAndSerialize("(a = b) ^= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b ^= c)') is 'a = (b ^= c)'
 PASS compileAndSerialize('a ^= b + c') is 'a ^= b + c'
 PASS compileAndSerialize('(a ^= b) + c') is '(a ^= b) + c'
@@ -340,10 +340,10 @@ PASS compileAndSerialize('a + b ^= c') threw exception SyntaxError: Left hand si
 PASS compileAndSerialize('(a + b) ^= c') threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a + (b ^= c)') is 'a + (b ^= c)'
 PASS compileAndSerialize('a |= b |= c') is 'a |= b |= c'
-PASS compileAndSerialize('(a |= b) |= c') is '(a |= b) |= c'
+PASS compileAndSerialize("(a |= b) |= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a |= (b |= c)') is 'a |= (b |= c)'
 PASS compileAndSerialize('a = b |= c') is 'a = b |= c'
-PASS compileAndSerialize('(a = b) |= c') is '(a = b) |= c'
+PASS compileAndSerialize("(a = b) |= c") threw exception SyntaxError: Left side of assignment is not a reference..
 PASS compileAndSerialize('a = (b |= c)') is 'a = (b |= c)'
 PASS compileAndSerialize('a |= b + c') is 'a |= b + c'
 PASS compileAndSerialize('(a |= b) + c') is '(a |= b) + c'

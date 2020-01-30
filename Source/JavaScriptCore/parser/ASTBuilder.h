@@ -926,6 +926,16 @@ public:
         tokenStackDepth--;
         m_unaryTokenStack.removeLast();
     }
+
+    int unaryTokenStackDepth() const
+    {
+        return m_unaryTokenStack.size();
+    }
+
+    void setUnaryTokenStackDepth(int oldDepth)
+    {
+        m_unaryTokenStack.shrink(oldDepth);
+    }
     
     void assignmentStackAppend(int& assignmentStackDepth, ExpressionNode* node, const JSTextPosition& start, const JSTextPosition& divot, int assignmentCount, Operator op)
     {

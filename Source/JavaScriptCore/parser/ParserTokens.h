@@ -197,7 +197,13 @@ static_assert(static_cast<unsigned>(POW) <= 0x00ffffffU, "JSTokenType must be 24
 
 struct JSTextPosition {
     JSTextPosition() = default;
-    JSTextPosition(int _line, int _offset, int _lineStartOffset) : line(_line), offset(_offset), lineStartOffset(_lineStartOffset) { }
+    JSTextPosition(int _line, int _offset, int _lineStartOffset) 
+        : line(_line)
+        , offset(_offset)
+        , lineStartOffset(_lineStartOffset)
+    { 
+        checkConsistency();
+    }
 
     JSTextPosition operator+(int adjustment) const { return JSTextPosition(line, offset + adjustment, lineStartOffset); }
     JSTextPosition operator+(unsigned adjustment) const { return *this + static_cast<int>(adjustment); }
@@ -218,10 +224,18 @@ struct JSTextPosition {
     }
 
     int column() const { return offset - lineStartOffset; }
+    void checkConsistency()
+    {
+        // FIXME: We should test ASSERT(offset >= lineStartOffset); but that breaks a lot of tests.
+        ASSERT(line >= 0);
+        ASSERT(offset >= 0);
+        ASSERT(lineStartOffset >= 0);
+    }
 
-    int line { 0 };
-    int offset { 0 };
-    int lineStartOffset { 0 };
+    // FIXME: these should be unsigned.
+    int line { -1 };
+    int offset { -1 };
+    int lineStartOffset { -1 };
 };
 
 union JSTokenData {

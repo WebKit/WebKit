@@ -47,10 +47,13 @@ function testLeftAssociativeSame(opA, opB)
     testKeepParentheses("a " + opA + " (b " + opB + " c)");
 }
 
-function testRightAssociativeSame(opA, opB)
+function testRightAssociativeSame(opA, opB, leftParensThrows = false)
 {
     testKeepParentheses("a " + opA + " b " + opB + " c");
-    testKeepParentheses("(a " + opA + " b) " + opB + " c");
+    if (leftParensThrows)
+        shouldThrow(`compileAndSerialize("(a ${opA} b) ${opB} c")`);
+    else
+        testKeepParentheses("(a " + opA + " b) " + opB + " c");
     testOptionalParentheses("a " + opA + " (b " + opB + " c)");
 }
 
@@ -99,9 +102,9 @@ var assignmentOperators = [ "=", "*=", "/=" , "%=", "+=", "-=", "<<=", ">>=", ">
 
 for (i = 0; i < assignmentOperators.length; ++i) {
     var op = assignmentOperators[i];
-    testRightAssociativeSame(op, op);
+    testRightAssociativeSame(op, op, true);
     if (i != 0)
-        testRightAssociativeSame("=", op);
+        testRightAssociativeSame("=", op, true);
     testLowerFirst(op, "+");
     shouldThrow("compileAndSerialize('a + b " + op + " c')");
     shouldThrow("compileAndSerialize('(a + b) " + op + " c')");

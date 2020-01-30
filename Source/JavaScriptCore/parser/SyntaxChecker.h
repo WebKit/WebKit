@@ -334,9 +334,11 @@ public:
     int unaryTokenStackLastType(int&) { return m_topUnaryToken; }
     JSTextPosition unaryTokenStackLastStart(int&) { return JSTextPosition(0, 0, 0); }
     void unaryTokenStackRemoveLast(int& stackDepth) { stackDepth = 0; }
+    int unaryTokenStackDepth() const { return 0; }
+    void setUnaryTokenStackDepth(int) { }
     
-    void assignmentStackAppend(int, int, int, int, int, Operator) { }
-    int createAssignment(const JSTokenLocation&, int, int, int, int, int) { RELEASE_ASSERT_NOT_REACHED(); return AssignmentExpr; }
+    void assignmentStackAppend(int& assignmentStackDepth, int, int, int, int, Operator) { assignmentStackDepth = 1; }
+    int createAssignment(const JSTokenLocation&, int& assignmentStackDepth, int, int, int, int) { assignmentStackDepth = 0; return AssignmentExpr; }
     const Identifier* getName(const Property& property) const { return property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }
@@ -435,7 +437,7 @@ public:
     int endOffset(int) { return 0; }
     void setStartOffset(int, int) { }
 
-    JSTextPosition breakpointLocation(int) { return JSTextPosition(-1, 0, 0); }
+    JSTextPosition breakpointLocation(int) { return { }; }
 
     void propagateArgumentsUse() { }
 

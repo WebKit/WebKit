@@ -372,37 +372,36 @@ namespace JSC {
 
     class ThrowableExpressionData {
     public:
-        ThrowableExpressionData()
-            : m_divot(-1, -1, -1)
-            , m_divotStart(-1, -1, -1)
-            , m_divotEnd(-1, -1, -1)
-        {
-        }
+        ThrowableExpressionData() = default;
         
         ThrowableExpressionData(const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
             : m_divot(divot)
             , m_divotStart(start)
             , m_divotEnd(end)
         {
-            ASSERT(m_divot.offset >= m_divot.lineStartOffset);
-            ASSERT(m_divotStart.offset >= m_divotStart.lineStartOffset);
-            ASSERT(m_divotEnd.offset >= m_divotEnd.lineStartOffset);
+            checkConsistency();
         }
 
         void setExceptionSourceCode(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         {
-            ASSERT(divot.offset >= divot.lineStartOffset);
-            ASSERT(divotStart.offset >= divotStart.lineStartOffset);
-            ASSERT(divotEnd.offset >= divotEnd.lineStartOffset);
             m_divot = divot;
             m_divotStart = divotStart;
             m_divotEnd = divotEnd;
+            checkConsistency();
         }
 
         const JSTextPosition& divot() const { return m_divot; }
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
 
+        void checkConsistency() const
+        {
+            ASSERT(m_divot.offset >= m_divot.lineStartOffset);
+            ASSERT(m_divotStart.offset >= m_divotStart.lineStartOffset);
+            ASSERT(m_divotEnd.offset >= m_divotEnd.lineStartOffset);
+            ASSERT(m_divot.offset >= m_divotStart.offset);
+            ASSERT(m_divotEnd.offset >= m_divot.offset);
+        }
     protected:
         RegisterID* emitThrowReferenceError(BytecodeGenerator&, const String& message);
 
@@ -2133,7 +2132,7 @@ namespace JSC {
         SourceCode m_classSource;
         int m_startStartOffset;
         unsigned m_parameterCount;
-        int m_lastLine;
+        int m_lastLine { 0 };
     };
 
     class FunctionNode final : public ScopeNode {
