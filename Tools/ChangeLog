@@ -1,3 +1,13 @@
+2020-01-30  Jonathan Bedard  <jbedard@apple.com>
+
+        TestWebKitAPI: Re-baseline AccessibilityTests for Catalyst
+        https://bugs.webkit.org/show_bug.cgi?id=206997
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2020-01-29  Jonathan Bedard  <jbedard@apple.com>
 
         run-safari / run-webkit-tests --ios-simulator not working with XCode 13.3.1 (11C504)
