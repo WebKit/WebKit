@@ -1,3 +1,48 @@
+2020-01-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255337. rdar://problem/58936679
+
+    macCatalyst: Right clicking on a link follows it immediately
+    https://bugs.webkit.org/show_bug.cgi?id=206919
+    <rdar://problem/58936679>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WKMouseGestureRecognizer.mm:
+    (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+    (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+    (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+    UIKit's _buttonMask does not include the currently-released button,
+    so in order to correctly identify the released button in touchesEnded,
+    store the mask for the length of the click.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/MacCatalystMouseSupport.mm:
+    (TEST):
+    Add a test ensuring that mouseup is still called with the secondary button,
+    even if the event's buttonmask is 0.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255337 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-28  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: Right clicking on a link follows it immediately
+            https://bugs.webkit.org/show_bug.cgi?id=206919
+            <rdar://problem/58936679>
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/ios/WKMouseGestureRecognizer.mm:
+            (-[WKMouseGestureRecognizer createMouseEventWithType:forEvent:]):
+            (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+            (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+            UIKit's _buttonMask does not include the currently-released button,
+            so in order to correctly identify the released button in touchesEnded,
+            store the mask for the length of the click.
+
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255114. rdar://problem/58920176
