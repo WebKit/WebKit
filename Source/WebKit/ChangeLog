@@ -1,24 +1,5 @@
 2020-01-30  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r255339. rdar://problem/58936679
-
-    Fix the build
-    
-    * UIProcess/ios/WKMouseGestureRecognizer.mm:
-    (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255339 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2020-01-28  Timothy Horton  <timothy_horton@apple.com>
-
-            Fix the build
-
-            * UIProcess/ios/WKMouseGestureRecognizer.mm:
-            (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
-
-2020-01-30  Alan Coon  <alancoon@apple.com>
-
         Cherry-pick r255337. rdar://problem/58936679
 
     macCatalyst: Right clicking on a link follows it immediately
