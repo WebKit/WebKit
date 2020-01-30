@@ -125,16 +125,15 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     BOOL isRightButton = modifiers.contains(WebKit::WebEvent::Modifier::ControlKey) || ([uiEvent _buttonMask] & UIEventButtonMaskSecondary);
 
     auto button = [&] {
-        if (!_touching)
+        if (!_touching || type == WebKit::WebEvent::Type::MouseUp)
             return WebKit::WebMouseEvent::NoButton;
         if (isRightButton)
             return WebKit::WebMouseEvent::RightButton;
         return WebKit::WebMouseEvent::LeftButton;
     }();
 
-    // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.
     auto buttons = [&] {
-        if (!_touching || type == WebKit::WebEvent::Type::MouseUp)
+        if (!_touching)
             return 0;
         if (isRightButton)
             return 2;
@@ -168,10 +167,10 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    _touching = NO;
+
     _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp forEvent:event];
     _lastLocation = [self locationInView:self.view];
-
-    _touching = NO;
 
     self.state = UIGestureRecognizerStateChanged;
 }
