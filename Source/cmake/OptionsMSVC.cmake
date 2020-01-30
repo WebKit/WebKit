@@ -29,6 +29,11 @@ endif ()
 # Specify the source code encoding
 add_compile_options(/utf-8 /validate-charset)
 
+# Enable the new lambda processor for better C++ conformance with /std:c++17
+if (NOT COMPILER_IS_CLANG_CL)
+    add_compile_options(/experimental:newLambdaProcessor)
+endif ()
+
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")

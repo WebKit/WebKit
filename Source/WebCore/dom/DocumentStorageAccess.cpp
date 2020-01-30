@@ -182,7 +182,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         bool shouldPreserveUserGesture = wasGranted == StorageAccessWasGranted::Yes || promptWasShown == StorageAccessPromptWasShown::No;
 
         if (shouldPreserveUserGesture) {
-            m_document.eventLoop().queueMicrotask([this, weakThis = makeWeakPtr(*weakThis)] {
+            m_document.eventLoop().queueMicrotask([this, weakThis = makeWeakPtr(*this)] {
                 if (weakThis)
                     enableTemporaryTimeUserGesture();
             });
@@ -197,7 +197,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         }
 
         if (shouldPreserveUserGesture) {
-            m_document.eventLoop().queueMicrotask([this, weakThis = makeWeakPtr(*weakThis)] {
+            m_document.eventLoop().queueMicrotask([this, weakThis = makeWeakPtr(*this)] {
                 if (weakThis)
                     consumeTemporaryTimeUserGesture();
             });
