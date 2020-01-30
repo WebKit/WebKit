@@ -500,7 +500,7 @@ private:
 
     bool shouldSendMouseEventsToInactiveWindows() const;
 
-    bool canMouseDownStartSelect(Node*);
+    bool canMouseDownStartSelect(const MouseEventWithHitTestResults&);
 
     Frame& m_frame;
 

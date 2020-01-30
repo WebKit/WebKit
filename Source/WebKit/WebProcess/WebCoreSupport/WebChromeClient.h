@@ -182,7 +182,7 @@ private:
     void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
     void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
 
-    bool shouldUseMouseEventsForSelection() final;
+    bool shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent&) final;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
