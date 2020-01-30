@@ -71,9 +71,9 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
 {
     if (document.frame())
-        m_isFirstLayoutDone = document.frame()->loader().stateMachine().firstLayoutDone();
+        m_isDocumentLoaded = document.loadEventFinished() && !document.processingLoadEvent();
 
-    if (m_isFirstLayoutDone && !backing.hasActiveFontFaces())
+    if (m_isDocumentLoaded && !backing.hasActiveFontFaces())
         m_readyPromise->resolve(*this);
 
     m_backing->addClient(*this);
@@ -196,16 +196,16 @@ void FontFaceSet::startedLoading()
     // FIXME: Fire a "loading" event asynchronously.
 }
 
-void FontFaceSet::didFirstLayout()
+void FontFaceSet::documentDidFinishLoading()
 {
-    m_isFirstLayoutDone = true;
+    m_isDocumentLoaded = true;
     if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled())
         m_readyPromise->resolve(*this);
 }
 
 void FontFaceSet::completedLoading()
 {
-    if (m_isFirstLayoutDone && !m_readyPromise->isFulfilled())
+    if (m_isDocumentLoaded && !m_readyPromise->isFulfilled())
         m_readyPromise->resolve(*this);
 }
 
