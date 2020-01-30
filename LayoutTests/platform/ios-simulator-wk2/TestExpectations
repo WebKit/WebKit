@@ -85,3 +85,5 @@ webkit.org/b/206698 editing/caret/ios/fixed-caret-position-after-scroll.html [ P
 webkit.org/b/206749 crypto/subtle/rsa-indexeddb-private.html [ Pass Timeout ]
 
 webkit.org/b/206751 http/tests/workers/service/service-worker-user-timing.https.html [ Pass Timeout ]
+
+webkit.org/b/206973 animations/change-one-anim.html [ Pass Failure ]
