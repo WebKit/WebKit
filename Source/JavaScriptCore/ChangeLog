@@ -1,3 +1,35 @@
+2020-01-29  Robin Morisset  <rmorisset@apple.com>
+
+        Remove Options::enableSpectreMitigations
+        https://bugs.webkit.org/show_bug.cgi?id=193885
+
+        Reviewed by Saam Barati.
+
+        From what I remember we decided to remove the spectre-specific mitigations we had tried (in favor of things like process-per-origin).
+        I don't think anyone is using the SpectreGadget we had added for experiments either.
+        So this patch removes the following three options, and all the code that depended on them:
+        - enableSpectreMitigations (was true, only used in one place)
+        - enableSpectreGadgets (was false)
+        - zeroStackFrame (was false, and was an experiment about Spectre variant 4 if I remember correctly)
+
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::defaultPrologueGenerator):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * runtime/OptionsList.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::initCallFrame):
+
 2020-01-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add instrumentation for showing existing Web Animations

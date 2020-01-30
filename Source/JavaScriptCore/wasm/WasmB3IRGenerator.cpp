@@ -1754,7 +1754,6 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
     ExpressionType callableFunctionBuffer;
     ExpressionType instancesBuffer;
     ExpressionType callableFunctionBufferLength;
-    ExpressionType mask;
     {
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             instanceValue(), safeCast<int32_t>(Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex)));
@@ -1764,9 +1763,6 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
             table, safeCast<int32_t>(FuncRefTable::offsetOfInstances()));
         callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
             table, safeCast<int32_t>(Table::offsetOfLength()));
-        mask = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(),
-            m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-                table, safeCast<int32_t>(Table::offsetOfMask())));
     }
 
     // Check the index we are looking for is valid.
@@ -1780,9 +1776,6 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
     }
 
     calleeIndex = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex);
-
-    if (Options::enableSpectreMitigations())
-        calleeIndex = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), mask, calleeIndex);
 
     ExpressionType callableFunction;
     {

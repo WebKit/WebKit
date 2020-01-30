@@ -502,30 +502,6 @@ public:
 #endif
     }
 
-    void clearStackFrame(GPRReg currentTop, GPRReg newTop, GPRReg temp, unsigned frameSize)
-    {
-        ASSERT(frameSize % stackAlignmentBytes() == 0);
-        if (frameSize <= 128) {
-            for (unsigned offset = 0; offset < frameSize; offset += sizeof(CPURegister))
-                storePtr(TrustedImm32(0), Address(currentTop, -8 - offset));
-        } else {
-            constexpr unsigned storeBytesPerIteration = stackAlignmentBytes();
-            constexpr unsigned storesPerIteration = storeBytesPerIteration / sizeof(CPURegister);
-
-            move(currentTop, temp);
-            Label zeroLoop = label();
-            subPtr(TrustedImm32(storeBytesPerIteration), temp);
-#if CPU(ARM64)
-            static_assert(storesPerIteration == 2, "clearStackFrame() for ARM64 assumes stack is 16 byte aligned");
-            storePair64(ARM64Registers::zr, ARM64Registers::zr, temp);
-#else
-            for (unsigned i = storesPerIteration; i-- != 0;)
-                storePtr(TrustedImm32(0), Address(temp, sizeof(CPURegister) * i));
-#endif
-            branchPtr(NotEqual, temp, newTop).linkTo(zeroLoop, this);
-        }
-    }
-
 #if CPU(X86_64)
     static constexpr size_t prologueStackPointerDelta()
     {

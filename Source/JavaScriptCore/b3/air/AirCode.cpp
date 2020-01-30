@@ -46,8 +46,6 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
     if (code.frameSize()) {
         AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
         jit.addPtr(MacroAssembler::TrustedImm32(-code.frameSize()), MacroAssembler::framePointerRegister,  MacroAssembler::stackPointerRegister);
-        if (Options::zeroStackFrame())
-            jit.clearStackFrame(MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister, GPRInfo::nonArgGPR0, code.frameSize());
     }
     
     jit.emitSave(code.calleeSaveRegisterAtOffsetList());

@@ -59,11 +59,6 @@ RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()
     return runtimeEnabledFeatures;
 }
 
-bool RuntimeEnabledFeatures::spectreGadgetsEnabled() const
-{
-    return JSC::Options::enableSpectreGadgets();
-}
-
 #if ENABLE(TOUCH_EVENTS)
 bool RuntimeEnabledFeatures::touchEventsEnabled() const
 {

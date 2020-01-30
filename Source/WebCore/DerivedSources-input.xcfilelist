@@ -636,7 +636,6 @@ $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
 $(PROJECT_DIR)/dom/ShadowRoot.idl
 $(PROJECT_DIR)/dom/ShadowRootMode.idl
 $(PROJECT_DIR)/dom/Slotable.idl
-$(PROJECT_DIR)/dom/SpectreGadget.idl
 $(PROJECT_DIR)/dom/StaticRange.idl
 $(PROJECT_DIR)/dom/StringCallback.idl
 $(PROJECT_DIR)/dom/Text.idl

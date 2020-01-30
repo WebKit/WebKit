@@ -442,10 +442,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(Bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
     \
-    v(Bool, enableSpectreMitigations, true, Restricted, "Enable Spectre mitigations.") \
-    v(Bool, enableSpectreGadgets, false, Restricted, "enable gadgets to test Spectre mitigations.") \
-    v(Bool, zeroStackFrame, false, Normal, "Zero stack frame on entry to a function.") \
-    \
     v(Bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
     v(Size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
     v(Unsigned, webAssemblyBBQAirOptimizationLevel, 0, Normal, "Air Optimization level for BBQ Web Assembly module compilations.") \

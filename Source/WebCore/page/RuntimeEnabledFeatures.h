@@ -135,8 +135,6 @@ public:
     bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
     void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
 
-    bool spectreGadgetsEnabled() const;
-
     void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
     bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
 
