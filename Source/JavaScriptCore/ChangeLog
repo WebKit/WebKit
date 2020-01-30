@@ -1,3 +1,28 @@
+2020-01-29  Mark Lam  <mark.lam@apple.com>
+
+        Fix bad assertion in InternalFunctionAllocationProfile::createAllocationStructureFromBase().
+        https://bugs.webkit.org/show_bug.cgi?id=206981
+        <rdar://problem/58985736>
+
+        Reviewed by Keith Miller.
+
+        InternalFunctionAllocationProfile::createAllocationStructureFromBase() is only
+        called from FunctionRareData::createInternalFunctionAllocationStructureFromBase(),
+        which in turn is only called from InternalFunction::createSubclassStructureSlow().
+
+        InternalFunction::createSubclassStructureSlow() only allows a call to
+        FunctionRareData::createInternalFunctionAllocationStructureFromBase() under
+        certain conditions.  One of these conditions is that the baseGlobalObject is
+        different than the newTarget's globalObject.
+
+        InternalFunctionAllocationProfile::createAllocationStructureFromBase() has an
+        ASSERT on the same set of conditions, with one ommission: the one above.  This
+        patch fixes the ASSERT by adding the missing condition to match the check in
+        InternalFunction::createSubclassStructureSlow().
+
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+
 2020-01-29  Robin Morisset  <rmorisset@apple.com>
 
         Remove Options::enableSpectreMitigations
