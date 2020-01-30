@@ -1413,8 +1413,13 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 
     if (ShadowRoot* root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
-            if (Element* shadowHost = element()->shadowHost())
-                return shadowHost->renderer()->getUncachedPseudoStyle({ PseudoId::Selection });
+            auto* currentElement = element()->shadowHost();
+            // When an element has display: contents, this element doesn't have a renderer
+            // and its children will render as children of the parent element.
+            while (currentElement && currentElement->hasDisplayContents())
+                currentElement = currentElement->parentElement();
+            if (currentElement && currentElement->renderer())
+                return currentElement->renderer()->getUncachedPseudoStyle({ PseudoId::Selection });
         }
     }
 

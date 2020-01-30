@@ -1,3 +1,13 @@
+2020-01-30  Doug Kelly  <dougk@apple.com>
+
+        Crash in RenderElement::selectionPseudoStyle with detail element set to display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=206705
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/display-contents-detail-selection-expected.txt: Added.
+        * fast/css/display-contents-detail-selection.html: Added.
+
 2020-01-30  Truitt Savell  <tsavell@apple.com>
 
         [ Mac ] fast/history/page-cache-webdatabase-pending-transaction.html is timing out

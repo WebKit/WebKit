@@ -1,0 +1,11 @@
+<script>
+function jsfuzzer() {
+document.execCommand("selectAll", false);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+}
+</script>
+<body onload=jsfuzzer()>
+<meter readonly="readonly"></meter>
+<details id="a" open="true" rel="noopener" style="display: contents;">Tests a display: contents element when selected on computing the style.  Test passes if WebKit does not crash.  PASS.</details>
