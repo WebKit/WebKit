@@ -1,3 +1,17 @@
+2020-01-30  youenn fablet  <youenn@apple.com>
+
+        Disable Service Workers before terminating an unresponsive service worker process
+        https://bugs.webkit.org/show_bug.cgi?id=206994
+
+        Reviewed by Chris Dumez.
+
+        In case a process becomes unresponsive, we terminate it in case it is a service worker process.
+        In that case, we should make sure not to call the service worker process crash callback.
+        To do so, disable service workers before terminating the IPC connection.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+
 2020-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove report rule for 'com.apple.runningboard' from the Network and GPU process sandboxes

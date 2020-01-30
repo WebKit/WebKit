@@ -836,6 +836,7 @@ void WebProcessProxy::didBecomeUnresponsive()
     // If the web process becomes unresponsive and only runs service workers, kill it ourselves since there are no native clients to do it.
     if (isRunningServiceWorkers() && m_pageMap.isEmpty()) {
         RELEASE_LOG_ERROR(PerformanceLogging, "%p - WebProcessProxy::didBecomeUnresponsive() Terminating service worker-only web process with pid %d because it is unresponsive", this, processIdentifier());
+        disableServiceWorkers();
         terminate();
     }
 }
