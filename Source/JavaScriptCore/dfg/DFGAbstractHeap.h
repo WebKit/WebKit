@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DOMJITHeapRange.h"
-#include "OperandsInlines.h"
 #include "VirtualRegister.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
@@ -124,15 +123,10 @@ public:
             , m_value(bitwise_cast<intptr_t>(pointer))
         {
         }
-
-        Payload(Operand operand)
-            : m_isTop(false)
-            , m_value(operand.asBits())
-        {
-        }
-
+        
         Payload(VirtualRegister operand)
-            : Payload(Operand(operand))
+            : m_isTop(false)
+            , m_value(operand.offset())
         {
         }
         
@@ -189,7 +183,6 @@ public:
         }
         
         void dump(PrintStream&) const;
-        void dumpAsOperand(PrintStream&) const;
         
     private:
         bool m_isTop;
@@ -211,7 +204,6 @@ public:
     {
         ASSERT(kind != InvalidAbstractHeap && kind != World && kind != Heap && kind != SideState);
         m_value = encode(kind, payload);
-        ASSERT(this->kind() == kind && this->payload() == payload);
     }
     
     AbstractHeap(WTF::HashTableDeletedValueType)
@@ -226,11 +218,6 @@ public:
     {
         ASSERT(kind() != World && kind() != InvalidAbstractHeap);
         return payloadImpl();
-    }
-    Operand operand() const
-    {
-        ASSERT(kind() == Stack && !payload().isTop());
-        return Operand::fromBits(payload().value());
     }
     
     AbstractHeap supertype() const

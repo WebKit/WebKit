@@ -285,17 +285,17 @@ private:
             }
             
             Node* setLocal = nullptr;
-            Operand operand = m_node->operand();
+            VirtualRegister local = m_node->local();
             
             for (unsigned i = m_nodeIndex; i--;) {
                 Node* node = m_block->at(i);
 
-                if (node->op() == SetLocal && node->operand() == operand) {
+                if (node->op() == SetLocal && node->local() == local) {
                     setLocal = node;
                     break;
                 }
 
-                if (accessesOverlap(m_graph, node, AbstractHeap(Stack, operand)))
+                if (accessesOverlap(m_graph, node, AbstractHeap(Stack, local)))
                     break;
 
             }

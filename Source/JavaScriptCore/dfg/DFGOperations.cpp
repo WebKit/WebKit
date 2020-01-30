@@ -2971,18 +2971,17 @@ int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObj
     return -1;
 }
 
-void JIT_OPERATION operationLoadVarargs(JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum)
+void JIT_OPERATION operationLoadVarargs(JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum)
 {
-    VirtualRegister firstElement { firstElementDest };
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    loadVarargs(globalObject, bitwise_cast<JSValue*>(&callFrame->r(firstElement)), arguments, offset, lengthIncludingThis - 1);
+    loadVarargs(globalObject, callFrame, VirtualRegister(firstElementDest), arguments, offset, length);
     
-    for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
-        callFrame->r(firstElement + i) = jsUndefined();
+    for (uint32_t i = length; i < mandatoryMinimum; ++i)
+        callFrame->r(firstElementDest + i) = jsUndefined();
 }
 
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)

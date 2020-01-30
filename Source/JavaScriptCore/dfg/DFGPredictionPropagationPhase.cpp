@@ -1374,7 +1374,6 @@ private:
         case MovHint:
         case ZombieHint:
         case ExitOK:
-        case VarargsLength:
         case LoadVarargs:
         case ForwardVarargs:
         case PutDynamicVar:

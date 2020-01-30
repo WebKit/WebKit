@@ -60,11 +60,11 @@ void VariableEvent::dump(PrintStream& out) const
         out.print("Death(", id(), ")");
         break;
     case MovHintEvent:
-        out.print("MovHint(", id(), ", ", operand(), ")");
+        out.print("MovHint(", id(), ", ", bytecodeRegister(), ")");
         break;
     case SetLocalEvent:
         out.print(
-            "SetLocal(machine:", machineRegister(), " -> bytecode:", operand(),
+            "SetLocal(machine:", machineRegister(), " -> bytecode:", bytecodeRegister(),
             ", ", dataFormatToString(dataFormat()), ")");
         break;
     default:

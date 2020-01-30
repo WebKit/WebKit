@@ -179,8 +179,7 @@ struct InlineCallFrame {
     WriteBarrier<CodeBlock> baselineCodeBlock;
     CodeOrigin directCaller;
 
-    unsigned argumentCountIncludingThis : 22; // Do not include fixups.
-    unsigned tmpOffset : 10;
+    unsigned argumentCountIncludingThis { 0 }; // Do not include fixups.
     signed stackOffset : 28;
     unsigned kind : 3; // real type is Kind
     bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
@@ -192,9 +191,7 @@ struct InlineCallFrame {
     // InlineCallFrame's fields. This constructor is here just to reduce confusion if
     // we forgot to initialize explicitly.
     InlineCallFrame()
-        : argumentCountIncludingThis(0)
-        , tmpOffset(0)
-        , stackOffset(0)
+        : stackOffset(0)
         , kind(Call)
         , isClosureCall(false)
     {
@@ -220,12 +217,6 @@ struct InlineCallFrame {
     {
         stackOffset = offset;
         RELEASE_ASSERT(static_cast<signed>(stackOffset) == offset);
-    }
-
-    void setTmpOffset(unsigned offset)
-    {
-        tmpOffset = offset;
-        RELEASE_ASSERT(static_cast<unsigned>(tmpOffset) == offset);
     }
 
     ptrdiff_t callerFrameOffset() const { return stackOffset * sizeof(Register) + CallFrame::callerFrameOffset(); }
@@ -256,9 +247,9 @@ inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigi
     return baselineCodeBlock;
 }
 
-// These function is defined here and not in CodeOrigin because it needs access to the directCaller field in InlineCallFrame
+// This function is defined here and not in CodeOrigin because it needs access to the directCaller field in InlineCallFrame
 template <typename Function>
-inline void CodeOrigin::walkUpInlineStack(const Function& function) const
+inline void CodeOrigin::walkUpInlineStack(const Function& function)
 {
     CodeOrigin codeOrigin = *this;
     while (true) {
@@ -270,38 +261,11 @@ inline void CodeOrigin::walkUpInlineStack(const Function& function) const
     }
 }
 
-inline bool CodeOrigin::inlineStackContainsActiveCheckpoint() const
-{
-    bool result = false;
-    walkUpInlineStack([&] (CodeOrigin origin) {
-        if (origin.bytecodeIndex().checkpoint())
-            result = true;
-    });
-    return result;
-}
-
-ALWAYS_INLINE Operand remapOperand(InlineCallFrame* inlineCallFrame, Operand operand)
+ALWAYS_INLINE VirtualRegister remapOperand(InlineCallFrame* inlineCallFrame, VirtualRegister reg)
 {
     if (inlineCallFrame)
-        return operand.isTmp() ? Operand::tmp(operand.value() + inlineCallFrame->tmpOffset) : operand.virtualRegister() + inlineCallFrame->stackOffset;
-    return operand;
-}
-
-ALWAYS_INLINE Operand remapOperand(InlineCallFrame* inlineCallFrame, VirtualRegister reg)
-{
-    return remapOperand(inlineCallFrame, Operand(reg));
-}
-
-ALWAYS_INLINE Operand unmapOperand(InlineCallFrame* inlineCallFrame, Operand operand)
-{
-    if (inlineCallFrame)
-        return operand.isTmp() ? Operand::tmp(operand.value() - inlineCallFrame->tmpOffset) : Operand(operand.virtualRegister() - inlineCallFrame->stackOffset);
-    return operand;
-}
-
-ALWAYS_INLINE Operand unmapOperand(InlineCallFrame* inlineCallFrame, VirtualRegister reg)
-{
-    return unmapOperand(inlineCallFrame, Operand(reg));
+        return VirtualRegister(reg.offset() + inlineCallFrame->stackOffset);
+    return reg;
 }
 
 } // namespace JSC

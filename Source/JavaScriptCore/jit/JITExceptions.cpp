@@ -50,7 +50,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     if (Options::breakOnThrow()) {
         CodeBlock* codeBlock = topJSCallFrame->codeBlock();
         dataLog("In call frame ", RawPointer(topJSCallFrame), " for code block ", codeBlock, "\n");
-        WTFBreakpointTrap();
+        CRASH();
     }
     
     if (auto* shadowChicken = vm.shadowChicken())

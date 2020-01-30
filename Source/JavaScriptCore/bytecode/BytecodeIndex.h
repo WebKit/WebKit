@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
-#include <wtf/MathExtras.h>
 
 namespace WTF {
 class PrintStream;
@@ -38,33 +37,24 @@ class BytecodeIndex {
 public:
     BytecodeIndex() = default;
     BytecodeIndex(WTF::HashTableDeletedValueType)
-        : m_packedBits(deletedValue().asBits())
+        : m_offset(deletedValue().asBits())
     {
     }
+    explicit BytecodeIndex(uint32_t bytecodeOffset)
+        : m_offset(bytecodeOffset)
+    { }
 
-    explicit BytecodeIndex(uint32_t bytecodeOffset, uint8_t checkpoint = 0)
-        : m_packedBits(pack(bytecodeOffset, checkpoint))
-    {
-        ASSERT(*this);
-    }
+    uint32_t offset() const { return m_offset; }
+    uint32_t asBits() const { return m_offset; }
 
-    static constexpr uint32_t numberOfCheckpoints = 4;
-    static_assert(hasOneBitSet(numberOfCheckpoints), "numberOfCheckpoints should be a power of 2");
-    static constexpr uint32_t checkpointMask = numberOfCheckpoints - 1;
-    static constexpr uint32_t checkpointShift = WTF::getMSBSetConstexpr(numberOfCheckpoints);
-
-    uint32_t offset() const { return m_packedBits >> checkpointShift; }
-    uint8_t checkpoint() const { return m_packedBits & checkpointMask; }
-    uint32_t asBits() const { return m_packedBits; }
-
-    unsigned hash() const { return WTF::intHash(m_packedBits); }
+    unsigned hash() const { return WTF::intHash(m_offset); }
     static BytecodeIndex deletedValue() { return fromBits(invalidOffset - 1); }
     bool isHashTableDeletedValue() const { return *this == deletedValue(); }
 
     static BytecodeIndex fromBits(uint32_t bits);
 
     // Comparison operators.
-    explicit operator bool() const { return m_packedBits != invalidOffset && m_packedBits != deletedValue().offset(); }
+    explicit operator bool() const { return m_offset != invalidOffset && m_offset != deletedValue().offset(); }
     bool operator ==(const BytecodeIndex& other) const { return asBits() == other.asBits(); }
     bool operator !=(const BytecodeIndex& other) const { return !(*this == other); }
 
@@ -79,22 +69,13 @@ public:
 private:
     static constexpr uint32_t invalidOffset = std::numeric_limits<uint32_t>::max();
 
-    static uint32_t pack(uint32_t bytecodeIndex, uint8_t checkpoint);
-
-    uint32_t m_packedBits { invalidOffset };
+    uint32_t m_offset { invalidOffset };
 };
-
-inline uint32_t BytecodeIndex::pack(uint32_t bytecodeIndex, uint8_t checkpoint)
-{
-    ASSERT(checkpoint < numberOfCheckpoints);
-    ASSERT((bytecodeIndex << checkpointShift) >> checkpointShift == bytecodeIndex);
-    return bytecodeIndex << checkpointShift | checkpoint;
-}
 
 inline BytecodeIndex BytecodeIndex::fromBits(uint32_t bits)
 {
     BytecodeIndex result;
-    result.m_packedBits = bits;
+    result.m_offset = bits;
     return result;
 }
 

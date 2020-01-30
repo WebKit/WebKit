@@ -1655,18 +1655,18 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
         if (UNLIKELY(Options::verboseOSR()))
             dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
 
-        unsigned numVarsWithValues = 0;
+        unsigned numVarsWithValues;
         if (bytecodeIndex)
             numVarsWithValues = codeBlock->numCalleeLocals();
-
-        Operands<Optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues, 0);
+        else
+            numVarsWithValues = 0;
+        Operands<Optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
         int localsUsedForCalleeSaves = static_cast<int>(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
         for (size_t i = 0; i < mustHandleValues.size(); ++i) {
-            Operand operand = mustHandleValues.operandForIndex(i);
-
-            if (operand.isLocal() && operand.toLocal() < localsUsedForCalleeSaves)
+            int operand = mustHandleValues.operandForIndex(i);
+            if (operandIsLocal(operand) && VirtualRegister(operand).toLocal() < localsUsedForCalleeSaves)
                 continue;
-            mustHandleValues[i] = callFrame->uncheckedR(operand.virtualRegister()).jsValue();
+            mustHandleValues[i] = callFrame->uncheckedR(operand).jsValue();
         }
 
         CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
@@ -1784,7 +1784,7 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(VM* vmPointer, ui
     codeBlock->ensureCatchLivenessIsComputedForBytecodeIndex(bytecodeIndex);
     auto bytecode = codeBlock->instructions().at(bytecodeIndex)->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
-    metadata.m_buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
+    metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
         profile.m_buckets[0] = JSValue::encode(callFrame->uncheckedR(profile.m_operand).jsValue());
     });
 
@@ -1908,8 +1908,8 @@ void JIT_OPERATION operationPopScope(JSGlobalObject* globalObject, int32_t scope
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto& scopeSlot = callFrame->uncheckedR(VirtualRegister(scopeReg));
-    scopeSlot = scopeSlot.Register::scope()->next();
+    JSScope* scope = callFrame->uncheckedR(scopeReg).Register::scope();
+    callFrame->uncheckedR(scopeReg) = scope->next();
 }
 
 int32_t JIT_OPERATION operationInstanceOfCustom(JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
@@ -2417,7 +2417,7 @@ EncodedJSValue JIT_OPERATION operationGetFromScope(JSGlobalObject* globalObject,
 
     auto bytecode = pc->as<OpGetFromScope>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
+    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope.offset()).jsValue());
     GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).m_getPutInfo;
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
@@ -2460,8 +2460,8 @@ void JIT_OPERATION operationPutToScope(JSGlobalObject* globalObject, const Instr
     auto& metadata = bytecode.metadata(codeBlock);
 
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
-    JSValue value = callFrame->r(bytecode.m_value).jsValue();
+    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope.offset()).jsValue());
+    JSValue value = callFrame->r(bytecode.m_value.offset()).jsValue();
     GetPutInfo& getPutInfo = metadata.m_getPutInfo;
 
     // ModuleVar does not keep the scope register value alive in DFG.

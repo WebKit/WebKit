@@ -34,7 +34,7 @@ namespace JSC { namespace DFG {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
 
-BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps, float executionCount)
+BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, float executionCount)
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)
     , cfaStructureClobberStateAtHead(StructuresAreWatched)
@@ -50,11 +50,11 @@ BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsig
     , isLinked(false)
 #endif
     , isReachable(false)
-    , variablesAtHead(numArguments, numLocals, numTmps)
-    , variablesAtTail(numArguments, numLocals, numTmps)
-    , valuesAtHead(numArguments, numLocals, numTmps)
-    , valuesAtTail(numArguments, numLocals, numTmps)
-    , intersectionOfPastValuesAtHead(numArguments, numLocals, numTmps, AbstractValue::fullTop())
+    , variablesAtHead(numArguments, numLocals)
+    , variablesAtTail(numArguments, numLocals)
+    , valuesAtHead(numArguments, numLocals)
+    , valuesAtTail(numArguments, numLocals)
+    , intersectionOfPastValuesAtHead(numArguments, numLocals, AbstractValue::fullTop())
     , executionCount(executionCount)
 {
 }
@@ -70,15 +70,6 @@ void BasicBlock::ensureLocals(unsigned newNumLocals)
     valuesAtHead.ensureLocals(newNumLocals);
     valuesAtTail.ensureLocals(newNumLocals);
     intersectionOfPastValuesAtHead.ensureLocals(newNumLocals, AbstractValue::fullTop());
-}
-
-void BasicBlock::ensureTmps(unsigned newNumTmps)
-{
-    variablesAtHead.ensureTmps(newNumTmps);
-    variablesAtTail.ensureTmps(newNumTmps);
-    valuesAtHead.ensureTmps(newNumTmps);
-    valuesAtTail.ensureTmps(newNumTmps);
-    intersectionOfPastValuesAtHead.ensureTmps(newNumTmps, AbstractValue::fullTop());
 }
 
 void BasicBlock::replaceTerminal(Graph& graph, Node* node)

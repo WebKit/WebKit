@@ -1520,7 +1520,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+            CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCountIncludingThis)));
 
         if (m_type == Getter || m_type == Setter) {
             auto& access = this->as<GetterSetterAccessCase>();
@@ -1809,7 +1809,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.store32(
                     CCallHelpers::TrustedImm32(
                         state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-                    CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+                    CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCountIncludingThis)));
                 
                 jit.makeSpaceOnStackForCCall();
                 

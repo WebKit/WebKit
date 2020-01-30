@@ -1187,7 +1187,7 @@ RegisterID* BytecodeGenerator::initializeNextParameter()
     VirtualRegister reg = virtualRegisterForArgument(m_codeBlock->numParameters());
     m_parameters.grow(m_parameters.size() + 1);
     auto& parameter = registerFor(reg);
-    parameter.setIndex(reg);
+    parameter.setIndex(reg.offset());
     m_codeBlock->addParameter();
     return &parameter;
 }
@@ -1196,7 +1196,7 @@ void BytecodeGenerator::initializeParameters(FunctionParameters& parameters)
 {
     // Make sure the code block knows about all of our parameters, and make sure that parameters
     // needing destructuring are noted.
-    m_thisRegister.setIndex(VirtualRegister(initializeNextParameter()->index())); // this
+    m_thisRegister.setIndex(initializeNextParameter()->index()); // this
 
     bool nonSimpleArguments = false;
     for (unsigned i = 0; i < parameters.size(); ++i) {
@@ -1637,11 +1637,11 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
 
     if (m_lastInstruction->is<OpTypeof>()) {
         auto op = m_lastInstruction->as<OpTypeof>();
-        if (src1->virtualRegister() == op.m_dst
+        if (src1->index() == op.m_dst.offset()
             && src1->isTemporary()
-            && src2->virtualRegister().isConstant()
-            && m_codeBlock->constantRegister(src2->virtualRegister()).get().isString()) {
-            const String& value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
+            && m_codeBlock->isConstantRegisterIndex(src2->index())
+            && m_codeBlock->constantRegister(src2->index()).get().isString()) {
+            const String& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
             if (value == "undefined") {
                 rewind();
                 OpIsUndefined::emit(this, dst, op.m_value);
@@ -3235,8 +3235,6 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     // Emit call.
     ASSERT(dst != ignoredResult());
     VarargsOp::emit(this, dst, func, thisRegister, arguments ? arguments : VirtualRegister(0), firstFreeRegister, firstVarArgOffset);
-    if (VarargsOp::opcodeID != op_tail_call_forward_arguments)
-        ASSERT(m_codeBlock->hasCheckpoints());
     return dst;
 }
 

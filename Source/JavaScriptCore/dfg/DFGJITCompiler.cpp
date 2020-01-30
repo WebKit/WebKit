@@ -85,6 +85,8 @@ void JITCompiler::linkOSRExits()
         }
     }
     
+    MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitThunkGenerator);
+    auto osrExitThunkLabel = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         JumpList& failureJumps = info.m_failureJumps;
@@ -95,7 +97,13 @@ void JITCompiler::linkOSRExits()
 
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &vm().osrExitIndex);
-        info.m_patchableJump = patchableJump();
+        if (Options::useProbeOSRExit()) {
+            Jump target = jump();
+            addLinkTask([target, osrExitThunkLabel] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(target, osrExitThunkLabel);
+            });
+        } else
+            info.m_patchableJump = patchableJump();
     }
 }
 
@@ -587,12 +595,11 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
             default:
                 break;
             }
-
-            ASSERT(!variable->operand().isTmp());
-            if (variable->operand().virtualRegister() != variable->machineLocal()) {
+            
+            if (variable->local() != variable->machineLocal()) {
                 entry->m_reshufflings.append(
                     OSREntryReshuffling(
-                        variable->operand().virtualRegister().offset(), variable->machineLocal().offset()));
+                        variable->local().offset(), variable->machineLocal().offset()));
             }
         }
     }

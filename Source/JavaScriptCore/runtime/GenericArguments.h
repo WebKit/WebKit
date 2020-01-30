@@ -59,7 +59,7 @@ protected:
     void setModifiedArgumentDescriptor(VM&, unsigned index, unsigned length);
     bool isModifiedArgumentDescriptor(unsigned index, unsigned length);
 
-    void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     using ModifiedArgumentsPtr = CagedBarrierPtr<Gigacage::Primitive, bool>;
     ModifiedArgumentsPtr m_modifiedArgumentsDescriptor;
