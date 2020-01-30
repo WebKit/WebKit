@@ -1014,8 +1014,6 @@ fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html [ Skip ]
 fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
 
 # Flaky tests that need bugs
-fast/dom/Window/post-message-crash.html [ Pass Failure ]
-
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 
 # eventSender.mouseDown is not implemented
