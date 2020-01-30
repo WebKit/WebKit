@@ -195,7 +195,7 @@ private:
 
     void setCursor(const WebCore::Cursor&) final;
     void setCursorHiddenUntilMouseMoves(bool) final;
-#if !HAVE(NSCURSOR)
+#if !HAVE(NSCURSOR) && !PLATFORM(GTK)
     bool supportsSettingCursor() final { return false; }
 #endif
 
