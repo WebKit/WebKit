@@ -32,6 +32,7 @@
 #import "APINavigation.h"
 #import "APINavigationAction.h"
 #import "APIUIClient.h"
+#import "Logging.h"
 #import "SOAuthorizationLoadPolicy.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewInternal.h"
@@ -42,9 +43,30 @@
 #import <pal/cocoa/AppSSOSoftLink.h>
 #import <wtf/Vector.h>
 
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_page && m_page->isAlwaysOnLoggingAllowed(), AppSSO, "%p - [InitiatingAction=%s] SOAuthorizationSession::" fmt, this, toString(m_action), ##__VA_ARGS__)
+
 namespace WebKit {
 
 namespace {
+
+static const char* Redirect = "Redirect";
+static const char* PopUp = "PopUp";
+static const char* SubFrame = "SubFrame";
+
+static const char* toString(const SOAuthorizationSession::InitiatingAction& action)
+{
+    switch (action) {
+    case SOAuthorizationSession::InitiatingAction::Redirect:
+        return Redirect;
+    case SOAuthorizationSession::InitiatingAction::PopUp:
+        return PopUp;
+    case SOAuthorizationSession::InitiatingAction::SubFrame:
+        return SubFrame;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
 
 static Vector<WebCore::Cookie> toCookieVector(NSArray<NSHTTPCookie *> *cookies)
 {
@@ -94,6 +116,8 @@ void SOAuthorizationSession::becomeCompleted()
 
 void SOAuthorizationSession::shouldStart()
 {
+    RELEASE_LOG_IF_ALLOWED("shouldStart:");
+
     ASSERT(m_state == State::Idle);
     if (!m_page)
         return;
@@ -102,6 +126,8 @@ void SOAuthorizationSession::shouldStart()
 
 void SOAuthorizationSession::start()
 {
+    RELEASE_LOG_IF_ALLOWED("start:");
+
     ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_page && m_navigationAction);
     m_state = State::Active;
 
@@ -110,9 +136,13 @@ void SOAuthorizationSession::start()
             return;
 
         if (policy == SOAuthorizationLoadPolicy::Ignore) {
+            RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationLoadPolicy::Ignore");
+
             fallBackToWebPath();
             return;
         }
+
+        RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationLoadPolicy::Allow");
 
         if (!m_soAuthorization || !m_page || !m_navigationAction)
             return;
@@ -142,6 +172,8 @@ void SOAuthorizationSession::start()
 
 void SOAuthorizationSession::fallBackToWebPath()
 {
+    RELEASE_LOG_IF_ALLOWED("fallBackToWebPath:");
+
     if (m_state != State::Active)
         return;
     becomeCompleted();
@@ -150,6 +182,8 @@ void SOAuthorizationSession::fallBackToWebPath()
 
 void SOAuthorizationSession::abort()
 {
+    RELEASE_LOG_IF_ALLOWED("abort:");
+
     if (m_state == State::Idle || m_state == State::Completed)
         return;
     becomeCompleted();
@@ -171,6 +205,9 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
 
     // Set cookies.
     auto cookies = toCookieVector([NSHTTPCookie cookiesWithResponseHeaderFields:httpResponse.allHeaderFields forURL:response.url()]);
+
+    RELEASE_LOG_IF_ALLOWED("complete: (httpStatusCode=%d, hasCookies=%d, hasData=%d)", response.httpStatusCode(), !cookies.isEmpty(), !!data.length);
+
     if (cookies.isEmpty()) {
         completeInternal(response, data);
         return;
@@ -178,15 +215,20 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
 
     if (!m_page)
         return;
-    m_page->websiteDataStore().cookieStore().setCookies(cookies, [weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
+    m_page->websiteDataStore().cookieStore().setCookies(cookies, [this, weakThis = makeWeakPtr(*this), response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         if (!weakThis)
             return;
-        weakThis->completeInternal(response, data.get());
+
+        RELEASE_LOG_IF_ALLOWED("complete: Cookies are set.");
+
+        completeInternal(response, data.get());
     });
 }
 
 void SOAuthorizationSession::presentViewController(SOAuthorizationViewController viewController, UICallback uiCallback)
 {
+    RELEASE_LOG_IF_ALLOWED("presentViewController:");
+
     ASSERT(m_state == State::Active);
     // Only expect at most one UI session for the whole authorization session.
     if (!m_page || m_page->isClosed() || m_viewController) {
@@ -227,6 +269,8 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
 void SOAuthorizationSession::dismissViewController()
 {
+    RELEASE_LOG_IF_ALLOWED("dismissViewController:");
+
     ASSERT(m_viewController);
 #if PLATFORM(MAC)
     ASSERT(m_sheetWindow && m_sheetWindowWillCloseObserver);
@@ -245,4 +289,6 @@ void SOAuthorizationSession::dismissViewController()
 
 } // namespace WebKit
 
-#endif
+#undef RELEASE_LOG_IF_ALLOWED
+
+#endif // HAVE(APP_SSO)

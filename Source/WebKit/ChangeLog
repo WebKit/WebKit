@@ -1,5 +1,23 @@
 2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Add logging to show the flow of AppSSO
+        https://bugs.webkit.org/show_bug.cgi?id=206778
+        <rdar://problem/58626835>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/Logging.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::shouldStart):
+        (WebKit::SOAuthorizationSession::start):
+        (WebKit::SOAuthorizationSession::fallBackToWebPath):
+        (WebKit::SOAuthorizationSession::abort):
+        (WebKit::SOAuthorizationSession::complete):
+        (WebKit::SOAuthorizationSession::presentViewController):
+        (WebKit::SOAuthorizationSession::dismissViewController):
+
+2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, another speculative test fix after r255041
 
         * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
