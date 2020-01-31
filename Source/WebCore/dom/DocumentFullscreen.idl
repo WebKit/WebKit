@@ -26,6 +26,7 @@
 [
     Conditional=FULLSCREEN_API,
     EnabledBySetting=FullScreen,
+    DisabledByQuirk=shouldDisableElementFullscreen
 ] partial interface Document {
     // Extensions from FullScreen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should probably be unprefixed.

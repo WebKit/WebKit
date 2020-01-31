@@ -87,6 +87,8 @@ public:
     bool shouldEnableLegacyGetUserMedia() const;
 #endif
 
+    bool shouldDisableElementFullscreenQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -104,6 +106,7 @@ private:
     mutable Optional<bool> m_needsYouTubeOverflowScrollQuirk;
     mutable Optional<bool> m_needsPreloadAutoQuirk;
 #endif
+    mutable Optional<bool> m_shouldDisableElementFullscreenQuirk;
 };
 
 }

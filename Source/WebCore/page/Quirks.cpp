@@ -627,4 +627,23 @@ bool Quirks::shouldEnableLegacyGetUserMedia() const
 }
 #endif
 
+bool Quirks::shouldDisableElementFullscreenQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (m_shouldDisableElementFullscreenQuirk)
+        return m_shouldDisableElementFullscreenQuirk.value();
+
+    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+
+    m_shouldDisableElementFullscreenQuirk = domain == "nfl.com" || domain.endsWith(".nfl.com");
+
+    return m_shouldDisableElementFullscreenQuirk.value();
+#else
+    return false;
+#endif
+}
+
 }
