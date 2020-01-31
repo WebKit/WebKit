@@ -421,6 +421,9 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
     if (equalLettersIgnoringASCIICase(host, "live.com") || host.endsWithIgnoringASCIICase(".live.com"))
         return true;
 
+    if (equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com"))
+        return true;
+
     if (host.endsWithIgnoringASCIICase(".sharepoint.com"))
         return true;
 
