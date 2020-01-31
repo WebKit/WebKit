@@ -64,9 +64,8 @@ if (ENABLE_REMOTE_INSPECTOR)
         inspector/remote/socket/win/RemoteInspectorSocketWin.cpp
     )
 
-    set(JavaScriptCore_LIBRARIES PUBLIC ${JavaScriptCore_LIBRARIES})
-    list(APPEND JavaScriptCore_LIBRARIES
-        PRIVATE ws2_32
+    list(APPEND JavaScriptCore_PRIVATE_LIBRARIES
+        ws2_32
     )
 else ()
     list(REMOVE_ITEM JavaScriptCore_SOURCES

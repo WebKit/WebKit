@@ -456,10 +456,6 @@ list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
 )
 
-set(SharedWebKitLibraries
-    ${WebKit_LIBRARIES}
-)
-
 list(APPEND WebKit_LIBRARIES
     ${GTK_UNIX_PRINT_LIBRARIES}
 )
@@ -472,16 +468,16 @@ if (USE_WPE_RENDERER)
 endif ()
 
 if (LIBNOTIFY_FOUND)
-list(APPEND WebKit_LIBRARIES
-    PRIVATE ${LIBNOTIFY_LIBRARIES}
-)
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ${LIBNOTIFY_LIBRARIES}
+    )
 endif ()
 
 if (USE_LIBWEBRTC)
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    "${THIRDPARTY_DIR}/libwebrtc/Source/"
-    "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
-)
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/libwebrtc/Source/"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
+    )
 endif ()
 
 # To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.

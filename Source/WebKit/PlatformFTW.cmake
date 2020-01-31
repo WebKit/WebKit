@@ -168,17 +168,16 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
 )
 
-list(APPEND WebKit_LIBRARIES
-    PRIVATE
-        ${OPENSSL_LIBRARIES}
-        D2d1.lib
-        D3d11.lib
-        Dwrite
-        Dxgi.lib
-        Dxguid
-        WindowsCodecs
-        mfuuid.lib
-        strmiids.lib
+list(APPEND WebKit_PRIVATE_LIBRARIES
+    ${OPENSSL_LIBRARIES}
+    D2d1.lib
+    D3d11.lib
+    Dwrite
+    Dxgi.lib
+    Dxguid
+    WindowsCodecs
+    mfuuid.lib
+    strmiids.lib
 )
 
 if (ENABLE_REMOTE_INSPECTOR)
@@ -193,10 +192,6 @@ if (ENABLE_REMOTE_INSPECTOR)
         "${WEBKIT_DIR}/UIProcess/socket"
     )
 endif ()
-
-set(SharedWebKitLibraries
-    ${WebKit_LIBRARIES}
-)
 
 WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
 

@@ -28,10 +28,10 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WebKitLegacy_DERIVED_SOURCES_DIR}"
 )
 
-set(WebKitLegacy_LIBRARIES
-    PRIVATE WebKit::JavaScriptCore
-    PRIVATE WebCore${DEBUG_SUFFIX}
-    PRIVATE PAL${DEBUG_SUFFIX}
+set(WebKitLegacy_PRIVATE_LIBRARIES
+    WebKit::JavaScriptCore
+    WebCore${DEBUG_SUFFIX}
+    PAL${DEBUG_SUFFIX}
 )
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)

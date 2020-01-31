@@ -7,11 +7,13 @@ list(APPEND WTF_PUBLIC_HEADERS
     win/Win32Handle.h
 )
 
-set(WTF_LIBRARIES PUBLIC ${WTF_LIBRARIES})
+list(APPEND WTF_PRIVATE_LIBRARIES
+    Dbghelp # For symbol handling <dbghelp.h>
+    Shlwapi # For file system operations <shlwapi.h>
+)
+
 list(APPEND WTF_LIBRARIES
-    PRIVATE Dbghelp # For symbol handling <dbghelp.h>
-    PRIVATE Shlwapi # For file system operations <shlwapi.h>
-    PUBLIC  Winmm   # For multimedia functions, also used in <timeapi.h>
+     Winmm # For multimedia functions, also used in <timeapi.h>
 )
 
 list(APPEND WTF_SOURCES

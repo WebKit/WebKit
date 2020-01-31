@@ -173,11 +173,10 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     )
 
-    list(APPEND WebKit_LIBRARIES
-        PRIVATE
-            ${OPENSSL_LIBRARIES}
-            mfuuid.lib
-            strmiids.lib
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ${OPENSSL_LIBRARIES}
+        mfuuid.lib
+        strmiids.lib
     )
 endif ()
 
@@ -193,10 +192,6 @@ if (ENABLE_REMOTE_INSPECTOR)
         "${WEBKIT_DIR}/UIProcess/socket"
     )
 endif ()
-
-set(SharedWebKitLibraries
-    ${WebKit_LIBRARIES}
-)
 
 WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
 

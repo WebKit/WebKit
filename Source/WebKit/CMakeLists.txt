@@ -216,19 +216,16 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap.messages.in
 )
 
-if (${WebCore_LIBRARY_TYPE} STREQUAL STATIC)
-    # Link with WebCore as PRIVATE not to propagate WebCore to all users of WebKit.
-    set(WebKit_LIBRARIES
-        PRIVATE WebCore
-        PUBLIC WebCoreHeaderInterface
-    )
-else ()
+if (${WebCore_LIBRARY_TYPE} STREQUAL SHARED)
     # All users of WebKit need to link WebCore if WebCore is a shared library.
     if (APPLE)
-        set(WebKit_LIBRARIES PRIVATE WebCore)
+        set(WebKit_PRIVATE_LIBRARIES WebCore)
     else ()
-        set(WebKit_LIBRARIES PUBLIC WebCore)
+        set(WebKit_LIBRARIES WebCore)
     endif ()
+else ()
+    set(WebKit_LIBRARIES WebCoreHeaderInterface)
+    set(WebKit_PRIVATE_LIBRARIES WebCore)
 endif ()
 
 set(WebProcess_LIBRARIES
@@ -251,8 +248,8 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
         list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
             ${LIBEPOXY_INCLUDE_DIRS}
         )
-        list(APPEND WebKit_LIBRARIES
-            PRIVATE ${LIBEPOXY_LIBRARIES}
+        list(APPEND WebKit_PRIVATE_LIBRARIES
+            ${LIBEPOXY_LIBRARIES}
         )
         add_definitions(${LIBEPOXY_DEFINITIONS})
     else ()
@@ -260,16 +257,16 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
             list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${OPENGL_INCLUDE_DIRS}
             )
-            list(APPEND WebKit_LIBRARIES
-                PRIVATE ${OPENGL_LIBRARIES}
+            list(APPEND WebKit_PRIVATE_LIBRARIES
+                ${OPENGL_LIBRARIES}
             )
             add_definitions(${OPENGL_DEFINITIONS})
         elseif (USE_OPENGL_ES)
             list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${OPENGLES2_INCLUDE_DIRS}
             )
-            list(APPEND WebKit_LIBRARIES
-                PRIVATE ${OPENGLES2_LIBRARIES}
+            list(APPEND WebKit_PRIVATE_LIBRARIES
+                ${OPENGLES2_LIBRARIES}
             )
             add_definitions(${OPENGLES2_DEFINITIONS})
         endif ()
@@ -278,8 +275,8 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
             list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${EGL_INCLUDE_DIRS}
             )
-            list(APPEND WebKit_LIBRARIES
-                PRIVATE ${EGL_LIBRARIES}
+            list(APPEND WebKit_PRIVATE_LIBRARIES
+                ${EGL_LIBRARIES}
             )
             add_definitions(${EGL_DEFINITIONS})
         endif ()
@@ -287,7 +284,7 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
 endif ()
 
 if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-    list(APPEND WebKit_LIBRARIES PRIVATE atomic)
+    list(APPEND WebKit_PRIVATE_LIBRARIES atomic)
 endif ()
 
 if (UNIX)
@@ -296,7 +293,7 @@ if (UNIX)
         set(CMAKE_REQUIRED_LIBRARIES rt)
         check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
         if (SHM_OPEN_REQUIRES_LIBRT)
-            list(APPEND WebKit_LIBRARIES PRIVATE rt)
+            list(APPEND WebKit_PRIVATE_LIBRARIES rt)
         endif ()
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()

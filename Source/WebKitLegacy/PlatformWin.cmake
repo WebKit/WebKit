@@ -8,26 +8,26 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebDownloadCURL.cpp
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
-    list(APPEND WebKitLegacy_LIBRARIES
+    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
         ${OPENSSL_LIBRARIES}
-        PRIVATE mfuuid.lib
-        PRIVATE strmiids.lib
+        mfuuid.lib
+        strmiids.lib
     )
 else ()
     list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCFNet.cpp
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
-    list(APPEND WebKitLegacy_LIBRARIES
-        PRIVATE CFNetwork${DEBUG_SUFFIX}
-        PRIVATE CoreGraphics${DEBUG_SUFFIX}
-        PRIVATE CoreText${DEBUG_SUFFIX}
-        PRIVATE QuartzCore${DEBUG_SUFFIX}
-        PRIVATE libdispatch${DEBUG_SUFFIX}
-        PRIVATE ${LIBXML2_LIBRARIES}
-        PRIVATE ${LIBXSLT_LIBRARIES}
-        PRIVATE ${SQLITE_LIBRARIES}
-        PRIVATE ${ZLIB_LIBRARIES}
+    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+        CFNetwork${DEBUG_SUFFIX}
+        CoreGraphics${DEBUG_SUFFIX}
+        CoreText${DEBUG_SUFFIX}
+        QuartzCore${DEBUG_SUFFIX}
+        libdispatch${DEBUG_SUFFIX}
+        ${LIBXML2_LIBRARIES}
+        ${LIBXSLT_LIBRARIES}
+        ${SQLITE_LIBRARIES}
+        ${ZLIB_LIBRARIES}
     )
 endif ()
 
@@ -424,22 +424,22 @@ add_library(WebKitLegacyGUID STATIC
 )
 set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
-list(APPEND WebKitLegacy_LIBRARIES
-    PRIVATE Comctl32
-    PRIVATE Comsupp
-    PRIVATE Crypt32
-    PRIVATE D2d1
-    PRIVATE Dwrite
-    PRIVATE dxguid
-    PRIVATE Iphlpapi
-    PRIVATE Psapi
-    PRIVATE Rpcrt4
-    PRIVATE Shlwapi
-    PRIVATE Usp10
-    PRIVATE Version
-    PRIVATE Winmm
-    PRIVATE WebKitGUID${DEBUG_SUFFIX}
-    PRIVATE WindowsCodecs
+list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+    Comctl32
+    Comsupp
+    Crypt32
+    D2d1
+    Dwrite
+    Iphlpapi
+    Psapi
+    Rpcrt4
+    Shlwapi
+    Usp10
+    Version
+    WebKitGUID${DEBUG_SUFFIX}
+    WindowsCodecs
+    Winmm
+    dxguid
 )
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
