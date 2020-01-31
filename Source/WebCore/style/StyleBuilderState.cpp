@@ -346,10 +346,6 @@ void BuilderState::updateFont()
         auto* fonts = m_style.fontCascade().fonts();
         if (!fonts)
             return true;
-        if (fonts->generation() != FontCache::singleton().generation())
-            return true;
-        if (fonts->fontSelectorVersion() != fontSelector.version())
-            return true;
         return false;
     };
 

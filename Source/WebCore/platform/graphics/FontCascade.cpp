@@ -265,6 +265,18 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
     return glyphs;
 }
 
+bool FontCascade::isCurrent(const FontSelector& fontSelector) const
+{
+    if (!m_fonts)
+        return false;
+    if (m_fonts->generation() != FontCache::singleton().generation())
+        return false;
+    if (m_fonts->fontSelectorVersion() != fontSelector.version())
+        return false;
+
+    return true;
+}
+
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
     m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTFMove(fontSelector));
