@@ -335,6 +335,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
             m_corsDisablingPatterns.uncheckedAppend(WTFMove(parsedPattern));
     }
     m_corsDisablingPatterns.shrinkToFit();
+    
+    if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
+        m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
 }
 
 Page::~Page()
@@ -1160,18 +1163,20 @@ bool Page::isOnlyNonUtilityPage() const
     return !isUtilityPage() && nonUtilityPageCount == 1;
 }
 
-bool Page::isLowPowerModeEnabled() const
-{
-    if (m_lowPowerModeEnabledOverrideForTesting)
-        return m_lowPowerModeEnabledOverrideForTesting.value();
-
-    return m_lowPowerModeNotifier->isLowPowerModeEnabled();
-}
-
 void Page::setLowPowerModeEnabledOverrideForTesting(Optional<bool> isEnabled)
 {
-    m_lowPowerModeEnabledOverrideForTesting = isEnabled;
-    handleLowModePowerChange(m_lowPowerModeEnabledOverrideForTesting.valueOr(false));
+    // Remove ThrottlingReason::LowPowerMode so handleLowModePowerChange() can do its work.
+    m_throttlingReasonsOverridenForTesting.remove(ThrottlingReason::LowPowerMode);
+
+    // Use the current low power mode value of the device.
+    if (!isEnabled) {
+        handleLowModePowerChange(m_lowPowerModeNotifier->isLowPowerModeEnabled());
+        return;
+    }
+
+    // Override the value and add ThrottlingReason::LowPowerMode so it won't change.
+    handleLowModePowerChange(isEnabled.value());
+    m_throttlingReasonsOverridenForTesting.add(ThrottlingReason::LowPowerMode);
 }
 
 void Page::setTopContentInset(float contentInset)
@@ -1410,6 +1415,9 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
 {
+    if (!canUpdateThrottlingReason(ThrottlingReason::LowPowerMode))
+        return;
+
     if (isLowPowerModeEnabled == m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
         return;
 
