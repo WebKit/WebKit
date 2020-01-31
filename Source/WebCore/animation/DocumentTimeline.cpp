@@ -43,6 +43,7 @@
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "Settings.h"
 #include <JavaScriptCore/VM.h>
 
 namespace WebCore {
@@ -63,10 +64,13 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(&document)
     , m_originTime(originTime)
 {
-    if (m_document)
+    if (m_document) {
         m_document->addTimeline(*this);
-    if (m_document && m_document->page() && !m_document->page()->isVisible())
-        suspendAnimations();
+        if (auto* page = m_document->page()) {
+            if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
+                suspendAnimations();
+        }
+    }
 }
 
 DocumentTimeline::~DocumentTimeline()
