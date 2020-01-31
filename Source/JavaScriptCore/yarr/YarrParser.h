@@ -774,6 +774,17 @@ private:
                 lastTokenWasAnAtom = true;
                 break;
 
+            case ']':
+            case '}':
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::BracketUnmatched;
+                    break;
+                }
+
+                m_delegate.atomPatternCharacter(consume());
+                lastTokenWasAnAtom = true;
+                break;
+
             case '\\':
                 lastTokenWasAnAtom = parseAtomEscape();
                 break;

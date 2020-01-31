@@ -41,6 +41,7 @@ enum class ErrorCode : uint8_t {
     QuantifierTooLarge,
     QuantifierIncomplete,
     MissingParentheses,
+    BracketUnmatched,
     ParenthesesUnmatched,
     ParenthesesTypeInvalid,
     InvalidGroupName,

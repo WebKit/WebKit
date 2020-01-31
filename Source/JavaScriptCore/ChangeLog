@@ -1,3 +1,23 @@
+2020-01-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unmatched ] or } brackets should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=207023
+
+        Reviewed by Darin Adler.
+
+        This change adds SyntaxError for Unicode patterns, aligning JSC with
+        V8 and SpiderMonkey.
+
+        Grammar: https://tc39.es/ecma262/#prod-annexB-Term
+        (/u flag precludes the use of ExtendedAtom and thus ExtendedPatternCharacter)
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseTokens):
+
 2020-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add _PRIVATE_LIBRARIES to framework

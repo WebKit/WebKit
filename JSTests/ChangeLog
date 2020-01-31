@@ -1,3 +1,12 @@
+2020-01-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unmatched ] or } brackets should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=207023
+
+        Reviewed by Darin Adler.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-01-30  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Incomplete braced quantifiers should be banned in Unicode patterns only

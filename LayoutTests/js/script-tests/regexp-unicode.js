@@ -232,6 +232,7 @@ shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regul
 shouldThrow('r = new RegExp("\u{10405}{2147483648}", "u")', '"SyntaxError: Invalid regular expression: pattern exceeds string length limits"');
 shouldThrow('/{/u', '"SyntaxError: Invalid regular expression: incomplete {} quantifier for Unicode pattern"');
 shouldThrow('/[a-\\d]/u', '"SyntaxError: Invalid regular expression: invalid range in character class for Unicode pattern"');
+shouldThrow('/]/u', '"SyntaxError: Invalid regular expression: unmatched ] or } bracket for Unicode pattern"');
 
 var invalidEscapeException = "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern";
 var newRegExp;

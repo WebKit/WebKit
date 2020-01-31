@@ -42,6 +42,7 @@ const char* errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "number too large in {} quantifier",                    // QuantifierTooLarge
         REGEXP_ERROR_PREFIX "incomplete {} quantifier for Unicode pattern",         // QuantifierIncomplete
         REGEXP_ERROR_PREFIX "missing )",                                            // MissingParentheses
+        REGEXP_ERROR_PREFIX "unmatched ] or } bracket for Unicode pattern",         // BracketUnmatched
         REGEXP_ERROR_PREFIX "unmatched parentheses",                                // ParenthesesUnmatched
         REGEXP_ERROR_PREFIX "unrecognized character after (?",                      // ParenthesesTypeInvalid
         REGEXP_ERROR_PREFIX "invalid group specifier name",                         // InvalidGroupName
@@ -74,6 +75,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::QuantifierTooLarge:
     case ErrorCode::QuantifierIncomplete:
     case ErrorCode::MissingParentheses:
+    case ErrorCode::BracketUnmatched:
     case ErrorCode::ParenthesesUnmatched:
     case ErrorCode::ParenthesesTypeInvalid:
     case ErrorCode::InvalidGroupName:
