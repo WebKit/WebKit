@@ -3524,13 +3524,15 @@
          "lvidacs"
       ]
    },
-   "Lauro Neto" : {
+   "Lauro Moura" : {
       "emails" : [
+         "lmoura@igalia.com",
          "lauro.neto@openbossa.org"
       ],
       "nicks" : [
          "lmoura"
-      ]
+      ],
+      "status" : "committer"
    },
    "Leandro Gracia Gil" : {
       "emails" : [
