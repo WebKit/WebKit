@@ -35,6 +35,12 @@
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PageConfigurationAdditions.h>
+#else
+#define PAGE_CONFIGURATION_ADDITIONS
+#endif
+
 #if ENABLE(APPLICATION_MANIFEST)
 #include "APIApplicationManifest.h"
 #endif
@@ -47,7 +53,11 @@ Ref<PageConfiguration> PageConfiguration::create()
     return adoptRef(*new PageConfiguration);
 }
 
-PageConfiguration::PageConfiguration() = default;
+PageConfiguration::PageConfiguration()
+PAGE_CONFIGURATION_ADDITIONS
+{
+}
+
 PageConfiguration::~PageConfiguration() = default;
 
 Ref<PageConfiguration> PageConfiguration::copy() const
