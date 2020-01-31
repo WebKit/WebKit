@@ -359,7 +359,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (auto* scrollableArea = frameView.scrollableAreaForScrollLayerID(scrollingNodeID)) {
         auto previousScrollType = scrollableArea->currentScrollType();
         scrollableArea->setCurrentScrollType(scrollType);
-        scrollableArea->scrollToOffsetWithoutAnimation(ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollableArea->scrollOrigin())));
+        scrollableArea->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
         scrollableArea->setCurrentScrollType(previousScrollType);
 
         if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
