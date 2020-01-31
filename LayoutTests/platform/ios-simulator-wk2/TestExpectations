@@ -89,3 +89,5 @@ webkit.org/b/206751 http/tests/workers/service/service-worker-user-timing.https.
 webkit.org/b/206973 animations/change-one-anim.html [ Pass Failure ]
 
 webkit.org/b/207002 imported/w3c/web-platform-tests/FileAPI/historical.https.html [ Pass Failure ]
+
+webkit.org/b/206952 imported/w3c/IndexedDB-private-browsing/idbindex_getKey6.html [ Pass Timeout ]
