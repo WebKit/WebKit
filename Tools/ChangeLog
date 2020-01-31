@@ -1,3 +1,15 @@
+2020-01-31  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] add build step to set custom build summary
+        https://bugs.webkit.org/show_bug.cgi?id=207026
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (SetBuildSummary.doStepIf): Run this step only if build_summary property is set.
+        (SetBuildSummary.hideStepIf): Hide this step if it is not executed.
+        (SetBuildSummary.start):
+
 2020-01-31  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Handle modified firewall rules

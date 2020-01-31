@@ -2000,3 +2000,23 @@ class ApplyWatchList(shell.ShellCommand):
         if self.results != SUCCESS:
             return {u'step': u'Failed to apply watchlist'}
         return super(ApplyWatchList, self).getResultSummary()
+
+
+class SetBuildSummary(buildstep.BuildStep):
+    name = "set-build-summary"
+    descriptionDone = ['Set build summary']
+    alwaysRun = True
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def doStepIf(self, step):
+        return self.getProperty('build_summary', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    def start(self):
+        build_summary = self.getProperty('build_summary', 'build successful')
+        self.finished(SUCCESS)
+        self.build.buildFinished([build_summary], self.build.results)
+        return defer.succeed(None)
