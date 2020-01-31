@@ -204,8 +204,11 @@
 
 #elif !defined(FALLTHROUGH) && !defined(__cplusplus)
 
-#if COMPILER(GCC)
+#if COMPILER(GCC_COMPATIBLE) && defined(__has_attribute)
+// Break out this #if to satisy some versions Windows compilers.
+#if __has_attribute(fallthrough)
 #define FALLTHROUGH __attribute__ ((fallthrough))
+#endif
 #endif
 
 #endif // !defined(FALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)

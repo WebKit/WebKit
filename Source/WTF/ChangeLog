@@ -1,3 +1,15 @@
+2020-01-30  Conrad Shultz  <conrad_shultz@apple.com>
+
+        `FALLTHROUGH` macro isn't properly defined when building Objective-C files using Clang
+        https://bugs.webkit.org/show_bug.cgi?id=206637
+
+        Reviewed by Darin Adler.
+
+        Allow the `FALLTHROUGH` macro to be defined properly when building with either GCC
+        or Clang.
+
+        * wtf/Compiler.h:
+
 2020-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Remove PackedIntVector
