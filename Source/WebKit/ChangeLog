@@ -1,3 +1,11 @@
+2020-01-31  Andy Estes  <aestes@apple.com>
+
+        Unreviewed build fix after r255522.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Switched to a C-style cast.
+
 2020-01-31  Alex Christensen  <achristensen@webkit.org>
 
         Add KVO SPI WKWebView._negotiatedLegacyTLS

@@ -817,7 +817,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         bool negotiatedLegacyTLS = false;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
-        auto tlsVersion = reinterpret_cast<tls_protocol_version_t>(metrics.negotiatedTLSProtocolVersion.unsignedShortValue);
+        auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = true;
         UNUSED_PARAM(metrics);
