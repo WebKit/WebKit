@@ -1,3 +1,18 @@
+2020-01-31  Antoine Quint  <graouts@apple.com>
+
+        [WK1] hiddenPageCSSAnimationSuspensionEnabled should be enabled by default for Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=207042
+        <rdar://problem/58934778>
+
+        Reviewed by Zalan Bujtas.
+
+        While HiddenPageCSSAnimationSuspensionEnabled is specified in WebPreferences.yaml to default to DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED,
+        which is defined to be true on Cocoa platforms in WebPreferencesDefaultValues.h, it is hard-coded to @NO in WK1 although clearly the intent is for
+        this preference to be enabled. So we switch that default value in WK1 as well.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2020-01-30  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate SPI to disable TLS 1.0 and 1.1
