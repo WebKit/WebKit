@@ -181,7 +181,7 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
     });
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
     send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies)));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 }
 
 inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const Optional<uint64_t>& navigationID)

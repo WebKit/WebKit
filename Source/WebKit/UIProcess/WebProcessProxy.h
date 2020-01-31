@@ -175,7 +175,6 @@ public:
 
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
 
-    ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     bool isResponsive() const;
 
     WebFrameProxy* webFrame(WebCore::FrameIdentifier) const;
@@ -217,6 +216,8 @@ public:
 
     void requestTermination(ProcessTerminationReason);
 
+    enum class UseLazyStop : bool { No, Yes };
+    void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
     void stopResponsivenessTimer();
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
@@ -416,6 +417,7 @@ private:
 
     static const HashSet<String>& platformPathsWithAssumedReadAccess();
 
+    ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     void updateBackgroundResponsivenessTimer();
 
     void processDidTerminateOrFailedToLaunch();
@@ -540,6 +542,7 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
     bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
 #endif
+    Optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
 
 #if PLATFORM(WATCHOS)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;
