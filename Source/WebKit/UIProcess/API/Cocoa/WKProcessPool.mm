@@ -598,16 +598,6 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request originatingWebView:(WKWebView *)webView
-{
-    return nil;
-}
-
-- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView
-{
-    return nil;
-}
-
 - (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request websiteDataStore:(WKWebsiteDataStore *)dataStore originatingWebView:(WKWebView *)webView
 {
     return wrapper(_processPool->download(*dataStore->_websiteDataStore, [webView _page], request));
