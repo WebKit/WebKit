@@ -1,3 +1,22 @@
+2020-01-31  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION: [ iPadOS ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html always fails
+        <https://webkit.org/b/206759>
+        <rdar://problem/58872607>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+        - Add declaration.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+        - Implement by waiting for
+          -[UIViewController isPerformingModalTransition] to return NO
+          while spinning the runloop.
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+        - Call waitForModalTransitionToFinish() to fix the test.
+
 2020-01-31  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] add build step to set custom build summary
