@@ -867,3 +867,5 @@ webkit.org/b/206974 http/tests/security/contentSecurityPolicy/block-all-mixed-co
 webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
 
 webkit.org/b/207059 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
+
+webkit.org/b/207066 editing/execCommand/insert-nested-lists.html [ Pass Failure ]
