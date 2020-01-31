@@ -1963,3 +1963,5 @@ webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass 
 webkit.org/b/207010 fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]
 
 webkit.org/b/201481 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
+
+webkit.org/b/207053 inspector/page/setBootstrapScript-sub-frame.html [ Pass Failure ]
