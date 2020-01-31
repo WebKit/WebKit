@@ -47,7 +47,6 @@ namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKWPE::View& view)
     : m_view(view)
-    , m_scrollGestureController(makeUnique<ScrollGestureController>())
 {
 }
 
@@ -213,9 +212,10 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
         return;
 
     auto& page = m_view.page();
+    auto& scrollGestureController = m_view.scrollGestureController();
 
-    if (m_scrollGestureController->handleEvent(touchPoint)) {
-        struct wpe_input_axis_event* axisEvent = m_scrollGestureController->axisEvent();
+    if (scrollGestureController.handleEvent(touchPoint)) {
+        struct wpe_input_axis_event* axisEvent = scrollGestureController.axisEvent();
         if (axisEvent->type != wpe_input_axis_event_type_null)
             page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, m_view.page().deviceScaleFactor()));
         return;

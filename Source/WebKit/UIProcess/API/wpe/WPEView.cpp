@@ -35,6 +35,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "ScrollGestureController.h"
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
 #include <WebCore/CompositionUnderline.h>
@@ -46,6 +47,7 @@ namespace WKWPE {
 
 View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
     : m_client(makeUnique<API::ViewClient>())
+    , m_scrollGestureController(makeUnique<ScrollGestureController>())
     , m_pageClient(makeUnique<PageClientImpl>(*this))
     , m_size { 800, 600 }
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
@@ -164,8 +166,23 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)
         {
-            auto& page = reinterpret_cast<View*>(data)->page();
-            page.handleTouchEvent(WebKit::NativeWebTouchEvent(event, page.deviceScaleFactor()));
+            auto& view = *reinterpret_cast<View*>(data);
+            auto& page = view.page();
+
+            WebKit::NativeWebTouchEvent touchEvent(event, page.deviceScaleFactor());
+
+            auto& scrollGestureController = *view.m_scrollGestureController;
+            if (scrollGestureController.isHandling()) {
+                const struct wpe_input_touch_event_raw* touchPoint = touchEvent.nativeFallbackTouchPoint();
+                if (touchPoint->type != wpe_input_touch_event_type_null && scrollGestureController.handleEvent(touchPoint)) {
+                    struct wpe_input_axis_event* axisEvent = scrollGestureController.axisEvent();
+                    if (axisEvent->type != wpe_input_axis_event_type_null)
+                        page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, page.deviceScaleFactor()));
+                    return;
+                }
+            }
+
+            page.handleTouchEvent(touchEvent);
         },
         // padding
         nullptr,

@@ -36,6 +36,7 @@ public:
 
     struct wpe_input_axis_event* axisEvent() { return &m_axisEvent; }
 
+    bool isHandling() const { return m_handling; }
     bool handleEvent(const struct wpe_input_touch_event_raw*);
 
 private:

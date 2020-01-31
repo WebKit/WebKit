@@ -41,7 +41,6 @@ enum class DOMPasteAccessResponse : uint8_t;
 
 namespace WebKit {
 
-class ScrollGestureController;
 struct InputMethodState;
 struct UserMessage;
 
@@ -168,8 +167,6 @@ private:
     void selectionDidChange() override;
 
     WKWPE::View& m_view;
-
-    std::unique_ptr<ScrollGestureController> m_scrollGestureController;
 };
 
 } // namespace WebKit

@@ -1,3 +1,33 @@
+2020-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Touch-based scrolling roundtrips through the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=206922
+
+        Reviewed by Adrian Perez de Castro.
+
+        Short-cut the touch events through the ScrollGestureCotroller while it
+        is actively handling the processed touch events, avoiding roundtrip
+        through the WebProcess. This effectively means that when the scroll
+        gesture is in action, any touch events that would affect that gesture
+        are piped into the controller, producing a corresponding axis event
+        or ending the gesture.
+
+        The ScrollGestureCotroller ownership is moved into the WKWPE::View class
+        in order to make accessing into that object easier from where the touch
+        events are handled.
+
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/ScrollGestureController.h:
+        (WebKit::ScrollGestureController::isHandling const):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View):
+        (WKWPE::m_backend):
+        * UIProcess/API/wpe/WPEView.h:
+        (WKWPE::View::scrollGestureController const):
+
 2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add logging to show the flow of AppSSO
