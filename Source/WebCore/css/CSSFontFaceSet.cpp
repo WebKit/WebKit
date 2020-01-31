@@ -303,15 +303,15 @@ CSSFontFace& CSSFontFaceSet::operator[](size_t i)
 static ExceptionOr<FontSelectionRequest> computeFontSelectionRequest(MutableStyleProperties& style)
 {
     RefPtr<CSSValue> weightValue = style.getPropertyCSSValue(CSSPropertyFontWeight).get();
-    if (!weightValue)
+    if (!weightValue || weightValue->isInitialValue())
         weightValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
 
     RefPtr<CSSValue> stretchValue = style.getPropertyCSSValue(CSSPropertyFontStretch).get();
-    if (!stretchValue)
+    if (!stretchValue || stretchValue->isInitialValue())
         stretchValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
 
     RefPtr<CSSValue> styleValue = style.getPropertyCSSValue(CSSPropertyFontStyle).get();
-    if (!styleValue)
+    if (!styleValue || styleValue->isInitialValue())
         styleValue = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
 
     if (weightValue->isGlobalKeyword() || stretchValue->isGlobalKeyword() || styleValue->isGlobalKeyword())
