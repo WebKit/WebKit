@@ -869,3 +869,5 @@ webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/207059 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Pass Failure ]
 
 webkit.org/b/207066 editing/execCommand/insert-nested-lists.html [ Pass Failure ]
+
+webkit.org/b/206950 fast/images/animated-gif-restored-from-bfcache.html [ Pass Failure ]
