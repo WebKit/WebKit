@@ -1,3 +1,12 @@
+2020-01-31  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mojave wk2 Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207060
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-01-31  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html is flaky failing

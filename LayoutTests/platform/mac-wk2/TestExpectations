@@ -951,3 +951,5 @@ webkit.org/b/206839 http/tests/frame-throttling/raf-throttle-in-cross-origin-sub
 webkit.org/b/207001 webrtc/video-autoplay.html [ Pass Failure ]
 
 webkit.org/b/207003 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html [ Pass Failure ]
+
+webkit.org/b/207060 imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
