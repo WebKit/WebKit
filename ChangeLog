@@ -1,3 +1,19 @@
+2020-01-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [CMake] Add SQLite::SQLite3 target
+        https://bugs.webkit.org/show_bug.cgi?id=207005
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/FindSQLite3.cmake: Added.
+        * Source/cmake/FindSqlite.cmake: Removed.
+        * Source/cmake/OptionsAppleWin.cmake: Actually use find_package.
+        * Source/cmake/OptionsFTW.cmake: Sqlite -> SQLite3
+        * Source/cmake/OptionsGTK.cmake: Sqlite -> SQLite3
+        * Source/cmake/OptionsPlayStation.cmake: Sqlite -> SQLite3
+        * Source/cmake/OptionsWPE.cmake: Sqlite -> SQLite3
+        * Source/cmake/OptionsWinCairo.cmake: Sqlite -> SQLite3
+
 2020-01-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] Add /experimental:newLambdaProcessor switch for better C++ conformance
