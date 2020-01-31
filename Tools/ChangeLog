@@ -1,3 +1,16 @@
+2020-01-31  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Handle modified firewall rules
+        https://bugs.webkit.org/show_bug.cgi?id=207047
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/results/upload.py:
+        (Upload.upload_archive): Return true for 403 and 413 errors, but print a message
+        indicating the upload failed.
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.test_archive_upload):
+
 2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another speculative test fix after r255041

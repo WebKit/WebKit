@@ -250,3 +250,16 @@ class UploadTest(unittest.TestCase):
                 ' ' * 4 + 'Error uploading archive to https://results.webkit.org',
                 ' ' * 8 + 'No such address',
             ], lines)
+
+        mock_413 = mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.MockResponse(
+            status_code=413,
+            text=json.dumps(dict(description='Request Entity Too Large')),
+        ))
+        with mock_413:
+            lines = []
+            self.assertTrue(upload.upload_archive('https://results.webkit.org', archive='content', log_line_func=lambda line: lines.append(line)))
+            self.assertEqual([
+                ' ' * 4 + 'Upload to https://results.webkit.org failed:',
+                ' ' * 8 + 'Request Entity Too Large',
+                ' ' * 4 + 'This error is not fatal, continuing',
+            ], lines)
