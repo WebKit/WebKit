@@ -1969,3 +1969,5 @@ webkit.org/b/207053 inspector/page/setBootstrapScript-sub-frame.html [ Pass Fail
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
 
 webkit.org/b/207057 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Pass Failure ]
+
+webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Pass Failure ]
