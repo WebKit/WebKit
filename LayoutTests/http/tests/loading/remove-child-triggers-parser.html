@@ -9,8 +9,10 @@ window.onload = () => {
     setTimeout(function() {
         var child = document.documentElement;
         child.parentNode.removeChild(child);
-        if (window.testRunner)
+        if (window.testRunner) {
+            document.appendChild(document.createElement('html')).innerHTML = '<body></body>';
             testRunner.notifyDone();
+        }
     }, 36);
 }
 </script>
