@@ -1314,6 +1314,8 @@ void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuf
 
 void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* texture)
 {
+    WTFLogAlways("[ WEBGL ] bindTexture()");
+
     bool deleted;
     if (!checkObjectToBeBound("bindTexture", texture, deleted))
         return;
@@ -1743,6 +1745,8 @@ RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
 
 RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
 {
+    WTFLogAlways("[ WEBGL ] createTexture()");
+
     if (isContextLostOrPending())
         return nullptr;
     auto texture = WebGLTexture::create(*this);
@@ -2651,6 +2655,8 @@ Optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes
 
 GCGLenum WebGLRenderingContextBase::getError()
 {
+    WTFLogAlways("[ WEBGL ] getError()");
+
     if (m_isPendingPolicyResolution)
         return GraphicsContextGL::NO_ERROR;
     return m_context->getError();
@@ -3956,6 +3962,8 @@ void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GC
 
 ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Optional<TexImageSource>&& source)
 {
+    WTFLogAlways("[ WEBGL ] texSubImage2D()");
+
     if (!source) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "source is null");
         return { };
@@ -4519,6 +4527,8 @@ static bool isRGBFormat(GCGLenum internalFormat)
 
 ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, Optional<TexImageSource> source)
 {
+    WTFLogAlways("[ WEBGL ] texImage2D()");
+
     if (!source) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "source is null");
         return { };

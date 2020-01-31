@@ -1,3 +1,12 @@
+2020-01-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Add logging statements to attempt to catch texture-upload-size.html timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207006
+
+        Unreviewed temporary logging additions caused unrelated tests to time out.
+
+        * TestExpectations:
+
 2020-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Regression: fast/hidpi/image-srcset-relative-svg-canvas-2x.html is consistently failing on iOS EWS

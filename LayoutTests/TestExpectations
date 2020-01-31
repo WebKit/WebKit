@@ -3493,3 +3493,8 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-le
 webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Crash ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Crash ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Crash ]
+
+# Slow now due to added logging for unrelated investigation. Will be reverted.
+webkit.org/b/207006 fast/canvas/webgl/uniform-samplers-test.html [ Timeout ]
+webkit.org/b/207006 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
+webkit.org/b/207006 webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Timeout ]
