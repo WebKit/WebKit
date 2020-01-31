@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@
 
 namespace JSC { namespace FTL {
 
+const char* const tierName = "FTL ";
+
 using namespace DFG;
 
 void compile(State& state, Safepoint::Result& safepointResult)
@@ -80,7 +82,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     std::unique_ptr<RegisterAtOffsetList> registerOffsets =
         makeUnique<RegisterAtOffsetList>(state.proc->calleeSaveRegisterAtOffsetList());
     if (shouldDumpDisassembly())
-        dataLog("Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", *registerOffsets, "\n");
+        dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", *registerOffsets, "\n");
     codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
@@ -88,7 +90,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     int localsOffset =
         state.capturedValue->offsetFromFP() / sizeof(EncodedJSValue) + graph.m_nextMachineLocal;
     if (shouldDumpDisassembly()) {
-        dataLog(
+        dataLog(tierName,
             "localsOffset = ", localsOffset, " for stack slot: ",
             pointerDump(state.capturedValue), " at ", RawPointer(state.capturedValue), "\n");
     }
@@ -176,10 +178,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
         HashSet<B3::Value*> printedValues;
         HashSet<Node*> printedNodes;
-        const char* dfgPrefix = "    ";
-        const char* b3Prefix  = "          ";
-        const char* airPrefix = "              ";
-        const char* asmPrefix = "                ";
+        const char* dfgPrefix = "DFG " "    ";
+        const char* b3Prefix  = "b3  " "          ";
+        const char* airPrefix = "Air " "              ";
+        const char* asmPrefix = "asm " "                ";
 
         auto printDFGNode = [&] (Node* node) {
             if (currentDFGNode == node)

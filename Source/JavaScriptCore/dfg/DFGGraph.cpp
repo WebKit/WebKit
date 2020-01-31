@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,8 +185,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
 
     // Example/explanation of dataflow dump output
     //
-    //   14:   <!2:7>  GetByVal(@3, @13)
-    //   ^1     ^2 ^3     ^4       ^5
+    //   D@14:   <!2:7>  GetByVal(@3, @13)
+    //     ^1     ^2 ^3     ^4       ^5
     //
     // (1) The nodeIndex of this operation.
     // (2) The reference count. The number printed is the 'real' count,
@@ -195,11 +195,13 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     // (3) The virtual register slot assigned to this node.
     // (4) The name of the operation.
     // (5) The arguments to the operation. The may be of the form:
-    //         @#   - a NodeIndex referencing a prior node in the graph.
+    //         D@#  - a NodeIndex referencing a prior node in the graph.
     //         arg# - an argument number.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/GetGlobalLexicalVariable/PutGlobalVariable operations.
-    out.printf("% 4d:<%c%u:", (int)node->index(), mustGenerate ? '!' : ' ', refCount);
+    int nodeIndex = node->index();
+    const char* prefixPadding = nodeIndex < 10 ? "   " : nodeIndex < 100 ? "  " : " ";
+    out.printf("%sD@%d:<%c%u:", prefixPadding, nodeIndex, mustGenerate ? '!' : ' ', refCount);
     if (node->hasResult() && node->hasVirtualRegister() && node->virtualRegister().isValid())
         out.print(node->virtualRegister());
     else
@@ -518,13 +520,13 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
             ASSERT(phiNode->op() == Phi);
             if (!phiNode->shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
                 continue;
-            out.print(" @", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount(), ">->(");
+            out.print(" D@", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount(), ">->(");
             if (phiNode->child1()) {
-                out.print("@", phiNode->child1()->index());
+                out.print("D@", phiNode->child1()->index());
                 if (phiNode->child2()) {
-                    out.print(", @", phiNode->child2()->index());
+                    out.print(", D@", phiNode->child2()->index());
                     if (phiNode->child3())
-                        out.print(", @", phiNode->child3()->index());
+                        out.print(", D@", phiNode->child3()->index());
                 }
             }
             out.print(")", i + 1 < block->phis.size() ? "," : "");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,21 +72,21 @@ void BasicBlock::deepDump(PrintStream& out) const
 {
     dumpHeader(out);
     for (const Inst& inst : *this)
-        out.print("    ", inst, "\n");
+        out.print(tierName, "    ", inst, "\n");
     dumpFooter(out);
 }
 
 void BasicBlock::dumpHeader(PrintStream& out) const
 {
-    out.print("BB", *this, ": ; frequency = ", m_frequency, "\n");
+    out.print(tierName, "BB", *this, ": ; frequency = ", m_frequency, "\n");
     if (predecessors().size())
-        out.print("  Predecessors: ", pointerListDump(predecessors()), "\n");
+        out.print(tierName, "  Predecessors: ", pointerListDump(predecessors()), "\n");
 }
 
 void BasicBlock::dumpFooter(PrintStream& out) const
 {
     if (successors().size())
-        out.print("  Successors: ", listDump(successors()), "\n");
+        out.print(tierName, "  Successors: ", listDump(successors()), "\n");
 }
 
 BasicBlock::BasicBlock(unsigned index, double frequency)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,7 +105,7 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, co
 
     // FIXME: We could be better about various late paths. We can implement
     // this later if we find a strong use for it.
-    out.print("# Late paths\n");
+    out.print(tierName, "# Late paths\n");
     dumpAsmRange(m_latePathStart, m_latePathEnd);
 }
 

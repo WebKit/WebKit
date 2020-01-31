@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ State::State(Graph& graph)
 
     proc->setOriginPrinter(
         [] (PrintStream& out, B3::Origin origin) {
-            out.print("DFG:", bitwise_cast<Node*>(origin.data()));
+            out.print(bitwise_cast<Node*>(origin.data()));
         });
 
     proc->setFrontendData(&graph);

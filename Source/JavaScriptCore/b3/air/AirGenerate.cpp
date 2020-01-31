@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ void prepareForGeneration(Code& code)
     
     // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
     if (shouldDumpIR(AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
-        dataLog("Initial air:\n");
+        dataLog(tierName, "Initial air:\n");
         dataLog(code);
     }
     

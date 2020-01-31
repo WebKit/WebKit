@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,13 +154,13 @@ void BasicBlock::dump(PrintStream& out) const
 
 void BasicBlock::deepDump(const Procedure& proc, PrintStream& out) const
 {
-    out.print("BB", *this, ": ; frequency = ", m_frequency, "\n");
+    out.print(tierName, "BB", *this, ": ; frequency = ", m_frequency, "\n");
     if (predecessors().size())
-        out.print("  Predecessors: ", pointerListDump(predecessors()), "\n");
+        out.print(tierName, "  Predecessors: ", pointerListDump(predecessors()), "\n");
     for (Value* value : *this)
-        out.print("    ", B3::deepDump(proc, value), "\n");
+        out.print(tierName, "    ", B3::deepDump(proc, value), "\n");
     if (!successors().isEmpty()) {
-        out.print("  Successors: ");
+        out.print(tierName, "  Successors: ");
         if (size())
             last()->dumpSuccessors(this, out);
         else

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,22 +239,22 @@ void Procedure::dump(PrintStream& out) const
             continue;
 
         if (!didPrint) {
-            dataLog("Orphaned values:\n");
+            dataLog(tierName, "Orphaned values:\n");
             didPrint = true;
         }
-        dataLog("    ", deepDump(*this, value), "\n");
+        dataLog(tierName, "    ", deepDump(*this, value), "\n");
     }
     if (hasQuirks())
-        out.print("Has Quirks: True\n");
+        out.print(tierName, "Has Quirks: True\n");
     if (variables().size()) {
-        out.print("Variables:\n");
+        out.print(tierName, "Variables:\n");
         for (Variable* variable : variables())
-            out.print("    ", deepDump(variable), "\n");
+            out.print(tierName, "    ", deepDump(variable), "\n");
     }
     if (stackSlots().size()) {
-        out.print("Stack slots:\n");
+        out.print(tierName, "Stack slots:\n");
         for (StackSlot* slot : stackSlots())
-            out.print("    ", pointerDump(slot), ": ", deepDump(slot), "\n");
+            out.print(tierName, "    ", pointerDump(slot), ": ", deepDump(slot), "\n");
     }
     if (m_byproducts->count())
         out.print(*m_byproducts);

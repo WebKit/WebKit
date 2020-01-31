@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,8 @@
 #include <wtf/MathExtras.h>
 
 namespace JSC { namespace B3 { namespace Air {
+
+const char* const tierName = "Air ";
 
 static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 {
@@ -248,26 +250,26 @@ void Code::resetReachability()
 void Code::dump(PrintStream& out) const
 {
     if (!m_entrypoints.isEmpty())
-        out.print("Entrypoints: ", listDump(m_entrypoints), "\n");
+        out.print(tierName, "Entrypoints: ", listDump(m_entrypoints), "\n");
     for (BasicBlock* block : *this)
         out.print(deepDump(block));
     if (stackSlots().size()) {
-        out.print("Stack slots:\n");
+        out.print(tierName, "Stack slots:\n");
         for (StackSlot* slot : stackSlots())
-            out.print("    ", pointerDump(slot), ": ", deepDump(slot), "\n");
+            out.print(tierName, "    ", pointerDump(slot), ": ", deepDump(slot), "\n");
     }
     if (specials().size()) {
-        out.print("Specials:\n");
+        out.print(tierName, "Specials:\n");
         for (Special* special : specials())
-            out.print("    ", deepDump(special), "\n");
+            out.print(tierName, "    ", deepDump(special), "\n");
     }
     if (m_frameSize || m_stackIsAllocated)
-        out.print("Frame size: ", m_frameSize, m_stackIsAllocated ? " (Allocated)" : "", "\n");
+        out.print(tierName, "Frame size: ", m_frameSize, m_stackIsAllocated ? " (Allocated)" : "", "\n");
     if (m_callArgAreaSize)
-        out.print("Call arg area size: ", m_callArgAreaSize, "\n");
+        out.print(tierName, "Call arg area size: ", m_callArgAreaSize, "\n");
     RegisterAtOffsetList calleeSaveRegisters = this->calleeSaveRegisterAtOffsetList();
     if (calleeSaveRegisters.size())
-        out.print("Callee saves: ", calleeSaveRegisters, "\n");
+        out.print(tierName, "Callee saves: ", calleeSaveRegisters, "\n");
 }
 
 unsigned Code::findFirstBlockIndex(unsigned index) const

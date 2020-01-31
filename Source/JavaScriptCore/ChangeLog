@@ -1,3 +1,132 @@
+2020-01-30  Mark Lam  <mark.lam@apple.com>
+
+        Some improvements to DFG and FTL dumps to improve readability and searchability.
+        https://bugs.webkit.org/show_bug.cgi?id=207024
+
+        Reviewed by Saam Barati.
+
+        This patch applies the following changes:
+
+        1. Prefix Air and B2 dumps with a tierName prefix.
+           The tierName prefix strings are as follows:
+
+               "FTL ", "DFG ", "b3  ", "Air ", "asm "
+
+           The choice to use a lowercase "b3" and "asm" with upper case "Air" is
+           deliberate because I found this combination to be easier to read and scan as
+           prefixes of the dump lines.  See dump samples below.
+
+        2. Make DFG node IDs consistently expressed as D@<node index> e.g. D@104.
+           The definition of the node will be the id followed by a colon e.g. D@104:
+           This makes it easy to search references to this node anywhere in the dump.
+
+           Make B3 nodes expressed as b@<node index> e.g. b@542.
+           This also makes it searchable since there's now no ambiguity between b@542 and
+           D@542.
+
+           The choice to use a lowercase "b" and an uppercase "D" is intentional because
+           "b@542" and "d@542" looks too similar, and I prefer to not use too much
+           uppercase.  Plus this makes the node consistent in capitalization with the
+           tierName prefixes above of "b3  " and "DFG " respectively.
+
+        Here's a sample of what the dumps now look like:
+
+        DFG graph dump:
+        <code>
+            ...
+                 6 55:   <-- foo#DFndCW:<0x62d0000b8140, bc#65, Call, known callee: Object: 0x62d000035920 with butterfly 0x0 (Structure %AN:Function), StructureID: 12711, numArgs+this = 1, numFixup = 0, stackOffset = -16 (loc0 maps to loc16)>
+              3  6 55:   D@79:< 3:->    ArithAdd(Int32:Kill:D@95, Int32:D@42, Int32|PureNum|UseAsOther, Int32, CheckOverflow, Exits, bc#71, ExitValid)
+              4  6 55:    D@3:<!0:->    KillStack(MustGen, loc7, W:Stack(loc7), ClobbersExit, bc#71, ExitInvalid)
+              5  6 55:   D@85:<!0:->    MovHint(Check:Untyped:D@79, MustGen, loc7, W:SideState, ClobbersExit, bc#71, ExitInvalid)
+              6  6 55:  D@102:< 1:->    CompareLess(Int32:D@79, Int32:D@89, Boolean|UseAsOther, Bool, Exits, bc#74, ExitValid)
+              7  6 55:  D@104:<!0:->    Branch(KnownBoolean:Kill:D@102, MustGen, T:#1/w:10.000000, F:#7/w:1.000000, W:SideState, bc#74, ExitInvalid)
+            ...
+        </code>
+
+        B3 graph dump:
+        <code>
+            ...
+            b3  BB#14: ; frequency = 10.000000
+            b3    Predecessors: #13
+            b3      Int32 b@531 = CheckAdd(b@10:WarmAny, $1(b@1):WarmAny, b@64:ColdAny, b@10:ColdAny, generator = 0x606000022e80, earlyClobbered = [], lateClobbered = [], usedRegisters = [], ExitsSideways|Reads:Top, D@79)
+            b3      Int32 b@539 = LessThan(b@531, $100(b@578), D@102)
+            b3      Void b@542 = Branch(b@539, Terminal, D@104)
+            b3    Successors: Then:#2, Else:#15
+            ...
+        </code>
+
+        Air graph dump:
+        <code>
+            ...
+            Air BB#5: ; frequency = 10.000000
+            Air   Predecessors: #4
+            Air     Move -96(%rbp), %rax, b@531
+            Air     Patch &BranchAdd32(3,ForceLateUseUnlessRecoverable)3, Overflow, $1, %rax, -104(%rbp), -96(%rbp), b@531
+            Air     Branch32 LessThan, %rax, $100, b@542
+            Air   Successors: #1, #6
+            ...
+        </code>
+
+        FTL disassembly dump:
+        <code>
+            ...
+            Air BB#5: ; frequency = 10.000000
+            Air   Predecessors: #4
+            DFG       D@42:< 2:->   JSConstant(JS|PureInt, Int32, Int32: 1, bc#0, ExitInvalid)
+            DFG       D@79:< 3:->   ArithAdd(Int32:Kill:D@95, Int32:D@42, Int32|PureNum|UseAsOther, Int32, CheckOverflow, Exits, bc#71, ExitValid)
+            b3            Int32 b@1 = Const32(1)
+            b3            Int32 b@531 = CheckAdd(b@10:WarmAny, $1(b@1):WarmAny, b@64:ColdAny, b@10:ColdAny, generator = 0x606000022e80, earlyClobbered = [], lateClobbered = [], usedRegisters = [%rax, %rbx, %rbp, %r12], ExitsSideways|Reads:Top, D@79)
+            Air               Move -96(%rbp), %rax, b@531
+            asm                   0x4576b9c04712: mov -0x60(%rbp), %rax
+            Air               Patch &BranchAdd32(3,ForceLateUseUnlessRecoverable)3, Overflow, $1, %rax, -104(%rbp), -96(%rbp), b@531
+            asm                   0x4576b9c04716: inc %eax
+            asm                   0x4576b9c04718: jo 0x4576b9c04861
+            DFG       D@89:< 1:->   JSConstant(JS|PureNum|UseAsOther, NonBoolInt32, Int32: 100, bc#0, ExitInvalid)
+            DFG      D@102:< 1:->   CompareLess(Int32:D@79, Int32:D@89, Boolean|UseAsOther, Bool, Exits, bc#74, ExitValid)
+            DFG      D@104:<!0:->   Branch(KnownBoolean:Kill:D@102, MustGen, T:#1/w:10.000000, F:#7/w:1.000000, W:SideState, bc#74, ExitInvalid)
+            b3            Int32 b@578 = Const32(100, D@89)
+            b3            Int32 b@539 = LessThan(b@531, $100(b@578), D@102)
+            b3            Void b@542 = Branch(b@539, Terminal, D@104)
+            Air               Branch32 LessThan, %rax, $100, b@542
+            asm                   0x4576b9c0471e: cmp $0x64, %eax
+            asm                   0x4576b9c04721: jl 0x4576b9c0462f
+            Air   Successors: #1, #6
+            ...
+        </code>
+
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::deepDump const):
+        * b3/B3Common.cpp:
+        * b3/B3Common.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::dump const):
+        * b3/B3Value.cpp:
+        * b3/air/AirBasicBlock.cpp:
+        (JSC::B3::Air::BasicBlock::deepDump const):
+        (JSC::B3::Air::BasicBlock::dumpHeader const):
+        (JSC::B3::Air::BasicBlock::dumpFooter const):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::dump const):
+        * b3/air/AirCode.h:
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::dump):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGCommon.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGNode.cpp:
+        (WTF::printInternal):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.h:
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
 2020-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Remove PackedIntVector
