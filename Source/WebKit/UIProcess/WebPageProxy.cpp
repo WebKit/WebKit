@@ -7713,6 +7713,12 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChal
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
 }
 
+void WebPageProxy::negotiatedLegacyTLS()
+{
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.negotiatedLegacyTLS(transaction);
+}
+
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
 {
     requestStorageSpace(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [reply = WTFMove(reply)](auto quota) mutable {

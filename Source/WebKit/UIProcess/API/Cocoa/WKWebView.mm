@@ -1550,6 +1550,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return nil;
 }
 
+- (BOOL)_negotiatedLegacyTLS
+{
+    return _page->pageLoadState().hasNegotiatedLegacyTLS();
+}
+
 - (BOOL)_isEditable
 {
     return _page && _page->isEditable();

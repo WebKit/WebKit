@@ -369,6 +369,15 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     });
 }
 
+void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
+{
+    WebPageProxy* page = nullptr;
+    if (pageID)
+        page = WebProcessProxy::webPage(pageID);
+    if (page)
+        page->negotiatedLegacyTLS();
+}
+
 void NetworkProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)
 {
     MESSAGE_CHECK(m_pendingFetchWebsiteDataCallbacks.isValidKey(callbackID));

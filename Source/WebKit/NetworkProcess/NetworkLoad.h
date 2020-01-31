@@ -81,6 +81,7 @@ private:
     void wasBlocked() final;
     void cannotShowURL() final;
     void wasBlockedByRestrictions() final;
+    void negotiatedLegacyTLS() const final;
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
     void throttleDelayCompleted();

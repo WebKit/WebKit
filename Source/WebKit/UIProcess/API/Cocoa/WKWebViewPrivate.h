@@ -164,6 +164,13 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
+/*! @abstract A Boolean value indicating whether any resource on the page
+has been loaded over a connection using TLS 1.0 or TLS 1.1.
+@discussion @link WKWebView @/link is key-value observing (KVO) compliant
+for this property.
+*/
+@property (nonatomic, readonly) BOOL _negotiatedLegacyTLS WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData;

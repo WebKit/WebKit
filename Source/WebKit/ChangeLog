@@ -1,3 +1,47 @@
+2020-01-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add KVO SPI WKWebView._negotiatedLegacyTLS
+        https://bugs.webkit.org/show_bug.cgi?id=207067
+
+        Reviewed by Andy Estes.
+
+        Covered by API tests.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::negotiatedLegacyTLS const):
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTaskClient::negotiatedLegacyTLS const):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::negotiatedLegacyTLS const):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::negotiatedLegacyTLS const):
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _negotiatedLegacyTLS]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeNegotiatedLegacyTLS):
+        (WebKit::NavigationState::didChangeNegotiatedLegacyTLS):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::negotiatedLegacyTLS):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges):
+        (WebKit::PageLoadState::hasNegotiatedLegacyTLS const):
+        (WebKit::PageLoadState::negotiatedLegacyTLS):
+        (WebKit::PageLoadState::didCommitLoad):
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::Observer::willChangeNegotiatedLegacyTLS):
+        (WebKit::PageLoadState::Observer::didChangeNegotiatedLegacyTLS):
+        (WebKit::PageLoadState::Data::Data): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2020-01-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed macOS build fix after r255518

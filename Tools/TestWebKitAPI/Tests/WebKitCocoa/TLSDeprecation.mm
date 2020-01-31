@@ -43,6 +43,31 @@
 #import <WebKit/WebCoreThread.h>
 #endif
 
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+@interface TLSObserver : NSObject
+- (void)waitUntilNegotiatedLegacyTLSChanged;
+@end
+
+@implementation TLSObserver {
+    bool _negotiatedLegacyTLSChanged;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    EXPECT_WK_STREQ(keyPath, "_negotiatedLegacyTLS");
+    _negotiatedLegacyTLSChanged = true;
+}
+
+- (void)waitUntilNegotiatedLegacyTLSChanged
+{
+    _negotiatedLegacyTLSChanged = false;
+    while (!_negotiatedLegacyTLSChanged)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
+#endif
+
 @interface TLSNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFailProvisionalNavigation;
@@ -201,6 +226,43 @@ TEST(TLSVersion, DISABLED_NavigationDelegateSPI)
         EXPECT_TRUE([delegate receivedShouldAllowLegacyTLS]);
     }
 }
+
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+TEST(TLSVersion, NegotiatedLegacyTLS)
+{
+    TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL *ssl) {
+        TCPServer::respondWithOK(ssl);
+        TCPServer::respondWithOK(ssl);
+    }, tls1_1);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [webView loadRequest:request];
+
+    auto observer = adoptNS([TLSObserver new]);
+    [webView addObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS" options:NSKeyValueObservingOptionNew context:nil];
+    
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+    [observer waitUntilNegotiatedLegacyTLSChanged];
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [observer waitUntilNegotiatedLegacyTLSChanged];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView loadRequest:request];
+    [observer waitUntilNegotiatedLegacyTLSChanged];
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+
+    [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
+}
+#endif
 
 // FIXME: Add some tests for WKWebView.hasOnlySecureContent
 

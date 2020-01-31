@@ -62,6 +62,9 @@ public:
         virtual void willChangeHasOnlySecureContent() = 0;
         virtual void didChangeHasOnlySecureContent() = 0;
 
+        virtual void willChangeNegotiatedLegacyTLS() { };
+        virtual void didChangeNegotiatedLegacyTLS() { };
+
         virtual void willChangeEstimatedProgress() = 0;
         virtual void didChangeEstimatedProgress() = 0;
 
@@ -140,6 +143,8 @@ public:
     String activeURL() const;
 
     bool hasOnlySecureContent() const;
+    bool hasNegotiatedLegacyTLS() const;
+    void negotiatedLegacyTLS(const Transaction::Token&);
 
     double estimatedProgress() const;
     bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
@@ -200,18 +205,9 @@ private:
     Vector<Observer*> m_observers;
 
     struct Data {
-        Data()
-            : state(State::Finished)
-            , hasInsecureContent(false)
-            , canGoBack(false)
-            , canGoForward(false)
-            , estimatedProgress(0)
-            , networkRequestsInProgress(false)
-        {
-        }
-
-        State state;
-        bool hasInsecureContent;
+        State state { State::Finished };
+        bool hasInsecureContent { false };
+        bool negotiatedLegacyTLS { false };
 
         PendingAPIRequest pendingAPIRequest;
 
@@ -224,11 +220,11 @@ private:
 
         URL resourceDirectoryURL;
 
-        bool canGoBack;
-        bool canGoForward;
+        bool canGoBack { false };
+        bool canGoForward { false };
 
-        double estimatedProgress;
-        bool networkRequestsInProgress;
+        double estimatedProgress { 0 };
+        bool networkRequestsInProgress { false };
 
         RefPtr<WebCertificateInfo> certificateInfo;
     };

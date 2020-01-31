@@ -813,6 +813,25 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     LOG(NetworkSession, "%llu didReceiveResponse", taskIdentifier);
     if (auto* networkDataTask = [self existingTask:dataTask]) {
         ASSERT(RunLoop::isMain());
+
+        bool negotiatedLegacyTLS = false;
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+        NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
+        auto tlsVersion = reinterpret_cast<tls_protocol_version_t>(metrics.negotiatedTLSProtocolVersion.unsignedShortValue);
+        if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
+            negotiatedLegacyTLS = true;
+        UNUSED_PARAM(metrics);
+#else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
+            SSLProtocol tlsVersion = [dataTask _TLSNegotiatedProtocolVersion];
+            if (tlsVersion == kTLSProtocol11 || tlsVersion == kTLSProtocol1)
+                negotiatedLegacyTLS = true;
+        }
+        ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+        if (negotiatedLegacyTLS)
+            networkDataTask->negotiatedLegacyTLS();
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;

@@ -1335,6 +1335,7 @@ public:
     WebCore::IntSize viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits.valueOr(WebCore::IntSize()); }
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
+    void negotiatedLegacyTLS();
 
     SpellDocumentTag spellDocumentTag();
 

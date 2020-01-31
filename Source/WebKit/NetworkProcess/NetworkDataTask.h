@@ -70,6 +70,7 @@ public:
     virtual void cannotShowURL() = 0;
     virtual void wasBlockedByRestrictions() = 0;
 
+    virtual void negotiatedLegacyTLS() const { }
     virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 
     void didCompleteWithError(const WebCore::ResourceError& error)
@@ -92,6 +93,7 @@ public:
     virtual void invalidateAndCancel() = 0;
 
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
+    void negotiatedLegacyTLS() const;
     bool shouldCaptureExtraNetworkLoadMetrics() const;
 
     enum class State {
