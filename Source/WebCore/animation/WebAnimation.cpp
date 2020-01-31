@@ -1444,16 +1444,17 @@ Seconds WebAnimation::timeToNextTick() const
         // The animation is in its "before" phase, in this case we can wait until it enters its "active" phase.
         return (effect.delay() - timing.localTime.value()) / playbackRate;
     case AnimationEffectPhase::Active:
-        // Non-accelerated animations in the "active" phase will need to update their animated value at the immediate next opportunity.
-        if (!isCompletelyAccelerated())
-            return 0_s;
-        // Accelerated CSS Animations need to trigger "animationiteration" events, in this case we can wait until the next iteration.
-        if (isCSSAnimation()) {
-            if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress)
-                return effect.iterationDuration() * (1 - *iterationProgress);
+        if (isCompletelyAccelerated() && isRunningAccelerated()) {
+            // Fully-accelerated running CSS Animations need to trigger "animationiteration" events, in this case we must wait until the next iteration.
+            if (isCSSAnimation()) {
+                if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress)
+                    return effect.iterationDuration() * (1 - *iterationProgress);
+            }
+            // Fully-accelerated running animations in the "active" phase can wait until they ended.
+            return (effect.endTime() - timing.localTime.value()) / playbackRate;
         }
-        // Accelerated animations in the "active" phase can wait until they ended.
-        return (effect.endTime() - timing.localTime.value()) / playbackRate;
+        // Other animations in the "active" phase will need to update their animated value at the immediate next opportunity.
+        return 0_s;
     case AnimationEffectPhase::After:
         // The animation is in its after phase, which means it will no longer update its value, so it doens't need a tick.
         return Seconds::infinity();
