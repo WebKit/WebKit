@@ -222,6 +222,21 @@ bool JSEventListener::operator==(const EventListener& listener) const
     return m_jsFunction == other.m_jsFunction && m_isAttribute == other.m_isAttribute;
 }
 
+String JSEventListener::functionName() const
+{
+    if (!m_wrapper || !m_jsFunction)
+        return { };
+
+    auto& vm = isolatedWorld().vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, m_jsFunction.get());
+    if (!handlerFunction)
+        return { };
+
+    return handlerFunction->name(vm);
+}
+
 static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener, ScriptExecutionContext& context)
 {
     if (!is<JSEventListener>(abstractListener))

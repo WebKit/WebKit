@@ -28,11 +28,15 @@
 
 #include "CustomHeaderFields.h"
 #include "DOMTokenList.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "EventNames.h"
 #include "FrameLoader.h"
+#include "HTMLBodyElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
+#include "JSEventListener.h"
 #include "LayoutUnit.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -612,6 +616,43 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (topURL.protocolIs("https") && equalLettersIgnoringASCIICase(host, "vimeo.com")) {
         if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    return false;
+}
+
+bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
+{
+    if (eventNames().isTouchScrollBlockingEventType(eventType)) {
+        if (is<DOMWindow>(eventTarget)) {
+            auto& window = downcast<DOMWindow>(eventTarget);
+            if (auto* document = window.document())
+                return document->settings().passiveTouchListenersAsDefaultOnDocument();
+        } else if (is<Node>(eventTarget)) {
+            auto& node = downcast<Node>(eventTarget);
+            if (is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node)
+                return node.document().settings().passiveTouchListenersAsDefaultOnDocument();
+        }
+        return false;
+    }
+
+    if (eventType == eventNames().mousewheelEvent) {
+        if (!is<JSEventListener>(eventListener))
+            return false;
+
+        // For SmoothScroll.js
+        // Matches Blink intervention in https://chromium.googlesource.com/chromium/src/+/b6b13c9cfe64d52a4168d9d8d1ad9bb8f0b46a2a%5E%21/
+        if (is<DOMWindow>(eventTarget)) {
+            auto* document = downcast<DOMWindow>(eventTarget).document();
+            if (!document || !document->quirks().needsQuirks())
+                return false;
+
+            auto& jsEventListener = downcast<JSEventListener>(eventListener);
+            if (jsEventListener.functionName() == "ssc_wheel")
+                return true;
+        }
+
+        return false;
     }
 
     return false;

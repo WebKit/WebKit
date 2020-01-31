@@ -32,6 +32,7 @@ namespace WebCore {
 
 class Document;
 class Element;
+class EventListener;
 class EventTarget;
 class HTMLElement;
 class LayoutUnit;
@@ -82,6 +83,8 @@ public:
     bool needsPreloadAutoQuirk() const;
 
     bool shouldBypassBackForwardCache() const;
+
+    static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType, const EventListener&);
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMedia() const;

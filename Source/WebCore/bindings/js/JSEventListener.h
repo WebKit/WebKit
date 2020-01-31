@@ -57,6 +57,8 @@ public:
     virtual String sourceURL() const { return String(); }
     virtual TextPosition sourcePosition() const { return TextPosition(); }
 
+    String functionName() const;
+
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
     void visitJSFunction(JSC::SlotVisitor&) final;

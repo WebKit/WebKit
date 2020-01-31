@@ -39,6 +39,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
 #include "JSLazyEventListener.h"
+#include "Quirks.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -75,17 +76,8 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
 
     auto passive = options.passive;
 
-    if (!passive.hasValue() && eventNames().isTouchScrollBlockingEventType(eventType)) {
-        if (is<DOMWindow>(*this)) {
-            auto& window = downcast<DOMWindow>(*this);
-            if (auto* document = window.document())
-                passive = document->settings().passiveTouchListenersAsDefaultOnDocument();
-        } else if (is<Node>(*this)) {
-            auto& node = downcast<Node>(*this);
-            if (is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node)
-                passive = node.document().settings().passiveTouchListenersAsDefaultOnDocument();
-        }
-    }
+    if (!passive.hasValue() && Quirks::shouldMakeEventListenerPassive(*this, eventType, listener.get()))
+        passive = true;
 
     bool listenerCreatedFromScript = listener->type() == EventListener::JSEventListenerType && !listener->wasCreatedFromMarkup();
     auto listenerRef = listener.copyRef();
