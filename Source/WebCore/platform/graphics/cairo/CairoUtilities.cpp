@@ -202,7 +202,7 @@ cairo_operator_t toCairoOperator(CompositeOperator op, BlendMode blendOp)
 }
 
 void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
-                               const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect)
+    const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, InterpolationQuality imageInterpolationQuality, const FloatRect& destRect)
 {
     // Avoid NaN
     if (!std::isfinite(phase.x()) || !std::isfinite(phase.y()))
@@ -221,6 +221,21 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     }
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
+    switch (imageInterpolationQuality) {
+    case InterpolationQuality::DoNotInterpolate:
+    case InterpolationQuality::Low:
+        cairo_pattern_set_filter(pattern, CAIRO_FILTER_FAST);
+        break;
+    case InterpolationQuality::Default:
+        cairo_pattern_set_filter(pattern, CAIRO_FILTER_BILINEAR);
+        break;
+    case InterpolationQuality::Medium:
+        cairo_pattern_set_filter(pattern, CAIRO_FILTER_GOOD);
+        break;
+    case InterpolationQuality::High:
+        cairo_pattern_set_filter(pattern, CAIRO_FILTER_BEST);
+        break;
+    }
     cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
 
     // Due to a limitation in pixman, cairo cannot handle transformation matrices with values bigger than 32768. If the value is
