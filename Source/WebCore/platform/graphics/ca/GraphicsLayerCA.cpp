@@ -4035,8 +4035,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* replica
         replicaState.setBranchType(ReplicaState::ChildBranch);
     }
 
-    if (contentsClippingLayer) {
-        ASSERT(contentsLayer);
+    if (contentsClippingLayer && contentsLayer) {
         contentsClippingLayer->appendSublayer(*contentsLayer);
     }
 
