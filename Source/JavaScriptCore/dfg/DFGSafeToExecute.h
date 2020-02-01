@@ -229,7 +229,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CheckStructure:
     case CheckStructureOrEmpty:
     case GetExecutable:
-    case GetButterfly:
     case CallDOMGetter:
     case CallDOM:
     case CheckSubClass:
@@ -320,6 +319,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DataViewGetInt:
     case DataViewGetFloat:
         return true;
+
+    case GetButterfly:
+        return state.forNode(node->child1()).isType(SpecObject);
 
     case ArraySlice:
     case ArrayIndexOf: {
