@@ -614,6 +614,10 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         }
 
         reallyAdd(m_codeBlock->jitCode()->dfgCommon());
+        {
+            ConcurrentJSLocker locker(m_codeBlock->m_lock);
+            m_codeBlock->jitCode()->shrinkToFit(locker);
+        }
 
         if (validationEnabled()) {
             TrackedReferences trackedReferences;

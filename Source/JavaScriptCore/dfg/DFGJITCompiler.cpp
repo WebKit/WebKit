@@ -392,7 +392,6 @@ void JITCompiler::compile()
     link(*linkBuffer);
     m_speculative->linkOSREntries(*linkBuffer);
 
-    m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
     disassemble(*linkBuffer);
@@ -494,7 +493,6 @@ void JITCompiler::compileFunction()
     link(*linkBuffer);
     m_speculative->linkOSREntries(*linkBuffer);
     
-    m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
     if (requiresArityFixup)

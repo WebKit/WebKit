@@ -67,6 +67,7 @@ public:
     JITCode* ftl() override;
     DFG::CommonData* dfgCommon() override;
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
+    void shrinkToFit(const ConcurrentJSLocker&) override;
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;

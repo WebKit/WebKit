@@ -93,6 +93,10 @@ FTL::ForOSREntryJITCode* JITCode::ftlForOSREntry()
     return 0;
 }
 
+void JITCode::shrinkToFit(const ConcurrentJSLocker&)
+{
+}
+
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
     : JITCode(jitType)
 {
