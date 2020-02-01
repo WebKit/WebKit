@@ -50,7 +50,7 @@ public:
         return makeUnique<PolyProtoAccessChain>(*this);
     }
 
-    const Vector<Structure*>& chain() const { return m_chain; }
+    const Vector<StructureID>& chain() const { return m_chain; }
 
     void dump(Structure* baseStructure, PrintStream& out) const;
 
@@ -60,23 +60,23 @@ public:
         return !(*this == other);
     }
 
-    bool needImpurePropertyWatchpoint() const;
+    bool needImpurePropertyWatchpoint(VM&) const;
 
     template <typename Func>
-    void forEach(Structure* baseStructure, const Func& func) const
+    void forEach(VM& vm, Structure* baseStructure, const Func& func) const
     {
         bool atEnd = !m_chain.size();
         func(baseStructure, atEnd);
         for (unsigned i = 0; i < m_chain.size(); ++i) {
             atEnd = i + 1 == m_chain.size();
-            func(m_chain[i], atEnd);
+            func(vm.getStructure(m_chain[i]), atEnd);
         }
     }
 
-    Structure* slotBaseStructure(Structure* baseStructure) const
+    Structure* slotBaseStructure(VM& vm, Structure* baseStructure) const
     {
         if (m_chain.size())
-            return m_chain.last();
+            return vm.getStructure(m_chain.last());
         return baseStructure;
     }
 
@@ -85,7 +85,7 @@ private:
 
     // This does not include the base. We rely on AccessCase providing it for us. That said, this data
     // structure is tied to the base that it was created with.
-    Vector<Structure*> m_chain; 
+    Vector<StructureID> m_chain; 
 };
 
 }

@@ -725,7 +725,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     bool doesCalls = false;
     Vector<JSCell*> cellsToMark;
     for (auto& entry : cases)
-        doesCalls |= entry->doesCalls(&cellsToMark);
+        doesCalls |= entry->doesCalls(vm, &cellsToMark);
     
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);

@@ -190,7 +190,7 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm)
     if (m_identifier) {
         if ((structure && structure->needImpurePropertyWatchpoint())
             || m_conditionSet.needImpurePropertyWatchpoint()
-            || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
+            || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint(vm)))
             result.append(vm.ensureWatchpointSetForImpureProperty(m_identifier.uid()));
     }
 
@@ -399,14 +399,14 @@ bool AccessCase::needsScratchFPR() const
 }
 
 template<typename Functor>
-void AccessCase::forEachDependentCell(const Functor& functor) const
+void AccessCase::forEachDependentCell(VM& vm, const Functor& functor) const
 {
     m_conditionSet.forEachDependentCell(functor);
     if (m_structure)
         functor(m_structure.get());
     if (m_polyProtoAccessChain) {
-        for (Structure* structure : m_polyProtoAccessChain->chain())
-            functor(structure);
+        for (StructureID structureID : m_polyProtoAccessChain->chain())
+            functor(vm.getStructure(structureID));
     }
 
     switch (type()) {
@@ -477,7 +477,7 @@ void AccessCase::forEachDependentCell(const Functor& functor) const
     }
 }
 
-bool AccessCase::doesCalls(Vector<JSCell*>* cellsToMarkIfDoesCalls) const
+bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) const
 {
     bool doesCalls = false;
     switch (type()) {
@@ -528,7 +528,7 @@ bool AccessCase::doesCalls(Vector<JSCell*>* cellsToMarkIfDoesCalls) const
     }
 
     if (doesCalls && cellsToMarkIfDoesCalls) {
-        forEachDependentCell([&](JSCell* cell) {
+        forEachDependentCell(vm, [&](JSCell* cell) {
             cellsToMarkIfDoesCalls->append(cell);
         });
     }
@@ -685,7 +685,7 @@ bool AccessCase::visitWeak(VM& vm) const
     }
 
     bool isValid = true;
-    forEachDependentCell([&](JSCell* cell) {
+    forEachDependentCell(vm, [&](JSCell* cell) {
         isValid &= vm.heap.isMarked(cell);
     });
     return isValid;
@@ -699,8 +699,8 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
         result &= m_structure->markIfCheap(visitor);
 
     if (m_polyProtoAccessChain) {
-        for (Structure* structure : m_polyProtoAccessChain->chain())
-            result &= structure->markIfCheap(visitor);
+        for (StructureID structureID : m_polyProtoAccessChain->chain())
+            result &= visitor.vm().getStructure(structureID)->markIfCheap(visitor);
     }
 
     switch (m_type) {
@@ -755,7 +755,7 @@ void AccessCase::generateWithGuard(
         if (m_polyProtoAccessChain) {
             GPRReg baseForAccessGPR = state.scratchGPR;
             jit.move(state.baseGPR, baseForAccessGPR);
-            m_polyProtoAccessChain->forEach(structure(), [&] (Structure* structure, bool atEnd) {
+            m_polyProtoAccessChain->forEach(vm, structure(), [&] (Structure* structure, bool atEnd) {
                 fallThrough.append(
                     jit.branchStructure(
                         CCallHelpers::NotEqual,

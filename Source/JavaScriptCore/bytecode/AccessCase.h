@@ -179,7 +179,7 @@ public:
 
     // If you supply the optional vector, this will append the set of cells that this will need to keep alive
     // past the call.
-    bool doesCalls(Vector<JSCell*>* cellsToMark = nullptr) const;
+    bool doesCalls(VM&, Vector<JSCell*>* cellsToMark = nullptr) const;
 
     bool isCustom() const
     {
@@ -268,7 +268,7 @@ private:
     friend class PolymorphicAccess;
 
     template<typename Functor>
-    void forEachDependentCell(const Functor&) const;
+    void forEachDependentCell(VM&, const Functor&) const;
 
     void visitAggregate(SlotVisitor&) const;
     bool visitWeak(VM&) const;

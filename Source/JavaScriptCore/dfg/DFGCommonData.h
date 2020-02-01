@@ -125,7 +125,7 @@ public:
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell>> weakReferences;
-    Vector<WriteBarrier<Structure>> weakStructureReferences;
+    Vector<StructureID> weakStructureReferences;
     Vector<CatchEntrypointData> catchEntrypoints;
     Bag<CodeBlockJettisoningWatchpoint> watchpoints;
     Bag<AdaptiveStructureWatchpoint> adaptiveStructureWatchpoints;

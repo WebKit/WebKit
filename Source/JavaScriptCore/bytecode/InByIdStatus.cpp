@@ -50,7 +50,7 @@ InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map
     InByIdStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(locker, map.get(CodeOrigin(bytecodeIndex)).stubInfo, uid);
+    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), map.get(CodeOrigin(bytecodeIndex)).stubInfo, uid);
 
     if (!result.takesSlowPath() && didExit)
         return InByIdStatus(TakesSlowPath);
@@ -96,7 +96,7 @@ InByIdStatus InByIdStatus::computeFor(
             InByIdStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(locker, status.stubInfo, uid);
+                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), status.stubInfo, uid);
             }
             if (result.isSet())
                 return bless(result);
@@ -114,16 +114,16 @@ InByIdStatus InByIdStatus::computeFor(
 #if ENABLE(DFG_JIT)
 InByIdStatus InByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    InByIdStatus result = InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(locker, stubInfo, uid);
+    InByIdStatus result = InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), stubInfo, uid);
 
     if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex()))
         return InByIdStatus(TakesSlowPath);
     return result;
 }
 
-InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, StructureStubInfo* stubInfo, UniquedStringImpl* uid)
+InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM& vm, StructureStubInfo* stubInfo, UniquedStringImpl* uid)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(vm, stubInfo);
     if (!isInlineable(summary))
         return InByIdStatus(summary);
     

@@ -168,7 +168,7 @@ GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
     if (!isInlineable(summary))
         return GetByStatus(summary, *stubInfo);
     
