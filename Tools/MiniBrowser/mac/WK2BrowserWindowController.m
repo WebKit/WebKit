@@ -125,8 +125,11 @@ static const int testFooterBannerHeight = 58;
     _textFinder.incrementalSearchingShouldDimContentView = NO;
     _textFinder.client = _webView;
     _textFinder.findBarContainer = self;
+    
+    __weak WKWebView *weakWebView = _webView;
     _textFinder.hideInterfaceCallback = ^{
-        [_webView _hideFindUI];
+        WKWebView *webView = weakWebView;
+        [webView _hideFindUI];
     };
 
     _zoomTextOnly = NO;
