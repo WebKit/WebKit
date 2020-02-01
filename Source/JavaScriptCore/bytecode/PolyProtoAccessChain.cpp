@@ -79,6 +79,7 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
     if (!found && !!target)
         return nullptr;
 
+    result->m_chain.shrinkToFit();
     return result;
 }
 

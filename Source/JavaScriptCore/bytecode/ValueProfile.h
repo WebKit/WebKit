@@ -163,12 +163,12 @@ struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
 struct RareCaseProfile {
     RareCaseProfile(BytecodeIndex bytecodeIndex)
         : m_bytecodeIndex(bytecodeIndex)
-        , m_counter(0)
     {
     }
+    RareCaseProfile() = default;
     
-    BytecodeIndex m_bytecodeIndex;
-    uint32_t m_counter;
+    BytecodeIndex m_bytecodeIndex { };
+    uint32_t m_counter { 0 };
 };
 
 inline BytecodeIndex getRareCaseProfileBytecodeIndex(RareCaseProfile* rareCaseProfile)

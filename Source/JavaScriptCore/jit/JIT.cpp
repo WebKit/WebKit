@@ -139,13 +139,18 @@ void JIT::assertStackPointerOffset()
     m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size()); \
     break;
 
+#define NEXT_OPCODE_IN_MAIN(name) \
+    if (previousSlowCasesSize != m_slowCases.size()) \
+        ++m_bytecodeCountHavingSlowCase; \
+    NEXT_OPCODE(name)
+
 #define DEFINE_SLOW_OP(name) \
     case op_##name: { \
         if (m_bytecodeIndex >= startBytecodeIndex) { \
             JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
             slowPathCall.call(); \
         } \
-        NEXT_OPCODE(op_##name); \
+        NEXT_OPCODE_IN_MAIN(op_##name); \
     }
 
 #define DEFINE_OP(name) \
@@ -153,7 +158,7 @@ void JIT::assertStackPointerOffset()
         if (m_bytecodeIndex >= startBytecodeIndex) { \
             emit_##name(currentInstruction); \
         } \
-        NEXT_OPCODE(name); \
+        NEXT_OPCODE_IN_MAIN(name); \
     }
 
 #define DEFINE_SLOWCASE_OP(name) \
@@ -232,7 +237,9 @@ void JIT::privateCompileMainPass()
         }
     }
 
+    m_bytecodeCountHavingSlowCase = 0;
     for (m_bytecodeIndex = BytecodeIndex(0); m_bytecodeIndex.offset() < instructionCount; ) {
+        unsigned previousSlowCasesSize = m_slowCases.size();
         if (m_bytecodeIndex == startBytecodeIndex && startBytecodeIndex.offset() > 0) {
             // We've proven all bytecode instructions up until here are unreachable.
             // Let's ensure that by crashing if it's ever hit.
@@ -496,7 +503,12 @@ void JIT::privateCompileSlowCases()
     m_instanceOfIndex = 0;
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
+
+    RefCountedArray<RareCaseProfile> rareCaseProfiles;
+    if (shouldEmitProfiling())
+        rareCaseProfiles = RefCountedArray<RareCaseProfile>(m_bytecodeCountHavingSlowCase);
     
+    unsigned bytecodeCountHavingSlowCase = 0;
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeIndex = iter->to;
 
@@ -506,9 +518,9 @@ void JIT::privateCompileSlowCases()
 
         const Instruction* currentInstruction = m_codeBlock->instructions().at(m_bytecodeIndex).ptr();
         
-        RareCaseProfile* rareCaseProfile = 0;
+        RareCaseProfile* rareCaseProfile = nullptr;
         if (shouldEmitProfiling())
-            rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeIndex);
+            rareCaseProfile = &rareCaseProfiles.at(bytecodeCountHavingSlowCase);
 
         if (JITInternal::verbose)
             dataLogLn("Old JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
@@ -617,14 +629,19 @@ void JIT::privateCompileSlowCases()
             add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
 
         emitJumpSlowToHot(jump(), 0);
+        ++bytecodeCountHavingSlowCase;
     }
 
+    RELEASE_ASSERT(bytecodeCountHavingSlowCase == m_bytecodeCountHavingSlowCase);
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_getByIdWithThisIndex == m_getByIdsWithThis.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
     RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
+
+    if (shouldEmitProfiling())
+        m_codeBlock->setRareCaseProfiles(WTFMove(rareCaseProfiles));
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.

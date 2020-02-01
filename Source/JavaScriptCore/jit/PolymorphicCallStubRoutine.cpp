@@ -68,16 +68,17 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
     CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
     UniqueArray<uint32_t>&& fastCounts)
     : GCAwareJITStubRoutine(codeRef, vm)
+    , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
 {
-    for (PolymorphicCallCase callCase : cases) {
-        m_variants.append(WriteBarrier<JSCell>(vm, owner, callCase.variant().rawCalleeCell()));
+    for (unsigned index = 0; index < cases.size(); ++index) {
+        const PolymorphicCallCase& callCase = cases[index];
+        m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
         if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
             dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
         if (CodeBlock* codeBlock = callCase.codeBlock())
             codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));
     }
-    m_variants.shrinkToFit();
     WTF::storeStoreFence();
 }
 

@@ -1,5 +1,35 @@
 2020-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ShrinkToFit some vectors kept by JIT data structures
+        https://bugs.webkit.org/show_bug.cgi?id=207085
+
+        Reviewed by Mark Lam.
+
+        1. We are allocating RareCaseProfile by using SegmentedVector since JIT code is directly accessing to RareCaseProfile*. But when creating RareCaseProfile, we can know
+           how many RareCaseProfiles should we create: RareCaseProfile is created per slow paths of Baseline JIT bytecode. Since we already scan bytecode for the main paths,
+           we can count it and use this number when creating RareCaseProfile.
+        2. Vectors held by PolymorphicAccess and PolymorphicCallStubRoutine should be kept small by calling shrinkToFit.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setRareCaseProfiles):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::addRareCaseProfile): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/PolyProtoAccessChain.cpp:
+        (JSC::PolyProtoAccessChain::create):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/ValueProfile.h:
+        (JSC::RareCaseProfile::RareCaseProfile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+
+2020-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG::CommonData::shrinkToFit called before DFG::Plan::reallyAdd is called
         https://bugs.webkit.org/show_bug.cgi?id=207083
 

@@ -279,7 +279,7 @@ public:
         Bag<CallLinkInfo> m_callLinkInfos;
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
-        SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
+        RefCountedArray<RareCaseProfile> m_rareCaseProfiles;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
         std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
         JITCodeMap m_jitCodeMap;
@@ -342,7 +342,7 @@ public:
     void setCalleeSaveRegisters(RegisterSet);
     void setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList>);
 
-    RareCaseProfile* addRareCaseProfile(BytecodeIndex);
+    void setRareCaseProfiles(RefCountedArray<RareCaseProfile>&&);
     RareCaseProfile* rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
     unsigned rareCaseProfileCountForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
 

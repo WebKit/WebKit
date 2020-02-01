@@ -939,6 +939,7 @@ namespace JSC {
         unsigned m_instanceOfIndex { UINT_MAX };
         unsigned m_byValInstructionIndex { UINT_MAX };
         unsigned m_callLinkInfoIndex { UINT_MAX };
+        unsigned m_bytecodeCountHavingSlowCase { 0 };
         
         Label m_arityCheck;
         std::unique_ptr<LinkBuffer> m_linkBuffer;

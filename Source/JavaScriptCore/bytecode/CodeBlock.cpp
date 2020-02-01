@@ -1577,12 +1577,10 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(BytecodeIndex index)
     return nullptr;
 }
 
-RareCaseProfile* CodeBlock::addRareCaseProfile(BytecodeIndex bytecodeIndex)
+void CodeBlock::setRareCaseProfiles(RefCountedArray<RareCaseProfile>&& rareCaseProfiles)
 {
     ConcurrentJSLocker locker(m_lock);
-    auto& jitData = ensureJITData(locker);
-    jitData.m_rareCaseProfiles.append(RareCaseProfile(bytecodeIndex));
-    return &jitData.m_rareCaseProfiles.last();
+    ensureJITData(locker).m_rareCaseProfiles = WTFMove(rareCaseProfiles);
 }
 
 RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
@@ -1956,11 +1954,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     ConcurrentJSLocker locker(m_lock);
 
-#if ENABLE(JIT)
-    if (auto* jitData = m_jitData.get())
-        jitData->m_rareCaseProfiles.shrinkToFit();
-#endif
-    
     if (shrinkMode == EarlyShrink) {
         m_constantRegisters.shrinkToFit();
         m_constantsSourceCodeRepresentation.shrinkToFit();

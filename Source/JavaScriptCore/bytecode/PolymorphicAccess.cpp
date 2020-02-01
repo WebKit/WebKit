@@ -729,12 +729,15 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
-    if (!state.weakReferences.isEmpty())
+    if (!state.weakReferences.isEmpty()) {
+        state.weakReferences.shrinkToFit();
         m_weakReferences = makeUnique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
+    }
     if (PolymorphicAccessInternal::verbose)
         dataLog("Returning: ", code.code(), "\n");
     
     m_list = WTFMove(cases);
+    m_list.shrinkToFit();
     
     AccessGenerationResult::Kind resultKind;
     if (m_list.size() >= Options::maxAccessVariantListSize() || generatedFinalCode)
