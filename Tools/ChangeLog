@@ -1,3 +1,22 @@
+2020-01-31  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION(r252185): NetworkSessionCocoa cancels downloads that receive authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=206984
+        rdar://problem/58999654
+
+        Reviewed by Brady Eidson.
+
+        Add an API test for a resumed download that receives an authentication challenge. The download
+        delegate should be asked to handle the challenge, and the download should be able to finish.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[DownloadCancelingDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[DownloadCancelingDelegate _download:didReceiveData:]):
+        (-[DownloadCancelingDelegate _downloadDidCancel:]):
+        (-[AuthenticationChallengeHandlingDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[AuthenticationChallengeHandlingDelegate _downloadDidFinish:]):
+        (TEST):
+
 2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for specifying background colors when setting marked text

@@ -1,3 +1,32 @@
+2020-01-31  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION(r252185): NetworkSessionCocoa cancels downloads that receive authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=206984
+        rdar://problem/58999654
+
+        Reviewed by Brady Eidson.
+
+        r252185 changed the early return in WKNetworkSessionDelegate's -...task:didReceiveChallenge:... method
+        from "cancel the task and return early if self has no _session" to "cancel the task and return early
+        if we can't determine the network session for the given data task". When this method is called for
+        an NSURLSessionDownloadTask, this early return is hit because there is no NetworkDataTaskCocoa
+        for an active download. As a result, the download is canceled when it might have otherwise been able
+        to proceed.
+
+        Fix this by adding a code path to fetch the NetworkSession associated with the Download when an
+        NSURLSessionDownloadTask receives an authentication challenge. This ensures we can actually handle
+        the challenge appropriately and not just cancel the task.
+
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::sessionID const):
+            Expose the session ID so we can use it to look up the NetworkSession for a Download.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+            Remove an unnecessary redeclaration of networkDataTask, and also an unneeded assertion that
+            networkDataTask != nullptr. Even if this is the case, the code that eventually handles this
+            task will null check it and handle the challenge as a websocket task or download task
+            based on the taskIdentifier.
+
 2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for specifying background colors when setting marked text
