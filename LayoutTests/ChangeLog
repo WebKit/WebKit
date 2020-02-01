@@ -1,5 +1,14 @@
 2020-01-31  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk2 ] webgpu/whlsl/textures-sample-level.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207078
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-01-31  Jacob Uphoff  <jacob_uphoff@apple.com>
+
        [ Mac wk2 ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=206940
 
