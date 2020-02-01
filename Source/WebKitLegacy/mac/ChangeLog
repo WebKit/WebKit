@@ -1,3 +1,19 @@
+2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for specifying background colors when setting marked text
+        https://bugs.webkit.org/show_bug.cgi?id=207065
+        <rdar://problem/57876140>
+
+        Reviewed by Tim Horton.
+
+        Adjust some call sites of Editor::setComposition().
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame setMarkedText:selectedRange:]):
+        (-[WebFrame setMarkedText:forCandidates:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+
 2020-01-31  Antoine Quint  <graouts@apple.com>
 
         [WK1] hiddenPageCSSAnimationSuspensionEnabled should be enabled by default for Cocoa platforms

@@ -24,6 +24,7 @@
 #include "InlineTextBox.h"
 
 #include "BreakLines.h"
+#include "CompositionHighlight.h"
 #include "DashArray.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
@@ -1224,7 +1225,23 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
 
 void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
 {
-    paintMarkedTextBackground(paintInfo, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
+    if (!renderer().frame().editor().compositionUsesCustomHighlights()) {
+        paintMarkedTextBackground(paintInfo, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
+        return;
+    }
+
+    for (auto& highlight : renderer().frame().editor().customCompositionHighlights()) {
+        if (highlight.endOffset <= m_start)
+            continue;
+
+        if (highlight.startOffset >= end())
+            break;
+
+        paintMarkedTextBackground(paintInfo, boxOrigin, highlight.color, clampedOffset(highlight.startOffset), clampedOffset(highlight.endOffset));
+
+        if (highlight.endOffset > end())
+            break;
+    }
 }
 
 void InlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const FloatPoint& boxOrigin) const

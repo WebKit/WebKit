@@ -1,3 +1,17 @@
+2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for specifying background colors when setting marked text
+        https://bugs.webkit.org/show_bug.cgi?id=207065
+        <rdar://problem/57876140>
+
+        Reviewed by Tim Horton.
+
+        Adjust some call sites of Editor::setComposition().
+
+        * WebView.cpp:
+        (WebView::onIMEComposition):
+        (WebView::setCompositionForTesting):
+
 2020-01-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled

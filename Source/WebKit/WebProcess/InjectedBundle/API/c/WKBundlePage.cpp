@@ -28,7 +28,9 @@
 #include "WKBundlePagePrivate.h"
 
 #include "APIArray.h"
+#include "APIDictionary.h"
 #include "APIFrameHandle.h"
+#include "APINumber.h"
 #include "APIString.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
@@ -58,6 +60,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/CompositionHighlight.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
@@ -610,9 +613,22 @@ WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
     return WebKit::toAPI(&WebKit::toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
-void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline)
+void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData)
 {
-    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline);
+    Vector<WebCore::CompositionHighlight> highlights;
+    if (highlightData) {
+        auto* highlightDataArray = WebKit::toImpl(highlightData);
+        highlights.reserveInitialCapacity(highlightDataArray->size());
+        for (auto dictionary : highlightDataArray->elementsOfType<API::Dictionary>()) {
+            auto startOffset = static_cast<API::UInt64*>(dictionary->get("from"))->value();
+            highlights.uncheckedAppend({
+                static_cast<unsigned>(startOffset),
+                static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"))->value()),
+                WebCore::Color(static_cast<API::String*>(dictionary->get("color"))->string())
+            });
+        }
+    }
+    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline, highlights);
 }
 
 bool WKBundlePageHasComposition(WKBundlePageRef pageRef)

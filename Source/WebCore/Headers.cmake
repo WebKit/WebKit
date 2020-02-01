@@ -483,6 +483,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/messageports/MessageWithMessagePorts.h
 
     editing/ClipboardAccessPolicy.h
+    editing/CompositionHighlight.h
     editing/CompositionUnderline.h
     editing/DictationAlternative.h
     editing/DictionaryPopupInfo.h

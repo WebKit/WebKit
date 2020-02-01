@@ -1,3 +1,19 @@
+2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for specifying background colors when setting marked text
+        https://bugs.webkit.org/show_bug.cgi?id=207065
+        <rdar://problem/57876140>
+
+        Reviewed by Tim Horton.
+
+        Add a test to check that highlighting different parts of a composition range results in the same behavior as
+        applying background colors using CSS. This test is currently only supported in WebKit2.
+
+        * TestExpectations:
+        * editing/input/composition-highlights-expected.html: Added.
+        * editing/input/composition-highlights.html: Added.
+        * platform/wk2/TestExpectations:
+
 2020-01-31  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Revert logging added to investigate 205757

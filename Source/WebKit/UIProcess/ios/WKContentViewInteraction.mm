@@ -90,6 +90,8 @@
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/Color.h>
+#import <WebCore/ColorIOS.h>
+#import <WebCore/CompositionHighlight.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatQuad.h>
@@ -116,6 +118,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -4519,13 +4522,41 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
 }
 
+static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedString *string)
+{
+    if (!string.length)
+        return { };
+
+    Vector<WebCore::CompositionHighlight> highlights;
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        if (!attributes[NSMarkedClauseSegmentAttributeName])
+            return;
+
+        WebCore::Color highlightColor { WebCore::Color::compositionFill };
+        if (UIColor *uiColor = attributes[NSBackgroundColorAttributeName])
+            highlightColor = WebCore::colorFromUIColor(uiColor);
+        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), highlightColor });
+    }];
+    return highlights;
+}
+
+- (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
+{
+    [self _setMarkedText:markedText.string highlights:compositionHighlights(markedText) selectedRange:selectedRange];
+}
+
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
+{
+    [self _setMarkedText:markedText highlights:Vector<WebCore::CompositionHighlight> { } selectedRange:selectedRange];
+}
+
+- (void)_setMarkedText:(NSString *)markedText highlights:(const Vector<WebCore::CompositionHighlight>&)highlights selectedRange:(NSRange)selectedRange
 {
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = !self.hasMarkedText;
 #endif
     _markedText = markedText;
-    _page->setCompositionAsync(markedText, Vector<WebCore::CompositionUnderline>(), selectedRange, WebKit::EditingRange());
+    _page->setCompositionAsync(markedText, { }, highlights, selectedRange, { });
 }
 
 - (void)unmarkText
