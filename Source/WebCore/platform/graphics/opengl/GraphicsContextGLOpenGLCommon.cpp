@@ -504,8 +504,6 @@ void GraphicsContextGLOpenGL::bindRenderbuffer(GCGLenum target, PlatformGLObject
 
 void GraphicsContextGLOpenGL::bindTexture(GCGLenum target, PlatformGLObject texture)
 {
-    WTFLogAlways("[ GraphicsContextGL ] bindTexture()");
-
     makeContextCurrent();
     m_state.setBoundTexture(m_state.activeTextureUnit, texture, target);
     ::glBindTexture(target, texture);
@@ -1113,8 +1111,6 @@ bool GraphicsContextGLOpenGL::moveErrorsToSyntheticErrorList()
 
 GCGLenum GraphicsContextGLOpenGL::getError()
 {
-    WTFLogAlways("[ GraphicsContextGL ] getError()");
-
     if (!m_syntheticErrors.isEmpty()) {
         // Need to move the current errors to the synthetic error list in case
         // that error is already there, since the expected behavior of both
@@ -1826,8 +1822,6 @@ GCGLsizeiptr GraphicsContextGLOpenGL::getVertexAttribOffset(GCGLuint index, GCGL
 
 void GraphicsContextGLOpenGL::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, const void* pixels)
 {
-    WTFLogAlways("[ GraphicsContextGL ] texSubImage2D()");
-
     makeContextCurrent();
 
 #if !USE(OPENGL_ES)
@@ -1909,8 +1903,6 @@ PlatformGLObject GraphicsContextGLOpenGL::createShader(GCGLenum type)
 
 PlatformGLObject GraphicsContextGLOpenGL::createTexture()
 {
-    WTFLogAlways("[ GraphicsContextGL ] createTexture()");
-
     makeContextCurrent();
     GLuint o = 0;
     glGenTextures(1, &o);

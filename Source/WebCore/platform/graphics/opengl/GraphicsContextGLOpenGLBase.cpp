@@ -391,8 +391,6 @@ void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGL
 
 bool GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
-    WTFLogAlways("[ GraphicsContextGL ] texImage2D()");
-
     if (width && height && !pixels) {
         synthesizeGLError(INVALID_VALUE);
         return false;
