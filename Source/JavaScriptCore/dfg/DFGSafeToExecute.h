@@ -435,8 +435,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case Int52Rep:
     case BooleanToNumber:
     case FiatInt52:
-    case GetGetter:
-    case GetSetter:
     case GetEnumerableLength:
     case HasGenericProperty:
     case HasStructureProperty:
@@ -519,6 +517,17 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         return false;
     }
 
+    case GetGetter:
+    case GetSetter: {
+        if (!state.forNode(node->child1()).isType(SpecCell))
+            return false;
+        StructureAbstractValue& value = state.forNode(node->child1()).m_structure;
+        if (value.isInfinite() || value.size() != 1)
+            return false;
+
+        return value[0].get() == graph.m_vm.getterSetterStructure;
+    }
+
     case BottomValue:
         // If in doubt, assume that this isn't safe to execute, just because we have no way of
         // compiling this node.
@@ -570,9 +579,35 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         return state.forNode(node->child1()).m_structure.isSubsetOf(
             RegisteredStructureSet(node->transition()->previous));
         
+    case GetGetterSetterByOffset: {
+        // If it's an inline property, we need to make sure it's a cell before trusting what the structure set tells us.
+        if (node->child1().node() == node->child2().node() && !state.forNode(node->child2()).isType(SpecCell))
+            return false;
+
+        StorageAccessData& data = node->storageAccessData();
+        auto* uid = graph.identifiers()[data.identifierNumber];
+        PropertyOffset desiredOffset = data.offset;
+        StructureAbstractValue& value = state.forNode(node->child2()).m_structure;
+        if (value.isInfinite())
+            return false;
+        for (unsigned i = value.size(); i--;) {
+            Structure* thisStructure = value[i].get();
+            if (thisStructure->isUncacheableDictionary())
+                return false;
+            unsigned attributes = 0;
+            PropertyOffset checkOffset = thisStructure->getConcurrently(uid, attributes);
+            if (checkOffset != desiredOffset || !(attributes & PropertyAttribute::Accessor))
+                return false;
+        }
+        return true;
+    }
+
     case GetByOffset:
-    case GetGetterSetterByOffset:
     case PutByOffset: {
+        // If it's an inline property, we need to make sure it's a cell before trusting what the structure set tells us.
+        if (node->child1().node() == node->child2().node() && !state.forNode(node->child2()).isType(SpecCell))
+            return false;
+
         StorageAccessData& data = node->storageAccessData();
         PropertyOffset offset = data.offset;
         // Graph::isSafeToLoad() is all about proofs derived from PropertyConditions. Those don't
@@ -590,6 +625,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
             return false;
         for (unsigned i = value.size(); i--;) {
             Structure* thisStructure = value[i].get();
+            if (thisStructure->isUncacheableDictionary())
+                return false;
             if (!thisStructure->isValidOffset(offset))
                 return false;
         }
