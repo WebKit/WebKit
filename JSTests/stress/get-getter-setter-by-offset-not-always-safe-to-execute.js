@@ -1,4 +1,4 @@
-//@ runDefault("--dumpFTLDisassembly=1", "--thresholdForOptimizeSoon=10", "--useConcurrentJIT=0", "--useConcurrentGC=0", "--thresholdForJITAfterWarmUp=10", "--thresholdForOptimizeAfterWarmUp=100", "--thresholdForFTLOptimizeAfterWarmUp=1000")
+//@ runDefault("--thresholdForOptimizeSoon=10", "--useConcurrentJIT=0", "--useConcurrentGC=0", "--thresholdForJITAfterWarmUp=10", "--thresholdForOptimizeAfterWarmUp=100", "--thresholdForFTLOptimizeAfterWarmUp=1000")
 
 function main() {
     function v1(v2) {
