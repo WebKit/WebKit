@@ -51,7 +51,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
         // would be for CodeMirror's event handler to pass if it doesn't do anything.
         this.prompt.escapeKeyHandlerWhenEmpty = function() { WI.toggleSplitConsole(); };
 
-        this._navigationBar = new WI.SizesToFitNavigationBar;
+        const navigationbarElement = null;
+        this._navigationBar = new WI.NavigationBar(navigationbarElement, {sizesToFit: true});
         this.addSubview(this._navigationBar);
 
         this._activeExecutionContextNavigationItemDivider = new WI.DividerNavigationItem;

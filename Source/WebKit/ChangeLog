@@ -1,3 +1,48 @@
+2020-02-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: move the items in the toolbar into the tab bar to save vertical space
+        https://bugs.webkit.org/show_bug.cgi?id=204627
+
+        Reviewed by Timothy Hatcher.
+
+        Now that there is no toolbar area, there is nothing obstructing the ability for the window
+        to be moved around when dragging via the title bar area. As such, we can remove the unused
+        `InspectorFrontendHost` APIs.
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::startWindowDrag): Deleted.
+        (WebKit::WebInspectorUI::moveWindowBy): Deleted.
+        * UIProcess/Inspector/WebInspectorProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::startWindowDrag): Deleted.
+        (WebKit::WebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/wpe/WebInspectorProxyWPE.cpp:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag): Deleted.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::startWindowDrag): Deleted.
+        (WebKit::RemoteWebInspectorUI::moveWindowBy): Deleted.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.messages.in:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        (WebKit::RemoteWebInspectorProxy::startWindowDrag): Deleted.
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag): Deleted.
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag): Deleted.
+
 2020-01-31  David Quesada  <david_quesada@apple.com>
 
         REGRESSION(r252185): NetworkSessionCocoa cancels downloads that receive authentication challenges

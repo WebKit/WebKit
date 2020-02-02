@@ -74,7 +74,7 @@ body[dir=rtl] .timeline-ruler > .markers > :matches(.divider, .marker) {
     background-image: linear-gradient(to bottom, hsla(0, 0%, 70%, 0), hsla(0, 0%, 70%, 2) 85%);
 }
 
-body.window-inactive .timeline-ruler > .header > .divider {
+body:matches(.window-inactive, .window-docked-inactive) .timeline-ruler > .header > .divider {
     background-image: linear-gradient(to bottom, hsla(0, 0%, 85%, 0), hsla(0, 0%, 85%, 1) 85%);
 }
 

@@ -25,25 +25,19 @@
 
 WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.TabContentView
 {
-    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward, flexibleNavigationItem)
+    constructor(tabInfo, {navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward, flexibleNavigationItem} = {})
     {
-        if (typeof styleClassNames === "string")
-            styleClassNames = [styleClassNames];
+        super(tabInfo, {navigationSidebarPanelConstructor, detailsSidebarPanelConstructors});
 
-        styleClassNames.push("content-browser");
-
-        var contentBrowser = new WI.ContentBrowser(null, null, disableBackForward, false, flexibleNavigationItem);
-
-        super(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors);
-
-        this._contentBrowser = contentBrowser;
-        this._contentBrowser.delegate = this;
+        const contentBrowserElement = null;
+        const disableFindBanner = false;
+        this._contentBrowser = new WI.ContentBrowser(contentBrowserElement, this, disableBackForward, disableFindBanner, flexibleNavigationItem);
 
         this._ignoreNavigationSidebarPanelCollapsedEvent = false;
         this._ignoreDetailsSidebarPanelCollapsedEvent = false;
         this._ignoreDetailsSidebarPanelSelectedEvent = false;
 
-        this._lastSelectedDetailsSidebarPanelSetting = new WI.Setting(identifier + "-last-selected-details-sidebar-panel", null);
+        this._lastSelectedDetailsSidebarPanelSetting = new WI.Setting(this._identifier + "-last-selected-details-sidebar-panel", null);
 
         this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._contentBrowserCurrentRepresentedObjectsDidChange, this);
         this._contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
@@ -52,7 +46,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         // Explicitly update the path for the navigation bar to prevent it from showing up as blank.
         this._contentBrowser.updateHierarchicalPathForCurrentContentView();
 
-        if (navigationSidebarPanelConstructor) {
+        if (this._navigationSidebarPanelConstructor) {
             let showToolTip = WI.UIString("Show the navigation sidebar (%s)").format(WI.navigationSidebarKeyboardShortcut.displayName);
             let hideToolTip = WI.UIString("Hide the navigation sidebar (%s)").format(WI.navigationSidebarKeyboardShortcut.displayName);
             let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleRightSidebar.svg" : "Images/ToggleLeftSidebar.svg";
@@ -68,7 +62,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._navigationSidebarCollapsedStateDidChange, this);
         }
 
-        if (detailsSidebarPanelConstructors && detailsSidebarPanelConstructors.length) {
+        if (this._detailsSidebarPanelConstructors.length) {
             let showToolTip = WI.UIString("Show the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
             let hideToolTip = WI.UIString("Hide the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
             let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";
@@ -85,6 +79,8 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._detailsSidebarCollapsedStateDidChange, this);
             WI.detailsSidebar.addEventListener(WI.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
         }
+
+        this.element.classList.add("content-browser");
 
         this.addSubview(this._contentBrowser);
     }

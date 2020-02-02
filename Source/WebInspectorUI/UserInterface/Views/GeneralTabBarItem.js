@@ -26,12 +26,11 @@
 
 WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
 {
-    constructor(image, title, isEphemeral = false)
+    constructor(representedObject, image, title, {isEphemeral} = {})
     {
-        super(image, title);
+        super(representedObject, image, title);
 
         this._isEphemeral = isEphemeral;
-
         if (this._isEphemeral) {
             this.element.classList.add("ephemeral");
 
@@ -44,9 +43,16 @@ WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
         }
     }
 
-    static fromTabInfo({image, title, isEphemeral})
+    // Static
+
+    static fromTabContentView(tabContentView)
     {
-        return new WI.GeneralTabBarItem(image, title, isEphemeral);
+        console.assert(tabContentView instanceof WI.TabContentView);
+
+        let {image, title} = tabContentView.constructor.tabInfo();
+        return new WI.GeneralTabBarItem(tabContentView, image, title, {
+            isEphemeral: !tabContentView.constructor.shouldSaveTab(),
+        });
     }
 
     // Public

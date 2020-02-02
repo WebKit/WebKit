@@ -225,11 +225,6 @@ void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
     m_sheetRect = rect;
 }
 
-void RemoteWebInspectorProxy::platformStartWindowDrag()
-{
-    webView()->_page->startWindowDrag();
-}
-
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String& url)
 {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];

@@ -25,15 +25,18 @@
 
 WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor(identifier)
+    constructor()
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ElementsTabContentView.tabInfo());
-
-        let detailsSidebarPanelConstructors = [WI.RulesStyleDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.ChangesDetailsSidebarPanel, WI.DOMNodeDetailsSidebarPanel];
+        let detailsSidebarPanelConstructors = [
+            WI.RulesStyleDetailsSidebarPanel,
+            WI.ComputedStyleDetailsSidebarPanel,
+            WI.ChangesDetailsSidebarPanel,
+            WI.DOMNodeDetailsSidebarPanel,
+        ];
         if (InspectorBackend.hasDomain("LayerTree"))
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
-        super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
+        super(ElementsTabContentView.tabInfo(), {detailsSidebarPanelConstructors, disableBackForward: true});
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -42,6 +45,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     static tabInfo()
     {
         return {
+            identifier: ElementsTabContentView.Type,
             image: "Images/Elements.svg",
             title: WI.UIString("Elements"),
         };

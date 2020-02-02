@@ -270,13 +270,6 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
     frame->loader().changeLocation(WTFMove(frameLoadRequest2));
 }
 
-void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
-{
-    FloatRect frameRect = m_frontendPage->chrome().windowRect();
-    frameRect.move(x, y);
-    m_frontendPage->chrome().setWindowRect(frameRect);
-}
-
 void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 {
     const char* side = "undocked";

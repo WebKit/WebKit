@@ -1,3 +1,18 @@
+2020-02-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: move the items in the toolbar into the tab bar to save vertical space
+        https://bugs.webkit.org/show_bug.cgi?id=204627
+
+        Reviewed by Timothy Hatcher.
+
+        Now that there is no toolbar area, there is nothing obstructing the ability for the window
+        to be moved around when dragging via the title bar area. As such, we can remove the unused
+        `InspectorFrontendHost` APIs.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::startWindowDrag): Deleted.
+
 2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for specifying background colors when setting marked text

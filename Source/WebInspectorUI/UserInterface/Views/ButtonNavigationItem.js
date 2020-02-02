@@ -48,6 +48,8 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this.buttonStyle = this._image ? WI.ButtonNavigationItem.Style.Image : WI.ButtonNavigationItem.Style.Text;
 
+        this.imageType = this._image ? WI.ButtonNavigationItem.ImageType.SVG : null;
+
         if (this.buttonStyle === WI.ButtonNavigationItem.Style.Image)
             this.tooltip = toolTipOrLabel;
     }
@@ -123,6 +125,27 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
             this.parentNavigationBar.needsLayout();
     }
 
+    get imageType()
+    {
+        return this._imageType;
+    }
+
+    set imageType(imageType)
+    {
+        console.assert(!imageType || Object.values(WI.ButtonNavigationItem.ImageType).includes(imageType), imageType);
+        console.assert(!imageType || (this._buttonStyle === WI.ButtonNavigationItem.Style.Image || this._buttonStyle === WI.ButtonNavigationItem.Style.ImageAndText));
+
+        if (this._imageType === imageType)
+            return;
+
+        this._imageType = imageType;
+
+        this._update();
+
+        if (this.parentNavigationBar)
+            this.parentNavigationBar.needsLayout();
+    }
+
     // Protected
 
     get totalMargin()
@@ -154,10 +177,22 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         if (this._buttonStyle === WI.ButtonNavigationItem.Style.Text)
             this.element.textContent = this._label;
         else {
-            let glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
-            glyphElement.style.width = this._imageWidth + "px";
-            glyphElement.style.height = this._imageHeight + "px";
-            this.element.appendChild(glyphElement);
+            switch (this._imageType) {
+            case null:
+            case WI.ButtonNavigationItem.ImageType.SVG: {
+                let glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
+                glyphElement.style.width = this._imageWidth + "px";
+                glyphElement.style.height = this._imageHeight + "px";
+                this.element.appendChild(glyphElement);
+                break;
+            }
+
+            case WI.ButtonNavigationItem.ImageType.IMG: {
+                let img = this.element.appendChild(document.createElement("img"));
+                img.src = this._image;
+                break;
+            }
+            }
 
             if (this._buttonStyle === WI.ButtonNavigationItem.Style.ImageAndText) {
                 let labelElement = this.element.appendChild(document.createElement("span"));
@@ -175,4 +210,9 @@ WI.ButtonNavigationItem.Style = {
     Image: "image-only",
     Text: "text-only",
     ImageAndText: "image-and-text",
+};
+
+WI.ButtonNavigationItem.ImageType = {
+    SVG: "image-type-svg",
+    IMG: "image-type-img",
 };

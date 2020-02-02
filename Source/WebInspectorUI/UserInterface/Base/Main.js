@@ -128,7 +128,6 @@ WI.loaded = function()
 
     // Register for events.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause);
-    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, WI._debuggerDidResume);
     WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged);
     WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected);
     WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected);
@@ -149,6 +148,7 @@ WI.loaded = function()
         WI.TimelineTabContentView.Type,
         WI.StorageTabContentView.Type,
         WI.GraphicsTabContentView.Type,
+        WI.LayersTabContentView.Type,
         WI.AuditTabContentView.Type,
         WI.ConsoleTabContentView.Type,
     ]);
@@ -237,7 +237,6 @@ WI.contentLoaded = function()
     window.addEventListener("resize", WI._windowResized);
     window.addEventListener("keydown", WI._windowKeyDown);
     window.addEventListener("keyup", WI._windowKeyUp);
-    window.addEventListener("mousedown", WI._mouseDown, true);
     window.addEventListener("mousemove", WI._mouseMoved, true);
     window.addEventListener("pagehide", WI._pageHidden);
     window.addEventListener("contextmenu", WI._contextMenuRequested);
@@ -278,19 +277,8 @@ WI.contentLoaded = function()
     WI.settings.showWhitespaceCharacters.addEventListener(WI.Setting.Event.Changed, setWhitespaceCharacterClassName);
     setWhitespaceCharacterClassName();
 
-    WI.settingsTabContentView = new WI.SettingsTabContentView;
-
-    WI._settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._handleSettingsKeyboardShortcut);
-
     // Create the user interface elements.
-    WI.toolbar = new WI.Toolbar(document.getElementById("toolbar"));
-
-    if (WI.settings.experimentalEnableNewTabBar.value)
-        WI.tabBar = new WI.TabBar(document.getElementById("tab-bar"));
-    else {
-        WI.tabBar = new WI.LegacyTabBar(document.getElementById("tab-bar"));
-        WI.tabBar.addEventListener(WI.TabBar.Event.OpenDefaultTab, WI._openDefaultTab);
-    }
+    WI.tabBar = new WI.TabBar(document.getElementById("tab-bar"));
 
     WI._contentElement = document.getElementById("content");
     WI._contentElement.setAttribute("role", "main");
@@ -342,7 +330,6 @@ WI.contentLoaded = function()
     WI._resetZoomKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "0", WI._resetZoom);
 
     WI._showTabAtIndexKeyboardShortcuts = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Option, `${i}`, (event) => { WI._showTabAtIndexFromShortcut(i); }));
-    WI._openNewTabKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Option, "T", WI._showNewTabFromShortcut);
 
     WI.tabBrowser = new WI.TabBrowser(document.getElementById("tab-browser"), WI.tabBar, WI.navigationSidebar, WI.detailsSidebar);
     WI.tabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, WI._tabBrowserSelectedTabContentViewDidChange);
@@ -371,94 +358,105 @@ WI.contentLoaded = function()
     WI.stepIntoAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Semicolon, WI.debuggerStepInto);
     WI.stepOutAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Semicolon, WI.debuggerStepOut);
 
-    WI._closeToolbarButton = new WI.ControlToolbarItem("dock-close", WI.UIString("Close"), "Images/Close.svg", 16, 14);
-    WI._closeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
-
-    WI._undockToolbarButton = new WI.ButtonToolbarItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg");
-    WI._undockToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._undockToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
-
-    let dockImage = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg";
-    WI._dockToSideToolbarButton = new WI.ButtonToolbarItem("dock-right", WI.UIString("Dock to side of window"), dockImage);
-    WI._dockToSideToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-
-    let dockToSideCallback = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight;
-    WI._dockToSideToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, dockToSideCallback);
-
-    WI._dockBottomToolbarButton = new WI.ButtonToolbarItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg");
-    WI._dockBottomToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._dockBottomToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom);
+    WI._settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._handleSettingsKeyboardShortcut);
 
     WI._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", WI._togglePreviousDockConfiguration);
+
+    let leftTabBarNavigationItems = [];
+
+    let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    WI._inspectModeTabBarButton = new WI.ActivateButtonNavigationItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
+    WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
+    leftTabBarNavigationItems.push(WI._inspectModeTabBarButton);
+
+    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
+    if ((InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
+        const deviceSettingsTooltip = WI.UIString("Device Settings");
+        WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
+        WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked);
+        leftTabBarNavigationItems.push(WI._deviceSettingsTabBarButton);
+
+        WI._deviceSettingsPopover = null;
+    }
 
     let reloadToolTip;
     if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
         reloadToolTip = WI.UIString("Restart (%s)").format(WI._reloadPageKeyboardShortcut.displayName);
     else
         reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(WI._reloadPageKeyboardShortcut.displayName, WI._reloadPageFromOriginKeyboardShortcut.displayName);
-    WI._reloadToolbarButton = new WI.ButtonToolbarItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
-    WI._reloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadToolbarButtonClicked);
+    WI._reloadTabBarButton = new WI.ButtonNavigationItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
+    WI._reloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadTabBarButtonClicked);
+    leftTabBarNavigationItems.push(WI._reloadTabBarButton);
 
-    WI._downloadToolbarButton = new WI.ButtonToolbarItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
-    WI._downloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive);
+    WI._downloadTabBarButton = new WI.ButtonNavigationItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
+    WI._downloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive);
+    leftTabBarNavigationItems.push(WI._downloadTabBarButton);
 
-    let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    WI._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
-    WI._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
+    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem(leftTabBarNavigationItems));
 
-    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if ((InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
-        const deviceSettingsTooltip = WI.UIString("Device Settings");
-        WI._deviceSettingsToolbarButton = new WI.ActivateButtonToolbarItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
-        WI._deviceSettingsToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsToolbarButtonClicked);
+    WI.tabBar.addNavigationItemBefore(new WI.DividerNavigationItem);
 
-        WI._deviceSettingsPopover = null;
-    }
+    WI._consoleWarningsTabBarButton = new WI.ButtonNavigationItem("console-warnings", WI.UIString("0 Console warnings"), "Images/Issues.svg");
+    WI._consoleWarningsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+    WI._consoleWarningsTabBarButton.enabled = false;
+    WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+        WI.showConsoleTab(WI.LogContentView.Scopes.Warnings, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
+        });
+    }, WI);
 
-    WI._updateReloadToolbarButton();
-    WI._updateDownloadToolbarButton();
-    WI._updateInspectModeToolbarButton();
+    WI._consoleErrorsTabBarButton = new WI.ButtonNavigationItem("console-errors", WI.UIString("0 Console errors"), "Images/Errors.svg");
+    WI._consoleErrorsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+    WI._consoleErrorsTabBarButton.enabled = false;
+    WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+        WI.showConsoleTab(WI.LogContentView.Scopes.Errors, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
+        });
+    }, WI);
 
-    WI._dashboards = {
-        default: new WI.DefaultDashboard,
-        debugger: new WI.DebuggerDashboard,
-    };
+    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem([
+        WI._consoleWarningsTabBarButton,
+        WI._consoleErrorsTabBarButton,
+    ]));
 
-    WI._dashboardContainer = new WI.DashboardContainerView;
-    WI._dashboardContainer.showDashboardViewForRepresentedObject(WI._dashboards.default);
+    WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 18, 16);
+    WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+    WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight);
 
-    WI.toolbar.addToolbarItem(WI._closeToolbarButton, WI.Toolbar.Section.Control);
+    WI._dockBottomTabBarButton = new WI.ButtonNavigationItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", 18, 16);
+    WI._dockBottomTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+    WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom);
 
-    WI.toolbar.addToolbarItem(WI._undockToolbarButton, WI.Toolbar.Section.Left);
-    WI.toolbar.addToolbarItem(WI._dockToSideToolbarButton, WI.Toolbar.Section.Left);
-    WI.toolbar.addToolbarItem(WI._dockBottomToolbarButton, WI.Toolbar.Section.Left);
+    WI._undockTabBarButton = new WI.ButtonNavigationItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", 18, 16);
+    WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+    WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
 
-    WI.toolbar.addToolbarItem(WI._reloadToolbarButton, WI.Toolbar.Section.CenterLeft);
-    WI.toolbar.addToolbarItem(WI._downloadToolbarButton, WI.Toolbar.Section.CenterLeft);
+    WI.tabBar.addNavigationItemAfter(new WI.GroupNavigationItem([
+        WI._dockToSideTabBarButton,
+        WI._dockBottomTabBarButton,
+        WI._undockTabBarButton,
+    ]));
 
-    WI.toolbar.addToolbarItem(WI._dashboardContainer.toolbarItem, WI.Toolbar.Section.Center);
+    WI._dockDividerTabBarNavigationItem = new WI.DividerNavigationItem;
+    WI.tabBar.addNavigationItemAfter(WI._dockDividerTabBarNavigationItem);
 
-    WI.toolbar.addToolbarItem(WI._inspectModeToolbarButton, WI.Toolbar.Section.CenterRight);
+    WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
+    WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
+    WI.tabBar.addNavigationItemAfter(WI._closeTabBarButton);
 
-    if (WI._deviceSettingsToolbarButton)
-        WI.toolbar.addToolbarItem(WI._deviceSettingsToolbarButton, WI.Toolbar.Section.CenterRight);
+    WI._updateInspectModeTabBarButton();
+    WI._updateDownloadTabBarButton();
+    WI._updateReloadTabBarButton();
 
-    WI._searchTabContentView = new WI.SearchTabContentView;
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, WI._updateConsoleTabBarButtons, WI);
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, WI._updateConsoleTabBarButtons, WI);
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, WI._updateConsoleTabBarButtons, WI);
+    WI._updateConsoleTabBarButtons();
 
-    if (WI.settings.experimentalEnableNewTabBar.value) {
-        WI.tabBrowser.addTabForContentView(WI._searchTabContentView, {suppressAnimations: true});
-        WI.tabBar.addTabBarItem(WI.settingsTabContentView.tabBarItem, {suppressAnimations: true});
-    } else {
-        const incremental = false;
-        WI._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), incremental);
-        WI._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, WI._searchTextDidChange);
-        WI.toolbar.addToolbarItem(WI._searchToolbarItem, WI.Toolbar.Section.Right);
-    }
-
-    let dockedResizerElement = document.getElementById("docked-resizer");
-    dockedResizerElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    dockedResizerElement.addEventListener("mousedown", WI._dockedResizerMouseDown);
+    WI._dockedResizerElement = document.getElementById("docked-resizer");
+    WI._dockedResizerElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+    WI._dockedResizerElement.addEventListener("mousedown", WI._dockedResizerMouseDown);
 
     WI._dockingAvailable = false;
 
@@ -478,7 +476,6 @@ WI.contentLoaded = function()
         WI.AuditTabContentView,
         WI.ConsoleTabContentView,
         WI.SearchTabContentView,
-        WI.NewTabContentView,
         WI.SettingsTabContentView,
     ];
 
@@ -489,6 +486,12 @@ WI.contentLoaded = function()
         WI._knownTabClassesByType.set(tabClass.Type, tabClass);
 
     WI._pendingOpenTabs = [];
+
+    WI._searchTabContentView = new WI.SearchTabContentView;
+    WI.tabBrowser.addTabForContentView(WI._searchTabContentView, {suppressAnimations: true});
+
+    WI._settingsTabContentView = new WI.SettingsTabContentView;
+    WI.tabBrowser.addTabForContentView(WI._settingsTabContentView, {suppressAnimations: true});
 
     // Previously we may have stored duplicates in WI setting. Avoid creating duplicate tabs.
     let openTabTypes = WI._openTabsSetting.value;
@@ -517,13 +520,16 @@ WI.contentLoaded = function()
 
     WI._restoreCookieForOpenTabs(WI.StateRestorationType.Load);
 
-    WI.tabBar.selectedTabBarItem = WI._selectedTabIndexSetting.value;
-
-    if (!WI.tabBar.selectedTabBarItem)
+    if (WI.tabBar.normalTabCount)
+        WI.tabBar.selectedTabBarItem = WI._selectedTabIndexSetting.value;
+    else {
+        // If no tabs were able to be restored, show all tabs that are allowed.
+        for (let tabType of WI._openTabsSetting.defaultValue) {
+            if (WI.isNewTabWithTypeAllowed(tabType))
+                WI.createNewTabWithType(tabType)
+        }
         WI.tabBar.selectedTabBarItem = 0;
-
-    if (!WI.tabBar.normalTabCount)
-        WI.showNewTabTab({suppressAnimations: true});
+    }
 
     // Listen to the events after restoring the saved tabs to avoid recursion.
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, WI._rememberOpenTabs);
@@ -672,15 +678,10 @@ WI._rememberOpenTabs = function()
     WI._openTabsSetting.value = openTabs;
 };
 
-WI._openDefaultTab = function(event)
-{
-    WI.showNewTabTab({suppressAnimations: true});
-};
-
 WI._handleSettingsKeyboardShortcut = function(event)
 {
     if (event.keyIdentifier === "U+002C") { // ","
-        WI.tabBrowser.showTabForContentView(WI.settingsTabContentView, {
+        WI.tabBrowser.showTabForContentView(WI._settingsTabContentView, {
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut,
         });
     }
@@ -708,20 +709,6 @@ WI._tryToRestorePendingTabs = function()
     }
 
     WI._pendingOpenTabs = stillPendingOpenTabs;
-
-    if (!WI.settings.experimentalEnableNewTabBar.value)
-        WI.tabBar.updateNewTabTabBarItemState();
-};
-
-WI.showNewTabTab = function(options)
-{
-    if (!WI.isNewTabWithTypeAllowed(WI.NewTabContentView.Type))
-        return;
-
-    let tabContentView = WI.tabBrowser.bestTabContentViewForClass(WI.NewTabContentView);
-    if (!tabContentView)
-        tabContentView = new WI.NewTabContentView;
-    WI.tabBrowser.showTabForContentView(tabContentView, options);
 };
 
 WI.isNewTabWithTypeAllowed = function(tabType)
@@ -737,13 +724,6 @@ WI.isNewTabWithTypeAllowed = function(tabType)
             continue;
         if (tabContentView.constructor === tabClass)
             return false;
-    }
-
-    if (tabClass === WI.NewTabContentView) {
-        let allTabs = Array.from(WI.knownTabClasses());
-        let addableTabs = allTabs.filter((tabClass) => !tabClass.tabInfo().isEphemeral);
-        let canMakeNewTab = addableTabs.some((tabClass) => WI.isNewTabWithTypeAllowed(tabClass.Type));
-        return canMakeNewTab;
     }
 
     return true;
@@ -789,9 +769,9 @@ WI.activateExtraDomains = function(domains)
             WI.networkManager.initializeTarget(WI.mainTarget);
     }
 
-    WI._updateReloadToolbarButton();
-    WI._updateDownloadToolbarButton();
-    WI._updateInspectModeToolbarButton();
+    WI._updateInspectModeTabBarButton();
+    WI._updateDownloadTabBarButton();
+    WI._updateReloadTabBarButton();
 
     WI._tryToRestorePendingTabs();
 };
@@ -851,8 +831,6 @@ WI.updateDockedState = function(side)
 
     WI.docked = side !== WI.DockConfiguration.Undocked;
 
-    WI._ignoreToolbarModeDidChangeEvents = true;
-
     if (side === WI.DockConfiguration.Bottom) {
         document.body.classList.add("docked", WI.DockConfiguration.Bottom);
         document.body.classList.remove("window-inactive", WI.DockConfiguration.Right, WI.DockConfiguration.Left);
@@ -864,8 +842,6 @@ WI.updateDockedState = function(side)
         document.body.classList.remove("window-inactive", WI.DockConfiguration.Bottom, WI.DockConfiguration.Right);
     } else
         document.body.classList.remove("docked", WI.DockConfiguration.Right, WI.DockConfiguration.Left, WI.DockConfiguration.Bottom);
-
-    WI._ignoreToolbarModeDidChangeEvents = false;
 
     WI._updateDockNavigationItems();
 
@@ -1132,10 +1108,10 @@ WI.isShowingLayersTab = function()
 
 WI.showSettingsTab = function(options = {})
 {
-    WI.tabBrowser.showTabForContentView(WI.settingsTabContentView, options);
+    WI.tabBrowser.showTabForContentView(WI._settingsTabContentView, options);
 
     if (options.blackboxPatternToSelect)
-        WI.settingsTabContentView.selectBlackboxPattern(options.blackboxPatternToSelect);
+        WI._settingsTabContentView.selectBlackboxPattern(options.blackboxPatternToSelect);
 };
 
 WI.indentString = function()
@@ -1380,35 +1356,14 @@ WI.debuggerStepOut = function(event)
     WI.debuggerManager.stepOut();
 };
 
-WI._searchTextDidChange = function(event)
+WI._focusSearchField = function(event)
 {
-    var tabContentView = WI.tabBrowser.bestTabContentViewForClass(WI.SearchTabContentView);
-    if (!tabContentView)
-        tabContentView = new WI.SearchTabContentView;
-
-    var searchQuery = WI._searchToolbarItem.text;
-    WI._searchToolbarItem.text = "";
-
-    WI.tabBrowser.showTabForContentView(tabContentView, {
+    WI.tabBrowser.showTabForContentView(WI._searchTabContentView, {
         // Classify this as a keyboard shortcut, as the only other way to get to Search Tab is via TabBar itself.
         initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut,
     });
 
-    tabContentView.performSearch(searchQuery);
-};
-
-WI._focusSearchField = function(event)
-{
-    if (WI.settings.experimentalEnableNewTabBar.value)
-        WI.tabBrowser.showTabForContentView(WI._searchTabContentView);
-
-    if (WI.tabBrowser.selectedTabContentView instanceof WI.SearchTabContentView) {
-        WI.tabBrowser.selectedTabContentView.focusSearchField();
-        return;
-    }
-
-    if (WI._searchToolbarItem)
-        WI._searchToolbarItem.focus();
+    WI._searchTabContentView.focusSearchField();
 };
 
 WI._focusChanged = function(event)
@@ -1517,14 +1472,7 @@ WI._debuggerDidPause = function(event)
 {
     WI.showSourcesTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
 
-    WI._dashboardContainer.showDashboardViewForRepresentedObject(WI._dashboards.debugger);
-
     InspectorFrontendHost.bringToFront();
-};
-
-WI._debuggerDidResume = function(event)
-{
-    WI._dashboardContainer.closeDashboardViewForRepresentedObject(WI._dashboards.debugger);
 };
 
 WI._frameWasAdded = function(event)
@@ -1552,7 +1500,7 @@ WI._frameWasAdded = function(event)
 
 WI._mainFrameDidChange = function(event)
 {
-    WI._updateDownloadToolbarButton();
+    WI._updateDownloadTabBarButton();
 
     WI.updateWindowTitle();
 };
@@ -1568,7 +1516,7 @@ WI._mainResourceDidChange = function(event)
         WI._restoreCookieForOpenTabs(WI.StateRestorationType.Navigation);
     });
 
-    WI._updateDownloadToolbarButton();
+    WI._updateDownloadTabBarButton();
 
     WI.updateWindowTitle();
 };
@@ -1586,6 +1534,8 @@ WI._restoreCookieForOpenTabs = function(restorationType)
     for (var tabBarItem of WI.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WI.TabContentView))
+            continue;
+        if (!tabContentView.constructor.shouldSaveTab())
             continue;
         tabContentView.restoreStateFromCookie(restorationType);
     }
@@ -1607,6 +1557,8 @@ WI._saveCookieForOpenTabs = function()
     for (var tabBarItem of WI.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WI.TabContentView))
+            continue;
+        if (!tabContentView.constructor.shouldSaveTab())
             continue;
         tabContentView.saveStateToCookie();
     }
@@ -1632,7 +1584,6 @@ WI._windowBlurred = function(event)
 
 WI._windowResized = function(event)
 {
-    WI.toolbar.updateLayout(WI.View.LayoutReason.Resize);
     WI.tabBar.updateLayout(WI.View.LayoutReason.Resize);
     WI._tabBrowserSizeDidChange();
     WI._updateSheetRect();
@@ -1674,12 +1625,6 @@ WI._windowKeyDown = function(event)
 WI._windowKeyUp = function(event)
 {
     WI._updateModifierKeys(event);
-};
-
-WI._mouseDown = function(event)
-{
-    if (WI.toolbar.element.contains(event.target))
-        WI._toolbarMouseDown(event);
 };
 
 WI._mouseMoved = function(event)
@@ -1766,16 +1711,20 @@ WI._togglePreviousDockConfiguration = function(event)
 WI._updateDockNavigationItems = function()
 {
     if (WI._dockingAvailable || WI.docked) {
-        WI._closeToolbarButton.hidden = !WI.docked;
-        WI._undockToolbarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Undocked;
-        WI._dockBottomToolbarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Bottom;
-        WI._dockToSideToolbarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Right || WI._dockConfiguration === WI.DockConfiguration.Left;
+        WI._closeTabBarButton.hidden = !WI.docked;
+        WI._undockTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Undocked;
+        WI._dockBottomTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Bottom;
+        WI._dockToSideTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Right || WI._dockConfiguration === WI.DockConfiguration.Left;
+        WI._dockDividerTabBarNavigationItem.hidden = WI._closeTabBarButton.hidden;
     } else {
-        WI._closeToolbarButton.hidden = true;
-        WI._undockToolbarButton.hidden = true;
-        WI._dockBottomToolbarButton.hidden = true;
-        WI._dockToSideToolbarButton.hidden = true;
+        WI._closeTabBarButton.hidden = true;
+        WI._undockTabBarButton.hidden = true;
+        WI._dockBottomTabBarButton.hidden = true;
+        WI._dockToSideTabBarButton.hidden = true;
+        WI._dockDividerTabBarNavigationItem.hidden = true;
     }
+
+    WI.tabBar.needsLayout();
 };
 
 WI._tabBrowserSizeDidChange = function()
@@ -1805,7 +1754,6 @@ WI._sidebarWidthDidChange = function(event)
 WI._setupViewHierarchy = function()
 {
     let rootView = WI.View.rootView();
-    rootView.addSubview(WI.toolbar);
     rootView.addSubview(WI.tabBar);
     rootView.addSubview(WI.navigationSidebar);
     rootView.addSubview(WI.tabBrowser);
@@ -1831,20 +1779,6 @@ WI._tabBrowserSelectedTabContentViewDidChange = function(event)
     WI.hideSplitConsole();
 };
 
-WI._toolbarMouseDown = function(event)
-{
-    if (event.ctrlKey)
-        return;
-
-    if (WI._dockConfiguration === WI.DockConfiguration.Right || WI._dockConfiguration === WI.DockConfiguration.Left)
-        return;
-
-    if (WI.docked)
-        WI._dockedResizerMouseDown(event);
-    else
-        WI._moveWindowMouseDown(event);
-};
-
 WI._dockedResizerMouseDown = function(event)
 {
     if (event.button !== 0 || event.ctrlKey)
@@ -1854,8 +1788,7 @@ WI._dockedResizerMouseDown = function(event)
         return;
 
     // Only start dragging if the target is one of the elements that we expect.
-    if (event.target.id !== "docked-resizer" && !event.target.classList.contains("toolbar") &&
-        !event.target.classList.contains("flexible-space") && !event.target.classList.contains("item-section"))
+    if (event.target !== WI._dockedResizerElement)
         return;
 
     event[WI.Popover.EventPreventDismissSymbol] = true;
@@ -1923,54 +1856,6 @@ WI._dockedResizerMouseDown = function(event)
     WI.elementDragStart(resizerElement, dockedResizerDrag, dockedResizerDragEnd, event, WI._dockConfiguration === WI.DockConfiguration.Bottom ? "row-resize" : "col-resize");
 };
 
-WI._moveWindowMouseDown = function(event)
-{
-    console.assert(!WI.docked);
-
-    if (event.button !== 0 || event.ctrlKey)
-        return;
-
-    // Only start dragging if the target is one of the elements that we expect.
-    if (!event.target.classList.contains("toolbar") && !event.target.classList.contains("flexible-space") &&
-        !event.target.classList.contains("item-section"))
-        return;
-
-    event[WI.Popover.EventPreventDismissSymbol] = true;
-
-    if (WI.Platform.name === "mac") {
-        InspectorFrontendHost.startWindowDrag();
-        event.preventDefault();
-        return;
-    }
-
-    var lastScreenX = event.screenX;
-    var lastScreenY = event.screenY;
-
-    function toolbarDrag(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        var x = event.screenX - lastScreenX;
-        var y = event.screenY - lastScreenY;
-
-        InspectorFrontendHost.moveWindowBy(x, y);
-
-        lastScreenX = event.screenX;
-        lastScreenY = event.screenY;
-    }
-
-    function toolbarDragEnd(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        WI.elementDragEnd(event);
-    }
-
-    WI.elementDragStart(event.target, toolbarDrag, toolbarDragEnd, event, "default");
-};
-
 WI._domStorageWasInspected = function(event)
 {
     WI.showStorageTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.Inspect});
@@ -1999,7 +1884,7 @@ WI._domNodeWasInspected = function(event)
 
 WI._inspectModeStateChanged = function(event)
 {
-    WI._inspectModeToolbarButton.activated = WI.domManager.inspectModeEnabled;
+    WI._inspectModeTabBarButton.activated = WI.domManager.inspectModeEnabled;
 };
 
 WI._toggleInspectMode = function(event)
@@ -2007,7 +1892,7 @@ WI._toggleInspectMode = function(event)
     WI.domManager.inspectModeEnabled = !WI.domManager.inspectModeEnabled;
 };
 
-WI._handleDeviceSettingsToolbarButtonClicked = function(event)
+WI._handleDeviceSettingsTabBarButtonClicked = function(event)
 {
     if (WI._deviceSettingsPopover) {
         WI._deviceSettingsPopover.dismiss();
@@ -2018,7 +1903,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
     let target = WI.assumingMainTarget();
 
     function updateActivatedState() {
-        WI._deviceSettingsToolbarButton.activated = WI._overridenDeviceUserAgent || WI._overridenDeviceSettings.size > 0;
+        WI._deviceSettingsTabBarButton.activated = WI._overridenDeviceUserAgent || WI._overridenDeviceSettings.size > 0;
     }
 
     function applyOverriddenUserAgent(value, force) {
@@ -2096,10 +1981,10 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
     }
 
     function calculateTargetFrame() {
-        return WI.Rect.rectFromClientRect(WI._deviceSettingsToolbarButton.element.getBoundingClientRect());
+        return WI.Rect.rectFromClientRect(WI._deviceSettingsTabBarButton.element.getBoundingClientRect()).pad(2);
     }
 
-    const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X, WI.RectEdge.MAX_X];
+    const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
 
     WI._deviceSettingsPopover = new WI.Popover(WI);
     WI._deviceSettingsPopover.windowResizeHandler = function(event) {
@@ -2306,7 +2191,7 @@ WI._reloadPageFromOrigin = function(event)
     target.PageAgent.reload.invoke({ignoreCache: true});
 };
 
-WI._reloadToolbarButtonClicked = function(event)
+WI._reloadTabBarButtonClicked = function(event)
 {
     if (InspectorFrontendHost.inspectionLevel > 1) {
         WI._reloadInspectedInspector();
@@ -2318,29 +2203,84 @@ WI._reloadToolbarButtonClicked = function(event)
     target.PageAgent.reload.invoke({ignoreCache: WI.modifierKeys.shiftKey});
 };
 
-WI._updateReloadToolbarButton = function()
+WI._updateReloadTabBarButton = function()
 {
-    WI._reloadToolbarButton.hidden = !InspectorBackend.hasDomain("Page");
+    WI._reloadTabBarButton.hidden = !InspectorBackend.hasDomain("Page");
+    WI.tabBar.needsLayout();
 };
 
-WI._updateDownloadToolbarButton = function()
+WI._updateDownloadTabBarButton = function()
 {
     if (!InspectorBackend.hasDomain("Page")) {
-        WI._downloadToolbarButton.hidden = true;
+        WI._downloadTabBarButton.hidden = true;
+        WI.tabBar.needsLayout();
         return;
     }
 
     if (WI._downloadingPage) {
-        WI._downloadToolbarButton.enabled = false;
+        WI._downloadTabBarButton.enabled = false;
         return;
     }
 
-    WI._downloadToolbarButton.enabled = WI.canArchiveMainFrame();
+    WI._downloadTabBarButton.enabled = WI.canArchiveMainFrame();
 };
 
-WI._updateInspectModeToolbarButton = function()
+WI._updateInspectModeTabBarButton = function()
 {
-    WI._inspectModeToolbarButton.hidden = !InspectorBackend.hasDomain("DOM");
+    WI._inspectModeTabBarButton.hidden = !InspectorBackend.hasDomain("DOM");
+    WI.tabBar.needsLayout();
+};
+
+WI._updateConsoleTabBarButtons = function()
+{
+    function pulse(element) {
+        // We need to force a style invalidation in the case where we already
+        // were animating this item after we've removed the pulsing CSS class.
+        if (element.classList.contains("pulsing")) {
+            element.classList.remove("pulsing");
+            element.recalculateStyles();
+        } else {
+            element.addEventListener("animationend", () => {
+                element.classList.remove("pulsing");
+            }, {once: true});
+        }
+
+        element.classList.add("pulsing");
+    }
+    let warningCount = WI.consoleManager.warningCount;
+    if (warningCount) {
+        let warningFormat = (warningCount === 1) ? WI.UIString("Click to show %d warning in the Console") : WI.UIString("Click to show %d warnings in the Console");
+        WI._consoleWarningsTabBarButton.image = "Images/IssuesEnabled.svg";
+        WI._consoleWarningsTabBarButton.tooltip = warningFormat.format(warningCount);
+        WI._consoleWarningsTabBarButton.enabled = true;
+
+        if (warningCount !== WI._consoleWarningsTabBarButton.__lastWarningCount)
+            pulse(WI._consoleWarningsTabBarButton.element);
+    } else {
+        WI._consoleWarningsTabBarButton.image = "Images/Issues.svg";
+        WI._consoleWarningsTabBarButton.tooltip = WI.UIString("0 Console warnings")
+        WI._consoleWarningsTabBarButton.enabled = false;
+    }
+
+    let errorCount = WI.consoleManager.errorCount;
+    if (errorCount) {
+        let errorFormat = (errorCount === 1) ? WI.UIString("Click to show %d error in the Console") : WI.UIString("Click to show %d errors in the Console");
+        WI._consoleErrorsTabBarButton.image = "Images/ErrorsEnabled.svg";
+        WI._consoleErrorsTabBarButton.tooltip = errorFormat.format(errorCount);
+        WI._consoleErrorsTabBarButton.enabled = true;
+
+        if (errorCount !== WI._consoleErrorsTabBarButton.__lastErrorCount)
+            pulse(WI._consoleErrorsTabBarButton.element);
+    } else {
+        WI._consoleErrorsTabBarButton.image = "Images/Errors.svg";
+        WI._consoleErrorsTabBarButton.tooltip = WI.UIString("0 Console errors")
+        WI._consoleErrorsTabBarButton.enabled = false;
+    }
+
+    WI.tabBar.needsLayout();
+
+    WI._consoleWarningsTabBarButton.__lastWarningCount = warningCount;
+    WI._consoleErrorsTabBarButton.__lastErrorCount = errorCount;
 };
 
 WI._showConsoleTab = function(event)
@@ -2697,14 +2637,9 @@ WI.setLayoutDirection = function(value)
     InspectorFrontendHost.reopen();
 };
 
-WI._showNewTabFromShortcut = function()
-{
-    WI.showNewTabTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut});
-}
-
 WI._showTabAtIndexFromShortcut = function(i)
 {
-    if (i <= WI.tabBar.tabBarItems.length) {
+    if (i <= WI.tabBar.tabCount) {
         WI.tabBar.selectTabBarItem(i - 1, {
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut,
         });
@@ -3154,12 +3089,12 @@ WI.revertDOMChanges = function(domChanges)
 WI.archiveMainFrame = function()
 {
     WI._downloadingPage = true;
-    WI._updateDownloadToolbarButton();
+    WI._updateDownloadTabBarButton();
 
     let target = WI.assumingMainTarget();
     target.PageAgent.archive((error, data) => {
         WI._downloadingPage = false;
-        WI._updateDownloadToolbarButton();
+        WI._updateDownloadTabBarButton();
 
         if (error)
             return;

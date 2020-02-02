@@ -150,8 +150,6 @@ public:
 
     void setSheetRect(const WebCore::FloatRect&);
 
-    void startWindowDrag();
-
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
@@ -209,7 +207,6 @@ private:
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
     void platformSetSheetRect(const WebCore::FloatRect&);
-    void platformStartWindowDrag();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
 

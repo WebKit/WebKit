@@ -67,9 +67,6 @@ public:
     WEBCORE_EXPORT void windowObjectCleared() final;
     WEBCORE_EXPORT void frontendLoaded() override;
 
-    void startWindowDrag() override { }
-    WEBCORE_EXPORT void moveWindowBy(float x, float y) final;
-
     WEBCORE_EXPORT UserInterfaceLayoutDirection userInterfaceLayoutDirection() const final;
 
     WEBCORE_EXPORT void requestSetDockSide(DockSide) final;

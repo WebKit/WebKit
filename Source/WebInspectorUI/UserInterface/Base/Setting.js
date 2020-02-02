@@ -217,7 +217,6 @@ WI.settings = {
 
     // Experimental
     experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
-    experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
 
     // Protocol

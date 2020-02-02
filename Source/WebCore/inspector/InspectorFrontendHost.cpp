@@ -258,18 +258,6 @@ void InspectorFrontendHost::setSheetRect(float x, float y, unsigned width, unsig
         m_client->changeSheetRect(FloatRect(x, y, width, height));
 }
 
-void InspectorFrontendHost::startWindowDrag()
-{
-    if (m_client)
-        m_client->startWindowDrag();
-}
-
-void InspectorFrontendHost::moveWindowBy(float x, float y) const
-{
-    if (m_client)
-        m_client->moveWindowBy(x, y);
-}
-
 bool InspectorFrontendHost::isRemote() const
 {
     return m_client && m_client->isRemote();

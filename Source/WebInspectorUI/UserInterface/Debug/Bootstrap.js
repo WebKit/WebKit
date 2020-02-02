@@ -56,7 +56,7 @@ WI.runBootstrapOperations = function() {
     const DumpMessagesState = {Off: "off", Filtering: "filtering", Everything: "everything"};
     const dumpMessagesToolTip = WI.unlocalizedString("Enable dump inspector messages to console.\nShift-click to dump all inspector messages with no filtering.");
     const dumpMessagesActivatedToolTip = WI.unlocalizedString("Disable dump inspector messages to console");
-    let dumpMessagesToolbarItem = new WI.ActivateButtonToolbarItem("dump-messages", dumpMessagesToolTip, dumpMessagesActivatedToolTip, "Images/Console.svg");
+    let dumpMessagesTabBarNavigationItem = new WI.ActivateButtonNavigationItem("dump-messages", dumpMessagesToolTip, dumpMessagesActivatedToolTip, "Images/Console.svg");
 
     function dumpMessagesCurrentState() {
         if (!InspectorBackend.dumpInspectorProtocolMessages)
@@ -72,27 +72,26 @@ WI.runBootstrapOperations = function() {
         case DumpMessagesState.Off:
             InspectorBackend.dumpInspectorProtocolMessages = false;
             InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = false;
-            dumpMessagesToolbarItem.activated = false;
-            dumpMessagesToolbarItem.element.style.removeProperty("color");
+            dumpMessagesTabBarNavigationItem.activated = false;
+            dumpMessagesTabBarNavigationItem.element.firstChild.style.removeProperty("color");
             break;
         case DumpMessagesState.Filtering:
             InspectorBackend.dumpInspectorProtocolMessages = true;
             InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = true;
-            dumpMessagesToolbarItem.activated = true;
-            dumpMessagesToolbarItem.element.style.removeProperty("color");
+            dumpMessagesTabBarNavigationItem.activated = true;
+            dumpMessagesTabBarNavigationItem.element.firstChild.style.removeProperty("color");
             break;
         case DumpMessagesState.Everything:
             InspectorBackend.dumpInspectorProtocolMessages = true;
             InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = false;
-            dumpMessagesToolbarItem.activated = true;
-            dumpMessagesToolbarItem.element.style.color = "rgb(164, 41, 154)";
+            dumpMessagesTabBarNavigationItem.activated = true;
+            dumpMessagesTabBarNavigationItem.element.firstChild.style.color = "rgb(164, 41, 154)";
             break;
         }
         ignoreChangesToState = false;
     }
 
-    WI.toolbar.addToolbarItem(dumpMessagesToolbarItem, WI.Toolbar.Section.CenterRight);
-    dumpMessagesToolbarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    dumpMessagesTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
         let nextState;
         switch (dumpMessagesCurrentState()) {
         case DumpMessagesState.Off:
@@ -117,16 +116,29 @@ WI.runBootstrapOperations = function() {
     // Next Level Inspector.
     let inspectionLevel = InspectorFrontendHost.inspectionLevel;
     const inspectInspectorToolTip = WI.unlocalizedString("Open Web Inspector [%d]").format(inspectionLevel + 1);
-    let inspectInspectorToolbarItem = new WI.ButtonToolbarItem("inspect-inspector", inspectInspectorToolTip);
-    WI.toolbar.addToolbarItem(inspectInspectorToolbarItem, WI.Toolbar.Section.CenterRight);
-    inspectInspectorToolbarItem.element.textContent = inspectionLevel + 1;
-    inspectInspectorToolbarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+    let inspectInspectorTabBarNavigationItem = new WI.ButtonNavigationItem("inspect-inspector", inspectInspectorToolTip);
+    inspectInspectorTabBarNavigationItem.element.textContent = inspectionLevel + 1;
+    inspectInspectorTabBarNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
         InspectorFrontendHost.inspectInspector();
     });
 
+    let dividerNavigationItem = new WI.DividerNavigationItem;
+    WI.tabBar.addNavigationItemAfter(dividerNavigationItem);
+
+    let groupNavigationItem = new WI.GroupNavigationItem([
+        dumpMessagesTabBarNavigationItem,
+        inspectInspectorTabBarNavigationItem,
+    ]);
+    WI.tabBar.addNavigationItemAfter(groupNavigationItem);
+
+    // Move the close button to the end of the tab bar after the debug items are added.
+    WI.tabBar.addNavigationItemAfter(WI._dockDividerTabBarNavigationItem);
+    WI.tabBar.addNavigationItemAfter(WI._closeTabBarButton);
+
     function updateDebugUI() {
-        dumpMessagesToolbarItem.hidden = !WI.showDebugUISetting.value;
-        inspectInspectorToolbarItem.hidden = !WI.showDebugUISetting.value;
+        dividerNavigationItem.hidden = !WI.showDebugUISetting.value;
+        groupNavigationItem.hidden = !WI.showDebugUISetting.value;
+        WI.tabBar.needsLayout();
     }
 
     WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, () => {

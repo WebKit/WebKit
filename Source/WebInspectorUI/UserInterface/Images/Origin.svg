@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright © 2019 Apple Inc. All rights reserved. -->
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 64 64">
     <defs>
         <radialGradient id="gradient" cx="58.6%" cy="27.74%" fx="58.6%" fy="27.74%" r="57.5%" gradientTransform="translate(0.59, 0.28), rotate(98.61), scale(1, 0.98), translate(-0.59, -0.28)">
             <stop stop-color="rgb(168, 171, 182)" offset="0%"/>

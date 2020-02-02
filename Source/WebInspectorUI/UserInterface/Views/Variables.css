@@ -179,7 +179,7 @@
     --odd-zebra-stripe-row-background-color: white;
     --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
 
-    --toolbar-height: 36px;
+    --undocked-title-area-height: 0px;
     --tab-bar-height: 24px;
     --navigation-bar-height: 29px;
 
@@ -195,7 +195,7 @@
     --diff-addition-border-color: hsl(90, 100%, 40%);
 }
 
-body.window-inactive {
+body:matches(.window-inactive, .window-docked-inactive) {
     /* FIXME: Use CSS4 color blend functions once they're available. */
     --selected-background-color: hsla(212, 92%, 54%, 0.5);
 
@@ -204,9 +204,13 @@ body.window-inactive {
     --glyph-opacity: 0.6;
 }
 
-body.window-inactive * {
+body:matches(.window-inactive, .window-docked-inactive) * {
     --border-color: hsl(0, 0%, 85%);
     --border-color-dark: hsl(0, 0%, 72%);
+}
+
+body:not(.docked) {
+    --undocked-title-area-height: 22px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -269,8 +273,6 @@ body.window-inactive * {
         --button-background-color-hover: var(--button-background-color);
         --button-background-color-pressed: hsl(0, 0%, 55%);
         --button-background-color-inactive: hsl(0, 0%, 28%);
-
-        --dashboard-background-color: hsl(0, 0%, 36%);
 
         --panel-background-color: hsl(0, 0%, 24%);
         --panel-background-color-light: hsl(0, 0%, 29%);
@@ -344,16 +346,16 @@ body.window-inactive * {
         --diff-deletion-background-color: hsl(5, 40%, 28%);
     }
 
-    body.window-inactive {
+    body:matches(.window-inactive, .window-docked-inactive) {
         --selected-background-color: hsla(212, 92%, 64%, 0.5);
 
         --glyph-color: hsl(0, 0%, 52%);
         --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
     }
 
-    body.window-inactive * {
+    body:matches(.window-inactive, .window-docked-inactive) * {
         /* These properties are duplicated so that they have higher specificity than WebKit's stylesheet.
-        Otherwise, the variable definition inside 'body.window-inactive *' in OpenSource overrides with a lighter color.
+        Otherwise, the variable definition inside 'body:matches(.window-inactive, .window-docked-inactive) *' in OpenSource overrides with a lighter color.
         When merging to open source, we should guard the existing .window-inactive style with
         '@media not all' to avoid applying the definition too broadly. */
         --border-color: hsl(0, 0%, 33%);

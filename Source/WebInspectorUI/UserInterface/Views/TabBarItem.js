@@ -24,12 +24,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TabBarItem = class TabBarItem extends WI.Object
+WI.TabBarItem = class TabBarItem
 {
-    constructor(image, title, representedObject)
+    constructor(representedObject, image, title)
     {
-        super();
-
+        this._representedObject = representedObject || null;
         this._parentTabBar = null;
 
         this._element = document.createElement("div");
@@ -48,15 +47,12 @@ WI.TabBarItem = class TabBarItem extends WI.Object
 
         this.title = title;
         this.image = image;
-        this.representedObject = representedObject;
     }
 
     // Public
 
     get element() { return this._element; }
-
     get representedObject() { return this._representedObject; }
-    set representedObject(representedObject) { this._representedObject = representedObject || null; }
 
     get parentTabBar() { return this._parentTabBar; }
     set parentTabBar(tabBar){ this._parentTabBar = tabBar || null; }
@@ -83,17 +79,17 @@ WI.TabBarItem = class TabBarItem extends WI.Object
 
     set disabled(disabled)
     {
-        this._element.classList.toggle("disabled", disabled);
+        this._element.classList.toggle("disabled", !!disabled);
     }
 
-    get isDefaultTab()
+    get hidden()
     {
-        return this._element.classList.contains("default-tab");
+        return this._element.classList.contains("hidden");
     }
 
-    set isDefaultTab(isDefaultTab)
+    set hidden(hidden)
     {
-        this._element.classList.toggle("default-tab", isDefaultTab);
+        this._element.classList.toggle("hidden", !!hidden);
     }
 
     get image() { return this._iconElement.src; }
@@ -113,6 +109,8 @@ WI.TabBarItem = class TabBarItem extends WI.Object
         this._title = title;
         this.titleDidChange();
     }
+
+    // Protected
 
     titleDidChange()
     {

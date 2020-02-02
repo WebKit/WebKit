@@ -333,11 +333,6 @@ void WebInspectorProxy::setSheetRect(const FloatRect& rect)
     platformSetSheetRect(rect);
 }
 
-void WebInspectorProxy::startWindowDrag()
-{
-    platformStartWindowDrag();
-}
-
 void WebInspectorProxy::togglePageProfiling()
 {
     if (!m_inspectedPage)
@@ -738,11 +733,6 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
 }
 
 void WebInspectorProxy::platformSetSheetRect(const FloatRect&)
-{
-    notImplemented();
-}
-
-void WebInspectorProxy::platformStartWindowDrag()
 {
     notImplemented();
 }

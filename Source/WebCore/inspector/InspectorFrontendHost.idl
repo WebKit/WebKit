@@ -57,9 +57,6 @@
 
     void setSheetRect(unrestricted float x, unrestricted float y, unsigned long width, unsigned long height);
 
-    void startWindowDrag();
-    void moveWindowBy(unrestricted float x, unrestricted float y);
-
     readonly attribute boolean isRemote;
     readonly attribute DOMString localizedStringsURL;
     readonly attribute DOMString backendCommandsURL;
