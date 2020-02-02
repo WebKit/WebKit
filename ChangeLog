@@ -1,3 +1,25 @@
+2020-02-02  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [CMake] Use opj_config.h to find OpenJPEG include directory
+        https://bugs.webkit.org/show_bug.cgi?id=207100
+
+        Reviewed by Konstantin Tokarev.
+
+        WebKit needs OpenJPEG 2.2.0 or later versions, but it is possible for a
+        system to have both OpenJPEG 1 and OpenJPEG 2 installed. However, some
+        distributions do not put OpenJPEG 1 under a versioned directory and
+        put its header file directly under /usr/include or /usr/local/include.
+        Since CMake prefers its prefixes to paths given in HINTS, it is possible
+        that openjpeg.h from OpenJPEG 1 is found before the one from OpenJPEG 2,
+        causing WebKit to fail to build because of using the wrong header file.
+
+        Resolve the problem by checking opj_config.h instead of openjpeg.h.
+        OpenJPEG 1.5 does not have opj_config.h, so only OpenJPEG 2 can be
+        found. This also makes it consistent with the code below which already
+        uses opj_config.h.
+
+        * Source/cmake/FindOpenJPEG.cmake:
+
 2020-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add _PRIVATE_LIBRARIES to framework
