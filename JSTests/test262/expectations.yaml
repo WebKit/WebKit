@@ -1577,11 +1577,8 @@ test/built-ins/RegExp/unicode_restricted_identity_escape.js:
   default: "Test262Error: Invalid IdentityEscape in AtomEscape: '\\"
   strict mode: "Test262Error: Invalid IdentityEscape in AtomEscape: '\\"
 test/built-ins/RegExp/unicode_restricted_identity_escape_alpha.js:
-  default: "Test262Error: IdentityEscape in AtomEscape: 'c' Expected a SyntaxError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: IdentityEscape in AtomEscape: 'c' Expected a SyntaxError to be thrown but no exception was thrown at all"
-test/built-ins/RegExp/unicode_restricted_identity_escape_c.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
+  default: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
 test/built-ins/RegExp/unicode_restricted_octal_escape.js:
   default: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
@@ -3370,9 +3367,6 @@ test/language/literals/regexp/named-groups/invalid-incomplete-groupname.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-dec-esc.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-class-escape.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-legacy-octal-escape.js:

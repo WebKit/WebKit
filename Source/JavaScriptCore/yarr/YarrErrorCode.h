@@ -53,6 +53,7 @@ enum class ErrorCode : uint8_t {
     InvalidUnicodeEscape,
     InvalidBackreference,
     InvalidIdentityEscape,
+    InvalidControlLetterEscape,
     InvalidUnicodePropertyExpression,
     TooManyDisjunctions,
     OffsetTooLarge,

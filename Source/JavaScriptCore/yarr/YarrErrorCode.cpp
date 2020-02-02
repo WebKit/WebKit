@@ -54,6 +54,7 @@ const char* errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "invalid Unicode {} escape",                            // InvalidUnicodeEscape
         REGEXP_ERROR_PREFIX "invalid backreference for Unicode pattern",            // InvalidBackreference
         REGEXP_ERROR_PREFIX "invalid escaped character for Unicode pattern",        // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "invalid \\c escape for Unicode pattern",               // InvalidControlLetterEscape
         REGEXP_ERROR_PREFIX "invalid property expression",                          // InvalidUnicodePropertyExpression
         REGEXP_ERROR_PREFIX "too many nested disjunctions",                         // TooManyDisjunctions
         REGEXP_ERROR_PREFIX "pattern exceeds string length limits",                 // OffsetTooLarge
@@ -87,6 +88,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::InvalidUnicodeEscape:
     case ErrorCode::InvalidBackreference:
     case ErrorCode::InvalidIdentityEscape:
+    case ErrorCode::InvalidControlLetterEscape:
     case ErrorCode::InvalidUnicodePropertyExpression:
     case ErrorCode::OffsetTooLarge:
     case ErrorCode::InvalidRegularExpressionFlags:

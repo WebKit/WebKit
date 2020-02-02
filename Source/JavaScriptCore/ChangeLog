@@ -1,3 +1,23 @@
+2020-02-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-alphabetical \c escapes should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=207091
+
+        Reviewed by Darin Adler.
+
+        This change adds SyntaxError for non-alphabetical and identity \c escapes
+        in Unicode patterns, aligning JSC with V8 and SpiderMonkey.
+
+        Grammar: https://tc39.es/ecma262/#prod-annexB-ClassEscape
+        (/u flag precludes the use of ClassControlLetter)
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+
 2020-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Hold StructureID instead of Structure* in PolyProtoAccessChain and DFG::CommonData

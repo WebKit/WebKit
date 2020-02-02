@@ -168,6 +168,7 @@ PASS r = new RegExp("𐐅{2147483648}", "u") threw exception SyntaxError: Invali
 PASS /{/u threw exception SyntaxError: Invalid regular expression: incomplete {} quantifier for Unicode pattern.
 PASS /[a-\d]/u threw exception SyntaxError: Invalid regular expression: invalid range in character class for Unicode pattern.
 PASS /]/u threw exception SyntaxError: Invalid regular expression: unmatched ] or } bracket for Unicode pattern.
+PASS /\c9/u threw exception SyntaxError: Invalid regular expression: invalid \c escape for Unicode pattern.
 PASS r = new RegExp("\\-", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("\\a", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("[\\a]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.

@@ -397,12 +397,28 @@ private:
             if (!atEndOfPattern()) {
                 int control = consume();
 
-                // To match Firefox, inside a character class, we also accept numbers and '_' as control characters.
-                if (inCharacterClass ? WTF::isASCIIAlphanumeric(control) || (control == '_') : WTF::isASCIIAlpha(control)) {
+                if (WTF::isASCIIAlpha(control)) {
+                    delegate.atomPatternCharacter(control & 0x1f);
+                    break;
+                }
+
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::InvalidControlLetterEscape;
+                    break;
+                }
+
+                // https://tc39.es/ecma262/#prod-annexB-ClassControlLetter
+                if (inCharacterClass && (WTF::isASCIIDigit(control) || control == '_')) {
                     delegate.atomPatternCharacter(control & 0x1f);
                     break;
                 }
             }
+
+            if (m_isUnicode) {
+                m_errorCode = ErrorCode::InvalidIdentityEscape;
+                break;
+            }
+
             restoreState(state);
             delegate.atomPatternCharacter('\\');
             break;
