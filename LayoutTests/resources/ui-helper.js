@@ -356,7 +356,7 @@ window.UIHelper = class UIHelper {
                     uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')));
                 };
                 uiController.longPressAtPoint(${x}, ${y}, function() { });
-            })();`, resolve);
+            })();`, result => resolve(JSON.parse(result)));
         });
     }
 

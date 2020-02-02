@@ -1,1 +1,10 @@
-PASS: correct page loaded in popover
+Verifies that long pressing a link presents a context menu that shows the link URL. To manually test, long press on the link. The context menu should show a preview for http://localhost:54321/.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS correct page loaded in preview
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Link Test

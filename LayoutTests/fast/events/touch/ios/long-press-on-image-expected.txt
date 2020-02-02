@@ -1,1 +1,10 @@
-PASS: context menu triggered on image
+Verifies that long pressing an image presents a context menu that shows the image name. To manually test, long press on the image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context menu triggered on image
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
