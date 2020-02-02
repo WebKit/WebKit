@@ -1,3 +1,41 @@
+2020-02-02  Rob Buis  <rbuis@igalia.com>
+
+        Import WPT tests to verify pings do not send a referrer header
+        https://bugs.webkit.org/show_bug.cgi?id=207090
+
+        Reviewed by Darin Adler.
+
+        Import WPT tests to verify pings do not send a referrer header.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/semantics/links/downloading-resources/contains.json: Removed.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer-when-downgrade-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer-when-downgrade.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-origin-when-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-origin-when-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-same-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-same-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-strict-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-strict-origin-when-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-strict-origin-when-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-strict-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-unsafe-url-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer-unsafe-url.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-referrer.js: Added.
+        (testReferrerHeader):
+        (pollResult.return.new.Promise.):
+        (pollResult.return.new.Promise):
+        * web-platform-tests/html/semantics/links/downloading-resources/resources/inspect-header.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/links/downloading-resources/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/w3c-import.log.
+        * web-platform-tests/html/semantics/links/downloading-resources/w3c-import.log:
+
 2020-01-30  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Move grid-item-alignment tests to WPT folder
