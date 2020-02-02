@@ -650,6 +650,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     wasServiceWorkerLoad = !!m_serviceWorkerFetchTask;
 #endif
     RELEASE_LOG_ERROR_IF_ALLOWED("didFailLoading: (wasServiceWorkerLoad=%d, isTimeout=%d, isCancellation=%d, isAccessControl=%d, errorCode=%d)", wasServiceWorkerLoad, error.isTimeout(), error.isCancellation(), error.isAccessControl(), error.errorCode());
+    UNUSED_VARIABLE(wasServiceWorkerLoad);
 
     if (shouldCaptureExtraNetworkLoadMetrics())
         m_connection->removeNetworkLoadInformation(identifier());

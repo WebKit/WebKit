@@ -493,7 +493,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                 auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
                     .release();
                 contextAttributesPayload->setAlpha(downcast<ImageBitmapRenderingContext>(context).hasAlpha());
-                return WTFMove(contextAttributesPayload);
+                return contextAttributesPayload;
             }
 
 #if ENABLE(WEBGL)
@@ -519,7 +519,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                         break;
                     }
                     contextAttributesPayload->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
-                    return WTFMove(contextAttributesPayload);
+                    return contextAttributesPayload;
                 }
             }
 #endif

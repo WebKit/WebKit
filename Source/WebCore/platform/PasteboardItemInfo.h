@@ -61,7 +61,7 @@ Optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
     if (!decoder.decode(result.height))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 struct PasteboardItemInfo {
@@ -161,7 +161,7 @@ Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
     if (!decoder.decodeEnum(result.preferredPresentationStyle))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 }

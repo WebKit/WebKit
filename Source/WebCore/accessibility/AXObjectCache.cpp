@@ -2515,10 +2515,10 @@ static UChar32 characterForCharacterOffset(const CharacterOffset& characterOffse
     UChar32 ch = 0;
     unsigned offset = characterOffset.startIndex + characterOffset.offset;
     if (offset < characterOffset.node->textContent().length()) {
-// FIXME: Remove IGNORE_WARNINGS macros once one of <rdar://problem/58615489&58615391> is fixed.
-IGNORE_WARNINGS_BEGIN("conditional-uninitialized")
+// FIXME: Remove IGNORE_CLANG_WARNINGS macros once one of <rdar://problem/58615489&58615391> is fixed.
+IGNORE_CLANG_WARNINGS_BEGIN("conditional-uninitialized")
         U16_NEXT(characterOffset.node->textContent(), offset, characterOffset.node->textContent().length(), ch);
-IGNORE_WARNINGS_END
+IGNORE_CLANG_WARNINGS_END
     }
     return ch;
 }
