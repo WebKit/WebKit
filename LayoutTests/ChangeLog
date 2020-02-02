@@ -1,3 +1,15 @@
+2020-02-02  Antoine Quint  <graouts@apple.com>
+
+        ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) on animations/keyframe-autoclose-brace.html
+        https://bugs.webkit.org/show_bug.cgi?id=207071
+        <rdar://problem/59076249>
+
+        Reviewed by Dean Jackson.
+
+        The crash is fixed, we can start running the test as expected again.
+
+        * platform/ipad/TestExpectations:
+
 2020-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/events/touch/ios/long-press-on-link.html consistently times out after r254699
