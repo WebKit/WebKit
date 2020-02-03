@@ -1,3 +1,19 @@
+2020-02-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        obsolete_attachment should not fail when flags do not exist
+        https://bugs.webkit.org/show_bug.cgi?id=171121
+
+        Reviewed by Jonathan Bedard.
+
+        Before this change, an error occured if a contributor without EditBugs privileges tried
+        to obsolete not their own attachment. With this patch, uploading routine continues with
+        friendly console warning like we have in reassign_bug() method.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla):
+        (Bugzilla.obsolete_attachment):
+        (Bugzilla.reassign_bug): Use NO_EDIT_BUGS_MESSAGE constant.
+
 2020-02-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(r253224) WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView

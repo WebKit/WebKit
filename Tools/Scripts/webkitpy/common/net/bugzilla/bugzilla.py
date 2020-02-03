@@ -308,6 +308,8 @@ class CommitQueueFlag(object):
 
 
 class Bugzilla(object):
+    NO_EDIT_BUGS_MESSAGE = "Ignore this message if you don't have EditBugs privileges (https://bugs.webkit.org/userprefs.cgi?tab=permissions)"
+
     def __init__(self, committers=committers.CommitterList()):
         self.authenticated = False
         self.queries = BugzillaQueries(self)
@@ -834,10 +836,16 @@ class Bugzilla(object):
         _log.info("Obsoleting attachment: %s" % attachment_id)
         self.open_url(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
-        self.browser.find_control('isobsolete').items[0].selected = True
-        # Also clear any review flag (to remove it from review/commit queues)
-        self._find_select_element_for_flag('review').value = ("X",)
-        self._find_select_element_for_flag('commit-queue').value = ("X",)
+
+        try:
+            self.browser.find_control("isobsolete").items[0].selected = True
+            # Also clear any review flag (to remove it from review/commit queues)
+            self._find_select_element_for_flag("review").value = ("X",)
+            self._find_select_element_for_flag("commit-queue").value = ("X",)
+        except (AttributeError, ValueError):
+            _log.warning("Failed to obsolete attachment")
+            _log.warning(self.NO_EDIT_BUGS_MESSAGE)
+
         if comment_text:
             _log.info(comment_text)
             # Bugzilla has two textareas named 'comment', one is somehow
@@ -903,8 +911,8 @@ class Bugzilla(object):
         self.browser.select_form(name="changeform")
 
         if not self._has_control(self.browser, "assigned_to"):
-            _log.warning("""Failed to assign bug to you (can't find assigned_to) control.
-Ignore this message if you don't have EditBugs privileges (https://bugs.webkit.org/userprefs.cgi?tab=permissions)""")
+            _log.warning("Failed to assign bug to you (can't find assigned_to) control.")
+            _log.warning(self.NO_EDIT_BUGS_MESSAGE)
             return
 
         if comment_text:
