@@ -1,3 +1,23 @@
+2020-02-03  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Accelerated animations don't run until their natural completion
+        https://bugs.webkit.org/show_bug.cgi?id=207130
+        <rdar://problem/59106047>
+
+        Reviewed by Dean Jackson.
+
+        Add two new tests that ensures that an accelerated animation still yields compositing on an element when
+        its finished promise is resolved, but that it's no longer the case on the next frame.
+
+        This required an existing test to be updated to wait until the next frame before checking the composited
+        status of an element on which an animation had just completed.
+
+        * compositing/geometry/limit-layer-bounds-opacity-transition.html:
+        * webanimations/transform-accelerated-animation-finishes-before-removal-expected.txt: Added.
+        * webanimations/transform-accelerated-animation-finishes-before-removal.html: Added.
+        * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise-expected.txt: Added.
+        * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html: Added.
+
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk1 ] inspector/canvas/recording-webgl-full.html  is flaky timing out
