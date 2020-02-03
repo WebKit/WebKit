@@ -959,3 +959,5 @@ webkit.org/b/207063 fast/scrolling/latching/scroll-div-with-nested-nonscrollable
 webkit.org/b/207078 webgpu/whlsl/textures-sample-level.html [ Pass Failure ]
 
 webkit.org/b/207117 webgpu/whlsl/nested-loop.html [ Pass Failure ]
+
+webkit.org/b/207120 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity.html [ Pass Failure ]
