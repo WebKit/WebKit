@@ -763,7 +763,7 @@ media/deactivate-audio-session.html [ Pass ]
 # Link preconnect is disabled on pre-High Sierra because the CFNetwork SPI is missing.
 [ Sierra ] http/tests/preconnect [ Skip ]
 
-webkit.org/b/171839 [ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html [ Pass Failure ]
+webkit.org/b/171839 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html [ Pass Failure ]
 
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
