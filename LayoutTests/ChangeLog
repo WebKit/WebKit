@@ -1,3 +1,12 @@
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] media/media-source/media-source-seek-redundant-append.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207146
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mojave wk2 ] media/media-fragments/TC0087.html is flaky failing.
