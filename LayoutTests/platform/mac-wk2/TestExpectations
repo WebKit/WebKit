@@ -965,3 +965,5 @@ webkit.org/b/207120 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-th
 webkit.org/b/207127 webgpu/whlsl/buffer-vertex.html [ Pass Failure ]
 
 webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash ]
+
+webkit.org/b/207141 [ Release ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
