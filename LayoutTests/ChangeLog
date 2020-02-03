@@ -1,3 +1,13 @@
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS iOS ] fast/dom/connected-subframe-counter-overflow.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207152
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] fast/dom/navigator-detached-no-crash.html flaky failing.

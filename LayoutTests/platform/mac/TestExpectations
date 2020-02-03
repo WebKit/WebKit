@@ -1979,3 +1979,5 @@ webkit.org/b/206285 inspector/worker/debugger-pause.html [ Pass Failure ]
 webkit.org/b/207142 requestidlecallback/requestidlecallback-is-called.html [ Pass Failure ]
 
 webkit.org/b/207147 legacy-animation-engine/compositing/geometry/partial-layout-update.html [ Pass Failure ]
+
+webkit.org/b/207152 fast/dom/connected-subframe-counter-overflow.html  [ Pass Timeout ]
