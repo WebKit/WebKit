@@ -39,14 +39,14 @@ using namespace HTMLNames;
 bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, const Document& document)
 {
     auto& topDocument = document.topDocument();
-    auto ancestorDocument = &document;
+    auto* ancestorDocument = &document;
     while (ancestorDocument != &topDocument) {
         if (!ancestorDocument)
             return false;
 
-        auto ownerElement = ancestorDocument->ownerElement();
+        auto* ownerElement = ancestorDocument->ownerElement();
         if (is<HTMLIFrameElement>(ownerElement)) {
-            auto featurePolicy = downcast<HTMLIFrameElement>(ownerElement)->featurePolicy();
+            const auto& featurePolicy = downcast<HTMLIFrameElement>(ownerElement)->featurePolicy();
             if (!featurePolicy.allows(type, ancestorDocument->securityOrigin().data()))
                 return false;
         }
