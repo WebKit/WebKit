@@ -102,7 +102,7 @@ public:
         float red = fromColor.red() - toColor.red();
         float green = fromColor.green() - toColor.green();
         float blue = fromColor.blue() - toColor.blue();
-        return sqrtf(red * red + green * green + blue * blue);
+        return std::hypot(red, green, blue);
     }
 
 private:

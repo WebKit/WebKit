@@ -154,7 +154,7 @@ void FETurbulence::initPaint(PaintingData& paintingData)
                 gradient[0] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
                 gradient[1] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
             } while (!gradient[0] && !gradient[1]);
-            normalizationFactor = sqrtf(gradient[0] * gradient[0] + gradient[1] * gradient[1]);
+            normalizationFactor = std::hypot(gradient[0], gradient[1]);
             gradient[0] /= normalizationFactor;
             gradient[1] /= normalizationFactor;
         }

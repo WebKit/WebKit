@@ -254,7 +254,7 @@ static void v4MulPointByMatrix(const Vector4 p, const TransformationMatrix::Matr
 
 static double v3Length(Vector3 a)
 {
-    return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2]));
+    return std::hypot(a[0], a[1], a[2]);
 }
 
 static void v3Scale(Vector3 v, double desiredLength)
@@ -300,8 +300,8 @@ static bool decompose2(const TransformationMatrix::Matrix4& matrix, Transformati
     result.translateY = matrix[3][1];
 
     // Compute scaling factors.
-    result.scaleX = sqrt(row0x * row0x + row0y * row0y);
-    result.scaleY = sqrt(row1x * row1x + row1y * row1y);
+    result.scaleX = std::hypot(row0x, row0y);
+    result.scaleY = std::hypot(row1x, row1y);
 
     // If determinant is negative, one axis was flipped.
     double determinant = row0x * row1y - row0y * row1x;
@@ -813,7 +813,7 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
 TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle)
 {
     // Normalize the axis of rotation
-    double length = sqrt(x * x + y * y + z * z);
+    double length = std::hypot(x, y, z);
     if (length == 0) {
         // A direction vector that cannot be normalized, such as [0, 0, 0], will cause the rotation to not be applied.
         return *this;

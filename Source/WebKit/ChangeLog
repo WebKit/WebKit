@@ -1,3 +1,18 @@
+2020-02-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use std::hypot() where possible
+        https://bugs.webkit.org/show_bug.cgi?id=198483
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use std::hypot() where possible, allowing for a possibly more precise
+        calculation of square roots of sums of two or three square values.
+
+        * Platform/classifier/ResourceLoadStatisticsClassifier.cpp:
+        (WebKit::vectorLength):
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm:
+        (-[WKFocusedFormControlView scrollOffsetForCrownInputOffset:]):
+
 2020-02-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Silence compiler warnings

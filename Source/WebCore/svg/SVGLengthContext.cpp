@@ -32,6 +32,7 @@
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SVGSVGElement.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -105,7 +106,7 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
     case SVGLengthMode::Height:
         return floatValueForLength(length, viewportSize.height());
     case SVGLengthMode::Other:
-        return floatValueForLength(length, std::sqrt(viewportSize.diagonalLengthSquared() / 2));
+        return floatValueForLength(length, viewportSize.diagonalLength() / sqrtOfTwoFloat);
     };
     return 0;
 }
@@ -192,7 +193,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
     case SVGLengthMode::Height:
         return value / viewportSize.height() * 100;
     case SVGLengthMode::Other:
-        return value / (std::sqrt(viewportSize.diagonalLengthSquared() / 2)) * 100;
+        return value / (viewportSize.diagonalLength() / sqrtOfTwoFloat) * 100;
     };
 
     ASSERT_NOT_REACHED();
@@ -211,7 +212,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float
     case SVGLengthMode::Height:
         return value * viewportSize.height();
     case SVGLengthMode::Other:
-        return value * std::sqrt(viewportSize.diagonalLengthSquared() / 2);
+        return value * viewportSize.diagonalLength() / sqrtOfTwoFloat;
     };
 
     ASSERT_NOT_REACHED();

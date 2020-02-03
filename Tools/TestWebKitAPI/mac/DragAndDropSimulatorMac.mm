@@ -151,7 +151,7 @@ static NSImage *defaultExternalDragImage()
 
 - (double)initialProgressForMouseDrag
 {
-    double totalDistance = std::sqrt(std::pow(_startLocationInWindow.x - _endLocationInWindow.x, 2) + std::pow(_startLocationInWindow.y - _endLocationInWindow.y, 2));
+    double totalDistance = std::hypot(_startLocationInWindow.x - _endLocationInWindow.x, _startLocationInWindow.y - _endLocationInWindow.y);
     return !totalDistance ? 1 : std::min<double>(1, initialMouseDragDistance / totalDistance);
 }
 

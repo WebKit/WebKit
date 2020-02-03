@@ -259,7 +259,7 @@ void FFTFrame::print()
     int n = m_FFTSize / 2;
 
     for (int i = 1; i < n; i++) {
-        double mag = sqrt(realP[i] * realP[i] + imagP[i] * imagP[i]);
+        double mag = std::hypot(realP[i], imagP[i]);
         double phase = atan2(realP[i], imagP[i]);
 
         LOG(WebAudio, "[%d] (%f %f)\n", i, mag, phase);

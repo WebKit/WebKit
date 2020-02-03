@@ -1551,8 +1551,8 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
         return roundedIntRect(rect);
     }
 
-    float deviceScaleX = sqrtf(deviceMatrix.a * deviceMatrix.a + deviceMatrix.b * deviceMatrix.b);
-    float deviceScaleY = sqrtf(deviceMatrix.c * deviceMatrix.c + deviceMatrix.d * deviceMatrix.d);
+    float deviceScaleX = std::hypot(deviceMatrix.a, deviceMatrix.b);
+    float deviceScaleY = std::hypot(deviceMatrix.c, deviceMatrix.d);
 
     CGPoint deviceOrigin = CGPointMake(rect.x() * deviceScaleX, rect.y() * deviceScaleY);
     CGPoint deviceLowerRight = CGPointMake((rect.x() + rect.width()) * deviceScaleX,

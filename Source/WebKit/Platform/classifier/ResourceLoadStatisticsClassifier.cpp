@@ -34,7 +34,7 @@ using namespace WebCore;
 
 static double vectorLength(unsigned a, unsigned b, unsigned c)
 {
-    return sqrt(a * a + b * b + c * c);
+    return std::hypot(a, b, c);
 }
 
 static const auto featureVectorLengthThresholdHigh = 3;

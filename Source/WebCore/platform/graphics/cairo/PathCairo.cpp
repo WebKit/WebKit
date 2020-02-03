@@ -242,8 +242,8 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
     FloatPoint p1p0((p0.x() - p1.x()),(p0.y() - p1.y()));
     FloatPoint p1p2((p2.x() - p1.x()),(p2.y() - p1.y()));
-    float p1p0_length = sqrtf(p1p0.x() * p1p0.x() + p1p0.y() * p1p0.y());
-    float p1p2_length = sqrtf(p1p2.x() * p1p2.x() + p1p2.y() * p1p2.y());
+    float p1p0_length = std::hypot(p1p0.x(), p1p0.y());
+    float p1p2_length = std::hypot(p1p2.x(), p1p2.y());
 
     double cos_phi = (p1p0.x() * p1p2.x() + p1p0.y() * p1p2.y()) / (p1p0_length * p1p2_length);
     // all points on a line logic
@@ -265,7 +265,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     FloatPoint t_p1p0((p1.x() + factor_p1p0 * p1p0.x()), (p1.y() + factor_p1p0 * p1p0.y()));
 
     FloatPoint orth_p1p0(p1p0.y(), -p1p0.x());
-    float orth_p1p0_length = sqrt(orth_p1p0.x() * orth_p1p0.x() + orth_p1p0.y() * orth_p1p0.y());
+    float orth_p1p0_length = std::hypot(orth_p1p0.x(), orth_p1p0.y());
     float factor_ra = radius / orth_p1p0_length;
 
     // angle between orth_p1p0 and p1p2 to get the right vector orthographic to p1p0

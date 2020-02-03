@@ -84,7 +84,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     double x = -decomp.quaternionX;
     double y = -decomp.quaternionY;
     double z = -decomp.quaternionZ;
-    double length = sqrt(x * x + y * y + z * z);
+    double length = std::hypot(x, y, z);
     double angle = 0;
     
     if (length > 0.00001) {

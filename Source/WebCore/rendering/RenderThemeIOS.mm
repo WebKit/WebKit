@@ -359,7 +359,7 @@ static CGPoint shortened(CGPoint start, CGPoint end, float width)
 {
     float x = end.x - start.x;
     float y = end.y - start.y;
-    float ratio = (!x && !y) ? 0 : width / sqrtf(x * x + y * y);
+    float ratio = (!x && !y) ? 0 : width / std::hypot(x, y);
     return CGPointMake(start.x + x * ratio, start.y + y * ratio);
 }
 

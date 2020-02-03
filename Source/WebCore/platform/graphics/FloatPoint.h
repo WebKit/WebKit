@@ -147,7 +147,11 @@ public:
     }
 
     float slopeAngleRadians() const;
-    float length() const;
+
+    float length() const
+    {
+        return std::hypot(m_x, m_y);
+    }
 
     float lengthSquared() const
     {

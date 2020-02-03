@@ -1133,7 +1133,7 @@ static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRati
     // x^2/a^2 + y^2/b^2 = 1
     // a/b = aspectRatio, b = a/aspectRatio
     // a = sqrt(x^2 + y^2/(1/r^2))
-    return sqrtf(p.width() * p.width() + (p.height() * p.height()) / (1 / (aspectRatio * aspectRatio)));
+    return std::hypot(p.width(), p.height() * aspectRatio);
 }
 
 // FIXME: share code with the linear version

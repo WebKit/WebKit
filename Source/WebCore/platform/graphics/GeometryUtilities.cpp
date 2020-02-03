@@ -32,7 +32,7 @@ namespace WebCore {
 float euclidianDistance(const FloatPoint& p1, const FloatPoint& p2)
 {
     FloatSize delta = p1 - p2;
-    return sqrt(delta.width() * delta.width() + delta.height() * delta.height());
+    return std::hypot(delta.width(), delta.height());
 }
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c)

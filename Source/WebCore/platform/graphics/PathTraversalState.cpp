@@ -35,9 +35,7 @@ static inline FloatPoint midPoint(const FloatPoint& first, const FloatPoint& sec
 
 static inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
-    float dx = end.x() - start.x();
-    float dy = end.y() - start.y();
-    return sqrtf(dx * dx + dy * dy);
+    return std::hypot(end.x() - start.x(), end.y() - start.y());
 }
 
 struct QuadraticBezier {

@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-
 #include "BasicShapes.h"
 
 #include "BasicShapeFunctions.h"
@@ -40,7 +39,7 @@
 #include "RenderBox.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
-
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/TextStream.h>
@@ -159,7 +158,7 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
 {
     if (m_radius.type() == BasicShapeRadius::Value)
-        return floatValueForLength(m_radius.value(), sqrtf((boxWidth * boxWidth + boxHeight * boxHeight) / 2));
+        return floatValueForLength(m_radius.value(), std::hypot(boxWidth, boxHeight) / sqrtOfTwoFloat);
 
     float centerX = floatValueForCenterCoordinate(m_centerX, boxWidth);
     float centerY = floatValueForCenterCoordinate(m_centerY, boxHeight);

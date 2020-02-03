@@ -395,7 +395,7 @@ FloatRect computeLineBoundsAndAntialiasingModeForText(PlatformContextCairo& plat
 
     AffineTransform transform = Cairo::State::getCTM(platformContext);
     // Just compute scale in x dimension, assuming x and y scales are equal.
-    float scale = transform.b() ? sqrtf(transform.a() * transform.a() + transform.b() * transform.b()) : transform.a();
+    float scale = transform.b() ? std::hypot(transform.a(), transform.b()) : transform.a();
     if (scale < 1.0) {
         // This code always draws a line that is at least one-pixel line high,
         // which tends to visually overwhelm text at small scales. To counter this

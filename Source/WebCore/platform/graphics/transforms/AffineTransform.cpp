@@ -85,12 +85,12 @@ bool AffineTransform::isIdentity() const
 
 double AffineTransform::xScale() const
 {
-    return sqrt(m_transform[0] * m_transform[0] + m_transform[1] * m_transform[1]);
+    return std::hypot(m_transform[0], m_transform[1]);
 }
 
 double AffineTransform::yScale() const
 {
-    return sqrt(m_transform[2] * m_transform[2] + m_transform[3] * m_transform[3]);
+    return std::hypot(m_transform[2], m_transform[3]);
 }
 
 static double det(const std::array<double, 6>& transform)

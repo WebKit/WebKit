@@ -282,7 +282,7 @@ Optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromStr
     if (!parsePoint(toString, to))
         return { };
     FloatSize diff = to - from;
-    return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
+    return std::hypot(diff.width(), diff.height());
 }
 
 void SVGAnimateMotionElement::updateAnimationMode()

@@ -119,7 +119,7 @@ public:
     }
 
     float lengthSquared() const { return this->dot(*this); }
-    float length() const { return sqrtf(lengthSquared()); }
+    float length() const { return std::hypot(m_x, m_y, m_z); }
     
     float distanceTo(const FloatPoint3D& a) const;
 

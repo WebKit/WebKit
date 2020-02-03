@@ -50,11 +50,6 @@ FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& m
     };
 }
 
-float FloatSize::diagonalLength() const
-{
-    return sqrtf(diagonalLengthSquared());
-}
-
 bool FloatSize::isZero() const
 {
     return fabs(m_width) < std::numeric_limits<float>::epsilon() && fabs(m_height) < std::numeric_limits<float>::epsilon();
