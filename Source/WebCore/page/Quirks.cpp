@@ -291,7 +291,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     if (!needsQuirks())
         return false;
 
-    auto doShouldDispatchChecks = [this] () bool {
+    auto doShouldDispatchChecks = [this] () -> bool {
         auto* loader = m_document->loader();
         if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
             return false;
