@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -69,308 +69,106 @@
 #endif
 #endif
 
+
 /* ==== Platform additions: additions to PlatformEnable.h from outside the main repository ==== */
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
 #include <WebKitAdditions/AdditionalFeatureDefines.h>
 #endif
 
-/* FIXME: Move out the PLATFORM specific rules into platform specific files. */
 
-/* --------- Apple iOS (but not macOS) port --------- */
-#if PLATFORM(IOS_FAMILY)
 
-#if !defined(ENABLE_AIRPLAY_PICKER)
-#if !PLATFORM(MACCATALYST)
-#define ENABLE_AIRPLAY_PICKER 1
-#endif
-#endif
-
-#if !defined(ENABLE_APPLE_PAY_REMOTE_UI)
-#if !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
-#define ENABLE_APPLE_PAY_REMOTE_UI 1
-#endif
-#endif
-
-#if !defined(ENABLE_CONTENT_EXTENSIONS)
-#define ENABLE_CONTENT_EXTENSIONS 1
-#endif
-
-#if !defined(ENABLE_CONTEXT_MENUS)
-#define ENABLE_CONTEXT_MENUS 0
-#endif
-
-#if !defined(ENABLE_CONTEXT_MENU_EVENT)
-#if !PLATFORM(MACCATALYST)
-#define ENABLE_CONTEXT_MENU_EVENT 0
-#endif
-#endif
-
-#if !defined(ENABLE_CUSTOM_CURSOR_SUPPORT)
-#define ENABLE_CUSTOM_CURSOR_SUPPORT 0
-#endif
-
-#if !defined(ENABLE_DRAG_SUPPORT)
-#define ENABLE_DRAG_SUPPORT 0
-#endif
-
-#if !defined(ENABLE_GEOLOCATION)
-#define ENABLE_GEOLOCATION 1
-#endif
-
-#if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
-#define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
-#endif
-
-#if !defined(ENABLE_INSPECTOR_TELEMETRY)
-#define ENABLE_INSPECTOR_TELEMETRY 0
-#endif
-
-#if !defined(ENABLE_LETTERPRESS)
-#define ENABLE_LETTERPRESS 1
-#endif
-
-#if !defined(ENABLE_AUTOCORRECT)
-#define ENABLE_AUTOCORRECT 1
-#endif
-
-#if !defined(ENABLE_AUTOCAPITALIZE)
-#define ENABLE_AUTOCAPITALIZE 1
-#endif
-
-#if !defined(ENABLE_IOS_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_IOS_GESTURE_EVENTS 1
-#endif
-
-#if !defined(ENABLE_TEXT_AUTOSIZING)
-#define ENABLE_TEXT_AUTOSIZING 1
-#endif
-
-#if !defined(ENABLE_IOS_TOUCH_EVENTS) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_IOS_TOUCH_EVENTS 1
-#endif
-
-#if !defined(ENABLE_METER_ELEMENT)
-#define ENABLE_METER_ELEMENT 0
-#endif
-
-#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
-#define ENABLE_NETSCAPE_PLUGIN_API 0
-#endif
-
-#if !defined(ENABLE_ORIENTATION_EVENTS)
-#define ENABLE_ORIENTATION_EVENTS 1
-#endif
-
-#if !defined(ENABLE_POINTER_LOCK)
-#define ENABLE_POINTER_LOCK 0
-#endif
-
-#if !defined(ENABLE_REMOTE_INSPECTOR)
-#define ENABLE_REMOTE_INSPECTOR 1
-#endif
-
-#if !defined(ENABLE_TEXT_CARET)
-#define ENABLE_TEXT_CARET 0
-#endif
-
-#if !defined(ENABLE_TEXT_SELECTION)
-#define ENABLE_TEXT_SELECTION 0
-#endif
-
-/* FIXME: Remove the USE(APPLE_INTERNAL_SDK) conjunct once we support touch events when building against
-the public iOS SDK. See <https://webkit.org/b/179167>. */
-#if !defined(ENABLE_TOUCH_EVENTS) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_TOUCH_EVENTS 1
-#endif
-
-#if !defined(ENABLE_WEB_ARCHIVE)
-#define ENABLE_WEB_ARCHIVE 1
-#endif
-
-#if !defined(ENABLE_WEBGL)
-#define ENABLE_WEBGL 1
-#endif
-
-#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
-#endif
-
-#if !defined(ENABLE_DOWNLOAD_ATTRIBUTE)
-#define ENABLE_DOWNLOAD_ATTRIBUTE 1
-#endif
-
-#if !defined(ENABLE_WKPDFVIEW) && PLATFORM(IOS)
-#define ENABLE_WKPDFVIEW 1
-#endif
-
-#if !defined(ENABLE_MEDIA_SOURCE)
-#define ENABLE_MEDIA_SOURCE 0
-#endif
-
-#if !defined(ENABLE_PREVIEW_CONVERTER) && PLATFORM(IOS)
-#define ENABLE_PREVIEW_CONVERTER 1
-#endif
-
-#if !defined(ENABLE_META_VIEWPORT)
-#define ENABLE_META_VIEWPORT 1
-#endif
-
-#endif /* PLATFORM(IOS_FAMILY) */
-
-/* --------- Apple watchOS port --------- */
-#if PLATFORM(WATCHOS)
-
-#endif /* PLATFORM(WATCHOS) */
-
-/* --------- Apple macOS port (not iOS) --------- */
-#if PLATFORM(MAC)
-
-#if !defined(ENABLE_CONTENT_EXTENSIONS)
-#define ENABLE_CONTENT_EXTENSIONS 1
-#endif
-
-#if !defined(ENABLE_FULLSCREEN_API)
-#define ENABLE_FULLSCREEN_API 1
-#endif
-
-#if !defined(ENABLE_REMOTE_INSPECTOR)
-#define ENABLE_REMOTE_INSPECTOR 1
-#endif
-
-#if !defined(ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS)
-#define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 1
-#endif
-
-#if !defined(ENABLE_INSPECTOR_TELEMETRY)
-#define ENABLE_INSPECTOR_TELEMETRY 1
-#endif
-
-#if !defined(ENABLE_SMOOTH_SCROLLING)
-#define ENABLE_SMOOTH_SCROLLING 1
-#endif
-
-#if ENABLE(VIDEO)
-#if !defined(ENABLE_VIDEO_TRACK)
-#define ENABLE_VIDEO_TRACK 1
-#endif
-#endif
-
-#if !defined(ENABLE_WEB_ARCHIVE)
-#define ENABLE_WEB_ARCHIVE 1
-#endif
-
-#if !defined(ENABLE_WEB_AUDIO)
-#define ENABLE_WEB_AUDIO 1
-#endif
-
-#if !defined(ENABLE_CURSOR_VISIBILITY)
-#define ENABLE_CURSOR_VISIBILITY 1
-#endif
-
-#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
-#endif
-
-#if !defined(ENABLE_MAC_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
-#define ENABLE_MAC_GESTURE_EVENTS 1
-#endif
-
-#if !defined(ENABLE_WEBPROCESS_NSRUNLOOP)
-#define ENABLE_WEBPROCESS_NSRUNLOOP __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-#endif
-
-#if !defined(ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING)
-#define ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING ENABLE_WEBPROCESS_NSRUNLOOP
-#endif
-
-#if !defined(ENABLE_MEDIA_SOURCE)
-#define ENABLE_MEDIA_SOURCE 1
-#endif
-
-#endif /* PLATFORM(MAC) */
+/* ==== Platform specific defaults ==== */
 
 /* --------- Apple Cocoa platforms --------- */
-
 #if PLATFORM(COCOA)
-
-#if !defined(ENABLE_LEGACY_ENCRYPTED_MEDIA)
-#if PLATFORM(MACCATALYST)
-#define ENABLE_LEGACY_ENCRYPTED_MEDIA 0
-#else
-#define ENABLE_LEGACY_ENCRYPTED_MEDIA 1
+#include <wtf/PlatformEnableCocoa.h>
 #endif
-#endif
-
-#if !defined(ENABLE_FILE_REPLACEMENT)
-#define ENABLE_FILE_REPLACEMENT 1
-#endif
-
-#if !defined(ENABLE_PAYMENT_REQUEST)
-#define ENABLE_PAYMENT_REQUEST 1
-#endif
-
-#if !defined(ENABLE_ASYNC_SCROLLING)
-#define ENABLE_ASYNC_SCROLLING 1
-#endif
-
-#if !defined(ENABLE_UI_SIDE_COMPOSITING)
-#define ENABLE_UI_SIDE_COMPOSITING 1
-#endif
-
-#endif /* PLATFORM(COCOA) */
-
-#if !PLATFORM(COCOA)
-
-#if !defined(JSC_OBJC_API_ENABLED)
-#define JSC_OBJC_API_ENABLED 0
-#endif
-
-#endif /* !PLATFORM(COCOA) */
-
 
 /* --------- Apple Windows port --------- */
 #if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
-
-#if !defined(ENABLE_FULLSCREEN_API)
-#define ENABLE_FULLSCREEN_API 1
+#include <wtf/PlatformEnableWinApple.h>
 #endif
-
-#if !defined(ENABLE_WEB_ARCHIVE)
-#define ENABLE_WEB_ARCHIVE 1
-#endif
-
-#if !defined(ENABLE_WEBGL)
-#define ENABLE_WEBGL 0
-#endif
-
-#if !defined(ENABLE_GEOLOCATION)
-#define ENABLE_GEOLOCATION 1
-#endif
-
-#endif /* PLATFORM(WIN) && !PLATFORM(WIN_CAIRO) */
 
 /* --------- Windows CAIRO port --------- */
-/* PLATFORM(WIN_CAIRO) is a specialization of PLATFORM(WIN). */
-/* PLATFORM(WIN) is always enabled when PLATFORM(WIN_CAIRO) is enabled. */
 #if PLATFORM(WIN_CAIRO)
-
-#if !defined(ENABLE_WEB_ARCHIVE)
-#define ENABLE_WEB_ARCHIVE 1
+#include <wtf/PlatformEnableWinCairo.h>
 #endif
 
-#if !defined(ENABLE_WEBGL)
-#define ENABLE_WEBGL 1
-#endif
 
-#if !defined(ENABLE_GEOLOCATION)
-#define ENABLE_GEOLOCATION 1
-#endif
 
-#endif /* PLATFORM(WIN_CAIRO) */
+/* ---------  ENABLE macro defaults --------- */
 
-/* ENABLE macro defaults for WebCore */
 /* Do not use PLATFORM() tests in this section ! */
+
+#if !defined(ENABLE_WEBPROCESS_NSRUNLOOP)
+#define ENABLE_WEBPROCESS_NSRUNLOOP 0
+#endif
+
+#if !defined(ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING)
+#define ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING 0
+#endif
+
+#if !defined(ENABLE_MAC_GESTURE_EVENTS)
+#define ENABLE_MAC_GESTURE_EVENTS 0
+#endif
+
+#if !defined(ENABLE_CURSOR_VISIBILITY)
+#define ENABLE_CURSOR_VISIBILITY 0
+#endif
+
+#if !defined(ENABLE_AIRPLAY_PICKER)
+#define ENABLE_AIRPLAY_PICKER 0
+#endif
+
+#if !defined(ENABLE_APPLE_PAY_REMOTE_UI)
+#define ENABLE_APPLE_PAY_REMOTE_UI 0
+#endif
+
+#if !defined(ENABLE_AUTOCORRECT)
+#define ENABLE_AUTOCORRECT 0
+#endif
+
+#if !defined(ENABLE_AUTOCAPITALIZE)
+#define ENABLE_AUTOCAPITALIZE 0
+#endif
+
+#if !defined(ENABLE_TEXT_AUTOSIZING)
+#define ENABLE_TEXT_AUTOSIZING 0
+#endif
+
+#if !defined(ENABLE_IOS_GESTURE_EVENTS)
+#define ENABLE_IOS_GESTURE_EVENTS 0
+#endif
+
+#if !defined(ENABLE_IOS_TOUCH_EVENTS)
+#define ENABLE_IOS_TOUCH_EVENTS 0
+#endif
+
+#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 0
+#endif
+
+#if !defined(ENABLE_WKPDFVIEW)
+#define ENABLE_WKPDFVIEW 0
+#endif
+
+#if !defined(ENABLE_PREVIEW_CONVERTER)
+#define ENABLE_PREVIEW_CONVERTER 0
+#endif
+
+#if !defined(ENABLE_META_VIEWPORT)
+#define ENABLE_META_VIEWPORT 0
+#endif
+
+
+#if !defined(ENABLE_FILE_REPLACEMENT)
+#define ENABLE_FILE_REPLACEMENT 0
+#endif
+
+#if !defined(ENABLE_UI_SIDE_COMPOSITING)
+#define ENABLE_UI_SIDE_COMPOSITING 0
+#endif
 
 #if !defined(ENABLE_3D_TRANSFORMS)
 #define ENABLE_3D_TRANSFORMS 0
@@ -719,8 +517,53 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_SERVICE_WORKER 1
 #endif
 
+#if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION)
+#define ENABLE_MONOSPACE_FONT_EXCEPTION 0
+#endif
 
-/* JIT Features */
+#if !defined(ENABLE_FULL_KEYBOARD_ACCESS)
+#define ENABLE_FULL_KEYBOARD_ACCESS 0
+#endif
+
+#if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING)
+#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 0
+#endif
+
+#if !defined(ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER)
+#define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 0
+#endif
+
+#if !defined(ENABLE_RESOURCE_USAGE)
+#define ENABLE_RESOURCE_USAGE 0
+#endif
+
+#if !defined(ENABLE_SEC_ITEM_SHIM)
+#define ENABLE_SEC_ITEM_SHIM 0
+#endif
+
+#if !defined(ENABLE_DATA_DETECTION)
+#define ENABLE_DATA_DETECTION 0
+#endif
+
+/*
+ * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
+ * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
+ */
+#if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
+#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#endif
+
+
+
+
+/* FIXME: This section of the file has not been cleaned up yet and needs major work. */
+
+/* FIXME: JSC_OBJC_API_ENABLED does not match the normal ENABLE naming convention. */
+#if !PLATFORM(COCOA)
+#if !defined(JSC_OBJC_API_ENABLED)
+#define JSC_OBJC_API_ENABLED 0
+#endif
+#endif
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
 #if !defined(ENABLE_JIT) && (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
@@ -942,10 +785,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_CSS_SELECTOR_JIT 1
 #endif
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST)
-#define ENABLE_DATA_DETECTION 1
-#endif
-
 #if CPU(ARM_THUMB2) || CPU(ARM64)
 #define ENABLE_BRANCH_COMPACTION 1
 #endif
@@ -970,10 +809,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_TREE_DEBUGGING 1
 #endif
 
-#if PLATFORM(COCOA)
-#define ENABLE_RESOURCE_USAGE 1
-#endif
-
 #if !defined(ENABLE_OPENTYPE_VERTICAL) && PLATFORM(GTK) || PLATFORM(WPE)
 #define ENABLE_OPENTYPE_VERTICAL 1
 #endif
@@ -982,41 +817,13 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
-/*
- * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
- * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
- */
-#if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
-#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
-#endif
 
 /* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
 #define ENABLE_SHARED_ARRAY_BUFFER 0
 
-#if PLATFORM(MAC)
-#define ENABLE_WEB_PLAYBACK_CONTROLS_MANAGER 1
-#endif
-
-#if PLATFORM(COCOA)
-/* FIXME: This is a USE style macro, as it triggers the use of CFURLConnection framework stubs. */
-/* FIXME: Is this still necessary? CFURLConnection isn't used on Cocoa platforms any more. */
-#define ENABLE_SEC_ITEM_SHIM 1
-#endif
-
-#if PLATFORM(MAC)
-#define ENABLE_FULL_KEYBOARD_ACCESS 1
-#endif
 
 #if ((PLATFORM(COCOA) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)) && ENABLE(ASYNC_SCROLLING)) || PLATFORM(GTK)
 #define ENABLE_KINETIC_SCROLLING 1
-#endif
-
-#if !defined(ENABLE_MONOSPACE_FONT_EXCEPTION) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
-#define ENABLE_MONOSPACE_FONT_EXCEPTION 1
-#endif
-
-#if !defined(ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING) && PLATFORM(MACCATALYST)
-#define ENABLE_PLATFORM_DRIVEN_TEXT_CHECKING 1
 #endif
 
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
@@ -1026,6 +833,9 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #if !defined(ENABLE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)))
 #define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
+
+
+
 
 
 /* Asserts, invariants for macro definitions */

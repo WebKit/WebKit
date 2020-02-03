@@ -173,6 +173,9 @@ set(WTF_PUBLIC_HEADERS
     PlatformCallingConventions.h
     PlatformCPU.h
     PlatformEnable.h
+    PlatformEnableCocoa.h
+    PlatformEnableWinApple.h
+    PlatformEnableWinCairo.h
     PlatformHave.h
     PlatformLegacy.h
     PlatformOS.h

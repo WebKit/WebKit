@@ -1,3 +1,27 @@
+2020-02-03  Sam Weinig  <weinig@apple.com>
+
+        Start splitting platform specific overrides of default enable behavior into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=207105
+
+        Reviewed by Dean Jackson.
+
+        Splits out platform specific overrides of default enable behavior into separate files, 
+        starting with one for all of the Cocoa related ports, one for Apple's Windows port, and
+        one for the WinCario port.
+        
+        The rule is now that all ENABLE_* macros should have a default defined in PlatformEnable.h,
+        but platforms are allowed to override it via their PlatformEnable*.h file. For now, I manually
+        ensured that all the defines in PlatformEnableCocoa.h, PlatformEnableWinApple.h and PlatformEnableWinCairo.h
+        also had defaults in PlatformEnable.h, but going forward this needs be validated either through
+        some sort of macro-based validation, through the style checker or something else.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h: Copied from Source/WTF/wtf/PlatformEnable.h.
+        * wtf/PlatformEnableWinApple.h: Copied from Source/WTF/wtf/PlatformEnable.h.
+        * wtf/PlatformEnableWinCairo.h: Copied from Source/WTF/wtf/PlatformEnable.h.
+
 2020-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add _PRIVATE_LIBRARIES to framework

@@ -1,3 +1,15 @@
+2020-02-03  Sam Weinig  <weinig@apple.com>
+
+        Start splitting platform specific overrides of default enable behavior into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=207105
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin):
+        Switch to using the ENABLE() helper macro to correctly guard against the case that
+        ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC is defined and equal to 0.
+
 2020-02-03  Keith Rollin  <krollin@apple.com>
 
         Unreviewed watchOS build fix after r255559- add missing semi-colon.
