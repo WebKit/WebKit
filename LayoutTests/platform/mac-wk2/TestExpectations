@@ -971,3 +971,5 @@ webkit.org/b/207141 [ Release ] inspector/canvas/create-context-bitmaprenderer.h
 webkit.org/b/207143 [ Mojave ] media/media-fragments/TC0087.html [ Pass Failure ]
 
 webkit.org/b/207149  [ Mojave ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
+
+webkit.org/b/207151 [ Release ] fast/dom/navigator-detached-no-crash.html [ Pass Failure ]
