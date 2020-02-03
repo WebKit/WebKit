@@ -291,56 +291,64 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     if (!needsQuirks())
         return false;
 
-    auto* loader = m_document->loader();
-    if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
-        return false;
-
-    if (isAmazon())
-        return true;
-    if (isGoogleMaps())
-        return true;
-
-    auto& url = m_document->topDocument().url();
-    auto host = url.host();
-
-    if (equalLettersIgnoringASCIICase(host, "wix.com") || host.endsWithIgnoringASCIICase(".wix.com")) {
-        // Disable simulated mouse dispatching for template selection.
-        return !url.path().startsWithIgnoringASCIICase("/website/templates/");
-    }
-    if ((equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "figma.com") || host.endsWithIgnoringASCIICase(".figma.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "airtable.com") || host.endsWithIgnoringASCIICase(".airtable.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "msn.com") || host.endsWithIgnoringASCIICase(".msn.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "flipkart.com") || host.endsWithIgnoringASCIICase(".flipkart.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "iqiyi.com") || host.endsWithIgnoringASCIICase(".iqiyi.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "soundcloud.com"))
-        return true;
-    if (equalLettersIgnoringASCIICase(host, "naver.com"))
-        return true;
-    if (host.endsWithIgnoringASCIICase(".naver.com")) {
-        // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
-        if (equalLettersIgnoringASCIICase(host, "tv.naver.com"))
+    auto doShouldDispatchChecks = [this] () bool {
+        auto* loader = m_document->loader();
+        if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
             return false;
-        // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
-        if (equalLettersIgnoringASCIICase(host, "mail.naver.com"))
-            return false;
-        // Disable the quirk on the mobile site.
-        // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
-        if (equalLettersIgnoringASCIICase(host, "m.naver.com"))
-            return false;
+
+        if (isAmazon())
+            return true;
+        if (isGoogleMaps())
+            return true;
+
+        auto& url = m_document->topDocument().url();
+        auto host = url.host().convertToASCIILowercase();
+
+        if (host == "wix.com" || host.endsWith(".wix.com")) {
+            // Disable simulated mouse dispatching for template selection.
+            return !url.path().startsWithIgnoringASCIICase("/website/templates/");
+        }
+
+        if ((host == "desmos.com" || host.endsWith(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
+            return true;
+        if (host == "figma.com" || host.endsWith(".figma.com"))
+            return true;
+        if (host == "trello.com" || host.endsWith(".trello.com"))
+            return true;
+        if (host == "airtable.com" || host.endsWith(".airtable.com"))
+            return true;
+        if (host == "msn.com" || host.endsWith(".msn.com"))
+            return true;
+        if (host == "flipkart.com" || host.endsWith(".flipkart.com"))
+            return true;
+        if (host == "iqiyi.com" || host.endsWith(".iqiyi.com"))
+            return true;
+        if (host == "trailers.apple.com")
+            return true;
+        if (host == "soundcloud.com")
+            return true;
+        if (host == "naver.com")
+            return true;
+        if (host == "nhl.com" || host.endsWith(".nhl.com"))
+            return true;
+        if (host.endsWith(".naver.com")) {
+            // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
+            if (host == "tv.naver.com")
+                return false;
+            // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
+            if (host == "mail.naver.com")
+                return false;
+            // Disable the quirk on the mobile site.
+            // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
+            if (host == "m.naver.com")
+                return false;
+        }
         return true;
-    }
-    return false;
+    };
+
+    if (!m_shouldDispatchSimulatedMouseEventsQuirk)
+        m_shouldDispatchSimulatedMouseEventsQuirk = doShouldDispatchChecks();
+    return *m_shouldDispatchSimulatedMouseEventsQuirk;
 }
 
 bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget* target) const

@@ -110,6 +110,9 @@ private:
     mutable Optional<bool> m_needsPreloadAutoQuirk;
 #endif
     mutable Optional<bool> m_shouldDisableElementFullscreenQuirk;
+#if ENABLE(TOUCH_EVENTS)
+    mutable Optional<bool> m_shouldDispatchSimulatedMouseEventsQuirk;
+#endif
 };
 
 }
