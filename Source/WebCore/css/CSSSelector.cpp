@@ -736,6 +736,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 if (cs->value() == "placeholder")
                     builder.appendLiteral("::-webkit-input-placeholder");
                 break;
+#if ENABLE(VIDEO_TRACK)
             case CSSSelector::PseudoElementCue: {
                 if (auto* selectorList = cs->selectorList()) {
                     builder.appendLiteral("::cue(");
@@ -745,6 +746,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                     builder.appendLiteral("::cue");
                 break;
             }
+#endif
             default:
                 builder.appendLiteral("::");
                 builder.append(cs->serializingValue());
