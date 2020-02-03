@@ -1,3 +1,21 @@
+2020-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/input/composition-highlights.html fails on open source Mojave bots
+        https://bugs.webkit.org/show_bug.cgi?id=207107
+
+        Reviewed by Tim Horton.
+
+        This test currently fails consistently on non-internal macOS Mojave bots; for some reason, the width of the
+        colon character glyph in Times font is 8.4px instead of 4.4px when using CTRunGetAdvancesPtr, causing the
+        composition highlights to be shifted right 4px and making the ref comparison fail.
+
+        Debugging shows that only in macOS Mojave, the CoreText framework adjusts the width of the colon glyph by 4px
+        in TStorageRange::SetAdvance. This has since been fixed in Catalina, so just work around this for the time being
+        by changing the editable text from "Test: " to just "Test ".
+
+        * editing/input/composition-highlights-expected.html:
+        * editing/input/composition-highlights.html:
+
 2020-02-02  Antoine Quint  <graouts@apple.com>
 
         ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) on animations/keyframe-autoclose-brace.html
