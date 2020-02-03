@@ -1,3 +1,19 @@
+2020-02-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        \0 identity escapes should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=207114
+
+        Reviewed by Darin Adler.
+
+        This change adds a separate check for null character because `strchr`
+        always returns a non-null pointer when called with '\0' as second argument.
+
+        Grammar: https://tc39.es/ecma262/#prod-annexB-IdentityEscape
+        (/u flag precludes the use of SourceCharacterIdentityEscape)
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::isIdentityEscapeAnError):
+
 2020-02-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-alphabetical \c escapes should be syntax errors in Unicode patterns only

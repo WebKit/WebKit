@@ -231,7 +231,7 @@ private:
     // For non-unicode patterns, most any character can be escaped.
     bool isIdentityEscapeAnError(int ch)
     {
-        if (m_isUnicode && !strchr("^$\\.*+?()[]{}|/", ch)) {
+        if (m_isUnicode && (!strchr("^$\\.*+?()[]{}|/", ch) || !ch)) {
             m_errorCode = ErrorCode::InvalidIdentityEscape;
             return true;
         }

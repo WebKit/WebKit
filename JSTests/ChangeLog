@@ -1,3 +1,12 @@
+2020-02-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        \0 identity escapes should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=207114
+
+        Reviewed by Darin Adler.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-02-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-alphabetical \c escapes should be syntax errors in Unicode patterns only
