@@ -883,3 +883,5 @@ webkit.org/b/192974 media/modern-media-controls/compact-media-controls/compact-m
 webkit.org/b/181085 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
 
 webkit.org/b/207146 media/media-source/media-source-seek-redundant-append.html [ Pass Timeout ]
+
+webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
