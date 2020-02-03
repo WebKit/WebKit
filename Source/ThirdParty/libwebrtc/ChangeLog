@@ -1,3 +1,19 @@
+2020-02-03  youenn fablet  <youenn@apple.com>
+
+        Make sure RTCVideoEncoderH264 generate a keyframe even if the frame that was supposed to be a key frame was dropped
+        https://bugs.webkit.org/show_bug.cgi?id=207108
+
+        Reviewed by Eric Carlson.
+
+        Add a parameter telling whether a frame to be encoded should be a key frame.
+        In encoder callback, if the frame is expected to be a key frame, set a flag to force the next frame to be a key frame.
+        This ensures that keyframe sending is not delayed in case encoding is dropping or failing to encode frames.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 frameWasEncoded:flags:sampleBuffer:codecSpecificInfo:width:height:renderTimeMs:timestamp:rotation:isKeyFrameRequired:]):
+
 2020-01-20  youenn fablet  <youenn@apple.com>
 
         Setting kVTCompressionPropertyKey_DataRateLimits on RTCVideoEncoderH264 fails

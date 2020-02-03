@@ -86,7 +86,8 @@ static inline bool isStandardFrameSize(int32_t width, int32_t height)
                  height:(int32_t)height
            renderTimeMs:(int64_t)renderTimeMs
               timestamp:(uint32_t)timestamp
-               rotation:(RTCVideoRotation)rotation;
+               rotation:(RTCVideoRotation)rotation
+     isKeyFrameRequired:(bool)isKeyFrameRequired;
 
 @end
 
@@ -112,8 +113,9 @@ struct RTCFrameEncodeParams {
                        int32_t h,
                        int64_t rtms,
                        uint32_t ts,
-                       RTCVideoRotation r)
-      : encoder(e), width(w), height(h), render_time_ms(rtms), timestamp(ts), rotation(r) {
+                       RTCVideoRotation r,
+                       bool isKeyFrameRequired)
+      : encoder(e), width(w), height(h), render_time_ms(rtms), timestamp(ts), rotation(r), isKeyFrameRequired(isKeyFrameRequired) {
     if (csi) {
       codecSpecificInfo = csi;
     } else {
@@ -128,6 +130,7 @@ struct RTCFrameEncodeParams {
   int64_t render_time_ms;
   uint32_t timestamp;
   RTCVideoRotation rotation;
+  bool isKeyFrameRequired;
 };
 
 // We receive I420Frames as input, but we need to feed CVPixelBuffers into the
@@ -206,7 +209,8 @@ void compressionOutputCallback(void *encoder,
                                   height:encodeParams->height
                             renderTimeMs:encodeParams->render_time_ms
                                timestamp:encodeParams->timestamp
-                                rotation:encodeParams->rotation];
+                                rotation:encodeParams->rotation
+                      isKeyFrameRequired:encodeParams->isKeyFrameRequired];
 }
 
 // Extract VideoToolbox profile out of the webrtc::SdpVideoFormat. If there is
@@ -370,6 +374,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   webrtc::H264BitstreamParser _h264BitstreamParser;
   std::vector<uint8_t> _frameScaleBuffer;
   bool _disableEncoding;
+  bool _isKeyFrameRequired;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -400,6 +405,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(ExtractProfile(*_profile_level_id));
     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
   }
+  _isKeyFrameRequired = false;
+
   return self;
 }
 
@@ -450,7 +457,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   if (!_callback || ![self hasCompressionSession]) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
-  BOOL isKeyframeRequired = NO;
+  BOOL isKeyframeRequired = _isKeyFrameRequired;
+  _isKeyFrameRequired = false;
 
   // Get a pixel buffer from the pool and copy frame data over.
   if ([self resetCompressionSessionIfNeededWithFrame:frame]) {
@@ -513,6 +521,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   if (!isKeyframeRequired && frameTypes) {
     for (NSNumber *frameType in frameTypes) {
       if ((RTCFrameType)frameType.intValue == RTCFrameTypeVideoFrameKey) {
+        RTC_LOG(LS_INFO) << "keyframe requested";
         isKeyframeRequired = YES;
         break;
       }
@@ -534,7 +543,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                               _height,
                                               frame.timeStampNs / rtc::kNumNanosecsPerMillisec,
                                               frame.timeStamp,
-                                              frame.rotation));
+                                              frame.rotation,
+                                              isKeyframeRequired));
   encodeParams->codecSpecificInfo.packetizationMode = _packetizationMode;
 
   // Update the bitrate if needed.
@@ -947,15 +957,21 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                  height:(int32_t)height
            renderTimeMs:(int64_t)renderTimeMs
               timestamp:(uint32_t)timestamp
-               rotation:(RTCVideoRotation)rotation {
+               rotation:(RTCVideoRotation)rotation
+     isKeyFrameRequired:(bool)isKeyFrameRequired {
   if (status != noErr) {
     RTC_LOG(LS_ERROR) << "H264 encode failed with code: " << status;
+    if (isKeyFrameRequired)
+      _isKeyFrameRequired = true;
     return;
   }
   if (infoFlags & kVTEncodeInfo_FrameDropped) {
+    if (isKeyFrameRequired)
+      _isKeyFrameRequired = true;
     RTC_LOG(LS_INFO) << "H264 encode dropped frame.";
     return;
   }
+  _isKeyFrameRequired = false;
 
   BOOL isKeyframe = NO;
   CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, 0);
@@ -1004,6 +1020,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   BOOL res = _callback(frame, codecSpecificInfo, header);
   if (!res) {
     RTC_LOG(LS_ERROR) << "Encode callback failed";
+    if (isKeyFrameRequired)
+      _isKeyFrameRequired = true;
     return;
   }
   _bitrateAdjuster->Update(frame.buffer.length);
