@@ -1,3 +1,12 @@
+2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mojave wk2 ] media/media-fragments/TC0087.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207143
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-03  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Accelerated animations don't run until their natural completion
