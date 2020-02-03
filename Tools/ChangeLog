@@ -1,3 +1,16 @@
+2020-02-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Set custom build summary for webkitpy tests
+        https://bugs.webkit.org/show_bug.cgi?id=207027
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        * BuildSlaveSupport/ews-build/steps.py:
+        (WebKitPyTest.setBuildSummary):
+        (WebKitPyTest.getResultSummary):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+
 2020-02-03  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Don't split binary results

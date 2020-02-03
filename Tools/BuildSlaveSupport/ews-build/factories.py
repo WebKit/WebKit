@@ -29,7 +29,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    DownloadBuiltProduct, ExtractBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, UpdateWorkingDirectory, ValidatePatch)
+                   RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, SetBuildSummary, UpdateWorkingDirectory, ValidatePatch)
 
 
 class Factory(factory.BuildFactory):
@@ -89,6 +89,7 @@ class WebKitPyFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArgument=additionalArguments, checkRelevance=True)
         self.addStep(RunWebKitPyPython2Tests())
         self.addStep(RunWebKitPyPython3Tests())
+        self.addStep(SetBuildSummary())
 
 
 class BuildFactory(Factory):

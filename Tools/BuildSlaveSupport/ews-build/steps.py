@@ -725,9 +725,24 @@ class WebKitPyTest(shell.ShellCommand):
         self.addLogObserver('json', self.log_observer)
         return shell.ShellCommand.start(self)
 
+    def setBuildSummary(self, build_summary):
+        previous_build_summary = self.getProperty('build_summary', '')
+        if not previous_build_summary:
+            self.setProperty('build_summary', build_summary)
+            return
+
+        if build_summary in previous_build_summary:
+            # Ensure that we do not append same build summary multiple times in case
+            # this method is called multiple times.
+            return
+
+        new_build_summary = previous_build_summary + ', ' + build_summary
+        self.setProperty('build_summary', new_build_summary)
+
     def getResultSummary(self):
         if self.results == SUCCESS:
             message = 'Passed webkitpy {} tests'.format(self.language)
+            self.setBuildSummary(message)
             return {u'step': unicode(message)}
 
         logLines = self.log_observer.getStdout()
@@ -743,7 +758,8 @@ class WebKitPyTest(shell.ShellCommand):
             return super(WebKitPyTest, self).getResultSummary()
         pluralSuffix = 's' if len(failures) > 1 else ''
         failures_string = ', '.join([failure.get('name').replace('webkitpy.', '') for failure in failures])
-        message = 'Found {} WebKitPy test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
+        message = 'Found {} webkitpy {} test failure{}: {}'.format(len(failures), self.language, pluralSuffix, failures_string)
+        self.setBuildSummary(message)
         return {u'step': unicode(message)}
 
     @defer.inlineCallbacks
