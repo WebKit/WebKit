@@ -1,3 +1,14 @@
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] inspector/canvas/recording-2d-full.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207154
+
+        Updating expectations for newer OS
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] animations/animation-callback-timestamp.html is flaky failing.
