@@ -1,3 +1,15 @@
+2020-02-03  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [JHBuild] remove libvpx
+        https://bugs.webkit.org/show_bug.cgi?id=207103
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        libvpx were added in jhbuild in times of OpenWebRTC. Nowadays, LibWebRTC is used and libvpx is
+        installed through Tools/gtk/install-dependencies, thus it should be removed from jhbuild.modules
+
+        * gstreamer/jhbuild.modules: remove libvpx.
+
 2020-02-02  Sam Weinig  <weinig@apple.com>
 
         Update style checker with new locations OS version checks are allowed

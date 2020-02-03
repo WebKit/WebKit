@@ -38,11 +38,6 @@
     </branch>
   </autotools>
 
-  <autotools id="libvpx"
-    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared --disable-avx512">
-    <branch repo="chromium.googlesource.com" checkoutdir="libvpx" tag="v1.7.0"/>
-  </autotools>
-
   <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1">
     <branch repo="aomedia.googlesource.com" module="aom" checkoutdir="aom" branch="master"
             revision="master" tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
@@ -77,7 +72,6 @@
   <meson id="gst-plugins-good" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dgtk3=disabled">
     <dependencies>
       <dep package="gst-plugins-base"/>
-      <dep package="libvpx"/>
     </dependencies>
 
     <branch hash="sha256:9fbabe69018fcec707df0b71150168776040cde6c1a26bb5a82a136755fa8f1f" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.1">
