@@ -170,6 +170,9 @@ TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
     ConstructorDestructorCounter::TestingScope scope;
 
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+#if !CHECK_HASHTABLE_ITERATORS &&!DUMP_HASHTABLE_STATS_PER_TABLE
+    static_assert(sizeof(set) == sizeof(void*));
+#endif
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
