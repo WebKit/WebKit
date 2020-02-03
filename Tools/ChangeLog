@@ -1,3 +1,11 @@
+2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, disable ResponsivenessTimer test in Debug / ASAN
+
+        The ResponsivenessTimer is disabled for those configurations as of r255518.
+
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm:
+
 2020-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Use std::hypot() where possible
