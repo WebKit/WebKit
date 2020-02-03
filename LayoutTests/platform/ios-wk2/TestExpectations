@@ -1365,3 +1365,5 @@ webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass 
 webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
 
 webkit.org/b/206993 [ Release ]  fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207153 animations/animation-callback-timestamp.html [ Pass Failure ]
