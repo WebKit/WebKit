@@ -1973,3 +1973,5 @@ webkit.org/b/207057 imported/w3c/web-platform-tests/IndexedDB/keypath-special-id
 webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Pass Failure ]
 
 webkit.org/b/206484 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Pass Failure ]
+
+webkit.org/b/206285 inspector/worker/debugger-pause.html [ Pass Failure ]
