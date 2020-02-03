@@ -1367,3 +1367,5 @@ webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html
 webkit.org/b/206993 [ Release ]  fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207153 animations/animation-callback-timestamp.html [ Pass Failure ]
+
+webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
