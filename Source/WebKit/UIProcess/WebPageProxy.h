@@ -1474,10 +1474,11 @@ public:
     void mockMediaPlaybackTargetPickerDismissPopup();
 
     // WebMediaSessionManagerClient
-    void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
-    void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
-    void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
-    void playbackTargetPickerWasDismissed(uint64_t) override;
+    void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(uint64_t, bool) final;
+    void setShouldPlayToPlaybackTarget(uint64_t, bool) final;
+    void playbackTargetPickerWasDismissed(uint64_t) final;
+    bool alwaysOnLoggingAllowed() final { return isAlwaysOnLoggingAllowed(); }
 #endif
 
     void didChangeBackgroundColor();

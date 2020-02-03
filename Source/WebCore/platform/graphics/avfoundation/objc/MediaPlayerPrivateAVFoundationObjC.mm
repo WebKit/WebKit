@@ -2621,6 +2621,27 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+// AVPlayerItem.tracks is empty during AirPlay so if AirPlay is activated immediately
+// after the item is created, we don't know if it has audio or video and state reported
+// to the WebMediaSessionManager is incorrect. AirPlay can't actually be active is an item
+// doesn't have audio or video, so lie during AirPlay.
+
+bool MediaPlayerPrivateAVFoundationObjC::hasVideo() const
+{
+    if (isCurrentPlaybackTargetWireless())
+        return true;
+
+    return MediaPlayerPrivateAVFoundation::hasVideo();
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::hasAudio() const
+{
+    if (isCurrentPlaybackTargetWireless())
+        return true;
+
+    return MediaPlayerPrivateAVFoundation::hasAudio();
+}
+
 bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
     bool wirelessTarget = false;

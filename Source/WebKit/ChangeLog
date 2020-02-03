@@ -1,3 +1,13 @@
+2020-02-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] AirPlay sometimes stops after 60 minutes of playback
+        https://bugs.webkit.org/show_bug.cgi?id=207056
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2020-02-03  Sam Weinig  <weinig@apple.com>
 
         Start splitting platform specific overrides of default enable behavior into their own files

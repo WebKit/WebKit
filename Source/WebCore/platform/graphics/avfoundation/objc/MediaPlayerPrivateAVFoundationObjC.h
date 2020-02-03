@@ -301,6 +301,8 @@ private:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    bool hasVideo() const final;
+    bool hasAudio() const final;
     bool isCurrentPlaybackTargetWireless() const override;
     String wirelessPlaybackTargetName() const override;
     MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
