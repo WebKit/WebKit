@@ -1,3 +1,13 @@
+2020-02-03  Truitt Savell  <tsavell@apple.com>
+
+        Fix expectation after r255561 that needed to be just iPad
+        https://bugs.webkit.org/show_bug.cgi?id=207116
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Flaky Test: inspector/worker/debugger-pause.html
