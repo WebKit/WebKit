@@ -396,7 +396,7 @@ static NSDictionary *submitActionNameFontAttributes()
     }
 
     if (targetHighlightedFrameDeltaX || targetHighlightedFrameDeltaY) {
-        CGFloat distanceToTarget = std::hypot(targetHighlightedFrameDeltaX, targetHighlightedFrameDeltaY)
+        CGFloat distanceToTarget = std::hypot(targetHighlightedFrameDeltaX, targetHighlightedFrameDeltaY);
         unitVectorToTarget = CGVector { targetHighlightedFrameDeltaX / distanceToTarget, targetHighlightedFrameDeltaY / distanceToTarget };
     }
 

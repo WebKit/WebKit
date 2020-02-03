@@ -1,3 +1,10 @@
+2020-02-03  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed watchOS build fix after r255559- add missing semi-colon.
+
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm:
+        (-[WKFocusedFormControlView scrollOffsetForCrownInputOffset:]):
+
 2020-02-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Use std::hypot() where possible
