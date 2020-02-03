@@ -549,81 +549,14 @@ sub runTest {
     }
 
     my $testResult = 0;
-    my $failureFlag = 0;
     my $lastOptimizeLevel;
 
     open(TEST, "-|", "@command 2>&1") or die "Failed to run @command";
     while ( my $line = <TEST> ) {
-        my $subTestName;
         print $line if ($verbose);
-
-        # e.g.: 'O2: testRotRWithImmShift(uint64-max, uint32-min): OK!''
-        if ($line =~ /(O\d): (\S+)(\(.*\)): ([A-Za-z]+)!\n/) {
-            $lastOptimizeLevel = $1;
-            $subTestName = "$testName.$1.$2$3";
-            $failureFlag += 1 if ($4 ne "OK");
-        }
-        # Assertion in binary
-        # e.g.: ASSERTION FAILED: things[0] == 2
-        elsif ($line =~ /ASSERTION FAILED:/) {
-            $failureFlag += 1;
-            next;
-        }
-        # e.g.: file/path(397) : void (anonymous namespace)::testShuffleSimpleBroadcast()
-        elsif ($failureFlag && $line =~ /.*\(\d+\) : \S+ .*::(\S+)(\(.*\))/) {
-            if (defined $lastOptimizeLevel) {
-                $subTestName = "$testName.$lastOptimizeLevel.$1$2";
-            } else {
-                $subTestName = "$testName.$1$2";
-            }
-        }
-        # sub-test from the c-api, of the form:
-        # e.g.: 'testapi[15422:16904790] parallelPromiseResolveTest(): done.''
-        elsif ($line =~ /\[\d+:\d+\] (\S+)(): done\.\n/) {
-            $subTestName = "$testName.objective-c.$1";
-        }
-        # End of C-API tests (meaning we just finished the ungrouped main tests)
-        elsif ($line =~ /Starting C-API tests in C++/) {
-            $subTestName = "$testName.objective-c.main";
-        }
-        # End of testapi
-        # e.g.: FAIL: Some tests failed.
-        elsif ($line =~ /FAIL: Some tests failed\./) {
-            $failureFlag = 0;
-            next;
-        }
-        # Test cases inside API tests
-        # e.g.: 'testapi[15422:16904790] TEST: "2 + 2": PASSED'
-        elsif ($line =~ /\[\d+:\d+\] TEST: ".*": ([A-Z]+)\n/) {
-            $failureFlag += 1 if ($1 ne "PASSED" && $1 ne "PASS");
-            next;
-        }
-        # e.g.: 'testBitXorAndAndArgs(0, 0,uint32-max): OK!''
-        elsif ($line =~ /(\S+)(\(.*\)): ([A-Za-z]+)!\n/) {
-            $subTestName = "$testName.$1$2";
-            $failureFlag += 1 if ($3 ne "OK");
-        }
-        # General testcase statement, filtered to exclude some junk logging
-        # e.g.: 'PASS: DFG script timed out as expected when no callback is specified.''
-        elsif ($line =~ /([A-Z]+): (.*)\.*\n/ && !($line =~ /[A-Z]+: \d+\n/ || $line =~ /\[\d+:\d+\] [A-Z]+:/)) {
-            $subTestName = "$testName.$2";
-            $failureFlag += 1 if ($1 ne "PASS");
-        }
-        # e.g.: 'test description: PASSED'
-        elsif ($line =~ /.*: ([A-Z]+)\n/) {
-            $failureFlag += 1 if ($1 ne "PASSED" && $1 ne "PASS");
-            next;
-        } else {
-            next;
-        }
-
-        if (!defined $reportData{$subTestName}) {
-            print "$subTestName failed\n" if ($failureFlag && !$verbose);
-            $reportData{$subTestName} = $failureFlag ? {actual => "FAIL"} : {actual => "PASS"};
-        }
-        $failureFlag = 0;
     }
     $testResult = close(TEST) ? 0 : $?;
+    $reportData{$testName} = $testResult ? {actual => "FAIL"} : {actual => "PASS"};
 
     my $exitStatus = exitStatus($testResult);
     print "$testName completed with rc=$testResult ($exitStatus)\n\n";

@@ -1,3 +1,13 @@
+2020-02-03  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Don't split binary results
+        https://bugs.webkit.org/show_bug.cgi?id=207118
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (runTest): Only report aggregated binary results.
+
 2020-02-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, disable ResponsivenessTimer test in Debug / ASAN
