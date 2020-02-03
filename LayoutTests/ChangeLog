@@ -1,3 +1,14 @@
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] inspector/canvas/recording-webgl-full.html  is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207145
+
+        Updating expectations
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-02-03  Lauro Moura  <lmoura@igalia.com>
 
         [WebKitTestRunner] setOpenPanelFiles support in non-local tests
