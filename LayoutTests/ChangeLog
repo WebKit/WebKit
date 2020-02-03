@@ -1,5 +1,14 @@
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk1 ] transitions/start-transform-transition.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207125
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk1 ] compositing/backing/animate-into-view.html is flaky timing out
         https://bugs.webkit.org/show_bug.cgi?id=207124
 
