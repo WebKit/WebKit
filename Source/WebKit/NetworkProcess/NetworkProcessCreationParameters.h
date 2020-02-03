@@ -53,7 +53,7 @@ struct NetworkProcessCreationParameters {
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS_FAMILY)

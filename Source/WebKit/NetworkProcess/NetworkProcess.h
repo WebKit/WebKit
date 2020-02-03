@@ -430,7 +430,7 @@ private:
     void setNetworkProxySettings(PAL::SessionID, WebCore::CurlProxySettings&&);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 

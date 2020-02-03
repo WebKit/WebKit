@@ -1,3 +1,24 @@
+2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Use per-UIProcess default cookie storage for Mac Catalyst apps
+        https://bugs.webkit.org/show_bug.cgi?id=207139
+        <rdar://problem/59047014>
+
+        Reviewed by Brent Fulgham.
+
+        Use per-UIProcess default cookie storage for Mac Catalyst apps, similarly to what
+        we do for regular macOS apps.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] Dragging on-screen volume control on a YouTube video selects text around the panel
