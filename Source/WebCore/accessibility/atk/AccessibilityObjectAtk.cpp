@@ -38,8 +38,10 @@ namespace WebCore {
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
 {
     if (detachmentType != AccessibilityDetachmentType::CacheDestroyed) {
-        if (auto* cache = axObjectCache())
+        if (auto* cache = axObjectCache()) {
             cache->detachWrapper(this, detachmentType);
+            return;
+        }
     }
 
     auto* wrapper = this->wrapper();
