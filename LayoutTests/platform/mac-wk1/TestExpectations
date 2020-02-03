@@ -875,3 +875,5 @@ webkit.org/b/206950 fast/images/animated-gif-restored-from-bfcache.html [ Pass F
 webkit.org/b/207124 compositing/backing/animate-into-view.html [ Pass Timeout ]
 
 webkit.org/b/207125 transitions/start-transform-transition.html [ Pass Failure ]
+
+webkit.org/b/207133 css3/selectors3/xml/css3-modsel-d2.xml [ Pass Failure ]
