@@ -2590,7 +2590,13 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
         auto fileBuffer = makeUniqueArray<char>(fileBufferSize);
         JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);
 
-        WKArrayAppendItem(fileURLs.get(), adoptWK(WKURLCreateWithBaseURL(m_testURL.get(), fileBuffer.get())).get());
+        auto baseURL = m_testURL.get();
+
+        if (fileBuffer[0] == '/')
+            baseURL = WKURLCreateWithUTF8CString("file://");
+
+        WKArrayAppendItem(fileURLs.get(), adoptWK(WKURLCreateWithBaseURL(baseURL, fileBuffer.get())).get());
+
     }
 
     static auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetOpenPanelFileURLs"));

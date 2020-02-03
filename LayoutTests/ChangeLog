@@ -1,3 +1,12 @@
+2020-02-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WebKitTestRunner] setOpenPanelFiles support in non-local tests
+        https://bugs.webkit.org/show_bug.cgi?id=206517
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/gtk/TestExpectations: Update expectations after fix.
+
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Layout Test svg/custom/object-sizing-explicit-width.xhtml is a flaky failure.

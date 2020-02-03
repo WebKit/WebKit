@@ -1,3 +1,15 @@
+2020-02-03  Lauro Moura  <lmoura@igalia.com>
+
+        [WebKitTestRunner] setOpenPanelFiles support in non-local tests
+        https://bugs.webkit.org/show_bug.cgi?id=206517
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setOpenPanelFiles): Use file:// if the passed path
+        starts with a leading slash instead of using the test URL, which could
+        cause input forms with invalid file data.
+
 2020-02-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Set custom build summary for webkitpy tests
