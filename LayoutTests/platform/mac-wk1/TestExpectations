@@ -885,3 +885,5 @@ webkit.org/b/181085 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure
 webkit.org/b/207146 media/media-source/media-source-seek-redundant-append.html [ Pass Timeout ]
 
 webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207150 [ Catalina ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
