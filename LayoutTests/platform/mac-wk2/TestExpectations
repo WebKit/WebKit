@@ -957,3 +957,5 @@ webkit.org/b/207060 imported/w3c/web-platform-tests/html/webappapis/timers/type-
 webkit.org/b/207063 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Pass Failure ]
 
 webkit.org/b/207078 webgpu/whlsl/textures-sample-level.html [ Pass Failure ]
+
+webkit.org/b/207117 webgpu/whlsl/nested-loop.html [ Pass Failure ]
