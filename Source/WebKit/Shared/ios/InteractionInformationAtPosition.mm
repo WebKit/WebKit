@@ -46,6 +46,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << canBeValid;
     encoder << nodeAtPositionHasDoubleClickHandler;
     encoder << isSelectable;
+    encoder << prefersDraggingOverTextSelection;
     encoder << isNearMarkedText;
     encoder << touchCalloutEnabled;
     encoder << isLink;
@@ -99,6 +100,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.isSelectable))
+        return false;
+
+    if (!decoder.decode(result.prefersDraggingOverTextSelection))
         return false;
 
     if (!decoder.decode(result.isNearMarkedText))
