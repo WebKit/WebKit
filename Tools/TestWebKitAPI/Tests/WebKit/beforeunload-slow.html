@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function sleep(millisecondsToWait) {
+    var now = new Date().getTime();
+    while (new Date().getTime() < now + millisecondsToWait) { }
+}
+
+onbeforeunload = (ev) => {
+    sleep(70);
+}
+</script>
+</head>
+</html>

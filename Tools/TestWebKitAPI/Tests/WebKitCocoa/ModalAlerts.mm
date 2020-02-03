@@ -190,4 +190,51 @@ TEST(WebKit, SlowBeforeUnloadPrompt)
     EXPECT_FALSE([webView _isClosed]);
 }
 
+static bool webViewDidCloseCalled = false;
+static unsigned viewDidCloseCallCount = 0;
+
+@interface SlowBeforeUnloadHandlerUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation SlowBeforeUnloadHandlerUIDelegate
+
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    completionHandler(YES);
+}
+
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    ++viewDidCloseCallCount;
+    webViewDidCloseCalled = true;
+}
+
+@end
+
+TEST(WebKit, SlowBeforeUnloadHandlerSingleClosePageCall)
+{
+    auto slowBeforeUnloadHandlerUIDelegate = adoptNS([[SlowBeforeUnloadHandlerUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:slowBeforeUnloadHandlerUIDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload-slow"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+    [webView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+
+    TestWebKitAPI::Util::spinRunLoop(100);
+
+    [webView _tryClose];
+
+    TestWebKitAPI::Util::run(&webViewDidCloseCalled);
+    EXPECT_EQ(1U, viewDidCloseCallCount);
+    EXPECT_FALSE([webView _isClosed]);
+
+    TestWebKitAPI::Util::sleep(0.2);
+
+    EXPECT_EQ(1U, viewDidCloseCallCount);
+    EXPECT_FALSE([webView _isClosed]);
+}
+
 #endif

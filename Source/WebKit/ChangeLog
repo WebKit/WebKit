@@ -1,3 +1,19 @@
+2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253224) WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=207121
+        <rdar://problem/58880177>
+
+        Reviewed by Alex Christensen.
+
+        WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView, in case we time out
+        while waiting for an answer from the WebProcess but the WebProcess eventually responds.
+
+        Change is covered by new API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::tryClose):
+
 2020-02-03  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] AirPlay sometimes stops after 60 minutes of playback
