@@ -1,3 +1,9 @@
+2020-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the inspector files combination after r255547
+
+        * UserInterface/Main.html: Remove Views/SizesToFitNavigationBar.js that was removed in r255547
+
 2020-02-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: move the items in the toolbar into the tab bar to save vertical space
