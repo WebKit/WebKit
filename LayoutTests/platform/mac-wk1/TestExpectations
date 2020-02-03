@@ -879,3 +879,5 @@ webkit.org/b/207125 transitions/start-transform-transition.html [ Pass Failure ]
 webkit.org/b/207133 css3/selectors3/xml/css3-modsel-d2.xml [ Pass Failure ]
 
 webkit.org/b/192974 media/modern-media-controls/compact-media-controls/compact-media-controls-constructor.html [ Pass Failure ]
+
+webkit.org/b/181085 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]

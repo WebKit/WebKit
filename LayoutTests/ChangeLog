@@ -1,5 +1,14 @@
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Layout Test svg/custom/object-sizing-explicit-width.xhtml is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=181058
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk1 ] media/modern-media-controls/compact-media-controls/compact-media-controls-constructor.html is flaky failing (192974)
         https://bugs.webkit.org/show_bug.cgi?id=192974
 
