@@ -1579,9 +1579,6 @@ test/built-ins/RegExp/unicode_restricted_identity_escape_alpha.js:
 test/built-ins/RegExp/unicode_restricted_octal_escape.js:
   default: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/unicode_restricted_quantifiable_assertion.js:
-  default: 'Test262Error: RegExp("(?=.)*", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: RegExp("(?=.)*", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/built-ins/Set/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'
@@ -3370,18 +3367,6 @@ test/language/literals/regexp/u-invalid-legacy-octal-escape.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-invalid-oob-decimal-escape.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-optional-lookahead.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-optional-negative-lookahead.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-range-lookahead.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-range-negative-lookahead.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/module-code/eval-rqstd-once.js:
