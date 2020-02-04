@@ -576,9 +576,8 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 {
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
 
-    // FIXME: Instead of returning an empty JSValue, should return an ExceptionDetails.
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return { };
+        return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
 
     switch (parameters.runAsAsyncFunction) {
     case RunAsAsyncFunction::No: {
