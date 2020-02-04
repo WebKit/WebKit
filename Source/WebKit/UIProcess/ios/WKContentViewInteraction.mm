@@ -6887,6 +6887,10 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     [_dragInteraction _setLiftDelay:self.dragLiftDelay];
     [_dragInteraction setEnabled:shouldEnableDragInteractionForPolicy(self.webView._dragInteractionPolicy)];
 
+#if USE(APPLE_INTERNAL_SDK)
+    [self _performAdditionalSetupDragAndDropInteractions];
+#endif
+
     [self addInteraction:_dragInteraction.get()];
     [self addInteraction:_dropInteraction.get()];
 }

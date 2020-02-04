@@ -1,3 +1,17 @@
+2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a WebKitAdditions hook to provide additional customizations to UIDragInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=207177
+        <rdar://problem/59121266>
+
+        Reviewed by Tim Horton.
+
+        Add a WebKitAdditions extension point that runs immediately after setting up UIDragInteraction and
+        UIDropInteraction.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupDragAndDropInteractions]):
+
 2020-02-03  Chris Dumez  <cdumez@apple.com>
 
         Stop relying on ResponsivenessTimer to keep the WebProcess from suspending during initialization
