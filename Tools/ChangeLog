@@ -1,5 +1,16 @@
 2020-02-04  Jonathan Bedard  <jbedard@apple.com>
 
+        TestWebKitAPI: Handle case where test result does not contain path
+        https://bugs.webkit.org/show_bug.cgi?id=207216
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::Printer::OnTestPartResult): It's possible that the TestPartResult
+        will not contain a file name. We should handle this case.
+
+2020-02-04  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Better order upload callbacks
         https://bugs.webkit.org/show_bug.cgi?id=207219
 
