@@ -1,3 +1,68 @@
+2020-02-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255422. rdar://problem/58675608
+
+    [Web Animations] Changing the delay of an accelerated animation doesn't seek the animation
+    https://bugs.webkit.org/show_bug.cgi?id=206990
+    <rdar://problem/58675608>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Test: webanimations/seeking-by-changing-delay-accelerated.html
+    
+    In order to seek an accelerated animation, we need to update the animation on the target element's backing GraphicsLayer. We do this by enqueuing an
+    AcceleratedAction:Seek command which is done by calling KeyframeEffect::animationDidSeek(), which we would only call from WebAnimation::setCurrentTime().
+    However, seeking can be performed by modifying the animation's effect's timing.
+    
+    We now call WebAnimation::effectTimingDidChange() with an optional ComputedEffectTiming for call sites that want to provide timing data prior to
+    modifying timing properties. This allows WebAnimation::effectTimingDidChange() to compare the previous progress with the new progress to determine if the
+    animation was seeked, so KeyframeEffect::animationDidSeek() may be called.
+    
+    There are two places where we now call WebAnimation::effectTimingDidChange() with the previous timing data. First, when updateTiming() is called
+    through the JavaScript API (AnimationEffect::updateTiming) and when a CSS Animation's timing has been modified by changing some of the animation CSS
+    properties (CSSAnimation::syncPropertiesWithBackingAnimation).
+    
+    * animation/AnimationEffect.cpp:
+    (WebCore::AnimationEffect::updateTiming): Compute the previous timing data and provide it to WebAnimation::effectTimingDidChange().
+    * animation/CSSAnimation.cpp:
+    (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation): Compute the previous timing data and provide it to WebAnimation::effectTimingDidChange().
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::computeAcceleratedPropertiesState): Drive-by fix for faulty logic introduced in a recent patch (r255383).
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions): We need to reset the m_isRunningAccelerated flag when an animation was supposed to be stopped but
+    couldn't be because the target's layer backing was removed prior to the accelerated action being committed.
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::effectTimingDidChange): If previous timing data was provided, check whether its progress differs from the current timing data and
+    call KeyframeEffect::animationDidSeek().
+    * animation/WebAnimation.h:
+    
+    LayoutTests:
+    
+    Add a new test which would fail prior to this patch where we pause an animation after it has started playing accelerated and
+    change its delay to check that it correctly seeks the animation.
+    
+    * webanimations/seeking-by-changing-delay-accelerated-expected.html: Added.
+    * webanimations/seeking-by-changing-delay-accelerated.html: Added.
+    * platform/win/TestExpectations: Mark the new test as failing.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255422 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-30  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Changing the delay of an accelerated animation doesn't seek the animation
+            https://bugs.webkit.org/show_bug.cgi?id=206990
+            <rdar://problem/58675608>
+
+            Reviewed by Antti Koivisto.
+
+            Add a new test which would fail prior to this patch where we pause an animation after it has started playing accelerated and
+            change its delay to check that it correctly seeks the animation.
+
+            * webanimations/seeking-by-changing-delay-accelerated-expected.html: Added.
+            * webanimations/seeking-by-changing-delay-accelerated.html: Added.
+            * platform/win/TestExpectations: Mark the new test as failing.
+
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r255504. rdar://problem/59061225

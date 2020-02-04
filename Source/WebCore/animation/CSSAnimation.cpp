@@ -65,6 +65,8 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     auto& animation = backingAnimation();
     auto* animationEffect = effect();
 
+    auto previousTiming = animationEffect->getComputedTiming();
+
     switch (animation.fillMode()) {
     case AnimationFillMode::None:
         animationEffect->setFill(FillMode::None);
@@ -101,7 +103,7 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     animationEffect->setDelay(Seconds(animation.delay()));
     animationEffect->setIterationDuration(Seconds(animation.duration()));
     animationEffect->updateStaticTimingProperties();
-    effectTimingDidChange();
+    effectTimingDidChange(previousTiming);
 
     // Synchronize the play state
     if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused) {

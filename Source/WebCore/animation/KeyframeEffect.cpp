@@ -1127,7 +1127,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
             break;
     }
 
-    if (!hasSomeAcceleratedProperties && !hasSomeUnacceleratedProperties)
+    if (!hasSomeAcceleratedProperties)
         m_acceleratedPropertiesState = AcceleratedProperties::None;
     else if (hasSomeUnacceleratedProperties)
         m_acceleratedPropertiesState = AcceleratedProperties::Some;
@@ -1410,8 +1410,10 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     if (!renderer || !renderer->isComposited()) {
         // The renderer may no longer be composited because the accelerated animation ended before we had a chance to update it,
         // in which case if we asked for the animation to stop, we can discard the current set of accelerated actions.
-        if (m_lastRecordedAcceleratedAction == AcceleratedAction::Stop)
+        if (m_lastRecordedAcceleratedAction == AcceleratedAction::Stop) {
             m_pendingAcceleratedActions.clear();
+            m_isRunningAccelerated = false;
+        }
         return;
     }
 
