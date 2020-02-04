@@ -4943,6 +4943,7 @@
 		F440E77A233D94D70063F9AB /* NavigatorClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E76F233D94D30063F9AB /* NavigatorClipboard.h */; };
 		F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E770233D94D40063F9AB /* ClipboardItem.h */; };
 		F440E77D233D94D70063F9AB /* Clipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E772233D94D50063F9AB /* Clipboard.h */; };
+		F442C35923E3ADD200499582 /* CompositionHighlight.h in Headers */ = {isa = PBXBuildFile; fileRef = F442C35723E3AC5100499582 /* CompositionHighlight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44A5F591FED38F2007F5944 /* LegacyNSPasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F44EBBD81DB5D21400277334 /* StaticRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15422,6 +15423,7 @@
 		F440E775233D94D60063F9AB /* ClipboardItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipboardItem.cpp; sourceTree = "<group>"; };
 		F440E777233D94D70063F9AB /* ClipboardItem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClipboardItem.idl; sourceTree = "<group>"; };
 		F442850B2140412500CCDA22 /* FontAttributeChanges.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontAttributeChanges.cpp; sourceTree = "<group>"; };
+		F442C35723E3AC5100499582 /* CompositionHighlight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompositionHighlight.h; sourceTree = "<group>"; };
 		F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyNSPasteboardTypes.h; sourceTree = "<group>"; };
 		F44EBBD61DB5D1B600277334 /* StaticRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StaticRange.idl; sourceTree = "<group>"; };
 		F44EBBD81DB5D21400277334 /* StaticRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticRange.h; sourceTree = "<group>"; };
@@ -21577,6 +21579,7 @@
 				7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */,
 				93309D8D099E64910056E581 /* CompositeEditCommand.cpp */,
 				93309D8E099E64910056E581 /* CompositeEditCommand.h */,
+				F442C35723E3AC5100499582 /* CompositionHighlight.h */,
 				2DD5A7261EBEE47D009BA597 /* CompositionUnderline.h */,
 				D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */,
 				D0B0556609C6700100307E43 /* CreateLinkCommand.h */,
@@ -29342,6 +29345,7 @@
 				71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */,
 				7111243E216FA71100EB7B67 /* CompositeOperationOrAuto.h in Headers */,
 				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
+				F442C35923E3ADD200499582 /* CompositionHighlight.h in Headers */,
 				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
 				7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,

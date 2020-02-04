@@ -224,7 +224,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 {
     if (aSelector == @selector(insertText:)
         || aSelector == @selector(doCommand:)
-        || aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:)
+        || aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:highlights:)
         || aSelector == @selector(unmarkText)
         || aSelector == @selector(hasMarkedText)
         || aSelector == @selector(conversationIdentifier)
@@ -251,7 +251,7 @@ NSString *NSTextInsertionUndoableAttributeName;
         return @"insertText";
     if (aSelector == @selector(doCommand:))
         return @"doCommand";
-    if (aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:))
+    if (aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:highlights:))
         return @"setMarkedText";
     if (aSelector == @selector(substringFrom:length:))
         return @"substringFromRange";
@@ -314,7 +314,7 @@ NSString *NSTextInsertionUndoableAttributeName;
         [textInput doCommandBySelector:NSSelectorFromString(aCommand)];
 }
 
-- (void)setMarkedText:(NSString *)aString selectedFrom:(int)from length:(int)length suppressUnderline:(BOOL)suppressUnderline
+- (void)setMarkedText:(NSString *)aString selectedFrom:(int)from length:(int)length suppressUnderline:(BOOL)suppressUnderline highlights:(NSArray<NSDictionary *> *)highlights
 {
     NSObject <NSTextInput> *textInput = [self textInput];
 

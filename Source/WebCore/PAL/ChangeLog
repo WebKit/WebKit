@@ -1,3 +1,159 @@
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255532. rdar://problem/57876140
+
+    Add support for specifying background colors when setting marked text
+    https://bugs.webkit.org/show_bug.cgi?id=207065
+    <rdar://problem/57876140>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Add support for rendering custom highlights (background colors) behind marked text in WebCore. To do this, we
+    plumb a Vector of CompositionHighlights alongside the Vector of CompositionUnderlines to Editor. At paint time,
+    we then consult this highlight data to determine which ranges of text in the composition should paint using
+    custom background colors.
+    
+    Note that in the future, we should consider refactoring both composition underlines and highlights to use the
+    MarkedText mechanism for decorating ranges of text instead.
+    
+    Test: editing/input/composition-highlights.html
+    
+    * Headers.cmake:
+    * WebCore.xcodeproj/project.pbxproj:
+    * editing/CompositionHighlight.h: Added.
+    (WebCore::CompositionHighlight::CompositionHighlight):
+    (WebCore::CompositionHighlight::encode const):
+    (WebCore::CompositionHighlight::decode):
+    
+    Add CompositionHighlight, which represents a range in the composition that should be highlighted with a given
+    background color.
+    
+    * editing/Editor.cpp:
+    (WebCore::Editor::clear):
+    (WebCore::Editor::setComposition):
+    
+    Add logic for clearing and updating m_customCompositionHighlights.
+    
+    * editing/Editor.h:
+    (WebCore::Editor::compositionUsesCustomHighlights const):
+    (WebCore::Editor::customCompositionHighlights const):
+    * rendering/InlineTextBox.cpp:
+    (WebCore::InlineTextBox::paintCompositionBackground):
+    
+    If custom composition highlights are given, use those when painting the composition background; otherwise,
+    default to painting the entire composition range using `Color::compositionFill`.
+    
+    Source/WebCore/PAL:
+    
+    Add an SPI soft-linking declaration for NSMarkedClauseSegmentAttributeName.
+    
+    * pal/spi/cocoa/NSAttributedStringSPI.h:
+    
+    Source/WebKit:
+    
+    Implement -setAttributedMarkedText:selectedRange: on WKContentView, and have it extract highlight color
+    information from the given attributed string. Plumb this through to the web process by serializing and
+    deserializing `WebCore::CompositionHighlight`s.
+    
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::setMarkedText):
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (compositionHighlights):
+    
+    For each marked text clause, grab the specified background color (defaulting to Color::compositionFill) and use
+    it to create a list of CompositionHighlights.
+    
+    (-[WKContentView setAttributedMarkedText:selectedRange:]):
+    (-[WKContentView setMarkedText:selectedRange:]):
+    (-[WKContentView _setMarkedText:highlights:selectedRange:]):
+    * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+    (WKBundlePageSetComposition):
+    
+    Add testing support for specifying highlight ranges when setting marked text.
+    
+    * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+    * WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp:
+    (WebKit::WebEditorClient::didDispatchInputMethodKeydown):
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::setCompositionForTesting):
+    (WebKit::WebPage::setCompositionAsync):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    
+    Source/WebKitLegacy/mac:
+    
+    Adjust some call sites of Editor::setComposition().
+    
+    * WebView/WebFrame.mm:
+    (-[WebFrame setMarkedText:selectedRange:]):
+    (-[WebFrame setMarkedText:forCandidates:]):
+    * WebView/WebHTMLView.mm:
+    (-[WebHTMLView setMarkedText:selectedRange:]):
+    
+    Source/WebKitLegacy/win:
+    
+    Adjust some call sites of Editor::setComposition().
+    
+    * WebView.cpp:
+    (WebView::onIMEComposition):
+    (WebView::setCompositionForTesting):
+    
+    Tools:
+    
+    Add support in WebKitTestRunner for specifying a list of highlight ranges when setting marked text. This comes
+    in the form of an additional argument to TextInputController::setMarkedText, which contains an array of objects,
+    each describing one range (in the composition) to highlight.
+    
+    * DumpRenderTree/ios/TextInputControllerIOS.m:
+    (+[TextInputController isSelectorExcludedFromWebScript:]):
+    (+[TextInputController webScriptNameForSelector:]):
+    (-[TextInputController setMarkedText:selectedFrom:length:suppressUnderline:highlights:]):
+    (-[TextInputController setMarkedText:selectedFrom:length:suppressUnderline:]): Deleted.
+    * DumpRenderTree/mac/TextInputControllerMac.m:
+    (+[TextInputController isSelectorExcludedFromWebScript:]):
+    (+[TextInputController webScriptNameForSelector:]):
+    (-[TextInputController setMarkedText:selectedFrom:length:suppressUnderline:highlights:]):
+    (-[TextInputController setMarkedText:selectedFrom:length:suppressUnderline:]): Deleted.
+    * WebKitTestRunner/InjectedBundle/Bindings/TextInputController.idl:
+    * WebKitTestRunner/InjectedBundle/TextInputController.cpp:
+    (WTR::arrayLength):
+    (WTR::createCompositionHighlightData):
+    
+    Add logic to convert a given JSObject containing the composition highlight information into a WKArrayRef, which
+    is then passed into WebKit via WKBundlePageSetComposition.
+    
+    (WTR::TextInputController::setMarkedText):
+    * WebKitTestRunner/InjectedBundle/TextInputController.h:
+    
+    LayoutTests:
+    
+    Add a test to check that highlighting different parts of a composition range results in the same behavior as
+    applying background colors using CSS. This test is currently only supported in WebKit2.
+    
+    * TestExpectations:
+    * editing/input/composition-highlights-expected.html: Added.
+    * editing/input/composition-highlights.html: Added.
+    * platform/wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255532 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Add support for specifying background colors when setting marked text
+            https://bugs.webkit.org/show_bug.cgi?id=207065
+            <rdar://problem/57876140>
+
+            Reviewed by Tim Horton.
+
+            Add an SPI soft-linking declaration for NSMarkedClauseSegmentAttributeName.
+
+            * pal/spi/cocoa/NSAttributedStringSPI.h:
+
 2020-01-09  Eric Carlson  <eric.carlson@apple.com>
 
         Don't softlink AVCapture classes on watchOS or tvOS

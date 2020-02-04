@@ -768,6 +768,9 @@ inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Pas
 # Target domain is only present in WebKit2.
 http/tests/inspector/target [ Pass ]
 
+# Highlighting marked text ranges from layout tests is only supported in WebKit2.
+editing/input/composition-highlights.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

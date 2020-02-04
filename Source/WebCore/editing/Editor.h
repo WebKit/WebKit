@@ -83,6 +83,7 @@ class Text;
 class TextCheckerClient;
 class TextEvent;
 
+struct CompositionHighlight;
 struct FontAttributes;
 struct PasteboardPlainText;
 struct PasteboardURL;
@@ -355,7 +356,7 @@ public:
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, unsigned selectionStart, unsigned selectionEnd);
     WEBCORE_EXPORT void confirmComposition();
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
     WEBCORE_EXPORT void cancelComposition();
@@ -369,6 +370,8 @@ public:
     unsigned compositionEnd() const { return m_compositionEnd; }
     bool compositionUsesCustomUnderlines() const { return !m_customCompositionUnderlines.isEmpty(); }
     const Vector<CompositionUnderline>& customCompositionUnderlines() const { return m_customCompositionUnderlines; }
+    bool compositionUsesCustomHighlights() const { return !m_customCompositionHighlights.isEmpty(); }
+    const Vector<CompositionHighlight>& customCompositionHighlights() const { return m_customCompositionHighlights; }
 
     enum class RevealSelection { No, Yes };
     WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
@@ -601,6 +604,7 @@ private:
     unsigned m_compositionStart;
     unsigned m_compositionEnd;
     Vector<CompositionUnderline> m_customCompositionUnderlines;
+    Vector<CompositionHighlight> m_customCompositionHighlights;
     bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };
