@@ -983,3 +983,5 @@ webkit.org/b/207199 webgpu/whlsl/loops.html [ Pass ImageOnlyFailure ]
 webkit.org/b/207200 webgpu/whlsl/while-loop-continue.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207202 webgpu/whlsl/textures-sample-grad.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/206718 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Crash ]
