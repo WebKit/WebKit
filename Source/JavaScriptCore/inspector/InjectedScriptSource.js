@@ -1466,8 +1466,8 @@ function CommandLineAPI(callFrame)
 {
     let savedResultAlias = InjectedScriptHost.savedResultAlias;
 
-    let defineGetter = (key, value) => {
-        if (typeof value !== "function") {
+    let defineGetter = (key, value, wrap) => {
+        if (wrap) {
             let originalValue = value;
             value = function() { return originalValue; };
         }
@@ -1478,17 +1478,17 @@ function CommandLineAPI(callFrame)
     };
 
     if ("_lastResult" in injectedScript)
-        defineGetter("_", injectedScript._lastResult);
+        defineGetter("_", injectedScript._lastResult, true);
 
     if ("_exceptionValue" in injectedScript)
-        defineGetter("exception", injectedScript._exceptionValue);
+        defineGetter("exception", injectedScript._exceptionValue, true);
 
     if ("_eventValue" in injectedScript)
-        defineGetter("event", injectedScript._eventValue);
+        defineGetter("event", injectedScript._eventValue, true);
 
     // $1-$99
     for (let i = 1; i < injectedScript._savedResults.length; ++i)
-        defineGetter(i, injectedScript._savedResults[i]);
+        defineGetter(i, injectedScript._savedResults[i], true);
 
     for (let name in CommandLineAPI.getters)
         defineGetter(name, CommandLineAPI.getters[name]);

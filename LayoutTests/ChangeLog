@@ -1,3 +1,14 @@
+2020-02-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r248287): Console: function objects saved to a $n will be invoked instead of just referenced when evaluating in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=207180
+        <rdar://problem/58860268>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/runtime/saveResult.html:
+        * inspector/runtime/saveResult-expected.txt:
+
 2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/loops.html is flaky failing
