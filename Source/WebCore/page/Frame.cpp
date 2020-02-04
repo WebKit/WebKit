@@ -922,10 +922,8 @@ float Frame::frameScaleFactor() const
     if (!page || !isMainFrame())
         return 1;
 
-    if (FrameView* view = this->view()) {
-        if (view->delegatesPageScaling())
-            return 1;
-    }
+    if (page->delegatesScaling())
+        return 1;
 
     return page->pageScaleFactor();
 }

@@ -1468,13 +1468,16 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     auto coreView = WebCore::FrameView::create(*coreFrame);
     coreFrame->setView(coreView.copyRef());
 
+#if PLATFORM(IOS_FAMILY)
+    page->setDelegatesScaling(true);
+#endif
+
     [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];
     [m_webFrame->_private->webFrameView _install];
 
     if (isMainFrame) {
 #if PLATFORM(IOS_FAMILY)
         coreView->setDelegatesScrolling(true);
-        coreView->setDelegatesPageScaling(true);
 #endif
         coreView->setParentVisible(true);
     }

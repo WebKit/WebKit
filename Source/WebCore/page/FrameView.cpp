@@ -3707,12 +3707,13 @@ void FrameView::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rec
 
 float FrameView::visibleContentScaleFactor() const
 {
-    // FIXME: This !delegatesPageScaling() is confusing. This function should probably be renamed to delegatedPageScaleFactor().
-    if (!frame().isMainFrame() || !delegatesPageScaling())
+    if (!frame().isMainFrame())
         return 1;
 
     Page* page = frame().page();
-    if (!page)
+    // FIXME: This !delegatesScaling() is confusing, and the opposite behavior to Frame::frameScaleFactor().
+    // This function should probably be renamed to delegatedPageScaleFactor().
+    if (!page || !page->delegatesScaling())
         return 1;
 
     return page->pageScaleFactor();

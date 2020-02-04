@@ -105,7 +105,7 @@ std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRe
 
     float scaleFactor = frame.page()->deviceScaleFactor();
 
-    if (frame.view()->delegatesPageScaling())
+    if (frame.page()->delegatesScaling())
         scaleFactor *= frame.page()->pageScaleFactor();
 
     if (options & SnapshotOptionsPaintWithIntegralScaleFactor)

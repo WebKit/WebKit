@@ -197,11 +197,6 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
     delegatesScrollingDidChange();
 }
 
-void ScrollView::setDelegatesPageScaling(bool delegatesPageScaling)
-{
-    m_delegatesPageScaling = delegatesPageScaling;
-}
-
 IntPoint ScrollView::contentsScrollPosition() const
 {
 #if PLATFORM(IOS_FAMILY)
