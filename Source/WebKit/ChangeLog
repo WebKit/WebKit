@@ -1,3 +1,17 @@
+2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a WebKitAdditions hook to override the behavior of -[WKContentView gestureRecognizer:shouldReceiveTouch:]
+        https://bugs.webkit.org/show_bug.cgi?id=207162
+        <rdar://problem/59129739>
+
+        Reviewed by Tim Horton.
+
+        Allow an internal implementation of `-_allowGestureRecognizer:toReceiveTouch:` to prevent touches from being
+        routed to certain gesture recognizers, if necessary.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+
 2020-02-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Use per-UIProcess default cookie storage for Mac Catalyst apps
