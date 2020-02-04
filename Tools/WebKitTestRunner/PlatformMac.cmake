@@ -22,6 +22,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_DIR}
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore
     ${FORWARDING_HEADERS_DIR}/WebCore
+    ${FORWARDING_HEADERS_DIR}/WebKit
     ${ICU_INCLUDE_DIRS}
     ${WEBCORE_DIR}/testing/cocoa
     ${WEBKITLEGACY_DIR}
@@ -85,6 +86,7 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/mac/main.mm
     
     ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/ClassMethodSwizzler.mm
+    ${WEBKIT_TESTRUNNER_SHARED_DIR}/cocoa/PlatformViewHelpers.mm
 
     ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/EventSerializerMac.mm
     ${WEBKIT_TESTRUNNER_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm

@@ -1,3 +1,14 @@
+2020-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=207231
+
+        * DumpRenderTree/PlatformMac.cmake:
+        * MiniBrowser/mac/CMakeLists.txt:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/PlatformMac.cmake:
+
 2020-02-04  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable TestWebKit

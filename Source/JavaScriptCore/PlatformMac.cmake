@@ -33,7 +33,7 @@ list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/cocoa/RemoteInspectorXPCConnection.h
 )
 
-set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
+set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION} -force_load ${CMAKE_BINARY_DIR}/lib/libWTF.a")
 
 # FIXME: Make including these files consistent in the source so these forwarding headers are not needed.
 if (NOT EXISTS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AugmentableInspectorControllerClient.h)

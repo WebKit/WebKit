@@ -126,7 +126,11 @@ static const int testFooterBannerHeight = 58;
     _textFinder.client = _webView;
     _textFinder.findBarContainer = self;
     
+#if __has_feature(objc_arc)
     __weak WKWebView *weakWebView = _webView;
+#else
+    WKWebView *weakWebView = _webView;
+#endif
     _textFinder.hideInterfaceCallback = ^{
         WKWebView *webView = weakWebView;
         [webView _hideFindUI];

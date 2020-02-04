@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/AbstractPasteboard.h>
-
 #if TARGET_OS_IOS
+
+#import <WebCore/AbstractPasteboard.h>
 
 struct CGSize;
 

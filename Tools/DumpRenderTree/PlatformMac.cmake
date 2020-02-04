@@ -25,6 +25,7 @@ list(APPEND DumpRenderTree_LIBRARIES
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     cg
     cf
+    cocoa
     mac
     mac/InternalHeaders/WebKit
     TestNetscapePlugIn
@@ -74,6 +75,7 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
 
 list(APPEND DumpRenderTree_ObjCpp_SOURCES
     DefaultPolicyDelegate.mm
+    cocoa/UIScriptControllerCocoa.mm
     mac/AccessibilityCommonMac.mm
     mac/AccessibilityControllerMac.mm
     mac/AccessibilityNotificationHandler.mm

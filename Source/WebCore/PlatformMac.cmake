@@ -19,7 +19,7 @@ find_library(QUARTZCORE_LIBRARY QuartzCore)
 find_library(SECURITY_LIBRARY Security)
 find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
 find_library(XML2_LIBRARY XML2)
-find_package(Sqlite REQUIRED)
+find_package(Sqlite3 REQUIRED)
 find_package(ZLIB REQUIRED)
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
@@ -45,7 +45,7 @@ list(APPEND WebCore_LIBRARIES
     ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
     ${SECURITY_LIBRARY}
-    ${SQLITE_LIBRARIES}
+    ${SQLITE3_LIBRARIES}
     ${SYSTEMCONFIGURATION_LIBRARY}
     ${XML2_LIBRARY}
     ${ZLIB_LIBRARY}
@@ -223,6 +223,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ScrollSnapAnimatorState.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
+    platform/cocoa/SystemBattery.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.mm
@@ -454,6 +455,23 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     bridge/objc/WebScriptObject.h
     bridge/objc/WebScriptObjectPrivate.h
 
+    crypto/CryptoAlgorithmIdentifier.h
+    crypto/CryptoKey.h
+    crypto/CryptoKeyType.h
+    crypto/CryptoKeyUsage.h
+    crypto/CryptoKeyPair.h
+    crypto/CommonCryptoUtilities.h
+
+    crypto/keys/CryptoKeyHMAC.h
+    crypto/keys/CryptoAesKeyAlgorithm.h
+    crypto/keys/CryptoEcKeyAlgorithm.h
+    crypto/keys/CryptoHmacKeyAlgorithm.h
+    crypto/keys/CryptoKeyAES.h
+    crypto/keys/CryptoKeyAlgorithm.h
+    crypto/keys/CryptoRsaHashedKeyAlgorithm.h
+    crypto/keys/CryptoRsaKeyAlgorithm.h
+    crypto/keys/CryptoKeyEC.h
+
     editing/cocoa/AutofillElements.h
     editing/cocoa/DataDetection.h
     editing/cocoa/HTMLConverter.h
@@ -466,6 +484,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/archive/cf/LegacyWebArchive.h
 
     loader/mac/LoaderNSURLExtras.h
+
+    Modules/webauthn/AuthenticatorAssertionResponse.h
+    Modules/webauthn/AuthenticatorResponse.h
+    Modules/webauthn/AuthenticatorAttestationResponse.h
+
+    Modules/webauthn/fido/Pin.h
 
     page/mac/TextIndicatorWindow.h
     page/mac/WebCoreFrameView.h
@@ -482,6 +506,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
 
     platform/PictureInPictureSupport.h
+    platform/PlatformContentFilter.h
 
     platform/audio/cocoa/MediaSessionManagerCocoa.h
     platform/audio/cocoa/WebAudioBufferList.h
@@ -491,6 +516,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/cf/RunLoopObserver.h
 
+    platform/cocoa/NetworkExtensionContentFilter.h
     platform/cocoa/PlatformView.h
     platform/cocoa/PlaybackSessionInterface.h
     platform/cocoa/PlaybackSessionModel.h
@@ -498,6 +524,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/ScrollController.h
     platform/cocoa/ScrollSnapAnimatorState.h
     platform/cocoa/SearchPopupMenuCocoa.h
+    platform/cocoa/SystemBattery.h
     platform/cocoa/SystemVersion.h
     platform/cocoa/VideoFullscreenChangeObserver.h
     platform/cocoa/VideoFullscreenModel.h
@@ -508,6 +535,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/gamepad/mac/HIDGamepad.h
     platform/gamepad/mac/HIDGamepadProvider.h
+
+    platform/graphics/MIMETypeCache.h
 
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h
     platform/graphics/avfoundation/WebMediaSessionManagerMac.h
@@ -563,6 +592,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/WebNSAttributedStringExtras.h
     platform/mac/WebPlaybackControlsManager.h
 
+    platform/mediastream/RealtimeMediaSourceIdentifier.h
+
     platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h
 
     platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h
@@ -581,6 +612,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/network/cocoa/CookieStorageObserver.h
     platform/network/cocoa/CredentialCocoa.h
+    platform/network/cocoa/HTTPCookieAcceptPolicyCocoa.h
     platform/network/cocoa/ProtectionSpaceCocoa.h
     platform/network/cocoa/WebCoreNSURLSession.h
 

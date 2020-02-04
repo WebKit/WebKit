@@ -1,3 +1,10 @@
+2020-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=207231
+
+        * PlatformMac.cmake:
+
 2020-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use PackedRefPtr in UnlinkedCodeBlock

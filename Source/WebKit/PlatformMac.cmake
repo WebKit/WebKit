@@ -14,7 +14,7 @@ add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
-list(APPEND WebKit_LIBRARIES
+list(APPEND WebKit_PRIVATE_LIBRARIES
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
     ${DEVICEIDENTITY_LIBRARY}
@@ -43,6 +43,12 @@ list(APPEND WebKit_SOURCES
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 )
 
+list(APPEND WebKit_SOURCES
+    UIProcess/API/Cocoa/_WKContentWorld.mm
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
+    UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
+)
+
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
     "${WEBKIT_DIR}/NetworkProcess/cocoa"
@@ -52,6 +58,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
     "${WEBKIT_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT_DIR}/UIProcess/API/mac"
+    "${WEBKIT_DIR}/UIProcess/API/ios"
     "${WEBKIT_DIR}/UIProcess/Authentication/cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa"
     "${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization"
@@ -150,6 +157,23 @@ set(WebKit_FORWARDING_HEADERS_FILES
 )
 
 list(APPEND WebKit_MESSAGES_IN_FILES
+    GPUProcess/GPUConnectionToWebProcess.messages.in
+    GPUProcess/GPUProcess.messages.in
+
+    GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
+    GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+    GPUProcess/webrtc/RemoteMediaRecorder.messages.in
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+
+    GPUProcess/media/RemoteMediaPlayerProxy.messages.in
+    GPUProcess/media/RemoteMediaResourceManager.messages.in
+    GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
+    
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
     Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
@@ -161,6 +185,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
     UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
+
+    UIProcess/GPU/GPUProcessProxy.messages.in
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
@@ -178,7 +204,13 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/cocoa/UserMediaCaptureManager.messages.in
     WebProcess/cocoa/VideoFullscreenManager.messages.in
 
+    WebProcess/GPU/GPUProcessConnection.messages.in
+
+    WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
+    WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
+
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
+    WebProcess/WebPage/ViewUpdateDispatcher.messages.in
 
     WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 
@@ -209,6 +241,7 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/API/C/Cocoa
     UIProcess/API/C/mac
     UIProcess/API/cpp
+    UIProcess/API/ios
 
     WebProcess/InjectedBundle/API/Cocoa
     WebProcess/InjectedBundle/API/c
@@ -226,6 +259,12 @@ foreach (_file ${ObjCHeaders})
         file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_name} "#import <WebKit/UIProcess/API/Cocoa/${_name}>")
     endif ()
 endforeach ()
+if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingIOS.h)
+    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingIOS.h "#import <WebKit/UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h>")
+endif ()
+if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingMac.h)
+    file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKWebViewPrivateForTestingMac.h "#import <WebKit/UIProcess/API/mac/WKWebViewPrivateForTestingMac.h>")
+endif ()
 
 # FIXME: Forwarding headers should be complete copies of the header.
 set(WebKitLegacyForwardingHeaders
