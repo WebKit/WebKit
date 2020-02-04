@@ -1,3 +1,41 @@
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255359. rdar://problem/58570085
+
+    REGRESSION: WK1 Accessibility: ASSERTION FAILED: FontCache::singleton().generation() == m_generation
+    https://bugs.webkit.org/show_bug.cgi?id=206241
+    <rdar://problem/58570085>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Font cache generation bump empties all font related caches and triggers full style resolution. However it is possible
+    for single element computed style resolution (triggeded by <title> element here) to happen before the full resolution.
+    In this case a style computed based on parent style with old font generation may get inserted into matched declarations
+    cache. A subsequent style resolution may then pick up this style and use it as render style.
+    
+    * style/StyleBuilderState.cpp:
+    (WebCore::Style::BuilderState::updateFont):
+    
+    Fix by taking care that the font returned by style resolver is always updated to the current generation.
+    
+    LayoutTests:
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255359 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-29  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION: WK1 Accessibility: ASSERTION FAILED: FontCache::singleton().generation() == m_generation
+            https://bugs.webkit.org/show_bug.cgi?id=206241
+            <rdar://problem/58570085>
+
+            Reviewed by Zalan Bujtas.
+
+            * platform/mac-wk1/TestExpectations:
+
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255329. rdar://problem/58606666
