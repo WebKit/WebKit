@@ -1,3 +1,17 @@
+2020-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r255595): page not closed after beforeunload handler returns true
+        https://bugs.webkit.org/show_bug.cgi?id=207189
+
+        Reviewed by Chris Dumez.
+
+        We are assuming the try close did timeout in that case, because the timer is stopped before running the
+        beforeunload dialog.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel): Start the try close timer again when the beforeunload
+        dialog replies.
+
 2020-02-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         [CMake] Add Cairo::Cairo target

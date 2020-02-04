@@ -5659,7 +5659,12 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(FrameIdentifier frameID, Security
     // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer and the tryClose timer.
     m_process->stopResponsivenessTimer();
     m_tryCloseTimeoutTimer.stop();
-    m_uiClient->runBeforeUnloadConfirmPanel(*this, message, frame, WTFMove(securityOrigin), WTFMove(reply));
+    m_uiClient->runBeforeUnloadConfirmPanel(*this, message, frame, WTFMove(securityOrigin),
+        [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(reply)](bool shouldClose) mutable {
+            if (weakThis)
+                m_tryCloseTimeoutTimer.startOneShot(tryCloseTimeoutDelay);
+            completionHandler(shouldClose);
+    });
 }
 
 void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
