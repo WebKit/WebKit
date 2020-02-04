@@ -1,3 +1,22 @@
+2020-02-04  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Add WebKit API files
+        https://bugs.webkit.org/show_bug.cgi?id=207168
+
+        Reviewed by Darin Adler.
+
+        Add PlayStation WebKit API files and expose them in the root header. Fix up the
+        build to copy them over. Also make sure that the playstation directory is listed
+        as a platform in the forwarding headers script.
+
+        * PlatformPlayStation.cmake:
+        * Scripts/generate-forwarding-headers.pl:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/playstation/WKBasePlayStation.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/playstation/WKAPICastPlayStation.h: Added.
+        * UIProcess/API/C/playstation/WKView.h: Added.
+
 2020-02-04  youenn fablet  <youenn@apple.com>
 
         NetworkProcess should be notified by UIProcess when its service worker process connection should be on

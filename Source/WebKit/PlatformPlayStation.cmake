@@ -28,6 +28,7 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/curl/NetworkDataTaskCurl.cpp
     NetworkProcess/curl/NetworkProcessCurl.cpp
+    NetworkProcess/curl/NetworkProcessMainCurl.cpp
     NetworkProcess/curl/NetworkSessionCurl.cpp
     NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
@@ -72,7 +73,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/WebMemoryPressureHandler.cpp
     UIProcess/WebViewportAttributes.cpp
 
-    UIProcess/API/C/WKGrammarDetail.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
@@ -109,24 +109,23 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/playstation/WebPagePlayStation.cpp
 
+    WebProcess/playstation/WebProcessMainPlayStation.cpp
     WebProcess/playstation/WebProcessPlayStation.cpp
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/curl"
-    "${WEBKIT_DIR}/NetworkProcess/unix"
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"
-    "${WEBKIT_DIR}/Shared/unix"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
+    "${WEBKIT_DIR}/UIProcess/API/C/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
-    "${WEBKIT_DIR}/WebProcess/unix"
 )
 
 # Temporarily list out shared headers here
@@ -282,7 +281,16 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
 
 # PlayStation specific
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+    Shared/API/c/cairo/WKImageCairo.h
 
+    Shared/API/c/curl/WKCertificateInfoCurl.h
+
+    Shared/API/c/playstation/WKBasePlayStation.h
+
+    UIProcess/API/C/curl/WKProtectionSpaceCurl.h
+    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
+
+    UIProcess/API/C/playstation/WKView.h
 )
 
 WEBKIT_MAKE_FORWARDING_HEADERS(WebKit
