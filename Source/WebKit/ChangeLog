@@ -1,5 +1,38 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255375. rdar://problem/58791603
+
+    Crash under com.apple.WebKit.Networking at WebKit: WebKit::WebIDBServer::suspend
+    https://bugs.webkit.org/show_bug.cgi?id=206904
+    <rdar://problem/58791603>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    Wait until m_server is set in constructor of WebIDBServer to make sure m_server can be accessed in
+    WebIDBServer::suspend.
+    
+    * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+    (WebKit::WebIDBServer::WebIDBServer):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255375 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-29  Sihui Liu  <sihui_liu@apple.com>
+
+            Crash under com.apple.WebKit.Networking at WebKit: WebKit::WebIDBServer::suspend
+            https://bugs.webkit.org/show_bug.cgi?id=206904
+            <rdar://problem/58791603>
+
+            Reviewed by Maciej Stachowiak.
+
+            Wait until m_server is set in constructor of WebIDBServer to make sure m_server can be accessed in
+            WebIDBServer::suspend.
+
+            * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+            (WebKit::WebIDBServer::WebIDBServer):
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255366. rdar://problem/58440111
 
     [iOS] Add managed preference to allow legacy sync XHRs during page dismissal

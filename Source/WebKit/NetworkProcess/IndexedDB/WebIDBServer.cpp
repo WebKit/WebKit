@@ -46,9 +46,12 @@ WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, We
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), sessionID, directory = directory.isolatedCopy(), spaceRequester = WTFMove(spaceRequester)] () mutable {
+    BinarySemaphore semaphore;
+    postTask([this, protectedThis = makeRef(*this), &semaphore, sessionID, directory = directory.isolatedCopy(), spaceRequester = WTFMove(spaceRequester)] () mutable {
         m_server = makeUnique<WebCore::IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester));
+        semaphore.signal();
     });
+    semaphore.wait();
 }
     
 void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime, CompletionHandler<void()>&& callback)
