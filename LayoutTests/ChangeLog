@@ -1,3 +1,15 @@
+2020-02-04  Antti Koivisto  <antti@apple.com>
+
+        CSS Rules with the same selector from several large stylesheets are applied in the wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=204687
+        <rdar://problem/57522566>
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/css/many-rules-expected.html: Added.
+        * fast/css/many-rules.html: Added.
+
 2020-02-04  youenn fablet  <youenn@apple.com>
 
         MediaDevices should handle changes of iframe allow attribute value
