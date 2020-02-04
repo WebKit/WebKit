@@ -1,5 +1,12 @@
 2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the internal build after <rdar://problem/59132944>
+
+        * UIProcess/ios/WKContentViewInteraction.h: Declare this helper in the header, now that it's consulted by some
+        WebKitAdditions code.
+
+2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add a WebKitAdditions hook to override the behavior of -[WKContentView gestureRecognizer:shouldReceiveTouch:]
         https://bugs.webkit.org/show_bug.cgi?id=207162
         <rdar://problem/59129739>
