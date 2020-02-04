@@ -123,6 +123,8 @@ private:
 };
 
 class Structure final : public JSCell {
+    static constexpr uint16_t shortInvalidOffset = std::numeric_limits<uint16_t>::max() - 1;
+    static constexpr uint16_t useRareDataFlag = std::numeric_limits<uint16_t>::max();
 public:
     friend class StructureTransitionTable;
 
@@ -361,7 +363,7 @@ public:
             return rareData()->m_maxOffset;
         return m_maxOffset;
     }
-    
+
     void setMaxOffset(VM& vm, PropertyOffset offset)
     {
         if (offset == invalidOffset)
@@ -823,9 +825,6 @@ private:
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
     COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
-
-    static constexpr uint16_t shortInvalidOffset = std::numeric_limits<uint16_t>::max();
-    static constexpr uint16_t useRareDataFlag = std::numeric_limits<uint16_t>::max() - 1;
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;
