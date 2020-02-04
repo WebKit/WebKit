@@ -1,5 +1,50 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255329. rdar://problem/58606666
+
+    REGRESSION (r252064): [ Mac iOS ] storage/websql/statement-error-callback.html is timing out flakily
+    https://bugs.webkit.org/show_bug.cgi?id=206291
+    <rdar://problem/58606666>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    Source/WebCore:
+    
+    I found that extending the lifetime of the SQLTransaction by capturing protectedThis in the event loop
+    task was the source of the flaky timeouts & crashes. Queueing this event loop task in
+    notifyDatabaseThreadIsShuttingDown() is actually not necessary because calling callErrorCallbackDueToInterruption()
+    directly would schedule the event loop task for us. Also, in callErrorCallbackDueToInterruption(),
+    the event loop task only keeps the error callback alive, not just the SQLTransaction object.
+    
+    No new tests, unskipped existing test.
+    
+    * Modules/webdatabase/SQLTransaction.cpp:
+    (WebCore::SQLTransaction::notifyDatabaseThreadIsShuttingDown):
+    
+    LayoutTests:
+    
+    Unskip test that is no longer flaky.
+    
+    * platform/ios/TestExpectations:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255329 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-28  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r252064): [ Mac iOS ] storage/websql/statement-error-callback.html is timing out flakily
+            https://bugs.webkit.org/show_bug.cgi?id=206291
+            <rdar://problem/58606666>
+
+            Reviewed by Maciej Stachowiak.
+
+            Unskip test that is no longer flaky.
+
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255247. rdar://problem/58838711
 
     REGRESSION?: [ Mac wk1 ] storage/indexeddb/modern/blob-cursor.html is flaky timing out
