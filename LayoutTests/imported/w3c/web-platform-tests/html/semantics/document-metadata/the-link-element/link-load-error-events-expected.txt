@@ -5,7 +5,7 @@ PASS Import of stylesheet
 PASS Import of nonexistent stylesheet 
 PASS Import of import of stylesheet 
 FAIL Import of import of nonexistent stylesheet assert_unreached: load fired when error expected Reached unreachable code
-FAIL Load of non-CSS stylesheet assert_unreached: load fired when error expected Reached unreachable code
+PASS Load of non-CSS stylesheet 
 FAIL Import of non-CSS stylesheet assert_unreached: load fired when error expected Reached unreachable code
 FAIL Import of import of non-CSS stylesheet assert_unreached: load fired when error expected Reached unreachable code
 PASS Load of http:// stylesheet 

@@ -65,7 +65,7 @@ public:
     const AtomString& defaultNamespace() { return m_defaultNamespace; }
     const AtomString& namespaceURIFromPrefix(const AtomString& prefix);
 
-    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
+    bool parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
 
     bool isCacheable() const;
