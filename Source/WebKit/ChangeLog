@@ -1,3 +1,19 @@
+2020-02-04  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Shouldn't get text cursor on checkboxes
+        https://bugs.webkit.org/show_bug.cgi?id=207234
+        <rdar://problem/59155917>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::canForceCaretForPosition):
+        (WebKit::populateCaretContext):
+        (WebKit::lineCaretExtent): Deleted.
+        The I-beam forcing code was a bit too aggressive; it should consider
+        the style of the node that it ends up finding after searching, not just
+        assume it wants an I-beam because it's "texty".
+
 2020-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build
