@@ -1,5 +1,43 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255503. rdar://problem/58975614
+
+    REGRESSION (r251511): [iOS] HDR Playback broken
+    https://bugs.webkit.org/show_bug.cgi?id=207052
+    <rdar://problem/58975614>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    I missed an XPC service in Bug 203318 when I stopped importing the 'common.sb' sandbox. This broke some
+    aspects of HDR playback for certain clients.
+    
+    This patch returns the XPC service, and unblocks access to a network preference file that AVFoundation
+    needs to read to support some media playback features.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255503 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION (r251511): [iOS] HDR Playback broken
+            https://bugs.webkit.org/show_bug.cgi?id=207052
+            <rdar://problem/58975614>
+
+            Reviewed by Maciej Stachowiak.
+
+            I missed an XPC service in Bug 203318 when I stopped importing the 'common.sb' sandbox. This broke some
+            aspects of HDR playback for certain clients.
+
+            This patch returns the XPC service, and unblocks access to a network preference file that AVFoundation
+            needs to read to support some media playback features.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255458. rdar://problem/59016256
 
     Can still get stuck after swipe backwards with a slow server, even after r254552
