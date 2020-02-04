@@ -1792,10 +1792,10 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
 
         failures_with_patch = first_run_failures.intersection(second_run_failures)
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
-        flaky_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in flaky_failures])
+        flaky_failures_string = ', '.join(flaky_failures)
         new_failures = failures_with_patch - clean_tree_failures
         new_failures_to_display = list(new_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
-        new_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in new_failures_to_display])
+        new_failures_string = ', '.join(new_failures_to_display)
 
         self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
         self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(second_run_failures))
