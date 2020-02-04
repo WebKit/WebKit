@@ -31,13 +31,13 @@ function shouldBeType(expression, className, prototypeName, constructorName)
 // These have to be global for the test helpers to see them.
 var imageSetRule, subRule;
 
-function testImageSetRule(description, property, rule, expectedLength, expectedTexts)
+function testImageSetRule(description, property, rule, expectedLength, expectedTexts, propName = "-webkit-image-set")
 {
     debug("");
     debug(description + " : " + rule);
 
     var div = document.createElement("div");
-    div.setAttribute("style", property + ": -webkit-image-set(" + rule + ")");
+    div.setAttribute("style", property + ": " + propName + "(" + rule + ")");
     document.body.appendChild(div);
 
     imageSetRule = div.style.getPropertyCSSValue(property);
@@ -84,17 +84,17 @@ testImageSetRule("Multiple values for background-image",
 testImageSetRule("Single value for background-image without url() function",
                 "background-image",
                 "'#a' 1x", 2,
-                ["a", "1dppx"]);
+                ["a", "1dppx"], "image-set");
 
 testImageSetRule("Multiple values for background-image without url() function",
                 "background-image",
                 "'#a' 1x, '#b' 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1dppx", "b", "2dppx"], "image-set");
 
 testImageSetRule("Mix values with and without url() function",
                 "background-image",
                 "'#a' 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1dppx", "b", "2dppx"], "image-set");
 
 testImageSetRule("Multiple values for background-image, out of order",
                 "background-image",

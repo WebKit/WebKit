@@ -1,5 +1,54 @@
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255420. rdar://problem/58858225
+
+    REGRESSION (r254406): Gmail.com star/favorite icons are not rendering
+    https://bugs.webkit.org/show_bug.cgi?id=206909
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Make image-set parsing more conservative, for backwards compatibility:
+    - Differentiate between image-set and -webkit-image-set when parsing, -webkit-image-set maintains old behavior.
+    - Don't allow empty urls when using raw strings, e.g. image-set('' 1x) is invalid.
+    
+    Tests updated: fast/css/image-set-parsing.html.
+    
+    * css/parser/CSSPropertyParserHelpers.cpp:
+    (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+    (WebCore::CSSPropertyParserHelpers::consumeImage):
+    
+    LayoutTests:
+    
+    Added empty URLs and new syntax with prefixed image-set to invalid tests.
+    Modified valid image-set parsing test to separate prefixed/non-prefixed.
+    
+    * fast/css/image-set-parsing-generated.html:
+    * fast/css/image-set-parsing-invalid-expected.txt:
+    * fast/css/image-set-parsing-invalid.html:
+    * fast/css/image-set-parsing.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255420 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-30  Noam Rosenthal  <noam@webkit.org>
+
+            REGRESSION (r254406): Gmail.com star/favorite icons are not rendering
+            https://bugs.webkit.org/show_bug.cgi?id=206909
+
+            Reviewed by Simon Fraser.
+
+            Added empty URLs and new syntax with prefixed image-set to invalid tests.
+            Modified valid image-set parsing test to separate prefixed/non-prefixed.
+
+            * fast/css/image-set-parsing-generated.html:
+            * fast/css/image-set-parsing-invalid-expected.txt:
+            * fast/css/image-set-parsing-invalid.html:
+            * fast/css/image-set-parsing.html:
+
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255396. rdar://problem/58675608
 
     Web Inspector: add instrumentation for showing existing Web Animations
