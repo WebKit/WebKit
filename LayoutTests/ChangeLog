@@ -1,5 +1,47 @@
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255504. rdar://problem/59061225
+
+    [Web Animations] [WK1] REGRESSION: opacity doesn't animate
+    https://bugs.webkit.org/show_bug.cgi?id=207044
+    <rdar://problem/59061225>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: webanimations/opacity-animation.html
+    
+    We failed to animate opacity in WK1 because we made the assumption that just because an animation targets only accelerated properties it would be accelerated
+    and wouldn't need to be updated as it runs in WebAnimation::timeToNextTick(). This is incorrect, an animation may fail to start or may fail to get a composited
+    layer, the latter being the case on WK1 because usesCompositing() is false in RenderLayerCompositor::requiresCompositingForAnimation().
+    
+    We now check that an animation is both only animating accelerated properties and running accelerated to determine that an animation won't need to be updated
+    until it completes.
+    
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::timeToNextTick const):
+    
+    LayoutTests:
+    
+    * webanimations/opacity-animation-expected.html: Added.
+    * webanimations/opacity-animation.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255504 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] [WK1] REGRESSION: opacity doesn't animate
+            https://bugs.webkit.org/show_bug.cgi?id=207044
+            <rdar://problem/59061225>
+
+            Reviewed by Simon Fraser.
+
+            * webanimations/opacity-animation-expected.html: Added.
+            * webanimations/opacity-animation.html: Added.
+
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255420. rdar://problem/58858225
 
     REGRESSION (r254406): Gmail.com star/favorite icons are not rendering
