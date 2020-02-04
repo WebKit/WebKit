@@ -34,6 +34,12 @@ class Element;
 class SVGCursorElement;
 class SVGElement;
 
+struct ImageWithScale;
+
+namespace Style {
+class BuilderState;
+}
+
 class CSSCursorImageValue final : public CSSValue {
 public:
     static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, bool hasHotSpot, const IntPoint& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
@@ -56,7 +62,7 @@ public:
 
     String customCSSText() const;
 
-    std::pair<CachedImage*, float> loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
+    ImageWithScale selectBestFitImage(const Document&);
 
     void removeReferencedElement(SVGElement*);
 

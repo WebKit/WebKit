@@ -35,7 +35,7 @@ bool ShapeValue::isImageValid() const
 {
     if (!m_image)
         return false;
-    if (m_image->isCachedImage()) {
+    if (m_image->hasCachedImage()) {
         auto* cachedImage = m_image->cachedImage();
         return cachedImage && cachedImage->hasImage();
     }

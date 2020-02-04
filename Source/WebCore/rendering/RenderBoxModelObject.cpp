@@ -962,7 +962,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
             auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
-                ASSERT(bgImage->isCachedImage());
+                ASSERT(bgImage->hasCachedImage());
                 bgImage->cachedImage()->addClientWaitingForAsyncDecoding(*this);
             }
         }

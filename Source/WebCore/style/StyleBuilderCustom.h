@@ -46,8 +46,10 @@
 #include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"
 #include "StyleCachedImage.h"
+#include "StyleCursorImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
+#include "StyleImageSet.h"
 #include "StyleResolver.h"
 #include "WillChangeData.h"
 
@@ -1324,13 +1326,15 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             else
                 builderState.style().setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
             didSet = true;
-        } else if (is<CSSImageSetValue>(item)) {
-            builderState.style().setContent(StyleCachedImage::create(item), didSet);
+        }
+        
+        if (is<CSSImageSetValue>(item)) {
+            builderState.style().setContent(StyleImageSet::create(downcast<CSSImageSetValue>(item.get()).imageSetWithStylesResolved(builderState)), didSet);
             didSet = true;
         }
 
         if (is<CSSImageValue>(item)) {
-            builderState.style().setContent(StyleCachedImage::create(item), didSet);
+            builderState.style().setContent(StyleCachedImage::create(downcast<CSSImageValue>(item.get())), didSet);
             didSet = true;
             continue;
         }

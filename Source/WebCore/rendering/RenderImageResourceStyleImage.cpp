@@ -44,7 +44,7 @@ RenderImageResourceStyleImage::RenderImageResourceStyleImage(StyleImage& styleIm
 
 void RenderImageResourceStyleImage::initialize(RenderElement& renderer)
 {
-    RenderImageResource::initialize(renderer, m_styleImage->isCachedImage() ? m_styleImage.get().cachedImage() : nullptr);
+    RenderImageResource::initialize(renderer, m_styleImage->hasCachedImage() ? m_styleImage.get().cachedImage() : nullptr);
     m_styleImage->addClient(this->renderer());
 }
 

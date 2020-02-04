@@ -1,5 +1,165 @@
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r254861. rdar://problem/58858225
+
+    -webkit-image-set should support all the image functions WebKit supports, not just url()
+    https://bugs.webkit.org/show_bug.cgi?id=81941
+    
+    Patch by Noam Rosenthal <noam@webkit.org> on 2020-01-21
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Separate StyleCachedImage to 4 classes:
+    - StyleCachedImage: for single images only
+    - StyleMultiImage: for values that can contain multiple images: like cursor/image-set
+    - StyleImageSet
+    - StyleCursorImage
+    
+    The new classes only deal with their own value type. Before, ImageSet and cursor were resolved
+    as a StyleCachedImage, which is no longer a valid assumption if image-set can contain generated images.
+    Though cursors still can only contain cached images, it was cleaner to refactor it out as well.
+    
+    Refactored best-fit image selection from loading. Now StyleCachedImage is in charge of loading
+    the actual image, and StyleImageSet/StyleCursorImage perform the source selection.
+    
+    Also, added the necessary logic in the CSS parser to consume generated images inside image-sets, excluding
+    when the image-set is a cursor value.
+    
+    Tests: fast/css/image-set-parsing-generated.html
+           fast/hidpi/image-set-cross-fade.html
+           fast/hidpi/image-set-gradient-multi.html
+           fast/hidpi/image-set-gradient-single.html
+           fast/hidpi/image-set-gradient.html
+    
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+            Added new files
+    
+    * css/CSSCursorImageValue.cpp:
+    (WebCore::CSSCursorImageValue::selectBestFitImage):
+    (WebCore::CSSCursorImageValue::loadImage): Deleted.
+    * css/CSSCursorImageValue.h:
+            Instead of cursor loading the image, it selects an image CSS value
+    
+    * css/CSSImageSetValue.cpp:
+    (WebCore::CSSImageSetValue::CSSImageSetValue):
+    (WebCore::CSSImageSetValue::fillImageSet):
+    (WebCore::CSSImageSetValue::cachedImage const):
+    (WebCore::CSSImageSetValue::selectBestFitImage):
+    (WebCore::CSSImageSetValue::updateDeviceScaleFactor):
+    (WebCore::CSSImageSetValue::imageSetWithStylesResolved):
+    (WebCore::CSSImageSetValue::traverseSubresources const):
+    (WebCore::CSSImageSetValue::loadBestFitImage): Deleted.
+    * css/CSSImageSetValue.h:
+            Refactor CSSImageSetValue to include non-cachedImage images
+    
+    * css/parser/CSSPropertyParser.cpp:
+    (WebCore::consumeCursor):
+    * css/parser/CSSPropertyParserHelpers.cpp:
+    (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+    (WebCore::CSSPropertyParserHelpers::consumeImage):
+    (WebCore::CSSPropertyParserHelpers::consumeUrlOrStringAsStringView): Deleted.
+    * css/parser/CSSPropertyParserHelpers.h:
+    
+    * page/animation/CSSPropertyAnimation.cpp:
+    (WebCore::blendFunc):
+            When blending two images, get the selected images in case it is an image-set
+    
+    * rendering/RenderBoxModelObject.cpp:
+    (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+    * rendering/RenderImageResourceStyleImage.cpp:
+    (WebCore::RenderImageResourceStyleImage::initialize):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::canDirectlyCompositeBackgroundBackgroundImage):
+    * rendering/style/ShapeValue.cpp:
+    (WebCore::ShapeValue::isImageValid const):
+            Use hasCachedImage() instead of isCachedImage() as a StyleImageSet is no longer an isCachedImage()
+    
+    * rendering/style/StyleCachedImage.cpp:
+    (WebCore::StyleCachedImage::StyleCachedImage):
+    (WebCore::StyleCachedImage::imageURL):
+    (WebCore::StyleCachedImage::load):
+    * rendering/style/StyleCachedImage.h:
+    * rendering/style/StyleCursorImage.h:
+    * rendering/style/StyleCursorImage.cpp:
+    * rendering/style/StyleMultiImage.h:
+    * rendering/style/StyleMultiImage.cpp:
+    * rendering/style/StyleImageSet.h:
+    * rendering/style/StyleImageSet.cpp:
+    * rendering/style/StyleImage.h:
+    (WebCore::StyleImage::selectedImage):
+    (WebCore::StyleImage::selectedImage const):
+    (WebCore::StyleImage::isCursorImage const):
+    (WebCore::StyleImage::isImageSet const):
+    (WebCore::StyleImage::hasCachedImage const):
+    (WebCore::StyleImage::StyleImage):
+            Separate cursor/image-set related stuff away from StyleCachedImage.
+    
+    * style/StyleBuilderCustom.h:
+    (WebCore::Style::BuilderCustom::applyValueContent):
+    * style/StyleBuilderState.cpp:
+    (WebCore::Style::BuilderState::resolveImageStyles):
+    (WebCore::Style::BuilderState::createStyleImage):
+    * style/StyleBuilderState.h:
+            Match the CSS values with the correct Style class. Also, ensure image-sets resolve their
+            images' styles as they may contain gradients and other context-aware values.
+    
+    LayoutTests:
+    
+    * fast/css/cursor-parsing-expected.txt:
+    * fast/css/cursor-parsing.html:
+            Added parsing test to ensure arrow image-sets disable generated images
+    
+    * fast/css/image-set-parsing-generated-expected.txt: Added.
+    * fast/css/image-set-parsing-generated.html: Added.
+    * fast/css/image-set-parsing-invalid-expected.txt:
+    * fast/css/image-set-parsing-invalid.html:
+            Added parsing tests for new generated-inside-image-set use cases
+            Test that image-set inside image-set is not supported
+    
+    * fast/hidpi/image-set-cross-fade-expected.html: Added.
+    * fast/hidpi/image-set-cross-fade.html: Added.
+    * fast/hidpi/image-set-gradient-expected.html: Added.
+    * fast/hidpi/image-set-gradient-multi-expected.html: Added.
+    * fast/hidpi/image-set-gradient-multi.html: Added.
+    * fast/hidpi/image-set-gradient-single-expected.html: Added.
+    * fast/hidpi/image-set-gradient-single.html: Added.
+    * fast/hidpi/image-set-gradient.html: Added.
+            Added ref-tests for several generated-inside-image-set use-cases
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254861 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-21  Noam Rosenthal  <noam@webkit.org>
+
+            -webkit-image-set should support all the image functions WebKit supports, not just url()
+            https://bugs.webkit.org/show_bug.cgi?id=81941
+
+            Reviewed by Darin Adler.
+
+            * fast/css/cursor-parsing-expected.txt:
+            * fast/css/cursor-parsing.html:
+                    Added parsing test to ensure arrow image-sets disable generated images
+
+            * fast/css/image-set-parsing-generated-expected.txt: Added.
+            * fast/css/image-set-parsing-generated.html: Added.
+            * fast/css/image-set-parsing-invalid-expected.txt:
+            * fast/css/image-set-parsing-invalid.html:
+                    Added parsing tests for new generated-inside-image-set use cases
+                    Test that image-set inside image-set is not supported
+
+            * fast/hidpi/image-set-cross-fade-expected.html: Added.
+            * fast/hidpi/image-set-cross-fade.html: Added.
+            * fast/hidpi/image-set-gradient-expected.html: Added.
+            * fast/hidpi/image-set-gradient-multi-expected.html: Added.
+            * fast/hidpi/image-set-gradient-multi.html: Added.
+            * fast/hidpi/image-set-gradient-single-expected.html: Added.
+            * fast/hidpi/image-set-gradient-single.html: Added.
+            * fast/hidpi/image-set-gradient.html: Added.
+                    Added ref-tests for several generated-inside-image-set use-cases
+
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255359. rdar://problem/58570085
 
     REGRESSION: WK1 Accessibility: ASSERTION FAILED: FontCache::singleton().generation() == m_generation

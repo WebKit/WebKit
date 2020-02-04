@@ -2107,7 +2107,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& sty
 
     // FIXME: support gradients with isGeneratedImage.
     auto* styleImage = fillLayer.image();
-    if (!styleImage->isCachedImage())
+    if (!styleImage->hasCachedImage())
         return false;
 
     auto* image = styleImage->cachedImage()->image();

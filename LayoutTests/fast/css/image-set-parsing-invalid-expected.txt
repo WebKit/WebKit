@@ -18,6 +18,12 @@ PASS cssRule is null
 
 Scale factor is 0 : url('#a') 0x
 PASS cssRule is null
+
+Generated image for cursor : linear-gradient(black, white) 1x
+PASS cssRule is null
+
+Image-set inside image-set : image-set(image-set(url('#a') 1x) 1x)
+PASS cssRule is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
