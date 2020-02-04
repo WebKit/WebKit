@@ -592,7 +592,7 @@ public:
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         @NO, WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
-        @NO, WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
+        @YES, WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         @NO, WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
         
         @NO, WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,

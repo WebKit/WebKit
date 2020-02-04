@@ -1,3 +1,37 @@
+2020-02-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255494. rdar://problem/58934778
+
+    [WK1] hiddenPageCSSAnimationSuspensionEnabled should be enabled by default for Cocoa platforms
+    https://bugs.webkit.org/show_bug.cgi?id=207042
+    <rdar://problem/58934778>
+    
+    Reviewed by Zalan Bujtas.
+    
+    While HiddenPageCSSAnimationSuspensionEnabled is specified in WebPreferences.yaml to default to DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED,
+    which is defined to be true on Cocoa platforms in WebPreferencesDefaultValues.h, it is hard-coded to @NO in WK1 although clearly the intent is for
+    this preference to be enabled. So we switch that default value in WK1 as well.
+    
+    * WebView/WebPreferences.mm:
+    (+[WebPreferences initialize]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255494 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Antoine Quint  <graouts@apple.com>
+
+            [WK1] hiddenPageCSSAnimationSuspensionEnabled should be enabled by default for Cocoa platforms
+            https://bugs.webkit.org/show_bug.cgi?id=207042
+            <rdar://problem/58934778>
+
+            Reviewed by Zalan Bujtas.
+
+            While HiddenPageCSSAnimationSuspensionEnabled is specified in WebPreferences.yaml to default to DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED,
+            which is defined to be true on Cocoa platforms in WebPreferencesDefaultValues.h, it is hard-coded to @NO in WK1 although clearly the intent is for
+            this preference to be enabled. So we switch that default value in WK1 as well.
+
+            * WebView/WebPreferences.mm:
+            (+[WebPreferences initialize]):
+
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255532. rdar://problem/57876140
