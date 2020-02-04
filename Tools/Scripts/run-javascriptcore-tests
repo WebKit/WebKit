@@ -638,7 +638,6 @@ if ($runTestAPI) { runTest("testapi", "allApiTestsPassed") }
 # Find JavaScriptCore directory
 chdirWebKit();
 
-# FIXME: report stress test failures https://bugs.webkit.org/show_bug.cgi?id=204096
 runJSCStressTests();
 reportTestFailures();
 if ($coverage) {
@@ -804,6 +803,11 @@ sub runJSCStressTests
     my $result = system(@jscStressDriverCmd);
     exit exitStatus($result) if $result;
 
+    my @jscStressPassList = readAllLines($jscStressResultsDir . "/passed");
+    foreach my $testSucceeded (@jscStressPassList) {
+        $reportData{$testSucceeded} = {actual => "PASS"};
+    }
+
     my @jscStressFailList = readAllLines($jscStressResultsDir . "/failed");
     @jscStressFailList = sort @jscStressFailList;
     my $numJSCStressFailures = @jscStressFailList;
@@ -813,6 +817,7 @@ sub runJSCStressTests
         print "\n** The following JSC stress test failures have been introduced:\n";
         foreach my $testFailure (@jscStressFailList) {
             print "\t$testFailure\n";
+            $reportData{$testFailure} = {actual => "FAIL"};
         }
     }
     print "\n";
