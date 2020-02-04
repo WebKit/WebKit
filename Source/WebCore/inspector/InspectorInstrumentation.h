@@ -305,7 +305,10 @@ public:
 #endif
 
     static void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
-    static void didChangeWebAnimationEffect(WebAnimation&);
+    static void didSetWebAnimationEffect(WebAnimation&);
+    static void didChangeWebAnimationEffectTiming(WebAnimation&);
+    static void didChangeWebAnimationEffectTarget(WebAnimation&);
+    static void didCreateWebAnimation(WebAnimation&);
     static void willDestroyWebAnimation(WebAnimation&);
 
     static void networkStateChanged(Page&);
@@ -505,7 +508,10 @@ private:
 #endif
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, Element&, KeyframeEffect&, ComputedEffectTiming);
-    static void didChangeWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
+    static void didSetWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
+    static void didChangeWebAnimationEffectTimingImpl(InstrumentingAgents&, WebAnimation&);
+    static void didChangeWebAnimationEffectTargetImpl(InstrumentingAgents&, WebAnimation&);
+    static void didCreateWebAnimationImpl(InstrumentingAgents&, WebAnimation&);
     static void willDestroyWebAnimationImpl(InstrumentingAgents&, WebAnimation&);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1466,11 +1472,32 @@ inline void InspectorInstrumentation::willApplyKeyframeEffect(Element& target, K
         willApplyKeyframeEffectImpl(*instrumentingAgents, target, effect, computedTiming);
 }
 
-inline void InspectorInstrumentation::didChangeWebAnimationEffect(WebAnimation& animation)
+inline void InspectorInstrumentation::didSetWebAnimationEffect(WebAnimation& animation)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
-        didChangeWebAnimationEffectImpl(*instrumentingAgents, animation);
+        didSetWebAnimationEffectImpl(*instrumentingAgents, animation);
+}
+
+inline void InspectorInstrumentation::didChangeWebAnimationEffectTiming(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        didChangeWebAnimationEffectTimingImpl(*instrumentingAgents, animation);
+}
+
+inline void InspectorInstrumentation::didChangeWebAnimationEffectTarget(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        didChangeWebAnimationEffectTargetImpl(*instrumentingAgents, animation);
+}
+
+inline void InspectorInstrumentation::didCreateWebAnimation(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        didCreateWebAnimationImpl(*instrumentingAgents, animation);
 }
 
 inline void InspectorInstrumentation::willDestroyWebAnimation(WebAnimation& animation)

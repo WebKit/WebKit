@@ -23,6 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.content-view.resource-collection > .resource.image img {
+    outline: 0.5px solid var(--border-color);
+}
+
+.content-view.resource-collection > .resource.image img:hover {
+    outline-color: var(--glyph-color-active)
+}
+
 .resource-collection-image-type-scope-bar.default-item-selected {
     --scope-bar-text-color-override: var(--text-color);
     --scope-bar-background-color-override: transparent;

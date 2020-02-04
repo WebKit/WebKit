@@ -70,6 +70,7 @@ void InstrumentingAgents::reset()
     m_pageDOMDebuggerAgent = nullptr;
     m_inspectorCanvasAgent = nullptr;
     m_persistentInspectorAnimationAgent = nullptr;
+    m_enabledInspectorAnimationAgent = nullptr;
     m_trackingInspectorAnimationAgent = nullptr;
 }
 

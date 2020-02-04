@@ -148,6 +148,23 @@ WI.Recording = class Recording extends WI.Object
         return new WI.Recording(payload.version, type, payload.initialState, frames, payload.data);
     }
 
+    static displayNameForRecordingType(recordingType)
+    {
+        switch (recordingType) {
+        case Recording.Type.Canvas2D:
+            return WI.UIString("2D");
+        case Recording.Type.CanvasBitmapRenderer:
+            return WI.UIString("Bitmap Renderer", "Recording Type Canvas Bitmap Renderer", "A type of canvas recording in the Graphics Tab");
+        case Recording.Type.CanvasWebGL:
+            return WI.unlocalizedString("WebGL");
+        case Recording.Type.CanvasWebGL2:
+            return WI.unlocalizedString("WebGL2");
+        }
+
+        console.assert(false, "Unknown recording type", recordingType);
+        return null;
+    }
+
     static displayNameForSwizzleType(swizzleType)
     {
         switch (swizzleType) {

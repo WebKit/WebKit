@@ -146,7 +146,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
                             try {
                                 nodeId = await documentNode.querySelector(domNodeString);
                             } catch { }
-                            return WI.domManager.nodeForId(nodeId) || null;
+                            return WI.domManager.nodeForId(nodeId);
                         }));
                     }
                 }

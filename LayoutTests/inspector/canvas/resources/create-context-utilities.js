@@ -35,7 +35,7 @@ function destroyCanvases() {
     window.contexts = [];
 
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
-    // does not receive WI.CanvasManager.Event.CanvasRemoved events.
+    // does not receive Canvas.canvasRemoved events.
     setTimeout(() => { GCController.collect(); }, 0);
 }
 
@@ -43,9 +43,9 @@ TestPage.registerInitializer(() => {
     let suite = null;
 
     function awaitCanvasAdded(contextType) {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
+        return WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded)
         .then((event) => {
-            let canvas = event.data.canvas;
+            let canvas = event.data.item;
             let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
             InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be ${contextDisplayName}.`);
 
@@ -73,9 +73,9 @@ TestPage.registerInitializer(() => {
     }
 
     function awaitCanvasRemoved(canvasIdentifier) {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasRemoved)
+        return WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemRemoved)
         .then((event) => {
-            let canvas = event.data.canvas;
+            let canvas = event.data.item;
             InspectorTest.expectEqual(canvas.identifier, canvasIdentifier, "Removed canvas has expected ID.");
         });
     }
@@ -89,7 +89,7 @@ TestPage.registerInitializer(() => {
             name: `${suite.name}.NoCanvases`,
             description: "Check that the CanvasManager has no canvases initially.",
             test(resolve, reject) {
-                InspectorTest.expectEqual(WI.canvasManager.canvases.length, 0, "CanvasManager should have no canvases.");
+                InspectorTest.expectEqual(WI.canvasManager.canvasCollection.size, 0, "CanvasManager should have no canvases.");
                 resolve();
             }
         });

@@ -20,7 +20,7 @@ function test() {
         name: "Canvas.extensions.enable",
         description: "Check that enabling an extension notifies the frontend.",
         test(resolve, reject) {
-            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            let canvases = Array.from(WI.canvasManager.canvasCollection).filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
             if (!canvases.length) {
                 reject("Missing WebGL canvas.");
                 return;

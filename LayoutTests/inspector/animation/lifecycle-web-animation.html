@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/lifecycle-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.Lifecycle");
+
+    suite.addTestCase({
+        name: "Animation.Lifecycle.WebAnimation",
+        description: "Check that Web Inspector is notified whenever web animations are created/destroyed.",
+        async test() {
+            InspectorTest.expectEqual(WI.animationManager.animationCollection.size, 0, "There should not be any animations.");
+
+            let animation = await InspectorTest.AnimationLifecycleUtilities.createAnimation(WI.Animation.Type.WebAnimation, {
+                selector: "body",
+                keyframes: [
+                    {
+                        offset: 0.25,
+                        easing: "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+                        color: "red",
+                        opacity: 0,
+                    },
+                    {
+                        offset: 0.75,
+                        easing: "cubic-bezier(0.6, 0.7, 0.8, 0.9)",
+                        color: "blue",
+                        opacity: 1,
+                    },
+                ],
+                options: {
+                    delay: 100,
+                    endDelay: 200,
+                    duration: 300,
+                    easing: "ease-in-out",
+                    direction: "alternate",
+                    fill: "both",
+                    iterations: 10,
+                    iterationStart: 5,
+                },
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Animation.animationCreated and Animation.animationDestroyed events.</p>
+</body>
+</html>

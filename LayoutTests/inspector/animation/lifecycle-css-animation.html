@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/lifecycle-utilities.js"></script>
+<style>
+@keyframes fade-in {
+    from {
+        color: red;
+        opacity: 0;
+    }
+    50% {
+        color: green;
+        opacity: 0.5;
+    }
+    to {
+        color: blue;
+        opacity: 1;
+    }
+}
+div#target.active {
+    animation-name: fade-in;
+    animation-duration: 400ms;
+    animation-timing-function: cubic-bezier(0.1, 0.2, 0.3, 0.4);
+    animation-delay: 100ms;
+    animation-iteration-count: 2;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+}
+</style>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.Lifecycle");
+
+    suite.addTestCase({
+        name: "Animation.Lifecycle.CSSAnimation",
+        description: "Check that Web Inspector is notified whenever CSS animations are created/destroyed.",
+        async test() {
+            InspectorTest.expectEqual(WI.animationManager.animationCollection.size, 0, "There should not be any animations.");
+
+            let [animation] = await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.CSSAnimation),
+                InspectorTest.evaluateInPage(`document.getElementById("target").classList.add("active")`),
+            ]);
+
+            await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationDestroyed(animation.animationId),
+                InspectorTest.AnimationLifecycleUtilities.destroyAnimations(),
+                InspectorTest.evaluateInPage(`document.getElementById("target").classList.remove("active")`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Animation.animationCreated and Animation.animationDestroyed events.</p>
+    <div id="target"></div>
+</body>
+</html>

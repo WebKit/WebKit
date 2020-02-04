@@ -18,7 +18,7 @@ function test() {
         name: "Canvas.requestNode.validCanvasId",
         description: "Get the node id for each canvas on the page.",
         test(resolve, reject) {
-            let canvases = WI.canvasManager.canvases;
+            let canvases = Array.from(WI.canvasManager.canvasCollection);
             let expectedLength = canvases.length;
             InspectorTest.assert(expectedLength === 3, "The page has 3 canvases.");
 
