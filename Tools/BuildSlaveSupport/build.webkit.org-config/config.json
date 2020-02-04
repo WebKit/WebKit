@@ -43,7 +43,7 @@
                     { "name": "bot652", "platform": "ios-simulator-13" },
                     { "name": "bot653", "platform": "ios-simulator-13" },
                     { "name": "bot654", "platform": "ios-simulator-13" },
-                    { "name": "bot677", "platform": "ios-simulator-13" },
+                    { "name": "bot641", "platform": "ios-simulator-13" },
                     { "name": "bot682", "platform": "ios-simulator-13" },
                     { "name": "bot694", "platform": "ios-simulator-13" },
                     { "name": "bot695", "platform": "ios-simulator-13" },
@@ -197,7 +197,7 @@
                       "name": "Apple iOS 13 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-13-release",
                       "platform": "ios-simulator-13", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-13-release-tests-wk2", "ipados-simulator-13-release-tests-wk2"],
-                      "slavenames": ["bot677", "bot682"]
+                      "slavenames": ["bot641", "bot682"]
                     },
                     {
                       "name": "Apple iOS 13 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-13-debug",
