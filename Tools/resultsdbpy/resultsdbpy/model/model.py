@@ -81,7 +81,7 @@ class Model(object):
             ttl_seconds=self.default_ttl_seconds,
         )
 
-        for context in [self.suite_context, self.test_context, self.ci_context, self.failure_context]:
+        for context in [self.ci_context, self.failure_context, self.suite_context, self.test_context]:
             self.upload_context.register_upload_callback(context.name, context.register)
 
         self.archive_context = ArchiveContext(

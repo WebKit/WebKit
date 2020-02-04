@@ -1,3 +1,19 @@
+2020-02-04  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Better order upload callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=207219
+
+        Reviewed by Aakash Jain.
+
+        Order upload callbacks more deliberately so that the quickest callbacks
+        that are least likely to link to information from unfinished callbacks are
+        executed first.
+
+        * resultsdbpy/resultsdbpy/model/model.py:
+        (Model.__init__): Generate buildbot links first, then generate a failure
+        list, then generate the collective suite results and finally, individual
+        test results.
+
 2020-02-04  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Do not remove TestWebKitAPI prefix from api test failures
