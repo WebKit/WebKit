@@ -881,12 +881,8 @@ sub uploadResults
     my %upload = (
         version => 0,
         suite => 'javascriptcore-tests',
-        # FIXME: Integrate branches, https://bugs.webkit.org/show_bug.cgi?id=204094
         # FIXME: Integrate the Safari repository, https://bugs.webkit.org/show_bug.cgi?id=204095
-        commits => [{
-            repository_id => 'webkit',
-            id => determineCurrentSVNRevision(),
-        }],
+        commits => [commitForDirectory(sourceDir(), 'webkit')],
         configuration => configurationForUpload(),
         test_results => {
             run_stats => {

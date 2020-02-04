@@ -52,6 +52,7 @@ BEGIN {
         &changeLogEmailAddress
         &changeLogName
         &chdirReturningRelativePath
+        &commitForDirectory
         &decodeGitBinaryChunk
         &decodeGitBinaryPatch
         &determineSVNRoot
@@ -369,6 +370,25 @@ sub chdirReturningRelativePath($)
     my $newDirectory = Cwd::getcwd();
     return "." if $newDirectory eq $previousDirectory;
     return File::Spec->abs2rel($previousDirectory, $newDirectory);
+}
+
+sub commitForDirectory($$)
+{
+    my ($directory, $repository) = @_;
+
+    my $result = {
+        repository_id => $repository,
+    };
+    if (isSVNDirectory($directory)) {
+        $result->{id} = svnRevisionForDirectory($directory);
+        my $info = svnInfoForPath($directory);
+        $info =~ /.*Relative URL: \^\/([a-z]+)\n.*/;
+        my $branch = $1;
+        $result->{branch} = $branch if ($branch ne 'trunk');
+    } else {
+        die "$directory is not a recognized SCM";
+    }
+    return $result;
 }
 
 sub determineSVNRoot()
