@@ -737,7 +737,7 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, M
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, PAL::SessionID sessionID)
+void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(proxy, &proxy == m_networkProcess.get());
 
@@ -752,6 +752,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
     if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID)) {
         WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess process already created");
+        completionHandler();
         return;
     }
 
@@ -789,7 +790,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     ASSERT(!m_serviceWorkerProcesses.contains(registrableDomainWithSessionID));
     m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), makeWeakPtr(serviceWorkerProcessProxy));
 
-    serviceWorkerProcessProxy->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store());
+    serviceWorkerProcessProxy->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), WTFMove(completionHandler));
     if (!m_serviceWorkerUserAgent.isNull())
         serviceWorkerProcessProxy->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
 }

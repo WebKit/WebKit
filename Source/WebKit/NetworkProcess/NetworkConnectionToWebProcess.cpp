@@ -917,10 +917,11 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
     server.addConnection(WTFMove(connection));
 }
 
-void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain)
+void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* server = m_networkProcess->swServerForSessionIfExists(m_sessionID))
         m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, WTFMove(registrableDomain), *server);
+    completionHandler();
 }
 
 void NetworkConnectionToWebProcess::closeSWContextConnection()

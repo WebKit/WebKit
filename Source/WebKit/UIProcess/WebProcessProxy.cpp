@@ -1605,9 +1605,12 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store)
+void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, CompletionHandler<void()>&& completionHandler)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, 0);
+    sendWithAsyncReply(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, [activity = m_throttler.backgroundActivity("Establish Service Worker"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        RELEASE_LOG(Loading, "WebProcessProxy::establishServiceWorkerContext finished");
+        completionHandler();
+    }, 0);
 }
 
 void WebProcessProxy::setServiceWorkerUserAgent(const String& userAgent)

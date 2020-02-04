@@ -74,7 +74,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWContextConnection(WebCore::RegistrableDomain domain)
+    EstablishSWContextConnection(WebCore::RegistrableDomain domain) -> () Async
     CloseSWContextConnection()
 #endif
 
