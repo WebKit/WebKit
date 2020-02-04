@@ -1339,7 +1339,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     inlineStyle->setCssText(styledElement.getAttribute("style"));
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack();
-    auto cssAnimationNames = keyframeStack.cssAnimationNames();
+    auto* cssAnimationList = keyframeStack.cssAnimationList();
 
     // 2.5 For each property, property, in targeted properties:
     for (auto property : effect->animatedProperties()) {
@@ -1356,7 +1356,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         // effect stack and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
         auto animatedStyle = RenderStyle::clonePtr(style);
         for (const auto& effectInStack : keyframeStack.sortedEffects()) {
-            if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this, cssAnimationNames))
+            if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this, cssAnimationList))
                 break;
             if (effectInStack->animatedProperties().contains(property))
                 effectInStack->animation()->resolve(*animatedStyle);
