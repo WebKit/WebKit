@@ -987,3 +987,5 @@ webkit.org/b/207202 webgpu/whlsl/textures-sample-grad.html [ Pass ImageOnlyFailu
 webkit.org/b/206718 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Crash ]
 
 webkit.org/b/207209 [ Release ] inspector/heap/getPreview.html [ Pass Failure ]
+
+webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass Failure ]
