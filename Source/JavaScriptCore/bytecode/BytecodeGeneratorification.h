@@ -31,9 +31,9 @@ namespace JSC {
 class BytecodeGenerator;
 class InstructionStreamWriter;
 class SymbolTable;
-class UnlinkedCodeBlock;
+class UnlinkedCodeBlockGenerator;
 class SymbolTable;
 
-void performGeneratorification(BytecodeGenerator&, UnlinkedCodeBlock*, InstructionStreamWriter&, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex);
+void performGeneratorification(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, InstructionStreamWriter&, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex);
 
 } // namespace JSC

@@ -275,6 +275,7 @@ bytecode/SuperSampler.cpp
 bytecode/ToThisStatus.cpp
 bytecode/TrackedReferences.cpp
 bytecode/UnlinkedCodeBlock.cpp
+bytecode/UnlinkedCodeBlockGenerator.cpp
 bytecode/UnlinkedEvalCodeBlock.cpp
 bytecode/UnlinkedFunctionCodeBlock.cpp
 bytecode/UnlinkedFunctionExecutable.cpp

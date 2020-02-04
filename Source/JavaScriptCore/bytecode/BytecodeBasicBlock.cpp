@@ -30,6 +30,7 @@
 #include "InterpreterInlines.h"
 #include "JSCInlines.h"
 #include "PreciseJumpTargets.h"
+#include "UnlinkedCodeBlockGenerator.h"
 
 namespace JSC {
 
@@ -220,7 +221,7 @@ auto BytecodeBasicBlock::compute(CodeBlock* codeBlock, const InstructionStream& 
     return computeImpl(codeBlock, instructions);
 }
 
-auto BytecodeBasicBlock::compute(UnlinkedCodeBlock* codeBlock, const InstructionStream& instructions) -> BasicBlockVector
+auto BytecodeBasicBlock::compute(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions) -> BasicBlockVector
 {
     return computeImpl(codeBlock, instructions);
 }

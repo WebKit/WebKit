@@ -173,7 +173,7 @@ public:
         IncludeBranch& m_includeBranch;
     };
 
-    BytecodeRewriter(BytecodeGenerator& bytecodeGenerator, BytecodeGraph& graph, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& writer)
+    BytecodeRewriter(BytecodeGenerator& bytecodeGenerator, BytecodeGraph& graph, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& writer)
         : m_bytecodeGenerator(bytecodeGenerator)
         , m_graph(graph)
         , m_codeBlock(codeBlock)
@@ -227,7 +227,7 @@ public:
 private:
     void insertImpl(InsertionPoint, IncludeBranch, InstructionStreamWriter&& fragment);
 
-    friend class UnlinkedCodeBlock;
+    friend class UnlinkedCodeBlockGenerator;
     void applyModification();
     void adjustJumpTargetsInFragment(unsigned finalOffset, Insertion&);
 
@@ -236,7 +236,7 @@ private:
 
     BytecodeGenerator& m_bytecodeGenerator;
     BytecodeGraph& m_graph;
-    UnlinkedCodeBlock* m_codeBlock;
+    UnlinkedCodeBlockGenerator* m_codeBlock;
     InstructionStreamWriter& m_writer;
     Vector<Insertion, 8> m_insertions;
 };

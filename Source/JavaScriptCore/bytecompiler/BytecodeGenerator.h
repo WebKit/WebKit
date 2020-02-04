@@ -48,6 +48,7 @@
 #include "StaticPropertyAnalyzer.h"
 #include "SymbolTable.h"
 #include "UnlinkedCodeBlock.h"
+#include "UnlinkedCodeBlockGenerator.h"
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashFunctions.h>
@@ -224,7 +225,7 @@ namespace JSC {
 
         unsigned bodyBytecodeStartOffset() const { return m_bodyBytecodeStartOffset; }
 
-        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
 
     private:
         RefPtr<RegisterID> m_localRegister;
@@ -255,7 +256,7 @@ namespace JSC {
             m_getInsts.append(GetInst { instIndex, propertyRegIndex });
         }
 
-        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
 
     private:
         RefPtr<RegisterID> m_indexRegister;
@@ -275,7 +276,7 @@ namespace JSC {
 
         RegisterID* index() const { return m_indexRegister.get(); }
 
-        void finalize(BytecodeGenerator&, UnlinkedCodeBlock*, unsigned bodyBytecodeEndOffset);
+        void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
         void addGetInst(unsigned instIndex, int propertyIndex) { m_getInsts.append({ instIndex, propertyIndex }); }
 
     private:
@@ -368,7 +369,7 @@ namespace JSC {
         using OpcodeTraits = JSOpcodeTraits;
         using OpcodeID = ::JSC::OpcodeID;
         using OpNop = ::JSC::OpNop;
-        using CodeBlock = Strong<UnlinkedCodeBlock>;
+        using CodeBlock = std::unique_ptr<UnlinkedCodeBlockGenerator>;
         static constexpr OpcodeID opcodeForDisablingOptimizations = op_end;
     };
 

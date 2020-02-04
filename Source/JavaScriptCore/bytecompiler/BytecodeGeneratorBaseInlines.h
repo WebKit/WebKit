@@ -161,9 +161,9 @@ template<typename Traits>
 RegisterID* BytecodeGeneratorBase<Traits>::newRegister()
 {
     m_calleeLocals.append(virtualRegisterForLocal(m_calleeLocals.size()));
-    int numCalleeLocals = std::max<int>(m_codeBlock->m_numCalleeLocals, m_calleeLocals.size());
+    int numCalleeLocals = std::max<int>(m_codeBlock->numCalleeLocals(), m_calleeLocals.size());
     numCalleeLocals = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numCalleeLocals);
-    m_codeBlock->m_numCalleeLocals = numCalleeLocals;
+    m_codeBlock->setNumCalleeLocals(numCalleeLocals);
     return &m_calleeLocals.last();
 }
 
@@ -181,9 +181,10 @@ RegisterID* BytecodeGeneratorBase<Traits>::newTemporary()
 template<typename Traits>
 RegisterID* BytecodeGeneratorBase<Traits>::addVar()
 {
-    ++m_codeBlock->m_numVars;
+    int numVars = m_codeBlock->numVars();
+    m_codeBlock->setNumVars(numVars + 1);
     RegisterID* result = newRegister();
-    ASSERT(VirtualRegister(result->index()).toLocal() == m_codeBlock->m_numVars - 1);
+    ASSERT(VirtualRegister(result->index()).toLocal() == numVars);
     result->ref(); // We should never free this slot.
     return result;
 }
