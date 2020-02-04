@@ -1,3 +1,23 @@
+2020-02-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Pass a hint from the extension to decidePolicyForSOAuthorizationLoadWithCurrentPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=207079
+        <rdar://problem/48290464>
+
+        Reviewed by Brent Fulgham.
+
+        Pass a localized human readable hint from the extension to decidePolicyForSOAuthorizationLoadWithCurrentPolicy,
+        such that clients can display it to tell users what the extension is trying to do. Hints could be something
+        like "Sign In With Apple".
+
+        Covered new test contents within existing tests.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::start):
+        (WebKit::SOAuthorizationSession::continueStartAfterGetAuthorizationHints):
+        (WebKit::SOAuthorizationSession::continueStartAfterDecidePolicy):
+
 2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal build after <rdar://problem/59132944>

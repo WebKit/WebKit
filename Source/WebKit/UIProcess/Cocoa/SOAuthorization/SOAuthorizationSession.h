@@ -48,6 +48,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
+enum class SOAuthorizationLoadPolicy : uint8_t;
+
 // A session will only be executed once.
 class SOAuthorizationSession : public RefCounted<SOAuthorizationSession>, public CanMakeWeakPtr<SOAuthorizationSession> {
 public:
@@ -102,6 +104,8 @@ private:
 
     void becomeCompleted();
     void dismissViewController();
+    void continueStartAfterGetAuthorizationHints(const String&);
+    void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
 
     State m_state  { State::Idle };
     WeakObjCPtr<SOAuthorization *> m_soAuthorization;

@@ -41,6 +41,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/cocoa/AppSSOSoftLink.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Vector.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_page && m_page->isAlwaysOnLoggingAllowed(), AppSSO, "%p - [InitiatingAction=%s] SOAuthorizationSession::" fmt, this, toString(m_action), ##__VA_ARGS__)
@@ -128,46 +129,66 @@ void SOAuthorizationSession::start()
 {
     RELEASE_LOG_IF_ALLOWED("start:");
 
-    ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_page && m_navigationAction);
+    ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_navigationAction);
     m_state = State::Active;
+    [m_soAuthorization getAuthorizationHintsWithURL:m_navigationAction->request().url() responseCode:0 completion:makeBlockPtr([this, weakThis = makeWeakPtr(*this)] (SOAuthorizationHints *authorizationHints, NSError *error) {
+        RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationHints (error=%ld)", error ? error.code : 0);
 
-    m_page->decidePolicyForSOAuthorizationLoad(emptyString(), [this, weakThis = makeWeakPtr(*this)] (SOAuthorizationLoadPolicy policy) {
+        if (!weakThis || error || !authorizationHints)
+            return;
+        continueStartAfterGetAuthorizationHints(authorizationHints.localizedExtensionBundleDisplayName);
+    }).get()];
+}
+
+void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const String& hints)
+{
+    RELEASE_LOG_IF_ALLOWED("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8().data());
+
+    ASSERT(m_state == State::Active);
+    if (!m_page)
+        return;
+
+    m_page->decidePolicyForSOAuthorizationLoad(hints, [this, weakThis = makeWeakPtr(*this)] (SOAuthorizationLoadPolicy policy) {
         if (!weakThis)
             return;
+        continueStartAfterDecidePolicy(policy);
+    });
+}
 
-        if (policy == SOAuthorizationLoadPolicy::Ignore) {
-            RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationLoadPolicy::Ignore");
+void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy& policy)
+{
+    if (policy == SOAuthorizationLoadPolicy::Ignore) {
+        RELEASE_LOG_IF_ALLOWED("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Ignore");
 
-            fallBackToWebPath();
-            return;
-        }
+        fallBackToWebPath();
+        return;
+    }
 
-        RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationLoadPolicy::Allow");
+    RELEASE_LOG_IF_ALLOWED("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Allow");
 
-        if (!m_soAuthorization || !m_page || !m_navigationAction)
-            return;
+    if (!m_soAuthorization || !m_page || !m_navigationAction)
+        return;
 
-        // FIXME: <rdar://problem/48909336> Replace the below with AppSSO constants.
-        auto initiatorOrigin = emptyString();
-        if (m_navigationAction->sourceFrame())
-            initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
-        if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
-            initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
-        NSDictionary *authorizationOptions = @{
-            SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
-            @"initiatorOrigin": (NSString *)initiatorOrigin,
-            @"initiatingAction": @(static_cast<NSInteger>(m_action))
-        };
-        [m_soAuthorization setAuthorizationOptions:authorizationOptions];
+    // FIXME: <rdar://problem/48909336> Replace the below with AppSSO constants.
+    auto initiatorOrigin = emptyString();
+    if (m_navigationAction->sourceFrame())
+        initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
+    if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
+        initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
+    NSDictionary *authorizationOptions = @{
+        SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
+        @"initiatorOrigin": (NSString *)initiatorOrigin,
+        @"initiatingAction": @(static_cast<NSInteger>(m_action))
+    };
+    [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
 #if PLATFORM(IOS)
-        if (![fromWebPageProxy(*m_page).UIDelegate respondsToSelector:@selector(_presentingViewControllerForWebView:)])
-            [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
+    if (![fromWebPageProxy(*m_page).UIDelegate respondsToSelector:@selector(_presentingViewControllerForWebView:)])
+        [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
 
-        auto *nsRequest = m_navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-        [m_soAuthorization beginAuthorizationWithURL:nsRequest.URL httpHeaders:nsRequest.allHTTPHeaderFields httpBody:nsRequest.HTTPBody];
-    });
+    auto *nsRequest = m_navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    [m_soAuthorization beginAuthorizationWithURL:nsRequest.URL httpHeaders:nsRequest.allHTTPHeaderFields httpBody:nsRequest.HTTPBody];
 }
 
 void SOAuthorizationSession::fallBackToWebPath()

@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppSSO/AppSSO.h>
+#import <AppSSOCore/AppSSOCore.h>
 
 #else
 
@@ -74,11 +75,28 @@ typedef NS_ENUM(NSInteger, SOAuthorizationInitiatingAction) {
     SOAuthorizationInitiatingActionSubframe,
 };
 
+@interface SOAuthorizationHintsCore : NSObject <NSSecureCoding>
+
+- (instancetype)initWithLocalizedExtensionBundleDisplayName:(NSString *)localizedExtensionBundleDisplayName;
+
+@property (nonatomic, readonly) NSString *localizedExtensionBundleDisplayName;
+
+@end
+
+@interface SOAuthorizationHints : NSObject
+
+- (instancetype)initWithAuthorizationHintsCore:(SOAuthorizationHintsCore *)authorizationHintsCore;
+
+@property (nonatomic, readonly) NSString *localizedExtensionBundleDisplayName;
+
+@end
+
 @interface SOAuthorization : NSObject
 @property (weak) id<SOAuthorizationDelegate> delegate;
 @property (retain, nullable) dispatch_queue_t delegateDispatchQueue;
 @property (copy, nonatomic) NSDictionary *authorizationOptions;
 @property (nonatomic) BOOL enableEmbeddedAuthorizationViewController;
+- (void)getAuthorizationHintsWithURL:(NSURL *)url responseCode:(NSInteger)responseCode completion:(void (^)(SOAuthorizationHints * _Nullable authorizationHints, NSError * _Nullable error))completion;
 + (BOOL)canPerformAuthorizationWithURL:(NSURL *)url responseCode:(NSInteger)responseCode;
 + (BOOL)canPerformAuthorizationWithURL:(NSURL *)url responseCode:(NSInteger)responseCode useInternalExtensions:(BOOL)useInternalExtensions;
 - (void)beginAuthorizationWithURL:(NSURL *)url httpHeaders:(NSDictionary <NSString *, NSString *> *)httpHeaders httpBody:(NSData *)httpBody;
