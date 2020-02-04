@@ -1798,8 +1798,8 @@ public:
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
 
-    String sourceURLDirective(Decoder& decoder) const { return m_sourceURLDirective.decode(decoder); }
-    String sourceMappingURLDirective(Decoder& decoder) const { return m_sourceMappingURLDirective.decode(decoder); }
+    RefPtr<StringImpl> sourceURLDirective(Decoder& decoder) const { return m_sourceURLDirective.decode(decoder); }
+    RefPtr<StringImpl> sourceMappingURLDirective(Decoder& decoder) const { return m_sourceMappingURLDirective.decode(decoder); }
 
     Ref<UnlinkedMetadataTable> metadata(Decoder& decoder) const { return m_metadata.decode(decoder); }
 
@@ -1868,8 +1868,8 @@ private:
 
     CachedPtr<CachedCodeBlockRareData> m_rareData;
 
-    CachedString m_sourceURLDirective;
-    CachedString m_sourceMappingURLDirective;
+    CachedRefPtr<CachedStringImpl> m_sourceURLDirective;
+    CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
 
     CachedPtr<CachedInstructionStream> m_instructions;
     CachedVector<InstructionStream::Offset> m_jumpTargets;
@@ -2246,8 +2246,8 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());
 
-    m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());
-    m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());
+    m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.get());
+    m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.get());
 
     m_instructions.encode(encoder, codeBlock.m_instructions.get());
     m_constantRegisters.encode(encoder, codeBlock.m_constantRegisters);

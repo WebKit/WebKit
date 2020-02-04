@@ -1,3 +1,25 @@
+2020-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use PackedRefPtr in UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=207229
+
+        Reviewed by Mark Lam.
+
+        Use PackedRefPtr in UnlinkedCodeBlock to compact it from 168 to 160, which saves 16 bytes (10%) per UnlinkedCodeBlock since
+        we have 16 bytes alignment for GC cells.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::sourceURLDirective const):
+        (JSC::UnlinkedCodeBlock::sourceMappingURLDirective const):
+        (JSC::UnlinkedCodeBlock::setSourceURLDirective):
+        (JSC::UnlinkedCodeBlock::setSourceMappingURLDirective):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::sourceURLDirective const):
+        (JSC::CachedCodeBlock::sourceMappingURLDirective const):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+
 2020-02-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Quantifiers after lookahead assertions should be syntax errors in Unicode patterns only
