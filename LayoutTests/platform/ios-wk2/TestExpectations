@@ -1375,3 +1375,5 @@ webkit.org/b/207161 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 webkit.org/b/207164 [ Debug ] legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
 
 webkit.org/b/207194 fast/scrolling/ios/scroll-events-back-forward.html [ Pass Failure ]
+
+webkit.org/b/207197 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass Failure Crash ]
