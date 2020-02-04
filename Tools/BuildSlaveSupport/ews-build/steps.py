@@ -753,11 +753,11 @@ class WebKitPyTest(shell.ShellCommand):
             self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
             return super(WebKitPyTest, self).getResultSummary()
 
-        failures = webkitpy_results.get('failures') + webkitpy_results.get('errors')
+        failures = webkitpy_results.get('failures', []) + webkitpy_results.get('errors', [])
         if not failures:
             return super(WebKitPyTest, self).getResultSummary()
         pluralSuffix = 's' if len(failures) > 1 else ''
-        failures_string = ', '.join([failure.get('name').replace('webkitpy.', '') for failure in failures])
+        failures_string = ', '.join([failure.get('name') for failure in failures])
         message = 'Found {} webkitpy {} test failure{}: {}'.format(len(failures), self.language, pluralSuffix, failures_string)
         self.setBuildSummary(message)
         return {u'step': unicode(message)}

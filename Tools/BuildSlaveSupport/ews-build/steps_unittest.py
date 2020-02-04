@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -423,6 +423,9 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'webkitpy_test_python2_results.json'
+        self.json_with_failure = '''{"failures": [{"name": "webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image"}]}\n'''
+        self.json_with_errros = '''{"failures": [],
+"errors": [{"name": "webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks"}, {"name": "webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual"}]}\n'''
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -442,7 +445,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy python2 tests')
         return self.runStep()
 
-    def test_failure(self):
+    def test_unexpected_failure(self):
         self.setupStep(RunWebKitPyPython2Tests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -458,11 +461,44 @@ FAILED (failures=1, errors=0)''')
         self.expectOutcome(result=FAILURE, state_string='webkitpy-tests (failure)')
         return self.runStep()
 
+    def test_failure(self):
+        self.setupStep(RunWebKitPyPython2Tests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=self.json_with_failure) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 1 webkitpy python2 test failure: webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image')
+        return self.runStep()
+
+    def test_errors(self):
+        self.setupStep(RunWebKitPyPython2Tests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=self.json_with_errros) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python2 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
+        return self.runStep()
+
 
 class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'webkitpy_test_python3_results.json'
+        self.json_with_failure = '''{"failures": [{"name": "webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image"}]}\n'''
+        self.json_with_errros = '''{"failures": [],
+"errors": [{"name": "webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks"}, {"name": "webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual"}]}\n'''
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -482,7 +518,7 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed webkitpy python3 tests')
         return self.runStep()
 
-    def test_failure(self):
+    def test_unexpected_failure(self):
         self.setupStep(RunWebKitPyPython3Tests())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -496,6 +532,36 @@ FAILED (failures=1, errors=0)''')
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='webkitpy-tests (failure)')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(RunWebKitPyPython3Tests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=self.json_with_failure) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 1 webkitpy python3 test failure: webkitpy.port.wpe_unittest.WPEPortTest.test_diff_image')
+        return self.runStep()
+
+    def test_errors(self):
+        self.setupStep(RunWebKitPyPython3Tests())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=120,
+                        ) +
+            ExpectShell.log('json', stdout=self.json_with_errros) +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Found 2 webkitpy python3 test failures: webkitpy.style.checkers.cpp_unittest.WebKitStyleTest.test_os_version_checks, webkitpy.port.win_unittest.WinPortTest.test_diff_image__missing_actual')
         return self.runStep()
 
 
