@@ -1,3 +1,70 @@
+2020-02-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255533. rdar://problem/58999654
+
+    REGRESSION(r252185): NetworkSessionCocoa cancels downloads that receive authentication challenges
+    https://bugs.webkit.org/show_bug.cgi?id=206984
+    rdar://problem/58999654
+    
+    Reviewed by Brady Eidson.
+    
+    Source/WebKit:
+    
+    r252185 changed the early return in WKNetworkSessionDelegate's -...task:didReceiveChallenge:... method
+    from "cancel the task and return early if self has no _session" to "cancel the task and return early
+    if we can't determine the network session for the given data task". When this method is called for
+    an NSURLSessionDownloadTask, this early return is hit because there is no NetworkDataTaskCocoa
+    for an active download. As a result, the download is canceled when it might have otherwise been able
+    to proceed.
+    
+    Fix this by adding a code path to fetch the NetworkSession associated with the Download when an
+    NSURLSessionDownloadTask receives an authentication challenge. This ensures we can actually handle
+    the challenge appropriately and not just cancel the task.
+    
+    * NetworkProcess/Downloads/Download.h:
+    (WebKit::Download::sessionID const):
+        Expose the session ID so we can use it to look up the NetworkSession for a Download.
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        Remove an unnecessary redeclaration of networkDataTask, and also an unneeded assertion that
+        networkDataTask != nullptr. Even if this is the case, the code that eventually handles this
+        task will null check it and handle the challenge as a websocket task or download task
+        based on the taskIdentifier.
+    
+    Tools:
+    
+    Add an API test for a resumed download that receives an authentication challenge. The download
+    delegate should be asked to handle the challenge, and the download should be able to finish.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+    (-[DownloadCancelingDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+    (-[DownloadCancelingDelegate _download:didReceiveData:]):
+    (-[DownloadCancelingDelegate _downloadDidCancel:]):
+    (-[AuthenticationChallengeHandlingDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]):
+    (-[AuthenticationChallengeHandlingDelegate _downloadDidFinish:]):
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255533 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  David Quesada  <david_quesada@apple.com>
+
+            REGRESSION(r252185): NetworkSessionCocoa cancels downloads that receive authentication challenges
+            https://bugs.webkit.org/show_bug.cgi?id=206984
+            rdar://problem/58999654
+
+            Reviewed by Brady Eidson.
+
+            Add an API test for a resumed download that receives an authentication challenge. The download
+            delegate should be asked to handle the challenge, and the download should be able to finish.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+            (-[DownloadCancelingDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+            (-[DownloadCancelingDelegate _download:didReceiveData:]):
+            (-[DownloadCancelingDelegate _downloadDidCancel:]):
+            (-[AuthenticationChallengeHandlingDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]):
+            (-[AuthenticationChallengeHandlingDelegate _downloadDidFinish:]):
+            (TEST):
+
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254950. rdar://problem/58544942

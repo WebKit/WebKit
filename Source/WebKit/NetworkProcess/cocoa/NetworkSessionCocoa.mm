@@ -613,6 +613,12 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, Se
 {
     auto* networkDataTask = [self existingTask:task];
     auto* sessionCocoa = networkDataTask ? static_cast<NetworkSessionCocoa*>(networkDataTask->networkSession()) : nullptr;
+    if (!networkDataTask) {
+        ASSERT(!sessionCocoa);
+        auto downloadID = _sessionWrapper->downloadMap.get(task.taskIdentifier);
+        auto download = downloadID.downloadID() ? _session->networkProcess().downloadManager().download(downloadID) : nil;
+        sessionCocoa = download ? static_cast<NetworkSessionCocoa*>(_session->networkProcess().networkSession(download->sessionID())) : nil;
+    }
     if (!sessionCocoa || [task state] == NSURLSessionTaskStateCanceling) {
         completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
         return;
@@ -635,8 +641,6 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, Se
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
         if (sessionCocoa->fastServerTrustEvaluationEnabled()) {
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
-            auto* networkDataTask = [self existingTask:task];
-            ASSERT(networkDataTask);
             auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = makeWeakPtr(sessionCocoa), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr<NetworkDataTaskCocoa>(networkDataTask)](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf)
