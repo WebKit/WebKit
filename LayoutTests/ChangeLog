@@ -1,5 +1,14 @@
 2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS ] http/tests/misc/image-blocked-src-change.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207226
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS iOS ] imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207225
 
