@@ -429,8 +429,8 @@
 (allow ipc-posix-shm-read*
     (ipc-posix-name-prefix "apple.cfprefs."))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.runningboard"))
+(allow mach-lookup (with telemetry)
+    (global-name "com.apple.runningboard")) ;; Needed by process assertion code (ProcessTaskStateObserver).
 
 (allow-multi-instance-xpc-services)
 
