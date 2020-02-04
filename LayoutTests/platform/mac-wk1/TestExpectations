@@ -889,3 +889,5 @@ webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
 webkit.org/b/207150 [ Catalina ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
 
 webkit.org/b/207157 inspector/debugger/tail-deleted-frames/tail-deleted-frames-scopes.html [ Pass Timeout ]
+
+webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
