@@ -21,14 +21,13 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
-    ${CAIRO_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBXKBCOMMON_INCLUDE_DIRS}
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
-    ${CAIRO_LIBRARIES}
+    Cairo::Cairo
     ${GLIB_LIBRARIES}
     ${LIBXKBCOMMON_LIBRARIES}
     ${WPEBACKEND_FDO_LIBRARIES}
@@ -36,7 +35,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
-    ${CAIRO_LIBRARIES}
+    Cairo::Cairo
     ${GLIB_LIBRARIES}
     WebCoreTestSupport
     WebKit

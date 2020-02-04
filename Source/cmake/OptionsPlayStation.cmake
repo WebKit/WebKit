@@ -116,7 +116,6 @@ find_package(ZLIB REQUIRED)
 
 # Emulate what pkg-config would do with statically compiled libraries
 # FIXME: https://bugs.webkit.org/show_bug.cgi?id=192410
-list(APPEND CAIRO_LIBRARIES ${PIXMAN_LIBRARIES})
 list(APPEND CURL_LIBRARIES ${NGHTTP2_LIBRARIES})
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_PTHREAD_SETNAME_NP ON)

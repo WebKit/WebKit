@@ -1,3 +1,13 @@
+2020-02-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [CMake] Add Cairo::Cairo target
+        https://bugs.webkit.org/show_bug.cgi?id=207159
+
+        Reviewed by Konstantin Tokarev.
+
+        * Source/cmake/FindCairo.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-02-02  Ting-Wei Lan  <lantw44@gmail.com>
 
         [CMake] Use opj_config.h to find OpenJPEG include directory

@@ -9,7 +9,6 @@ list(APPEND TestWebKit_DEPENDENCIES TestWebKitAPI-forwarding-headers)
 add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers)
 
 include_directories(SYSTEM
-    ${CAIRO_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GSTREAMER_INCLUDE_DIRS}
     ${GSTREAMER_AUDIO_INCLUDE_DIRS}

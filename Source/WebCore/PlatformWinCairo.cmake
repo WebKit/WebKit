@@ -55,6 +55,6 @@ list(APPEND WebCore_LIBRARIES
 )
 
 list(APPEND WebCoreTestSupport_LIBRARIES
-    ${CAIRO_LIBRARIES}
+    Cairo::Cairo
     shlwapi
 )

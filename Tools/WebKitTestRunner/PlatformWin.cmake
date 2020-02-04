@@ -24,7 +24,6 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     cairo
     win
-    ${CAIRO_INCLUDE_DIRS}
     ${FORWARDING_HEADERS_DIR}
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win
 )

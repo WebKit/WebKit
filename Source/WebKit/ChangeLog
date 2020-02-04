@@ -1,3 +1,14 @@
+2020-02-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [CMake] Add Cairo::Cairo target
+        https://bugs.webkit.org/show_bug.cgi?id=207159
+
+        Reviewed by Konstantin Tokarev.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+
 2020-02-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] WebProcessMain.h(28,14): error: token is not a valid binary operator in a preprocessor subexpression

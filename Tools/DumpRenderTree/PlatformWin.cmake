@@ -84,7 +84,9 @@ set(DumpRenderTree_LIBRARIES
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
         cairo
-        ${CAIRO_INCLUDE_DIRS}
+    )
+    list(APPEND DumpRenderTreeLib_LIBRARIES
+        Cairo::Cairo
     )
     list(APPEND DumpRenderTreeLib_SOURCES
         cairo/PixelDumpSupportCairo.cpp

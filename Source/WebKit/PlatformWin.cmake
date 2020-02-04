@@ -121,10 +121,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/win"
 )
 
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${CAIRO_INCLUDE_DIRS}
-)
-
 set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})
 set(WebKitCommonSystemIncludeDirectories ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
