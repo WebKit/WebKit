@@ -62,7 +62,7 @@ public:
 
     void terminate();
 
-    WEBCORE_EXPORT void whenActivated(WTF::Function<void(bool)>&&);
+    WEBCORE_EXPORT void whenActivated(CompletionHandler<void(bool)>&&);
 
     enum class State {
         Running,
@@ -137,7 +137,7 @@ private:
     mutable Optional<ClientOrigin> m_origin;
     RegistrableDomain m_registrableDomain;
     bool m_isSkipWaitingFlagSet { false };
-    Vector<Function<void(bool)>> m_whenActivatedHandlers;
+    Vector<CompletionHandler<void(bool)>> m_whenActivatedHandlers;
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
     bool m_shouldSkipHandleFetch;
     bool m_hasTimedOutAnyFetchTasks { false };

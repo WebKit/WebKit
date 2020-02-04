@@ -51,12 +51,13 @@ class FormDataReference;
 namespace WebKit {
 
 class NetworkResourceLoader;
+class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
 class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerFetchTask(NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, bool shouldSoftUpdate);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, bool shouldSoftUpdate);
     ~ServiceWorkerFetchTask();
 
     void start(WebSWServerToContextConnection&);
@@ -91,6 +92,7 @@ private:
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
 
+    WeakPtr<WebSWServerConnection> m_swServerConnection;
     NetworkResourceLoader& m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;
     WebCore::FetchIdentifier m_fetchIdentifier;
