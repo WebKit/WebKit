@@ -1,5 +1,27 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255376. rdar://problem/58440111
+
+    Unreviewed, fix Catalyst build after r255366
+    
+    * Shared/WebPreferencesDefaultValues.cpp:
+    (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+    * Shared/WebPreferencesDefaultValues.h:
+    * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255376 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-29  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix Catalyst build after r255366
+
+            * Shared/WebPreferencesDefaultValues.cpp:
+            (WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled):
+            * Shared/WebPreferencesDefaultValues.h:
+            * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255375. rdar://problem/58791603
 
     Crash under com.apple.WebKit.Networking at WebKit: WebKit::WebIDBServer::suspend
