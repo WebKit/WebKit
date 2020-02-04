@@ -1373,3 +1373,5 @@ webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.ht
 webkit.org/b/207161 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ Pass Failure ]
 
 webkit.org/b/207164 [ Debug ] legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
+
+webkit.org/b/207194 fast/scrolling/ios/scroll-events-back-forward.html [ Pass Failure ]
