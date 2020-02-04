@@ -1395,6 +1395,12 @@ void KeyframeEffect::animationWasCanceled()
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
+void KeyframeEffect::willChangeRenderer()
+{
+    if (m_isRunningAccelerated)
+        addPendingAcceleratedAction(AcceleratedAction::Stop);
+}
+
 void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended)
 {
     if (m_isRunningAccelerated)

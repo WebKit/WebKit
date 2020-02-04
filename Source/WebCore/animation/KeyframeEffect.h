@@ -122,6 +122,8 @@ public:
     void animationTimingDidChange();
     void applyPendingAcceleratedActions();
 
+    void willChangeRenderer();
+
     void setAnimation(WebAnimation*) final;
 
     RenderElement* renderer() const override;
