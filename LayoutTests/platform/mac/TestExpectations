@@ -1987,3 +1987,5 @@ webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/207226 http/tests/misc/image-blocked-src-change.html [ Pass Failure ]
 
 webkit.org/b/207230 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.html [ Pass Failure ]
+
+webkit.org/b/207235 legacy-animation-engine/fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
