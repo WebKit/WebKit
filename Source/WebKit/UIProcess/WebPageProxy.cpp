@@ -8524,6 +8524,9 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     if (m_isLayerTreeFrozenDueToSwipeAnimation) {
         m_isLayerTreeFrozenDueToSwipeAnimation = false;
         send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+
+        if (m_provisionalPage)
+            m_provisionalPage->unfreezeLayerTreeDueToSwipeAnimation();
     }
 }
 
