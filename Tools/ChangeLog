@@ -1,3 +1,18 @@
+2020-02-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Make Bugzilla._find_select_element_for_flag more robust
+        https://bugs.webkit.org/show_bug.cgi?id=207148
+
+        Reviewed by Jonathan Bedard.
+
+        This patch resolves two FIXMEs:
+        1. _find_select_element_for_flag() is now used in _fill_attachment_form() method.
+        2. _find_select_element_for_flag() now does not rely on order of <select> elements.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._fill_attachment_form):
+        (Bugzilla._find_select_element_for_flag):
+
 2020-02-03  Alex Christensen  <achristensen@webkit.org>
 
         Reduce size of HashMap and HashSet
