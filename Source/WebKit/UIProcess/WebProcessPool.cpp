@@ -1047,7 +1047,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (websiteDataStore)
         parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
 
-    process.sendWithAsyncReply(Messages::WebProcess::InitializeWebProcess(parameters), [initializationActivity = WTFMove(initializationActivity)] { });
+    process.sendWithAsyncReply(Messages::WebProcess::InitializeWebProcess(parameters), [protectedThis = makeRef(*this), initializationActivity = WTFMove(initializationActivity)] { });
 
 #if PLATFORM(COCOA)
     process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
