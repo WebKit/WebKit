@@ -1,3 +1,25 @@
+2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Stop relying on ResponsivenessTimer to keep the WebProcess from suspending during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=207144
+
+        Reviewed by Brady Eidson.
+
+        Stop relying on ResponsivenessTimer to keep the WebProcess from suspending during initialization. Instead, make the
+        WebProcess::InitializeWebProcess IPC async with a reply and take a process assertion on behalf of the WebContent
+        process until we get a response back.
+
+        This avoids sending an extra WebProcess::MainThreadPing IPC to the WebProcess for no reason (since we're already
+        sending the WebProcess::InitializeWebProcess IPC) and this is also more reliable since the ResponsivenessTimer can
+        actually time out and cause the process to get suspended during initialization still.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-02-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         Pass a hint from the extension to decidePolicyForSOAuthorizationLoadWithCurrentPolicy
