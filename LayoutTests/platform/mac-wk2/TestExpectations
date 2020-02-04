@@ -977,3 +977,5 @@ webkit.org/b/207151 [ Release ] fast/dom/navigator-detached-no-crash.html [ Pass
 webkit.org/b/207165 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html [ Pass Failure ]
 
 webkit.org/b/207166 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Pass Failure ]
+
+webkit.org/b/207199 webgpu/whlsl/loops.html [ Pass ImageOnlyFailure ]
