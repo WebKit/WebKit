@@ -1,5 +1,16 @@
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        LayoutTest inspector/controller/runtime-controller-import.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=168926
+
+        Updating because the test is also flaky failing.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk1 ] inspector/heap/imported-snapshot.html is flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=207163
 
