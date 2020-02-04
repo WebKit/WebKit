@@ -54,6 +54,8 @@ CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* clien
     ASSERT(isMainThread());
 }
 
+CurlRequest::~CurlRequest() = default;
+
 void CurlRequest::invalidateClient()
 {
     ASSERT(isMainThread());
