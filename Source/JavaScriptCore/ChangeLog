@@ -1,3 +1,17 @@
+2020-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use PackedPtr for VariableEnvironment
+        https://bugs.webkit.org/show_bug.cgi?id=207172
+
+        Reviewed by Mark Lam.
+
+        Since VariableEnvironment's KeyValue is key: pointer + value: 2 byte, using PackedPtr can make it 8 bytes, 50% reduction.
+
+        * parser/VariableEnvironment.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedRefPtr::encode):
+        (JSC::CachedRefPtr::decode const): CachedTypes should handle PackedPtr too since VariableEnvironment starts using it.
+
 2020-02-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         \0 identity escapes should be syntax errors in Unicode patterns only

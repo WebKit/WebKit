@@ -85,7 +85,7 @@ struct VariableEnvironmentEntryHashTraits : HashTraits<VariableEnvironmentEntry>
 
 class VariableEnvironment {
 private:
-    typedef HashMap<RefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
+    typedef HashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
 public:
     VariableEnvironment() = default;
     VariableEnvironment(VariableEnvironment&& other) = default;
@@ -139,7 +139,7 @@ public:
 private:
     CompactVariableEnvironment() = default;
 
-    Vector<RefPtr<UniquedStringImpl>> m_variables;
+    Vector<PackedRefPtr<UniquedStringImpl>> m_variables;
     Vector<VariableEnvironmentEntry> m_variableMetadata;
     unsigned m_hash;
     bool m_isEverythingCaptured;

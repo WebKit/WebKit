@@ -42,6 +42,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Optional.h>
+#include <wtf/Packed.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
 
@@ -469,7 +470,7 @@ private:
 
 template<typename T, typename Source = SourceType<T>>
 class CachedPtr : public VariableLengthObject<Source*> {
-    template<typename, typename>
+    template<typename, typename, typename>
     friend class CachedRefPtr;
 
     friend struct CachedPtrOffsets;
@@ -532,20 +533,20 @@ ptrdiff_t CachedPtrOffsets::offsetOffset()
     return OBJECT_OFFSETOF(CachedPtr<void>, m_offset);
 }
 
-template<typename T, typename Source = SourceType<T>>
-class CachedRefPtr : public CachedObject<RefPtr<Source>> {
+template<typename T, typename Source = SourceType<T>, typename PtrTraits = DumbPtrTraits<Source>>
+class CachedRefPtr : public CachedObject<RefPtr<Source, PtrTraits>> {
 public:
     void encode(Encoder& encoder, const Source* src)
     {
         m_ptr.encode(encoder, src);
     }
 
-    void encode(Encoder& encoder, const RefPtr<Source> src)
+    void encode(Encoder& encoder, const RefPtr<Source, PtrTraits> src)
     {
         encode(encoder, src.get());
     }
 
-    RefPtr<Source> decode(Decoder& decoder) const
+    RefPtr<Source, PtrTraits> decode(Decoder& decoder) const
     {
         bool isNewAllocation;
         Source* decodedPtr = m_ptr.decode(decoder, isNewAllocation);
@@ -560,7 +561,7 @@ public:
         return adoptRef(decodedPtr);
     }
 
-    void decode(Decoder& decoder, RefPtr<Source>& src) const
+    void decode(Decoder& decoder, RefPtr<Source, PtrTraits>& src) const
     {
         src = decode(decoder);
     }
@@ -983,7 +984,7 @@ public:
 
 private:
     bool m_isEverythingCaptured;
-    CachedHashMap<CachedRefPtr<CachedUniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> m_map;
+    CachedHashMap<CachedRefPtr<CachedUniquedStringImpl, UniquedStringImpl, WTF::PackedPtrTraits<UniquedStringImpl>>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> m_map;
 };
 
 class CachedCompactVariableEnvironment : public CachedObject<CompactVariableEnvironment> {
@@ -1012,7 +1013,7 @@ public:
     }
 
 private:
-    CachedVector<CachedRefPtr<CachedUniquedStringImpl>> m_variables;
+    CachedVector<CachedRefPtr<CachedUniquedStringImpl, UniquedStringImpl, WTF::PackedPtrTraits<UniquedStringImpl>>> m_variables;
     CachedVector<VariableEnvironmentEntry> m_variableMetadata;
     unsigned m_hash;
     bool m_isEverythingCaptured;
