@@ -13,3 +13,30 @@ list(APPEND TestWTF_SOURCES
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 )
+
+# TestWebKit
+if (ENABLE_WEBKIT)
+    add_dependencies(TestWebKitAPIBase WebKitFrameworkHeaders)
+    add_dependencies(TestWebKitAPIInjectedBundle WebKitFrameworkHeaders)
+
+    target_sources(TestWebKitAPIInjectedBundle PRIVATE
+        generic/UtilitiesGeneric.cpp
+
+        playstation/PlatformUtilitiesPlayStation.cpp
+    )
+
+    list(APPEND TestWebKit_SOURCES
+        ${test_main_SOURCES}
+
+        Tests/WebKit/curl/Certificates.cpp
+
+        generic/UtilitiesGeneric.cpp
+
+        playstation/PlatformUtilitiesPlayStation.cpp
+        playstation/PlatformWebViewPlayStation.cpp
+    )
+
+    list(APPEND TestWebKit_DEPENDENCIES
+        WebKitFrameworkHeaders
+    )
+endif ()

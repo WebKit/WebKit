@@ -1,3 +1,31 @@
+2020-02-04  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable TestWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=207211
+
+        Reviewed by Ross Kirsling.
+
+        Stub out PlayStation implementation of TestWebKit so it builds.
+
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+        * TestWebKitAPI/PlatformWebView.h: Simplify platform define
+        * TestWebKitAPI/playstation/PlatformUtilitiesPlayStation.cpp: Added.
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::createURLForResource):
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        (TestWebKitAPI::Util::isKeyDown):
+        * TestWebKitAPI/playstation/PlatformWebViewPlayStation.cpp: Added.
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::initialize):
+        (TestWebKitAPI::PlatformWebView::page const):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI::PlatformWebView::focus):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateAltKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+
 2020-02-04  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Support branches in run-javascriptcore-tests

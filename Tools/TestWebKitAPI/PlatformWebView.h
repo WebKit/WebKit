@@ -59,6 +59,9 @@ typedef WPEToolingBackends::HeadlessViewBackend *PlatformWindow;
 #elif PLATFORM(WIN)
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
+#elif PLATFORM(PLAYSTATION)
+typedef void* PlatformWKView;
+typedef void* PlatformWindow;
 #endif
 typedef uint32_t WKEventModifiers;
 
