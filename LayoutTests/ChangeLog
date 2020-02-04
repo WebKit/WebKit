@@ -1,3 +1,14 @@
+2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] inspector/heap/imported-snapshot.html is flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207163
+
+        Updating to include an exclude for timeouts.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
 
         [iOS wk2 Debug] legacy-animation-engine/animations/play-state-in-shorthand.html is flaky failing.
