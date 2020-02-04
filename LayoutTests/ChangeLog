@@ -1,3 +1,24 @@
+2020-02-04  youenn fablet  <youenn@apple.com>
+
+        MediaDevices should handle changes of iframe allow attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=207112
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * fullscreen/full-screen-enabled-expected.txt:
+        * fullscreen/full-screen-enabled-prefixed-expected.txt:
+        * fullscreen/full-screen-iframe-not-allowed-expected.txt:
+        * fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent-expected.txt:
+        * fullscreen/full-screen-restrictions-expected.txt:
+        * http/tests/fullscreen/fullscreen-feature-policy-expected.txt:
+        * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute-expected.txt:
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt:
+        * http/tests/ssl/media-stream/get-user-media-different-host-expected.txt:
+        * http/tests/ssl/media-stream/get-user-media-nested-expected.txt:
+        * http/tests/webrtc/enumerateDevicesInFrames-expected.txt: Added.
+        * http/tests/webrtc/enumerateDevicesInFrames.html: Added.
+
 2020-02-03  Antti Koivisto  <antti@apple.com>
 
         Accelerated animations freeze on render tree rebuild

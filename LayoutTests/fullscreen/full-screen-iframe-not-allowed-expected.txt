@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin '' and allow attribute 'fullscreen 'none''.
 Test for bug 56264: Handle entering full screen security restrictions
 
 To test manually, click the "Go full screen" button - the page should not enter full screen mode.

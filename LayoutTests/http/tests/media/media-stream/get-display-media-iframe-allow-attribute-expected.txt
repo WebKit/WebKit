@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: line 6: Trying to call getDisplayMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 6: Trying to call getDisplayMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 6: Trying to call getDisplayMedia from a frame without correct 'allow' attribute.
      
 
 PASS: <iframe allow=''> got "deny"

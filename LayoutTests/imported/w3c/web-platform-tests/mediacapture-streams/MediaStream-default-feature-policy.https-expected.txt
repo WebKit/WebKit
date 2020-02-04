@@ -1,12 +1,3 @@
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 13: Trying to call getUserMedia from a frame without correct 'allow' attribute.
 
 
 PASS Default "microphone" feature policy ["self"] allows the top-level document. 

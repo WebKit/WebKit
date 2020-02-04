@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FeaturePolicy.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
@@ -36,19 +37,45 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, const Document& document)
+static const char* policyTypeName(FeaturePolicy::Type type)
+{
+    switch (type) {
+    case FeaturePolicy::Type::Camera:
+        return "Camera";
+    case FeaturePolicy::Type::Microphone:
+        return "Microphone";
+    case FeaturePolicy::Type::DisplayCapture:
+        return "DisplayCapture";
+    case FeaturePolicy::Type::SyncXHR:
+        return "SyncXHR";
+    case FeaturePolicy::Type::Fullscreen:
+        return "Fullscreen";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, const Document& document, LogFeaturePolicyFailure logFailure)
 {
     auto& topDocument = document.topDocument();
     auto* ancestorDocument = &document;
     while (ancestorDocument != &topDocument) {
-        if (!ancestorDocument)
+        if (!ancestorDocument) {
+            if (logFailure == LogFeaturePolicyFailure::Yes && document.domWindow())
+                document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed."));
             return false;
+        }
 
         auto* ownerElement = ancestorDocument->ownerElement();
         if (is<HTMLIFrameElement>(ownerElement)) {
             const auto& featurePolicy = downcast<HTMLIFrameElement>(ownerElement)->featurePolicy();
-            if (!featurePolicy.allows(type, ancestorDocument->securityOrigin().data()))
+            if (!featurePolicy.allows(type, ancestorDocument->securityOrigin().data())) {
+                if (logFailure == LogFeaturePolicyFailure::Yes && document.domWindow()) {
+                    auto& allowValue = downcast<HTMLIFrameElement>(ownerElement)->attributeWithoutSynchronization(HTMLNames::allowAttr);
+                    document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed for iframe with origin '", document.securityOrigin().toString(), "' and allow attribute '", allowValue, "'."));
+                }
                 return false;
+            }
         }
 
         ancestorDocument = ancestorDocument->parentDocument();

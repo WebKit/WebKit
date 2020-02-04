@@ -1,31 +1,59 @@
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 37: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 43: Trying to call getUserMedia from a frame without correct 'allow' attribute.
-CONSOLE MESSAGE: line 49: Trying to call getUserMedia from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera 'none''.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'camera 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'camera 'none''.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'camera 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone 'none';camera 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone 'none';camera 'none''.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone 'none';camera 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera *;microphone 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera *;microphone 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'camera *;microphone 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'camera *;microphone 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera 'none';microphone *'.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'camera 'none';microphone *'.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone *; microphone 'none''.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone *; microphone 'none''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone *; camera 'self''.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone *; camera 'self''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone *; camera http:/example.org self'.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone *; camera http:/example.org self'.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone *; camera http:/example.org 'self''.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone *; camera http:/example.org 'self''.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 37: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone https://127.0.0.1:9443'.
+CONSOLE MESSAGE: line 37: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Microphone' check failed for iframe with origin 'https://localhost:9443' and allow attribute 'microphone https://127.0.0.1:9443'.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 43: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone https://127.0.0.1:9443'.
+CONSOLE MESSAGE: line 43: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: line 49: Feature policy 'Camera' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute 'microphone https://127.0.0.1:9443'.
+CONSOLE MESSAGE: line 49: Not allowed to call getUserMedia.
 
 PASS "camera 'none'" - same origin iframe 
 PASS "camera 'none'" - cross origin iframe 

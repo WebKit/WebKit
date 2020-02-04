@@ -55,6 +55,7 @@ private:
     AllowRule m_fullscreenRule;
 };
 
-extern bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type, const Document&);
+enum class LogFeaturePolicyFailure { No, Yes };
+extern bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type, const Document&, LogFeaturePolicyFailure = LogFeaturePolicyFailure::Yes);
 
 } // namespace WebCore

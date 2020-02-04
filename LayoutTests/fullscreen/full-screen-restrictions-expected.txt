@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Feature policy 'Fullscreen' check failed for iframe with origin '' and allow attribute 'fullscreen 'none''.
 This tests the restrictions to entering full screen mode laid out in section 4.1 of the W3C Full Screen API
 "The context object is not in a document."
 EVENT(webkitfullscreenerror)
