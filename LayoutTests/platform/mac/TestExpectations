@@ -1981,3 +1981,5 @@ webkit.org/b/207142 requestidlecallback/requestidlecallback-is-called.html [ Pas
 webkit.org/b/207147 legacy-animation-engine/compositing/geometry/partial-layout-update.html [ Pass Failure ]
 
 webkit.org/b/207152 fast/dom/connected-subframe-counter-overflow.html  [ Pass Timeout ]
+
+webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Pass Failure ]
