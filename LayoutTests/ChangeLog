@@ -1,3 +1,12 @@
+2020-02-03  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html is flaky failing. 
+        https://bugs.webkit.org/show_bug.cgi?id=207165
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         LayoutTest inspector/controller/runtime-controller-import.html is a flaky timeout
