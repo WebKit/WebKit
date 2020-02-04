@@ -50,7 +50,7 @@ static inline bool userInterfaceIdiomIsPad()
     // This inline function exists to thwart unreachable code
     // detection on platforms where UICurrentUserInterfaceIdiomIsPad
     // is defined directly to false.
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && !PLATFORM(MACCATALYST)
     return UICurrentUserInterfaceIdiomIsPad();
 #else
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;

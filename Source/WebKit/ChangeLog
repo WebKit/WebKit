@@ -1,3 +1,17 @@
+2020-02-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Fixed Deprecated API
+        https://bugs.webkit.org/show_bug.cgi?id=207179
+
+        Reviewed by Tim Horton.
+
+        Fixing deprecated API for MacCatalyst.
+
+        No new tests - build fix.
+
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::userInterfaceIdiomIsPad):
+
 2020-02-04  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Add WebKit API files
