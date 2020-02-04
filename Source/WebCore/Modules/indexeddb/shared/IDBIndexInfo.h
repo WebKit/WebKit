@@ -37,7 +37,7 @@ public:
     WEBCORE_EXPORT IDBIndexInfo();
     IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
 
-    IDBIndexInfo isolatedCopy() const;
+    WEBCORE_EXPORT IDBIndexInfo isolatedCopy() const;
 
     uint64_t identifier() const { return m_identifier; }
     uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }

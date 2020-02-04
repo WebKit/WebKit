@@ -1,3 +1,14 @@
+2020-02-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash in WebCore::IDBServer::IDBServer::createIndex
+        https://bugs.webkit.org/show_bug.cgi?id=207137
+        <rdar://problem/59096231>
+
+        Reviewed by Darin Adler.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::createIndex): Create an isolated copy of IDBIndexInfo before passing it to IDB thread.
+
 2020-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add _PRIVATE_LIBRARIES to framework
