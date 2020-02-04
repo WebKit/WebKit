@@ -32,7 +32,6 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DocumentTimeline.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
@@ -42,6 +41,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffectStack.h"
 #include "LayerAncestorClippingStack.h"
 #include "LayerOverlapMap.h"
 #include "Logging.h"
@@ -2778,9 +2778,14 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
         return false;
 
     if (auto* element = renderer.element()) {
-        if (auto* timeline = element->document().existingTimeline()) {
-            if (timeline->runningAnimationsForElementAreAllAccelerated(*element))
-                return true;
+        if (auto* effectsStack = element->keyframeEffectStack()) {
+            return (effectsStack->isCurrentlyAffectingProperty(CSSPropertyOpacity)
+                && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyFilter)
+#if ENABLE(FILTERS_LEVEL_2)
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyWebkitBackdropFilter)
+#endif
+                || effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
         }
     }
 
@@ -3337,13 +3342,14 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* element = renderer.element()) {
-            if (auto* timeline = element->document().existingTimeline())
-                return timeline->isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
-        }
-        return false;
+    if (auto* element = renderer.element()) {
+        if (auto* effectsStack = element->keyframeEffectStack())
+            return effectsStack->isCurrentlyAffectingProperty(CSSPropertyTransform);
     }
+
+    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
+        return false;
+
     return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
 }
 

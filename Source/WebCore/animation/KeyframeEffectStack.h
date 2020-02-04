@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationList.h"
+#include "CSSPropertyNames.h"
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,6 +46,7 @@ public:
     Vector<WeakPtr<KeyframeEffect>> sortedEffects();
     const AnimationList* cssAnimationList() const { return m_cssAnimationList.get(); }
     void setCSSAnimationList(RefPtr<const AnimationList>&&);
+    bool isCurrentlyAffectingProperty(CSSPropertyID) const;
 
 private:
     void ensureEffectsAreSorted();

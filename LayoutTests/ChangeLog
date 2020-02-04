@@ -1,5 +1,132 @@
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255383. rdar://problem/58675608
+
+    [Web Animations] Animations should run accelerated even if other animations targeting the same element are not accelerated
+    https://bugs.webkit.org/show_bug.cgi?id=206890
+    <rdar://problem/58961750>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: webanimations/width-and-opacity-separate-animation-yields-compositing.html
+    
+    In the Web Animations implementation, when an element has some animated properties that can be accelerated and some that cannot be, we would never
+    run accelerated animations at all. However, in the "legacy" animation engine, we would animate properties that can be acclerated if possible.
+    We now attempt to run accelerated animations provided at least one animation is accelerated.
+    
+    To do that, we now keep track of whether none, some or all of the animated properties of a given KeyframeEffect are accelerated using the new
+    m_acceleratedPropertiesState instance variable. We compute this property when creating the blending keyframes for the effect.
+    
+    Then, as time progresses and the effect is resolved, updateAcceleratedActions() is called and we simply use the effect's phase to determine
+    whether we need to enqueue actions to start, pause, seek or end accelerated animations. This is an improvement over how this method used to work
+    since we would run accelerated animations while in their delay phase, which did not match the "legacy" animation engine's behavior.
+    
+    We've also removed the single method that provided the accelerated characteristics of a KeyframeEffect, isAccelerated(), with a few more methods:
+    
+        - isRunningAccelerated(): the effect is currently running accelerated animations.
+        - isAboutToRunAccelerated(): the effect has pending accelerated actions that should make it run accelerated animations when accelerated actions
+        are updated next.
+        - isCompletelyAccelerated(): the effect animates only accelerated properties.
+        - isCurrentlyAffectingProperty(property, accelerated): the effect is currently animating the given property, with the option to specify whether
+        that animation is accelerated.
+    
+    We use this information in a few new places. If an effect returns true for either isRunningAccelerated() or isAboutToRunAccelerated() when
+    Element::applyKeyframeEffects() is called, we set the AnimationImpact::RequiresRecomposite flag. In RenderLayerCompositor::requiresCompositingForAnimation(),
+    if an effect returns true for isCurrentlyAffectingProperty() with the accelerated flag set to true, the method returns true, matching the logic
+    used by the "legacy" animation engine.
+    
+    All in all, this better aligns the behavior of the "legacy" and Web Animations engines to run accelerated animations in the same circumstances.
+    
+    * animation/AnimationTimeline.cpp:
+    (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty): Use KeyframeEfffect::isRunningAccelerated() instead of KeyframeEffect::isAccelerated().
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::isRunningAcceleratedAnimationOnRenderer const): Use KeyframeEffect::isCurrentlyAffectingProperty() instead of checking both
+    isRunningAccelerated() and manually looking at the effect's animated properties.
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::setBlendingKeyframes): Call computeAcceleratedPropertiesState() instead of the now-defunct computeShouldRunAccelerated().
+    (WebCore::KeyframeEffect::apply): Keep track of the newly computed phase so that we may use it in the new isCurrentlyAffectingProperty() without having
+    to recompute it on each call.
+    (WebCore::KeyframeEffect::isCurrentlyAffectingProperty const): Indicates whether a given property is currently animated (active phase) with the option
+    to specify whether that animation is accelerated.
+    (WebCore::KeyframeEffect::computeAcceleratedPropertiesState): Compute whether none, some or all of the animated properties of the given effect can be accelerated.
+    (WebCore::KeyframeEffect::updateAcceleratedActions): Use the phase to determine which accelerated actions to enqueue.
+    (WebCore::KeyframeEffect::animationDidSeek): Use the new m_isRunningAccelerated state to determine whether the animation is presently running accelerated.
+    (WebCore::KeyframeEffect::animationWasCanceled): Use the new m_isRunningAccelerated state to determine whether the animation is presently running accelerated.
+    (WebCore::KeyframeEffect::animationSuspensionStateDidChange): Use the new m_isRunningAccelerated state to determine whether the animation is presently running accelerated.
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+    * animation/KeyframeEffect.h:
+    (WebCore::KeyframeEffect::isRunningAccelerated const):
+    (WebCore::KeyframeEffect::isAboutToRunAccelerated const):
+    (WebCore::KeyframeEffect::isCompletelyAccelerated const):
+    * animation/KeyframeEffectStack.cpp:
+    (WebCore::KeyframeEffectStack::isCurrentlyAffectingProperty const): Indicates whether any of the effects in the stack animates a given property, with the option
+    to specify whether the animation should be accelerated.
+    * animation/KeyframeEffectStack.h:
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::effectTargetDidChange): Ensure we schedule an animation update if an effect is no longer animating a given element or newly animating an element,
+    to ensure that replaced animations may be removed.
+    (WebCore::WebAnimation::isCompletelyAccelerated const): Convenience function to call isCompletelyAccelerated() on the animation's effect.
+    (WebCore::WebAnimation::computeRelevance): Check the replaced state when computing relevance.
+    (WebCore::WebAnimation::timeToNextTick const): Schedule an immediate update if a given animation is not _completely_ accelerated.
+    * animation/WebAnimation.h:
+    * dom/Element.cpp:
+    (WebCore::Element::keyframeEffectStack const):
+    (WebCore::Element::applyKeyframeEffects): Set the AnimationImpact::RequiresRecomposite flag when the animation is either currently running accelerated or expected
+    to be in the next accelerated animation update.
+    * dom/Element.h:
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const): Use the same logic as for the "legacy" animation engine to determine whether an animation
+    requires compositing using the new KeyframeEffect::isCurrentlyAffectingProperty() method.
+    (WebCore::RenderLayerCompositor::isRunningTransformAnimation const): Refactor some code to use the new KeyframeEffect::isCurrentlyAffectingProperty() method.
+    
+    LayoutTests:
+    
+    Update some tests that assumed a mix of accelerated and non-accelerated properties would not yield accelerated animations.
+    We also make some WK1-specific expectation due to compositing being disabled when opacity is the only potentially-accelerated
+    property to be animated.
+    
+    * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Added.
+    * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-expected.txt: Added.
+    * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-span-expected.txt: Added.
+    * platform/mac-wk1/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+    * platform/mac-wk1/webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+    * webanimations/left-and-opacity-animation-yields-no-compositing-expected.txt: Removed.
+    * webanimations/partly-accelerated-transition-by-removing-property-expected.txt:
+    * webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+    * webanimations/width-and-opacity-separate-animation-yields-compositing.html: Renamed from LayoutTests/webanimations/left-and-opacity-animation-yields-no-compositing.html.
+    * webanimations/width-and-opacity-separate-animation-yields-no-compositing-expected.txt: Removed.
+    * webanimations/width-and-opacity-separate-animation-yields-no-compositing.html: Removed.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255383 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-28  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Animations should run accelerated even if other animations targeting the same element are not accelerated
+            https://bugs.webkit.org/show_bug.cgi?id=206890
+            <rdar://problem/58961750>
+
+            Reviewed by Simon Fraser.
+
+            Update some tests that assumed a mix of accelerated and non-accelerated properties would not yield accelerated animations.
+            We also make some WK1-specific expectation due to compositing being disabled when opacity is the only potentially-accelerated
+            property to be animated.
+
+            * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Added.
+            * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-expected.txt: Added.
+            * platform/mac-wk1/webanimations/opacity-animation-yields-compositing-span-expected.txt: Added.
+            * platform/mac-wk1/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+            * platform/mac-wk1/webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+            * webanimations/left-and-opacity-animation-yields-no-compositing-expected.txt: Removed.
+            * webanimations/partly-accelerated-transition-by-removing-property-expected.txt:
+            * webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+            * webanimations/width-and-opacity-separate-animation-yields-compositing.html: Renamed from LayoutTests/webanimations/left-and-opacity-animation-yields-no-compositing.html.
+            * webanimations/width-and-opacity-separate-animation-yields-no-compositing-expected.txt: Removed.
+            * webanimations/width-and-opacity-separate-animation-yields-no-compositing.html: Removed.
+
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255228. rdar://problem/58858225
 
     -webkit-image-set should support resolution units other than 'x'
