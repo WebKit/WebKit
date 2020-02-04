@@ -981,3 +981,5 @@ webkit.org/b/207166 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 webkit.org/b/207199 webgpu/whlsl/loops.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207200 webgpu/whlsl/while-loop-continue.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207202 webgpu/whlsl/textures-sample-grad.html [ Pass ImageOnlyFailure ]
