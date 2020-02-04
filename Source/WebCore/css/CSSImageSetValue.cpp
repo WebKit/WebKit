@@ -50,20 +50,15 @@ CSSImageSetValue::~CSSImageSetValue() = default;
 void CSSImageSetValue::fillImageSet()
 {
     size_t length = this->length();
-    size_t i = 0;
-    while (i < length) {
+    for (size_t i = 0; i + 1 < length; i += 2) {
         CSSValue* imageValue = item(i);
-        ASSERT(is<CSSImageValue>(imageValue) || is<CSSImageGeneratorValue>(imageValue));
-        ++i;
-        ASSERT_WITH_SECURITY_IMPLICATION(i < length);
-        CSSValue* scaleFactorValue = item(i);
-        float scaleFactor = downcast<CSSPrimitiveValue>(*scaleFactorValue).floatValue();
+        CSSValue* scaleFactorValue = item(i + 1);
 
-        ImageWithScale image;
-        image.value = imageValue;
-        image.scaleFactor = scaleFactor;
-        m_imagesInSet.append(image);
-        ++i;
+        ASSERT(is<CSSImageValue>(imageValue) || is<CSSImageGeneratorValue>(imageValue));
+        ASSERT(is<CSSPrimitiveValue>(scaleFactorValue));
+
+        float scaleFactor = downcast<CSSPrimitiveValue>(scaleFactorValue)->floatValue(CSSUnitType::CSS_DPPX);
+        m_imagesInSet.append({ imageValue, scaleFactor });
     }
 
     // Sort the images so that they are stored in order from lowest resolution to highest.
@@ -106,7 +101,6 @@ ImageWithScale CSSImageSetValue::selectBestFitImage(const Document& document)
 
 void CSSImageSetValue::updateDeviceScaleFactor(const Document& document)
 {
-
     // FIXME: In the future, we want to take much more than deviceScaleFactor into acount here.
     // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
     // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
@@ -136,24 +130,11 @@ String CSSImageSetValue::customCSSText() const
     result.appendLiteral("image-set(");
 
     size_t length = this->length();
-    size_t i = 0;
-    while (i < length) {
+    for (size_t i = 0; i + 1 < length; i += 2) {
         if (i > 0)
             result.appendLiteral(", ");
 
-        const CSSValue* imageValue = item(i);
-        result.append(imageValue->cssText());
-        result.append(' ');
-
-        ++i;
-        ASSERT_WITH_SECURITY_IMPLICATION(i < length);
-        const CSSValue* scaleFactorValue = item(i);
-        result.append(scaleFactorValue->cssText());
-        // FIXME: Eventually the scale factor should contain it's own unit http://wkb.ug/100120.
-        // For now 'x' is hard-coded in the parser, so we hard-code it here too.
-        result.append('x');
-
-        ++i;
+        result.append(item(i)->cssText(), ' ', item(i + 1)->cssText());
     }
 
     result.append(')');

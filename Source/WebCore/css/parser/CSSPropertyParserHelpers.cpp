@@ -439,7 +439,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
     return nullptr;
 }
 
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, AllowXResolutionUnit allowX)
 {
     const CSSParserToken& token = range.peek();
     // Unlike the other types, calc() does not work with <resolution>.
@@ -448,6 +448,9 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
     CSSUnitType unit = token.unitType();
     if (unit == CSSUnitType::CSS_DPPX || unit == CSSUnitType::CSS_DPI || unit == CSSUnitType::CSS_DPCM)
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unit);
+    if (allowX == AllowXResolutionUnit::Allow && token.value() == "x")
+        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_DPPX);
+
     return nullptr;
 }
 
@@ -1485,22 +1488,17 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
     CSSParserTokenRange args = consumeFunction(rangeCopy);
     RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
     do {
-        RefPtr<CSSValue> image = consumeImage(args, context, (allowedImageType | AllowedImageType::RawStringAsURL) - AllowedImageType::ImageSet);
+        auto image = consumeImage(args, context, (allowedImageType | AllowedImageType::RawStringAsURL) - AllowedImageType::ImageSet);
         if (!image)
             return nullptr;
 
         imageSet->append(image.releaseNonNull());
 
-        const CSSParserToken& token = args.consumeIncludingWhitespace();
-        if (token.type() != DimensionToken)
+        auto resolution = consumeResolution(args, AllowXResolutionUnit::Allow);
+        if (!resolution || resolution->floatValue() <= 0)
             return nullptr;
-        if (token.value() != "x")
-            return nullptr;
-        ASSERT(token.unitType() == CSSUnitType::CSS_UNKNOWN);
-        double imageScaleFactor = token.numericValue();
-        if (imageScaleFactor <= 0)
-            return nullptr;
-        imageSet->append(CSSValuePool::singleton().createValue(imageScaleFactor, CSSUnitType::CSS_NUMBER));
+
+        imageSet->append(resolution.releaseNonNull());
     } while (consumeCommaIncludingWhitespace(args));
     if (!args.atEnd())
         return nullptr;

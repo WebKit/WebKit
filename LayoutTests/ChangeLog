@@ -1,5 +1,89 @@
 2020-02-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255228. rdar://problem/58858225
+
+    -webkit-image-set should support resolution units other than 'x'
+    https://bugs.webkit.org/show_bug.cgi?id=100120
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Leveraged previous work on image-resolution to enable dpi/dppx/dpcm in CSS image-set.
+    Now the second value of every entry in the image-set is parsed like any resolution,
+    allowing "x" as a synonim for "dppx.
+    
+    This changes computed style behavior for image-set - "x" resolution values will be converted
+    to "dppx". This is in line with the spirit of computed values, though it's not spec'ed particularly.
+    
+    Tests: fast/hidpi/image-set-units.html
+    
+    * css/CSSImageSetValue.cpp:
+    (WebCore::CSSImageSetValue::fillImageSet):
+    (WebCore::CSSImageSetValue::updateDeviceScaleFactor):
+    (WebCore::CSSImageSetValue::customCSSText const):
+            Convert values to dppx before sorting them the image set.
+            Use given CSS units in computed styles instead of hardcoding "x"
+    
+    * css/CSSPrimitiveValue.cpp:
+    (WebCore::isValidCSSUnitTypeForDoubleConversion):
+    (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor):
+            Allow conversion of dpi/dppx/dpcm to canonical (dppx).
+    
+    * css/parser/CSSPropertyParserHelpers.cpp:
+    (WebCore::CSSPropertyParserHelpers::consumeResolution):
+    (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+    * css/parser/CSSPropertyParserHelpers.h:
+            Consume any resolution when parsing image-set.
+    
+    LayoutTests:
+    
+    Had to modify several image-set parsing tests because of the behavior change in
+    computed style (x => dppx).
+    
+    Also added a couple of parsing/rendering tests specifically to test the new behavior
+    of dpi/dpcm/dppx.
+    
+    * fast/css/cursor-parsing-image-set-expected.txt:
+    * fast/css/cursor-parsing-image-set.html:
+    * fast/css/image-set-parsing-expected.txt:
+    * fast/css/image-set-parsing-invalid-expected.txt:
+    * fast/css/image-set-parsing.html:
+    * fast/css/image-set-setting-expected.txt:
+    * fast/css/image-set-setting.html:
+    * fast/css/image-set-unprefixed.html:
+    * fast/hidpi/image-set-units-expected.html: Added.
+    * fast/hidpi/image-set-units.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255228 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Noam Rosenthal  <noam@webkit.org>
+
+            -webkit-image-set should support resolution units other than 'x'
+            https://bugs.webkit.org/show_bug.cgi?id=100120
+
+            Reviewed by Darin Adler.
+
+            Had to modify several image-set parsing tests because of the behavior change in
+            computed style (x => dppx).
+
+            Also added a couple of parsing/rendering tests specifically to test the new behavior
+            of dpi/dpcm/dppx.
+
+            * fast/css/cursor-parsing-image-set-expected.txt:
+            * fast/css/cursor-parsing-image-set.html:
+            * fast/css/image-set-parsing-expected.txt:
+            * fast/css/image-set-parsing-invalid-expected.txt:
+            * fast/css/image-set-parsing.html:
+            * fast/css/image-set-setting-expected.txt:
+            * fast/css/image-set-setting.html:
+            * fast/css/image-set-unprefixed.html:
+            * fast/hidpi/image-set-units-expected.html: Added.
+            * fast/hidpi/image-set-units.html: Added.
+
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254861. rdar://problem/58858225
 
     -webkit-image-set should support all the image functions WebKit supports, not just url()

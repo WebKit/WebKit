@@ -21,14 +21,14 @@ function testComputedStyle(property, fullRule)
     return computedValue;
 }
 
-function testImageSetRule(description, property, rule, expected)
+function testImageSetRule(description, property, rule)
 {
     debug("");
     debug(description + " : " + rule);
 
     var fullRule = "image-set(" + rule + ")";
     style = testComputedStyle(property, fullRule);
-    shouldBeEqualToString('style.backgroundImage', fullRule);
+    shouldBeEqualToString('style.backgroundImage', fullRule.replace(/x(?=[,)])/g, 'dppx'));
 }
 
 testImageSetRule("Single value for background-image",
