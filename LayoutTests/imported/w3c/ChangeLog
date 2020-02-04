@@ -1,3 +1,48 @@
+2020-02-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255141. rdar://problem/58815952
+
+    [Web Animations] Update all DocumentTimeline objects when updating animations
+    https://bugs.webkit.org/show_bug.cgi?id=206819
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark a single new WPT progression.
+    
+    * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+    
+    Source/WebCore:
+    
+    Developers can create additional DocumentTimeline objects in JavaScript using that class's constructor, and an animation can be
+    assigned to that timeline after its creation. Until now we would only update an timeline created by a Document when that document's
+    animations were updated. Now we keep track of all DocumentTimeline objects that are created for a given Document as a vector of weak
+    references, and we update all of them when updating a document's animations.
+    
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::DocumentTimeline):
+    (WebCore::DocumentTimeline::~DocumentTimeline):
+    * animation/DocumentTimeline.h:
+    * dom/Document.cpp:
+    (WebCore::Document::updateAnimationsAndSendEvents):
+    (WebCore::Document::addTimeline):
+    (WebCore::Document::removeTimeline):
+    * dom/Document.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255141 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-26  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Update all DocumentTimeline objects when updating animations
+            https://bugs.webkit.org/show_bug.cgi?id=206819
+
+            Reviewed by Antti Koivisto.
+
+            Mark a single new WPT progression.
+
+            * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement-expected.txt:
+
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255166. rdar://problem/58841339
