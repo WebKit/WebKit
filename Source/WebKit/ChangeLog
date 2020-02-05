@@ -1,3 +1,79 @@
+2020-02-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255234. rdar://problem/59098321
+
+    [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled
+    https://bugs.webkit.org/show_bug.cgi?id=206173
+    <rdar://problem/58527432>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Make the timeline property of Animation read-write only if the new WebAnimationsMutableTimelines runtime flag is enabled.
+    
+    * animation/WebAnimation.idl: Make the "timeline" property conditionally read-write if WebAnimationsMutableTimelines is enabled.
+    * bindings/js/WebCoreBuiltinNames.h: With the new RuntimeConditionallyReadWrite property used in WebAnimation.idl, it is necessary
+    to declare the name of the affected property, in this case "timeline", in WebCoreBuiltinNames.
+    * page/RuntimeEnabledFeatures.h:
+    (WebCore::RuntimeEnabledFeatures::setWebAnimationsMutableTimelinesEnabled):
+    (WebCore::RuntimeEnabledFeatures::webAnimationsMutableTimelinesEnabled const):
+    
+    Source/WebKit:
+    
+    Add a new WebAnimationsMutableTimelines runtime flag.
+    
+    * Shared/WebPreferences.yaml:
+    
+    Source/WebKitLegacy/mac:
+    
+    Add a new WebAnimationsMutableTimelines runtime flag.
+    
+    * WebView/WebPreferenceKeysPrivate.h:
+    * WebView/WebPreferences.mm:
+    (-[WebPreferences webAnimationsMutableTimelinesEnabled]):
+    (-[WebPreferences setWebAnimationsMutableTimelinesEnabled:]):
+    * WebView/WebPreferencesPrivate.h:
+    * WebView/WebView.mm:
+    (-[WebView _preferencesChanged:]):
+    
+    Source/WebKitLegacy/win:
+    
+    Add a new WebAnimationsMutableTimelines runtime flag.
+    
+    * Interfaces/IWebPreferencesPrivate.idl:
+    * WebPreferenceKeysPrivate.h:
+    * WebPreferences.cpp:
+    (WebPreferences::initializeDefaultSettings):
+    (WebPreferences::setWebAnimationsMutableTimelinesEnabled):
+    (WebPreferences::webAnimationsMutableTimelinesEnabled):
+    * WebPreferences.h:
+    * WebView.cpp:
+    (WebView::notifyPreferencesChanged):
+    
+    Tools:
+    
+    Manually enable the new WebAnimationsMutableTimelines runtime flag in DumpRenderTree.
+    
+    * DumpRenderTree/mac/DumpRenderTree.mm:
+    (enableExperimentalFeatures):
+    * DumpRenderTree/win/DumpRenderTree.cpp:
+    (enableExperimentalFeatures):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255234 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Make Animation.timeline read-write only if a runtime flag is enabled
+            https://bugs.webkit.org/show_bug.cgi?id=206173
+            <rdar://problem/58527432>
+
+            Reviewed by Dean Jackson.
+
+            Add a new WebAnimationsMutableTimelines runtime flag.
+
+            * Shared/WebPreferences.yaml:
+
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255375. rdar://problem/59097770

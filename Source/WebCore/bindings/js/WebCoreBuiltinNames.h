@@ -352,6 +352,7 @@ namespace WebCore {
     macro(streamWritable) \
     macro(structuredCloneArrayBuffer) \
     macro(structuredCloneArrayBufferView) \
+    macro(timeline) \
     macro(top) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \

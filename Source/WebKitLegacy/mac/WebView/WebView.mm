@@ -3178,6 +3178,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled([preferences webAnimationsEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsCompositeOperationsEnabled([preferences webAnimationsCompositeOperationsEnabled]);
+    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsMutableTimelinesEnabled([preferences webAnimationsMutableTimelinesEnabled]);
 
 #if ENABLE(POINTER_EVENTS)
     RuntimeEnabledFeatures::sharedFeatures().setPointerEventsEnabled([preferences pointerEventsEnabled]);
