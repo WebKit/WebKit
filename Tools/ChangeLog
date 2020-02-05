@@ -1,3 +1,19 @@
+2020-02-04  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Support Internal in run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=204095
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/VCSUtils.pm:
+        (gitBisectStartBranchForDirectory): Renamed from gitBisectStartBranch.
+        (gitBranchForDirectory): Compute branch for directory.
+        (gitBranch): Compute branch for the current git directory.
+        (commitForDirectory): Add git support.
+        (gitBisectStartBranch): Renamed to gitBisectStartBranchForDirectory.
+        * Scripts/run-javascriptcore-tests:
+        (uploadResults): Check for Internal repository.
+
 2020-02-04  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: (r255611) [ Mac ] 3 lldb tests failing related to HashMap

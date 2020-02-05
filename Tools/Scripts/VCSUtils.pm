@@ -62,6 +62,7 @@ BEGIN {
         &fixChangeLogPatch
         &fixSVNPatchForAdditionWithHistory
         &gitBranch
+        &gitBranchForDirectory
         &gitCommitForSVNRevision
         &gitDirectory
         &gitHashForDirectory
@@ -108,7 +109,6 @@ BEGIN {
 
 our @EXPORT_OK;
 
-my $gitBranch;
 my $gitRoot;
 my $isGit;
 my $isGitSVN;
@@ -287,9 +287,10 @@ sub gitTreeDirectory()
     return $result;
 }
 
-sub gitBisectStartBranch()
+sub gitBisectStartBranchForDirectory($)
 {
-    my $bisectStartFile = File::Spec->catfile(gitDirectory(), "BISECT_START");
+    my ($directory) = @_;
+    my $bisectStartFile = File::Spec->catfile($directory, "BISECT_START");
     if (!-f $bisectStartFile) {
         return "";
     }
@@ -299,20 +300,26 @@ sub gitBisectStartBranch()
     return $result;
 }
 
-sub gitBranch()
+sub gitBranchForDirectory($)
 {
-    unless (defined $gitBranch) {
-        chomp($gitBranch = `git symbolic-ref -q HEAD`);
-        my $hasDetachedHead = exitStatus($?);
-        if ($hasDetachedHead) {
-            # We may be in a git bisect session.
-            $gitBranch = gitBisectStartBranch();
-        }
-        $gitBranch =~ s#^refs/heads/##;
-        $gitBranch = "" if $gitBranch eq "master";
+    my ($directory) = @_;
+
+    my $gitBranch;
+    chomp($gitBranch = `git -C \"$directory\" symbolic-ref -q HEAD`);
+    my $hasDetachedHead = exitStatus($?);
+    if ($hasDetachedHead) {
+        # We may be in a git bisect session.
+        $gitBranch = gitBisectStartBranchForDirectory($directory);
     }
+    $gitBranch =~ s#^refs/heads/##;
+    $gitBranch = "" if $gitBranch eq "master";
 
     return $gitBranch;
+}
+
+sub gitBranch()
+{
+    return gitBranchForDirectory(gitDirectory());
 }
 
 sub isGitBranchBuild()
@@ -385,6 +392,10 @@ sub commitForDirectory($$)
         $info =~ /.*Relative URL: \^\/([a-z]+)\n.*/;
         my $branch = $1;
         $result->{branch} = $branch if ($branch ne 'trunk');
+    } elsif (isGitDirectory($directory)) {
+        $result->{id} = gitHashForDirectory($directory);
+        my $branch = gitBranchForDirectory($directory);
+        $result->{branch} = $branch if ($branch ne '');
     } else {
         die "$directory is not a recognized SCM";
     }

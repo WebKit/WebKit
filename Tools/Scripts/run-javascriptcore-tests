@@ -878,11 +878,18 @@ sub uploadResults
         return 0;
     }
 
+    my @commits = [];
+    my $internalCheckout = File::Spec->catdir(dirname(sourceDir()), "Internal");
+    if (-e $internalCheckout and -d $internalCheckout) {
+        @commits = [commitForDirectory(sourceDir(), 'webkit'), commitForDirectory($internalCheckout, 'safari')]
+    } else {
+        @commits = [commitForDirectory(sourceDir(), 'webkit')]
+    }
+
     my %upload = (
         version => 0,
         suite => 'javascriptcore-tests',
-        # FIXME: Integrate the Safari repository, https://bugs.webkit.org/show_bug.cgi?id=204095
-        commits => [commitForDirectory(sourceDir(), 'webkit')],
+        commits => @commits,
         configuration => configurationForUpload(),
         test_results => {
             run_stats => {
