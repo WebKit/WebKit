@@ -2,19 +2,26 @@
 <html>
 <head>
     <style>
+        body {
+            margin: 5px;
+            padding: 5px;
+        }
+
         video {
             box-shadow: -50px -50px 0px black;
-            background-color: red;   
+            background-color: red;
             margin: 50px;
-            width: 500.25px;
+            width: 640px;
+            height: 480px;
         }
 
         .obscurer {
             position: absolute;
-            width: 14px;
+            width: 10px;
             height: 10px;
             background-color: gray;
         }
+
     </style>
     <script src="../../media/media-file.js"></script>
     <script>
@@ -37,7 +44,7 @@
             findMediaElement();
             waitForEvent('canplaythrough', canplaythrough);
             waitForEvent('seeked', testComplete);
-            video.src = findMediaFile('video', '../../media/content/counting');
+            video.src = findMediaFile('video', '../../media/content/pure-color-green');
         }
         
         window.addEventListener('load', doTest, false);
@@ -48,12 +55,12 @@
     <video></video>
 
     <div class="obscurer" style="left: 5px; top: 5px;"></div>
-    <div class="obscurer" style="left: 5px; top: 410px;"></div>
-    <div class="obscurer" style="left: 500px; top: 5px;"></div>
+    <div class="obscurer" style="left: 5px; top: 485px;"></div>
+    <div class="obscurer" style="left: 645px; top: 5px;"></div>
 
     <div class="obscurer" style="left: 55px; top: 55px;"></div>
-    <div class="obscurer" style="left: 55px; top: 460px;"></div>
-    <div class="obscurer" style="left: 550px; top: 55px;"></div>
-    <div class="obscurer" style="left: 550px; top: 460px;"></div>
+    <div class="obscurer" style="left: 55px; top: 535px;"></div>
+    <div class="obscurer" style="left: 695px; top: 55px;"></div>
+    <div class="obscurer" style="left: 695px; top: 535px;"></div>
 </body>
 </html>
