@@ -92,27 +92,31 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
     Util::run(&gotMainFrame);
 
     callOnMainThreadAndWait([&] () mutable {
+        [mainFrame setTimeoutsPaused:YES];
+
         DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[mainFrame.DOMDocument querySelector:@"video"];
         ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 
         [video addEventListener:@"playing" listener:testController.get() useCapture:NO];
-
-        [mainFrame setTimeoutsPaused:YES];
         didReceivePlaying = false;
         [video play];
+
+        [mainFrame setTimeoutsPaused:NO];
     });
 
     Util::run(&didReceivePlaying);
 
     callOnMainThreadAndWait([&] () mutable {
+        [mainFrame setTimeoutsPaused:YES];
+
         DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[mainFrame.DOMDocument querySelector:@"video"];
         ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 
         [video addEventListener:@"pause" listener:testController.get() useCapture:NO];
-
-        [mainFrame setTimeoutsPaused:NO];
         didReceivePause = false;
         [video pause];
+
+        [mainFrame setTimeoutsPaused:NO];
     });
 
     Util::run(&didReceivePause);

@@ -113,7 +113,8 @@ public:
     virtual void resetRestrictions();
 
     virtual bool sessionWillBeginPlayback(PlatformMediaSession&);
-    virtual void sessionWillEndPlayback(PlatformMediaSession&);
+
+    virtual void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying);
     virtual void sessionStateChanged(PlatformMediaSession&);
     virtual void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) { };
     virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }

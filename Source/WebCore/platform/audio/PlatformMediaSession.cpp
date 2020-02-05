@@ -224,7 +224,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
     return true;
 }
 
-bool PlatformMediaSession::clientWillPausePlayback()
+bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowPlaying shouldDelayCallingUpdateNowPlaying)
 {
     if (m_notifyingClient)
         return true;
@@ -237,8 +237,18 @@ bool PlatformMediaSession::clientWillPausePlayback()
     }
     
     setState(Paused);
-    PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
+    PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
+}
+
+bool PlatformMediaSession::clientWillPausePlayback()
+{
+    return processClientWillPausePlayback(DelayCallingUpdateNowPlaying::No);
+}
+
+void PlatformMediaSession::clientWillBeDOMSuspended()
+{
+    processClientWillPausePlayback(DelayCallingUpdateNowPlaying::Yes);
 }
 
 void PlatformMediaSession::pauseSession()
