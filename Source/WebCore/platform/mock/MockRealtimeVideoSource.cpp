@@ -262,12 +262,10 @@ void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)
 
 void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 {
-    static const RGBA32 magenta = 0xffff00ff;
-    static const RGBA32 yellow = 0xffffff00;
-    static const RGBA32 blue = 0xff0000ff;
-    static const RGBA32 red = 0xffff0000;
-    static const RGBA32 green = 0xff008000;
-    static const RGBA32 cyan = 0xFF00FFFF;
+    constexpr SimpleColor magenta { 0xffff00ff };
+    constexpr SimpleColor blue { 0xff0000ff };
+    constexpr SimpleColor red { 0xffff0000 };
+    constexpr SimpleColor darkGreen { 0xff008000 };
 
     IntSize size = captureSize();
     float boxSize = size.width() * .035;
@@ -317,9 +315,9 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
     boxTop += boxSize + 2;
     boxLeft = boxSize;
-    Color boxColors[] = { Color::white, yellow, cyan, green, magenta, red, blue };
-    for (unsigned i = 0; i < sizeof(boxColors) / sizeof(boxColors[0]); i++) {
-        context.fillRect(FloatRect(boxLeft, boxTop, boxSize + 1, boxSize + 1), boxColors[i]);
+    constexpr SimpleColor boxColors[] = { Color::white, Color::yellow, Color::cyan, darkGreen, magenta, red, blue };
+    for (auto& boxColor : boxColors) {
+        context.fillRect(FloatRect(boxLeft, boxTop, boxSize + 1, boxSize + 1), boxColor);
         boxLeft += boxSize + 1;
     }
     context.strokePath(m_path);

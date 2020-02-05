@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@ namespace WebCore {
 // such as StyleCounterValue, StyleRectValue, and StyleColorValue, these methods will get
 // more complicated.
 
-
 unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
     return static_cast<unsigned short>(m_value->primitiveType());
@@ -64,26 +63,25 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    ExceptionOr<Counter&> counter = m_value->getCounterValue();
-    if (counter.hasException())
+    auto* value = m_value->counterValue();
+    if (!value)
         return Exception { InvalidAccessError };
-    return DeprecatedCSSOMCounter::create(counter.releaseReturnValue(), m_owner.get());
+    return DeprecatedCSSOMCounter::create(*value, m_owner);
 }
     
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
 {
-    ExceptionOr<Rect&> rect = m_value->getRectValue();
-    if (rect.hasException())
+    auto* value = m_value->rectValue();
+    if (!value)
         return Exception { InvalidAccessError };
-    return DeprecatedCSSOMRect::create(rect.releaseReturnValue(), m_owner.get());
+    return DeprecatedCSSOMRect::create(*value, m_owner);
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBColorValue() const
 {
-    ExceptionOr<Ref<RGBColor>> color = m_value->getRGBColorValue();
-    if (color.hasException())
+    if (!m_value->isRGBColor())
         return Exception { InvalidAccessError };
-    return DeprecatedCSSOMRGBColor::create(color.releaseReturnValue(), m_owner.get());
+    return DeprecatedCSSOMRGBColor::create(m_owner, m_value->color());
 }
 
 }

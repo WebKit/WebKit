@@ -1489,8 +1489,10 @@ void ArgumentCoder<Color>::encode(Encoder& encoder, const Color& color)
         return;
     }
 
+    uint32_t value = color.rgb().value();
+
     encoder << true;
-    encoder << color.rgb();
+    encoder << value;
 }
 
 bool ArgumentCoder<Color>::decode(Decoder& decoder, Color& color)
@@ -1528,11 +1530,11 @@ bool ArgumentCoder<Color>::decode(Decoder& decoder, Color& color)
         return true;
     }
 
-    RGBA32 rgba;
-    if (!decoder.decode(rgba))
+    uint32_t value;
+    if (!decoder.decode(value))
         return false;
 
-    color = Color(rgba);
+    color = SimpleColor { value };
     return true;
 }
 

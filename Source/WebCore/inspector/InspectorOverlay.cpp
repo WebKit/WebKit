@@ -222,7 +222,7 @@ static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& 
     context.fillPath(quadToPath(quad, bounds));
 
     context.setCompositeOperation(CompositeOperator::DestinationOut);
-    context.setFillColor(Color::createUnchecked(255, 0, 0));
+    context.setFillColor(Color(255, 0, 0));
     context.fillPath(quadToPath(clipQuad, bounds));
 }
 

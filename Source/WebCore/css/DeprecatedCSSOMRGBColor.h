@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,55 +21,44 @@
 #pragma once
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
-#include "RGBColor.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
 public:
-    static Ref<DeprecatedCSSOMRGBColor> create(const RGBColor& color, CSSStyleDeclaration& owner)
+    static Ref<DeprecatedCSSOMRGBColor> create(CSSStyleDeclaration& owner, const Color& color)
     {
-        return adoptRef(*new DeprecatedCSSOMRGBColor(color, owner));
+        return adoptRef(*new DeprecatedCSSOMRGBColor(owner, color));
     }
 
-    DeprecatedCSSOMPrimitiveValue* red() { return m_red.get(); }
-    DeprecatedCSSOMPrimitiveValue* green() { return m_green.get(); }
-    DeprecatedCSSOMPrimitiveValue* blue() { return m_blue.get(); }
-    DeprecatedCSSOMPrimitiveValue* alpha() { return m_alpha.get(); }
-    
-    Color color() const { return Color(m_rgbColor); }
+    DeprecatedCSSOMPrimitiveValue& red() { return m_red; }
+    DeprecatedCSSOMPrimitiveValue& green() { return m_green; }
+    DeprecatedCSSOMPrimitiveValue& blue() { return m_blue; }
+    DeprecatedCSSOMPrimitiveValue& alpha() { return m_alpha; }
+
+    Color color() const { return m_color; }
 
 private:
-    DeprecatedCSSOMRGBColor(const RGBColor& color, CSSStyleDeclaration& owner)
-        : m_rgbColor(color.rgbColor())
+    template<typename NumberType> static Ref<DeprecatedCSSOMPrimitiveValue> createWrapper(CSSStyleDeclaration& owner, NumberType number)
     {
-        // Red
-        unsigned value = (m_rgbColor >> 16) & 0xFF;
-        auto result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
-        m_red = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
-        
-        // Green
-        value = (m_rgbColor >> 8) & 0xFF;
-        result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
-        m_green = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
-
-        // Blue
-        value = m_rgbColor & 0xFF;
-        result = CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER);
-        m_blue = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
-        
-        // Alpha
-        float alphaValue = static_cast<float>((m_rgbColor >> 24) & 0xFF) / 0xFF;
-        result = CSSPrimitiveValue::create(alphaValue, CSSUnitType::CSS_NUMBER);
-        m_alpha = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
+        return CSSPrimitiveValue::create(number, CSSUnitType::CSS_NUMBER)->createDeprecatedCSSOMPrimitiveWrapper(owner);
     }
-    
-    RGBA32 m_rgbColor;
-    RefPtr<DeprecatedCSSOMPrimitiveValue> m_red;
-    RefPtr<DeprecatedCSSOMPrimitiveValue> m_green;
-    RefPtr<DeprecatedCSSOMPrimitiveValue> m_blue;
-    RefPtr<DeprecatedCSSOMPrimitiveValue> m_alpha;
+
+    DeprecatedCSSOMRGBColor(CSSStyleDeclaration& owner, const Color& color)
+        : m_color(color)
+        , m_red(createWrapper(owner, color.red()))
+        , m_green(createWrapper(owner, color.green()))
+        , m_blue(createWrapper(owner, color.blue()))
+        , m_alpha(createWrapper(owner, color.alphaAsFloat()))
+    {
+    }
+
+    Color m_color;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_red;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_green;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_blue;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_alpha;
 };
 
 } // namespace WebCore

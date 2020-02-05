@@ -511,7 +511,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         }
     } else {
         for (int x = 0; x < width; ++x, pixel += 3, ++address)
-            *address = makeRGB(pixel[0], pixel[1], pixel[2]);
+            *address = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
     }
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())

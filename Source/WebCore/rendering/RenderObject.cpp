@@ -1837,9 +1837,11 @@ RenderFragmentedFlow* RenderObject::locateEnclosingFragmentedFlow() const
 void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const BoxSide& side, Color& color)
 {
     ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
+
     // This values were derived empirically.
-    const RGBA32 baseDarkColor = 0xFF202020;
-    const RGBA32 baseLightColor = 0xFFEBEBEB;
+    constexpr SimpleColor baseDarkColor { 0xFF202020 };
+    constexpr SimpleColor baseLightColor { 0xFFEBEBEB };
+
     enum Operation { Darken, Lighten };
 
     Operation operation = (side == BSTop || side == BSLeft) == (style == BorderStyle::Inset) ? Darken : Lighten;

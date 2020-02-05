@@ -37,7 +37,6 @@
 #include "FontCascade.h"
 #include "Node.h"
 #include "Pair.h"
-#include "RGBColor.h"
 #include "Rect.h"
 #include "RenderStyle.h"
 #include <wtf/NeverDestroyed.h>
@@ -872,29 +871,6 @@ String CSSPrimitiveValue::stringValue() const
     default:
         return String();
     }
-}
-
-ExceptionOr<Counter&> CSSPrimitiveValue::getCounterValue() const
-{
-    if (primitiveUnitType() != CSSUnitType::CSS_COUNTER)
-        return Exception { InvalidAccessError };
-    return *m_value.counter;
-}
-
-ExceptionOr<Rect&> CSSPrimitiveValue::getRectValue() const
-{
-    if (primitiveUnitType() != CSSUnitType::CSS_RECT)
-        return Exception { InvalidAccessError };
-    return *m_value.rect;
-}
-
-ExceptionOr<Ref<RGBColor>> CSSPrimitiveValue::getRGBColorValue() const
-{
-    if (primitiveUnitType() != CSSUnitType::CSS_RGBCOLOR)
-        return Exception { InvalidAccessError };
-
-    // FIXME: This should not return a new object for each invocation.
-    return RGBColor::create(m_value.color->rgb());
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const

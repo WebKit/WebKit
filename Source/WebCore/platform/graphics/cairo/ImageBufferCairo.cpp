@@ -398,7 +398,7 @@ void ImageBuffer::platformTransformColorSpace(const std::array<uint8_t, 256>& lo
                                lookUpTable[pixelColor.green()],
                                lookUpTable[pixelColor.blue()],
                                pixelColor.alpha());
-            *pixel = premultipliedARGBFromColor(pixelColor);
+            *pixel = premultipliedARGBFromColor(pixelColor).value();
         }
     }
     cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), 0, 0, m_logicalSize.width(), m_logicalSize.height());

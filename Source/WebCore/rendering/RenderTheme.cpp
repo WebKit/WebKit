@@ -1285,73 +1285,72 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
 {
     switch (cssValueId) {
     case CSSValueWebkitLink:
-        return options.contains(StyleColor::Options::ForVisitedLink) ? 0xFF551A8B : 0xFF0000EE;
+        return options.contains(StyleColor::Options::ForVisitedLink) ? SimpleColor { 0xFF551A8B } : SimpleColor { 0xFF0000EE };
     case CSSValueWebkitActivelink:
-        return 0xFFFF0000;
+        return SimpleColor { 0xFFFF0000 };
     case CSSValueActiveborder:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueActivebuttontext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueActivecaption:
-        return 0xFFCCCCCC;
+        return SimpleColor { 0xFFCCCCCC };
     case CSSValueAppworkspace:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueBackground:
-        return 0xFF6363CE;
+        return SimpleColor { 0xFF6363CE };
     case CSSValueButtonface:
-        return 0xFFC0C0C0;
+        return Color::lightGray;
     case CSSValueButtonhighlight:
-        return 0xFFDDDDDD;
+        return SimpleColor { 0xFFDDDDDD };
     case CSSValueButtonshadow:
-        return 0xFF888888;
+        return SimpleColor { 0xFF888888 };
     case CSSValueButtontext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueCaptiontext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueGraytext:
-        return 0xFF808080;
+        return SimpleColor { 0xFF808080 };
     case CSSValueHighlight:
-        return 0xFFB5D5FF;
+        return SimpleColor { 0xFFB5D5FF };
     case CSSValueHighlighttext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueInactiveborder:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueInactivecaption:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueInactivecaptiontext:
-        return 0xFF7F7F7F;
+        return SimpleColor { 0xFF7F7F7F };
     case CSSValueInfobackground:
-        return 0xFFFBFCC5;
+        return SimpleColor { 0xFFFBFCC5 };
     case CSSValueInfotext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueMenu:
-        return 0xFFC0C0C0;
+        return Color::lightGray;
     case CSSValueMenutext:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueScrollbar:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueText:
-        return 0xFF000000;
+        return Color::black;
     case CSSValueThreeddarkshadow:
-        return 0xFF666666;
+        return SimpleColor { 0xFF666666 };
     case CSSValueThreedface:
-        return 0xFFC0C0C0;
+        return Color::lightGray;
     case CSSValueThreedhighlight:
-        return 0xFFDDDDDD;
+        return SimpleColor { 0xFFDDDDDD };
     case CSSValueThreedlightshadow:
-        return 0xFFC0C0C0;
+        return Color::lightGray;
     case CSSValueThreedshadow:
-        return 0xFF888888;
+        return SimpleColor { 0xFF888888 };
     case CSSValueWindow:
-        return 0xFFFFFFFF;
+        return Color::white;
     case CSSValueWindowframe:
-        return 0xFFCCCCCC;
+        return SimpleColor { 0xFFCCCCCC };
     case CSSValueWindowtext:
-        return 0xFF000000;
+        return Color::black;
     default:
-        break;
+        return { };
     }
-    return Color();
 }
 
 Color RenderTheme::activeTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const

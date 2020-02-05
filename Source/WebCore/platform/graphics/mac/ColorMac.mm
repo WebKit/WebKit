@@ -40,7 +40,7 @@ static bool useOldAquaFocusRingColor;
 
 Color oldAquaFocusRingColor()
 {
-    return 0xFF7DADD9;
+    return SimpleColor { 0xFF7DADD9 };
 }
 
 void setUsesTestModeFocusRingColor(bool newValue)

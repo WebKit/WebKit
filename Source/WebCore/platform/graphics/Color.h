@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,13 +52,37 @@ typedef D2D_VECTOR_4F D2D1_VECTOR_4F;
 typedef struct _GdkRGBA GdkRGBA;
 #endif
 
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
-typedef unsigned RGBA32; // Deprecated: Type for an RGBA quadruplet. Use RGBA class instead.
+// Color value with 8-bit components for red, green, blue, and alpha.
+// For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
+class SimpleColor {
+public:
+    constexpr SimpleColor(uint32_t value = 0) : m_value { value } { }
+
+    constexpr uint32_t value() const { return m_value; }
+
+    constexpr uint8_t redComponent() const { return m_value >> 16; }
+    constexpr uint8_t greenComponent() const { return m_value >> 8; }
+    constexpr uint8_t blueComponent() const { return m_value; }
+    constexpr uint8_t alphaComponent() const { return m_value >> 24; }
+
+    constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
+    constexpr bool isVisible() const { return alphaComponent(); }
+
+    String serializationForHTML() const;
+    String serializationForCSS() const;
+    String serializationForRenderTreeAsText() const;
+
+private:
+    uint32_t m_value { 0 };
+};
+
+bool operator==(SimpleColor, SimpleColor);
+bool operator!=(SimpleColor, SimpleColor);
+
+// FIXME: Remove this after migrating to the new name.
+using RGBA32 = SimpleColor;
 
 WEBCORE_EXPORT RGBA32 makeRGB(int r, int g, int b);
 WEBCORE_EXPORT RGBA32 makeRGBA(int r, int g, int b, int a);
@@ -73,35 +97,8 @@ WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
 RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
 
-inline int redChannel(RGBA32 color) { return (color >> 16) & 0xFF; }
-inline int greenChannel(RGBA32 color) { return (color >> 8) & 0xFF; }
-inline int blueChannel(RGBA32 color) { return color & 0xFF; }
-inline int alphaChannel(RGBA32 color) { return (color >> 24) & 0xFF; }
-
 uint8_t roundAndClampColorChannel(int);
 uint8_t roundAndClampColorChannel(float);
-
-class RGBA {
-public:
-    RGBA(); // all channels zero, including alpha
-    RGBA(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-    RGBA(uint8_t red, uint8_t green, uint8_t blue); // opaque, alpha of 1
-
-    uint8_t red() const;
-    uint8_t green() const;
-    uint8_t blue() const;
-    uint8_t alpha() const;
-
-    bool hasAlpha() const;
-
-private:
-    friend class Color;
-
-    unsigned m_integer { 0 };
-};
-
-bool operator==(const RGBA&, const RGBA&);
-bool operator!=(const RGBA&, const RGBA&);
 
 class Color {
     WTF_MAKE_FAST_ALLOCATED;
@@ -117,7 +114,6 @@ public:
     }
 
     enum SemanticTag { Semantic };
-
     Color(RGBA32 color, SemanticTag)
     {
         setRGB(color);
@@ -175,7 +171,6 @@ public:
     // converted exactly to integers, we should make a normal Color.
     WEBCORE_EXPORT Color(float r, float g, float b, float a, ColorSpace colorSpace);
 
-    Color(RGBA, ColorSpace);
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
 
@@ -183,17 +178,6 @@ public:
     {
         if (isExtended())
             m_colorData.extendedColor->deref();
-    }
-
-    static Color createUnchecked(int r, int g, int b)
-    {
-        RGBA32 color = 0xFF000000 | r << 16 | g << 8 | b;
-        return Color(color);
-    }
-    static Color createUnchecked(int r, int g, int b, int a)
-    {
-        RGBA32 color = a << 24 | r << 16 | g << 8 | b;
-        return Color(color);
     }
 
     // Returns the color serialized according to HTML5
@@ -207,15 +191,15 @@ public:
 
     bool isValid() const { return isExtended() || (m_colorData.rgbaAndFlags & validRGBAColorBit); }
 
-    bool isOpaque() const { return isValid() && (isExtended() ? asExtended().alpha() == 1.0 : alpha() == 255); }
-    bool isVisible() const { return isValid() && (isExtended() ? asExtended().alpha() > 0.0 : alpha() > 0); }
+    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : rgb().isOpaque(); }
+    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : rgb().isVisible(); }
 
-    int red() const { return redChannel(rgb()); }
-    int green() const { return greenChannel(rgb()); }
-    int blue() const { return blueChannel(rgb()); }
-    int alpha() const { return alphaChannel(rgb()); }
+    int red() const { return rgb().redComponent(); }
+    int green() const { return rgb().greenComponent(); }
+    int blue() const { return rgb().blueComponent(); }
+    int alpha() const { return rgb().alphaComponent(); }
 
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : static_cast<float>(alphaChannel(rgb())) / 255; }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : static_cast<float>(rgb().alphaComponent()) / 0xFF; }
 
     RGBA32 rgb() const;
 
@@ -269,19 +253,19 @@ public:
     static bool parseHexColor(const LChar*, unsigned, RGBA32&);
     static bool parseHexColor(const UChar*, unsigned, RGBA32&);
 
-    static const RGBA32 black = 0xFF000000;
-    WEBCORE_EXPORT static const RGBA32 white = 0xFFFFFFFF;
-    static const RGBA32 darkGray = 0xFF808080;
-    static const RGBA32 gray = 0xFFA0A0A0;
-    static const RGBA32 lightGray = 0xFFC0C0C0;
-    WEBCORE_EXPORT static const RGBA32 transparent = 0x00000000;
-    static const RGBA32 cyan = 0xFF00FFFF;
-    static const RGBA32 yellow = 0xFFFFFF00;
+    static constexpr SimpleColor black { 0xFF000000 };
+    static constexpr SimpleColor white { 0xFFFFFFFF };
+    static constexpr SimpleColor darkGray { 0xFF808080 };
+    static constexpr SimpleColor gray { 0xFFA0A0A0 };
+    static constexpr SimpleColor lightGray { 0xFFC0C0C0 };
+    static constexpr SimpleColor transparent { 0x00000000 };
+    static constexpr SimpleColor cyan { 0xFF00FFFF };
+    static constexpr SimpleColor yellow { 0xFFFFFF00 };
 
 #if PLATFORM(IOS_FAMILY)
-    static const RGBA32 compositionFill = 0x3CAFC0E3;
+    static constexpr SimpleColor compositionFill { 0x3CAFC0E3 };
 #else
-    static const RGBA32 compositionFill = 0xFFE1DD55;
+    static constexpr SimpleColor compositionFill { 0xFFE1DD55 };
 #endif
 
     bool isExtended() const
@@ -343,49 +327,17 @@ uint16_t fastDivideBy255(uint16_t);
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
-inline RGBA::RGBA()
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
+
+inline bool operator==(SimpleColor a, SimpleColor b)
 {
+    return a.value() == b.value();
 }
 
-inline RGBA::RGBA(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-    : m_integer(alpha << 24 | red << 16 | green << 8 | blue)
+inline bool operator!=(SimpleColor a, SimpleColor b)
 {
-}
-
-inline RGBA::RGBA(uint8_t red, uint8_t green, uint8_t blue)
-    : m_integer(0xFF000000 | red << 16 | green << 8 | blue)
-{
-}
-
-inline uint8_t RGBA::red() const
-{
-    return m_integer >> 16;
-}
-
-inline uint8_t RGBA::green() const
-{
-    return m_integer >> 8;
-}
-
-inline uint8_t RGBA::blue() const
-{
-    return m_integer;
-}
-
-inline uint8_t RGBA::alpha() const
-{
-    return m_integer >> 24;
-}
-
-inline bool RGBA::hasAlpha() const
-{
-    return (m_integer & 0xFF000000) != 0xFF000000;
-}
-
-inline Color::Color(RGBA color, ColorSpace space)
-{
-    setRGB(color.m_integer);
-    ASSERT_UNUSED(space, space == ColorSpace::SRGB);
+    return !(a == b);
 }
 
 inline bool operator==(const Color& a, const Color& b)
@@ -437,12 +389,12 @@ inline RGBA32 Color::rgb() const
     // FIXME: We should ASSERT(!isExtended()) here, or produce
     // an RGBA32 equivalent for an ExtendedColor. Ideally the former,
     // so we can audit all the rgb() call sites to handle extended.
-    return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32);
+    return { static_cast<uint32_t>(m_colorData.rgbaAndFlags >> 32) };
 }
 
 inline void Color::setRGB(RGBA32 rgb)
 {
-    m_colorData.rgbaAndFlags = static_cast<uint64_t>(rgb) << 32;
+    m_colorData.rgbaAndFlags = static_cast<uint64_t>(rgb.value()) << 32;
     tagAsValid();
 }
 
@@ -453,7 +405,7 @@ inline bool Color::isBlackColor(const Color& color)
         return !extendedColor.red() && !extendedColor.green() && !extendedColor.blue() && extendedColor.alpha() == 1;
     }
 
-    return color.isValid() && color.rgb() == Color::black;
+    return color.rgb() == Color::black;
 }
 
 inline bool Color::isWhiteColor(const Color& color)
@@ -463,11 +415,8 @@ inline bool Color::isWhiteColor(const Color& color)
         return extendedColor.red() == 1 && extendedColor.green() == 1 && extendedColor.blue() == 1 && extendedColor.alpha() == 1;
     }
     
-    return color.isValid() && color.rgb() == Color::white;
+    return color.rgb() == Color::white;
 }
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
 
 } // namespace WebCore
 

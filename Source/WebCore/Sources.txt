@@ -766,7 +766,6 @@ css/MediaQueryList.cpp
 css/MediaQueryMatcher.cpp
 css/MediaQueryParserContext.cpp
 css/PropertySetCSSStyleDeclaration.cpp
-css/RGBColor.cpp
 css/SVGCSSComputedStyleDeclaration.cpp
 css/SelectorChecker.cpp
 css/SelectorFilter.cpp
