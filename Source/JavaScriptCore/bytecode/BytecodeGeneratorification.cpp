@@ -40,7 +40,7 @@
 #include "JSGenerator.h"
 #include "Label.h"
 #include "StrongInlines.h"
-#include "UnlinkedCodeBlock.h"
+#include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include <wtf/Optional.h>
 
@@ -64,7 +64,7 @@ public:
         VirtualRegister m_initialValue;
     };
 
-    BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+    BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
         : m_bytecodeGenerator(bytecodeGenerator)
         , m_codeBlock(codeBlock)
         , m_instructions(instructions)
@@ -174,7 +174,7 @@ private:
     BytecodeGenerator& m_bytecodeGenerator;
     InstructionStream::Offset m_enterPoint;
     Optional<GeneratorFrameData> m_generatorFrameData;
-    UnlinkedCodeBlock* m_codeBlock;
+    UnlinkedCodeBlockGenerator* m_codeBlock;
     InstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
     Vector<Optional<Storage>> m_storages;
@@ -190,7 +190,7 @@ public:
     {
     }
 
-    void run(UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions)
+    void run(UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions)
     {
         // Perform modified liveness analysis to determine which locals are live at the merge points.
         // This produces the conservative results for the question, "which variables should be saved and resumed?".
@@ -224,8 +224,8 @@ void BytecodeGeneratorification::run()
         VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::GeneratorArgument::State));
         auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
-        jumpTable.branchOffsets.resize(m_yields.size() + 1);
-        jumpTable.branchOffsets.fill(0);
+        jumpTable.branchOffsets = RefCountedArray<int32_t>(m_yields.size() + 1);
+        std::fill(jumpTable.branchOffsets.begin(), jumpTable.branchOffsets.end(), 0);
         jumpTable.add(0, nextToEnterPoint.offset());
         for (unsigned i = 0; i < m_yields.size(); ++i)
             jumpTable.add(i + 1, m_yields[i].point);
@@ -295,10 +295,10 @@ void BytecodeGeneratorification::run()
     rewriter.execute();
 }
 
-void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
     if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification()))
-        CodeBlockBytecodeDumper<UnlinkedCodeBlock>::dumpBlock(codeBlock, instructions, WTF::dataFile());
+        CodeBlockBytecodeDumper<UnlinkedCodeBlockGenerator>::dumpBlock(codeBlock, instructions, WTF::dataFile());
 
     BytecodeGeneratorification pass(bytecodeGenerator, codeBlock, instructions, generatorFrameSymbolTable, generatorFrameSymbolTableIndex);
     pass.run();

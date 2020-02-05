@@ -36,6 +36,7 @@ namespace JSC {
 class BytecodeGraph;
 class CodeBlock;
 class UnlinkedCodeBlock;
+class UnlinkedCodeBlockGenerator;
 struct Instruction;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
@@ -72,7 +73,7 @@ public:
 private:
     // Only called from BytecodeGraph.
     static BasicBlockVector compute(CodeBlock*, const InstructionStream& instructions);
-    static BasicBlockVector compute(UnlinkedCodeBlock*, const InstructionStream& instructions);
+    static BasicBlockVector compute(UnlinkedCodeBlockGenerator*, const InstructionStream& instructions);
     template<typename Block> static BasicBlockVector computeImpl(Block* codeBlock, const InstructionStream& instructions);
     void shrinkToFit();
 

@@ -40,7 +40,7 @@
 #include "PutByIdFlags.h"
 #include "StructureInlines.h"
 #include "ToThisStatus.h"
-#include "UnlinkedCodeBlock.h"
+#include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include "WasmFunctionCodeBlock.h"
 #include "WasmGeneratorTraits.h"
@@ -270,7 +270,7 @@ void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionSt
 }
 
 template class BytecodeDumper<CodeBlock>;
-template class CodeBlockBytecodeDumper<UnlinkedCodeBlock>;
+template class CodeBlockBytecodeDumper<UnlinkedCodeBlockGenerator>;
 template class CodeBlockBytecodeDumper<CodeBlock>;
 
 #if ENABLE(WEBASSEMBLY)
