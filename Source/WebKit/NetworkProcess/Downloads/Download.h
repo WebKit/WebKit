@@ -82,6 +82,7 @@ public:
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
+    PAL::SessionID sessionID() const { return m_sessionID; }
     const String& suggestedName() const { return m_suggestedName; }
 
     void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTFMove(sandboxExtension); }
