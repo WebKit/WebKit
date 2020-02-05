@@ -18,7 +18,7 @@ function test() {
         name: "Canvas.requestContentWebGL.validCanvasId",
         description: "Get the base64 encoded data for the WebGL canvas on the page.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;

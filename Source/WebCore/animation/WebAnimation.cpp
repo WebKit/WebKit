@@ -44,6 +44,8 @@
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -51,11 +53,30 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebAnimation);
 
+HashSet<WebAnimation*>& WebAnimation::instances(const LockHolder&)
+{
+    static NeverDestroyed<HashSet<WebAnimation*>> instances;
+    return instances;
+}
+
+Lock& WebAnimation::instancesMutex()
+{
+    static LazyNeverDestroyed<Lock> mutex;
+    static std::once_flag initializeMutex;
+    std::call_once(initializeMutex, [] {
+        mutex.construct();
+    });
+    return mutex.get();
+}
+
 Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->setEffect(effect);
     result->setTimeline(&document.timeline());
+
+    InspectorInstrumentation::didCreateWebAnimation(result.get());
+
     return result;
 }
 
@@ -65,6 +86,9 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     result->setEffect(effect);
     if (timeline)
         result->setTimeline(timeline);
+
+    InspectorInstrumentation::didCreateWebAnimation(result.get());
+
     return result;
 }
 
@@ -75,6 +99,9 @@ WebAnimation::WebAnimation(Document& document)
 {
     m_readyPromise->resolve(*this);
     suspendIfNeeded();
+
+    LockHolder lock(instancesMutex());
+    instances(lock).add(this);
 }
 
 WebAnimation::~WebAnimation()
@@ -83,6 +110,10 @@ WebAnimation::~WebAnimation()
 
     if (m_timeline)
         m_timeline->forgetAnimation(this);
+
+    LockHolder lock(instancesMutex());
+    ASSERT(instances(lock).contains(this));
+    instances(lock).remove(this);
 }
 
 void WebAnimation::contextDestroyed()
@@ -114,6 +145,8 @@ void WebAnimation::unsuspendEffectInvalidation()
 void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previousTiming)
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
+    
+    InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 
     if (!previousTiming)
         return;
@@ -196,7 +229,7 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
             m_timeline->animationWasAddedToElement(*this, *newTarget);
     }
 
-    InspectorInstrumentation::didChangeWebAnimationEffect(*this);
+    InspectorInstrumentation::didSetWebAnimationEffect(*this);
 }
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
@@ -255,17 +288,18 @@ void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
 
 void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTarget)
 {
-    if (!m_timeline)
-        return;
+    if (m_timeline) {
+        if (previousTarget)
+            m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
 
-    if (previousTarget)
-        m_timeline->animationWasRemovedFromElement(*this, *previousTarget);
+        if (newTarget)
+            m_timeline->animationWasAddedToElement(*this, *newTarget);
 
-    if (newTarget)
-        m_timeline->animationWasAddedToElement(*this, *newTarget);
+        // This could have changed whether we have replaced animations, so we may need to schedule an update.
+        m_timeline->animationTimingDidChange(*this);
+    }
 
-    // This could have changed whether we have replaced animations, so we may need to schedule an update.
-    m_timeline->animationTimingDidChange(*this);
+    InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
 Optional<double> WebAnimation::startTime() const

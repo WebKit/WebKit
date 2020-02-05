@@ -29,7 +29,8 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     {
         console.assert(representedObject instanceof WI.CanvasCollection);
 
-        let contentPlaceholder = WI.createMessageTextView(WI.UIString("No Canvas Contexts"));
+        let contentPlaceholder = WI.animationManager.supported ? document.createElement("div") : WI.createMessageTextView(WI.UIString("No Canvas Contexts"));
+
         let descriptionElement = contentPlaceholder.appendChild(document.createElement("div"));
         descriptionElement.className = "description";
         descriptionElement.textContent = WI.UIString("Waiting for canvas contexts created by script or CSS.");
@@ -62,21 +63,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._updateRecordingAutoCaptureCheckboxLabel(frameCount);
         }
 
-        this._importButtonNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
-        this._importButtonNavigationItem.tooltip = WI.UIString("Import");
-        this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-
-        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh-all", WI.UIString("Refresh all"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.enabled = false;
-        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshPreviews, this);
-
-        this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid"), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
-        this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
-        this._showGridButtonNavigationItem.enabled = false;
-        this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
-
         importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
-        this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
 
         this._savedRecordingsContentView = null;
         this._savedRecordingsTreeOutline = null;
@@ -90,17 +77,18 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     get navigationItems()
     {
-        let navigationItems = [this._importButtonNavigationItem, new WI.DividerNavigationItem, this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
-        if (WI.CanvasManager.supportsRecordingAutoCapture())
-            navigationItems.unshift(this._recordingAutoCaptureNavigationItem, new WI.DividerNavigationItem);
+        let navigationItems = [];
+        if (this._recordingAutoCaptureNavigationItem)
+            navigationItems.push(this._recordingAutoCaptureNavigationItem);
         return navigationItems;
     }
 
-    hidden()
+    handleRefreshButtonClicked()
     {
-        WI.domManager.hideDOMNodeHighlight();
-
-        super.hidden();
+        for (let subview of this.subviews) {
+            if (subview instanceof WI.CanvasContentView)
+                subview.handleRefreshButtonClicked();
+        }
     }
 
     // Protected
@@ -115,23 +103,18 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this.removeSubview(this._savedRecordingsContentView);
             this.addSubview(this._savedRecordingsContentView);
         }
-
-        this._updateNavigationItems();
     }
 
     contentViewRemoved(contentView)
     {
         contentView.element.removeEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.removeEventListener("mouseleave", this._contentViewMouseLeave);
-
-        this._updateNavigationItems();
     }
 
     attached()
     {
         super.attached();
 
-        WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateShowImageGrid, this);
         WI.settings.canvasRecordingAutoCaptureEnabled.addEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureEnabledChanged, this);
         WI.settings.canvasRecordingAutoCaptureFrameCount.addEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureFrameCountChanged, this);
 
@@ -141,48 +124,26 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._savedRecordingsTreeOutline.removeChildren();
         for (let recording of WI.canvasManager.savedRecordings)
             this._addSavedRecording(recording);
+
+        for (let subview of this.subviews) {
+            if (subview instanceof WI.CanvasContentView)
+                subview.refreshPreview();
+        }
     }
 
     detached()
     {
+        WI.domManager.hideDOMNodeHighlight();
+
         WI.canvasManager.removeEventListener(null, null, this);
 
         WI.settings.canvasRecordingAutoCaptureFrameCount.removeEventListener(null, null, this);
         WI.settings.canvasRecordingAutoCaptureEnabled.removeEventListener(null, null, this);
-        WI.settings.showImageGrid.removeEventListener(null, null, this);
 
         super.detached();
     }
 
     // Private
-
-    get _itemMargin()
-    {
-        return parseInt(window.getComputedStyle(this.element).getPropertyValue("--item-margin"));
-    }
-
-    _refreshPreviews()
-    {
-        for (let canvasContentView of this.subviews)
-            canvasContentView.refreshPreview();
-    }
-
-    _updateNavigationItems()
-    {
-        let hasItems = !!this.representedObject.size;
-        this._refreshButtonNavigationItem.enabled = hasItems;
-        this._showGridButtonNavigationItem.enabled = hasItems;
-    }
-
-    _showGridButtonClicked(event)
-    {
-        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
-    }
-
-    _updateShowImageGrid()
-    {
-        this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
-    }
 
     _contentViewMouseEnter(event)
     {
@@ -301,8 +262,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             this._savedRecordingsContentView.element.appendChild(this._savedRecordingsTreeOutline.element);
         }
 
-        const subtitle = null;
-        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
+        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, WI.Recording.displayNameForRecordingType(recording.type), recording);
         recordingTreeElement.selectable = false;
         this._savedRecordingsTreeOutline.appendChild(recordingTreeElement);
     }

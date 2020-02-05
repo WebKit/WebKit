@@ -28,6 +28,7 @@
 
 #include "Animation.h"
 #include "Element.h"
+#include "InspectorInstrumentation.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -39,6 +40,9 @@ Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& 
 {
     auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation, newStyle));
     result->initialize(oldStyle, newStyle);
+
+    InspectorInstrumentation::didCreateWebAnimation(result.get());
+
     return result;
 }
 

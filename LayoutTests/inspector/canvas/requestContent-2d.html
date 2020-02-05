@@ -18,7 +18,7 @@ function test() {
         name: "Canvas.requestContent2D.validCanvasId",
         description: "Get the base64 encoded data for the canvas on the page with the given type.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;

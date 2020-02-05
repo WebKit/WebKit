@@ -96,7 +96,7 @@ WI.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WI.DetailsSec
     {
         this._value = value || "";
 
-        if (this._value) {
+        if (this._value || this._value === 0) {
             this.element.classList.remove(WI.DetailsSectionSimpleRow.EmptyStyleClassName);
 
             // If the value has space characters that cause word wrapping then we don't need the data class.
