@@ -126,7 +126,7 @@ protected:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    Color platformTapHighlightColor() const override { return 0x4D1A1A1A; }
+    Color platformTapHighlightColor() const override { return SimpleColor { 0x4D1A1A1A }; }
 #endif
 
     bool shouldHaveSpinButton(const HTMLInputElement&) const override;
