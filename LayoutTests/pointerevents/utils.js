@@ -134,6 +134,11 @@ const ui = new (class UIController {
         return this._run(`uiController.singleTapAtPoint(${options.x}, ${options.y})`);
     }
 
+    doubleTap(options)
+    {
+        return this._run(`uiController.doubleTapAtPoint(${options.x}, ${options.y}, 0, () => uiController.uiScriptComplete())`);
+    }
+
     doubleTapToZoom(options)
     {
         const durationInSeconds = 0.35;

@@ -1,3 +1,21 @@
+2020-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251320): Can't double tap to select word in Notes on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=207239
+        <rdar://problem/58686015>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that performing a double tap on an element with a dblclick handler results in the following
+        sequence of events: `[ "pointerdown", "pointerup", "pointerdown", "pointerup", "dblclick" ]`.
+
+        * pointerevents/ios/pointer-events-for-double-tap-expected.txt: Added.
+        * pointerevents/ios/pointer-events-for-double-tap.html: Added.
+        * pointerevents/utils.js:
+        (const.ui.new.UIController.prototype.doubleTap):
+
+        Add a helper method to simulate a double-tap gesture.
+
 2020-02-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION [ Mac wk2 ] Tests are jetsamming: Unable to shrink memory footprint of process below the kill thresold [sic]

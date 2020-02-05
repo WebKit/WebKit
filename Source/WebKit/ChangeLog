@@ -1,3 +1,30 @@
+2020-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251320): Can't double tap to select word in Notes on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=207239
+        <rdar://problem/58686015>
+
+        Reviewed by Tim Horton.
+
+        Following r251320, all synthetic mouse events on iOS additionally dispatched corresponding pointer events. This
+        led to duplicate "pointerdown"/"pointerup" events dispatched with every tap. r253878 fixed this by avoiding
+        pointer event dispatch for synthetically generated mouse events (and made this determination by consulting
+        `syntheticClickType()`).
+
+        However, in the case where we're synthesizing a mouse event for a "dblclick" event handler (after a double-
+        tap), we currently pass `NoTap` as the synthetic click event type when creating the mouse event. This causes
+        additional pointer events to be synthesized and dispatched during a double tap, which creates three pairs of
+        "pointerdown"/"pointerup" events upon double-tap. This subsequently confuses iCloud Notes' web app when double
+        tapping to select a word.
+
+        Fix this by passing in `OneFingerTap` as the synthetic click type instead (since two-finger double taps should
+        already be handled by the two-finger double-tap magnification gesture).
+
+        Test: pointerevents/ios/pointer-events-for-double-tap.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleDoubleTapForDoubleClickAtPoint):
+
 2020-02-01  Darin Adler  <darin@apple.com>
 
         Replace RGBA32 typedef with a class to improve type safety
