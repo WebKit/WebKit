@@ -30,6 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -287,6 +288,44 @@ TEST(WebKit, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelaunch)
 
         didReadLayoutSize = true;
     }];
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
+}
+
+TEST(WebKit, ChangeFrameAndMinimumEffectiveDeviceWidthDuringAnimatedResize)
+{
+    auto webView = createAnimatedResizeWebView();
+    [[webView configuration] preferences]._shouldIgnoreMetaViewport = YES;
+    [webView setUIDelegate:webView.get()];
+    [webView loadHTMLString:@"<body>Hello world</body>" baseURL:nil];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _beginAnimatedResizeWithUpdates:^{
+        [webView _setMinimumEffectiveDeviceWidth:1000];
+        [webView setFrame:CGRectMake(0, 0, 500, 375)];
+    }];
+
+    [webView _endAnimatedResize];
+
+    __block bool didReadLayoutSize = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight, visualViewport.scale]" completionHandler:^(NSArray<NSNumber *> *value, NSError *error) {
+            CGFloat innerWidth = value[0].floatValue;
+            CGFloat innerHeight = value[1].floatValue;
+            CGFloat scale = value[2].floatValue;
+            EXPECT_EQ(innerWidth, 1000);
+            EXPECT_EQ(innerHeight, 750);
+            EXPECT_EQ(scale, 0.5);
+            didReadLayoutSize = true;
+        }];
+    }];
+
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
