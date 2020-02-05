@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivate.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
 #include "GPUProcessConnection.h"
 #include "RemoteMediaRecorderManagerMessages.h"
@@ -146,4 +146,4 @@ void MediaRecorderPrivate::stopRecording()
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
