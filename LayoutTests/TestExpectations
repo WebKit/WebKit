@@ -3329,10 +3329,7 @@ webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
 
-# Not supported by default
-http/wpt/mediarecorder [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-fast/history/page-cache-media-recorder.html [ Skip ]
+webkit.org/b/197673 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure Timeout ]
 
 # To aid transition to ANGLE backend for WebGL, skip all of WebGL 2 tests for now. 
 # Re-enable as each chunk of tests are verified with ANGLE backend.
