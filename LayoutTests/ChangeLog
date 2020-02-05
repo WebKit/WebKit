@@ -1,3 +1,18 @@
+2020-02-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
+        https://bugs.webkit.org/show_bug.cgi?id=207253
+        <rdar://problem/59143624>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that an accelerated animation that has been enqueued to start but has
+        not yet been committed is correctly canceled when the cancel() method is called. This test fails
+        prior to this source change.
+
+        * webanimations/accelerated-animation-canceled-before-commit-expected.html: Added.
+        * webanimations/accelerated-animation-canceled-before-commit.html: Added.
+
 2020-02-04  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Garden some wpt tests failing with harness timeout
