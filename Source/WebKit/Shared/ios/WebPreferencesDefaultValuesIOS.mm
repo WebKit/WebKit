@@ -29,6 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UserInterfaceIdiom.h"
+#import <pal/ios/ManagedConfigurationSoftLink.h>
+#import <pal/spi/ios/ManagedConfigurationSPI.h>
 
 namespace WebKit {
 
@@ -40,6 +42,11 @@ bool defaultTextAutosizingUsesIdempotentMode()
 }
 
 #endif
+
+bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
+{
+    return [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
+}
 
 } // namespace WebKit
 
