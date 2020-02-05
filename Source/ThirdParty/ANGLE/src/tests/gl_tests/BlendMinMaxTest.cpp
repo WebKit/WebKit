@@ -193,6 +193,9 @@ TEST_P(BlendMinMaxTest, RGBA16F)
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
 
+    // http://anglebug.com/4185
+    ANGLE_SKIP_TEST_IF(IsMetal());
+
     runTest(GL_RGBA16F, GL_FLOAT);
 }
 

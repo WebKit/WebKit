@@ -12,6 +12,8 @@
 
 #include <gtest/gtest.h>
 
+#include "common/platform.h"
+
 namespace angle
 {
 struct SystemInfo;
@@ -35,10 +37,21 @@ bool IsPixel2();
 bool IsPixel2XL();
 bool IsNVIDIAShield();
 
-// Desktop devices.
+// GPU vendors.
 bool IsIntel();
 bool IsAMD();
 bool IsNVIDIA();
+bool IsARM();
+bool IsARM64();
+
+inline bool IsASan()
+{
+#if defined(ANGLE_WITH_ASAN)
+    return true;
+#else
+    return false;
+#endif  // defined(ANGLE_WITH_ASAN)
+}
 
 bool IsPlatformAvailable(const PlatformParameters &param);
 
@@ -103,8 +116,9 @@ struct CombinedPrintToStringParamName
 #define ANGLE_ALL_TEST_PLATFORMS_ES1 \
     ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER()
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES2 \
-    ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER()
+#define ANGLE_ALL_TEST_PLATFORMS_ES2                                                               \
+    ES2_D3D9(), ES2_D3D11(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(), \
+        ES2_METAL()
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES3 \
     ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER()
@@ -143,6 +157,12 @@ struct CombinedPrintToStringParamName
     const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,     \
                                                    ANGLE_ALL_TEST_PLATFORMS_ES3};    \
     INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName), \
+                             testing::PrintToStringParamName())
+
+#define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(testName, extra)                          \
+    const PlatformParameters testName##params[] = {ANGLE_ALL_TEST_PLATFORMS_ES2,         \
+                                                   ANGLE_ALL_TEST_PLATFORMS_ES3, extra}; \
+    INSTANTIATE_TEST_SUITE_P(, testName, ANGLE_INSTANTIATE_TEST_PLATFORMS(testName),     \
                              testing::PrintToStringParamName())
 
 #define ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(testName)                        \
@@ -206,5 +226,15 @@ extern std::string gSelectedConfig;
 // multiple APIs/windows/etc in the same process.
 extern bool gSeparateProcessPerConfig;
 }  // namespace angle
+
+#define ANGLE_SKIP_TEST_IF(COND)                                  \
+    do                                                            \
+    {                                                             \
+        if (COND)                                                 \
+        {                                                         \
+            std::cout << "Test skipped: " #COND "." << std::endl; \
+            return;                                               \
+        }                                                         \
+    } while (0)
 
 #endif  // ANGLE_TEST_INSTANTIATE_H_

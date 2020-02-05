@@ -27,7 +27,7 @@ namespace
 
 async::Loop *GetDefaultLoop()
 {
-    static async::Loop *defaultLoop = new async::Loop(&kAsyncLoopConfigAttachToCurrentThread);
+    static async::Loop *defaultLoop = new async::Loop(&kAsyncLoopConfigNeverAttachToThread);
     return defaultLoop;
 }
 
@@ -50,10 +50,11 @@ zx_status_t ConnectToService(zx_handle_t serviceRoot, fidl::InterfaceRequest<Int
 }
 
 template <typename Interface>
-fidl::InterfacePtr<Interface> ConnectToService(zx_handle_t serviceRoot)
+fidl::InterfacePtr<Interface> ConnectToService(zx_handle_t serviceRoot,
+                                               async_dispatcher_t *dispatcher)
 {
     fidl::InterfacePtr<Interface> result;
-    ConnectToService(serviceRoot, result.NewRequest());
+    ConnectToService(serviceRoot, result.NewRequest(dispatcher));
     return result;
 }
 
@@ -62,12 +63,18 @@ fidl::InterfacePtr<Interface> ConnectToService(zx_handle_t serviceRoot)
 ScenicWindow::ScenicWindow()
     : mLoop(GetDefaultLoop()),
       mServiceRoot(ConnectToServiceRoot()),
-      mScenic(ConnectToService<fuchsia::ui::scenic::Scenic>(mServiceRoot.get())),
-      mPresenter(ConnectToService<fuchsia::ui::policy::Presenter>(mServiceRoot.get())),
-      mScenicSession(mScenic.get()),
+      mScenic(
+          ConnectToService<fuchsia::ui::scenic::Scenic>(mServiceRoot.get(), mLoop->dispatcher())),
+      mPresenter(ConnectToService<fuchsia::ui::policy::Presenter>(mServiceRoot.get(),
+                                                                  mLoop->dispatcher())),
+      mScenicSession(mScenic.get(), mLoop->dispatcher()),
       mShape(&mScenicSession),
       mMaterial(&mScenicSession)
-{}
+{
+    mScenicSession.set_error_handler(fit::bind_member(this, &ScenicWindow::onScenicError));
+    mScenicSession.set_on_frame_presented_handler(
+        fit::bind_member(this, &ScenicWindow::onFramePresented));
+}
 
 ScenicWindow::~ScenicWindow()
 {
@@ -87,10 +94,9 @@ bool ScenicWindow::initialize(const std::string &name, int width, int height)
     // Create view.
     mView = std::make_unique<scenic::View>(&mScenicSession, std::move(viewToken), name);
     mView->AddChild(mShape);
-    mScenicSession.Present(0, [](fuchsia::images::PresentationInfo info) {});
 
     // Present view.
-    mPresenter->PresentView(std::move(viewHolderToken), nullptr);
+    mPresenter->PresentOrReplaceView(std::move(viewHolderToken), nullptr);
 
     mWidth  = width;
     mHeight = height;
@@ -102,6 +108,14 @@ bool ScenicWindow::initialize(const std::string &name, int width, int height)
 
 void ScenicWindow::destroy()
 {
+    while (mInFlightPresents != 0 && !mLostSession)
+    {
+        mLoop->ResetQuit();
+        mLoop->Run();
+    }
+
+    ASSERT(mInFlightPresents == 0 || mLostSession);
+
     mFuchsiaEGLWindow.reset();
 }
 
@@ -109,12 +123,13 @@ void ScenicWindow::resetNativeWindow()
 {
     fuchsia::images::ImagePipe2Ptr imagePipe;
     uint32_t imagePipeId = mScenicSession.AllocResourceId();
-    mScenicSession.Enqueue(scenic::NewCreateImagePipe2Cmd(imagePipeId, imagePipe.NewRequest()));
+    mScenicSession.Enqueue(
+        scenic::NewCreateImagePipe2Cmd(imagePipeId, imagePipe.NewRequest(mLoop->dispatcher())));
     zx_handle_t imagePipeHandle = imagePipe.Unbind().TakeChannel().release();
 
     mMaterial.SetTexture(imagePipeId);
     mScenicSession.ReleaseResource(imagePipeId);
-    mScenicSession.Present(0, [](fuchsia::images::PresentationInfo info) {});
+    present();
 
     mFuchsiaEGLWindow.reset(fuchsia_egl_window_create(imagePipeHandle, mWidth, mHeight));
 }
@@ -131,7 +146,8 @@ EGLNativeDisplayType ScenicWindow::getNativeDisplay() const
 
 void ScenicWindow::messageLoop()
 {
-    mLoop->Run(zx::deadline_after({}), true /* once */);
+    mLoop->ResetQuit();
+    mLoop->RunUntilIdle();
 }
 
 void ScenicWindow::setMousePosition(int x, int y)
@@ -159,14 +175,42 @@ void ScenicWindow::setVisible(bool isVisible) {}
 
 void ScenicWindow::signalTestEvent() {}
 
-void ScenicWindow::OnScenicEvents(std::vector<fuchsia::ui::scenic::Event> events)
+void ScenicWindow::present()
+{
+    while (mInFlightPresents >= kMaxInFlightPresents && !mLostSession)
+    {
+        mLoop->ResetQuit();
+        mLoop->Run();
+    }
+
+    if (mLostSession)
+    {
+        return;
+    }
+
+    ASSERT(mInFlightPresents < kMaxInFlightPresents);
+
+    ++mInFlightPresents;
+    mScenicSession.Present2(0, 0, [](fuchsia::scenic::scheduling::FuturePresentationTimes info) {});
+}
+
+void ScenicWindow::onFramePresented(fuchsia::scenic::scheduling::FramePresentedInfo info)
+{
+    mInFlightPresents -= info.presentation_infos.size();
+    ASSERT(mInFlightPresents >= 0);
+    mLoop->Quit();
+}
+
+void ScenicWindow::onScenicEvents(std::vector<fuchsia::ui::scenic::Event> events)
 {
     UNIMPLEMENTED();
 }
 
-void ScenicWindow::OnScenicError(zx_status_t status)
+void ScenicWindow::onScenicError(zx_status_t status)
 {
     WARN() << "OnScenicError: " << zx_status_get_string(status);
+    mLostSession = true;
+    mLoop->Quit();
 }
 
 // static

@@ -61,7 +61,7 @@ class TVersionGLSL : public TIntermTraverser
 
     void visitSymbol(TIntermSymbol *node) override;
     bool visitAggregate(Visit, TIntermAggregate *node) override;
-    bool visitInvariantDeclaration(Visit, TIntermInvariantDeclaration *node) override;
+    bool visitGlobalQualifierDeclaration(Visit, TIntermGlobalQualifierDeclaration *node) override;
     void visitFunctionPrototype(TIntermFunctionPrototype *node) override;
     bool visitDeclaration(Visit, TIntermDeclaration *node) override;
 

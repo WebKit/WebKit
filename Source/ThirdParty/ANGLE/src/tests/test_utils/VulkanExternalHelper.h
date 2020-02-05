@@ -8,7 +8,7 @@
 #ifndef ANGLE_TESTS_TESTUTILS_VULKANEXTERNALHELPER_H_
 #define ANGLE_TESTS_TESTUTILS_VULKANEXTERNALHELPER_H_
 
-#include <vulkan/vulkan.h>
+#include "volk.h"
 
 namespace angle
 {

@@ -206,7 +206,7 @@ class BinaryOutputStream : angle::NonCopyable
     }
 
     template <class IntT>
-    void writeIntVector(std::vector<IntT> param)
+    void writeIntVector(const std::vector<IntT> &param)
     {
         writeInt(param.size());
         for (IntT element : param)

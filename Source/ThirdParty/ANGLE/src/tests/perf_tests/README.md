@@ -40,5 +40,6 @@ ANGLE implements a no-op driver for OpenGL, D3D11 and Vulkan. To run on these co
 * [`TextureBenchmark`](TexturesPerf.cpp): Tests Texture state change performance.
 * [`LinkProgramBenchmark`](LinkProgramPerfTest.cpp): Tests performance of `glLinkProgram`.
 * [`glmark2`](glmark2.cpp): Runs the glmark2 benchmark.
+* [`TracePerfTest`](TracePerfTest.cpp): Runs replays of restricted traces, not available publicly. To enable, read more in [`RestrictedTraceTests`](restricted_traces/RestrictedTraceTests.md)
 
 Many other tests can be found that have documentation in their classes.

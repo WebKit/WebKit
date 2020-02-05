@@ -183,6 +183,13 @@ std::string ToString(const T &value)
     return o.str();
 }
 
+inline bool IsLittleEndian()
+{
+    constexpr uint32_t kEndiannessTest = 1;
+    const bool isLittleEndian          = *reinterpret_cast<const uint8_t *>(&kEndiannessTest) == 1;
+    return isLittleEndian;
+}
+
 // snprintf is not defined with MSVC prior to to msvc14
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #    define snprintf _snprintf

@@ -453,6 +453,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     void markContextLost(GraphicsResetStatus status);
 
     bool isContextLost() const { return mContextLost; }
+    void setContextLost();
 
     GLenum getGraphicsResetStrategy() const { return mResetStrategy; }
     bool isResetNotificationEnabled();
@@ -460,6 +461,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     const egl::Config *getConfig() const;
     EGLenum getClientType() const;
     EGLenum getRenderBuffer() const;
+    EGLenum getContextPriority() const;
 
     const GLubyte *getString(GLenum name) const;
     const GLubyte *getStringi(GLenum name, GLuint index) const;
@@ -478,7 +480,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                                            angle::MemoryBuffer **scratchBufferOut) const;
     ANGLE_NO_DISCARD bool getZeroFilledBuffer(size_t requstedSizeBytes,
                                               angle::MemoryBuffer **zeroBufferOut) const;
-    angle::ScratchBuffer *getScratchBuffer() const { return &mScratchBuffer; }
+    angle::ScratchBuffer *getScratchBuffer() const;
 
     angle::Result prepareForCopyImage();
     angle::Result prepareForDispatch();
@@ -511,8 +513,15 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     const TextureCapsMap &getTextureCaps() const { return mState.getTextureCaps(); }
     const Extensions &getExtensions() const { return mState.getExtensions(); }
     const Limitations &getLimitations() const { return mState.getLimitations(); }
-    bool skipValidation() const { return mSkipValidation; }
     bool isGLES1() const;
+
+    bool skipValidation() const
+    {
+        // Ensure we don't skip validation when context becomes lost, since implementations
+        // generally assume a non-lost context, non-null objects, etc.
+        ASSERT(!isContextLost() || !mSkipValidation);
+        return mSkipValidation;
+    }
 
     // Specific methods needed for validation.
     bool getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *numParams) const;
@@ -679,7 +688,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     // Current/lost context flags
     bool mHasBeenCurrent;
-    bool mContextLost;
+    bool mContextLost;  // Set with setContextLost so that we also set mSkipValidation=false.
     GraphicsResetStatus mResetStatus;
     bool mContextLostForced;
     GLenum mResetStrategy;
@@ -722,8 +731,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     std::vector<angle::ObserverBinding> mImageObserverBindings;
 
     // Not really a property of context state. The size and contexts change per-api-call.
-    mutable angle::ScratchBuffer mScratchBuffer;
-    mutable angle::ScratchBuffer mZeroFilledBuffer;
+    mutable Optional<angle::ScratchBuffer> mScratchBuffer;
+    mutable Optional<angle::ScratchBuffer> mZeroFilledBuffer;
 
     std::shared_ptr<angle::WorkerThreadPool> mThreadPool;
 

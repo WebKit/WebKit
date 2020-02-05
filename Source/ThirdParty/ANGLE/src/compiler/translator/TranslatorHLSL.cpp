@@ -203,12 +203,13 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
 
     outputHLSL.output(root, getInfoSink().obj);
 
-    mShaderStorageBlockRegisterMap = outputHLSL.getShaderStorageBlockRegisterMap();
-    mUniformBlockRegisterMap       = outputHLSL.getUniformBlockRegisterMap();
-    mUniformRegisterMap            = outputHLSL.getUniformRegisterMap();
-    mReadonlyImage2DRegisterIndex  = outputHLSL.getReadonlyImage2DRegisterIndex();
-    mImage2DRegisterIndex          = outputHLSL.getImage2DRegisterIndex();
-    mUsedImage2DFunctionNames      = outputHLSL.getUsedImage2DFunctionNames();
+    mShaderStorageBlockRegisterMap      = outputHLSL.getShaderStorageBlockRegisterMap();
+    mUniformBlockRegisterMap            = outputHLSL.getUniformBlockRegisterMap();
+    mUniformBlockUseStructuredBufferMap = outputHLSL.getUniformBlockUseStructuredBufferMap();
+    mUniformRegisterMap                 = outputHLSL.getUniformRegisterMap();
+    mReadonlyImage2DRegisterIndex       = outputHLSL.getReadonlyImage2DRegisterIndex();
+    mImage2DRegisterIndex               = outputHLSL.getImage2DRegisterIndex();
+    mUsedImage2DFunctionNames           = outputHLSL.getUsedImage2DFunctionNames();
 
     return true;
 }
@@ -260,6 +261,14 @@ unsigned int TranslatorHLSL::getImage2DRegisterIndex() const
 const std::set<std::string> *TranslatorHLSL::getUsedImage2DFunctionNames() const
 {
     return &mUsedImage2DFunctionNames;
+}
+
+bool TranslatorHLSL::shouldUniformBlockUseStructuredBuffer(
+    const std::string &uniformBlockName) const
+{
+    auto uniformBlockIter = mUniformBlockUseStructuredBufferMap.find(uniformBlockName);
+    return uniformBlockIter != mUniformBlockUseStructuredBufferMap.end() &&
+           uniformBlockIter->second;
 }
 
 }  // namespace sh

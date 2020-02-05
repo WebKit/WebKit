@@ -34,6 +34,13 @@
             <param>const <ptype>EGLAttrib</ptype> *<name>attrib_list</name></param>
         </command>
         <command>
+            <proto><ptype>EGLBoolean</ptype> <name>eglGetMscRateCHROMIUM</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLSurface</ptype> <name>surface</name></param>
+            <param><ptype>EGLint</ptype> *<name>numerator</name></param>
+            <param><ptype>EGLint</ptype> *<name>denominator</name></param>
+        </command>
+        <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglGetSyncValuesCHROMIUM</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
@@ -108,9 +115,10 @@
                 <command name="eglStreamPostD3DTextureANGLE"/>
             </require>
         </extension>
-        <extension name="EGL_CHROMIUM_get_sync_values" supported="egl">
+        <extension name="EGL_CHROMIUM_sync_control" supported="egl">
             <require>
                 <command name="eglGetSyncValuesCHROMIUM"/>
+                <command name="eglGetMscRateCHROMIUM"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_program_cache_control" supported="egl">

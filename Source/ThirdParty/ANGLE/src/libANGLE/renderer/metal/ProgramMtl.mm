@@ -124,7 +124,7 @@ void InitDefaultUniformBlock(const std::vector<sh::Uniform> &uniforms,
     }
 
     sh::Std140BlockEncoder blockEncoder;
-    sh::GetUniformBlockInfo(uniforms, "", &blockEncoder, blockLayoutMapOut);
+    sh::GetActiveUniformBlockInfo(uniforms, "", &blockEncoder, blockLayoutMapOut);
 
     size_t blockSize = blockEncoder.getCurrentOffset();
 
@@ -295,7 +295,7 @@ std::unique_ptr<LinkEvent> ProgramMtl::link(const gl::Context *context,
     // assignment done in that function.
     linkResources(resources);
 
-    mtl::GlslangGetShaderSource(mState, resources, &mShaderSource);
+    mtl::GlslangGetShaderSource(mState, resources, &mShaderSource, &mVariableInfoMap);
 
     // NOTE(hqle): Parallelize linking.
     return std::make_unique<LinkEventDone>(linkImpl(context, infoLog));
@@ -312,8 +312,8 @@ angle::Result ProgramMtl::linkImpl(const gl::Context *glContext, gl::InfoLog &in
 
     // Convert GLSL to spirv code
     gl::ShaderMap<std::vector<uint32_t>> shaderCodes;
-    ANGLE_TRY(mtl::GlslangGetShaderSpirvCode(contextMtl, contextMtl->getCaps(), false,
-                                             mShaderSource, &shaderCodes));
+    ANGLE_TRY(mtl::GlslangGetShaderSpirvCode(contextMtl, contextMtl->getCaps(), mShaderSource,
+                                             mVariableInfoMap, &shaderCodes));
 
     // Convert spirv code to MSL
     ANGLE_TRY(convertToMsl(glContext, gl::ShaderType::Vertex, infoLog,

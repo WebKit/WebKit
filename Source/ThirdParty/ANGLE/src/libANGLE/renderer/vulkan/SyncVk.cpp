@@ -54,7 +54,7 @@ angle::Result SyncHelper::initialize(ContextVk *contextVk)
 
     CommandGraph *commandGraph = contextVk->getCommandGraph();
     commandGraph->setFenceSync(mEvent);
-    commandGraph->onResourceUse(mUse);
+    contextVk->getResourceUseList().add(mUse);
 
     return angle::Result::Continue;
 }
@@ -107,7 +107,7 @@ void SyncHelper::serverWait(ContextVk *contextVk)
 {
     CommandGraph *commandGraph = contextVk->getCommandGraph();
     commandGraph->waitFenceSync(mEvent);
-    commandGraph->onResourceUse(mUse);
+    contextVk->getResourceUseList().add(mUse);
 }
 
 angle::Result SyncHelper::getStatus(Context *context, bool *signaled)

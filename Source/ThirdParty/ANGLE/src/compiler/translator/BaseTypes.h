@@ -105,7 +105,8 @@ enum TBasicType
     EbtUSampler2DRect,
     EbtUSamplerBuffer,
     EbtUSamplerCubeArray,
-    EbtGuardSamplerEnd = EbtUSamplerCubeArray,  // non type: see implementation of IsSampler()
+    EbtSamplerVideoWEBGL,
+    EbtGuardSamplerEnd = EbtSamplerVideoWEBGL,  // non type: see implementation of IsSampler()
 
     // images
     EbtGuardImageBegin,
@@ -272,6 +273,7 @@ inline bool IsIntegerSampler(TBasicType type)
         case EbtSamplerCubeArrayShadow:
         case EbtSampler1DShadow:
         case EbtSampler2DRectShadow:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -434,6 +436,7 @@ inline bool IsSampler2D(TBasicType type)
         case EbtSampler2DMS:
         case EbtISampler2DMS:
         case EbtUSampler2DMS:
+        case EbtSamplerVideoWEBGL:
             return true;
         case EbtSampler2DArray:
         case EbtISampler2DArray:
@@ -519,6 +522,7 @@ inline bool IsSamplerCube(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -574,6 +578,7 @@ inline bool IsSampler3D(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -629,6 +634,7 @@ inline bool IsSamplerArray(TBasicType type)
         case EbtUSampler1D:
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -684,6 +690,7 @@ inline bool IsShadowSampler(TBasicType type)
         case EbtUSampler2DRect:
         case EbtUSamplerBuffer:
         case EbtUSamplerCubeArray:
+        case EbtSamplerVideoWEBGL:
             return false;
         default:
             assert(!IsSampler(type));
@@ -999,6 +1006,9 @@ enum TQualifier
     EvqPrimitiveID,    // gl_PrimitiveID
     EvqLayer,          // gl_Layer
 
+    // GLSL ES 3.1 extension EXT_gpu_shader5 qualifiers
+    EvqPrecise,
+
     // end of list
     EvqLast
 };
@@ -1011,6 +1021,41 @@ inline bool IsQualifierUnspecified(TQualifier qualifier)
 inline bool IsStorageBuffer(TQualifier qualifier)
 {
     return qualifier == EvqBuffer;
+}
+
+inline bool IsShaderIn(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqVertexIn:
+        case EvqGeometryIn:
+        case EvqFragmentIn:
+        case EvqAttribute:
+        case EvqVaryingIn:
+        case EvqSmoothIn:
+        case EvqFlatIn:
+        case EvqCentroidIn:
+            return true;
+        default:
+            return false;
+    }
+}
+
+inline bool IsShaderOut(TQualifier qualifier)
+{
+    switch (qualifier)
+    {
+        case EvqVertexOut:
+        case EvqGeometryOut:
+        case EvqFragmentOut:
+        case EvqVaryingOut:
+        case EvqSmoothOut:
+        case EvqFlatOut:
+        case EvqCentroidOut:
+            return true;
+        default:
+            return false;
+    }
 }
 
 enum TLayoutImageInternalFormat
@@ -1077,16 +1122,16 @@ struct TLayoutQualifier
     bool isEmpty() const
     {
         return location == -1 && binding == -1 && offset == -1 && numViews == -1 && yuv == false &&
-               matrixPacking == EmpUnspecified && blockStorage == EbsUnspecified &&
-               !localSize.isAnyValueSet() && imageInternalFormat == EiifUnspecified &&
-               primitiveType == EptUndefined && invocations == 0 && maxVertices == -1 &&
-               index == -1;
+               earlyFragmentTests == false && matrixPacking == EmpUnspecified &&
+               blockStorage == EbsUnspecified && !localSize.isAnyValueSet() &&
+               imageInternalFormat == EiifUnspecified && primitiveType == EptUndefined &&
+               invocations == 0 && maxVertices == -1 && index == -1;
     }
 
     bool isCombinationValid() const
     {
-        bool workSizeSpecified = localSize.isAnyValueSet();
-        bool numViewsSet       = (numViews != -1);
+        bool workGroupSizeSpecified = localSize.isAnyValueSet();
+        bool numViewsSet            = (numViews != -1);
         bool geometryShaderSpecified =
             (primitiveType != EptUndefined) || (invocations != 0) || (maxVertices != -1);
         bool otherLayoutQualifiersSpecified =
@@ -1094,9 +1139,11 @@ struct TLayoutQualifier
              blockStorage != EbsUnspecified || imageInternalFormat != EiifUnspecified);
 
         // we can have either the work group size specified, or number of views,
-        // or yuv layout qualifier, or the other layout qualifiers.
-        return (workSizeSpecified ? 1 : 0) + (numViewsSet ? 1 : 0) + (yuv ? 1 : 0) +
-                   (otherLayoutQualifiersSpecified ? 1 : 0) + (geometryShaderSpecified ? 1 : 0) <=
+        // or yuv layout qualifier, or early_fragment_tests layout qualifier, or the other layout
+        // qualifiers.
+        return (workGroupSizeSpecified ? 1 : 0) + (numViewsSet ? 1 : 0) + (yuv ? 1 : 0) +
+                   (earlyFragmentTests ? 1 : 0) + (otherLayoutQualifiersSpecified ? 1 : 0) +
+                   (geometryShaderSpecified ? 1 : 0) <=
                1;
     }
 
@@ -1125,6 +1172,9 @@ struct TLayoutQualifier
     // EXT_YUV_target yuv layout qualifier.
     bool yuv;
 
+    // early_fragment_tests qualifier.
+    bool earlyFragmentTests;
+
     // OES_geometry_shader layout qualifiers.
     TLayoutPrimitiveType primitiveType;
     int invocations;
@@ -1145,6 +1195,7 @@ struct TLayoutQualifier
           imageInternalFormat(EiifUnspecified),
           numViews(-1),
           yuv(false),
+          earlyFragmentTests(false),
           primitiveType(EptUndefined),
           invocations(0),
           maxVertices(-1),
@@ -1269,6 +1320,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqGeometryIn:             return "in";
     case EvqGeometryOut:            return "out";
     case EvqPerVertexIn:            return "gl_in";
+    case EvqPrecise:                return "precise";
     default: UNREACHABLE();         return "unknown qualifier";
     }
     // clang-format on

@@ -254,7 +254,7 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #endif
 
 // The state tracked by ANGLE will be validated with the driver state before each call
-#if defined(ANGLE_ENABLE_ASSERTS)
+#if defined(ANGLE_ENABLE_DEBUG_TRACE)
 #    define ANGLE_STATE_VALIDATION_ENABLED
 #endif
 

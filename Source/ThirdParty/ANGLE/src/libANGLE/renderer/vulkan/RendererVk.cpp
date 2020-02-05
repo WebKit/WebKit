@@ -17,6 +17,7 @@
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
+#include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/driver_utils.h"
@@ -374,6 +375,7 @@ class ScopedVkLoaderEnvironment : angle::NonCopyable
                 ERR() << "Error setting environment for Mock/Null Driver.";
             }
         }
+#    if defined(ANGLE_VK_SWIFTSHADER_ICD_JSON)
         else if (icd == vk::ICD::SwiftShader)
         {
             if (!setICDEnvironment(ANGLE_VK_SWIFTSHADER_ICD_JSON))
@@ -381,6 +383,7 @@ class ScopedVkLoaderEnvironment : angle::NonCopyable
                 ERR() << "Error setting environment for SwiftShader.";
             }
         }
+#    endif  // defined(ANGLE_VK_SWIFTSHADER_ICD_JSON)
         if (mEnableValidationLayers || icd != vk::ICD::Default)
         {
             const auto &cwd = angle::GetCWD();
@@ -481,10 +484,16 @@ ICDFilterFunc GetFilterForICD(vk::ICD preferredICD)
             return [](const VkPhysicalDeviceProperties &deviceProperties) {
                 return ((deviceProperties.vendorID == VENDOR_ID_GOOGLE) &&
                         (deviceProperties.deviceID == kSwiftShaderDeviceID) &&
-                        (strcmp(deviceProperties.deviceName, kSwiftShaderDeviceName) == 0));
+                        (strncmp(deviceProperties.deviceName, kSwiftShaderDeviceName,
+                                 strlen(kSwiftShaderDeviceName)) == 0));
             };
         default:
-            return [](const VkPhysicalDeviceProperties &deviceProperties) { return true; };
+            const std::string anglePreferredDevice =
+                angle::GetEnvironmentVar(vk::gANGLEPreferredDevice);
+            return [anglePreferredDevice](const VkPhysicalDeviceProperties &deviceProperties) {
+                return (anglePreferredDevice.empty() ||
+                        anglePreferredDevice == deviceProperties.deviceName);
+            };
     }
 }
 
@@ -523,6 +532,11 @@ bool ShouldUseValidationLayers(const egl::AttributeMap &attribs)
     return debugSetting == EGL_TRUE;
 #endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
 }
+
+gl::Version LimitVersionTo(const gl::Version &current, const gl::Version &lower)
+{
+    return std::min(current, lower);
+}
 }  // namespace
 
 // RendererVk implementation.
@@ -536,10 +550,9 @@ RendererVk::RendererVk()
       mDebugUtilsMessenger(VK_NULL_HANDLE),
       mDebugReportCallback(VK_NULL_HANDLE),
       mPhysicalDevice(VK_NULL_HANDLE),
-      mPhysicalDeviceSubgroupProperties{},
-      mQueue(VK_NULL_HANDLE),
       mCurrentQueueFamilyIndex(std::numeric_limits<uint32_t>::max()),
       mMaxVertexAttribDivisor(1),
+      mMaxVertexAttribStride(0),
       mDevice(VK_NULL_HANDLE),
       mLastCompletedQueueSerial(mQueueSerialFactory.generate()),
       mCurrentQueueSerial(mQueueSerialFactory.generate()),
@@ -548,10 +561,13 @@ RendererVk::RendererVk()
       mPipelineCacheDirty(false),
       mPipelineCacheInitialized(false)
 {
-    mPhysicalDeviceSubgroupProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
-
     VkFormatProperties invalid = {0, 0, kInvalidFormatFeatureFlags};
     mFormatProperties.fill(invalid);
+
+    // We currently don't have any big-endian devices in the list of supported platforms.  There are
+    // a number of places in the Vulkan backend that make this assumption.  This assertion is made
+    // early to fail immediately on big-endian platforms.
+    ASSERT(IsLittleEndian());
 }
 
 RendererVk::~RendererVk()
@@ -619,6 +635,8 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
                                      const char *wsiExtension,
                                      const char *wsiLayer)
 {
+    // Set all vk* function ptrs
+    ANGLE_VK_TRY(displayVk, volkInitialize());
     mDisplay                         = display;
     const egl::AttributeMap &attribs = mDisplay->getAttributeMap();
     ScopedVkLoaderEnvironment scopedEnvironment(ShouldUseValidationLayers(attribs),
@@ -691,15 +709,10 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     ExtensionNameList enabledInstanceExtensions;
     enabledInstanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
     enabledInstanceExtensions.push_back(wsiExtension);
-#if defined(ANGLE_PLATFORM_ANDROID)
-    // TODO: Enable DebugUtils on Android
-    // http://anglebug.com/3852
-    bool enableDebugUtils = false;
-#else
     bool enableDebugUtils =
         mEnableValidationLayers &&
         ExtensionFound(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instanceExtensionNames);
-#endif
+
     bool enableDebugReport =
         mEnableValidationLayers && !enableDebugUtils &&
         ExtensionFound(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instanceExtensionNames);
@@ -711,6 +724,12 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     else if (enableDebugReport)
     {
         enabledInstanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+    }
+
+    if (ExtensionFound(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME, instanceExtensionNames))
+    {
+        enabledInstanceExtensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+        ANGLE_FEATURE_CONDITION((&mFeatures), supportsSwapchainColorspace, true);
     }
 
     // Verify the required extensions are in the extension names set. Fail if not.
@@ -766,12 +785,11 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     instanceInfo.enabledLayerCount   = static_cast<uint32_t>(enabledInstanceLayerNames.size());
     instanceInfo.ppEnabledLayerNames = enabledInstanceLayerNames.data();
     ANGLE_VK_TRY(displayVk, vkCreateInstance(&instanceInfo, nullptr, &mInstance));
+    volkLoadInstance(mInstance);
 
     if (enableDebugUtils)
     {
-        // Try to use the newer EXT_debug_utils if it exists.
-        InitDebugUtilsEXTFunctions(mInstance);
-
+        // Use the newer EXT_debug_utils if it exists.
         // Create the messenger callback.
         VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
 
@@ -796,8 +814,6 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     else if (enableDebugReport)
     {
         // Fallback to EXT_debug_report.
-        InitDebugReportEXTFunctions(mInstance);
-
         VkDebugReportCallbackCreateInfoEXT debugReportInfo = {};
 
         debugReportInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
@@ -813,7 +829,6 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
                   VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) !=
         enabledInstanceExtensions.end())
     {
-        InitGetPhysicalDeviceProperties2KHRFunctions(mInstance);
         ASSERT(vkGetPhysicalDeviceProperties2KHR);
     }
 
@@ -880,6 +895,84 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     mFormatTable.initialize(this, &mNativeTextureCaps, &mNativeCaps.compressedTextureFormats);
 
     return angle::Result::Continue;
+}
+
+void RendererVk::queryDeviceExtensionFeatures(const ExtensionNameList &deviceExtensionNames)
+{
+    // Default initialize all extension features to false.
+    mLineRasterizationFeatures = {};
+    mLineRasterizationFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
+
+    mProvokingVertexFeatures = {};
+    mProvokingVertexFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
+
+    mVertexAttributeDivisorFeatures = {};
+    mVertexAttributeDivisorFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT;
+
+    mVertexAttributeDivisorProperties = {};
+    mVertexAttributeDivisorProperties.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT;
+
+    mTransformFeedbackFeatures = {};
+    mTransformFeedbackFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT;
+
+    mPhysicalDeviceSubgroupProperties       = {};
+    mPhysicalDeviceSubgroupProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+
+    if (!vkGetPhysicalDeviceProperties2KHR || !vkGetPhysicalDeviceFeatures2KHR)
+    {
+        return;
+    }
+
+    // Query features and properties.
+    VkPhysicalDeviceFeatures2KHR deviceFeatures = {};
+    deviceFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+
+    VkPhysicalDeviceProperties2 deviceProperties = {};
+    deviceProperties.sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+
+    // Query line rasterization features
+    if (ExtensionFound(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mLineRasterizationFeatures);
+    }
+
+    // Query provoking vertex features
+    if (ExtensionFound(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mProvokingVertexFeatures);
+    }
+
+    // Query attribute divisor features and properties
+    if (ExtensionFound(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mVertexAttributeDivisorFeatures);
+        vk::AddToPNextChain(&deviceProperties, &mVertexAttributeDivisorProperties);
+    }
+
+    // Query transform feedback features
+    if (ExtensionFound(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(&deviceFeatures, &mTransformFeedbackFeatures);
+    }
+
+    // Query subgroup properties
+    vk::AddToPNextChain(&deviceProperties, &mPhysicalDeviceSubgroupProperties);
+
+    vkGetPhysicalDeviceFeatures2KHR(mPhysicalDevice, &deviceFeatures);
+    vkGetPhysicalDeviceProperties2KHR(mPhysicalDevice, &deviceProperties);
+
+    // Clean up pNext chains
+    mLineRasterizationFeatures.pNext        = nullptr;
+    mProvokingVertexFeatures.pNext          = nullptr;
+    mVertexAttributeDivisorFeatures.pNext   = nullptr;
+    mVertexAttributeDivisorProperties.pNext = nullptr;
+    mTransformFeedbackFeatures.pNext        = nullptr;
+    mPhysicalDeviceSubgroupProperties.pNext = nullptr;
 }
 
 angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex)
@@ -950,58 +1043,34 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     ExtensionNameList enabledDeviceExtensions;
     enabledDeviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
-    float zeroPriority                      = 0.0f;
+    // Queues: map low, med, high priority to whatever is supported up to 3 queues
+    uint32_t queueCount = std::min(mQueueFamilyProperties[queueFamilyIndex].queueCount,
+                                   static_cast<uint32_t>(egl::ContextPriority::EnumCount));
+
+    constexpr float kVulkanQueuePriorityLow    = 0.0;
+    constexpr float kVulkanQueuePriorityMedium = 0.4;
+    constexpr float kVulkanQueuePriorityHigh   = 1.0;
+
+    // Index order: Low, High, Medium - so no need to rearrange according to count:
+    // If we have 1 queue - all same, if 2 - Low and High, if 3 Low, High and Medium.
+    constexpr uint32_t kQueueIndexLow    = 0;
+    constexpr uint32_t kQueueIndexHigh   = 1;
+    constexpr uint32_t kQueueIndexMedium = 2;
+
+    constexpr float queuePriorities[static_cast<uint32_t>(egl::ContextPriority::EnumCount)] = {
+        kVulkanQueuePriorityMedium, kVulkanQueuePriorityHigh, kVulkanQueuePriorityLow};
+
     VkDeviceQueueCreateInfo queueCreateInfo = {};
     queueCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     queueCreateInfo.flags                   = 0;
     queueCreateInfo.queueFamilyIndex        = queueFamilyIndex;
-    queueCreateInfo.queueCount              = 1;
-    queueCreateInfo.pQueuePriorities        = &zeroPriority;
+    queueCreateInfo.queueCount              = queueCount;
+    queueCreateInfo.pQueuePriorities        = queuePriorities;
 
-    // Setup device initialization struct
-    VkDeviceCreateInfo createInfo = {};
+    // Query extensions and their features.
+    queryDeviceExtensionFeatures(deviceExtensionNames);
 
-    createInfo.sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.flags                = 0;
-    createInfo.queueCreateInfoCount = 1;
-    createInfo.pQueueCreateInfos    = &queueCreateInfo;
-    createInfo.enabledLayerCount    = static_cast<uint32_t>(enabledDeviceLayerNames.size());
-    createInfo.ppEnabledLayerNames  = enabledDeviceLayerNames.data();
-
-    mLineRasterizationFeatures = {};
-    mLineRasterizationFeatures.sType =
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
-    ASSERT(mLineRasterizationFeatures.bresenhamLines == VK_FALSE);
-    if (vkGetPhysicalDeviceFeatures2KHR &&
-        ExtensionFound(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME, deviceExtensionNames))
-    {
-        enabledDeviceExtensions.push_back(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME);
-        // Query line rasterization capabilities
-        VkPhysicalDeviceFeatures2KHR availableFeatures = {};
-        availableFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-        vk::AppendToPNextChain(&availableFeatures, &mLineRasterizationFeatures);
-
-        vkGetPhysicalDeviceFeatures2KHR(mPhysicalDevice, &availableFeatures);
-        vk::AppendToPNextChain(&createInfo, &mLineRasterizationFeatures);
-    }
-
-    mProvokingVertexFeatures = {};
-    mProvokingVertexFeatures.sType =
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
-    ASSERT(mProvokingVertexFeatures.provokingVertexLast == VK_FALSE);
-    if (vkGetPhysicalDeviceFeatures2KHR &&
-        ExtensionFound(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME, deviceExtensionNames))
-    {
-        enabledDeviceExtensions.push_back(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
-        // Query line rasterization capabilities
-        VkPhysicalDeviceFeatures2KHR availableFeatures = {};
-        availableFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-        vk::AppendToPNextChain(&availableFeatures, &mProvokingVertexFeatures);
-
-        vkGetPhysicalDeviceFeatures2KHR(mPhysicalDevice, &availableFeatures);
-        vk::AppendToPNextChain(&createInfo, &mProvokingVertexFeatures);
-    }
-
+    // Initialize features and workarounds.
     if (!displayVk->getState().featuresAllDisabled)
     {
         initFeatures(deviceExtensionNames);
@@ -1032,7 +1101,6 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
         enabledDeviceExtensions.push_back(VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME);
         enabledDeviceExtensions.push_back(
             VK_ANDROID_EXTERNAL_MEMORY_ANDROID_HARDWARE_BUFFER_EXTENSION_NAME);
-        InitExternalMemoryHardwareBufferANDROIDFunctions(mInstance);
     }
 #else
     ASSERT(!getFeatures().supportsAndroidHardwareBuffer.enabled);
@@ -1046,7 +1114,6 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     if (getFeatures().supportsExternalSemaphoreFd.enabled)
     {
         enabledDeviceExtensions.push_back(VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
-        InitExternalSemaphoreFdFunctions(mInstance);
     }
 
     if (getFeatures().supportsExternalSemaphoreFd.enabled)
@@ -1062,71 +1129,118 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     std::sort(enabledDeviceExtensions.begin(), enabledDeviceExtensions.end(), StrLess);
     ANGLE_VK_TRY(displayVk, VerifyExtensionsPresent(deviceExtensionNames, enabledDeviceExtensions));
 
-    // Select additional features to be enabled
+    // Select additional features to be enabled.
     VkPhysicalDeviceFeatures2KHR enabledFeatures = {};
     enabledFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    enabledFeatures.features.independentBlend    = mPhysicalDeviceFeatures.independentBlend;
-    enabledFeatures.features.robustBufferAccess  = mPhysicalDeviceFeatures.robustBufferAccess;
-    enabledFeatures.features.samplerAnisotropy   = mPhysicalDeviceFeatures.samplerAnisotropy;
+    // Used to support framebuffers with multiple attachments:
+    enabledFeatures.features.independentBlend = mPhysicalDeviceFeatures.independentBlend;
+    // Used to support robust buffer access:
+    enabledFeatures.features.robustBufferAccess = mPhysicalDeviceFeatures.robustBufferAccess;
+    // Used to support Anisotropic filtering:
+    enabledFeatures.features.samplerAnisotropy = mPhysicalDeviceFeatures.samplerAnisotropy;
+    // Used to emulate transform feedback:
     enabledFeatures.features.vertexPipelineStoresAndAtomics =
         mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics;
+    // Used to implement storage buffers and images in the fragment shader:
     enabledFeatures.features.fragmentStoresAndAtomics =
         mPhysicalDeviceFeatures.fragmentStoresAndAtomics;
+    // Used to support geometry shaders:
     enabledFeatures.features.geometryShader = mPhysicalDeviceFeatures.geometryShader;
+    // Used to support EXT_gpu_shader5:
+    enabledFeatures.features.shaderImageGatherExtended =
+        mPhysicalDeviceFeatures.shaderImageGatherExtended;
+    // Used to support EXT_gpu_shader5:
+    enabledFeatures.features.shaderUniformBufferArrayDynamicIndexing =
+        mPhysicalDeviceFeatures.shaderUniformBufferArrayDynamicIndexing;
+    // Used to support EXT_gpu_shader5 and sampler array of array emulation:
+    enabledFeatures.features.shaderSampledImageArrayDynamicIndexing =
+        mPhysicalDeviceFeatures.shaderSampledImageArrayDynamicIndexing;
+    // Used to support atomic counter emulation:
+    enabledFeatures.features.shaderStorageBufferArrayDynamicIndexing =
+        mPhysicalDeviceFeatures.shaderStorageBufferArrayDynamicIndexing;
+
     if (!vk::CommandBuffer::ExecutesInline())
     {
         enabledFeatures.features.inheritedQueries = mPhysicalDeviceFeatures.inheritedQueries;
     }
 
-    VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT divisorFeatures = {};
-    divisorFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT;
-    if (vkGetPhysicalDeviceProperties2KHR &&
-        ExtensionFound(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME, deviceExtensionNames))
+    // Setup device initialization struct
+    VkDeviceCreateInfo createInfo = {};
+
+    // Based on available extension features, decide on which extensions and features to enable.
+
+    if (mLineRasterizationFeatures.bresenhamLines)
+    {
+        enabledDeviceExtensions.push_back(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME);
+        vk::AddToPNextChain(&createInfo, &mLineRasterizationFeatures);
+    }
+
+    if (mProvokingVertexFeatures.provokingVertexLast)
+    {
+        enabledDeviceExtensions.push_back(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
+        vk::AddToPNextChain(&createInfo, &mProvokingVertexFeatures);
+    }
+
+    if (mVertexAttributeDivisorFeatures.vertexAttributeInstanceRateDivisor)
     {
         enabledDeviceExtensions.push_back(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME);
-        divisorFeatures.vertexAttributeInstanceRateDivisor = true;
-        vk::AppendToPNextChain(&enabledFeatures, &divisorFeatures);
+        vk::AddToPNextChain(&createInfo, &mVertexAttributeDivisorFeatures);
 
-        VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT divisorProperties = {};
-        divisorProperties.sType =
-            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT;
-
-        VkPhysicalDeviceProperties2 deviceProperties = {};
-        deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-        vk::AppendToPNextChain(&deviceProperties, &divisorProperties);
-
-        vkGetPhysicalDeviceProperties2KHR(mPhysicalDevice, &deviceProperties);
         // We only store 8 bit divisor in GraphicsPipelineDesc so capping value & we emulate if
         // exceeded
         mMaxVertexAttribDivisor =
-            std::min(divisorProperties.maxVertexAttribDivisor,
+            std::min(mVertexAttributeDivisorProperties.maxVertexAttribDivisor,
                      static_cast<uint32_t>(std::numeric_limits<uint8_t>::max()));
-        vk::AppendToPNextChain(&createInfo, &enabledFeatures);
     }
-    else
+
+    if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        // Enable all available features
-        createInfo.pEnabledFeatures = &enabledFeatures.features;
+        enabledDeviceExtensions.push_back(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME);
+        vk::AddToPNextChain(&createInfo, &mTransformFeedbackFeatures);
     }
 
-    if (vkGetPhysicalDeviceProperties2KHR)
-    {
-        VkPhysicalDeviceProperties2 deviceProperties = {};
-        deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-        vk::AppendToPNextChain(&deviceProperties, &mPhysicalDeviceSubgroupProperties);
-
-        vkGetPhysicalDeviceProperties2KHR(mPhysicalDevice, &deviceProperties);
-    }
-
+    createInfo.sType                 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.flags                 = 0;
+    createInfo.queueCreateInfoCount  = 1;
+    createInfo.pQueueCreateInfos     = &queueCreateInfo;
+    createInfo.enabledLayerCount     = static_cast<uint32_t>(enabledDeviceLayerNames.size());
+    createInfo.ppEnabledLayerNames   = enabledDeviceLayerNames.data();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(enabledDeviceExtensions.size());
     createInfo.ppEnabledExtensionNames =
         enabledDeviceExtensions.empty() ? nullptr : enabledDeviceExtensions.data();
+    // Enable core features without assuming VkPhysicalDeviceFeatures2KHR is accepted in the pNext
+    // chain of VkDeviceCreateInfo.
+    createInfo.pEnabledFeatures = &enabledFeatures.features;
 
     ANGLE_VK_TRY(displayVk, vkCreateDevice(mPhysicalDevice, &createInfo, nullptr, &mDevice));
+    volkLoadDevice(mDevice);
 
     mCurrentQueueFamilyIndex = queueFamilyIndex;
 
-    vkGetDeviceQueue(mDevice, mCurrentQueueFamilyIndex, 0, &mQueue);
+    // When only 1 Queue, use same for all, Low index. Identify as Medium, since it's default.
+    VkQueue queue;
+    vkGetDeviceQueue(mDevice, mCurrentQueueFamilyIndex, kQueueIndexLow, &queue);
+    mQueues[egl::ContextPriority::Low]        = queue;
+    mQueues[egl::ContextPriority::Medium]     = queue;
+    mQueues[egl::ContextPriority::High]       = queue;
+    mPriorities[egl::ContextPriority::Low]    = egl::ContextPriority::Medium;
+    mPriorities[egl::ContextPriority::Medium] = egl::ContextPriority::Medium;
+    mPriorities[egl::ContextPriority::High]   = egl::ContextPriority::Medium;
+
+    // If at least 2 queues, High has its own queue
+    if (queueCount > 1)
+    {
+        vkGetDeviceQueue(mDevice, mCurrentQueueFamilyIndex, kQueueIndexHigh,
+                         &mQueues[egl::ContextPriority::High]);
+        mPriorities[egl::ContextPriority::High] = egl::ContextPriority::High;
+    }
+    // If at least 3 queues, Medium has its own queue. Adjust Low priority.
+    if (queueCount > 2)
+    {
+        vkGetDeviceQueue(mDevice, mCurrentQueueFamilyIndex, kQueueIndexMedium,
+                         &mQueues[egl::ContextPriority::Medium]);
+        mPriorities[egl::ContextPriority::Low] = egl::ContextPriority::Low;
+    }
 
     // Initialize the vulkan pipeline cache.
     bool success = false;
@@ -1226,6 +1340,20 @@ gl::Version RendererVk::getMaxSupportedESVersion() const
     // Current highest supported version
     gl::Version maxVersion = gl::Version(3, 1);
 
+    // Early out without downgrading ES version if mock ICD enabled.
+    // Mock ICD doesn't expose sufficient capabilities yet.
+    // https://github.com/KhronosGroup/Vulkan-Tools/issues/84
+    if (isMockICDEnabled())
+    {
+        return maxVersion;
+    }
+
+    // Limit to ES3.1 if there are any blockers for 3.2.
+    if (!vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures))
+    {
+        maxVersion = LimitVersionTo(maxVersion, {3, 1});
+    }
+
     // Limit to ES3.0 if there are any blockers for 3.1.
 
     // ES3.1 requires at least one atomic counter buffer and four storage buffers in compute.
@@ -1237,23 +1365,31 @@ gl::Version RendererVk::getMaxSupportedESVersion() const
     if (mPhysicalDeviceProperties.limits.maxPerStageDescriptorStorageBuffers <
         kMinimumStorageBuffersForES31)
     {
-        maxVersion = std::min(maxVersion, gl::Version(3, 0));
+        maxVersion = LimitVersionTo(maxVersion, {3, 0});
     }
 
     // ES3.1 requires at least a maximum offset of at least 2047.
     // If the Vulkan implementation can't support that, we cannot support 3.1.
     if (mPhysicalDeviceProperties.limits.maxVertexInputAttributeOffset < 2047)
     {
-        maxVersion = std::min(maxVersion, gl::Version(3, 0));
+        maxVersion = LimitVersionTo(maxVersion, {3, 0});
     }
 
     // Limit to ES2.0 if there are any blockers for 3.0.
     // TODO: http://anglebug.com/3972 Limit to GLES 2.0 if flat shading can't be emulated
 
+    // Multisample textures (ES3.1) and multisample renderbuffers (ES3.0) require the Vulkan driver
+    // to support the standard sample locations (in order to pass dEQP tests that check these
+    // locations).  If the Vulkan implementation can't support that, we cannot support 3.0/3.1.
+    if (mPhysicalDeviceProperties.limits.standardSampleLocations != VK_TRUE)
+    {
+        maxVersion = LimitVersionTo(maxVersion, {2, 0});
+    }
+
     // If the command buffer doesn't support queries, we can't support ES3.
     if (!vk::CommandBuffer::SupportsQueries(mPhysicalDeviceFeatures))
     {
-        maxVersion = std::max(maxVersion, gl::Version(2, 0));
+        maxVersion = LimitVersionTo(maxVersion, {2, 0});
     }
 
     // If independentBlend is not supported, we can't have a mix of has-alpha and emulated-alpha
@@ -1261,39 +1397,40 @@ gl::Version RendererVk::getMaxSupportedESVersion() const
     // targets.
     if (!mPhysicalDeviceFeatures.independentBlend)
     {
-        maxVersion = std::max(maxVersion, gl::Version(2, 0));
+        maxVersion = LimitVersionTo(maxVersion, {2, 0});
     }
 
-    // If vertexPipelineStoresAndAtomics is not supported, we can't currently support transform
-    // feedback.  TODO(syoussefi): this should be conditioned to the extension not being present as
-    // well, when that code path is implemented.  http://anglebug.com/3206
-    if (!mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics)
+    // If the Vulkan transform feedback extension is not present, we use an emulation path that
+    // requires the vertexPipelineStoresAndAtomics feature. Without the extension or this feature,
+    // we can't currently support transform feedback.
+    if (!mFeatures.supportsTransformFeedbackExtension.enabled &&
+        !mFeatures.emulateTransformFeedback.enabled)
     {
-        maxVersion = std::max(maxVersion, gl::Version(2, 0));
+        maxVersion = LimitVersionTo(maxVersion, {2, 0});
     }
 
     // Limit to GLES 2.0 if maxPerStageDescriptorUniformBuffers is too low.
     // Table 6.31 MAX_VERTEX_UNIFORM_BLOCKS minimum value = 12
     // Table 6.32 MAX_FRAGMENT_UNIFORM_BLOCKS minimum value = 12
-    // NOTE: We reserve some uniform buffers for emulation, so use the mNativeCaps which takes this
+    // NOTE: We reserve some uniform buffers for emulation, so use the NativeCaps which takes this
     // into account, rather than the physical device maxPerStageDescriptorUniformBuffers limits.
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        if (static_cast<GLuint>(mNativeCaps.maxShaderUniformBlocks[shaderType]) <
+        if (static_cast<GLuint>(getNativeCaps().maxShaderUniformBlocks[shaderType]) <
             gl::limits::kMinimumShaderUniformBlocks)
         {
-            maxVersion = std::max(maxVersion, gl::Version(2, 0));
+            maxVersion = LimitVersionTo(maxVersion, {2, 0});
         }
     }
 
     // Limit to GLES 2.0 if maxVertexOutputComponents is too low.
     // Table 6.31 MAX VERTEX OUTPUT COMPONENTS minimum value = 64
-    // NOTE: We reserve some vertex output components for emulation, so use the mNativeCaps which
+    // NOTE: We reserve some vertex output components for emulation, so use the NativeCaps which
     // takes this into account, rather than the physical device maxVertexOutputComponents limits.
-    if (static_cast<GLuint>(mNativeCaps.maxVertexOutputComponents) <
+    if (static_cast<GLuint>(getNativeCaps().maxVertexOutputComponents) <
         gl::limits::kMinimumVertexOutputComponents)
     {
-        maxVersion = std::max(maxVersion, gl::Version(2, 0));
+        maxVersion = LimitVersionTo(maxVersion, {2, 0});
     }
 
     return maxVersion;
@@ -1301,7 +1438,7 @@ gl::Version RendererVk::getMaxSupportedESVersion() const
 
 gl::Version RendererVk::getMaxConformantESVersion() const
 {
-    return std::min(getMaxSupportedESVersion(), gl::Version(3, 0));
+    return LimitVersionTo(getMaxSupportedESVersion(), {3, 0});
 }
 
 void RendererVk::initFeatures(const ExtensionNameList &deviceExtensionNames)
@@ -1346,8 +1483,18 @@ void RendererVk::initFeatures(const ExtensionNameList &deviceExtensionNames)
     ANGLE_FEATURE_CONDITION((&mFeatures), forceCPUPathForCubeMapCopy, IsWindows() && isIntel);
 
     // Work around incorrect NVIDIA point size range clamping.
-    // TODO(jmadill): Narrow driver range once fixed. http://anglebug.com/2970
-    ANGLE_FEATURE_CONDITION((&mFeatures), clampPointSize, isNvidia);
+    // http://anglebug.com/2970#c10
+    // Clamp if driver version is:
+    //   < 430 on Windows
+    //   < 421 otherwise
+    angle::VersionInfo nvidiaVersion;
+    if (isNvidia)
+    {
+        nvidiaVersion =
+            angle::ParseNvidiaDriverVersion(this->mPhysicalDeviceProperties.driverVersion);
+    }
+    ANGLE_FEATURE_CONDITION((&mFeatures), clampPointSize,
+                            isNvidia && nvidiaVersion.major < uint32_t(IsWindows() ? 430 : 421));
 
     // Work around ineffective compute-graphics barriers on Nexus 5X.
     // TODO(syoussefi): Figure out which other vendors and driver versions are affected.
@@ -1381,15 +1528,14 @@ void RendererVk::initFeatures(const ExtensionNameList &deviceExtensionNames)
         (&mFeatures), supportsShaderStencilExport,
         ExtensionFound(VK_EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME, deviceExtensionNames));
 
-    // TODO(syoussefi): when the code path using the extension is implemented, this should be
-    // conditioned to the extension not being present as well.  http://anglebug.com/3206
+    ANGLE_FEATURE_CONDITION((&mFeatures), supportsTransformFeedbackExtension,
+                            mTransformFeedbackFeatures.transformFeedback == VK_TRUE);
+
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback,
-                            mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics == VK_TRUE);
+                            (mFeatures.supportsTransformFeedbackExtension.enabled == VK_FALSE &&
+                             mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics == VK_TRUE));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), disableFifoPresentMode, IsLinux() && isIntel);
-
-    ANGLE_FEATURE_CONDITION((&mFeatures), restartRenderPassAfterLoadOpClear,
-                            IsAndroid() && isQualcomm && vk::CommandBuffer::ExecutesInline());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), bindEmptyForUnusedDescriptorSets,
                             IsAndroid() && isQualcomm);
@@ -1397,20 +1543,25 @@ void RendererVk::initFeatures(const ExtensionNameList &deviceExtensionNames)
     ANGLE_FEATURE_CONDITION((&mFeatures), forceOldRewriteStructSamplers, IsAndroid());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), perFrameWindowSizeQuery,
-                            isIntel || (IsWindows() && isAMD));
+                            isIntel || (IsWindows() && isAMD) || IsFuchsia());
 
     // Disabled on AMD/windows due to buggy behavior.
     ANGLE_FEATURE_CONDITION((&mFeatures), disallowSeamfulCubeMapEmulation, IsWindows() && isAMD);
+
+    // Round up buffer sizes in the presence of robustBufferAccess to emulate GLES behavior when
+    // vertex attributes are fetched from beyond the last multiple of the stride.  Currently, only
+    // AMD is known to refuse reading these attributes.
+    ANGLE_FEATURE_CONDITION((&mFeatures), roundUpBuffersToMaxVertexAttribStride,
+                            isAMD && mPhysicalDeviceFeatures.robustBufferAccess);
+    mMaxVertexAttribStride = std::min(static_cast<uint32_t>(gl::limits::kMaxVertexAttribStride),
+                                      mPhysicalDeviceProperties.limits.maxVertexInputBindingStride);
 
     ANGLE_FEATURE_CONDITION((&mFeatures), forceD16TexFilter, IsAndroid() && isQualcomm);
 
     ANGLE_FEATURE_CONDITION((&mFeatures), disableFlippingBlitWithCommand,
                             IsAndroid() && isQualcomm);
 
-    ANGLE_FEATURE_CONDITION(
-        (&mFeatures), transientCommandBuffer,
-        IsPixel2(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) ||
-            IsPixel1XL(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID));
+    ANGLE_FEATURE_CONDITION((&mFeatures), commandGraph, true);
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesVk(platform, &mFeatures);
@@ -1635,13 +1786,14 @@ bool RendererVk::hasBufferFormatFeatureBits(VkFormat format, const VkFormatFeatu
 }
 
 angle::Result RendererVk::queueSubmit(vk::Context *context,
+                                      egl::ContextPriority priority,
                                       const VkSubmitInfo &submitInfo,
                                       const vk::Fence &fence,
                                       Serial *serialOut)
 {
     {
         std::lock_guard<decltype(mQueueMutex)> lock(mQueueMutex);
-        ANGLE_VK_TRY(context, vkQueueSubmit(mQueue, 1, &submitInfo, fence.getHandle()));
+        ANGLE_VK_TRY(context, vkQueueSubmit(mQueues[priority], 1, &submitInfo, fence.getHandle()));
     }
 
     ANGLE_TRY(cleanupGarbage(context, false));
@@ -1653,11 +1805,11 @@ angle::Result RendererVk::queueSubmit(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result RendererVk::queueWaitIdle(vk::Context *context)
+angle::Result RendererVk::queueWaitIdle(vk::Context *context, egl::ContextPriority priority)
 {
     {
         std::lock_guard<decltype(mQueueMutex)> lock(mQueueMutex);
-        ANGLE_VK_TRY(context, vkQueueWaitIdle(mQueue));
+        ANGLE_VK_TRY(context, vkQueueWaitIdle(mQueues[priority]));
     }
 
     ANGLE_TRY(cleanupGarbage(context, false));
@@ -1665,7 +1817,20 @@ angle::Result RendererVk::queueWaitIdle(vk::Context *context)
     return angle::Result::Continue;
 }
 
-VkResult RendererVk::queuePresent(const VkPresentInfoKHR &presentInfo)
+angle::Result RendererVk::deviceWaitIdle(vk::Context *context)
+{
+    {
+        std::lock_guard<decltype(mQueueMutex)> lock(mQueueMutex);
+        ANGLE_VK_TRY(context, vkDeviceWaitIdle(mDevice));
+    }
+
+    ANGLE_TRY(cleanupGarbage(context, false));
+
+    return angle::Result::Continue;
+}
+
+VkResult RendererVk::queuePresent(egl::ContextPriority priority,
+                                  const VkPresentInfoKHR &presentInfo)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::queuePresent");
 
@@ -1673,7 +1838,7 @@ VkResult RendererVk::queuePresent(const VkPresentInfoKHR &presentInfo)
 
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "vkQueuePresentKHR");
-        return vkQueuePresentKHR(mQueue, &presentInfo);
+        return vkQueuePresentKHR(mQueues[priority], &presentInfo);
     }
 }
 
@@ -1780,6 +1945,19 @@ void RendererVk::onCompletedSerial(Serial serial)
     if (serial > mLastCompletedQueueSerial)
     {
         mLastCompletedQueueSerial = serial;
+    }
+}
+
+void RendererVk::reloadVolkIfNeeded() const
+{
+    if (volkGetLoadedInstance() != mInstance)
+    {
+        volkLoadInstance(mInstance);
+    }
+
+    if (volkGetLoadedDevice() != mDevice)
+    {
+        volkLoadDevice(mDevice);
     }
 }
 }  // namespace rx

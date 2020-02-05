@@ -12,8 +12,6 @@ util_sources = [
   "util/random_utils.h",
   "util/shader_utils.cpp",
   "util/shader_utils.h",
-  "util/test_utils.cpp",
-  "util/test_utils.h",
   "util/util_export.h",
   "util/util_gl.h",
   "util/Event.h",
@@ -25,30 +23,20 @@ util_sources = [
   "util/OSPixmap.h",
   "util/OSWindow.cpp",
   "util/OSWindow.h",
-  "util/Timer.h",
-  "util/Timer.cpp",
 ]
 
-util_win_sources = [
-  "util/windows/test_utils_win.cpp",
-  "util/windows/win32/test_utils_win32.cpp",
-  "util/windows/win32/Win32Pixmap.cpp",
-  "util/windows/win32/Win32Pixmap.h",
-  "util/windows/win32/Win32Window.cpp",
-  "util/windows/win32/Win32Window.h",
-  "util/windows/WGLWindow.h",
-]
+if (is_win) {
+  util_sources += [ "util/windows/WGLWindow.h" ]
 
-if (current_os != "winuwp") {
-  util_win_shared_sources = [ "util/windows/WGLWindow.cpp" ]
+  if (target_os != "winuwp") {
+    util_sources += [
+      "util/windows/win32/Win32Pixmap.cpp",
+      "util/windows/win32/Win32Pixmap.h",
+      "util/windows/win32/Win32Window.cpp",
+      "util/windows/win32/Win32Window.h",
+    ]
+  }
 }
-
-util_posix_sources = [
-  "util/posix/crash_handler_posix.cpp",
-  "util/posix/test_utils_posix.cpp",
-]
-
-util_linux_sources = util_posix_sources
 
 util_x11_sources = [
   "util/x11/X11Pixmap.cpp",
@@ -57,10 +45,10 @@ util_x11_sources = [
   "util/x11/X11Window.h",
 ]
 
-util_fuchsia_sources = util_posix_sources + [
-                         "util/fuchsia/ScenicWindow.cpp",
-                         "util/fuchsia/ScenicWindow.h",
-                       ]
+util_fuchsia_sources = [
+  "util/fuchsia/ScenicWindow.cpp",
+  "util/fuchsia/ScenicWindow.h",
+]
 
 util_ozone_sources = [
   "util/ozone/OzonePixmap.cpp",
@@ -68,17 +56,17 @@ util_ozone_sources = [
   "util/ozone/OzoneWindow.h",
 ]
 
-util_osx_sources = util_posix_sources + [
-                     "util/osx/OSXPixmap.mm",
-                     "util/osx/OSXPixmap.h",
-                     "util/osx/OSXWindow.mm",
-                     "util/osx/OSXWindow.h",
-                   ]
+util_osx_sources = [
+  "util/osx/OSXPixmap.mm",
+  "util/osx/OSXPixmap.h",
+  "util/osx/OSXWindow.mm",
+  "util/osx/OSXWindow.h",
+]
 
-util_android_sources = util_posix_sources + [
-                         "util/android/AndroidPixmap.cpp",
-                         "util/android/AndroidWindow.cpp",
-                         "util/android/AndroidWindow.h",
-                         "util/android/third_party/android_native_app_glue.c",
-                         "util/android/third_party/android_native_app_glue.h",
-                       ]
+util_android_sources = [
+  "util/android/AndroidPixmap.cpp",
+  "util/android/AndroidWindow.cpp",
+  "util/android/AndroidWindow.h",
+  "util/android/third_party/android_native_app_glue.c",
+  "util/android/third_party/android_native_app_glue.h",
+]

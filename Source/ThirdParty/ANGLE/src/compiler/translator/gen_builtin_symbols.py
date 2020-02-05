@@ -275,6 +275,8 @@ constexpr const ImmutableString _empty("");
 namespace BuiltInVariable
 {{
 
+{type_array_sizes_declarations}
+
 {variable_declarations}
 
 {get_variable_definitions}
@@ -465,6 +467,7 @@ basic_types_enumeration = [
     'USampler2DRect',
     'USamplerBuffer',
     'USamplerCubeArray',
+    'SamplerVideoWEBGL',
     'Image2D',
     'IImage2D',
     'UImage2D',
@@ -528,7 +531,9 @@ def get_basic_mangled_name(basic):
     return '1' + chr(ord('a') + index - 78)
 
 
-essl_levels = ['ESSL3_1_BUILTINS', 'ESSL3_BUILTINS', 'ESSL1_BUILTINS', 'COMMON_BUILTINS']
+essl_levels = [
+    'ESSL3_2_BUILTINS', 'ESSL3_1_BUILTINS', 'ESSL3_BUILTINS', 'ESSL1_BUILTINS', 'COMMON_BUILTINS'
+]
 
 glsl_levels = [
     'GLSL4_6_BUILTINS', 'GLSL4_5_BUILTINS', 'GLSL4_4_BUILTINS', 'GLSL4_3_BUILTINS',
@@ -541,6 +546,8 @@ glsl_levels = [
 def get_essl_shader_version_for_level(level):
     if level == None:
         return '-1'
+    elif level == 'ESSL3_2_BUILTINS':
+        return '320'
     elif level == 'ESSL3_1_BUILTINS':
         return '310'
     elif level == 'ESSL3_BUILTINS':
@@ -816,12 +823,20 @@ class TType:
         if 'qualifier' not in self.data:
             self.data['qualifier'] = 'Global'
 
+    def has_array_size(self):
+        return 'arraySize' in self.data
+
     def get_statictype_string(self):
         template_type = 'StaticType::Get<Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize}>()'
+        if self.has_array_size():
+            template_type = 'StaticType::GetArray<Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize}, kArraySize{arraySize}, 1>()'
         return template_type.format(**self.data)
 
     def get_dynamic_type_string(self):
-        template_type = 'new TType(Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize})'
+        template_type = 'new TType(Ebt{basic}, Ebp{precision}, Evq{qualifier}, {primarySize}, {secondarySize}'
+        if self.has_array_size():
+            template_type += ', TVector<unsigned int>{{{arraySize}}}'
+        template_type += ')'
         return template_type.format(**self.data)
 
     def get_mangled_name(self):
@@ -833,10 +848,14 @@ class TType:
         else:
             mangled_name += chr(ord('A') + size_key - 10)
         mangled_name += get_basic_mangled_name(self.data['basic'])
+        if self.has_array_size():
+            mangled_name += 'x' + str(self.data['arraySize'])
         return mangled_name
 
     def get_human_readable_name(self):
         name = self.data['basic']
+        if self.has_array_size():
+            name = str(self.data['arraySize']) + 'x' + name
         name += str(self.data['primarySize'])
         if self.data['secondarySize'] > 1:
             name += 'x' + str(self.data['secondarySize'])
@@ -923,8 +942,6 @@ class TType:
             'v': 'Void'
         }
 
-        # TODO(http://anglebug.com/3833): textureGatherOffsets in GLSL has an ivec2[4] parameter
-        # Need to parse, currently treating it as mat4x2
         vec_re = re.compile(r'^([iudb]?)vec([234]?)((\[[234]\])?)$')
         vec_match = vec_re.match(glsl_header_type)
         if vec_match:
@@ -936,8 +953,8 @@ class TType:
                 # vec with specific size
                 if vec_match.group(3) != '':
                     # vec array
-                    type_obj['primarySize'] = int(vec_match.group(3)[1])
-                    type_obj['secondarySize'] = int(vec_match.group(2))
+                    type_obj['primarySize'] = int(vec_match.group(2))
+                    type_obj['arraySize'] = int(vec_match.group(3)[1])
                 else:
                     type_obj['primarySize'] = int(vec_match.group(2))
             return type_obj
@@ -1195,6 +1212,11 @@ def get_variable_name_to_store_parameters(parameters):
     return unique_name
 
 
+def define_constexpr_type_array_sizes(template_args, type_array_sizes_declarations):
+    template_array_sizes_declaration = 'constexpr const unsigned int kArraySize{arraySize}[1] = {{{arraySize}}};'
+    type_array_sizes_declarations.add(template_array_sizes_declaration.format(**template_args))
+
+
 def define_constexpr_variable(template_args, variable_declarations):
     template_variable_declaration = 'constexpr const TVariable k{name_with_suffix}(BuiltInId::{name_with_suffix}, BuiltInName::{name}, SymbolType::BuiltIn, TExtension::{extension}, {type});'
     variable_declarations.append(template_variable_declaration.format(**template_args))
@@ -1284,9 +1306,9 @@ def gen_function_variants(function_props):
 def process_single_function_group(
         shader_type, group_name, group, parameter_declarations, name_declarations,
         unmangled_function_if_statements, defined_function_variants, builtin_id_declarations,
-        builtin_id_definitions, defined_parameter_names, variable_declarations,
-        function_declarations, script_generated_hash_tests, unmangled_script_generated_hash_tests,
-        mangled_builtins):
+        builtin_id_definitions, defined_parameter_names, type_array_sizes_declarations,
+        variable_declarations, function_declarations, script_generated_hash_tests,
+        unmangled_script_generated_hash_tests, mangled_builtins):
     global id_counter
 
     if 'functions' not in group:
@@ -1387,6 +1409,10 @@ def process_single_function_group(
                         template_builtin_id_declaration.format(**param_template_args))
                     define_constexpr_variable(param_template_args, variable_declarations)
                     defined_parameter_names.add(unique_param_name)
+                    if param.has_array_size():
+                        array_size_template_args = {'arraySize': param.data['arraySize']}
+                        define_constexpr_type_array_sizes(array_size_template_args,
+                                                          type_array_sizes_declarations)
                 parameters_list.append(
                     '&BuiltInVariable::k{name_with_suffix}'.format(**param_template_args))
 
@@ -1410,12 +1436,12 @@ def process_single_function_group(
             id_counter += 1
 
 
-def process_function_group(group_name, group, parameter_declarations, name_declarations,
-                           unmangled_function_if_statements, defined_function_variants,
-                           builtin_id_declarations, builtin_id_definitions,
-                           defined_parameter_names, variable_declarations, function_declarations,
-                           script_generated_hash_tests, unmangled_script_generated_hash_tests,
-                           mangled_builtins, is_in_group_definitions):
+def process_function_group(
+        group_name, group, parameter_declarations, name_declarations,
+        unmangled_function_if_statements, defined_function_variants, builtin_id_declarations,
+        builtin_id_definitions, defined_parameter_names, type_array_sizes_declarations,
+        variable_declarations, function_declarations, script_generated_hash_tests,
+        unmangled_script_generated_hash_tests, mangled_builtins, is_in_group_definitions):
     global id_counter
     first_id = id_counter
 
@@ -1426,9 +1452,9 @@ def process_function_group(group_name, group, parameter_declarations, name_decla
     process_single_function_group(
         shader_type, group_name, group, parameter_declarations, name_declarations,
         unmangled_function_if_statements, defined_function_variants, builtin_id_declarations,
-        builtin_id_definitions, defined_parameter_names, variable_declarations,
-        function_declarations, script_generated_hash_tests, unmangled_script_generated_hash_tests,
-        mangled_builtins)
+        builtin_id_definitions, defined_parameter_names, type_array_sizes_declarations,
+        variable_declarations, function_declarations, script_generated_hash_tests,
+        unmangled_script_generated_hash_tests, mangled_builtins)
 
     if 'subgroups' in group:
         for subgroup_name, subgroup in group['subgroups'].iteritems():
@@ -1436,8 +1462,9 @@ def process_function_group(group_name, group, parameter_declarations, name_decla
                 group_name + subgroup_name, subgroup, parameter_declarations, name_declarations,
                 unmangled_function_if_statements, defined_function_variants,
                 builtin_id_declarations, builtin_id_definitions, defined_parameter_names,
-                variable_declarations, function_declarations, script_generated_hash_tests,
-                unmangled_script_generated_hash_tests, mangled_builtins, is_in_group_definitions)
+                type_array_sizes_declarations, variable_declarations, function_declarations,
+                script_generated_hash_tests, unmangled_script_generated_hash_tests,
+                mangled_builtins, is_in_group_definitions)
 
     if 'queryFunction' in group:
         template_args = {'first_id': first_id, 'last_id': id_counter - 1, 'group_name': group_name}
@@ -1665,6 +1692,9 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
     # Declarations of name string variables
     name_declarations = set()
 
+    # Declarations of static array sizes if any builtin TVariable is array.
+    type_array_sizes_declarations = set()
+
     # Declarations of builtin TVariables
     variable_declarations = []
 
@@ -1749,8 +1779,8 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
         process_function_group(
             group_name, group, parameter_declarations, name_declarations,
             unmangled_function_if_statements, defined_function_variants, builtin_id_declarations,
-            builtin_id_definitions, defined_parameter_names, variable_declarations,
-            function_declarations, script_generated_hash_tests,
+            builtin_id_definitions, defined_parameter_names, type_array_sizes_declarations,
+            variable_declarations, function_declarations, script_generated_hash_tests,
             unmangled_script_generated_hash_tests, mangled_builtins, is_in_group_definitions)
 
     parameter_declarations = prune_parameters_arrays(parameter_declarations, function_declarations)
@@ -1787,6 +1817,8 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
             '\n'.join(is_in_group_definitions),
         'variable_data_source_name':
             variables_json_filename,
+        'type_array_sizes_declarations':
+            '\n'.join(sorted(type_array_sizes_declarations)),
         'variable_declarations':
             '\n'.join(sorted(variable_declarations)),
         'get_variable_declarations':

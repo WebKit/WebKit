@@ -40,7 +40,7 @@ Try jobs from pre-commit builds are found on the builders console:
     * Update **`infra/config/global/cr-buildbucket.cfg`** to add the new builder (to ci and try), and set the new config option.
     * Update **`infra/config/global/luci-milo.cfg`** to make the builders show up on the ci and try waterfalls.
     * Update **`infra/config/global/luci-scheduler.cfg`** to make the builders trigger on new commits or try jobs respectively.
-    * Update **`infra/config/cq.cfg`** to add the builder to the default CQ jobs (if desired).
+    * Update **`infra/config/global/commit-queue.cfg`** to add the builder to the default CQ jobs (if desired).
 
 ## Other Configuration
 

@@ -207,6 +207,53 @@ void ExecuteCommands(PrimaryCommandBuffer *primCmdBuffer, priv::CommandBuffer *s
 }
 
 ANGLE_MAYBE_UNUSED
+void InsertBeginTransformFeedback(PrimaryCommandBuffer *primCmdBuffer,
+                                  priv::SecondaryCommandBuffer &commandBuffer,
+                                  uint32_t validBufferCount,
+                                  const VkBuffer *counterBuffers,
+                                  bool rebindBuffer)
+{
+    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets = {0, 0, 0, 0};
+    uint32_t counterBufferSize                              = (rebindBuffer) ? 0 : validBufferCount;
+
+    vkCmdBeginTransformFeedbackEXT(primCmdBuffer->getHandle(), 0, counterBufferSize, counterBuffers,
+                                   offsets.data());
+}
+
+ANGLE_MAYBE_UNUSED
+void InsertEndTransformFeedback(PrimaryCommandBuffer *primCmdBuffer,
+                                priv::SecondaryCommandBuffer &commandBuffer,
+                                uint32_t validBufferCount,
+                                const VkBuffer *counterBuffers)
+{
+    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets = {0, 0, 0, 0};
+
+    vkCmdEndTransformFeedbackEXT(primCmdBuffer->getHandle(), 0, validBufferCount, counterBuffers,
+                                 offsets.data());
+}
+
+ANGLE_MAYBE_UNUSED
+void InsertCounterBufferPipelineBarrier(PrimaryCommandBuffer *primCmdBuffer,
+                                        priv::SecondaryCommandBuffer &commandBuffer,
+                                        const VkBuffer *counterBuffers)
+{
+    VkBufferMemoryBarrier bufferBarrier = {};
+    bufferBarrier.sType                 = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+    bufferBarrier.pNext                 = nullptr;
+    bufferBarrier.srcAccessMask         = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT;
+    bufferBarrier.dstAccessMask         = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT;
+    bufferBarrier.srcQueueFamilyIndex   = VK_QUEUE_FAMILY_IGNORED;
+    bufferBarrier.dstQueueFamilyIndex   = VK_QUEUE_FAMILY_IGNORED;
+    bufferBarrier.buffer                = counterBuffers[0];
+    bufferBarrier.offset                = 0;
+    bufferBarrier.size                  = VK_WHOLE_SIZE;
+
+    vkCmdPipelineBarrier(primCmdBuffer->getHandle(), VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT,
+                         VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0u, 0u, nullptr, 1u, &bufferBarrier,
+                         0u, nullptr);
+}
+
+ANGLE_MAYBE_UNUSED
 std::string DumpCommands(const priv::SecondaryCommandBuffer &commandBuffer, const char *separator)
 {
     return commandBuffer.dumpCommands(separator);
@@ -250,14 +297,16 @@ CommandGraphResource::~CommandGraphResource()
     mUse.release();
 }
 
-bool CommandGraphResource::isResourceInUse(ContextVk *contextVk) const
+angle::Result CommandGraphResource::finishRunningCommands(ContextVk *contextVk)
 {
-    return mUse.isCurrentlyInGraph() || contextVk->isSerialInUse(mUse.getSerial());
+    return contextVk->finishToSerial(mUse.getSerial());
 }
 
 angle::Result CommandGraphResource::recordCommands(ContextVk *contextVk,
                                                    CommandBuffer **commandBufferOut)
 {
+    ASSERT(contextVk->commandGraphEnabled());
+
     updateCurrentAccessNodes();
 
     if (!hasChildlessWritingNode() || hasStartedRenderPass())
@@ -279,7 +328,7 @@ angle::Result CommandGraphResource::recordCommands(ContextVk *contextVk,
     }
 
     // Store reference to usage in graph.
-    contextVk->getCommandGraph()->onResourceUse(mUse);
+    contextVk->getResourceUseList().add(mUse);
 
     return angle::Result::Continue;
 }
@@ -310,6 +359,8 @@ angle::Result CommandGraphResource::beginRenderPass(
 void CommandGraphResource::addWriteDependency(ContextVk *contextVk,
                                               CommandGraphResource *writingResource)
 {
+    ASSERT(contextVk->commandGraphEnabled());
+
     CommandGraphNode *writingNode = writingResource->mCurrentWritingNode;
     ASSERT(writingNode);
 
@@ -319,7 +370,9 @@ void CommandGraphResource::addWriteDependency(ContextVk *contextVk,
 void CommandGraphResource::addReadDependency(ContextVk *contextVk,
                                              CommandGraphResource *readingResource)
 {
-    onGraphAccess(contextVk->getCommandGraph());
+    ASSERT(contextVk->commandGraphEnabled());
+
+    onResourceAccess(&contextVk->getResourceUseList());
 
     CommandGraphNode *readingNode = readingResource->mCurrentWritingNode;
     ASSERT(readingNode);
@@ -336,11 +389,13 @@ void CommandGraphResource::addReadDependency(ContextVk *contextVk,
 
 void CommandGraphResource::finishCurrentCommands(ContextVk *contextVk)
 {
+    ASSERT(contextVk->commandGraphEnabled());
     startNewCommands(contextVk);
 }
 
 void CommandGraphResource::startNewCommands(ContextVk *contextVk)
 {
+    ASSERT(contextVk->commandGraphEnabled());
     CommandGraphNode *newCommands =
         contextVk->getCommandGraph()->allocateNode(CommandGraphNodeFunction::Generic);
     newCommands->setDiagnosticInfo(mResourceType, reinterpret_cast<uintptr_t>(this));
@@ -349,7 +404,7 @@ void CommandGraphResource::startNewCommands(ContextVk *contextVk)
 
 void CommandGraphResource::onWriteImpl(ContextVk *contextVk, CommandGraphNode *writingNode)
 {
-    onGraphAccess(contextVk->getCommandGraph());
+    onResourceAccess(&contextVk->getResourceUseList());
 
     // Make sure any open reads and writes finish before we execute 'writingNode'.
     if (!mCurrentReadingNodes.empty())
@@ -381,7 +436,8 @@ CommandGraphNode::CommandGraphNode(CommandGraphNodeFunction function,
       mGlobalMemoryBarrierSrcAccess(0),
       mGlobalMemoryBarrierDstAccess(0),
       mGlobalMemoryBarrierStages(0),
-      mRenderPassOwner(nullptr)
+      mRenderPassOwner(nullptr),
+      mValidTransformFeedbackBufferCount(0)
 {}
 
 CommandGraphNode::~CommandGraphNode()
@@ -604,8 +660,26 @@ angle::Result CommandGraphNode::visitAndExecute(vk::Context *context,
                 beginInfo.pClearValues = mRenderPassClearValues.data();
 
                 primaryCommandBuffer->beginRenderPass(beginInfo, kRenderPassContents);
-                ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
-                primaryCommandBuffer->endRenderPass();
+                if (mValidTransformFeedbackBufferCount == 0)
+                {
+                    ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
+                    primaryCommandBuffer->endRenderPass();
+                }
+                else
+                {
+                    InsertBeginTransformFeedback(primaryCommandBuffer, mInsideRenderPassCommands,
+                                                 mValidTransformFeedbackBufferCount,
+                                                 mTransformFeedbackCounterBuffers.data(),
+                                                 mRebindTransformFeedbackBuffers);
+                    ExecuteCommands(primaryCommandBuffer, &mInsideRenderPassCommands);
+                    InsertEndTransformFeedback(primaryCommandBuffer, mInsideRenderPassCommands,
+                                               mValidTransformFeedbackBufferCount,
+                                               mTransformFeedbackCounterBuffers.data());
+                    primaryCommandBuffer->endRenderPass();
+                    InsertCounterBufferPipelineBarrier(primaryCommandBuffer,
+                                                       mInsideRenderPassCommands,
+                                                       mTransformFeedbackCounterBuffers.data());
+                }
             }
             break;
 
@@ -848,7 +922,7 @@ SharedGarbage &SharedGarbage::operator=(SharedGarbage &&rhs)
 
 bool SharedGarbage::destroyIfComplete(VkDevice device, Serial completedSerial)
 {
-    if (mLifetime.isCurrentlyInGraph() || mLifetime.getSerial() > completedSerial)
+    if (mLifetime.isCurrentlyInUse(completedSerial))
         return false;
 
     mLifetime.release();
@@ -874,7 +948,6 @@ CommandGraph::CommandGraph(bool enableGraphDiagnostics, angle::PoolAllocator *po
 CommandGraph::~CommandGraph()
 {
     ASSERT(empty());
-    ASSERT(mResourceUses.empty());
 }
 
 CommandGraphNode *CommandGraph::allocateNode(CommandGraphNodeFunction function)
@@ -941,8 +1014,6 @@ angle::Result CommandGraph::submitCommands(ContextVk *context,
     {
         dumpGraphDotFile(std::cout);
     }
-
-    releaseResourceUsesAndUpdateSerials(serial);
 
     std::vector<CommandGraphNode *> nodeStack;
 
@@ -1102,6 +1173,14 @@ void CommandGraph::makeHostVisibleBufferWriteAvailable()
 {
     allocateBarrierNode(CommandGraphNodeFunction::HostAvailabilityOperation,
                         CommandGraphResourceType::HostAvailabilityOperation, 0);
+}
+
+void CommandGraph::syncExternalMemory()
+{
+    // Add an all-inclusive memory barrier.
+    memoryBarrier(VK_ACCESS_MEMORY_WRITE_BIT,
+                  VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+                  VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 }
 
 // Dumps the command graph into a dot file that works with graphviz.
@@ -1268,7 +1347,15 @@ void CommandGraph::addDependenciesToNextBarrier(size_t begin,
     }
 }
 
-void CommandGraph::releaseResourceUses()
+// ResourceUseList implementation.
+ResourceUseList::ResourceUseList() = default;
+
+ResourceUseList::~ResourceUseList()
+{
+    ASSERT(mResourceUses.empty());
+}
+
+void ResourceUseList::releaseResourceUses()
 {
     for (SharedResourceUse &use : mResourceUses)
     {
@@ -1278,7 +1365,7 @@ void CommandGraph::releaseResourceUses()
     mResourceUses.clear();
 }
 
-void CommandGraph::releaseResourceUsesAndUpdateSerials(Serial serial)
+void ResourceUseList::releaseResourceUsesAndUpdateSerials(Serial serial)
 {
     for (SharedResourceUse &use : mResourceUses)
     {

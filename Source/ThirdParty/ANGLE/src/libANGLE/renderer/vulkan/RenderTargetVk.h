@@ -10,7 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERTARGETVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RENDERTARGETVK_H_
 
-#include <vulkan/vulkan.h>
+#include "volk.h"
 
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/renderer/renderer_utils.h"
@@ -82,7 +82,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     angle::Result flushStagedUpdates(ContextVk *contextVk);
 
-    void onImageViewGraphAccess(ContextVk *contextVk) const;
+    void onImageViewAccess(ContextVk *contextVk) const;
 
   private:
     vk::ImageHelper *mImage;

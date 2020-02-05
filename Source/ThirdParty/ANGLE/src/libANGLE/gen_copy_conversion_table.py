@@ -74,7 +74,7 @@ def main():
 
     # auto_script parameters.
     if len(sys.argv) > 1:
-        inputs = [data_source_name]
+        inputs = ['renderer/angle_format.py', data_source_name]
         outputs = [out_file_name]
 
         if sys.argv[1] == 'inputs':

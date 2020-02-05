@@ -64,7 +64,7 @@ void RenderbufferState::update(GLsizei width,
 
 // Renderbuffer implementation.
 Renderbuffer::Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id)
-    : RefCountObject(id),
+    : RefCountObject(implFactory->generateSerial(), id),
       mState(),
       mImplementation(implFactory->createRenderbuffer(mState)),
       mLabel()
@@ -114,6 +114,11 @@ angle::Result Renderbuffer::setStorageMultisample(const Context *context,
                                                   size_t height)
 {
     ANGLE_TRY(orphanImages(context));
+
+    // Potentially adjust "samples" to a supported value
+    const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
+    samples                       = formatCaps.getNearestSamples(static_cast<GLuint>(samples));
+
     ANGLE_TRY(
         mImplementation->setStorageMultisample(context, samples, internalformat, width, height));
 

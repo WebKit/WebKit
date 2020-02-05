@@ -77,6 +77,10 @@ enum
 
 namespace limits
 {
+// Almost all drivers use 2048 (the minimum value) as GL_MAX_VERTEX_ATTRIB_STRIDE.  ANGLE advertizes
+// the same limit.
+constexpr uint32_t kMaxVertexAttribStride = 2048;
+
 // Some of the minimums required by GL, used to detect if the backend meets the minimum requirement.
 // Currently, there's no need to separate these values per spec version.
 constexpr uint32_t kMinimumComputeStorageBuffers = 4;

@@ -120,6 +120,9 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
     angle::LoadEGL(getProcAddress);
 #endif  // defined(ANGLE_USE_UTIL_LOADER)
 
+    const char *extensionString =
+        static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
+
     std::vector<EGLAttrib> displayAttributes;
     displayAttributes.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
     displayAttributes.push_back(params.renderer);
@@ -136,8 +139,6 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
 
     if (params.presentPath != EGL_DONT_CARE)
     {
-        const char *extensionString =
-            static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
         if (strstr(extensionString, "EGL_ANGLE_experimental_present_path") == nullptr)
         {
             destroyGL();
@@ -167,6 +168,54 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
                       "Unexpected pointer size");
         displayAttributes.push_back(EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX);
         displayAttributes.push_back(reinterpret_cast<EGLAttrib>(params.platformMethods));
+    }
+
+    std::vector<const char *> disabledFeatureOverrides;
+    std::vector<const char *> enabledFeatureOverrides;
+
+    if (params.commandGraphFeature == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("command_graph");
+    }
+    else if (params.commandGraphFeature == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("command_graph");
+    }
+
+    if (params.transformFeedbackFeature == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("supports_transform_feedback_extension");
+        disabledFeatureOverrides.push_back("emulate_transform_feedback");
+    }
+
+    if (!disabledFeatureOverrides.empty())
+    {
+        if (strstr(extensionString, "EGL_ANGLE_feature_control") == nullptr)
+        {
+            std::cout << "Missing EGL_ANGLE_feature_control.\n";
+            destroyGL();
+            return false;
+        }
+
+        disabledFeatureOverrides.push_back(nullptr);
+
+        displayAttributes.push_back(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE);
+        displayAttributes.push_back(reinterpret_cast<EGLAttrib>(disabledFeatureOverrides.data()));
+    }
+
+    if (!enabledFeatureOverrides.empty())
+    {
+        if (strstr(extensionString, "EGL_ANGLE_feature_control") == nullptr)
+        {
+            std::cout << "Missing EGL_ANGLE_feature_control.\n";
+            destroyGL();
+            return false;
+        }
+
+        enabledFeatureOverrides.push_back(nullptr);
+
+        displayAttributes.push_back(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE);
+        displayAttributes.push_back(reinterpret_cast<EGLAttrib>(enabledFeatureOverrides.data()));
     }
 
     displayAttributes.push_back(EGL_NONE);
@@ -439,7 +488,7 @@ EGLContext EGLWindow::createContext(EGLContext share) const
     }
     contextAttributes.push_back(EGL_NONE);
 
-    EGLContext context = eglCreateContext(mDisplay, mConfig, nullptr, &contextAttributes[0]);
+    EGLContext context = eglCreateContext(mDisplay, mConfig, share, &contextAttributes[0]);
     if (eglGetError() != EGL_SUCCESS)
     {
         std::cerr << "Error on eglCreateContext.\n";

@@ -53,13 +53,20 @@ class ANGLE_UTIL_EXPORT ScenicWindow : public OSWindow
     void setVisible(bool isVisible) override;
     void signalTestEvent() override;
 
+    // Presents the window to Scenic.
+    //
+    // We need to do this once per EGL window surface after adding the
+    // surface's image pipe as a child of our window.
+    void present();
+
     // FIDL callbacks:
-    void OnScenicEvents(std::vector<fuchsia::ui::scenic::Event> events);
-    void OnScenicError(zx_status_t status);
+    void onScenicEvents(std::vector<fuchsia::ui::scenic::Event> events);
+    void onScenicError(zx_status_t status);
+    void onFramePresented(fuchsia::scenic::scheduling::FramePresentedInfo info);
 
   private:
-    // Default message loop.
-    async::Loop *mLoop;
+    // ScenicWindow async loop.
+    async::Loop *const mLoop;
 
     // System services.
     zx::channel mServiceRoot;
@@ -70,6 +77,13 @@ class ANGLE_UTIL_EXPORT ScenicWindow : public OSWindow
     scenic::Session mScenicSession;
     scenic::ShapeNode mShape;
     scenic::Material mMaterial;
+
+    // Whether our scenic session has disconnected.
+    bool mLostSession = false;
+
+    // Present limiting.
+    static constexpr int kMaxInFlightPresents = 2;
+    int mInFlightPresents                     = 0;
 
     // Scenic view.
     std::unique_ptr<scenic::View> mView;

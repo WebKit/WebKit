@@ -85,6 +85,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     Error releaseTexImage(const gl::Context *context, EGLint buffer);
 
     Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc);
+    Error getMscRate(EGLint *numerator, EGLint *denominator);
 
     EGLint isPostSubBufferSupported() const;
 

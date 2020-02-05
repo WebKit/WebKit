@@ -46,8 +46,9 @@ To specify the exact platform for ANGLE + dEQP, use the arguments:
   * `--deqp-egl-display-type=angle-d3d11-fl93` for D3D11 Feature level 9_3
   * `--deqp-egl-display-type=angle-gl` for OpenGL Desktop (OSX, Linux and Windows)
   * `--deqp-egl-display-type=angle-gles` for OpenGL ES (Android/ChromeOS, some Windows platforms)
+  * `--deqp-egl-display-type=angle-metal` for Metal (Mac)
+  * `--deqp-egl-display-type=angle-swiftshader` for Vulkan with SwiftShader as driver (Android, Linux, Mac, Windows)
   * `--deqp-egl-display-type=angle-vulkan` for Vulkan (Android, Linux, Windows)
-  * `--deqp-egl-display-type=angle-swiftshader` for Vulkan with SwiftShader as driver (Android, Linux, Windows)
 
 The flag `--use-angle=X` has the same effect as `--deqp-egl-display-type=angle-X`.
 

@@ -39,14 +39,15 @@ EGLint PlatformParameters::getRenderer() const
     return eglParameters.renderer;
 }
 
+EGLint PlatformParameters::getDeviceType() const
+{
+    return eglParameters.deviceType;
+}
+
 void PlatformParameters::initDefaultParameters()
 {
-#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
     // Default debug layers to enabled in tests.
     eglParameters.debugLayersEnabled = EGL_TRUE;
-#else
-    eglParameters.debugLayersEnabled = EGL_FALSE;
-#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
 }
 
 bool operator<(const PlatformParameters &a, const PlatformParameters &b)
@@ -184,6 +185,24 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
     if (pp.eglParameters.contextVirtualization == EGL_FALSE)
     {
         stream << "_NoVirtual";
+    }
+
+    if (pp.eglParameters.commandGraphFeature == EGL_FALSE)
+    {
+        stream << "_NoCommandGraph";
+    }
+    else if (pp.eglParameters.commandGraphFeature == EGL_TRUE)
+    {
+        stream << "_CommandGraph";
+    }
+
+    if (pp.eglParameters.transformFeedbackFeature == EGL_FALSE)
+    {
+        stream << "_NoTransformFeedback";
+    }
+    else if (pp.eglParameters.transformFeedbackFeature == EGL_TRUE)
+    {
+        stream << "_TransformFeedback";
     }
 
     return stream;

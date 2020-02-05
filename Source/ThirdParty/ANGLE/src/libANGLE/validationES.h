@@ -324,9 +324,9 @@ ANGLE_INLINE bool ValidateDrawBase(Context *context, PrimitiveMode mode)
 
         // All errors from ValidateDrawStates should return INVALID_OPERATION except Framebuffer
         // Incomplete.
+        bool isFramebufferIncomplete = strcmp(errorMessage, err::kDrawFramebufferIncomplete) == 0;
         GLenum errorCode =
-            (errorMessage == err::kDrawFramebufferIncomplete ? GL_INVALID_FRAMEBUFFER_OPERATION
-                                                             : GL_INVALID_OPERATION);
+            isFramebufferIncomplete ? GL_INVALID_FRAMEBUFFER_OPERATION : GL_INVALID_OPERATION;
         context->validationError(errorCode, errorMessage);
         return false;
     }

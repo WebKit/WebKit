@@ -10,17 +10,12 @@
         "ANGLE format ID, and the value is the Vulkan format enum. Note some formats",
         "are missing from the map, these formats are either unsupported or emulated",
         "on Vulkan. The map matches GL formats to identical Vulkan formats; missing",
-        "formats use the overrides table for emulation.",
+        "formats use the fallback table for emulation.",
         "",
         "We implement formats that aren't natively supported in Vulkan using",
-        "fallback and override formats. These are specified as dictionaries (also keyed on",
+        "fallback formats. These are specified as dictionaries (also keyed on",
         "the angle format ID), with two optional entries for Buffer and Image",
-        "formats. Each entry specifies a fallback or override format.",
-        "",
-        "Override formats are used for emulated support for formats we assume are never",
-        "supported by any Vulkan device, although they might exist. Fallback formats",
-        "differ in that they are tested at runtime for support, and we only fall back",
-        "if the main format is not available on this device.",
+        "formats. Each entry specifies a fallback format.",
         "",
         "Also see gen_vk_format_table.py for the code generation step."
     ],
@@ -165,7 +160,7 @@
         "ASTC_12x12_UNORM_BLOCK": "VK_FORMAT_ASTC_12x12_UNORM_BLOCK",
         "ASTC_12x12_SRGB_BLOCK": "VK_FORMAT_ASTC_12x12_SRGB_BLOCK"
     },
-    "overrides": {
+    "fallbacks": {
         "A16_FLOAT": {
             "image": "R16_FLOAT"
         },
@@ -200,7 +195,8 @@
             "image": "A1R5G5B5_UNORM"
         },
         "R8G8B8_UNORM": {
-            "image": "R8G8B8A8_UNORM"
+            "image": "R8G8B8A8_UNORM",
+            "buffer": "R32G32B32_FLOAT"
         },
         "R8G8B8_UNORM_SRGB": {
             "image": "R8G8B8A8_UNORM_SRGB"
@@ -211,15 +207,15 @@
         },
         "D24_UNORM_X8_UINT": {
             "buffer": "NONE",
-            "image": "D24_UNORM_S8_UINT"
+            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
         },
         "D32_UNORM": {
             "buffer": "NONE",
-            "image": "D24_UNORM_S8_UINT"
+            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT"]
         },
         "ETC1_R8G8B8_UNORM_BLOCK": {
             "buffer": "NONE",
-            "image": "ETC2_R8G8B8_UNORM_BLOCK"
+            "image": ["ETC2_R8G8B8_UNORM_BLOCK", "R8G8B8A8_UNORM"]
         },
         "R32_FIXED": {
             "buffer": "R32_FLOAT"
@@ -332,16 +328,11 @@
         "X2R10G10B10_UNORM_VERTEX": {
             "image": "NONE",
             "buffer": "R32G32B32A32_FLOAT"
-        }
-    },
-    "fallbacks": {
+        },
         "D32_FLOAT_S8X24_UINT": {
             "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
         },
         "D24_UNORM_S8_UINT": {
-            "image": ["D32_FLOAT_S8X24_UINT", "D24_UNORM_S8_UINT"]
-        },
-        "D24_UNORM_X8_UINT": {
             "image": ["D32_FLOAT_S8X24_UINT", "D24_UNORM_S8_UINT"]
         },
         "S8_UINT": {
@@ -371,9 +362,6 @@
         },
         "R8G8_SSCALED": {
             "buffer": "R32G32_FLOAT"
-        },
-        "R8G8B8_UNORM": {
-            "buffer": "R32G32B32_FLOAT"
         },
         "R8G8B8_SNORM": {
             "image": "R8G8B8A8_SNORM",

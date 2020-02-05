@@ -98,6 +98,8 @@ class TCompiler : public TShHandleBase
     int getShaderVersion() const { return mShaderVersion; }
     TInfoSink &getInfoSink() { return mInfoSink; }
 
+    bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
+
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
     int getNumViews() const { return mNumViews; }
@@ -141,6 +143,9 @@ class TCompiler : public TShHandleBase
         return mGeometryShaderOutputPrimitiveType;
     }
 
+    unsigned int getStructSize(const ShaderVariable &var) const;
+    unsigned int getSharedMemorySize() const;
+
     sh::GLenum getShaderType() const { return mShaderType; }
 
     bool validateAST(TIntermNode *root);
@@ -175,6 +180,7 @@ class TCompiler : public TShHandleBase
     std::vector<sh::ShaderVariable> mUniforms;
     std::vector<sh::ShaderVariable> mInputVaryings;
     std::vector<sh::ShaderVariable> mOutputVaryings;
+    std::vector<sh::ShaderVariable> mSharedVariables;
     std::vector<sh::InterfaceBlock> mInterfaceBlocks;
     std::vector<sh::InterfaceBlock> mUniformBlocks;
     std::vector<sh::InterfaceBlock> mShaderStorageBlocks;
@@ -264,6 +270,9 @@ class TCompiler : public TShHandleBase
     TDiagnostics mDiagnostics;
     const char *mSourcePath;  // Path of source file or NULL
 
+    // fragment shader early fragment tests
+    bool mEarlyFragmentTestsSpecified;
+
     // compute shader local group size
     bool mComputeShaderLocalSizeDeclared;
     sh::WorkGroupSize mComputeShaderLocalSize;
@@ -300,8 +309,13 @@ class TCompiler : public TShHandleBase
 TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 void DeleteCompiler(TCompiler *);
 
+void EmitEarlyFragmentTestsGLSL(const TCompiler &, TInfoSinkBase &sink);
 void EmitWorkGroupSizeGLSL(const TCompiler &, TInfoSinkBase &sink);
-void EmitMultiviewGLSL(const TCompiler &, const ShCompileOptions &, TBehavior, TInfoSinkBase &sink);
+void EmitMultiviewGLSL(const TCompiler &,
+                       const ShCompileOptions &,
+                       const TExtension,
+                       const TBehavior,
+                       TInfoSinkBase &sink);
 
 }  // namespace sh
 

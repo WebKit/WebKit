@@ -12,9 +12,9 @@ namespace gl
 {
 
 bool ValidateMultiDrawElementsBaseVertex(Context *context,
-                                         GLenum mode,
+                                         PrimitiveMode mode,
                                          const GLsizei *count,
-                                         GLenum type,
+                                         DrawElementsType type,
                                          const void *const *indices,
                                          GLsizei drawcount,
                                          const GLint *basevertex)

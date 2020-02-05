@@ -65,10 +65,13 @@ angle::Result RenderTargetVk::onColorDraw(ContextVk *contextVk,
     mImage->changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ColorAttachment,
                          commandBuffer);
 
-    // Set up dependencies between the RT resource and the Framebuffer.
-    mImage->addWriteDependency(contextVk, framebufferVk);
+    if (contextVk->commandGraphEnabled())
+    {
+        // Set up dependencies between the RT resource and the Framebuffer.
+        mImage->addWriteDependency(contextVk, framebufferVk);
+    }
 
-    onImageViewGraphAccess(contextVk);
+    onImageViewAccess(contextVk);
 
     return angle::Result::Continue;
 }
@@ -89,7 +92,7 @@ angle::Result RenderTargetVk::onDepthStencilDraw(ContextVk *contextVk,
     // Set up dependencies between the RT resource and the Framebuffer.
     mImage->addWriteDependency(contextVk, framebufferVk);
 
-    onImageViewGraphAccess(contextVk);
+    onImageViewAccess(contextVk);
 
     return angle::Result::Continue;
 }
@@ -157,7 +160,7 @@ vk::ImageHelper *RenderTargetVk::getImageForRead(ContextVk *contextVk,
     // to perform the layout transition and set the dependency.
     mImage->addWriteDependency(contextVk, readingResource);
     mImage->changeLayout(mImage->getAspectFlags(), layout, commandBuffer);
-    onImageViewGraphAccess(contextVk);
+    onImageViewAccess(contextVk);
     return mImage;
 }
 
@@ -166,7 +169,7 @@ vk::ImageHelper *RenderTargetVk::getImageForWrite(ContextVk *contextVk,
 {
     ASSERT(mImage && mImage->valid());
     mImage->addWriteDependency(contextVk, writingResource);
-    onImageViewGraphAccess(contextVk);
+    onImageViewAccess(contextVk);
     return mImage;
 }
 
@@ -182,8 +185,8 @@ angle::Result RenderTargetVk::flushStagedUpdates(ContextVk *contextVk)
                                       mLayerIndex + 1, commandBuffer);
 }
 
-void RenderTargetVk::onImageViewGraphAccess(ContextVk *contextVk) const
+void RenderTargetVk::onImageViewAccess(ContextVk *contextVk) const
 {
-    mImageViews->onGraphAccess(contextVk->getCommandGraph());
+    mImageViews->onResourceAccess(&contextVk->getResourceUseList());
 }
 }  // namespace rx

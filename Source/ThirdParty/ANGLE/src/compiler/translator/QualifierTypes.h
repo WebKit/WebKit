@@ -24,6 +24,7 @@ TLayoutQualifier JoinLayoutQualifiers(TLayoutQualifier leftQualifier,
 enum TQualifierType
 {
     QtInvariant,
+    QtPrecise,
     QtInterpolation,
     QtLayout,
     QtStorage,
@@ -54,6 +55,17 @@ class TInvariantQualifierWrapper final : public TQualifierWrapperBase
 
     TQualifierType getType() const override { return QtInvariant; }
     ImmutableString getQualifierString() const override { return ImmutableString("invariant"); }
+    unsigned int getRank() const override;
+};
+
+class TPreciseQualifierWrapper final : public TQualifierWrapperBase
+{
+  public:
+    TPreciseQualifierWrapper(const TSourceLoc &line) : TQualifierWrapperBase(line) {}
+    ~TPreciseQualifierWrapper() override {}
+
+    TQualifierType getType() const override { return QtPrecise; }
+    ImmutableString getQualifierString() const override { return ImmutableString("precise"); }
     unsigned int getRank() const override;
 };
 
@@ -165,6 +177,7 @@ struct TTypeQualifier
     TPrecision precision;
     TQualifier qualifier;
     bool invariant;
+    bool precise;
     TSourceLoc line;
 };
 

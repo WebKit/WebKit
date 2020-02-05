@@ -191,6 +191,8 @@ angle::Result OffscreenSurfaceVk::initializeImpl(DisplayVk *displayVk)
     RendererVk *renderer      = displayVk->getRenderer();
     const egl::Config *config = mState.config;
 
+    renderer->reloadVolkIfNeeded();
+
     GLint samples = GetSampleCount(mState.config);
     ANGLE_VK_CHECK(displayVk, samples > 0, VK_ERROR_INITIALIZATION_FAILED);
 
@@ -262,6 +264,12 @@ egl::Error OffscreenSurfaceVk::releaseTexImage(const gl::Context * /*context*/, 
 egl::Error OffscreenSurfaceVk::getSyncValues(EGLuint64KHR * /*ust*/,
                                              EGLuint64KHR * /*msc*/,
                                              EGLuint64KHR * /*sbc*/)
+{
+    UNIMPLEMENTED();
+    return egl::EglBadAccess();
+}
+
+egl::Error OffscreenSurfaceVk::getMscRate(EGLint * /*numerator*/, EGLint * /*denominator*/)
 {
     UNIMPLEMENTED();
     return egl::EglBadAccess();
@@ -419,8 +427,8 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     VkDevice device      = renderer->getDevice();
     VkInstance instance  = renderer->getInstance();
 
-    // We might not need to flush the pipe here.
-    (void)renderer->queueWaitIdle(displayVk);
+    // flush the pipe.
+    (void)renderer->deviceWaitIdle(displayVk);
 
     destroySwapChainImages(displayVk);
 
@@ -455,12 +463,21 @@ egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
     angle::Result result = initializeImpl(displayVk);
-    return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
+    if (result == angle::Result::Incomplete)
+    {
+        return angle::ToEGL(result, displayVk, EGL_BAD_MATCH);
+    }
+    else
+    {
+        return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
+    }
 }
 
 angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
 {
     RendererVk *renderer = displayVk->getRenderer();
+
+    renderer->reloadVolkIfNeeded();
 
     gl::Extents windowSize;
     ANGLE_TRY(createSurfaceVk(displayVk, &windowSize));
@@ -545,7 +562,12 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
             }
         }
 
-        ANGLE_VK_CHECK(displayVk, foundFormat, VK_ERROR_INITIALIZATION_FAILED);
+        // If a non-linear colorspace was requested but the non-linear format is
+        // not supported as a vulkan surface format, treat it as a non-fatal error
+        if (!foundFormat)
+        {
+            return angle::Result::Incomplete;
+        }
     }
 
     mCompositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -633,7 +655,7 @@ angle::Result WindowSurfaceVk::recreateSwapchain(ContextVk *contextVk,
         static constexpr size_t kMaxOldSwapchains = 5;
         if (mOldSwapchains.size() > kMaxOldSwapchains)
         {
-            ANGLE_TRY(contextVk->getRenderer()->queueWaitIdle(contextVk));
+            ANGLE_TRY(contextVk->getRenderer()->queueWaitIdle(contextVk, contextVk->getPriority()));
             for (SwapchainCleanupData &oldSwapchain : mOldSwapchains)
             {
                 oldSwapchain.destroy(contextVk->getDevice(), &mPresentSemaphoreRecycler);
@@ -673,6 +695,29 @@ angle::Result WindowSurfaceVk::newPresentSemaphore(vk::Context *context,
         mPresentSemaphoreRecycler.fetch(semaphoreOut);
     }
     return angle::Result::Continue;
+}
+
+static VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(EGLenum EGLColorspace)
+{
+    switch (EGLColorspace)
+    {
+        case EGL_NONE:
+        case EGL_GL_COLORSPACE_LINEAR:
+        case EGL_GL_COLORSPACE_SRGB_KHR:
+        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
+            return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+        case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:
+            return VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
+        case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
+            return VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT;
+        case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:
+            return VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
+        case EGL_GL_COLORSPACE_SCRGB_EXT:
+            return VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT;
+        default:
+            UNREACHABLE();
+            return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+    }
 }
 
 angle::Result WindowSurfaceVk::resizeSwapchainImages(vk::Context *context, uint32_t imageCount)
@@ -725,7 +770,8 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     swapchainInfo.surface                  = mSurface;
     swapchainInfo.minImageCount            = mMinImageCount;
     swapchainInfo.imageFormat              = nativeFormat;
-    swapchainInfo.imageColorSpace          = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+    swapchainInfo.imageColorSpace          = MapEglColorSpaceToVkColorSpace(
+        static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
     // Note: Vulkan doesn't allow 0-width/height swapchains.
     swapchainInfo.imageExtent.width     = std::max(extents.width, 1);
     swapchainInfo.imageExtent.height    = std::max(extents.height, 1);
@@ -985,14 +1031,22 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
 
     SwapchainImage &image = mSwapchainImages[mCurrentSwapchainImageIndex];
 
+    vk::CommandBuffer *commandBuffer = nullptr;
+    if (!contextVk->commandGraphEnabled())
+    {
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(&commandBuffer));
+    }
+
     if (mColorImageMS.valid())
     {
         // Transition the multisampled image to TRANSFER_SRC for resolve.
-        vk::CommandBuffer *multisampledTransition = nullptr;
-        ANGLE_TRY(mColorImageMS.recordCommands(contextVk, &multisampledTransition));
+        if (contextVk->commandGraphEnabled())
+        {
+            ANGLE_TRY(mColorImageMS.recordCommands(contextVk, &commandBuffer));
+        }
 
         mColorImageMS.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::TransferSrc,
-                                   multisampledTransition);
+                                   commandBuffer);
 
         // Setup graph dependency between the swapchain image and the multisampled one.
         image.image.addReadDependency(contextVk, &mColorImageMS);
@@ -1007,17 +1061,20 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         resolveRegion.dstOffset                     = {};
         resolveRegion.extent                        = image.image.getExtents();
 
-        vk::CommandBuffer *resolveCommands = nullptr;
-        ANGLE_TRY(image.image.recordCommands(contextVk, &resolveCommands));
-        mColorImageMS.resolve(&image.image, resolveRegion, resolveCommands);
+        if (contextVk->commandGraphEnabled())
+        {
+            ANGLE_TRY(image.image.recordCommands(contextVk, &commandBuffer));
+        }
+        mColorImageMS.resolve(&image.image, resolveRegion, commandBuffer);
     }
 
     ANGLE_TRY(updateAndDrawOverlay(contextVk, &image));
 
-    vk::CommandBuffer *transitionCommands = nullptr;
-    ANGLE_TRY(image.image.recordCommands(contextVk, &transitionCommands));
-    image.image.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::Present,
-                             transitionCommands);
+    if (contextVk->commandGraphEnabled())
+    {
+        ANGLE_TRY(image.image.recordCommands(contextVk, &commandBuffer));
+    }
+    image.image.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::Present, commandBuffer);
 
     // Knowing that the kSwapHistorySize'th submission ago has finished, we can know that the
     // (kSwapHistorySize+1)'th present ago of this image is definitely finished and so its wait
@@ -1093,7 +1150,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     mCurrentSwapHistoryIndex =
         mCurrentSwapHistoryIndex == mSwapHistory.size() ? 0 : mCurrentSwapHistoryIndex;
 
-    VkResult result = contextVk->getRenderer()->queuePresent(presentInfo);
+    VkResult result = contextVk->getRenderer()->queuePresent(contextVk->getPriority(), presentInfo);
 
     // If OUT_OF_DATE is returned, it's ok, we just need to recreate the swapchain before
     // continuing.
@@ -1218,6 +1275,12 @@ egl::Error WindowSurfaceVk::releaseTexImage(const gl::Context *context, EGLint b
 egl::Error WindowSurfaceVk::getSyncValues(EGLuint64KHR * /*ust*/,
                                           EGLuint64KHR * /*msc*/,
                                           EGLuint64KHR * /*sbc*/)
+{
+    UNIMPLEMENTED();
+    return egl::EglBadAccess();
+}
+
+egl::Error WindowSurfaceVk::getMscRate(EGLint * /*numerator*/, EGLint * /*denominator*/)
 {
     UNIMPLEMENTED();
     return egl::EglBadAccess();

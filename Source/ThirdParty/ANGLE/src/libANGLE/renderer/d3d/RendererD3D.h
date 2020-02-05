@@ -22,6 +22,7 @@
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
 #include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/renderer/serial_utils.h"
 #include "platform/FeaturesD3D.h"
 
 namespace egl

@@ -212,6 +212,8 @@ const char *VulkanResultString(VkResult result)
                    "layout, or is incompatible in a way that prevents sharing an image.";
         case VK_ERROR_VALIDATION_FAILED_EXT:
             return "The validation layers detected invalid API usage.";
+        case VK_ERROR_INVALID_SHADER_NV:
+            return "Invalid Vulkan shader was generated.";
         default:
             return "Unknown vulkan error code.";
     }
@@ -259,6 +261,7 @@ namespace vk
 {
 const char *gLoaderLayersPathEnv   = "VK_LAYER_PATH";
 const char *gLoaderICDFilenamesEnv = "VK_ICD_FILENAMES";
+const char *gANGLEPreferredDevice  = "ANGLE_PREFERRED_DEVICE";
 
 VkImageAspectFlags GetDepthStencilAspectFlags(const angle::Format &format)
 {
@@ -544,91 +547,6 @@ void GarbageObject::destroy(VkDevice device)
 }
 
 }  // namespace vk
-
-// VK_EXT_debug_utils
-PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT   = nullptr;
-PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT = nullptr;
-PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT       = nullptr;
-PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT           = nullptr;
-PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT     = nullptr;
-
-// VK_EXT_debug_report
-PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT   = nullptr;
-PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT = nullptr;
-
-// VK_KHR_get_physical_device_properties2
-PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR = nullptr;
-PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR     = nullptr;
-
-// VK_KHR_external_semaphore_fd
-PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR = nullptr;
-
-#if defined(ANGLE_PLATFORM_FUCHSIA)
-// VK_FUCHSIA_imagepipe_surface
-PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA = nullptr;
-#endif
-
-#define GET_FUNC(vkName)                                                                   \
-    do                                                                                     \
-    {                                                                                      \
-        vkName = reinterpret_cast<PFN_##vkName>(vkGetInstanceProcAddr(instance, #vkName)); \
-        ASSERT(vkName);                                                                    \
-    } while (0)
-
-void InitDebugUtilsEXTFunctions(VkInstance instance)
-{
-    GET_FUNC(vkCreateDebugUtilsMessengerEXT);
-    GET_FUNC(vkDestroyDebugUtilsMessengerEXT);
-    GET_FUNC(vkCmdBeginDebugUtilsLabelEXT);
-    GET_FUNC(vkCmdEndDebugUtilsLabelEXT);
-    GET_FUNC(vkCmdInsertDebugUtilsLabelEXT);
-}
-
-void InitDebugReportEXTFunctions(VkInstance instance)
-{
-    GET_FUNC(vkCreateDebugReportCallbackEXT);
-    GET_FUNC(vkDestroyDebugReportCallbackEXT);
-}
-
-void InitGetPhysicalDeviceProperties2KHRFunctions(VkInstance instance)
-{
-    GET_FUNC(vkGetPhysicalDeviceProperties2KHR);
-    GET_FUNC(vkGetPhysicalDeviceFeatures2KHR);
-}
-
-#if defined(ANGLE_PLATFORM_FUCHSIA)
-void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance)
-{
-    GET_FUNC(vkCreateImagePipeSurfaceFUCHSIA);
-}
-#endif
-
-#if defined(ANGLE_PLATFORM_ANDROID)
-PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferPropertiesANDROID =
-    nullptr;
-PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID = nullptr;
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance)
-{
-    GET_FUNC(vkGetAndroidHardwareBufferPropertiesANDROID);
-    GET_FUNC(vkGetMemoryAndroidHardwareBufferANDROID);
-}
-#endif
-
-#if defined(ANGLE_PLATFORM_GGP)
-PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP = nullptr;
-
-void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance)
-{
-    GET_FUNC(vkCreateStreamDescriptorSurfaceGGP);
-}
-#endif  // defined(ANGLE_PLATFORM_GGP)
-
-void InitExternalSemaphoreFdFunctions(VkInstance instance)
-{
-    GET_FUNC(vkImportSemaphoreFdKHR);
-}
-
-#undef GET_FUNC
 
 namespace gl_vk
 {
@@ -952,7 +870,7 @@ void AddSampleCounts(VkSampleCountFlags sampleCounts, gl::SupportedSampleSet *se
 {
     // The possible bits are VK_SAMPLE_COUNT_n_BIT = n, with n = 1 << b.  At the time of this
     // writing, b is in [0, 6], however, we test all 32 bits in case the enum is extended.
-    for (size_t bit : angle::BitSet32<32>(sampleCounts))
+    for (size_t bit : angle::BitSet32<32>(sampleCounts & kSupportedSampleCounts))
     {
         setOut->insert(static_cast<GLuint>(1 << bit));
     }
@@ -961,7 +879,7 @@ void AddSampleCounts(VkSampleCountFlags sampleCounts, gl::SupportedSampleSet *se
 GLuint GetMaxSampleCount(VkSampleCountFlags sampleCounts)
 {
     GLuint maxCount = 0;
-    for (size_t bit : angle::BitSet32<32>(sampleCounts))
+    for (size_t bit : angle::BitSet32<32>(sampleCounts & kSupportedSampleCounts))
     {
         maxCount = static_cast<GLuint>(1 << bit);
     }
@@ -970,7 +888,7 @@ GLuint GetMaxSampleCount(VkSampleCountFlags sampleCounts)
 
 GLuint GetSampleCount(VkSampleCountFlags supportedCounts, GLuint requestedCount)
 {
-    for (size_t bit : angle::BitSet32<32>(supportedCounts))
+    for (size_t bit : angle::BitSet32<32>(supportedCounts & kSupportedSampleCounts))
     {
         GLuint sampleCount = static_cast<GLuint>(1 << bit);
         if (sampleCount >= requestedCount)

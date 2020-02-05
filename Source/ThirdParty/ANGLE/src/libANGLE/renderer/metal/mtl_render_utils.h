@@ -58,7 +58,7 @@ struct TriFanFromArrayParams
     uint32_t firstVertex;
     uint32_t vertexCount;
     BufferRef dstBuffer;
-    // Must be multiples of kBufferSettingOffsetAlignment
+    // Must be multiples of kIndexBufferOffsetAlignment
     uint32_t dstOffset;
 };
 
@@ -95,7 +95,7 @@ class RenderUtils : public Context, angle::NonCopyable
                                      const BufferRef &srcBuffer,
                                      uint32_t srcOffset,
                                      const BufferRef &dstBuffer,
-                                     // Must be multiples of kBufferSettingOffsetAlignment
+                                     // Must be multiples of kIndexBufferOffsetAlignment
                                      uint32_t dstOffset);
     angle::Result generateTriFanBufferFromArrays(const gl::Context *context,
                                                  const TriFanFromArrayParams &params);
@@ -164,7 +164,7 @@ class RenderUtils : public Context, angle::NonCopyable
         const BufferRef &srcBuffer,
         uint32_t srcOffset,
         const BufferRef &dstBuffer,
-        // Must be multiples of kBufferSettingOffsetAlignment
+        // Must be multiples of kIndexBufferOffsetAlignment
         uint32_t dstOffset);
     angle::Result generateTriFanBufferFromElementsArrayCPU(const gl::Context *context,
                                                            const IndexGenerationParams &params);

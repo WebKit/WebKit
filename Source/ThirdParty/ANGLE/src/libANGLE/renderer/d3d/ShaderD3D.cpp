@@ -123,6 +123,10 @@ ShaderD3D::ShaderD3D(const gl::ShaderState &data,
     {
         mAdditionalOptions |= SH_FORCE_ATOMIC_VALUE_RESOLUTION;
     }
+    if (features.dontTranslateUniformBlockToStructuredBuffer.enabled)
+    {
+        mAdditionalOptions |= SH_DONT_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER;
+    }
     if (extensions.multiview || extensions.multiview2)
     {
         mAdditionalOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
@@ -205,6 +209,12 @@ unsigned int ShaderD3D::getUniformBlockRegister(const std::string &blockName) co
 {
     ASSERT(mUniformBlockRegisterMap.count(blockName) > 0);
     return mUniformBlockRegisterMap.find(blockName)->second;
+}
+
+bool ShaderD3D::shouldUniformBlockUseStructuredBuffer(const std::string &blockName) const
+{
+    ASSERT(mUniformBlockUseStructuredBufferMap.count(blockName) > 0);
+    return mUniformBlockUseStructuredBufferMap.find(blockName)->second;
 }
 
 unsigned int ShaderD3D::getShaderStorageBlockRegister(const std::string &blockName) const
@@ -310,8 +320,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
                 bool blockRegisterResult =
                     sh::GetUniformBlockRegister(compilerHandle, interfaceBlock.name, &index);
                 ASSERT(blockRegisterResult);
+                bool useStructuredBuffer =
+                    sh::ShouldUniformBlockUseStructuredBuffer(compilerHandle, interfaceBlock.name);
 
-                mUniformBlockRegisterMap[interfaceBlock.name] = index;
+                mUniformBlockRegisterMap[interfaceBlock.name]            = index;
+                mUniformBlockUseStructuredBufferMap[interfaceBlock.name] = useStructuredBuffer;
             }
         }
 

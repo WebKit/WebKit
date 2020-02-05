@@ -457,7 +457,11 @@ const D3D11_SUBRESOURCE_DATA *ResourceManager11::createInitDataIfNeeded<ID3D11Te
     size_t requiredSize = static_cast<size_t>(ComputeMemoryUsage(desc));
     if (mZeroMemory.size() < requiredSize)
     {
-        mZeroMemory.resize(requiredSize);
+        if (!mZeroMemory.resize(requiredSize))
+        {
+            ERR() << "Failed to allocate D3D texture initialization data.";
+            return nullptr;
+        }
         mZeroMemory.fill(kDebugInitTextureDataValue);
     }
 
@@ -503,7 +507,11 @@ const D3D11_SUBRESOURCE_DATA *ResourceManager11::createInitDataIfNeeded<ID3D11Te
     size_t requiredSize = static_cast<size_t>(ComputeMemoryUsage(desc));
     if (mZeroMemory.size() < requiredSize)
     {
-        mZeroMemory.resize(requiredSize);
+        if (!mZeroMemory.resize(requiredSize))
+        {
+            ERR() << "Failed to allocate D3D texture initialization data.";
+            return nullptr;
+        }
         mZeroMemory.fill(kDebugInitTextureDataValue);
     }
 

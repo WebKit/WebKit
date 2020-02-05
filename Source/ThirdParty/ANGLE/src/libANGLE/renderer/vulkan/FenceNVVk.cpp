@@ -21,22 +21,32 @@ FenceNVVk::FenceNVVk() : FenceNVImpl() {}
 
 FenceNVVk::~FenceNVVk() {}
 
+void FenceNVVk::onDestroy(const gl::Context *context)
+{
+    mFenceSync.releaseToRenderer(vk::GetImpl(context)->getRenderer());
+}
+
 angle::Result FenceNVVk::set(const gl::Context *context, GLenum condition)
 {
-    ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
-    return angle::Result::Stop;
+    ASSERT(condition == GL_ALL_COMPLETED_NV);
+    return mFenceSync.initialize(vk::GetImpl(context));
 }
 
 angle::Result FenceNVVk::test(const gl::Context *context, GLboolean *outFinished)
 {
-    ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
-    return angle::Result::Stop;
+    bool signaled = false;
+    ANGLE_TRY(mFenceSync.getStatus(vk::GetImpl(context), &signaled));
+
+    ASSERT(outFinished);
+    *outFinished = signaled ? GL_TRUE : GL_FALSE;
+    return angle::Result::Continue;
 }
 
 angle::Result FenceNVVk::finish(const gl::Context *context)
 {
-    ANGLE_VK_UNREACHABLE(vk::GetImpl(context));
-    return angle::Result::Stop;
+    VkResult outResult;
+    ContextVk *contextVk = vk::GetImpl(context);
+    return mFenceSync.clientWait(contextVk, contextVk, true, UINT64_MAX, &outResult);
 }
 
 }  // namespace rx

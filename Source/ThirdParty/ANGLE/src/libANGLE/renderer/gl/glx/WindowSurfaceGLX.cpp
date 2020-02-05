@@ -255,4 +255,14 @@ egl::Error WindowSurfaceGLX::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc,
     return egl::NoError();
 }
 
+egl::Error WindowSurfaceGLX::getMscRate(EGLint *numerator, EGLint *denominator)
+{
+    if (!mGLX.getMscRateOML(mGLXWindow, reinterpret_cast<int32_t *>(numerator),
+                            reinterpret_cast<int32_t *>(denominator)))
+    {
+        return egl::EglBadSurface() << "glXGetMscRateOML failed.";
+    }
+    return egl::NoError();
+}
+
 }  // namespace rx

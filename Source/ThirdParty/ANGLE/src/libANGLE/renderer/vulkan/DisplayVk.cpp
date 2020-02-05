@@ -41,6 +41,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
 
 void DisplayVk::terminate()
 {
+    mRenderer->reloadVolkIfNeeded();
+
     ASSERT(mRenderer);
     mRenderer->onDestroy(this);
 }
@@ -190,7 +192,13 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->imageNativeBuffer =
         getRenderer()->getFeatures().supportsAndroidHardwareBuffer.enabled;
     outExtensions->surfacelessContext = true;
+    outExtensions->glColorspace = getRenderer()->getFeatures().supportsSwapchainColorspace.enabled;
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+    outExtensions->framebufferTargetANDROID = true;
+#endif  // defined(ANGLE_PLATFORM_ANDROID)
+
+    outExtensions->contextPriority = true;
     outExtensions->noConfigContext = true;
 
 #if defined(ANGLE_PLATFORM_GGP)

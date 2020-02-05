@@ -655,9 +655,17 @@ static GLenum GetNativeReadType(const FunctionsGL *functions,
 
 static GLenum GetNativeReadFormat(const FunctionsGL *functions,
                                   const angle::FeaturesGL &features,
-                                  GLenum format)
+                                  GLenum attachmentReadFormat,
+                                  GLenum format,
+                                  GLenum type)
 {
     GLenum result = format;
+    if (features.readPixelsUsingImplementationColorReadFormatForNorm16.enabled &&
+        type == GL_UNSIGNED_SHORT && format == GL_RGBA &&
+        (attachmentReadFormat == GL_RED || attachmentReadFormat == GL_RG))
+    {
+        result = attachmentReadFormat;
+    }
     return result;
 }
 
@@ -736,11 +744,12 @@ RenderbufferFormat GetRenderbufferFormat(const FunctionsGL *functions,
 }
 ReadPixelsFormat GetReadPixelsFormat(const FunctionsGL *functions,
                                      const angle::FeaturesGL &features,
+                                     GLenum attachmentReadFormat,
                                      GLenum format,
                                      GLenum type)
 {
     ReadPixelsFormat result;
-    result.format = GetNativeReadFormat(functions, features, format);
+    result.format = GetNativeReadFormat(functions, features, attachmentReadFormat, format, type);
     result.type   = GetNativeReadType(functions, features, type);
     return result;
 }

@@ -179,14 +179,14 @@ class TextureVk : public TextureImpl
         return *mImage;
     }
 
-    void onImageViewGraphAccess(vk::CommandGraph *commandGraph)
+    void onImageViewUse(vk::ResourceUseList *resourceUseList)
     {
-        mImageViews.onGraphAccess(commandGraph);
+        mImageViews.onResourceAccess(resourceUseList);
     }
 
-    void onSamplerGraphAccess(vk::CommandGraph *commandGraph)
+    void onSamplerUse(vk::ResourceUseList *resourceUseList)
     {
-        mSampler.onGraphAccess(commandGraph);
+        mSampler.onResourceAccess(resourceUseList);
     }
 
     void releaseOwnershipOfImage(const gl::Context *context);
@@ -345,13 +345,15 @@ class TextureVk : public TextureImpl
     void releaseStagingBuffer(ContextVk *contextVk);
     uint32_t getMipLevelCount(ImageMipLevels mipLevels) const;
     uint32_t getMaxLevelCount() const;
-    angle::Result copyImageDataToStagingBuffer(ContextVk *contextVk,
+    // Used when the image is being redefined (for example to add mips or change base level) to copy
+    // each subresource of the image and stage it for another subresource.  When all subresources
+    // are taken care of, the image is recreated.
+    angle::Result copyAndStageImageSubresource(ContextVk *contextVk,
                                                const gl::ImageDesc &desc,
                                                bool ignoreLayerCount,
                                                uint32_t currentLayer,
                                                uint32_t sourceLevel,
-                                               uint32_t stagingDstMipLevel,
-                                               vk::BufferHelper **stagingBuffer);
+                                               uint32_t stagingDstMipLevel);
     angle::Result initImageViews(ContextVk *contextVk,
                                  const vk::Format &format,
                                  const bool sized,
@@ -376,14 +378,10 @@ class TextureVk : public TextureImpl
     angle::Result changeLevels(ContextVk *contextVk,
                                GLuint previousBaseLevel,
                                GLuint baseLevel,
-                               GLuint maxLevel,
-                               vk::BufferHelper **stagingBuffer);
+                               GLuint maxLevel);
 
     // Update base and max levels, and re-create image if needed.
-    angle::Result updateBaseMaxLevels(ContextVk *contextVk,
-                                      GLuint baseLevel,
-                                      GLuint maxLevel,
-                                      vk::BufferHelper **stagingBuffer);
+    angle::Result updateBaseMaxLevels(ContextVk *contextVk, GLuint baseLevel, GLuint maxLevel);
 
     bool mOwnsImage;
 

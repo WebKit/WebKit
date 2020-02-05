@@ -127,7 +127,9 @@ def main():
 
     # auto_script parameters.
     if len(sys.argv) > 1:
-        inputs = ['es3_format_type_combinations.json', 'format_map_data.json']
+        inputs = [
+            'renderer/angle_format.py', 'es3_format_type_combinations.json', 'format_map_data.json'
+        ]
         outputs = ['format_map_autogen.cpp']
 
         if sys.argv[1] == 'inputs':

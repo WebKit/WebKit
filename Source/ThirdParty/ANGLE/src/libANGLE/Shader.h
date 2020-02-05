@@ -217,6 +217,7 @@ class Shader final : angle::NonCopyable, public LabeledObject
     ShaderProgramManager *mResourceManager;
 
     GLuint mCurrentMaxComputeWorkGroupInvocations;
+    unsigned int mMaxComputeSharedMemory;
 };
 
 bool CompareShaderVar(const sh::ShaderVariable &x, const sh::ShaderVariable &y);

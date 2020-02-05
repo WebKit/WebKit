@@ -7,23 +7,24 @@ of steps:
 shader translator][translator]. The translator compiles application shaders into Vulkan-compatible
 GLSL. Vulkan-compatible GLSL matches the [GL_KHR_vulkan_glsl][GL_KHR_vulkan_glsl] extension spec
 with some additional workarounds and emulation. We emulate OpenGL's different depth range, viewport
-y flipping, default uniforms, and OpenGL [line segment
-rasterization](OpenGLLineSegmentRasterization.md). For more info see
+y flipping, default uniforms, and OpenGL
+[line segment rasterization](OpenGLLineSegmentRasterization.md). For more info see
 [TranslatorVulkan.cpp][TranslatorVulkan.cpp]. After initial compilation the shaders are not
 complete. They are templated with markers that are filled in later at link time.
 
 1. **Link-Time Translation**: During a call to `glLinkProgram` the Vulkan back-end can know the
 necessary locations and properties to write to connect the shader stage interfaces. We get the
 completed shader source using ANGLE's [GlslangWrapperVk][GlslangWrapperVk.cpp] helper class. We still
-cannot generate `VkShaderModules` since some ANGLE features like [OpenGL line
-rasterization](OpenGLLineSegmentRasterization.md) emulation depend on draw-time information.
+cannot generate `VkShaderModules` since some ANGLE features like
+[OpenGL line rasterization](OpenGLLineSegmentRasterization.md) emulation depend on draw-time
+information.
 
 1. **Draw-time SPIR-V Generation**: Once the application records a draw call we use Khronos'
-[glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V with the correct draw-time
-defines. The SPIR-V is then compiled into `VkShaderModules`. For details please see
-[GlslangWrapperVk.cpp][GlslangWrapperVk.cpp]. The `VkShaderModules` are then used by `VkPipelines`. Note
-that we currently don't use [SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V optimization. This
-could be something to improve on in the future.
+[glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V.  The SPIR-V is then compiled
+into `VkShaderModules`. For details please see [GlslangWrapperVk.cpp][GlslangWrapperVk.cpp]. The
+`VkShaderModules` are then used by `VkPipelines` with the appropriate specialization constant
+values. Note that we currently don't use [SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V
+optimization. This could be something to improve on in the future.
 
 See the below diagram for a high-level view of the shader translation flow:
 

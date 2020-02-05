@@ -28,7 +28,7 @@ all_uniform_types = [
     "GL_UNSIGNED_INT_SAMPLER_2D", "GL_UNSIGNED_INT_SAMPLER_2D_ARRAY",
     "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE", "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY",
     "GL_UNSIGNED_INT_SAMPLER_3D", "GL_UNSIGNED_INT_SAMPLER_CUBE", "GL_UNSIGNED_INT_VEC2",
-    "GL_UNSIGNED_INT_VEC3", "GL_UNSIGNED_INT_VEC4"
+    "GL_UNSIGNED_INT_VEC3", "GL_UNSIGNED_INT_VEC4", "GL_SAMPLER_VIDEO_IMAGE_WEBGL"
 ]
 
 # Uniform texture types. Be wary of substrings finding the wrong types.
@@ -46,6 +46,7 @@ texture_types = {
     "CUBE_SHADOW": "CUBE_MAP",
     "EXTERNAL_OES": "EXTERNAL_OES",
     "RECT": "RECTANGLE",
+    "VIDEO_IMAGE_WEBGL": "VIDEO_IMAGE_WEBGL",
 }
 
 template_cpp = """// GENERATED FILE - DO NOT EDIT.
@@ -214,7 +215,7 @@ def get_is_matrix(uniform_type):
 
 
 def get_is_image(uniform_type):
-    return cpp_bool("_IMAGE_" in uniform_type)
+    return cpp_bool("_VIDEO_" not in uniform_type and "_IMAGE_" in uniform_type)
 
 
 def get_glsl_asfloat(uniform_type):

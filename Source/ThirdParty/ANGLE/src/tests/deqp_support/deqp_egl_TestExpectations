@@ -29,6 +29,9 @@
 // fails on Nexus5X with GLES backend (hangs)
 //  91531 NEXUS5X GLES : conformance_more_* = SKIP
 
+// Globally disable Metal testing for now
+4235 METAL : dEQP-EGL.* = SKIP
+
 // Only Vulkan supports multithreading
 3916 OPENGL : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
 3916 OPENGL : dEQP-EGL.functional.multithread.* = SKIP
@@ -129,7 +132,6 @@
 2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.grow = FAIL
 2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.stretch_height = FAIL
 2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.stretch_width = FAIL
-2635 WIN VULKAN : dEQP-EGL.functional.wide_color.pbuffer_8888_colorspace_default = FAIL
 2716 WIN VULKAN : dEQP-EGL.functional.preserve_swap.no_preserve.* = FAIL
 
 // Linux failures
@@ -219,7 +221,6 @@
 2546 ANDROID VULKAN : dEQP-EGL.functional.query_surface.set_attribute.window.other = SKIP
 2546 ANDROID VULKAN : dEQP-EGL.functional.query_surface.simple.window.other = SKIP
 2546 ANDROID VULKAN : dEQP-EGL.functional.resize.pixel_density.* = SKIP
-2546 ANDROID VULKAN : dEQP-EGL.functional.wide_color.window* = SKIP
 
 // Robustness failures on multiple platforms
 3711 : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.reads.* = FAIL

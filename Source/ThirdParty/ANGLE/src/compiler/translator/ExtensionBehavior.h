@@ -25,6 +25,7 @@ enum class TExtension
     EXT_draw_buffers,
     EXT_frag_depth,
     EXT_geometry_shader,
+    EXT_gpu_shader5,
     EXT_shader_framebuffer_fetch,
     EXT_shader_texture_lod,
     EXT_YUV_target,
@@ -38,7 +39,8 @@ enum class TExtension
     OVR_multiview,
     OVR_multiview2,
     ANGLE_multi_draw,
-    ANGLE_base_vertex_base_instance
+    ANGLE_base_vertex_base_instance,
+    WEBGL_video_texture,
 };
 
 enum TBehavior

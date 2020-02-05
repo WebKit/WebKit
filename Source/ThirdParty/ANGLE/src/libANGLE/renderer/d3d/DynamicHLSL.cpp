@@ -194,8 +194,6 @@ std::string DynamicHLSL::generateVertexShaderForInputLayout(
             }
             else
             {
-                GLenum componentType = mRenderer->getVertexComponentType(vertexFormatID);
-
                 if (shaderAttribute.name == "gl_InstanceID" ||
                     shaderAttribute.name == "gl_VertexID")
                 {
@@ -205,6 +203,8 @@ std::string DynamicHLSL::generateVertexShaderForInputLayout(
                 }
                 else
                 {
+                    GLenum componentType = mRenderer->getVertexComponentType(vertexFormatID);
+
                     structStream << "    ";
                     HLSLComponentTypeString(structStream, componentType,
                                             VariableComponentCount(shaderAttribute.type));
@@ -803,7 +803,7 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Caps &caps,
 
         // Don't reference VS-only transform feedback varyings in the PS. Note that we're relying on
         // that the active flag is set according to usage in the fragment shader.
-        if (packedVarying.vertexOnly || !varying.active)
+        if (packedVarying.vertexOnly() || !varying.active)
             continue;
 
         pixelPrologue << "    ";

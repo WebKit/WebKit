@@ -6,5 +6,7 @@
   "src/libANGLE/format_map_data.json":
     "2dd1986f49c441ad9a71b82410f57d6e",
   "src/libANGLE/gen_format_map.py":
-    "dbc855d50826670a9e1a4ff2747e7583"
+    "38320d844e6629e09afc5ccdc484e9aa",
+  "src/libANGLE/renderer/angle_format.py":
+    "32ba71942c0fd00e6807104f1bb80a3c"
 }

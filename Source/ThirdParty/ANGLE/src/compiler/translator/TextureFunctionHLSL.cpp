@@ -238,6 +238,7 @@ int GetHLSLCoordCount(const TextureFunctionHLSL::TextureFunction &textureFunctio
             case EbtSampler2D:
             case EbtSamplerExternalOES:
             case EbtSampler2DMS:
+            case EbtSamplerVideoWEBGL:
                 hlslCoords = 2;
                 break;
             case EbtSamplerCube:
@@ -283,6 +284,7 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
         switch (textureFunction.sampler)
         {
             case EbtSampler2D:
+            case EbtSamplerVideoWEBGL:
             case EbtSamplerExternalOES:
                 out << "sampler2D s";
                 break;
@@ -361,6 +363,7 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
             case EbtSampler2DShadow:
             case EbtSampler2DArrayShadow:
             case EbtSamplerExternalOES:
+            case EbtSamplerVideoWEBGL:
                 out << ", float2 ddx, float2 ddy";
                 break;
             case EbtSampler3D:
@@ -431,6 +434,7 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
             case EbtSampler2DShadow:
             case EbtSampler2DArrayShadow:
             case EbtSamplerExternalOES:
+            case EbtSamplerVideoWEBGL:
                 out << ", int2 offset";
                 break;
             default:
@@ -1019,6 +1023,7 @@ void OutputTextureSampleFunctionReturnStatement(
         switch (textureFunction.sampler)
         {
             case EbtSampler2D:
+            case EbtSamplerVideoWEBGL:
             case EbtSamplerExternalOES:
                 out << "tex2D";
                 break;
@@ -1295,6 +1300,7 @@ const char *TextureFunctionHLSL::TextureFunction::getReturnType() const
             case EbtSampler2DMS:
             case EbtISampler2DMS:
             case EbtUSampler2DMS:
+            case EbtSamplerVideoWEBGL:
                 return "int2";
             case EbtSampler3D:
             case EbtISampler3D:
@@ -1322,6 +1328,7 @@ const char *TextureFunctionHLSL::TextureFunction::getReturnType() const
             case EbtSamplerCube:
             case EbtSampler2DArray:
             case EbtSamplerExternalOES:
+            case EbtSamplerVideoWEBGL:
                 return "float4";
             case EbtISampler2D:
             case EbtISampler2DMS:
@@ -1459,6 +1466,10 @@ ImmutableString TextureFunctionHLSL::useTextureFunction(const ImmutableString &n
     {
         textureFunction.method = TextureFunction::GATHER;
         textureFunction.offset = true;
+    }
+    else if (name == "textureVideoWEBGL")
+    {
+        textureFunction.method = TextureFunction::IMPLICIT;
     }
     else
         UNREACHABLE();

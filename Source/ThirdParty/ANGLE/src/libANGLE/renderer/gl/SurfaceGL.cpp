@@ -34,6 +34,12 @@ egl::Error SurfaceGL::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuin
     return egl::EglBadSurface();
 }
 
+egl::Error SurfaceGL::getMscRate(EGLint *numerator, EGLint *denominator)
+{
+    UNIMPLEMENTED();
+    return egl::EglBadAccess();
+}
+
 angle::Result SurfaceGL::initializeContents(const gl::Context *context,
                                             const gl::ImageIndex &imageIndex)
 {

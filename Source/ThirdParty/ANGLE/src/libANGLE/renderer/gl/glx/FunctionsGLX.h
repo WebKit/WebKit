@@ -80,6 +80,7 @@ class FunctionsGLX
 
     // GLX_OML_sync_control
     bool getSyncValuesOML(glx::Drawable drawable, int64_t *ust, int64_t *msc, int64_t *sbc) const;
+    bool getMscRateOML(glx::Drawable drawable, int32_t *numerator, int32_t *denominator) const;
 
   private:
     // So as to isolate GLX from angle we do not include angleutils.h and cannot

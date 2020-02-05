@@ -1209,6 +1209,9 @@ TEST_P(TransformFeedbackTestES31, CaptureOutboundElement)
 // Test transform feedback names can be specified using array element.
 TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 {
+    // Remove this when http://anglebug.com/4140 is fixed.
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     constexpr char kVS[] =
         "#version 310 es\n"
         "in vec3 position;\n"
@@ -1271,6 +1274,9 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 // Test transform feedback varying for base-level members of struct.
 TEST_P(TransformFeedbackTestES31, StructMemberVaryings)
 {
+    // Remove this when http://anglebug.com/4140 is fixed.
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     constexpr char kVS[] = R"(#version 310 es
 in vec3 position;
 struct S {

@@ -10,11 +10,12 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 
-#include <vulkan/vulkan.h>
 #include <memory>
 #include <mutex>
 #include "vk_ext_provoking_vertex.h"
+#include "volk.h"
 
+#include "common/PackedEnums.h"
 #include "common/PoolAlloc.h"
 #include "common/angleutils.h"
 #include "libANGLE/BlobCache.h"
@@ -68,6 +69,8 @@ class RendererVk : angle::NonCopyable
                              egl::Display *display,
                              const char *wsiExtension,
                              const char *wsiLayer);
+    // Reload volk vk* function ptrs if needed for an already initialized RendererVk
+    void reloadVolkIfNeeded() const;
     void onDestroy(vk::Context *context);
 
     void notifyDeviceLost();
@@ -105,6 +108,10 @@ class RendererVk : angle::NonCopyable
     const gl::Limitations &getNativeLimitations() const;
 
     uint32_t getQueueFamilyIndex() const { return mCurrentQueueFamilyIndex; }
+    const VkQueueFamilyProperties &getQueueFamilyProperties() const
+    {
+        return mQueueFamilyProperties[mCurrentQueueFamilyIndex];
+    }
 
     const vk::MemoryProperties &getMemoryProperties() const { return mMemoryProperties; }
 
@@ -140,6 +147,7 @@ class RendererVk : angle::NonCopyable
         return mFeatures;
     }
     uint32_t getMaxVertexAttribDivisor() const { return mMaxVertexAttribDivisor; }
+    VkDeviceSize getMaxVertexAttribStride() const { return mMaxVertexAttribStride; }
 
     bool isMockICDEnabled() const { return mEnabledICD == vk::ICD::Mock; }
 
@@ -152,12 +160,19 @@ class RendererVk : angle::NonCopyable
     bool hasImageFormatFeatureBits(VkFormat format, const VkFormatFeatureFlags featureBits);
     bool hasBufferFormatFeatureBits(VkFormat format, const VkFormatFeatureFlags featureBits);
 
+    ANGLE_INLINE egl::ContextPriority getDriverPriority(egl::ContextPriority priority)
+    {
+        return mPriorities[priority];
+    }
+
     angle::Result queueSubmit(vk::Context *context,
+                              egl::ContextPriority priority,
                               const VkSubmitInfo &submitInfo,
                               const vk::Fence &fence,
                               Serial *serialOut);
-    angle::Result queueWaitIdle(vk::Context *context);
-    VkResult queuePresent(const VkPresentInfoKHR &presentInfo);
+    angle::Result queueWaitIdle(vk::Context *context, egl::ContextPriority priority);
+    angle::Result deviceWaitIdle(vk::Context *context);
+    VkResult queuePresent(egl::ContextPriority priority, const VkPresentInfoKHR &presentInfo);
 
     angle::Result newSharedFence(vk::Context *context, vk::Shared<vk::Fence> *sharedFenceOut);
     inline void resetSharedFence(vk::Shared<vk::Fence> *sharedFenceIn)
@@ -213,6 +228,8 @@ class RendererVk : angle::NonCopyable
     angle::Result initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex);
     void ensureCapsInitialized() const;
 
+    void queryDeviceExtensionFeatures(const ExtensionNameList &deviceExtensionNames);
+
     void initFeatures(const ExtensionNameList &extensions);
     void initPipelineCacheVkKey();
     angle::Result initPipelineCache(DisplayVk *display,
@@ -245,15 +262,20 @@ class RendererVk : angle::NonCopyable
     VkDebugReportCallbackEXT mDebugReportCallback;
     VkPhysicalDevice mPhysicalDevice;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
-    VkPhysicalDeviceSubgroupProperties mPhysicalDeviceSubgroupProperties;
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
     VkPhysicalDeviceLineRasterizationFeaturesEXT mLineRasterizationFeatures;
     VkPhysicalDeviceProvokingVertexFeaturesEXT mProvokingVertexFeatures;
+    VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT mVertexAttributeDivisorFeatures;
+    VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT mVertexAttributeDivisorProperties;
+    VkPhysicalDeviceTransformFeedbackFeaturesEXT mTransformFeedbackFeatures;
+    VkPhysicalDeviceSubgroupProperties mPhysicalDeviceSubgroupProperties;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     std::mutex mQueueMutex;
-    VkQueue mQueue;
+    angle::PackedEnumMap<egl::ContextPriority, VkQueue> mQueues;
+    angle::PackedEnumMap<egl::ContextPriority, egl::ContextPriority> mPriorities;
     uint32_t mCurrentQueueFamilyIndex;
     uint32_t mMaxVertexAttribDivisor;
+    VkDeviceSize mMaxVertexAttribStride;
     VkDevice mDevice;
     AtomicSerialFactory mQueueSerialFactory;
     AtomicSerialFactory mShaderSerialFactory;

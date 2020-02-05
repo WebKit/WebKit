@@ -400,6 +400,7 @@ bool ValidateES3TexImageParametersBase(Context *context,
     {
         case TextureType::_2D:
         case TextureType::External:
+        case TextureType::VideoImage:
             if (width > (caps.max2DTextureSize >> level) ||
                 height > (caps.max2DTextureSize >> level))
             {
@@ -1488,17 +1489,6 @@ bool ValidateDrawRangeElements(Context *context,
         return true;
     }
 
-    // Note that resolving the index range is a bit slow. We should probably optimize this.
-    IndexRange indexRange;
-    ANGLE_VALIDATION_TRY(context->getState().getVertexArray()->getIndexRange(context, type, count,
-                                                                             indices, &indexRange));
-
-    if (indexRange.end > end || indexRange.start < start)
-    {
-        // GL spec says that behavior in this case is undefined - generating an error is fine.
-        context->validationError(GL_INVALID_OPERATION, kExceedsElementRange);
-        return false;
-    }
     return true;
 }
 
@@ -2549,7 +2539,7 @@ bool ValidateGetBufferPointervRobustANGLE(Context *context,
 
     GLsizei numParams = 0;
 
-    if (context->getClientMajorVersion() < 3 && !context->getExtensions().mapBuffer)
+    if (context->getClientMajorVersion() < 3 && !context->getExtensions().mapBufferOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -3089,7 +3079,7 @@ bool ValidateGetSynciv(Context *context,
                        GLsizei *length,
                        GLint *values)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -3976,7 +3966,7 @@ bool ValidateDrawArraysInstanced(Context *context,
 
 bool ValidateFenceSync(Context *context, GLenum condition, GLbitfield flags)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -3999,7 +3989,7 @@ bool ValidateFenceSync(Context *context, GLenum condition, GLbitfield flags)
 
 bool ValidateIsSync(Context *context, GLsync sync)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4010,7 +4000,7 @@ bool ValidateIsSync(Context *context, GLsync sync)
 
 bool ValidateDeleteSync(Context *context, GLsync sync)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4027,7 +4017,7 @@ bool ValidateDeleteSync(Context *context, GLsync sync)
 
 bool ValidateClientWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4051,7 +4041,7 @@ bool ValidateClientWaitSync(Context *context, GLsync sync, GLbitfield flags, GLu
 
 bool ValidateWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;
@@ -4081,7 +4071,7 @@ bool ValidateWaitSync(Context *context, GLsync sync, GLbitfield flags, GLuint64 
 
 bool ValidateGetInteger64v(Context *context, GLenum pname, GLint64 *params)
 {
-    if (context->getClientMajorVersion() < 3)
+    if ((context->getClientMajorVersion() < 3) && !context->getExtensions().glSyncARB)
     {
         context->validationError(GL_INVALID_OPERATION, kES3Required);
         return false;

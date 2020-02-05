@@ -10,14 +10,17 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_UTILS_H_
 
+#include <atomic>
 #include <limits>
 
+#include "GLSLANG/ShaderLang.h"
 #include "common/FixedVector.h"
 #include "common/Optional.h"
 #include "common/PackedEnums.h"
 #include "common/debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Observer.h"
+#include "libANGLE/renderer/serial_utils.h"
 #include "libANGLE/renderer/vulkan/SecondaryCommandBuffer.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
@@ -101,20 +104,20 @@ namespace vk
 {
 struct Format;
 
-// Append ptr to end of pNext chain beginning at chainStart
+// Prepend ptr to the pNext chain at chainStart
 template <typename VulkanStruct1, typename VulkanStruct2>
-void AppendToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
+void AddToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
 {
+    ASSERT(ptr->pNext == nullptr);
+
     VkBaseOutStructure *localPtr = reinterpret_cast<VkBaseOutStructure *>(chainStart);
-    while (localPtr->pNext)
-    {
-        localPtr = localPtr->pNext;
-    }
-    localPtr->pNext = reinterpret_cast<VkBaseOutStructure *>(ptr);
+    ptr->pNext                   = localPtr->pNext;
+    localPtr->pNext              = reinterpret_cast<VkBaseOutStructure *>(ptr);
 }
 
 extern const char *gLoaderLayersPathEnv;
 extern const char *gLoaderICDFilenamesEnv;
+extern const char *gANGLEPreferredDevice;
 
 enum class ICD
 {
@@ -604,52 +607,14 @@ class Recycler final : angle::NonCopyable
     std::vector<T> mObjectFreeList;
 };
 
+using SpecializationConstantBitSet =
+    angle::PackedEnumBitSet<sh::vk::SpecializationConstantId, uint32_t>;
+static_assert(sizeof(SpecializationConstantBitSet) == sizeof(uint32_t), "Unexpected size");
+
+template <typename T>
+using SpecializationConstantMap = angle::PackedEnumMap<sh::vk::SpecializationConstantId, T>;
+
 }  // namespace vk
-
-// List of function pointers for used extensions.
-// VK_EXT_debug_utils
-extern PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
-extern PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT;
-extern PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT;
-extern PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT;
-extern PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT;
-
-// VK_EXT_debug_report
-extern PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
-extern PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
-
-// VK_KHR_get_physical_device_properties2
-extern PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
-extern PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR;
-
-// VK_KHR_external_semaphore_fd
-extern PFN_vkImportSemaphoreFdKHR vkImportSemaphoreFdKHR;
-
-// Lazily load entry points for each extension as necessary.
-void InitDebugUtilsEXTFunctions(VkInstance instance);
-void InitDebugReportEXTFunctions(VkInstance instance);
-void InitGetPhysicalDeviceProperties2KHRFunctions(VkInstance instance);
-
-#if defined(ANGLE_PLATFORM_FUCHSIA)
-// VK_FUCHSIA_imagepipe_surface
-extern PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA;
-void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance);
-#endif
-
-#if defined(ANGLE_PLATFORM_ANDROID)
-// VK_ANDROID_external_memory_android_hardware_buffer
-extern PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferPropertiesANDROID;
-extern PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID;
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance);
-#endif
-
-#if defined(ANGLE_PLATFORM_GGP)
-// VK_GGP_stream_descriptor_surface
-extern PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP;
-void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance);
-#endif  // defined(ANGLE_PLATFORM_GGP)
-
-void InitExternalSemaphoreFdFunctions(VkInstance instance);
 
 namespace gl_vk
 {
@@ -699,6 +664,20 @@ void GetExtentsAndLayerCount(gl::TextureType textureType,
 
 namespace vk_gl
 {
+// The Vulkan back-end will not support a sample count of 1, because of a Vulkan specification
+// restriction:
+//
+//   If the image was created with VkImageCreateInfo::samples equal to VK_SAMPLE_COUNT_1_BIT, the
+//   instruction must: have MS = 0.
+//
+// This restriction was tracked in http://anglebug.com/4196 and Khronos-private Vulkan
+// specification issue https://gitlab.khronos.org/vulkan/vulkan/issues/1925.
+//
+// In addition, the Vulkan back-end will not support sample counts of 32 or 64, since there are no
+// standard sample locations for those sample counts.
+constexpr unsigned int kSupportedSampleCounts = (VK_SAMPLE_COUNT_2_BIT | VK_SAMPLE_COUNT_4_BIT |
+                                                 VK_SAMPLE_COUNT_8_BIT | VK_SAMPLE_COUNT_16_BIT);
+
 // Find set bits in sampleCounts and add the corresponding sample count to the set.
 void AddSampleCounts(VkSampleCountFlags sampleCounts, gl::SupportedSampleSet *outSet);
 // Return the maximum sample count with a bit set in |sampleCounts|.

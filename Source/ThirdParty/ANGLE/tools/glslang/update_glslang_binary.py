@@ -13,31 +13,20 @@
 
 import os
 import platform
-import re
 import shutil
 import subprocess
 import sys
+
+sys.path.append('tools/')
+import angle_tools
 
 gn_args = """is_clang = true
 is_debug = false
 angle_enable_vulkan = true"""
 
-is_windows = platform.system() == 'Windows'
-is_linux = platform.system() == 'Linux'
-
-
-def find_file_in_path(filename):
-    """ Finds |filename| by searching the environment paths """
-    path_delimiter = ';' if is_windows else ':'
-    for env_path in os.environ['PATH'].split(path_delimiter):
-        full_path = os.path.join(env_path, filename)
-        if os.path.isfile(full_path):
-            return full_path
-    raise Exception('Cannot find %s in environment' % filename)
-
 
 def main():
-    if not is_windows and not is_linux:
+    if not angle_tools.is_windows and not angle_tools.is_linux:
         print('Script must be run on Linux or Windows.')
         return 1
 
@@ -53,9 +42,7 @@ def main():
             f.write(gn_args)
             f.close()
 
-    gn_exe = 'gn'
-    if is_windows:
-        gn_exe += '.bat'
+    gn_exe = angle_tools.get_exe_name('gn', '.bat')
 
     # Step 2: Generate the ninja build files in the output directory
     if subprocess.call([gn_exe, 'gen', out_dir]) != 0:
@@ -68,9 +55,7 @@ def main():
         return 3
 
     # Step 4: Copy glslang_validator to the tools/glslang directory
-    glslang_exe = 'glslang_validator'
-    if is_windows:
-        glslang_exe += '.exe'
+    glslang_exe = angle_tools.get_exe_name('glslang_validator', '.exe')
 
     glslang_src = os.path.join(out_dir, glslang_exe)
     glslang_dst = os.path.join(sys.path[0], glslang_exe)
@@ -81,19 +66,12 @@ def main():
     shutil.rmtree(out_dir)
 
     # Step 6: Upload to cloud storage
-    upload_script = find_file_in_path('upload_to_google_storage.py')
-    upload_args = ['python', upload_script, '-b', 'angle-glslang-validator', glslang_dst]
-    if subprocess.call(upload_args) != 0:
+    if not angle_tools.upload_to_google_storage('angle-glslang-validator', [glslang_dst]):
         print('Error upload to cloud storage')
         return 4
 
     # Step 7: Stage new SHA to git
-    git_exe = 'git'
-    if is_windows:
-        git_exe += '.bat'
-    git_exe = find_file_in_path(git_exe)
-
-    if subprocess.call([git_exe, 'add', glslang_dst + '.sha1']) != 0:
+    if not angle_tools.stage_google_storage_sha1([glslang_dst]):
         print('Error running git add')
         return 5
 

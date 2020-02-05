@@ -223,6 +223,8 @@ void init_instance_extension_names(struct sample_info &info)
 
 VkResult init_instance(struct sample_info &info, char const *const app_short_name)
 {
+    VkResult res = volkInitialize();
+    ASSERT(res == VK_SUCCESS);
     VkApplicationInfo app_info  = {};
     app_info.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     app_info.pNext              = NULL;
@@ -243,8 +245,9 @@ VkResult init_instance(struct sample_info &info, char const *const app_short_nam
     inst_info.enabledExtensionCount   = info.instance_extension_names.size();
     inst_info.ppEnabledExtensionNames = info.instance_extension_names.data();
 
-    VkResult res = vkCreateInstance(&inst_info, NULL, &info.inst);
+    res = vkCreateInstance(&inst_info, NULL, &info.inst);
     ASSERT(res == VK_SUCCESS);
+    volkLoadInstance(info.inst);
 
     return res;
 }
@@ -701,6 +704,7 @@ VkResult init_device(struct sample_info &info)
 
     res = vkCreateDevice(info.gpus[0], &device_info, NULL, &info.device);
     ASSERT(res == VK_SUCCESS);
+    volkLoadDevice(info.device);
 
     return res;
 }

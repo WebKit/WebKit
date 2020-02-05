@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/vulkan/SecondaryCommandBuffer.h"
 #include "common/debug.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
@@ -75,6 +76,20 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                                          params->indexType);
                     break;
                 }
+                case CommandID::BindTransformFeedbackBuffers:
+                {
+                    const BindTransformFeedbackBuffersParams *params =
+                        getParamPtr<BindTransformFeedbackBuffersParams>(currentCommand);
+                    const VkBuffer *buffers =
+                        Offset<VkBuffer>(params, sizeof(BindTransformFeedbackBuffersParams));
+                    const VkDeviceSize *offsets =
+                        Offset<VkDeviceSize>(buffers, sizeof(VkBuffer) * params->bindingCount);
+                    const VkDeviceSize *sizes =
+                        Offset<VkDeviceSize>(offsets, sizeof(VkDeviceSize) * params->bindingCount);
+                    vkCmdBindTransformFeedbackBuffersEXT(cmdBuffer, 0, params->bindingCount,
+                                                         buffers, offsets, sizes);
+                    break;
+                }
                 case CommandID::BindVertexBuffers:
                 {
                     const BindVertexBuffersParams *params =
@@ -93,6 +108,14 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, params->dstImage,
                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &params->region,
                                    params->filter);
+                    break;
+                }
+                case CommandID::BufferBarrier:
+                {
+                    const BufferBarrierParams *params =
+                        getParamPtr<BufferBarrierParams>(currentCommand);
+                    vkCmdPipelineBarrier(cmdBuffer, params->srcStageMask, params->dstStageMask, 0,
+                                         0, nullptr, 1, &params->bufferMemoryBarrier, 0, nullptr);
                     break;
                 }
                 case CommandID::ClearAttachments:
@@ -180,11 +203,26 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                     vkCmdDrawIndexed(cmdBuffer, params->indexCount, 1, 0, 0, 0);
                     break;
                 }
+                case CommandID::DrawIndexedBaseVertex:
+                {
+                    const DrawIndexedBaseVertexParams *params =
+                        getParamPtr<DrawIndexedBaseVertexParams>(currentCommand);
+                    vkCmdDrawIndexed(cmdBuffer, params->indexCount, 1, 0, params->vertexOffset, 0);
+                    break;
+                }
                 case CommandID::DrawIndexedInstanced:
                 {
                     const DrawIndexedInstancedParams *params =
                         getParamPtr<DrawIndexedInstancedParams>(currentCommand);
                     vkCmdDrawIndexed(cmdBuffer, params->indexCount, params->instanceCount, 0, 0, 0);
+                    break;
+                }
+                case CommandID::DrawIndexedInstancedBaseVertex:
+                {
+                    const DrawIndexedInstancedBaseVertexParams *params =
+                        getParamPtr<DrawIndexedInstancedBaseVertexParams>(currentCommand);
+                    vkCmdDrawIndexed(cmdBuffer, params->indexCount, params->instanceCount, 0,
+                                     params->vertexOffset, 0);
                     break;
                 }
                 case CommandID::DrawIndexedInstancedBaseVertexBaseInstance:
@@ -408,8 +446,14 @@ std::string SecondaryCommandBuffer::dumpCommands(const char *separator) const
                 case CommandID::BindVertexBuffers:
                     result += "BindVertexBuffers";
                     break;
+                case CommandID::BindTransformFeedbackBuffers:
+                    result += "BindTransformFeedbackBuffers";
+                    break;
                 case CommandID::BlitImage:
                     result += "BlitImage";
+                    break;
+                case CommandID::BufferBarrier:
+                    result += "BufferBarrier";
                     break;
                 case CommandID::ClearAttachments:
                     result += "ClearAttachments";
@@ -444,8 +488,14 @@ std::string SecondaryCommandBuffer::dumpCommands(const char *separator) const
                 case CommandID::DrawIndexed:
                     result += "DrawIndexed";
                     break;
+                case CommandID::DrawIndexedBaseVertex:
+                    result += "DrawIndexedBaseVertex";
+                    break;
                 case CommandID::DrawIndexedInstanced:
                     result += "DrawIndexedInstanced";
+                    break;
+                case CommandID::DrawIndexedInstancedBaseVertex:
+                    result += "DrawIndexedInstancedBaseVertex";
                     break;
                 case CommandID::DrawInstanced:
                     result += "DrawInstanced";
@@ -479,6 +529,9 @@ std::string SecondaryCommandBuffer::dumpCommands(const char *separator) const
                     break;
                 case CommandID::ResetQueryPool:
                     result += "ResetQueryPool";
+                    break;
+                case CommandID::ResolveImage:
+                    result += "ResolveImage";
                     break;
                 case CommandID::SetEvent:
                     result += "SetEvent";

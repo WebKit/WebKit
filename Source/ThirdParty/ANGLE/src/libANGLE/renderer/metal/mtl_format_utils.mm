@@ -34,6 +34,14 @@ bool OverrideTextureCaps(const DisplayMtl *display, angle::FormatID formatId, gl
         case angle::FormatID::R8G8B8A8_UNORM_SRGB:
         case angle::FormatID::B8G8R8A8_UNORM:
         case angle::FormatID::B8G8R8A8_UNORM_SRGB:
+        // NOTE: even though iOS devices don't support filtering depth textures, we still report as
+        // supported here in order for the OES_depth_texture extension to be enabled.
+        // During draw call, the filter modes will be converted to nearest.
+        case angle::FormatID::D16_UNORM:
+        case angle::FormatID::D24_UNORM_S8_UINT:
+        case angle::FormatID::D32_FLOAT_S8X24_UINT:
+        case angle::FormatID::D32_FLOAT:
+        case angle::FormatID::D32_UNORM:
             caps->texturable = caps->filterable = caps->textureAttachment = caps->renderbuffer =
                 true;
             return true;
@@ -67,15 +75,15 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
     // Requires depth24Stencil8PixelFormatSupported=YES for these extensions
     bool packedDepthStencil24Support =
         display->getMetalDevice().depth24Stencil8PixelFormatSupported;
-    tmpTextureExtensions.packedDepthStencil     = true;  // We support this reguardless
+    tmpTextureExtensions.packedDepthStencilOES  = true;  // We support this reguardless
     tmpTextureExtensions.colorBufferHalfFloat   = packedDepthStencil24Support;
     tmpTextureExtensions.colorBufferFloat       = packedDepthStencil24Support;
     tmpTextureExtensions.colorBufferFloatRGB    = packedDepthStencil24Support;
     tmpTextureExtensions.colorBufferFloatRGBA   = packedDepthStencil24Support;
     tmpTextureExtensions.textureHalfFloat       = packedDepthStencil24Support;
-    tmpTextureExtensions.textureFloat           = packedDepthStencil24Support;
+    tmpTextureExtensions.textureFloatOES        = packedDepthStencil24Support;
     tmpTextureExtensions.textureHalfFloatLinear = packedDepthStencil24Support;
-    tmpTextureExtensions.textureFloatLinear     = packedDepthStencil24Support;
+    tmpTextureExtensions.textureFloatLinearOES  = packedDepthStencil24Support;
     tmpTextureExtensions.textureRG              = packedDepthStencil24Support;
     tmpTextureExtensions.textureFormatBGRA8888  = packedDepthStencil24Support;
 
@@ -87,14 +95,14 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
 
     tmpTextureExtensions.textureCompressionS3TCsRGB = tmpTextureExtensions.textureCompressionDXT1;
 #else
-    tmpTextureExtensions.packedDepthStencil     = true;  // override to D32_FLOAT_S8X24_UINT
+    tmpTextureExtensions.packedDepthStencilOES  = true;  // override to D32_FLOAT_S8X24_UINT
     tmpTextureExtensions.colorBufferHalfFloat   = true;
     tmpTextureExtensions.colorBufferFloat       = true;
     tmpTextureExtensions.colorBufferFloatRGB    = true;
     tmpTextureExtensions.colorBufferFloatRGBA   = true;
     tmpTextureExtensions.textureHalfFloat       = true;
     tmpTextureExtensions.textureHalfFloatLinear = true;
-    tmpTextureExtensions.textureFloat           = true;
+    tmpTextureExtensions.textureFloatOES        = true;
     tmpTextureExtensions.textureRG              = true;
     tmpTextureExtensions.textureFormatBGRA8888  = true;
     if ([display->getMetalDevice() supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily1_v1])
@@ -112,11 +120,13 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         tmpTextureExtensions.compressedTexturePVRTCsRGB       = true;
     }
 #endif
-    tmpTextureExtensions.sRGB           = true;
-    tmpTextureExtensions.depth32        = true;
-    tmpTextureExtensions.depth24OES     = true;
-    tmpTextureExtensions.rgb8rgba8      = true;
-    tmpTextureExtensions.textureStorage = true;
+    tmpTextureExtensions.sRGB              = true;
+    tmpTextureExtensions.depth32OES        = true;
+    tmpTextureExtensions.depth24OES        = true;
+    tmpTextureExtensions.rgb8rgba8OES      = true;
+    tmpTextureExtensions.textureStorage    = true;
+    tmpTextureExtensions.depthTextureOES   = true;
+    tmpTextureExtensions.depthTextureANGLE = true;
 
     auto formatVerifier = [&](const gl::InternalFormat &internalFormatInfo) {
         angle::FormatID angleFormatId =
@@ -145,14 +155,6 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         textureCaps.sampleCounts.clear();
         textureCaps.sampleCounts.insert(0);
         textureCaps.sampleCounts.insert(1);
-
-        if (textureCaps.filterable && mtlFormat.actualFormatId == angle::FormatID::D32_FLOAT)
-        {
-            // Only MacOS support filterable for D32_FLOAT texture
-#if !TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            textureCaps.filterable = false;
-#endif
-        }
 
         textureCapsMap.set(mtlFormat.intendedFormatId, textureCaps);
 

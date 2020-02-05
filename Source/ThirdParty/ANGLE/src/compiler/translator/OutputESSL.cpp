@@ -43,4 +43,26 @@ bool TOutputESSL::writeVariablePrecision(TPrecision precision)
     return true;
 }
 
+ImmutableString TOutputESSL::translateTextureFunction(const ImmutableString &name,
+                                                      const ShCompileOptions &option)
+{
+    // Check WEBGL_video_texture invocation first.
+    if (name == "textureVideoWEBGL")
+    {
+        if (option & SH_TAKE_VIDEO_TEXTURE_AS_EXTERNAL_OES)
+        {
+            // TODO(http://anglebug.com/3889): Implement external image situation.
+            UNIMPLEMENTED();
+            return ImmutableString("");
+        }
+        else
+        {
+            // Default translating textureVideoWEBGL to texture2D.
+            return ImmutableString("texture2D");
+        }
+    }
+
+    return name;
+}
+
 }  // namespace sh

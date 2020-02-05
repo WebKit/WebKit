@@ -135,4 +135,9 @@ void ContextImpl::handleError(GLenum errorCode,
     mErrors->handleError(errorCode, errorStream.str().c_str(), file, function, line);
 }
 
+egl::ContextPriority ContextImpl::getContextPriority() const
+{
+    return egl::ContextPriority::Medium;
+}
+
 }  // namespace rx

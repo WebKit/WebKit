@@ -372,6 +372,15 @@ D3DInterfaceBlock::D3DInterfaceBlock()
 
 D3DInterfaceBlock::D3DInterfaceBlock(const D3DInterfaceBlock &other) = default;
 
+D3DUniformBlock::D3DUniformBlock()
+{
+    mUseStructuredBuffers.fill(false);
+    mByteWidths.fill(0u);
+    mStructureByteStrides.fill(0u);
+}
+
+D3DUniformBlock::D3DUniformBlock(const D3DUniformBlock &other) = default;
+
 // D3DVarying Implementation
 
 D3DVarying::D3DVarying() : semanticIndex(0), componentCount(0), outputSlot(0) {}
@@ -1081,10 +1090,13 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     ASSERT(mD3DUniformBlocks.empty());
     for (unsigned int blockIndex = 0; blockIndex < blockCount; ++blockIndex)
     {
-        D3DInterfaceBlock uniformBlock;
+        D3DUniformBlock uniformBlock;
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
         {
             stream->readInt(&uniformBlock.mShaderRegisterIndexes[shaderType]);
+            stream->readBool(&uniformBlock.mUseStructuredBuffers[shaderType]);
+            stream->readInt(&uniformBlock.mByteWidths[shaderType]);
+            stream->readInt(&uniformBlock.mStructureByteStrides[shaderType]);
         }
         mD3DUniformBlocks.push_back(uniformBlock);
     }
@@ -1365,11 +1377,14 @@ void ProgramD3D::save(const gl::Context *context, gl::BinaryOutputStream *stream
     }
 
     stream->writeInt(mD3DUniformBlocks.size());
-    for (const D3DInterfaceBlock &uniformBlock : mD3DUniformBlocks)
+    for (const D3DUniformBlock &uniformBlock : mD3DUniformBlocks)
     {
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
         {
             stream->writeIntOrNegOne(uniformBlock.mShaderRegisterIndexes[shaderType]);
+            stream->writeInt(uniformBlock.mUseStructuredBuffers[shaderType]);
+            stream->writeInt(uniformBlock.mByteWidths[shaderType]);
+            stream->writeInt(uniformBlock.mStructureByteStrides[shaderType]);
         }
     }
 
@@ -2143,7 +2158,7 @@ void ProgramD3D::initializeUniformBlocks()
     {
         unsigned int uniformBlockElement = uniformBlock.isArray ? uniformBlock.arrayElement : 0;
 
-        D3DInterfaceBlock d3dUniformBlock;
+        D3DUniformBlock d3dUniformBlock;
 
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
         {
@@ -2154,6 +2169,18 @@ void ProgramD3D::initializeUniformBlocks()
                     shadersD3D[shaderType]->getUniformBlockRegister(uniformBlock.name);
                 d3dUniformBlock.mShaderRegisterIndexes[shaderType] =
                     baseRegister + uniformBlockElement;
+                bool useStructuredBuffer =
+                    shadersD3D[shaderType]->shouldUniformBlockUseStructuredBuffer(
+                        uniformBlock.name);
+                if (useStructuredBuffer)
+                {
+                    d3dUniformBlock.mUseStructuredBuffers[shaderType] = true;
+                    d3dUniformBlock.mByteWidths[shaderType]           = uniformBlock.dataSize;
+                    d3dUniformBlock.mStructureByteStrides[shaderType] =
+                        uniformBlock.firstFieldArraySize == 0u
+                            ? uniformBlock.dataSize
+                            : uniformBlock.dataSize / uniformBlock.firstFieldArraySize;
+                }
             }
         }
 
@@ -2213,9 +2240,7 @@ void ProgramD3D::initializeUniformStorage(const gl::ShaderBitSet &availableShade
     }
 }
 
-void ProgramD3D::updateUniformBufferCache(
-    const gl::Caps &caps,
-    const gl::ShaderMap<unsigned int> &reservedShaderRegisterIndexes)
+void ProgramD3D::updateUniformBufferCache(const gl::Caps &caps)
 {
     if (mState.getUniformBlocks().empty())
     {
@@ -2225,13 +2250,14 @@ void ProgramD3D::updateUniformBufferCache(
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mShaderUBOCaches[shaderType].clear();
+        mShaderUBOCachesUseSB[shaderType].clear();
     }
 
     for (unsigned int uniformBlockIndex = 0; uniformBlockIndex < mD3DUniformBlocks.size();
          uniformBlockIndex++)
     {
-        const D3DInterfaceBlock &uniformBlock = mD3DUniformBlocks[uniformBlockIndex];
-        GLuint blockBinding                   = mState.getUniformBlockBinding(uniformBlockIndex);
+        const D3DUniformBlock &uniformBlock = mD3DUniformBlocks[uniformBlockIndex];
+        GLuint blockBinding                 = mState.getUniformBlockBinding(uniformBlockIndex);
 
         // Unnecessary to apply an unreferenced standard or shared UBO
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -2241,20 +2267,35 @@ void ProgramD3D::updateUniformBufferCache(
                 continue;
             }
 
-            unsigned int registerIndex = uniformBlock.mShaderRegisterIndexes[shaderType] -
-                                         reservedShaderRegisterIndexes[shaderType];
-            ASSERT(registerIndex <
-                   static_cast<unsigned int>(caps.maxShaderUniformBlocks[shaderType]));
-
-            std::vector<int> &shaderUBOcache = mShaderUBOCaches[shaderType];
-            if (shaderUBOcache.size() <= registerIndex)
+            bool useStructuredBuffer   = uniformBlock.mUseStructuredBuffers[shaderType];
+            unsigned int registerIndex = uniformBlock.mShaderRegisterIndexes[shaderType];
+            if (useStructuredBuffer)
             {
-                shaderUBOcache.resize(registerIndex + 1, -1);
+                D3DUBOCacheUseSB cacheUseSB;
+                cacheUseSB.registerIndex       = registerIndex;
+                cacheUseSB.binding             = blockBinding;
+                cacheUseSB.byteWidth           = uniformBlock.mByteWidths[shaderType];
+                cacheUseSB.structureByteStride = uniformBlock.mStructureByteStrides[shaderType];
+                mShaderUBOCachesUseSB[shaderType].push_back(cacheUseSB);
             }
-
-            ASSERT(shaderUBOcache[registerIndex] == -1);
-            shaderUBOcache[registerIndex] = blockBinding;
+            else
+            {
+                ASSERT(registerIndex <
+                       static_cast<unsigned int>(caps.maxShaderUniformBlocks[shaderType]));
+                D3DUBOCache cache;
+                cache.registerIndex = registerIndex;
+                cache.binding       = blockBinding;
+                mShaderUBOCaches[shaderType].push_back(cache);
+            }
         }
+    }
+
+    for (gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        GLuint uniformBlockCount = static_cast<GLuint>(mShaderUBOCaches[shaderType].size() +
+                                                       mShaderUBOCachesUseSB[shaderType].size());
+        ASSERT(uniformBlockCount <=
+               static_cast<unsigned int>(caps.maxShaderUniformBlocks[shaderType]));
     }
 }
 
@@ -2276,9 +2317,16 @@ unsigned int ProgramD3D::getShaderStorageBufferRegisterIndex(GLuint blockIndex,
     return mD3DShaderStorageBlocks[blockIndex].mShaderRegisterIndexes[shaderType];
 }
 
-const std::vector<GLint> &ProgramD3D::getShaderUniformBufferCache(gl::ShaderType shaderType) const
+const std::vector<D3DUBOCache> &ProgramD3D::getShaderUniformBufferCache(
+    gl::ShaderType shaderType) const
 {
     return mShaderUBOCaches[shaderType];
+}
+
+const std::vector<D3DUBOCacheUseSB> &ProgramD3D::getShaderUniformBufferCacheUseSB(
+    gl::ShaderType shaderType) const
+{
+    return mShaderUBOCachesUseSB[shaderType];
 }
 
 void ProgramD3D::dirtyAllUniforms()

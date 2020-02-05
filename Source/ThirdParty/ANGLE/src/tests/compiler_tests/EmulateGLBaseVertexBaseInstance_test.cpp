@@ -102,7 +102,7 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, EmulatesUniform)
 #ifdef ANGLE_ENABLE_VULKAN
     EXPECT_TRUE(foundInCode(
         SH_GLSL_VULKAN_OUTPUT,
-        "uniform defaultUniforms\n{\n    int angle_BaseInstance;\n    int angle_BaseVertex;"));
+        "uniform defaultUniformsVS\n{\n    int angle_BaseInstance;\n    int angle_BaseVertex;"));
 #endif
 #ifdef ANGLE_ENABLE_HLSL
     EXPECT_TRUE(foundInCode(SH_HLSL_3_0_OUTPUT, "uniform int angle_BaseVertex : register"));

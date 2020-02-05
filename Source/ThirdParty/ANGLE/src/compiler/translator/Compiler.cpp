@@ -350,7 +350,7 @@ TIntermBlock *TCompiler::compileTreeImpl(const char *const shaderStrings[],
     ASSERT(GetGlobalPoolAllocator());
 
     // Reset the extension behavior for each compilation unit.
-    ResetExtensionBehavior(mExtensionBehavior);
+    ResetExtensionBehavior(mResources, mExtensionBehavior, compileOptions);
 
     // If gl_DrawID is not supported, remove it from the available extensions
     // Currently we only allow emulation of gl_DrawID
@@ -473,6 +473,8 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
     mPragma = parseContext.pragma();
     mSymbolTable.setGlobalInvariant(mPragma.stdgl.invariantAll);
 
+    mEarlyFragmentTestsSpecified = parseContext.isEarlyFragmentTestsSpecified();
+
     mComputeShaderLocalSizeDeclared = parseContext.isComputeShaderLocalSizeDeclared();
     mComputeShaderLocalSize         = parseContext.getComputeShaderLocalSize();
 
@@ -485,6 +487,17 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
         mGeometryShaderMaxVertices         = parseContext.getGeometryShaderMaxVertices();
         mGeometryShaderInvocations         = parseContext.getGeometryShaderInvocations();
     }
+}
+
+unsigned int TCompiler::getSharedMemorySize() const
+{
+    unsigned int sharedMemSize = 0;
+    for (const sh::ShaderVariable &var : mSharedVariables)
+    {
+        sharedMemSize += var.getExternalSize();
+    }
+
+    return sharedMemSize;
 }
 
 bool TCompiler::validateAST(TIntermNode *root)
@@ -767,8 +780,9 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     {
         ASSERT(!mVariablesCollected);
         CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
-                         &mOutputVaryings, &mUniformBlocks, &mShaderStorageBlocks, &mInBlocks,
-                         mResources.HashFunction, &mSymbolTable, mShaderType, mExtensionBehavior);
+                         &mOutputVaryings, &mSharedVariables, &mUniformBlocks,
+                         &mShaderStorageBlocks, &mInBlocks, mResources.HashFunction, &mSymbolTable,
+                         mShaderType, mExtensionBehavior);
         collectInterfaceBlocks();
         mVariablesCollected = true;
         if (compileOptions & SH_USE_UNUSED_STANDARD_SHARED_BLOCKS)
@@ -1035,6 +1049,7 @@ void TCompiler::setResourceString()
         << ":OVR_multiview:" << mResources.OVR_multiview
         << ":EXT_YUV_target:" << mResources.EXT_YUV_target
         << ":EXT_geometry_shader:" << mResources.EXT_geometry_shader
+        << ":EXT_gpu_shader5:" << mResources.EXT_gpu_shader5
         << ":OES_texture_3D:" << mResources.OES_texture_3D
         << ":MaxVertexOutputVectors:" << mResources.MaxVertexOutputVectors
         << ":MaxFragmentInputVectors:" << mResources.MaxFragmentInputVectors
@@ -1113,6 +1128,7 @@ void TCompiler::clearResults()
     mUniforms.clear();
     mInputVaryings.clear();
     mOutputVaryings.clear();
+    mSharedVariables.clear();
     mInterfaceBlocks.clear();
     mUniformBlocks.clear();
     mShaderStorageBlocks.clear();
@@ -1440,6 +1456,14 @@ bool TCompiler::isVaryingDefined(const char *varyingName)
     return false;
 }
 
+void EmitEarlyFragmentTestsGLSL(const TCompiler &compiler, TInfoSinkBase &sink)
+{
+    if (compiler.isEarlyFragmentTestsSpecified())
+    {
+        sink << "layout (early_fragment_tests) in;\n";
+    }
+}
+
 void EmitWorkGroupSizeGLSL(const TCompiler &compiler, TInfoSinkBase &sink)
 {
     if (compiler.isComputeShaderLocalSizeDeclared())
@@ -1452,6 +1476,7 @@ void EmitWorkGroupSizeGLSL(const TCompiler &compiler, TInfoSinkBase &sink)
 
 void EmitMultiviewGLSL(const TCompiler &compiler,
                        const ShCompileOptions &compileOptions,
+                       const TExtension extension,
                        const TBehavior behavior,
                        TInfoSinkBase &sink)
 {
@@ -1476,7 +1501,12 @@ void EmitMultiviewGLSL(const TCompiler &compiler,
     }
     else
     {
-        sink << "#extension GL_OVR_multiview2 : " << GetBehaviorString(behavior) << "\n";
+        sink << "#extension GL_OVR_multiview";
+        if (extension == TExtension::OVR_multiview2)
+        {
+            sink << "2";
+        }
+        sink << " : " << GetBehaviorString(behavior) << "\n";
 
         const auto &numViews = compiler.getNumViews();
         if (isVertexShader && numViews != -1)

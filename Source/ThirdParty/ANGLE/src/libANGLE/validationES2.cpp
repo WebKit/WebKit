@@ -347,7 +347,9 @@ bool IsValidCopyTextureSourceTarget(Context *context, TextureType type)
         case TextureType::Rectangle:
             return context->getExtensions().textureRectangle;
         case TextureType::External:
-            return context->getExtensions().eglImageExternal;
+            return context->getExtensions().eglImageExternalOES;
+        case TextureType::VideoImage:
+            return context->getExtensions().webglVideoTexture;
         default:
             return false;
     }
@@ -591,7 +593,7 @@ bool ValidateES2CopyTexImageParameters(Context *context,
                 return false;
         }
 
-        if (formatInfo.type == GL_FLOAT && !context->getExtensions().textureFloat)
+        if (formatInfo.type == GL_FLOAT && !context->getExtensions().textureFloatOES)
         {
             context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
             return false;
@@ -700,7 +702,7 @@ bool ValidateES2CopyTexImageParameters(Context *context,
                 }
                 break;
             case GL_ETC1_RGB8_OES:
-                if (context->getExtensions().compressedETC1RGB8Texture)
+                if (context->getExtensions().compressedETC1RGB8TextureOES)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
@@ -774,7 +776,8 @@ bool ValidateES2CopyTexImageParameters(Context *context,
             case GL_DEPTH_STENCIL_OES:
             case GL_DEPTH24_STENCIL8_OES:
                 if (context->getExtensions().depthTextureAny() ||
-                    context->getExtensions().packedDepthStencil)
+                    context->getExtensions().packedDepthStencilOES ||
+                    context->getExtensions().depthTextureCubeMapOES)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
@@ -870,13 +873,15 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
             return context->getClientVersion() < Version(2, 0);
         case GL_POINT_SIZE_ARRAY_OES:
             return context->getClientVersion() < Version(2, 0) &&
-                   context->getExtensions().pointSizeArray;
+                   context->getExtensions().pointSizeArrayOES;
         case GL_TEXTURE_CUBE_MAP:
             return context->getClientVersion() < Version(2, 0) &&
-                   context->getExtensions().textureCubeMap;
+                   context->getExtensions().textureCubeMapOES;
         case GL_POINT_SPRITE_OES:
             return context->getClientVersion() < Version(2, 0) &&
-                   context->getExtensions().pointSprite;
+                   context->getExtensions().pointSpriteOES;
+        case GL_TEXTURE_RECTANGLE_ANGLE:
+            return context->getExtensions().webglCompatibility;
         default:
             return false;
     }
@@ -1248,6 +1253,7 @@ bool ValidateES2TexImageParametersBase(Context *context,
     {
         case TextureType::_2D:
         case TextureType::External:
+        case TextureType::VideoImage:
             if (width > (caps.max2DTextureSize >> level) ||
                 height > (caps.max2DTextureSize >> level))
             {
@@ -1422,7 +1428,7 @@ bool ValidateES2TexImageParametersBase(Context *context,
                         break;
                     case GL_FLOAT:
                     case GL_HALF_FLOAT_OES:
-                        if (!context->getExtensions().textureFloat)
+                        if (!context->getExtensions().textureFloatOES)
                         {
                             context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                             return false;
@@ -1591,7 +1597,7 @@ bool ValidateES2TexImageParametersBase(Context *context,
                 }
                 break;
             case GL_ETC1_RGB8_OES:
-                if (context->getExtensions().compressedETC1RGB8Texture)
+                if (context->getExtensions().compressedETC1RGB8TextureOES)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
@@ -1651,17 +1657,36 @@ bool ValidateES2TexImageParametersBase(Context *context,
             case GL_DEPTH_COMPONENT:
             case GL_DEPTH_STENCIL_OES:
                 if (!context->getExtensions().depthTextureANGLE &&
-                    !(context->getExtensions().packedDepthStencil &&
+                    !((context->getExtensions().packedDepthStencilOES ||
+                       context->getExtensions().depthTextureCubeMapOES) &&
                       context->getExtensions().depthTextureOES))
                 {
                     context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                     return false;
                 }
-                if (target != TextureTarget::_2D)
+
+                switch (target)
                 {
-                    context->validationError(GL_INVALID_OPERATION, kMismatchedTargetAndFormat);
-                    return false;
+                    case TextureTarget::_2D:
+                        break;
+                    case TextureTarget::CubeMapNegativeX:
+                    case TextureTarget::CubeMapNegativeY:
+                    case TextureTarget::CubeMapNegativeZ:
+                    case TextureTarget::CubeMapPositiveX:
+                    case TextureTarget::CubeMapPositiveY:
+                    case TextureTarget::CubeMapPositiveZ:
+                        if (!context->getExtensions().depthTextureCubeMapOES)
+                        {
+                            context->validationError(GL_INVALID_OPERATION,
+                                                     kMismatchedTargetAndFormat);
+                            return false;
+                        }
+                        break;
+                    default:
+                        context->validationError(GL_INVALID_OPERATION, kMismatchedTargetAndFormat);
+                        return false;
                 }
+
                 // OES_depth_texture supports loading depth data and multiple levels,
                 // but ANGLE_depth_texture does not
                 if (!context->getExtensions().depthTextureOES)
@@ -1754,7 +1779,8 @@ bool ValidateES2TexImageParametersBase(Context *context,
 
                 case GL_DEPTH_STENCIL:
                     if (!(context->getExtensions().depthTextureANGLE ||
-                          context->getExtensions().packedDepthStencil))
+                          context->getExtensions().packedDepthStencilOES ||
+                          context->getExtensions().depthTextureCubeMapOES))
                     {
                         context->validationError(GL_INVALID_ENUM, kInvalidFormat);
                         return false;
@@ -1827,7 +1853,7 @@ bool ValidateES2TexImageParametersBase(Context *context,
 
         if (type == GL_FLOAT)
         {
-            if (!context->getExtensions().textureFloat)
+            if (!context->getExtensions().textureFloatOES)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -1987,7 +2013,7 @@ bool ValidateES2TexStorageParameters(Context *context,
             return false;
     }
 
-    if (levels != 1 && !context->getExtensions().textureNPOT)
+    if (levels != 1 && !context->getExtensions().textureNPOTOES)
     {
         if (!gl::isPow2(width) || !gl::isPow2(height))
         {
@@ -2021,7 +2047,7 @@ bool ValidateES2TexStorageParameters(Context *context,
             }
             break;
         case GL_ETC1_RGB8_OES:
-            if (!context->getExtensions().compressedETC1RGB8Texture)
+            if (!context->getExtensions().compressedETC1RGB8TextureOES)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -2063,7 +2089,7 @@ bool ValidateES2TexStorageParameters(Context *context,
         case GL_ALPHA32F_EXT:
         case GL_LUMINANCE32F_EXT:
         case GL_LUMINANCE_ALPHA32F_EXT:
-            if (!context->getExtensions().textureFloat)
+            if (!context->getExtensions().textureFloatOES)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -2098,7 +2124,7 @@ bool ValidateES2TexStorageParameters(Context *context,
             break;
         case GL_R32F_EXT:
         case GL_RG32F_EXT:
-            if (!context->getExtensions().textureRG || !context->getExtensions().textureFloat)
+            if (!context->getExtensions().textureRG || !context->getExtensions().textureFloatOES)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -2111,11 +2137,23 @@ bool ValidateES2TexStorageParameters(Context *context,
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
             }
-            if (target != TextureType::_2D)
+
+            switch (target)
             {
-                context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
-                return false;
+                case TextureType::_2D:
+                    break;
+                case TextureType::CubeMap:
+                    if (!context->getExtensions().depthTextureCubeMapOES)
+                    {
+                        context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                        return false;
+                    }
+                    break;
+                default:
+                    context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                    return false;
             }
+
             // ANGLE_depth_texture only supports 1-level textures
             if (!context->getExtensions().depthTextureOES)
             {
@@ -2128,18 +2166,32 @@ bool ValidateES2TexStorageParameters(Context *context,
             break;
         case GL_DEPTH24_STENCIL8_OES:
             if (!(context->getExtensions().depthTextureANGLE ||
-                  (context->getExtensions().packedDepthStencil &&
+                  ((context->getExtensions().packedDepthStencilOES ||
+                    context->getExtensions().depthTextureCubeMapOES) &&
                    context->getExtensions().textureStorage)))
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
             }
-            if (target != TextureType::_2D)
+
+            switch (target)
             {
-                context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
-                return false;
+                case TextureType::_2D:
+                    break;
+                case TextureType::CubeMap:
+                    if (!context->getExtensions().depthTextureCubeMapOES)
+                    {
+                        context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                        return false;
+                    }
+                    break;
+                default:
+                    context->validationError(GL_INVALID_OPERATION, kInvalidTextureTarget);
+                    return false;
             }
-            if (!context->getExtensions().packedDepthStencil)
+
+            if (!context->getExtensions().packedDepthStencilOES &&
+                !context->getExtensions().depthTextureCubeMapOES)
             {
                 // ANGLE_depth_texture only supports 1-level textures
                 if (levels != 1)
@@ -2200,7 +2252,7 @@ bool ValidateDiscardFramebufferEXT(Context *context,
 
 bool ValidateBindVertexArrayOES(Context *context, VertexArrayID array)
 {
-    if (!context->getExtensions().vertexArrayObject)
+    if (!context->getExtensions().vertexArrayObjectOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -2211,7 +2263,7 @@ bool ValidateBindVertexArrayOES(Context *context, VertexArrayID array)
 
 bool ValidateDeleteVertexArraysOES(Context *context, GLsizei n, const VertexArrayID *arrays)
 {
-    if (!context->getExtensions().vertexArrayObject)
+    if (!context->getExtensions().vertexArrayObjectOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -2222,7 +2274,7 @@ bool ValidateDeleteVertexArraysOES(Context *context, GLsizei n, const VertexArra
 
 bool ValidateGenVertexArraysOES(Context *context, GLsizei n, VertexArrayID *arrays)
 {
-    if (!context->getExtensions().vertexArrayObject)
+    if (!context->getExtensions().vertexArrayObjectOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -2233,7 +2285,7 @@ bool ValidateGenVertexArraysOES(Context *context, GLsizei n, VertexArrayID *arra
 
 bool ValidateIsVertexArrayOES(Context *context, VertexArrayID array)
 {
-    if (!context->getExtensions().vertexArrayObject)
+    if (!context->getExtensions().vertexArrayObjectOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -2248,7 +2300,7 @@ bool ValidateProgramBinaryOES(Context *context,
                               const void *binary,
                               GLint length)
 {
-    if (!context->getExtensions().getProgramBinary)
+    if (!context->getExtensions().getProgramBinaryOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -2264,7 +2316,7 @@ bool ValidateGetProgramBinaryOES(Context *context,
                                  GLenum *binaryFormat,
                                  void *binary)
 {
-    if (!context->getExtensions().getProgramBinary)
+    if (!context->getExtensions().getProgramBinaryOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -3271,7 +3323,7 @@ bool ValidateGetBufferPointervOES(Context *context,
                                   GLenum pname,
                                   void **params)
 {
-    if (!context->getExtensions().mapBuffer)
+    if (!context->getExtensions().mapBufferOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -3282,7 +3334,7 @@ bool ValidateGetBufferPointervOES(Context *context,
 
 bool ValidateMapBufferOES(Context *context, BufferBinding target, GLenum access)
 {
-    if (!context->getExtensions().mapBuffer)
+    if (!context->getExtensions().mapBufferOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -3319,7 +3371,7 @@ bool ValidateMapBufferOES(Context *context, BufferBinding target, GLenum access)
 
 bool ValidateUnmapBufferOES(Context *context, BufferBinding target)
 {
-    if (!context->getExtensions().mapBuffer)
+    if (!context->getExtensions().mapBufferOES)
     {
         context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
@@ -5854,7 +5906,7 @@ bool ValidateHint(Context *context, GLenum target, GLenum mode)
 
         case GL_FRAGMENT_SHADER_DERIVATIVE_HINT:
             if (context->getClientVersion() < ES_3_0 &&
-                !context->getExtensions().standardDerivatives)
+                !context->getExtensions().standardDerivativesOES)
             {
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -6478,7 +6530,7 @@ bool ValidateFramebufferTexture2D(Context *context,
 {
     // Attachments are required to be bound to level 0 without ES3 or the GL_OES_fbo_render_mipmap
     // extension
-    if (context->getClientMajorVersion() < 3 && !context->getExtensions().fboRenderMipmap &&
+    if (context->getClientMajorVersion() < 3 && !context->getExtensions().fboRenderMipmapOES &&
         level != 0)
     {
         context->validationError(GL_INVALID_VALUE, kInvalidFramebufferTextureLevel);
@@ -6600,7 +6652,7 @@ bool ValidateFramebufferTexture3DOES(Context *context,
 
     // Attachments are required to be bound to level 0 without ES3 or the
     // GL_OES_fbo_render_mipmap extension
-    if (context->getClientMajorVersion() < 3 && !context->getExtensions().fboRenderMipmap &&
+    if (context->getClientMajorVersion() < 3 && !context->getExtensions().fboRenderMipmapOES &&
         level != 0)
     {
         context->validationError(GL_INVALID_VALUE, kInvalidFramebufferTextureLevel);
@@ -6735,7 +6787,7 @@ bool ValidateGenerateMipmap(Context *context, TextureType target)
     }
 
     // Non-power of 2 ES2 check
-    if (context->getClientVersion() < Version(3, 0) && !context->getExtensions().textureNPOT &&
+    if (context->getClientVersion() < Version(3, 0) && !context->getExtensions().textureNPOTOES &&
         (!isPow2(static_cast<int>(texture->getWidth(baseTarget, 0))) ||
          !isPow2(static_cast<int>(texture->getHeight(baseTarget, 0)))))
     {
@@ -6976,7 +7028,7 @@ bool ValidateUseProgram(Context *context, ShaderProgramID program)
 
 bool ValidateDeleteFencesNV(Context *context, GLsizei n, const FenceNVID *fences)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -6993,7 +7045,7 @@ bool ValidateDeleteFencesNV(Context *context, GLsizei n, const FenceNVID *fences
 
 bool ValidateFinishFenceNV(Context *context, FenceNVID fence)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7018,7 +7070,7 @@ bool ValidateFinishFenceNV(Context *context, FenceNVID fence)
 
 bool ValidateGenFencesNV(Context *context, GLsizei n, FenceNVID *fences)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7035,7 +7087,7 @@ bool ValidateGenFencesNV(Context *context, GLsizei n, FenceNVID *fences)
 
 bool ValidateGetFenceivNV(Context *context, FenceNVID fence, GLenum pname, GLint *params)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7111,7 +7163,7 @@ bool ValidateGetTranslatedShaderSourceANGLE(Context *context,
 
 bool ValidateIsFenceNV(Context *context, FenceNVID fence)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7122,7 +7174,7 @@ bool ValidateIsFenceNV(Context *context, FenceNVID fence)
 
 bool ValidateSetFenceNV(Context *context, FenceNVID fence, GLenum condition)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7147,7 +7199,7 @@ bool ValidateSetFenceNV(Context *context, FenceNVID fence, GLenum condition)
 
 bool ValidateTestFenceNV(Context *context, FenceNVID fence)
 {
-    if (!context->getExtensions().fence)
+    if (!context->getExtensions().fenceNV)
     {
         context->validationError(GL_INVALID_OPERATION, kNVFenceNotSupported);
         return false;
@@ -7530,14 +7582,19 @@ void RecordBindTextureTypeError(Context *context, TextureType target)
             break;
 
         case TextureType::_2DMultisampleArray:
-            ASSERT(!context->getExtensions().textureStorageMultisample2DArray);
+            ASSERT(!context->getExtensions().textureStorageMultisample2DArrayOES);
             context->validationError(GL_INVALID_ENUM, kMultisampleArrayExtensionRequired);
             break;
 
         case TextureType::External:
-            ASSERT(!context->getExtensions().eglImageExternal &&
-                   !context->getExtensions().eglStreamConsumerExternal);
+            ASSERT(!context->getExtensions().eglImageExternalOES &&
+                   !context->getExtensions().eglStreamConsumerExternalNV);
             context->validationError(GL_INVALID_ENUM, kExternalTextureNotSupported);
+            break;
+
+        case TextureType::VideoImage:
+            ASSERT(!context->getExtensions().webglVideoTexture);
+            context->validationError(GL_INVALID_ENUM, kExtensionNotEnabled);
             break;
 
         default:
