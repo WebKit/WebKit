@@ -1,3 +1,56 @@
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255149. rdar://problem/58942712
+
+    [Web Animations] Add support for the options parameter to getAnimations()
+    https://bugs.webkit.org/show_bug.cgi?id=202191
+    <rdar://problem/55697751>
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark some WPT progressions. In the CSS Animations case, we are returning the expected animations but not quite sorted as expected.
+    
+    * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+    * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+    
+    Source/WebCore:
+    
+    Add support for the GetAnimationsOptions dictionary as a parameter to Animatable.getAnimations(). When it is provided
+    and has its sole "subtree" property set to "true", we call Document.getAnimations() and filter out animations that are
+    not targeting elements that are either this element, one of its descendants, one of its pseudo-elements or one of its
+    descendants' pseudo-elements.
+    
+    * CMakeLists.txt:
+    * DerivedSources-input.xcfilelist:
+    * DerivedSources-output.xcfilelist:
+    * DerivedSources.make:
+    * Headers.cmake:
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * animation/Animatable.idl:
+    * animation/GetAnimationsOptions.h: Added.
+    * animation/GetAnimationsOptions.idl: Added.
+    * dom/Element.cpp:
+    (WebCore::Element::getAnimations):
+    * dom/Element.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255149 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Add support for the options parameter to getAnimations()
+            https://bugs.webkit.org/show_bug.cgi?id=202191
+            <rdar://problem/55697751>
+
+            Reviewed by Antti Koivisto.
+
+            Mark some WPT progressions. In the CSS Animations case, we are returning the expected animations but not quite sorted as expected.
+
+            * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+            * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+
 2020-01-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254408. rdar://problem/58606270
