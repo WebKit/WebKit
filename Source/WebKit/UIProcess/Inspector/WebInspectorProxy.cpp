@@ -629,11 +629,19 @@ void WebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
+    ASSERT(!filename.isEmpty());
+    if (filename.isEmpty())
+        return;
+
     platformSave(filename, content, base64Encoded, forceSaveAs);
 }
 
 void WebInspectorProxy::append(const String& filename, const String& content)
 {
+    ASSERT(!filename.isEmpty());
+    if (filename.isEmpty())
+        return;
+
     platformAppend(filename, content);
 }
 
