@@ -193,7 +193,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
     virtual bool supportsSettingCursor() { return true; }
 
-    virtual bool shouldUseMouseEventsForSelection() { return true; }
+    virtual bool shouldUseMouseEventForSelection(const PlatformMouseEvent&) { return true; }
 
     virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
     virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }

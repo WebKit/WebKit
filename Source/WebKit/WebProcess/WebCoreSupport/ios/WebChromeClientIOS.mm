@@ -40,6 +40,7 @@
 #import <WebCore/ContentChangeObserver.h>
 #import <WebCore/Icon.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -181,11 +182,12 @@ void WebChromeClient::didDestroyEditableImage(GraphicsLayer::EmbeddedViewID embe
 #endif
 }
 
-bool WebChromeClient::shouldUseMouseEventsForSelection()
+bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent& event)
 {
     // In macCatalyst, despite getting mouse events, we still want UITextInteraction and friends to own selection gestures.
+    // However, we need to allow single-clicks to set the selection, because that is how UITextInteraction is activated.
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    return false;
+    return event.clickCount() <= 1;
 #else
     return true;
 #endif

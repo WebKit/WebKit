@@ -731,10 +731,12 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     return handled;
 }
 
-bool EventHandler::canMouseDownStartSelect(Node* node)
+bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& event)
 {
+    auto* node = event.targetNode();
+
     if (Page* page = m_frame.page()) {
-        if (!page->chrome().client().shouldUseMouseEventsForSelection())
+        if (!page->chrome().client().shouldUseMouseEventForSelection(event.event()))
             return false;
     }
     
@@ -768,7 +770,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection if it wasn't in a scrollbar.
-    m_mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode()) && !event.scrollbar();
+    m_mouseDownMayStartSelect = canMouseDownStartSelect(event) && !event.scrollbar();
     
 #if ENABLE(DRAG_SUPPORT)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
