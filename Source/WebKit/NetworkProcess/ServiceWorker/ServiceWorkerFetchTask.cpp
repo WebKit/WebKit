@@ -50,8 +50,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ServiceWorkerFetchTask::ServiceWorkerFetchTask(NetworkResourceLoader& loader, ResourceRequest&& request, SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, bool shouldSoftUpdate)
-    : m_loader(loader)
+ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerConnection, NetworkResourceLoader& loader, ResourceRequest&& request, SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, bool shouldSoftUpdate)
+    : m_swServerConnection(makeWeakPtr(swServerConnection))
+    , m_loader(loader)
     , m_fetchIdentifier(WebCore::FetchIdentifier::generate())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_serviceWorkerIdentifier(serviceWorkerIdentifier)
@@ -239,8 +240,11 @@ void ServiceWorkerFetchTask::timeoutTimerFired()
     softUpdateIfNeeded();
 
     RELEASE_LOG_ERROR_IF_ALLOWED("timeoutTimerFired: (hasServiceWorkerConnection=%d)", !!m_serviceWorkerConnection);
-    if (m_serviceWorkerConnection)
-        m_serviceWorkerConnection->fetchTaskTimedOut(serviceWorkerIdentifier());
+
+    contextClosed();
+
+    if (m_swServerConnection)
+        m_swServerConnection->fetchTaskTimedOut(serviceWorkerIdentifier());
 }
 
 void ServiceWorkerFetchTask::softUpdateIfNeeded()
