@@ -42,6 +42,7 @@
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "Settings.h"
 #include <JavaScriptCore/VM.h>
 
 static const Seconds defaultAnimationInterval { 15_ms };
@@ -65,8 +66,13 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(&document)
     , m_originTime(originTime)
 {
-    if (m_document && m_document->page() && !m_document->page()->isVisible())
-        suspendAnimations();
+    if (m_document) {
+        m_document->addTimeline(*this);
+        if (auto* page = m_document->page()) {
+            if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
+                suspendAnimations();
+        }
+    }
 }
 
 DocumentTimeline::~DocumentTimeline() = default;
