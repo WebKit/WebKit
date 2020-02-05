@@ -1,3 +1,12 @@
+2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION (r228901): Layout Test http/tests/appcache/abort-cache-onprogress.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=183684
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: replaceTextInRange should handle when called on the WebArea element
