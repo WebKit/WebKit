@@ -2868,9 +2868,11 @@ void Page::forEachDocument(const Function<void(Document&)>& functor) const
 
 void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 {
+#if ENABLE(VIDEO)
     forEachDocument([&] (Document& document) {
         document.forEachMediaElement(functor);
     });
+#endif
 }
 
 void Page::applicationWillResignActive()
