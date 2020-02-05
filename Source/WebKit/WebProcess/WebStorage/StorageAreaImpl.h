@@ -43,13 +43,13 @@ class StorageAreaImpl final : public WebCore::StorageArea {
 public:
     using Identifier = StorageAreaImplIdentifier;
 
-    static Ref<StorageAreaImpl> create(Ref<StorageAreaMap>&&);
+    static Ref<StorageAreaImpl> create(StorageAreaMap&);
     virtual ~StorageAreaImpl();
 
     Identifier identifier() const { return m_identifier; }
 
 private:
-    StorageAreaImpl(Ref<StorageAreaMap>&&);
+    StorageAreaImpl(StorageAreaMap&);
 
     // WebCore::StorageArea.
     unsigned length() override;
@@ -66,7 +66,7 @@ private:
     void closeDatabaseIfIdle() override;
 
     Identifier m_identifier;
-    Ref<StorageAreaMap> m_storageAreaMap;
+    WeakPtr<StorageAreaMap> m_storageAreaMap;
 };
 
 } // namespace WebKit

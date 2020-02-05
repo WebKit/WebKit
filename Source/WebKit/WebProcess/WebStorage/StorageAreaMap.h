@@ -46,9 +46,10 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap final : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
+class StorageAreaMap final : private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StorageAreaMap> create(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
+    StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
 
     WebCore::StorageType type() const { return m_type; }
@@ -70,8 +71,6 @@ public:
     void disconnect();
 
 private:
-    StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
-
     void didSetItem(uint64_t mapSeed, const String& key, bool quotaError);
     void didRemoveItem(uint64_t mapSeed, const String& key);
     void didClear(uint64_t mapSeed);

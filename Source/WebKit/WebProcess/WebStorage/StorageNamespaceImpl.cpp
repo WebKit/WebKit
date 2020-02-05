@@ -102,12 +102,10 @@ void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
 
 Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOriginData)
 {
-    RefPtr<StorageAreaMap> map;
-    auto* mapPtr = m_storageAreaMaps.ensure(securityOriginData, [&] {
-        map = StorageAreaMap::create(*this, securityOriginData.securityOrigin());
-        return map.get();
+    auto& map = m_storageAreaMaps.ensure(securityOriginData, [&] {
+        return makeUnique<StorageAreaMap>(*this, securityOriginData.securityOrigin());
     }).iterator->value;
-    return StorageAreaImpl::create(*mapPtr);
+    return StorageAreaImpl::create(*map);
 }
 
 Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
