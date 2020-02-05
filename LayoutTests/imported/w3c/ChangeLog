@@ -1,3 +1,13 @@
+2020-02-04  youenn fablet  <youenn@apple.com>
+
+        MediaDevices should handle changes of iframe allow attribute value
+        https://bugs.webkit.org/show_bug.cgi?id=207112
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaStream-feature-policy-none.https-expected.txt:
+
 2020-02-02  Rob Buis  <rbuis@igalia.com>
 
         Import WPT tests to verify pings do not send a referrer header

@@ -1,3 +1,5 @@
-CONSOLE MESSAGE: line 4: Trying to call enumerateDevices from a frame without correct 'allow' attribute.
+CONSOLE MESSAGE: line 4: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: line 4: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: line 4: Not allowed to call enumerateDevices.
       
 PASS: "allow" attribute respected in all iframes

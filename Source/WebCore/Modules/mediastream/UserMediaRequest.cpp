@@ -198,23 +198,26 @@ void UserMediaRequest::start()
     // 6.10 Permission Failure: Reject p with a new DOMException object whose name attribute has
     //      the value NotAllowedError.
 
-    OptionSet<UserMediaController::CaptureType> types;
-    UserMediaController::BlockedCaller caller;
-    if (m_request.type == MediaStreamRequest::Type::DisplayMedia) {
-        types.add(UserMediaController::CaptureType::Display);
-        caller = UserMediaController::BlockedCaller::GetDisplayMedia;
-    } else {
-        if (m_request.audioConstraints.isValid)
-            types.add(UserMediaController::CaptureType::Microphone);
-        if (m_request.videoConstraints.isValid)
-            types.add(UserMediaController::CaptureType::Camera);
-        caller = UserMediaController::BlockedCaller::GetUserMedia;
-    }
-    auto access = controller->canCallGetUserMedia(document, types);
-    if (access != UserMediaController::GetUserMediaAccess::CanCall) {
-        deny(MediaAccessDenialReason::PermissionDenied);
-        controller->logGetUserMediaDenial(document, access, caller);
-        return;
+    switch (m_request.type) {
+    case MediaStreamRequest::Type::DisplayMedia:
+        if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::DisplayCapture, document)) {
+            deny(MediaAccessDenialReason::PermissionDenied);
+            controller->logGetDisplayMediaDenial(document);
+            return;
+        }
+        break;
+    case MediaStreamRequest::Type::UserMedia:
+        if (m_request.audioConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document)) {
+            deny(MediaAccessDenialReason::PermissionDenied);
+            controller->logGetUserMediaDenial(document);
+            return;
+        }
+        if (m_request.videoConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document)) {
+            deny(MediaAccessDenialReason::PermissionDenied);
+            controller->logGetUserMediaDenial(document);
+            return;
+        }
+        break;
     }
 
     PlatformMediaSessionManager::sharedManager().prepareToSendUserMediaPermissionRequest();

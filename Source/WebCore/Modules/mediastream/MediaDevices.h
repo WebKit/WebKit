@@ -121,8 +121,6 @@ private:
     bool m_listeningForDeviceChanges { false };
 
     Vector<Ref<MediaDeviceInfo>> m_devices;
-    bool m_canAccessCamera { false };
-    bool m_canAccessMicrophone { false };
 
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;
