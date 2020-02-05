@@ -26,11 +26,13 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "ComputedEffectTiming.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/Markable.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 #include <wtf/UniqueRef.h>
@@ -122,7 +124,7 @@ public:
     bool isCompletelyAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void updateRelevance();
-    void effectTimingDidChange();
+    void effectTimingDidChange(Optional<ComputedEffectTiming> = WTF::nullopt);
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
     void setSuspended(bool);
