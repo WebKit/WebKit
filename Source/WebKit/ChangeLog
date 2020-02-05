@@ -1,3 +1,10 @@
+2020-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, follow-up assertion fix after r255662.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
 2020-02-04  youenn fablet  <youenn@apple.com>
 
         NetworkProcess should be notified by UIProcess when its service worker process connection should be on
