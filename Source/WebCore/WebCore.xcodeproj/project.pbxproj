@@ -4913,7 +4913,7 @@
 		E4E8B4EC216B79E500B8834D /* SystemFontDatabaseCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4EA216B79E500B8834D /* SystemFontDatabaseCoreText.h */; };
 		E4E8B4F5216B956500B8834D /* FontCascadeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8B4F2216B8B6000B8834D /* FontCascadeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A1AC7822FAFD500017B75B /* ComplexLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E516699120FF9918009D2C27 /* ListButtonArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E516698F20FF9916009D2C27 /* ListButtonArrow@2x.png */; };
@@ -31600,6 +31600,7 @@
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 				269397241A4A5B6400E8349D /* NFA.h in Headers */,
+				E4E94D6122FF158A00DD191F /* ComplexLineLayout.h in Headers */,
 				269397221A4A412F00E8349D /* NFANode.h in Headers */,
 				267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */,
 				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,
