@@ -541,6 +541,7 @@ public:
     Style::Resolver& userAgentShadowTreeStyleResolver();
 
     CSSFontSelector& fontSelector() { return m_fontSelector; }
+    const CSSFontSelector& fontSelector() const { return m_fontSelector; }
 
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
     bool isIgnoringPendingStylesheets() const { return m_ignorePendingStylesheets; }

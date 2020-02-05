@@ -322,7 +322,18 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
 void BuilderState::updateFont()
 {
-    if (!m_fontDirty && m_style.fontCascade().fonts())
+    auto& fontSelector = const_cast<Document&>(document()).fontSelector();
+
+    auto needsUpdate = [&] {
+        if (m_fontDirty)
+            return true;
+        auto* fonts = m_style.fontCascade().fonts();
+        if (!fonts)
+            return true;
+        return false;
+    };
+
+    if (!needsUpdate())
         return;
 
 #if ENABLE(TEXT_AUTOSIZING)

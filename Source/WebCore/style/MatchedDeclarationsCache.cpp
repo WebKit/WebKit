@@ -30,6 +30,7 @@
 #include "config.h"
 #include "MatchedDeclarationsCache.h"
 
+#include "CSSFontSelector.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -59,6 +60,14 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
         return false;
     // The cache assumes static knowledge about which properties are inherited.
     if (style.hasExplicitlyInheritedProperties())
+        return false;
+
+    // Getting computed style after a font environment change but before full style resolution may involve styles with non-current fonts.
+    // Avoid caching them.
+    auto& fontSelector = element.document().fontSelector();
+    if (!style.fontCascade().isCurrent(fontSelector))
+        return false;
+    if (!parentStyle.fontCascade().isCurrent(fontSelector))
         return false;
 
     return true;
