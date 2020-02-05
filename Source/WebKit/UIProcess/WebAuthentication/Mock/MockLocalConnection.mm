@@ -97,6 +97,11 @@ void MockLocalConnection::getAttestation(const String& rpId, const String& usern
             (id)kSecValueRef: (id)key.get(),
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrLabel: (id)label,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
+            (id)kSecAttrNoLegacy: @YES
+#endif
         };
         OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
         ASSERT_UNUSED(status, !status);
