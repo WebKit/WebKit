@@ -29,6 +29,7 @@
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 

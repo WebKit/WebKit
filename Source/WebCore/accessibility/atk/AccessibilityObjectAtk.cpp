@@ -29,6 +29,7 @@
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "TextControlInnerElements.h"
+#include "WebKitAccessible.h"
 #include <glib-object.h>
 
 #if ENABLE(ACCESSIBILITY)

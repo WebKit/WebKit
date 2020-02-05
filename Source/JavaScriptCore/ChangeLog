@@ -1,3 +1,12 @@
+2020-02-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes early February 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=207227
+
+        Reviewed by Don Olmstead.
+
+        * bytecode/PolyProtoAccessChain.h: Add missing inclusions of StructureIDTable.h and VM.h
+
 2020-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build

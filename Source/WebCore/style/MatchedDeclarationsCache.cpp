@@ -31,6 +31,7 @@
 #include "MatchedDeclarationsCache.h"
 
 #include "CSSFontSelector.h"
+#include "FontCascade.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
