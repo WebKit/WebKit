@@ -1501,6 +1501,7 @@ const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 
 void WebProcessProxy::didCollectPrewarmInformation(const WebCore::RegistrableDomain& domain, const WebCore::PrewarmInformation& prewarmInformation)
 {
+    MESSAGE_CHECK(!domain.isEmpty());
     processPool().didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
