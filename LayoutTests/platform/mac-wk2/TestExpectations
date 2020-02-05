@@ -988,3 +988,5 @@ webkit.org/b/207209 [ Release ] inspector/heap/getPreview.html [ Pass Failure ]
 webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass Failure ]
 
 webkit.org/b/206627 storage/websql [ Skip ]
+
+webkit.org/b/207267 webgpu/whlsl/ensure-proper-variable-lifetime.html [ Pass Failure ]

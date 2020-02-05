@@ -1,3 +1,12 @@
+2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] webgpu/whlsl/ensure-proper-variable-lifetime.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207267
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
