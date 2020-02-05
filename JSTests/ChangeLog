@@ -1,5 +1,23 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255529. rdar://problem/59098310
+
+    Unreviewed. Don't dump disassembly in test.
+    
+    * stress/get-getter-setter-by-offset-not-always-safe-to-execute.js:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255529 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Saam Barati  <sbarati@apple.com>
+
+            Unreviewed. Don't dump disassembly in test.
+
+            * stress/get-getter-setter-by-offset-not-always-safe-to-execute.js:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255528. rdar://problem/59098310
 
     GetGetterSetterByOffset and GetGetter/GetSetter are not always safe to execute
