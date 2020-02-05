@@ -1,3 +1,17 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: [ iOS wk2 ] fast/scrolling/ios/scroll-events-back-forward.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207194
+        <rdar://problem/59148073>
+
+        Reviewed by Wenson Hsieh.
+
+        Test was flaky because it relied on a 10ms timer.
+
+        * fast/scrolling/ios/scroll-events-back-forward-expected.txt:
+        * fast/scrolling/ios/scroll-events-back-forward.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
 
         [iOS wk2 Debug] imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html is failing
