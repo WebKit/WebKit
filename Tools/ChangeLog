@@ -1,3 +1,14 @@
+2020-02-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Fix dependencies build
+        https://bugs.webkit.org/show_bug.cgi?id=207273
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules: Bumped wpebackend-fdo version to 1.4.1 and
+        added mesa as one of its deps. Added the xserver patch as well.
+        * gtk/patches/xserver-gl-version.patch: Added.
+
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r255595): page not closed after beforeunload handler returns true

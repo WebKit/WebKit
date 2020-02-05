@@ -315,6 +315,7 @@
             md5sum="3e47777ff034a331aed2322b078694a8">
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
       <patch file="xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch" strip="1"/>
+      <patch file="xserver-gl-version.patch" strip="1"/> <!-- This patch does not include the meson build fix -->
     </branch>
   </autotools>
 
@@ -459,9 +460,10 @@
     <dependencies>
       <dep package="libwpe"/>
       <dep package="glib"/>
+      <dep package="mesa"/>
     </dependencies>
-    <branch repo="wpewebkit" module="wpebackend-fdo-1.4.0.tar.xz" version="1.4.0"
-            hash="sha256:a919ca4a5bc445f9419a5b7f3781cfc98e5abcf5d7259eb1869f5ab20fd18baf"/>
+    <branch repo="wpewebkit" module="wpebackend-fdo-1.4.1.tar.xz" version="1.4.1"
+            hash="sha256:6249a0b7cbfa662206a8d2fa24e2c574e75c681ad0e93468091f1dc68ddb299d"/>
   </cmake>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
