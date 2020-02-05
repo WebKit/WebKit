@@ -108,6 +108,10 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 #if defined(__OBJC__)
 
+@interface NSURLSessionTask ()
+@property (readonly, retain) NSURLSessionTaskMetrics* _incompleteTaskMetrics;
+@end
+
 @interface NSURLCache ()
 - (CFURLCacheRef)_CFURLCache;
 @end
@@ -403,6 +407,7 @@ WTF_EXTERN_C_END
 
 @interface NSURLSessionTask ()
 - (void)_setExplicitCookieStorage:(CFHTTPCookieStorageRef)storage;
+@property (readonly) SSLProtocol _TLSNegotiatedProtocolVersion;
 @end
 
 #endif // defined(__OBJC__)
