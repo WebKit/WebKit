@@ -164,28 +164,6 @@ void WebSWServerToContextConnection::unregisterFetch(ServiceWorkerFetchTask& tas
     m_ongoingFetches.remove(task.fetchIdentifier());
 }
 
-void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    // Gather all fetches in this service worker.
-    Vector<ServiceWorkerFetchTask*> fetches;
-    for (auto& fetchTask : m_ongoingFetches.values()) {
-        if (fetchTask->serviceWorkerIdentifier() == serviceWorkerIdentifier)
-            fetches.append(fetchTask.get());
-    }
-
-    // Signal load failure for them.
-    for (auto* fetchTask : fetches)
-        fetchTask->contextClosed();
-
-    if (m_server) {
-        if (auto* worker = m_server->workerByID(serviceWorkerIdentifier)) {
-            worker->setHasTimedOutAnyFetchTasks();
-            if (worker->isRunning())
-                m_server->syncTerminateWorker(*worker);
-        }
-    }
-}
-
 WebCore::ProcessIdentifier WebSWServerToContextConnection::webProcessIdentifier() const
 {
     return m_connection.webProcessIdentifier();

@@ -185,7 +185,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         return nullptr;
     }
 
-    auto task = makeUnique<ServiceWorkerFetchTask>(loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier, shouldSoftUpdate);
+    auto task = makeUnique<ServiceWorkerFetchTask>(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier, shouldSoftUpdate);
     startFetch(*task, *worker);
     return task;
 }
@@ -425,6 +425,17 @@ PAL::SessionID WebSWServerConnection::sessionID() const
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
 {
     static_cast<WebSWServerToContextConnection&>(connection).send(WTFMove(message));
+}
+
+void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    auto* worker = server().workerByID(serviceWorkerIdentifier);
+    if (!worker)
+        return;
+
+    worker->setHasTimedOutAnyFetchTasks();
+    if (worker->isRunning())
+        server().syncTerminateWorker(*worker);
 }
 
 } // namespace WebKit
