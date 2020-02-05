@@ -1,3 +1,17 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r255595): page not closed after beforeunload handler returns true
+        https://bugs.webkit.org/show_bug.cgi?id=207189
+        <rdar://problem/59149593>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage for fix landed in r255677.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+        (-[SlowBeforeUnloadPromptUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2020-02-05  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org should disable auto-capitalize over the search field

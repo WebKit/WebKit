@@ -145,7 +145,8 @@ TEST(WebKit, ModalAlerts)
 
 #if PLATFORM(MAC)
 
-static bool didRejectTryClose = false;
+static bool shouldRejectClosingViaPrompt = false;
+static bool didRespondToPrompt = false;
 
 @interface SlowBeforeUnloadPromptUIDelegate : NSObject <WKUIDelegate>
 @end
@@ -155,8 +156,8 @@ static bool didRejectTryClose = false;
 - (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        completionHandler(NO);
-        didRejectTryClose = true;
+        completionHandler(shouldRejectClosingViaPrompt ? NO : YES);
+        didRespondToPrompt = true;
     });
 }
 
@@ -167,7 +168,7 @@ static bool didRejectTryClose = false;
 
 @end
 
-TEST(WebKit, SlowBeforeUnloadPrompt)
+TEST(WebKit, SlowBeforeUnloadPromptReject)
 {
     auto slowBeforeUnloadPromptUIDelegate = adoptNS([[SlowBeforeUnloadPromptUIDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -181,13 +182,37 @@ TEST(WebKit, SlowBeforeUnloadPrompt)
 
     TestWebKitAPI::Util::spinRunLoop(10);
 
+    shouldRejectClosingViaPrompt = true;
     [webView _tryClose];
 
-    TestWebKitAPI::Util::run(&didRejectTryClose);
+    TestWebKitAPI::Util::run(&didRespondToPrompt);
     EXPECT_FALSE([webView _isClosed]);
 
     TestWebKitAPI::Util::sleep(0.1);
     EXPECT_FALSE([webView _isClosed]);
+}
+
+TEST(WebKit, SlowBeforeUnloadPromptAllow)
+{
+    auto slowBeforeUnloadPromptUIDelegate = adoptNS([[SlowBeforeUnloadPromptUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:slowBeforeUnloadPromptUIDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+    [webView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    shouldRejectClosingViaPrompt = false;
+    [webView _tryClose];
+
+    TestWebKitAPI::Util::run(&didRespondToPrompt);
+
+    while (![webView _isClosed])
+        TestWebKitAPI::Util::sleep(0.1);
 }
 
 static bool webViewDidCloseCalled = false;
