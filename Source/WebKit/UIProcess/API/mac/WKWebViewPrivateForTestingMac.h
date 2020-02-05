@@ -50,7 +50,6 @@
 
 - (void)_setHeaderBannerHeight:(int)height;
 - (void)_setFooterBannerHeight:(int)height;
-- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
 
 @end
 

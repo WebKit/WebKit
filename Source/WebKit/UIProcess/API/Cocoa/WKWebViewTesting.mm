@@ -202,4 +202,11 @@
 #endif
 }
 
+- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
+{
+    _page->doAfterProcessingAllPendingMouseEvents([action = makeBlockPtr(action)] {
+        action();
+    });
+}
+
 @end

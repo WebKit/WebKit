@@ -181,6 +181,16 @@ void WebChromeClient::didDestroyEditableImage(GraphicsLayer::EmbeddedViewID embe
 #endif
 }
 
+bool WebChromeClient::shouldUseMouseEventsForSelection()
+{
+    // In macCatalyst, despite getting mouse events, we still want UITextInteraction and friends to own selection gestures.
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
+    return false;
+#else
+    return true;
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
