@@ -338,7 +338,11 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         }
     }
 
-    m_elementToCSSAnimationsCreatedByMarkupMap.set(&element, WTFMove(newAnimations));
+    if (newAnimations.isEmpty())
+        m_elementToCSSAnimationsCreatedByMarkupMap.remove(&element);
+    else
+        m_elementToCSSAnimationsCreatedByMarkupMap.set(&element, WTFMove(newAnimations));
+
     keyframeEffectStack.setCSSAnimationList(currentAnimationList);
 }
 
