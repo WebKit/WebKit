@@ -250,7 +250,7 @@ function SearchBar(callback, suites) {
     });
 
     return `<div class="input">
-            <input type="text" ref="${inputRef}" autocomplete="off" required/>
+            <input type="text" ref="${inputRef}" autocomplete="off" autocapitalize="none" required/>
             <label>Search test</label>
         </div>
         <ul class="search-candidates" ref="${candidatesRef}" style="display: none;"></ul>`;
