@@ -179,10 +179,6 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
-
-#if PLATFORM(IOS_FAMILY)
-    WTF::String m_ctDataConnectionServiceType;
-#endif
 #if PLATFORM(COCOA)
     bool m_suppressesConnectionTerminationOnSystemChange { false };
 #endif
