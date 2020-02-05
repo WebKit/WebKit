@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "StructureIDTable.h"
+#include "VM.h"
 #include <wtf/Vector.h>
 
 namespace JSC {

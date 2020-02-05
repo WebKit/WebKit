@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSExecState.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeList.h"
@@ -49,6 +50,7 @@
 #include "TimingFunction.h"
 #include "WebAnimation.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/HashMap.h>
