@@ -1,3 +1,18 @@
+2020-02-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r248287): Console: function objects saved to a $n will be invoked instead of just referenced when evaluating in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=207180
+        <rdar://problem/58860268>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InjectedScriptSource.js:
+        (CommandLineAPI):
+        Instead of deciding whether to wrap the value given for a `$n` getter based on if the value
+        is already a function, always wrap getter values in a function so that if the value being
+        stored in the getter is already a function, it isn't used as the callback for the getter and
+        therefore invoked when the getter is referenced.
+
 2020-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use PackedPtr for VariableEnvironment

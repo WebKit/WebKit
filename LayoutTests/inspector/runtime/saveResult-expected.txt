@@ -34,3 +34,10 @@ PASS: Value 999 should become $1.
 PASS: Evaluated result 990 should become $2.
 PASS: Evaluated result 999 should match previous value $1.
 
+-- Running test case: SaveFunctionValue
+PASS: Function should become $3.
+PASS: Saved value should match previous value $3.
+PASS: Evaluated function should match previous value $3.
+PASS: Calling saved function should become $4.
+PASS: Calling saved function should return expected value.
+

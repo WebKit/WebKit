@@ -171,6 +171,31 @@ function test()
         }
     });
 
+    // ------
+
+    suite.addTestCase({
+        name: "SaveFunctionValue",
+        description: "Ensure that saving a function object doesn't evaluate the function object when fetching it via a $n getter.",
+        async test() {
+            const functionName = "testSaveFunctionValue";
+            const functionReturn = "testSaveFunctionValue Return Value";
+
+            let createFunctionEvaluateResult = await RuntimeAgent.evaluate.invoke({expression: `function ${functionName}() { return "${functionReturn}"; } ${functionName}`, objectGroup: "test", includeCommandLineAPI: true, saveResult: true});
+            InspectorTest.assert(!createFunctionEvaluateResult.error, "Should not be a protocol error.");
+            InspectorTest.expectEqual(createFunctionEvaluateResult.savedResultIndex, 3, "Function should become $3.");
+
+            let getSavedValueEvaluateResult = await RuntimeAgent.evaluate.invoke({expression: `$3`, objectGroup: "test", includeCommandLineAPI: true, saveResult: true});
+            InspectorTest.assert(!getSavedValueEvaluateResult.error, "Should not be a protocol error.");
+            InspectorTest.expectEqual(getSavedValueEvaluateResult.savedResultIndex, 3, "Saved value should match previous value $3.");
+            InspectorTest.expectEqual(createFunctionEvaluateResult.result.description, getSavedValueEvaluateResult.result.description, "Evaluated function should match previous value $3.");
+
+            let callFunctionEvaluateResult = await RuntimeAgent.evaluate.invoke({expression: functionName + "()", objectGroup: "test", includeCommandLineAPI: true, saveResult: true});
+            InspectorTest.assert(!callFunctionEvaluateResult.error, "Should not be a protocol error.");
+            InspectorTest.expectEqual(callFunctionEvaluateResult.savedResultIndex, 4, "Calling saved function should become $4.");
+            InspectorTest.expectEqual(callFunctionEvaluateResult.result.value, functionReturn, "Calling saved function should return expected value.");
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
