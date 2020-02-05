@@ -1,3 +1,47 @@
+2020-01-23  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r254408. rdar://problem/58606270
+
+    [WebCore] Fix crash in module loader due to change in fragment reservation
+    https://bugs.webkit.org/show_bug.cgi?id=206125
+    
+    Reviewed by Dean Jackson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url-expected.txt:
+    
+    Source/WebCore:
+    
+    At some point, CachedResource::url() starts returning URL without fragment.
+    However, this was invariant in ScriptModuleLoader, so one of WPT test is crashing.
+    
+    We save source URL so that we preserve fragment information.
+    Still we need to have fragment information after the redirect to fix a bug filed in [1].
+    
+    [1]: https://bugs.webkit.org/show_bug.cgi?id=205294
+    
+    * bindings/js/CachedModuleScriptLoader.cpp:
+    (WebCore::CachedModuleScriptLoader::load):
+    * bindings/js/CachedModuleScriptLoader.h:
+    * bindings/js/ScriptModuleLoader.cpp:
+    (WebCore::ScriptModuleLoader::notifyFinished):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254408 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [WebCore] Fix crash in module loader due to change in fragment reservation
+            https://bugs.webkit.org/show_bug.cgi?id=206125
+
+            Reviewed by Dean Jackson.
+
+            * web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url-expected.txt:
+
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255076. rdar://problem/58920206
