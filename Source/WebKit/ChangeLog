@@ -1,3 +1,10 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, follow-up assertion fix after r255662.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
 2020-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r251320): Can't double tap to select word in Notes on iCloud.com
