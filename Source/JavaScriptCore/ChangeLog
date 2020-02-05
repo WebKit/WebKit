@@ -1,5 +1,59 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255528. rdar://problem/59098310
+
+    GetGetterSetterByOffset and GetGetter/GetSetter are not always safe to execute
+    https://bugs.webkit.org/show_bug.cgi?id=206805
+    <rdar://problem/58898161>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/get-getter-setter-by-offset-not-always-safe-to-execute.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    This patch fixes two bugs. The first is GetGetterSetterByOffset. Previously,
+    we were just checking that we could load the value safely. However, because
+    GetGetterSetterByOffset returns a GetterSetter object, we can only safely
+    move this node into a context where it's guaranteed that the offset loaded
+    will return a GetterSetter.
+            
+    The second fix is GetGetter/GetSetter were both always marked as safe to execute.
+    However, they're only safe to execute when the incoming value to load from
+    is a GetterSetter object.
+    
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255528 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Saam Barati  <sbarati@apple.com>
+
+            GetGetterSetterByOffset and GetGetter/GetSetter are not always safe to execute
+            https://bugs.webkit.org/show_bug.cgi?id=206805
+            <rdar://problem/58898161>
+
+            Reviewed by Yusuke Suzuki.
+
+            This patch fixes two bugs. The first is GetGetterSetterByOffset. Previously,
+            we were just checking that we could load the value safely. However, because
+            GetGetterSetterByOffset returns a GetterSetter object, we can only safely
+            move this node into a context where it's guaranteed that the offset loaded
+            will return a GetterSetter.
+
+            The second fix is GetGetter/GetSetter were both always marked as safe to execute.
+            However, they're only safe to execute when the incoming value to load from
+            is a GetterSetter object.
+
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255365. rdar://problem/59097795
 
     [JSC] Give up IC when unknown structure transition happens
