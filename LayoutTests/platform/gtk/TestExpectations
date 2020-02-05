@@ -4134,6 +4134,10 @@ webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-variant-n
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position.html [ ImageOnlyFailure ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/quoted-generic-ignored.html [ ImageOnlyFailure ]
 
+webkit.org/b/207246 imported/w3c/web-platform-tests/content-security-policy/generic/generic-0_10.sub.html [ Failure ]
+webkit.org/b/207246 imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html [ Failure ]
+webkit.org/b/207246 imported/w3c/web-platform-tests/css/css-backgrounds/parsing/border-image-source-computed.sub.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
