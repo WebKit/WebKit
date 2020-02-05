@@ -2877,6 +2877,7 @@ JSFillMode.cpp
 JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSGetAnimationsOptions.cpp
 JSGPUCanvasContext.cpp
 JSGPUColor.cpp
 JSGPUColorStateDescriptor.cpp

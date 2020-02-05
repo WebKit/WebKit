@@ -3,9 +3,9 @@ PASS Returns an empty array for an element with no animations
 PASS Returns both animations for an element with two animations 
 PASS Returns only the animations specific to each sibling element 
 PASS Returns only the animations specific to each parent/child element 
-FAIL Returns animations on descendants when subtree: true is specified assert_array_equals: Returns expected animations from parent lengths differ, expected 3 got 0
-FAIL Returns animations on pseudo-elements when subtree: true is specified assert_equals: Returns one animation when subtree is true expected 1 but got 0
-FAIL Does NOT cross shadow-tree boundaries when subtree: true is specified assert_equals: Returns one animation when called on a parent in the shadow tree expected 1 but got 0
+PASS Returns animations on descendants when subtree: true is specified 
+PASS Returns animations on pseudo-elements when subtree: true is specified 
+PASS Does NOT cross shadow-tree boundaries when subtree: true is specified 
 PASS Returns animations for a foreign element 
 PASS Does not return finished animations that do not fill forwards 
 PASS Returns finished animations that fill forwards 
