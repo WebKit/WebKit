@@ -388,6 +388,11 @@ void ProvisionalPageProxy::didCreateContextForVisibilityPropagation(LayerHosting
 }
 #endif
 
+void ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation()
+{
+    send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+}
+
 void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
