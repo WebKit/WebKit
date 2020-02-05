@@ -1,3 +1,27 @@
+2020-02-05  youenn fablet  <youenn@apple.com>
+
+        Improve stability of webrtc/video-autoplay.html by splitting tests in multiple files
+        https://bugs.webkit.org/show_bug.cgi?id=207252
+
+        Reviewed by Eric Carlson.
+
+        webrtc/video-autplay.html is flaky on bots.
+        On debug bots, removing the video element from the DOM does not always pause it in a timely manner.
+        To improve reliability, we split tests in individual files.
+        Removing flakiness expectation from video-autoplay.html since it no longer contains the flaky tests.
+
+        * TestExpectations:
+        * webrtc/video-autoplay-expected.txt:
+        * webrtc/video-autoplay.html:
+        * webrtc/video-autoplay1-expected.txt: Added.
+        * webrtc/video-autoplay1.html: Added.
+        * webrtc/video-autoplay2-expected.txt: Added.
+        * webrtc/video-autoplay2.html: Added.
+        * webrtc/video-autoplay3-expected.txt: Added.
+        * webrtc/video-autoplay3.html: Added.
+        * webrtc/video-autoplay4-expected.txt: Added.
+        * webrtc/video-autoplay4.html: Added.
+
 2020-02-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, new baselines and update TestExpectations
