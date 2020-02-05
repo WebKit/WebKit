@@ -46,12 +46,16 @@
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Options.h"
+#include <unicode/ucol.h>
+#include <unicode/udat.h>
 #include <unicode/uloc.h>
+#include <unicode/unum.h>
 #include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
@@ -128,7 +132,7 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-String convertICULocaleToBCP47LanguageTag(const char* localeID)
+static String convertICULocaleToBCP47LanguageTag(const char* localeID)
 {
     UErrorCode status = U_ZERO_ERROR;
     Vector<char, 32> buffer(32);
@@ -139,8 +143,84 @@ String convertICULocaleToBCP47LanguageTag(const char* localeID)
         uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
     }
     if (!U_FAILURE(status))
-        return String(buffer.data(), length);
+        return String(StringImpl::createStaticStringImpl(buffer.data(), length));
     return String();
+}
+
+static void addMissingScriptLocales(HashSet<String>& availableLocales)
+{
+    static const NeverDestroyed<String> pa_PK_String(MAKE_STATIC_STRING_IMPL("pa-PK"));
+    static const NeverDestroyed<String> zh_CN_String(MAKE_STATIC_STRING_IMPL("zh-CN"));
+    static const NeverDestroyed<String> zh_HK_String(MAKE_STATIC_STRING_IMPL("zh-HK"));
+    static const NeverDestroyed<String> zh_SG_String(MAKE_STATIC_STRING_IMPL("zh-SG"));
+    static const NeverDestroyed<String> zh_TW_String(MAKE_STATIC_STRING_IMPL("zh-TW"));
+    if (availableLocales.contains("pa-Arab-PK"))
+        availableLocales.add(pa_PK_String.get());
+    if (availableLocales.contains("zh-Hans-CN"))
+        availableLocales.add(zh_CN_String.get());
+    if (availableLocales.contains("zh-Hant-HK"))
+        availableLocales.add(zh_HK_String.get());
+    if (availableLocales.contains("zh-Hans-SG"))
+        availableLocales.add(zh_SG_String.get());
+    if (availableLocales.contains("zh-Hant-TW"))
+        availableLocales.add(zh_TW_String.get());
+}
+
+const HashSet<String>& intlCollatorAvailableLocales()
+{
+    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
+    HashSet<String>& availableLocales = cachedAvailableLocales.get();
+
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableLocales.isEmpty());
+        int32_t count = ucol_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale = convertICULocaleToBCP47LanguageTag(ucol_getAvailable(i));
+            if (!locale.isEmpty())
+                availableLocales.add(locale);
+        }
+        addMissingScriptLocales(availableLocales);
+    });
+    return availableLocales;
+}
+
+const HashSet<String>& intlDateTimeFormatAvailableLocales()
+{
+    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
+    HashSet<String>& availableLocales = cachedAvailableLocales.get();
+
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableLocales.isEmpty());
+        int32_t count = udat_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale = convertICULocaleToBCP47LanguageTag(udat_getAvailable(i));
+            if (!locale.isEmpty())
+                availableLocales.add(locale);
+        }
+        addMissingScriptLocales(availableLocales);
+    });
+    return availableLocales;
+}
+
+const HashSet<String>& intlNumberFormatAvailableLocales()
+{
+    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
+    HashSet<String>& availableLocales = cachedAvailableLocales.get();
+
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableLocales.isEmpty());
+        int32_t count = unum_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale = convertICULocaleToBCP47LanguageTag(unum_getAvailable(i));
+            if (!locale.isEmpty())
+                availableLocales.add(locale);
+        }
+        addMissingScriptLocales(availableLocales);
+    });
+    return availableLocales;
 }
 
 bool intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, bool& usesFallback)
@@ -622,9 +702,13 @@ String defaultLocale(JSGlobalObject* globalObject)
 
     // If all else fails, ask ICU. It will probably say something bogus like en_us even if the user
     // has configured some other language, but being wrong is better than crashing.
-    String locale = convertICULocaleToBCP47LanguageTag(uloc_getDefault());
-    if (!locale.isEmpty())
-        return locale;
+    static NeverDestroyed<String> icuDefaultLocalString;
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        icuDefaultLocalString.get() = convertICULocaleToBCP47LanguageTag(uloc_getDefault());
+    });
+    if (!icuDefaultLocalString->isEmpty())
+        return icuDefaultLocalString.get();
 
     return "en"_s;
 }

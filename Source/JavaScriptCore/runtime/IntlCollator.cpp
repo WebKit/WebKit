@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -219,7 +219,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
             opt.add("kf"_s, caseFirst);
     }
 
-    auto& availableLocales = globalObject->intlCollatorAvailableLocales();
+    auto& availableLocales = intlCollatorAvailableLocales();
     auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
