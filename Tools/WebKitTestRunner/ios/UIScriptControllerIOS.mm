@@ -286,6 +286,9 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(long x, long y, JSValu
 
 void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&& block)
 {
+    // Animations on the scroll view could be in progress to reveal a form control which may interfere with hit testing (see wkb.ug/205458).
+    [webView().scrollView _removeAllAnimations:NO];
+
     waitForSingleTapToReset();
 
     for (auto& modifierFlag : modifierFlags)
