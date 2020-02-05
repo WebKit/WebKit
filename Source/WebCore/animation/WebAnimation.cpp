@@ -115,8 +115,6 @@ void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previous
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 
-    InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
-
     if (!previousTiming)
         return;
 
