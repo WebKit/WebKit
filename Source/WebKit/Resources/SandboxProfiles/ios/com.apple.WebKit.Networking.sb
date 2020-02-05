@@ -1,4 +1,4 @@
-; Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+; Copyright (C) 2014-2020 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -88,8 +88,11 @@
             (require-any
                 (require-entitlement "com.apple.security.network.client")
                 (require-entitlement "com.apple.security.network.server"))
-            (allow network-outbound (literal "/private/var/run/mDNSResponder")))
-        (allow network-outbound (literal "/private/var/run/mDNSResponder")))
+            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+            (allow mach-lookup (global-name "com.apple.dnssd.service"))) ;; <rdar://problem/55562091>
+        (begin
+            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+            (allow mach-lookup (global-name "com.apple.dnssd.service")))) ;; <rdar://problem/55562091>
 
     ;; <rdar://problem/10962803>
     ;; <rdar://problem/13238730>
