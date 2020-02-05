@@ -224,7 +224,7 @@ bool AudioSession::tryToSetActiveInternal(bool active)
     }
 
     dispatch_async(m_private->m_dispatchQueue.get(), ^{
-        [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error];
+        [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
     });
 
     return true;
