@@ -275,7 +275,8 @@ void WebInspectorProxy::attachLeft()
 
 void WebInspectorProxy::attach(AttachmentSide side)
 {
-    if (!m_inspectedPage || !canAttach())
+    ASSERT(m_inspectorPage);
+    if (!m_inspectedPage || !m_inspectorPage || !canAttach())
         return;
 
     m_isAttached = true;
