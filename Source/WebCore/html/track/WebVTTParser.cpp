@@ -410,10 +410,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
         if (styleRule.properties().isEmpty())
             continue;
 
-        sanitizedStyleSheetBuilder.append(selectorText);
-        sanitizedStyleSheetBuilder.appendLiteral(" { ");
-        sanitizedStyleSheetBuilder.append(styleRule.properties().asText());
-        sanitizedStyleSheetBuilder.appendLiteral(" }\n");
+        sanitizedStyleSheetBuilder.append(selectorText, " { ", styleRule.properties().asText(), "  }\n");
     }
 
     // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.
