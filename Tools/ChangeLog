@@ -1,3 +1,9 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r255846.
+
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+
 2020-02-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         Defer ending AppSSO sheets til NSWindowDidDeminiaturize or NSApplicationDidUnhide
