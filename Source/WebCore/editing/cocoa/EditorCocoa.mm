@@ -58,7 +58,6 @@
 #import "WebContentReader.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/system/Sound.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -76,7 +75,7 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
     if (!attributedString.length)
         return nullptr;
 
-    return SharedBuffer::create(securelyArchivedDataWithRootObject(attributedString));
+    return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString requiringSecureCoding:YES error:nullptr]);
 }
 
 String Editor::selectionInHTMLFormat()

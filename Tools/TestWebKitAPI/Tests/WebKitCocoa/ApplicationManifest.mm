@@ -34,7 +34,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKApplicationManifest.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 namespace TestWebKitAPI {
 
@@ -42,9 +41,10 @@ TEST(WebKit, ApplicationManifestCoding)
 {
     auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\" }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
-    
-    manifest = unarchivedObjectOfClassesFromData([NSSet setWithObject:[_WKApplicationManifest class]], securelyArchivedDataWithRootObject(manifest.get()));
-    
+
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:manifest.get() requiringSecureCoding:YES error:nullptr];
+    manifest = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:[_WKApplicationManifest class]] fromData:data error:nullptr];
+
     EXPECT_TRUE([manifest isKindOfClass:[_WKApplicationManifest class]]);
     EXPECT_STREQ("TestName", manifest.get().name.UTF8String);
     EXPECT_STREQ("TestShortName", manifest.get().shortName.UTF8String);

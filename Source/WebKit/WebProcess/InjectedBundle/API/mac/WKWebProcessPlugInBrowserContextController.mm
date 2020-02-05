@@ -61,7 +61,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
 @interface NSObject (WKDeprecatedDelegateMethods)
@@ -465,7 +464,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             if (!userObject)
                 return;
 
-            auto archiver = secureArchiver();
+            auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
             @try {
                 [archiver encodeObject:userObject forKey:@"userObject"];
             } @catch (NSException *exception) {

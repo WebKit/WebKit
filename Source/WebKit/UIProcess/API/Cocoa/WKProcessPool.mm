@@ -52,7 +52,6 @@
 #import <WebCore/PluginData.h>
 #import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -214,7 +213,7 @@ static WKProcessPool *sharedProcessPool;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
 {
     auto copy = adoptNS([(NSObject *)object copy]);
-    auto keyedArchiver = secureArchiver();
+    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
 
     @try {
         [keyedArchiver encodeObject:copy.get() forKey:@"parameter"];
@@ -235,7 +234,7 @@ static WKProcessPool *sharedProcessPool;
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
 {
     auto copy = adoptNS([[NSDictionary alloc] initWithDictionary:dictionary copyItems:YES]);
-    auto keyedArchiver = secureArchiver();
+    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
 
     @try {
         [keyedArchiver encodeObject:copy.get() forKey:@"parameters"];

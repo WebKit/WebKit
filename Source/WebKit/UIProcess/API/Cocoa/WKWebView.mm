@@ -123,7 +123,6 @@
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -551,11 +550,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (!(self = [super initWithCoder:coder]))
         return nil;
 
-    WKWebViewConfiguration *configuration = decodeObjectOfClassForKeyFromCoder([WKWebViewConfiguration class], @"configuration", coder);
+    WKWebViewConfiguration *configuration = [coder decodeObjectOfClass:[WKWebViewConfiguration class] forKey:@"configuration"];
     [self _initializeWithConfiguration:configuration];
 
     self.allowsBackForwardNavigationGestures = [coder decodeBoolForKey:@"allowsBackForwardNavigationGestures"];
-    self.customUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"customUserAgent", coder);
+    self.customUserAgent = [coder decodeObjectOfClass:[NSString class] forKey:@"customUserAgent"];
     self.allowsLinkPreview = [coder decodeBoolForKey:@"allowsLinkPreview"];
 
 #if PLATFORM(MAC)
@@ -2574,8 +2573,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
             NSObject <NSSecureCoding> *userObject = nil;
             if (API::Data* data = static_cast<API::Data*>(userData)) {
-                auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(data->bytes())) length:data->size() freeWhenDone:NO]);
-                auto unarchiver = secureUnarchiverFromData(nsData.get());
+                auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
+                auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
+                unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
                 @try {
                     if (auto* allowedClasses = m_webView->_page->process().processPool().allowedClassesForParameterCoding())
                         userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];

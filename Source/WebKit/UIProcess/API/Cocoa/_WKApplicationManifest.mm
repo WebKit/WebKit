@@ -28,7 +28,6 @@
 
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 @implementation _WKApplicationManifest
 
@@ -41,12 +40,12 @@
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    NSString *name = decodeObjectOfClassForKeyFromCoder([NSString class], @"name", aDecoder);
-    NSString *shortName = decodeObjectOfClassForKeyFromCoder([NSString class], @"short_name", aDecoder);
-    NSString *description = decodeObjectOfClassForKeyFromCoder([NSString class], @"description", aDecoder);
-    NSURL *scopeURL = decodeObjectOfClassForKeyFromCoder([NSURL class], @"scope", aDecoder);
+    NSString *name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
+    NSString *shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
+    NSString *description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
+    NSURL *scopeURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"scope"];
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
-    NSURL *startURL = decodeObjectOfClassForKeyFromCoder([NSURL class], @"start_url", aDecoder);
+    NSURL *startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTF::String(name),

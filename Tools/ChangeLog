@@ -1,3 +1,16 @@
+2020-02-04  Darin Adler  <darin@apple.com>
+
+        Remove NSKeyedArchiverSPI.h now that WebKit only uses API
+        https://bugs.webkit.org/show_bug.cgi?id=207203
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm: Removed
+        include of NSKeyedArchiverSPI.h and call methods of NSKeyedArchiver directly.
+        * TestWebKitAPI/Tests/WebKitCocoa/Coding.mm: Ditto.
+        * TestWebKitAPI/Tests/ios/WKWebViewOpaque.mm: Ditto.
+        * TestWebKitAPI/Tests/mac/EarlyKVOCrash.mm: Ditto.
+
 2020-02-04  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Support Internal in run-javascriptcore-tests

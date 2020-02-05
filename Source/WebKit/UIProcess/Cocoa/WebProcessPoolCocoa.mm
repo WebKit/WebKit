@@ -55,7 +55,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -262,7 +261,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.fontWhitelist = m_fontWhitelist;
 
     if (m_bundleParameters) {
-        auto keyedArchiver = secureArchiver();
+        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
 
         @try {
             [keyedArchiver encodeObject:m_bundleParameters.get() forKey:@"parameters"];

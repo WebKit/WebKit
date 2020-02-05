@@ -30,7 +30,6 @@
 #import <CFNetwork/CFHTTPMessage.h>
 #import <CFNetwork/CFNetwork.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -43,7 +42,8 @@ namespace WebCoreTestSupport {
 static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     NSURLResponse *response;
-    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)responseData);
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
         [unarchiver finishDecoding];

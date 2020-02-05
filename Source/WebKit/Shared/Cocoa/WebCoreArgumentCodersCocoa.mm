@@ -35,7 +35,6 @@
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

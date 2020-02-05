@@ -26,7 +26,6 @@
 #import "config.h"
 
 #import <WebKit/WebView.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
 
 @interface EarlyKVOCrashResponder : NSResponder {
@@ -86,12 +85,15 @@ TEST(WebKitLegacy, EarlyKVOCrash)
 
     [webView setNextResponder:earlyKVOCrashResponder.get()];
 
-    auto data = securelyArchivedDataWithRootObject(@[webView.get(), earlyKVOCrashResponder.get()]);
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@[webView.get(), earlyKVOCrashResponder.get()] requiringSecureCoding:YES error:nullptr];
 
     if ([webView conformsToProtocol:@protocol(NSSecureCoding)])
-        unarchivedObjectOfClassesFromData([NSSet setWithObjects:[NSArray class], [WebView class], [EarlyKVOCrashResponder class], nil], data);
-    else
-        insecurelyUnarchiveObjectFromData(data);
+        [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:[NSArray class], [WebView class], [EarlyKVOCrashResponder class], nil] fromData:data error:nullptr];
+    else {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
 }
 
 } // namespace TestWebKitAPI

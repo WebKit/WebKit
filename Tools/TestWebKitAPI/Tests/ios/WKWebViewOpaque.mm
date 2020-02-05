@@ -30,7 +30,6 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 @interface OpaqueTestWKWebView : TestWKWebView
 @end
@@ -112,8 +111,10 @@ TEST(WKWebView, IsOpaqueYesDecodedFromArchive)
 
     [webView setOpaque:YES];
 
-    auto data = insecurelyArchivedDataWithRootObject(webView.get());
-    TestWKWebView *decodedWebView = insecurelyUnarchiveObjectFromData(data);
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:webView.get() requiringSecureCoding:NO error:nullptr];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    TestWKWebView *decodedWebView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     isOpaque(decodedWebView, YES);
 }
@@ -124,8 +125,10 @@ TEST(WKWebView, IsOpaqueNoDecodedFromArchive)
 
     [webView setOpaque:NO];
 
-    auto data = insecurelyArchivedDataWithRootObject(webView.get());
-    TestWKWebView *decodedWebView = insecurelyUnarchiveObjectFromData(data);
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:webView.get() requiringSecureCoding:NO error:nullptr];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    TestWKWebView *decodedWebView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     isOpaque(decodedWebView, NO);
 }

@@ -39,7 +39,6 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -53,6 +52,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
 static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 {
     auto currentModifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
@@ -71,7 +71,26 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
     
     return modifiers;
 }
+
 #endif
+
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const unsigned char* bytes, NSUInteger length)
+{
+    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(bytes) length:length freeWhenDone:NO]);
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data.get() error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
+    return unarchiver;
+}
+
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
+{
+    return createUnarchiver(data.bytes(), data.size());
+}
+
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const IPC::DataReference& data)
+{
+    return createUnarchiver(data.data(), data.size());
+}
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
@@ -121,13 +140,10 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     }
 
     if (parameters.bundleParameterData) {
-        auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
-
-        auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
-
         NSDictionary *dictionary = nil;
+        auto unarchiver = createUnarchiver(*parameters.bundleParameterData);
         @try {
-            dictionary = [unarchiver.get() decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
+            dictionary = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
             ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
         } @catch (NSException *exception) {
             LOG_ERROR("Failed to decode bundle parameters: %@", exception);
@@ -222,18 +238,15 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
 NSSet* InjectedBundle::classesForCoder()
 {
     if (!m_classesForCoder)
-        m_classesForCoder = retainPtr([NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil]);
+        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
 
     return m_classesForCoder.get();
 }
 
 void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
 {
-    auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
-
-    auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
-
     id parameter = nil;
+    auto unarchiver = createUnarchiver(value);
     @try {
         parameter = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameter"];
     } @catch (NSException *exception) {
@@ -249,11 +262,8 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
 
 void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
 {
-    auto bundleParametersData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
-
-    auto unarchiver = secureUnarchiverFromData(bundleParametersData.get());
-
     NSDictionary *parameters = nil;
+    auto unarchiver = createUnarchiver(value);
     @try {
         parameters = [unarchiver decodeObjectOfClass:[NSDictionary class] forKey:@"parameters"];
     } @catch (NSException *exception) {

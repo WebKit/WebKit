@@ -26,19 +26,20 @@
 #import "config.h"
 
 #import <WebKit/WKProcessPoolPrivate.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
 
 template<typename T>
 RetainPtr<T> encodeAndDecode(T* t)
 {
     if ([t conformsToProtocol:@protocol(NSSecureCoding)]) {
-        auto data = securelyArchivedDataWithRootObject(t);
-        return unarchivedObjectOfClassesFromData([NSSet setWithObjects:[t class], nil], data);
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:t requiringSecureCoding:YES error:nullptr];
+        return [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:[t class]] fromData:data error:nullptr];
     }
 
-    auto data = insecurelyArchivedDataWithRootObject(t);
-    return insecurelyUnarchiveObjectFromData(data);
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:t requiringSecureCoding:NO error:nullptr];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 TEST(Coding, WKPreferences)
@@ -164,11 +165,11 @@ TEST(Coding, WKWebView_SameConfiguration)
         auto a = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto b = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
-        data = securelyArchivedDataWithRootObject(@[a.get(), b.get()]);
+        data = [NSKeyedArchiver archivedDataWithRootObject:@[a.get(), b.get()] requiringSecureCoding:YES error:nullptr];
     }
 
     // Then, decode and verify that the important configuration properties are the same.
-    NSArray *array = unarchivedObjectOfClassesFromData([NSSet setWithObject:[NSArray class]], data.get());
+    NSArray *array = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:[NSArray class]] fromData:data.get() error:nullptr];
 
     WKWebView *aView = array[0];
     WKWebView *bView = array[1];

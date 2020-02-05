@@ -1,3 +1,59 @@
+2020-02-04  Darin Adler  <darin@apple.com>
+
+        Remove NSKeyedArchiverSPI.h now that WebKit only uses API
+        https://bugs.webkit.org/show_bug.cgi?id=207203
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/ios/AccessibilityIOS.mm:
+        (WebKit::newAccessibilityRemoteToken): Removed include of NSKeyedArchiverSPI.h;
+        use NSKeyedArchiver methods directly.
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::encodeSecureCodingInternal): Ditto.
+        (IPC::decodeSecureCodingInternal): Ditto.
+
+        * Shared/Cocoa/DataDetectionResult.mm: Removed include of NSKeyedArchiverSPI.h.
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm: Ditto.
+        * Shared/ios/InteractionInformationAtPosition.mm: Ditto.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ContentFilterUnblockHandler>::encode): Removed
+        include of NSKeyedArchiverSPI.h; use NSKeyedArchiver methods directly.
+        (IPC::ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode): Ditto.
+
+        * Shared/mac/WebHitTestResultData.mm: Removed include of NSKeyedArchiverSPI.h.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::createSerializedRepresentation const): Removed
+        include of NSKeyedArchiverSPI.h; use NSKeyedArchiver methods directly. Also
+        refactored so the !CAN_SECURELY_ARCHIVE_FILE_WRAPPER path shares more code
+        with the modern code path. I think we can remove it entirely once we bump
+        the minimum version of macOS a bit more.
+        (API::Attachment::updateFromSerializedRepresentation): Ditto.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setObject:forBundleParameter:]): Ditto.
+        (-[WKProcessPool _setObjectsForBundleParametersWithDictionary:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithCoder:]): Ditto.
+        (-[WKWebView _setInputDelegate:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration initWithCoder:]): Ditto.
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest initWithCoder:]): Ditto.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::elementDidFocus): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Ditto.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm: Removed include of NSKeyedArchiverSPI.h
+        (WebKit::createUnarchiver): Added helper function to make the code below less repetitive.
+        (WebKit::InjectedBundle::initialize): Use the createUnarchiver function above and the
+        NSKeyedArchiver methods directly.
+        (WebKit::InjectedBundle::classesForCoder): Ditto.
+        (WebKit::InjectedBundle::setBundleParameter): Ditto.
+        (WebKit::InjectedBundle::setBundleParameters): Ditto.
+
 2020-02-04  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Shouldn't get text cursor on checkboxes

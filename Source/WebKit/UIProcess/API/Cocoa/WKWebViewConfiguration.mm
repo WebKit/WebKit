@@ -25,7 +25,6 @@
 
 #import "config.h"
 #import "WKWebViewConfigurationInternal.h"
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 #import "APIPageConfiguration.h"
 #import "VersionChecks.h"
@@ -319,15 +318,15 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     if (!(self = [self init]))
         return nil;
 
-    self.processPool = decodeObjectOfClassForKeyFromCoder([WKProcessPool class], @"processPool", coder);
-    self.preferences = decodeObjectOfClassForKeyFromCoder([WKPreferences class], @"preferences", coder);
-    self.userContentController = decodeObjectOfClassForKeyFromCoder([WKUserContentController class], @"userContentController", coder);
-    self.websiteDataStore = decodeObjectOfClassForKeyFromCoder([WKWebsiteDataStore class], @"websiteDataStore", coder);
+    self.processPool = [coder decodeObjectOfClass:[WKProcessPool class] forKey:@"processPool"];
+    self.preferences = [coder decodeObjectOfClass:[WKPreferences class] forKey:@"preferences"];
+    self.userContentController = [coder decodeObjectOfClass:[WKUserContentController class] forKey:@"userContentController"];
+    self.websiteDataStore = [coder decodeObjectOfClass:[WKWebsiteDataStore class] forKey:@"websiteDataStore"];
 
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
 
     if ([coder containsValueForKey:@"applicationNameForUserAgent"])
-        self.applicationNameForUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"applicationNameForUserAgent", coder);
+        self.applicationNameForUserAgent = [coder decodeObjectOfClass:[NSString class] forKey:@"applicationNameForUserAgent"];
 
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
 

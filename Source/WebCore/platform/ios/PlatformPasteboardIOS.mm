@@ -40,7 +40,6 @@
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
 #import <pal/ios/UIKitSoftLink.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/URL.h>
@@ -436,8 +435,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     }
 
     if (content.dataInAttributedStringFormat) {
-        NSAttributedString *attributedString = unarchivedObjectOfClassesFromData([NSSet setWithObject:[NSAttributedString class]], content.dataInAttributedStringFormat->createNSData().get());
-        if (attributedString)
+        if (NSAttributedString *attributedString = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObject:NSAttributedString.class] fromData:content.dataInAttributedStringFormat->createNSData().get() error:nullptr])
             [representationsToRegister addRepresentingObject:attributedString];
     }
 
@@ -542,18 +540,19 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (!provider.teamData.length)
             continue;
 
-        NSDictionary *teamDataObject = unarchivedObjectOfClassesFromData([NSSet setWithObjects:[NSDictionary class], [NSString class], [NSArray class], nil], provider.teamData);
-        if (!teamDataObject)
+        NSSet *classes = [NSSet setWithObjects:NSDictionary.class, NSString.class, NSArray.class, nil];
+        id teamDataObject = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:provider.teamData error:nullptr];
+        if (![teamDataObject isKindOfClass:NSDictionary.class])
             continue;
 
         id originInTeamData = [teamDataObject objectForKey:@(originKeyForTeamData)];
-        if (![originInTeamData isKindOfClass:[NSString class]])
+        if (![originInTeamData isKindOfClass:NSString.class])
             continue;
         if (String((NSString *)originInTeamData) != origin)
             continue;
 
-        id customTypes = [(NSDictionary *)teamDataObject objectForKey:@(customTypesKeyForTeamData)];
-        if (![customTypes isKindOfClass:[NSArray class]])
+        id customTypes = [teamDataObject objectForKey:@(customTypesKeyForTeamData)];
+        if (![customTypes isKindOfClass:NSArray.class])
             continue;
 
         for (NSString *type in customTypes)
@@ -596,8 +595,11 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
             for (auto& type : data.orderedTypes())
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:securelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : typesAsNSArray })];
-            [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
+            NSDictionary *teamDataDictionary = @{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : typesAsNSArray };
+            if (NSData *teamData = [NSKeyedArchiver archivedDataWithRootObject:teamDataDictionary requiringSecureCoding:YES error:nullptr]) {
+                [representationsToRegister setTeamData:teamData];
+                [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
+            }
         }
     }
 

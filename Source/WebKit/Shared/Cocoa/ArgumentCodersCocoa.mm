@@ -32,7 +32,6 @@
 #import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
 
@@ -359,7 +358,7 @@ static inline Optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
 
 static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureCoding> object)
 {
-    auto archiver = secureArchiver();
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
 
@@ -376,7 +375,8 @@ static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSAr
     if (!decode(decoder, data))
         return WTF::nullopt;
 
-    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
         id result = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:allowedClasses] forKey:NSKeyedArchiveRootObjectKey];
         ASSERT(!result || [result conformsToProtocol:@protocol(NSSecureCoding)]);

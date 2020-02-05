@@ -29,8 +29,6 @@
 #import "config.h"
 #import "LegacyWebArchive.h"
 
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
-
 namespace WebCore {
 
 static NSString * const LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
@@ -44,9 +42,10 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
         return ResourceResponse();
     
     NSURLResponse *response = nil;
-    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)responseData);
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
-        response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:LegacyWebArchiveResourceResponseKey];
+        response = [unarchiver decodeObjectOfClass:NSURLResponse.class forKey:LegacyWebArchiveResourceResponseKey];
         [unarchiver finishDecoding];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);
@@ -63,7 +62,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
     if (!nsResponse)
         return nullptr;
 
-    auto archiver = secureArchiver();
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
     return (__bridge CFDataRef)archiver.get().encodedData;
 }

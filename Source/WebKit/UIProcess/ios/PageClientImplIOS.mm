@@ -67,7 +67,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView.get()->_page->process().connection())
@@ -564,8 +563,9 @@ void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInform
 
     NSObject <NSSecureCoding> *userObject = nil;
     if (API::Data* data = static_cast<API::Data*>(userData)) {
-        auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(data->bytes())) length:data->size() freeWhenDone:NO]);
-        auto unarchiver = secureUnarchiverFromData(nsData.get());
+        auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
+        auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
+        unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
         @try {
             if (auto* allowedClasses = m_webView.get()->_page->process().processPool().allowedClassesForParameterCoding())
                 userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];

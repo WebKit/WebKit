@@ -38,7 +38,6 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/MachSendRight.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -625,7 +624,7 @@ Optional<CGAffineTransform> ArgumentCoder<CGAffineTransform>::decode(Decoder& de
 
 void ArgumentCoder<WebCore::ContentFilterUnblockHandler>::encode(Encoder& encoder, const WebCore::ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
-    auto archiver = secureArchiver();
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     contentFilterUnblockHandler.encode(archiver.get());
     IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
 }
@@ -636,7 +635,8 @@ bool ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode(Decoder& decode
     if (!IPC::decode(decoder, data))
         return false;
 
-    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     if (!WebCore::ContentFilterUnblockHandler::decode(unarchiver.get(), contentFilterUnblockHandler))
         return false;
 

@@ -34,7 +34,6 @@
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/TextIndicator.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 
 namespace WebKit {
