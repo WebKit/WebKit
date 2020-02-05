@@ -323,12 +323,20 @@ void WebInspectorProxy::detach()
 
 void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
+    ASSERT(m_inspectorPage);
+    if (!m_inspectorPage)
+        return;
+
     inspectorPagePreferences().setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 
 void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
 {
+    ASSERT(m_inspectorPage);
+    if (!m_inspectorPage)
+        return;
+
     inspectorPagePreferences().setInspectorAttachedWidth(width);
     platformSetAttachedWindowWidth(width);
 }
