@@ -375,17 +375,20 @@ static void bindFonts(Vector<CString>& args)
 
     // Configs can include custom dirs but then we have to parse them...
     GUniquePtr<char> fontConfig(g_build_filename(configDir, "fontconfig", nullptr));
+    GUniquePtr<char> fontConfigHome(g_build_filename(homeDir, ".fontconfig", nullptr));
     GUniquePtr<char> fontCache(g_build_filename(cacheDir, "fontconfig", nullptr));
     GUniquePtr<char> fontHomeConfig(g_build_filename(homeDir, ".fonts.conf", nullptr));
     GUniquePtr<char> fontHomeConfigDir(g_build_filename(configDir, ".fonts.conf.d", nullptr));
     GUniquePtr<char> fontData(g_build_filename(dataDir, "fonts", nullptr));
     GUniquePtr<char> fontHomeData(g_build_filename(homeDir, ".fonts", nullptr));
     bindIfExists(args, fontConfig.get());
+    bindIfExists(args, fontConfigHome.get());
     bindIfExists(args, fontCache.get(), BindFlags::ReadWrite);
     bindIfExists(args, fontHomeConfig.get());
     bindIfExists(args, fontHomeConfigDir.get());
     bindIfExists(args, fontData.get());
     bindIfExists(args, fontHomeData.get());
+    bindIfExists(args, "/var/cache/fontconfig"); // Used by Debian.
 }
 
 #if PLATFORM(GTK)
