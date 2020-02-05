@@ -2401,9 +2401,9 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
 
         return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
             ServiceWorkerSoftUpdateLoader::start(networkSession(sessionID), WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
-        }, [this, sessionID](auto& registrableDomain) {
+        }, [this, sessionID](auto& registrableDomain, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());
-            parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, 0);
+            parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, WTFMove(completionHandler), 0);
         });
     });
     return *result.iterator->value;

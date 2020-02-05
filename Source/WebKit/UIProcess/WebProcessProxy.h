@@ -339,7 +339,7 @@ public:
     void deref() final { ThreadSafeRefCounted::deref(); }
 
 #if ENABLE(SERVICE_WORKER)
-    void establishServiceWorkerContext(const WebPreferencesStore&);
+    void establishServiceWorkerContext(const WebPreferencesStore&, CompletionHandler<void()>&&);
     void setServiceWorkerUserAgent(const String&);
     void updateServiceWorkerPreferencesStore(const WebPreferencesStore&);
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->serviceWorkerPageProxyID == pageProxyID; }
