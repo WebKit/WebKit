@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,7 +121,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     RETURN_IF_EXCEPTION(scope, void());
     localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
-    const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
+    const HashSet<String>& availableLocales = intlPluralRulesAvailableLocales();
     HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -470,7 +470,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     } else
         opt.add("hc"_s, String());
 
-    const HashSet<String> availableLocales = globalObject->intlDateTimeFormatAvailableLocales();
+    const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
     HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlDTFInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDTFInternal::relevantExtensionKeys), IntlDTFInternal::localeData);
 
     m_locale = resolved.get(vm.propertyNames->locale.string());
