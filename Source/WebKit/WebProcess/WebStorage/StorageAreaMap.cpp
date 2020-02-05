@@ -49,6 +49,11 @@
 namespace WebKit {
 using namespace WebCore;
 
+Ref<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl& storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
+{
+    return adoptRef(*new StorageAreaMap(storageNamespace, WTFMove(securityOrigin)));
+}
+
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
     : m_namespace(storageNamespace)
     , m_securityOrigin(WTFMove(securityOrigin))
@@ -60,6 +65,8 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<WebCo
 
 StorageAreaMap::~StorageAreaMap()
 {
+    m_namespace.didDestroyStorageAreaMap(*this);
+
     disconnect();
 }
 
