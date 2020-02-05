@@ -1,3 +1,10 @@
+2020-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, follow-up assertion fix after r255662.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+
 2020-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r255595): page not closed after beforeunload handler returns true
