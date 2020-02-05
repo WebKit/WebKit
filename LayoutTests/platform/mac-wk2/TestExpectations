@@ -937,9 +937,6 @@ webkit.org/b/206696 [ Release ] editing/selection/caret-at-bidi-boundary.html [ 
 
 webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
 
-webkit.org/b/206770 [ Mojave Release ] storage/websql/test-authorizer.html [ Pass Timeout ]
-webkit.org/b/206770 [ Catalina Release ] storage/websql/test-authorizer.html [ Pass Failure Timeout ]
-
 webkit.org/b/206940 [ Mojave+ ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html [ Pass Failure ]
 
 webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Failure Timeout ]
@@ -989,3 +986,5 @@ webkit.org/b/206718 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass
 webkit.org/b/207209 [ Release ] inspector/heap/getPreview.html [ Pass Failure ]
 
 webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass Failure ]
+
+webkit.org/b/206627 storage/websql [ Skip ]

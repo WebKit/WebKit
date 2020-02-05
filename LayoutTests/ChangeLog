@@ -1,3 +1,13 @@
+2020-02-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION [ Mac wk2 ] Tests are jetsamming: Unable to shrink memory footprint of process below the kill thresold [sic]
+        https://bugs.webkit.org/show_bug.cgi?id=206627
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Disable websql tests.
+        * platform/mac-wk2/TestExpectations: Ditto.
+
 2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION: [ macOS wk1 ] ASSERTION FAILED: http/tests/notifications/event-listener-crash.html is flaky crashing

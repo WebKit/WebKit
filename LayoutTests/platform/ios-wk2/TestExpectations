@@ -861,8 +861,7 @@ js/promises-tests/promises-tests-2-2-7.html
 js/promises-tests/promises-tests-2-3-1.html
 js/promises-tests/promises-tests-2-3-2.html
 js/promises-tests/promises-tests-2-3-3.html
-js/promises-tests/promises-tests-2-3-4.html 
-storage/websql/change-version.html
+js/promises-tests/promises-tests-2-3-4.html
 
 # Flaky tests that assert/time out:
 fast/loader/form-submission-before-load-post.html
@@ -1377,3 +1376,5 @@ webkit.org/b/207164 [ Debug ] legacy-animation-engine/animations/play-state-in-s
 webkit.org/b/207194 fast/scrolling/ios/scroll-events-back-forward.html [ Pass Failure ]
 
 webkit.org/b/207197 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass Failure Crash ]
+
+webkit.org/b/206627 storage/websql [ Skip ]
