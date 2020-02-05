@@ -1991,3 +1991,5 @@ webkit.org/b/207230 imported/w3c/web-platform-tests/fetch/stale-while-revalidate
 webkit.org/b/207235 legacy-animation-engine/fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
 
 webkit.org/b/206908 imported/w3c/web-platform-tests/hr-time/basic.any.html [ Pass Failure ]
+
+webkit.org/b/207306 inspector/animation/lifecycle-css-animation.html [ Pass Failure ]
