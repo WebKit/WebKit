@@ -1,3 +1,12 @@
+2020-02-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden some wpt tests failing with harness timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207247
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r251320): Can't double tap to select word in Notes on iCloud.com
