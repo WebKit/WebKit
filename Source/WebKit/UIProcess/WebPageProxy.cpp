@@ -7779,17 +7779,23 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
 
 void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&& reply)
 {
-    Ref<SecurityOrigin> securityOrigin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin();
+    auto securityOriginData = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
+    MESSAGE_CHECK(m_process, securityOriginData);
+
+    Ref<SecurityOrigin> securityOrigin = securityOriginData->securityOrigin();
     m_uiClient->reachedApplicationCacheOriginQuota(this, securityOrigin.get(), currentQuota, totalBytesNeeded, WTFMove(reply));
 }
 
 void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, FrameIdentifier frameID, String originIdentifier)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
 
+    auto securityOriginData = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
+    MESSAGE_CHECK(m_process, securityOriginData);
+
     // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    auto origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin());
+    auto origin = API::SecurityOrigin::create(securityOriginData->securityOrigin());
     auto request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
     Function<void(bool)> completionHandler = [request = WTFMove(request)](bool allowed) {
         if (allowed)
