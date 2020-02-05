@@ -654,6 +654,8 @@ private:
         ASSERT(peek() == '(');
         consume();
 
+        auto type = ParenthesesType::Subpattern;
+
         if (tryConsume('?')) {
             if (atEndOfPattern()) {
                 m_errorCode = ErrorCode::ParenthesesTypeInvalid;
@@ -667,10 +669,12 @@ private:
             
             case '=':
                 m_delegate.atomParentheticalAssertionBegin();
+                type = ParenthesesType::Assertion;
                 break;
 
             case '!':
                 m_delegate.atomParentheticalAssertionBegin(true);
+                type = ParenthesesType::Assertion;
                 break;
 
             case '<': {
@@ -693,26 +697,32 @@ private:
         } else
             m_delegate.atomParenthesesSubpatternBegin();
 
-        ++m_parenthesesNestingDepth;
+        m_parenthesesStack.append(type);
     }
 
     /*
      * parseParenthesesEnd():
      *
      * Helper for parseTokens(); checks for parse errors (due to unmatched parentheses).
+     *
+     * The boolean value returned by this method indicates whether the token parsed
+     * was either an Atom or, for web compatibility reasons, QuantifiableAssertion
+     * in non-Unicode pattern.
      */
-    void parseParenthesesEnd()
+    bool parseParenthesesEnd()
     {
         ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == ')');
         consume();
 
-        if (m_parenthesesNestingDepth > 0)
-            m_delegate.atomParenthesesEnd();
-        else
+        if (m_parenthesesStack.isEmpty()) {
             m_errorCode = ErrorCode::ParenthesesUnmatched;
+            return false;
+        }
 
-        --m_parenthesesNestingDepth;
+        m_delegate.atomParenthesesEnd();
+        auto type = m_parenthesesStack.takeLast();
+        return type == ParenthesesType::Subpattern || !m_isUnicode;
     }
 
     /*
@@ -763,8 +773,7 @@ private:
                 break;
 
             case ')':
-                parseParenthesesEnd();
-                lastTokenWasAnAtom = true;
+                lastTokenWasAnAtom = parseParenthesesEnd();
                 break;
 
             case '^':
@@ -863,7 +872,7 @@ private:
                 return;
         }
 
-        if (m_parenthesesNestingDepth > 0)
+        if (!m_parenthesesStack.isEmpty())
             m_errorCode = ErrorCode::MissingParentheses;
     }
 
@@ -1144,6 +1153,8 @@ private:
         return WTF::nullopt;
     }
 
+    enum class ParenthesesType : uint8_t { Subpattern, Assertion };
+
     Delegate& m_delegate;
     unsigned m_backReferenceLimit;
     ErrorCode m_errorCode { ErrorCode::NoError };
@@ -1151,7 +1162,7 @@ private:
     unsigned m_size;
     unsigned m_index { 0 };
     bool m_isUnicode;
-    unsigned m_parenthesesNestingDepth { 0 };
+    Vector<ParenthesesType, 16> m_parenthesesStack;
     HashSet<String> m_captureGroupNames;
 
     // Derived by empirical testing of compile time in PCRE and WREC.

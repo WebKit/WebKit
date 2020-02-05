@@ -1,3 +1,24 @@
+2020-02-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Quantifiers after lookahead assertions should be syntax errors in Unicode patterns only
+        https://bugs.webkit.org/show_bug.cgi?id=206988
+
+        Reviewed by Darin Adler and Ross Kirsling.
+
+        This change adds SyntaxError for quantifiable assertions in Unicode patterns,
+        aligning JSC with V8 and SpiderMonkey.
+
+        Grammar: https://tc39.es/ecma262/#prod-annexB-Term
+        (/u flag precludes the use of QuantifiableAssertion)
+
+        Return value of parseParenthesesEnd() now matches with parseEscape() and
+        parseAtomEscape().
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::parseParenthesesEnd):
+        (JSC::Yarr::Parser::parseTokens):
+
 2020-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce UnlinkedCodeBlockGenerator and reduce sizeof(UnlinkedCodeBlock)
