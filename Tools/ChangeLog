@@ -1,5 +1,29 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255041. rdar://problem/59097777
+
+    WebKitTestRunner: use ad hoc signing for internal Production builds
+    https://bugs.webkit.org/show_bug.cgi?id=206607
+    <rdar://problem/56087327>
+    
+    Reviewed by Jonathan Bedard.
+    
+    * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255041 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+            WebKitTestRunner: use ad hoc signing for internal Production builds
+            https://bugs.webkit.org/show_bug.cgi?id=206607
+            <rdar://problem/56087327>
+
+            Reviewed by Jonathan Bedard.
+
+            * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r254963. rdar://problem/59097777
 
     Unreviewed, rolling out r254955.
