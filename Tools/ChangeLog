@@ -1,5 +1,36 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255466. rdar://problem/59097777
+
+    Unreviewed, another speculative test fix after r255041
+    
+    Source/WebKit:
+    
+    * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+    (WebKit::MockLocalConnection::getAttestation const):
+    Adds kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock to secItem to bypass
+    potential error due to screen locks.
+    
+    Tools:
+    
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::addTestKeyToKeychain):
+    Adds kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock to secItem to bypass
+    potential error due to screen locks.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255466 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, another speculative test fix after r255041
+
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::addTestKeyToKeychain):
+            Adds kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock to secItem to bypass
+            potential error due to screen locks.
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255365. rdar://problem/59097795
 
     [JSC] Give up IC when unknown structure transition happens
