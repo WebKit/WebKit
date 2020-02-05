@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -279,6 +279,14 @@ Ref<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
 Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 {
     return createInternal(characters, length);
+}
+
+Ref<StringImpl> StringImpl::createStaticStringImpl(const char* characters, unsigned length)
+{
+    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
+    Ref<StringImpl> result = createInternal(reinterpret_cast<const LChar*>(characters), length);
+    result->m_refCount |= s_refCountFlagIsStaticString;
+    return result;
 }
 
 Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsigned length)

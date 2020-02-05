@@ -1,3 +1,56 @@
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255112. rdar://problem/58942707
+
+    IntlObject's cached strings should be immortal and safe for concurrent access.
+    https://bugs.webkit.org/show_bug.cgi?id=206779
+    <rdar://problem/58831763>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    In IntlObject's numberingSystemsForLocale(), we have a never destroyed
+    cachedNumberingSystems which is a singleton vector of Strings which are shared
+    multiple VMs.  Hence, the strings in this vector should be a StaticStringImpl
+    so that it will be immortal, and can be access concurrently from multiple VMs
+    on different threads without any ref/deref'ing race issues.
+    
+    * runtime/IntlObject.cpp:
+    (JSC::numberingSystemsForLocale):
+    
+    Source/WTF:
+    
+    Add a factory for creating a dynamically allocated StaticStringImpl.
+    
+    Note: StaticStringImpl is guaranteed to have the same shape as StringImpl.
+    The only difference is that s_refCountFlagIsStaticString is set on the refCount
+    for StaticStringImpl.  Since the client will use the StaticStringImpl as a
+    StringImpl, we implement the factory by using StringImpl::createInternal() for
+    simplicity, and set the s_refCountFlagIsStaticString flag thereafter.
+    
+    * wtf/text/StringImpl.cpp:
+    (WTF::StringImpl::createStaticStringImpl):
+    * wtf/text/StringImpl.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255112 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-24  Mark Lam  <mark.lam@apple.com>
+
+            IntlObject's cached strings should be immortal and safe for concurrent access.
+            https://bugs.webkit.org/show_bug.cgi?id=206779
+            <rdar://problem/58831763>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js: Added.
+
 2020-01-28  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/58856012
