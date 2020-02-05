@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,6 +101,24 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.useSystemAppearance == b.useSystemAppearance;
+}
+
+URL CSSParserContext::completeURL(const String& url) const
+{
+    auto completedURL = [&] {
+        if (url.isNull())
+            return URL();
+        if (charset.isEmpty())
+            return URL(baseURL, url);
+        TextEncoding encoding(charset);
+        auto& encodingForURLParsing = encoding.encodingForFormSubmissionOrURLParsing();
+        return URL(baseURL, url, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing);
+    }();
+
+    if (mode == WebVTTMode && !completedURL.protocolIsData())
+        return URL();
+
+    return completedURL;
 }
 
 }
