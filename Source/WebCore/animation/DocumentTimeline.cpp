@@ -596,7 +596,7 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
         auto* effect = animation->effect();
         if (is<KeyframeEffect>(effect)) {
             auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-            if (keyframeEffect->isRunningAccelerated() && keyframeEffect->animatedProperties().contains(property))
+            if (keyframeEffect->isCurrentlyAffectingProperty(property, KeyframeEffect::Accelerated::Yes))
                 return true;
         }
     }
