@@ -27,6 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class WKFrameInfo;
 @class WKWebView;
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
@@ -41,5 +42,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

@@ -1,3 +1,16 @@
+2020-02-05  Brady Eidson  <beidson@apple.com>
+
+        _WKDownload should expose the originating FrameInfo.
+        <rdar://problem/58022576> and https://bugs.webkit.org/show_bug.cgi?id=207185
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[DownloadTestSchemeDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[DownloadSecurityOriginDelegate _downloadDidStart:]):
+        (loaded):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+
 2020-02-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Fix dependencies build

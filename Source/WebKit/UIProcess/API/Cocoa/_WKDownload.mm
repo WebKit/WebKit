@@ -27,6 +27,7 @@
 #import "_WKDownloadInternal.h"
 
 #import "DownloadProxy.h"
+#import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
 #import <wtf/WeakObjCPtr.h>
@@ -81,6 +82,11 @@
 - (NSData *)resumeData
 {
     return WebKit::wrapper(_download->resumeData());
+}
+
+- (WKFrameInfo *)originatingFrame
+{
+    return WebKit::wrapper(&_download->frameInfo());
 }
 
 - (id)copyWithZone:(NSZone *)zone
