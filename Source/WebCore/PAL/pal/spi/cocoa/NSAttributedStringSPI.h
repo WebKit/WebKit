@@ -93,6 +93,8 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 #define NSCocoaVersionDocumentAttribute getNSCocoaVersionDocumentAttribute()
 SOFT_LINK_CONSTANT(UIFoundation, NSBackgroundColorDocumentAttribute, NSString *)
 #define NSBackgroundColorDocumentAttribute getNSBackgroundColorDocumentAttribute()
+SOFT_LINK_CONSTANT(UIFoundation, NSMarkedClauseSegmentAttributeName, NSString *)
+#define NSMarkedClauseSegmentAttributeName getNSMarkedClauseSegmentAttributeName()
 
 // We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
 // This attribute is being deprecated at the API level, but internally UIFoundation

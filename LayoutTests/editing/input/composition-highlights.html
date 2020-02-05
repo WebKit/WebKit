@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div[contenteditable] {
+    font-size: 20px;
+    outline: none;
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+This test verifies that highlights can be specified when setting marked text.
+<div contenteditable>Test:&nbsp;</div>
+
+<script>
+const editor = document.querySelector("div[contenteditable]");
+editor.focus();
+getSelection().setPosition(editor, 1);
+
+if (window.textInputController) {
+    textInputController.setMarkedText("onetwothree", 11, 11, true, [
+        { from: 0, length: 3, color: "#FF000033" },
+        { from: 3, length: 3, color: "#00FF0033" },
+        { from: 6, length: 5, color: "#0000FF33" }
+    ]);
+}
+</script>
+</body>
+</html>

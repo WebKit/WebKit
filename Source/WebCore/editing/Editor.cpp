@@ -38,6 +38,7 @@
 #include "ChangeListTypeCommand.h"
 #include "ClipboardEvent.h"
 #include "CompositionEvent.h"
+#include "CompositionHighlight.h"
 #include "CreateLinkCommand.h"
 #include "CustomUndoStep.h"
 #include "DataTransfer.h"
@@ -1217,6 +1218,7 @@ void Editor::clear()
             client->discardedComposition(&m_frame);
     }
     m_customCompositionUnderlines.clear();
+    m_customCompositionHighlights.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
     m_mark = { };
@@ -1970,6 +1972,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
+    m_customCompositionHighlights.clear();
 
     if (m_frame.selection().isNone())
         return;
@@ -1991,7 +1994,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     }
 }
 
-void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, unsigned selectionStart, unsigned selectionEnd)
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, unsigned selectionStart, unsigned selectionEnd)
 {
     SetCompositionScope setCompositionScope(m_frame);
 
@@ -2063,6 +2066,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
+    m_customCompositionHighlights.clear();
 
     if (!text.isEmpty()) {
         TypingCommand::insertText(document(), text, TypingCommand::SelectInsertedText | TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
@@ -2083,6 +2087,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             for (auto& underline : m_customCompositionUnderlines) {
                 underline.startOffset += baseOffset;
                 underline.endOffset += baseOffset;
+            }
+            m_customCompositionHighlights = highlights;
+            for (auto& highlight : m_customCompositionHighlights) {
+                highlight.startOffset += baseOffset;
+                highlight.endOffset += baseOffset;
             }
             if (baseNode->renderer())
                 baseNode->renderer()->repaint();
