@@ -37,6 +37,12 @@ class LineBreaker;
 class RenderMultiColumnFlow;
 class RenderRubyRun;
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+namespace LayoutIntegration {
+class LineLayout;
+}
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
@@ -332,11 +338,8 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RenderLineBoxList& lineBoxes() { return m_complexLineLayout.lineBoxes(); }
-    const RenderLineBoxList& lineBoxes() const { return m_complexLineLayout.lineBoxes(); }
-
-    RootInlineBox* firstRootBox() const { return m_complexLineLayout.firstRootBox(); }
-    RootInlineBox* lastRootBox() const { return m_complexLineLayout.lastRootBox(); }
+    RootInlineBox* firstRootBox() const { return complexLineLayout() ? complexLineLayout()->firstRootBox() : nullptr; }
+    RootInlineBox* lastRootBox() const { return complexLineLayout() ? complexLineLayout()->lastRootBox() : nullptr; }
 
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
@@ -533,13 +536,20 @@ private:
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) override;
 
 public:
-    ComplexLineLayout& complexLineLayout() { return m_complexLineLayout; }
-
     virtual Optional<TextAlignMode> overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const { return { }; }
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
 private:
+    bool hasLineLayout() const;
+    bool hasSimpleLineLayout() const;
+    bool hasComplexLineLayout() const;
+
     void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    bool hasLayoutFormattingContextLineLayout() const;
+    void layoutLFCLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+#endif
 
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
@@ -577,9 +587,15 @@ protected:
     std::unique_ptr<FloatingObjects> m_floatingObjects;
     std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
 
-    // FIXME: Only one of these should be needed at any given time.
-    ComplexLineLayout m_complexLineLayout;
-    std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
+private:
+    Variant<
+        WTF::Monostate,
+        Ref<SimpleLineLayout::Layout>,
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        std::unique_ptr<LayoutIntegration::LineLayout>,
+#endif
+        std::unique_ptr<ComplexLineLayout>
+    > m_lineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
