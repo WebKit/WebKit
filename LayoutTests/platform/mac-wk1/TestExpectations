@@ -893,3 +893,5 @@ webkit.org/b/207157 inspector/debugger/tail-deleted-frames/tail-deleted-frames-s
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
 webkit.org/b/207167 inspector/unit-tests/server-timing-entry.html [ Pass Timeout ]
+
+webkit.org/b/207237 http/tests/notifications/event-listener-crash.html [ Pass Crash ]

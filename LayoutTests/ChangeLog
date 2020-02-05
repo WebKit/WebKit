@@ -1,5 +1,14 @@
 2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        REGRESSION: [ macOS wk1 ] ASSERTION FAILED: http/tests/notifications/event-listener-crash.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=207237
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-04  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS ] legacy-animation-engine/fast/animation/request-animation-frame-iframe.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207235
 
