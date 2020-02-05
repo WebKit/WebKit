@@ -1683,11 +1683,13 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
 
 void WebPageProxy::createInspectorTarget(const String& targetId, Inspector::InspectorTargetType type)
 {
+    MESSAGE_CHECK(m_process, !targetId.isEmpty());
     m_inspectorController->createInspectorTarget(targetId, type);
 }
 
 void WebPageProxy::destroyInspectorTarget(const String& targetId)
 {
+    MESSAGE_CHECK(m_process, !targetId.isEmpty());
     m_inspectorController->destroyInspectorTarget(targetId);
 }
 
