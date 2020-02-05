@@ -60,14 +60,14 @@ public:
             return false;
 
         Vector<char> buffer;
-        size_t bufferSize = size.area().unsafeGet() * sizeof(RGBA32);
+        size_t bufferSize = size.area().unsafeGet() * sizeof(uint32_t);
 
         if (!buffer.tryReserveCapacity(bufferSize))
             return false;
 
         buffer.grow(bufferSize);
         m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
-        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
+        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<char*>(m_pixels->data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
         clear();
@@ -86,7 +86,7 @@ public:
 
     void clear()
     {
-        memset(m_pixelsPtr, 0, (m_size.area() * sizeof(RGBA32)).unsafeGet());
+        memset(m_pixelsPtr, 0, (m_size.area() * sizeof(uint32_t)).unsafeGet());
     }
 
     void clearRect(const IntRect& rect)
@@ -94,8 +94,8 @@ public:
         if (rect.isEmpty() || !inBounds(rect))
             return;
 
-        size_t rowBytes = rect.width() * sizeof(RGBA32);
-        RGBA32* start = pixelAt(rect.x(), rect.y());
+        size_t rowBytes = rect.width() * sizeof(uint32_t);
+        uint32_t* start = pixelAt(rect.x(), rect.y());
         for (int i = 0; i < rect.height(); ++i) {
             memset(start, 0, rowBytes);
             start += m_size.width();
@@ -107,8 +107,8 @@ public:
         if (rect.isEmpty() || !inBounds(rect))
             return;
 
-        RGBA32* start = pixelAt(rect.x(), rect.y());
-        RGBA32 pixelValue = this->pixelValue(r, g, b, a);
+        uint32_t* start = pixelAt(rect.x(), rect.y());
+        uint32_t pixelValue = this->pixelValue(r, g, b, a);
         for (int i = 0; i < rect.height(); ++i) {
             for (int j = 0; j < rect.width(); ++j)
                 start[j] = pixelValue;
@@ -121,22 +121,22 @@ public:
         if (rect.isEmpty() || !inBounds(rect))
             return;
 
-        size_t rowBytes = rect.width() * sizeof(RGBA32);
-        RGBA32* src = pixelAt(rect.x(), rect.y());
-        RGBA32* dest = src + m_size.width();
+        size_t rowBytes = rect.width() * sizeof(uint32_t);
+        uint32_t* src = pixelAt(rect.x(), rect.y());
+        uint32_t* dest = src + m_size.width();
         for (int i = 1; i < rect.height(); ++i) {
             memcpy(dest, src, rowBytes);
             dest += m_size.width();
         }
     }
 
-    RGBA32* pixelAt(int x, int y) const
+    uint32_t* pixelAt(int x, int y) const
     {
         ASSERT(inBounds(IntPoint(x, y)));
         return m_pixelsPtr + y * m_size.width() + x;
     }
 
-    void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+    void setPixel(uint32_t* dest, unsigned r, unsigned g, unsigned b, unsigned a)
     {
         ASSERT(dest);
         *dest = pixelValue(r, g, b, a);
@@ -147,30 +147,32 @@ public:
         setPixel(pixelAt(x, y), r, g, b, a);
     }
 
-    void blendPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+    void blendPixel(uint32_t* dest, unsigned r, unsigned g, unsigned b, unsigned a)
     {
         if (!a)
             return;
 
-        if (a >= 255 || !alphaChannel(*dest)) {
+        SimpleColor pixel { *dest };
+
+        if (a >= 255 || !pixel.isVisible()) {
             setPixel(dest, r, g, b, a);
             return;
         }
 
         if (!m_premultiplyAlpha)
-            *dest = makePremultipliedRGBA(redChannel(*dest), greenChannel(*dest), blueChannel(*dest), alphaChannel(*dest), false);
+            pixel = makePremultipliedRGBA(pixel.redComponent(), pixel.greenComponent(), pixel.blueComponent(), pixel.alphaComponent(), false);
 
         unsigned d = 255 - a;
 
-        r = fastDivideBy255(r * a + redChannel(*dest) * d);
-        g = fastDivideBy255(g * a + greenChannel(*dest) * d);
-        b = fastDivideBy255(b * a + blueChannel(*dest) * d);
-        a += fastDivideBy255(d * alphaChannel(*dest));
+        r = fastDivideBy255(r * a + pixel.redComponent() * d);
+        g = fastDivideBy255(g * a + pixel.greenComponent() * d);
+        b = fastDivideBy255(b * a + pixel.blueComponent() * d);
+        a += fastDivideBy255(d * pixel.alphaComponent());
 
         if (m_premultiplyAlpha)
-            *dest = makeRGBA(r, g, b, a);
+            *dest = makeRGBA(r, g, b, a).value();
         else
-            *dest = makeUnPremultipliedRGBA(r, g, b, a);
+            *dest = makeUnPremultipliedRGBA(r, g, b, a).value();
     }
 
     static bool isOverSize(const IntSize& size)
@@ -204,7 +206,7 @@ private:
         Vector<char> buffer;
         buffer.append(other.m_pixels->data(), other.m_pixels->size());
         m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
-        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
+        m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<char*>(m_pixels->data()));
     }
 
     bool inBounds(const IntPoint& point) const
@@ -217,19 +219,19 @@ private:
         return IntRect(IntPoint(), m_size).contains(rect);
     }
 
-    RGBA32 pixelValue(unsigned r, unsigned g, unsigned b, unsigned a) const
+    uint32_t pixelValue(unsigned r, unsigned g, unsigned b, unsigned a) const
     {
         if (m_premultiplyAlpha && !a)
             return 0;
 
         if (m_premultiplyAlpha && a < 255)
-            return makePremultipliedRGBA(r, g, b, a, false);
+            return makePremultipliedRGBA(r, g, b, a, false).value();
 
-        return makeRGBA(r, g, b, a);
+        return makeRGBA(r, g, b, a).value();
     }
 
     RefPtr<SharedBuffer::DataSegment> m_pixels;
-    RGBA32* m_pixelsPtr { nullptr };
+    uint32_t* m_pixelsPtr { nullptr };
     IntSize m_size;
     IntRect m_frameRect; // This will always just be the entire buffer except for GIF and PNG frames
     bool m_premultiplyAlpha { true };

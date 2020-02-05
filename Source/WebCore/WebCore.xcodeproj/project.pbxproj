@@ -3831,7 +3831,6 @@
 		BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */; };
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC74DA371013F3F7007987AD /* RGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74DA351013F3F7007987AD /* RGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C450C4EB2C60083285F /* XMLHttpRequest.h */; };
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13184,8 +13183,6 @@
 		BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLEmbedElement.cpp; sourceTree = "<group>"; };
 		BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLEmbedElement.h; sourceTree = "<group>"; };
 		BC6D6E2509AF943500F59759 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrollView.h; sourceTree = "<group>"; };
-		BC74DA351013F3F7007987AD /* RGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGBColor.h; sourceTree = "<group>"; };
-		BC74DA361013F3F7007987AD /* RGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBColor.cpp; sourceTree = "<group>"; };
 		BC772B360C4EA91E0083285F /* CSSHelper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSHelper.h; sourceTree = "<group>"; };
 		BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequest.cpp; sourceTree = "<group>"; };
 		BC772C450C4EB2C60083285F /* XMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequest.h; sourceTree = "<group>"; };
@@ -27563,8 +27560,6 @@
 				E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				BC4368E70C226E32005EFB5F /* Rect.h */,
-				BC74DA361013F3F7007987AD /* RGBColor.cpp */,
-				BC74DA351013F3F7007987AD /* RGBColor.h */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */,
@@ -32090,7 +32085,6 @@
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
 				FD3160AB12B026F700C1A359 /* ReverbConvolverStage.h in Headers */,
 				FD3160AD12B026F700C1A359 /* ReverbInputBuffer.h in Headers */,
-				BC74DA371013F3F7007987AD /* RGBColor.h in Headers */,
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
 				A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */,

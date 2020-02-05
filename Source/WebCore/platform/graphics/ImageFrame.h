@@ -27,7 +27,6 @@
 
 #include "Color.h"
 #include "DecodingOptions.h"
-#include "ImageBackingStore.h"
 #include "ImageOrientation.h"
 #include "ImageTypes.h"
 #include "IntSize.h"

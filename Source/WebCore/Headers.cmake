@@ -336,7 +336,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/MediaQueryEvaluator.h
     css/MediaQueryExpression.h
     css/MediaQueryParserContext.h
-    css/RGBColor.h
     css/Rect.h
     css/StyleColor.h
     css/StyleProperties.h

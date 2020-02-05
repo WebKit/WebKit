@@ -128,13 +128,13 @@ static CGColorRef createColor(float r, float g, float b, float a)
 struct HistoricMemoryCategoryInfo {
     HistoricMemoryCategoryInfo() { } // Needed for std::array.
 
-    HistoricMemoryCategoryInfo(unsigned category, RGBA32 rgba, String name, bool subcategory = false)
+    HistoricMemoryCategoryInfo(unsigned category, uint32_t argb, String name, bool subcategory = false)
         : name(WTFMove(name))
         , isSubcategory(subcategory)
         , type(category)
     {
         float r, g, b, a;
-        Color(rgba).getRGBA(r, g, b, a);
+        Color { SimpleColor { argb } }.getRGBA(r, g, b, a);
         color = adoptCF(createColor(r, g, b, a));
     }
 

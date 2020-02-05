@@ -40,6 +40,7 @@ namespace WebCore {
 class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
+class SharedBuffer;
 
 class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
     friend class BitmapImage;

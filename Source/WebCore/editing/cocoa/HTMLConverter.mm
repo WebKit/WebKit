@@ -58,7 +58,6 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
-#import "RGBColor.h"
 #import "RenderImage.h"
 #import "RenderText.h"
 #import "StyleProperties.h"

@@ -42,7 +42,7 @@ Color::operator D2D1_COLOR_F() const
 {
     float colorAlpha = alpha() / 255.0f;
 
-    return D2D1::ColorF(rgb(), colorAlpha);
+    return D2D1::ColorF(rgb().value(), colorAlpha);
 }
 
 Color::operator D2D1_VECTOR_4F() const

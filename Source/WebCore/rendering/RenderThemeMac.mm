@@ -819,11 +819,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueThreedface:
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
-            return 0xFFC0C0C0;
+            return SimpleColor { 0xFFC0C0C0 };
 
         case CSSValueInfobackground:
             // No corresponding NSColor for this so we use a hard coded value.
-            return 0xFFFBFCC5;
+            return SimpleColor { 0xFFFBFCC5 };
 
         case CSSValueMenu:
             return menuBackgroundColor();
@@ -832,30 +832,30 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueActiveborder:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return Color(0xFF1AA9FF, Color::Semantic);
-            return Color(0xFF0067F4, Color::Semantic);
+                return { SimpleColor { 0xFF1AA9FF }, Color::Semantic };
+            return { SimpleColor { 0xFF0067F4 }, Color::Semantic };
 
         case CSSValueAppleSystemControlAccent:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             // Same color in light and dark appearances.
-            return Color(0xFF007AFF, Color::Semantic);
+            return { SimpleColor { 0xFF007AFF }, Color::Semantic };
 
         case CSSValueAppleSystemSelectedContentBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return Color(0xFF0058D0, Color::Semantic);
-            return Color(0xFF0063E1, Color::Semantic);
+                return { SimpleColor { 0xFF0058D0 }, Color::Semantic };
+            return { SimpleColor { 0xFF0063E1 }, Color::Semantic };
 
         case CSSValueHighlight:
         case CSSValueAppleSystemSelectedTextBackground:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return Color(0xCC3F638B, Color::Semantic);
-            return Color(0x9980BCFE, Color::Semantic);
+                return { SimpleColor { 0xCC3F638B }, Color::Semantic };
+            return { SimpleColor { 0x9980BCFE }, Color::Semantic };
 
 #if !HAVE(OS_DARK_MODE_SUPPORT)
         case CSSValueAppleSystemContainerBorder:
-            return 0xFFC5C5C5;
+            return SimpleColor { 0xFFC5C5C5 };
 #endif
 
         case CSSValueAppleSystemEvenAlternatingContentBackground: {

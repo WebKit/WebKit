@@ -1,3 +1,15 @@
+2020-02-01  Darin Adler  <darin@apple.com>
+
+        Replace RGBA32 typedef with a class to improve type safety
+        https://bugs.webkit.org/show_bug.cgi?id=206862
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Color>::encode): Use uint32_t explicitly to convert
+        the color value into a SimpleColor.
+        (IPC::ArgumentCoder<Color>::decode): Same thing, only the other direction.
+
 2020-02-04  Darin Adler  <darin@apple.com>
 
         Remove NSKeyedArchiverSPI.h now that WebKit only uses API
