@@ -57,10 +57,10 @@ function test() {
         InspectorTest.log("Creating render pipeline...");
         let evalutePromise = InspectorTest.evaluateInPage(`createRenderPipeline()`);
 
-        if (!WI.canvasManager.canvases.length)
-            await WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded);
+        if (!WI.canvasManager.canvasCollection.size)
+            await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
 
-        let canvas = WI.canvasManager.canvases[0];
+        let canvas = Array.from(WI.canvasManager.canvasCollection)[0];
         InspectorTest.assert(canvas.contextType === WI.Canvas.ContextType.WebGPU, "Canvas should be WebGPU.");
 
         let itemAddedEvent = await canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemAdded);

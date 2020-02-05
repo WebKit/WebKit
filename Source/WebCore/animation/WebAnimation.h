@@ -31,6 +31,7 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
@@ -55,6 +56,9 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*);
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
+
+    static HashSet<WebAnimation*>& instances(const LockHolder&);
+    static Lock& instancesMutex();
 
     virtual bool isDeclarativeAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }

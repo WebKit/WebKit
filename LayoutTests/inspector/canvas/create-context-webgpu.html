@@ -34,14 +34,14 @@ function test() {
         description: "Ensure that attached GPUCanvasContext aren't tracked as a canvas, instead of the WebGPUDevice.",
         async test() {
             let created = false;
-            let listener = WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
-                InspectorTest.assert(event.target.contextType === WI.Canvas.ContextType.WebGPU);
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                InspectorTest.assert(event.data.item.contextType === WI.Canvas.ContextType.WebGPU);
                 created = true;
             });
 
             await InspectorTest.evaluateInPage(`createAttachedCanvas("gpu")`)
 
-            WI.canvasManager.removeEventListener(WI.CanvasManager.Event.CanvasAdded, listener);
+            WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
 
             InspectorTest.expectFalse(created, "Inspector canvas should not be created for attached GPUCanvasContext without connected WebGPUDevice.");
         },
@@ -52,14 +52,14 @@ function test() {
         description: "Ensure that detached GPUCanvasContext aren't tracked as a canvas, instead of the WebGPUDevice.",
         async test() {
             let created = false;
-            let listener = WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
-                InspectorTest.assert(event.target.contextType === WI.Canvas.ContextType.WebGPU);
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                InspectorTest.assert(event.data.item.contextType === WI.Canvas.ContextType.WebGPU);
                 created = true;
             });
 
             await InspectorTest.evaluateInPage(`createDetachedCanvas("gpu")`)
 
-            WI.canvasManager.removeEventListener(WI.CanvasManager.Event.CanvasAdded, listener);
+            WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
 
             InspectorTest.expectFalse(created, "Inspector canvas should not be created for detached GPUCanvasContext without connected WebGPUDevice.");
         },
@@ -70,14 +70,14 @@ function test() {
         description: "Ensure that CSS GPUCanvasContext aren't tracked as a canvas, instead of the WebGPUDevice.",
         async test() {
             let created = false;
-            let listener = WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
-                InspectorTest.assert(event.target.contextType === WI.Canvas.ContextType.WebGPU);
+            let listener = WI.canvasManager.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                InspectorTest.assert(event.data.item.contextType === WI.Canvas.ContextType.WebGPU);
                 created = true;
             });
 
             await InspectorTest.evaluateInPage(`createCSSCanvas("gpu", "css-canvas")`)
 
-            WI.canvasManager.removeEventListener(WI.CanvasManager.Event.CanvasAdded, listener);
+            WI.canvasManager.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
 
             InspectorTest.expectFalse(created, "Inspector canvas should not be created for CSS GPUCanvasContext without connected WebGPUDevice.");
         },

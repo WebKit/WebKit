@@ -188,6 +188,25 @@ WI.RemoteObject = class RemoteObject
         target.CanvasAgent.resolveContext(canvas.identifier, objectGroup, wrapCallback);
     }
 
+    static resolveAnimation(animation, objectGroup, callback)
+    {
+        console.assert(typeof callback === "function");
+
+        function wrapCallback(error, object) {
+            if (error || !object)
+                callback(null);
+            else
+                callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
+        }
+
+        let target = WI.assumingMainTarget();
+
+        // COMPATIBILITY (iOS 13.1): Animation.resolveAnimation did not exist yet.
+        console.assert(target.hasCommand("Animation.resolveAnimation"));
+
+        target.AnimationAgent.resolveAnimation(animation.animationId, objectGroup, wrapCallback);
+    }
+
     // Public
 
     get target()

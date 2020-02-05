@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.animation = document.body.animate([]);
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.resolveAnimation");
+
+    suite.addTestCase({
+        name: "Animation.resolveAnimation.ValidIdentifier",
+        description: "Should return a valid object for the given animation identifier.",
+        async test() {
+            let animations = Array.from(WI.animationManager.animationCollection);
+            InspectorTest.assert(animations.length === 1, "There should only be one animation.");
+
+            let animation = animations[0];
+            if (!animation) {
+                throw `Missing animation.`;
+                return;
+            }
+
+            InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
+
+            const objectGroup = "test";
+            let {object} = await AnimationAgent.resolveAnimation(animation.animationId, objectGroup);
+            InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+            InspectorTest.expectEqual(object.className, "Animation", `Payload should have className "Animation".`);
+        },
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "Animation.resolveAnimation.InvalidIdentifier",
+        description: "Invalid animation identifiers should cause an error.",
+        async test() {
+            const identifier = "DOES_NOT_EXIST";
+            const objectGroup = "test";
+
+            await InspectorTest.expectException(async () => {
+                await AnimationAgent.resolveAnimation(identifier, objectGroup);
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Animation.resolveAnimation command.</p>
+</body>
+</html>

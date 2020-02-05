@@ -48,6 +48,20 @@ function test()
     addTestCase(expectThatTestCase);
     addInverseTestCase("expectFalse", expectThatTestCase);
 
+    let expectEmptyTestCase = {
+        functionName: "expectEmpty",
+        passingInputs: [null, "", {}, [], new Map, new Set],
+        failingInputs: ["test", {test: 1}, ["test"], new Map([["test", 1]]), new Set(["test"]), true, false, 1, undefined],
+    };
+    addTestCase(expectEmptyTestCase);
+
+    let expectNotEmptyTestCase = {
+        functionName: "expectNotEmpty",
+        passingInputs: ["test", {test: 1}, ["test"], new Map([["test", 1]]), new Set(["test"])],
+        failingInputs: [null, "", {}, [], new Map, new Set, true, false, 1, undefined],
+    };
+    addTestCase(expectNotEmptyTestCase);
+
     let expectNullTestCase = {
         functionName: "expectNull",
         passingInputs: [null],

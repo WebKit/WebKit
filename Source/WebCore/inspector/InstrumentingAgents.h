@@ -156,6 +156,9 @@ public:
     InspectorAnimationAgent* persistentInspectorAnimationAgent() const { return m_persistentInspectorAnimationAgent; }
     void setPersistentInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_persistentInspectorAnimationAgent = agent; }
 
+    InspectorAnimationAgent* enabledInspectorAnimationAgent() const { return m_enabledInspectorAnimationAgent; }
+    void setEnabledInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_enabledInspectorAnimationAgent = agent; }
+
     InspectorAnimationAgent* trackingInspectorAnimationAgent() const { return m_trackingInspectorAnimationAgent; }
     void setTrackingInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_trackingInspectorAnimationAgent = agent; }
 
@@ -190,6 +193,7 @@ private:
     PageDOMDebuggerAgent* m_pageDOMDebuggerAgent { nullptr };
     InspectorCanvasAgent* m_inspectorCanvasAgent { nullptr };
     InspectorAnimationAgent* m_persistentInspectorAnimationAgent { nullptr };
+    InspectorAnimationAgent* m_enabledInspectorAnimationAgent { nullptr };
     InspectorAnimationAgent* m_trackingInspectorAnimationAgent { nullptr };
 };
 

@@ -70,6 +70,7 @@ WI.loaded = function()
         WI.workerManager = new WI.WorkerManager,
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
+        WI.animationManager = new WI.AnimationManager,
     ];
 
     // Register for events.
@@ -91,6 +92,7 @@ WI.loaded = function()
 WI.contentLoaded = function()
 {
     // Things that would normally get called by the UI, that we still want to do in tests.
+    WI.animationManager.enable();
     WI.applicationCacheManager.enable();
     WI.canvasManager.enable();
     WI.databaseManager.enable();
@@ -181,6 +183,7 @@ WI.updateVisibilityState = () => {};
             get() { return WI.mainTarget._agents[domainName]; },
         });
     }
+    makeAgentGetter("Animation");
     makeAgentGetter("Audit");
     makeAgentGetter("ApplicationCache");
     makeAgentGetter("CPUProfiler");

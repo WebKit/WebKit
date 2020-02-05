@@ -27,16 +27,21 @@
 
 #include "ComputedEffectTiming.h"
 #include "InspectorWebAgentBase.h"
+#include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class AnimationEffect;
 class DeclarativeAnimation;
 class Element;
 class Event;
+class Frame;
 class KeyframeEffect;
+class Page;
 class WebAnimation;
 
 typedef String ErrorString;
@@ -53,19 +58,41 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
     // AnimationBackendDispatcherHandler
+    void enable(ErrorString&) override;
+    void disable(ErrorString&) override;
+    void requestEffectTarget(ErrorString&, const String& animationId, int* nodeId) override;
+    void resolveAnimation(ErrorString&, const String& animationId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
     void startTracking(ErrorString&) override;
     void stopTracking(ErrorString&) override;
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
-    void didChangeWebAnimationEffect(WebAnimation&);
+    void didSetWebAnimationEffect(WebAnimation&);
+    void didChangeWebAnimationEffectTiming(WebAnimation&);
+    void didChangeWebAnimationEffectTarget(WebAnimation&);
+    void didCreateWebAnimation(WebAnimation&);
     void willDestroyWebAnimation(WebAnimation&);
+    void frameNavigated(Frame&);
 
 private:
+    String findAnimationId(WebAnimation&);
+    WebAnimation* assertAnimation(ErrorString&, const String& animationId);
+    void bindAnimation(WebAnimation&, bool captureBacktrace);
+    void unbindAnimation(const String& animationId);
+    void animationDestroyedTimerFired();
+    void reset();
+
     void stopTrackingDeclarativeAnimation(DeclarativeAnimation&);
 
     std::unique_ptr<Inspector::AnimationFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
+
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    Page& m_inspectedPage;
+
+    HashMap<String, WebAnimation*> m_animationIdMap;
+    Vector<String> m_removedAnimationIds;
+    Timer m_animationDestroyedTimer;
 
     struct TrackedDeclarativeAnimationData {
         String trackingAnimationId;
