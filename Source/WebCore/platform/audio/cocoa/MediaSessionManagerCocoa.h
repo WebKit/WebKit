@@ -53,7 +53,7 @@ protected:
     void removeSession(PlatformMediaSession&) override;
     
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
-    void sessionWillEndPlayback(PlatformMediaSession&) override;
+    void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) override;
     void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) override;
     void clientCharacteristicsChanged(PlatformMediaSession&) override;
     void sessionCanProduceAudioChanged() override;

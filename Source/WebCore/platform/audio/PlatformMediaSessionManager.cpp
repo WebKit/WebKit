@@ -235,7 +235,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     return true;
 }
     
-void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session)
+void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
 
