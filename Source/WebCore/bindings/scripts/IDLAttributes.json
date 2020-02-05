@@ -416,6 +416,10 @@
         "ReturnValue": {
             "contextsAllowed": ["argument"]
         },
+        "RuntimeConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {
