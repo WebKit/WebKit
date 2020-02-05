@@ -43,6 +43,7 @@
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
@@ -912,7 +913,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled ? terminationDelay : 0_s);
+        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() ? terminationDelay : 0_s);
     }
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
@@ -930,6 +931,17 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         registration->removeClientUsingRegistration(clientIdentifier);
 
     m_clientToControllingRegistration.remove(registrationIterator);
+}
+
+void SWServer::handleLowMemoryWarning()
+{
+    // Accelerating the delayed termination of unused service workers due to memory pressure.
+    if (m_isProcessTerminationDelayEnabled) {
+        for (auto& clients : m_clientIdentifiersPerOrigin.values()) {
+            if (clients.terminateServiceWorkersTimer)
+                clients.terminateServiceWorkersTimer->startOneShot(0_s);
+        }
+    }
 }
 
 void SWServer::removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey& key)
