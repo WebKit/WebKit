@@ -1,0 +1,3 @@
+
+PASS Animations are composited by their order in the animation-name property. 
+

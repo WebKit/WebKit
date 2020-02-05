@@ -14,5 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Document/getAnimations.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Document/timeline.html

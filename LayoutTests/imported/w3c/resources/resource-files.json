@@ -100,6 +100,7 @@
         "web-platform-tests/css/WOFF2/support/available-001a.xht",
         "web-platform-tests/css/WOFF2/support/available-001b.xht",
         "web-platform-tests/css/WOFF2/testcaseindex.xht",
+        "web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html",
         "web-platform-tests/css/css-backgrounds/background-attachment-local-scrolling.htm",
         "web-platform-tests/css/css-backgrounds/background-clip-content-box.html",
         "web-platform-tests/css/css-backgrounds/background-clip-padding-box-with-border-radius.html",

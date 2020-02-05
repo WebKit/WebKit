@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset=utf-8>
 <title>CSSTransition.currentTime</title>
-<!--  TODO: Add a more specific link for this once it is specified.  -->
+<!-- TODO: Add a more specific link for this once it is specified. -->
 <link rel="help" href="https://drafts.csswg.org/css-transitions-2/#csstransition">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -98,8 +98,8 @@ promise_test(async t => {
 
   await animation.ready;
 
-  assert_throws(
-    new TypeError(),
+  assert_throws_js(
+    TypeError,
     () => {
       animation.currentTime = null;
     },

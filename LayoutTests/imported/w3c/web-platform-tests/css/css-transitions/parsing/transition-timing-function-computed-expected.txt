@@ -1,7 +1,5 @@
 
 PASS Property transition-timing-function value 'linear' computes to 'linear' 
-FAIL Property transition-timing-function value '' computes to 'ease' assert_true: '' is a supported value for transition-timing-function. expected true got false
-PASS Property transition-timing-function value 'initial' computes to 'ease' 
 PASS Property transition-timing-function value 'ease' computes to 'ease' 
 PASS Property transition-timing-function value 'ease-in' computes to 'ease-in' 
 PASS Property transition-timing-function value 'ease-out' computes to 'ease-out' 
