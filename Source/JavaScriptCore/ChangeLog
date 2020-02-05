@@ -1,3 +1,24 @@
+2020-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Structure::setMaxOffset and setTransitionOffset are racy
+        https://bugs.webkit.org/show_bug.cgi?id=207249
+
+        Reviewed by Mark Lam.
+
+        We hit crash in JSTests/stress/array-slice-osr-exit-2.js. The situation is following.
+
+            1. The mutator thread (A) is working.
+            2. The concurrent collector (B) is working.
+            3. A attempts to set m_maxOffset in StructureRareData by allocating it. First, A sets Structure::m_maxOffset to useRareDataFlag.
+            3. B is in JSObject::visitButterflyImpl, and executing Structure::maxOffset().
+            4. B detects that m_maxOffset is useRareDataFlag.
+            5. B attempts to load rareData, but this is not a StructureRareData since A is just now setting up StructureRareData.
+            6. B crashes.
+
+        Set useRareDataFlag after StructureRareData is set. Ensuring this store-order by using storeStoreFence.
+
+        * runtime/Structure.h:
+
 2020-02-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes early February 2020 edition
