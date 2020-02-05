@@ -1,3 +1,15 @@
+2020-02-05  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Apply ttl to archive shards
+        https://bugs.webkit.org/show_bug.cgi?id=207295
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/archive_context.py:
+        (ArchiveContext.ArchiveMetaDataByCommit): Use new table.
+        (ArchiveContext.ArchiveChunks): Use new table.
+        (ArchiveContext.register): Add ttl to archive shards.
+
 2020-02-05  Alex Christensen  <achristensen@webkit.org>
 
         Make WKWebView._negotiatedLegacyTLS accurate when loading main resouorce from network or cache
