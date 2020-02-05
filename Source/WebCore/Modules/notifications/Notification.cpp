@@ -204,9 +204,11 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         return;
 
     if (!document.isSecureContext()) {
-        document.eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback)]() mutable {
-            callback->handleEvent(Permission::Denied);
-        });
+        if (callback) {
+            document.eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback)]() mutable {
+                callback->handleEvent(Permission::Denied);
+            });
+        }
         return;
     }
 

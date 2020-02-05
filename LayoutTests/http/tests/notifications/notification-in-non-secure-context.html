@@ -10,6 +10,8 @@ var test = async_test("Notification permission in insecure context");
 if (window.internals)
     internals.markContextAsInsecure();
 
+Notification.requestPermission();
+
 Notification.requestPermission(test.step_func((result) => {
     assert_equals(result, "denied", "result");
     assert_equals(Notification.permission, "denied", "getter");
