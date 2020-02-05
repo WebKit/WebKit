@@ -1874,18 +1874,18 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
 
     if (buftype == EGL_IOSURFACE_ANGLE)
     {
-#if ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
         if (textureTarget != EGL_TEXTURE_RECTANGLE_ANGLE)
         {
             return EglBadAttribute()
                    << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target on desktop macOS";
         }
-#else   // ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
+#else // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
         if (textureTarget != EGL_TEXTURE_2D)
         {
             return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_2D target on iOS";
         }
-#endif  // ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
+#endif // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
         if (textureFormat != EGL_TEXTURE_RGBA)
         {

@@ -1,3 +1,10 @@
+2020-02-05  Dean Jackson  <dino@apple.com>
+
+        Fix MacCatalyst build.
+
+        * src/libANGLE/validationEGL.cpp:
+        (egl::ValidateCreatePbufferFromClientBuffer):
+
 2020-02-04  James Darpinian  <jdarpinian@chromium.org>
 
         Update ANGLE
