@@ -37,9 +37,12 @@
     (sysctl-name
         "hw.availcpu"
         "hw.ncpu"
-        "hw.model"
+        "hw.model" ;; Needed for bundle loading
         "kern.memorystatus_level"
-        "vm.footprint_suspend"))
+        "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
+        "kern.tcsm_available" ;; Needed for IndexedDB support.
+        "vm.footprint_suspend")
+)
 
 (deny iokit-get-properties)
 

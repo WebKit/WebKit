@@ -1,3 +1,11 @@
+2020-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+    Correct branch sandboxes. rdar://problem/59098315
+
+    * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-02-04  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255189. rdar://problem/58943054

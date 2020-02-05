@@ -555,7 +555,8 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
-        "hw.availcpu" ;; Needed by JSC engine.
+        "hw.activecpu" ;; Needed by JSC engine.
+        "hw.availcpu"
         "hw.ncpu"
         "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
         "hw.model" ;; Needed for bundle loading
