@@ -71,9 +71,7 @@ public:
 
     void enqueueAnimationPlaybackEvent(AnimationPlaybackEvent&);
     
-    bool scheduledUpdate() const { return m_animationResolutionScheduled; }
-    void updateCurrentTime(DOMHighResTimeStamp timestamp);
-    void updateAnimationsAndSendEvents();
+    void updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp);
 
     void updateThrottlingState();
     WEBCORE_EXPORT Seconds animationInterval() const;
