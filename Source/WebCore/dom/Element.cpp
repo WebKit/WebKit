@@ -3709,6 +3709,11 @@ IntersectionObserverData* Element::intersectionObserverData()
 
 #endif
 
+KeyframeEffectStack* Element::keyframeEffectStack() const
+{
+    return hasRareData() ? elementRareData()->keyframeEffectStack() : nullptr;
+}
+
 KeyframeEffectStack& Element::ensureKeyframeEffectStack()
 {
     auto& rareData = ensureElementRareData();
@@ -3734,7 +3739,7 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
         ASSERT(effect->animation());
         effect->animation()->resolve(targetStyle);
 
-        if (effect->isAccelerated())
+        if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
             impact.add(AnimationImpact::RequiresRecomposite);
 
         if (effect->triggersStackingContext())
