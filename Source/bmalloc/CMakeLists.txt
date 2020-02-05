@@ -33,7 +33,6 @@ set(bmalloc_SOURCES
     bmalloc/Scavenger.cpp
     bmalloc/VMHeap.cpp
     bmalloc/bmalloc.cpp
-    bmalloc/mbmalloc.cpp
 )
 
 set(bmalloc_PUBLIC_HEADERS
@@ -148,8 +147,6 @@ set(bmalloc_INTERFACE_LIBRARIES bmalloc)
 set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
 set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
 
-set(mbmalloc_LIBRARIES bmalloc)
-
 WEBKIT_FRAMEWORK_DECLARE(bmalloc)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
@@ -165,6 +162,6 @@ WEBKIT_FRAMEWORK_TARGET(bmalloc)
 if (DEVELOPER_MODE)
     add_library(mbmalloc SHARED bmalloc/mbmalloc.cpp)
     target_include_directories(mbmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
-    target_link_libraries(mbmalloc ${CMAKE_THREAD_LIBS_INIT} ${mbmalloc_LIBRARIES} ${bmalloc_LIBRARIES})
+    target_link_libraries(mbmalloc Threads::Threads bmalloc)
     set_target_properties(mbmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_mbmalloc")
 endif ()

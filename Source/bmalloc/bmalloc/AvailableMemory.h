@@ -30,7 +30,7 @@
 
 namespace bmalloc {
 
-size_t availableMemory();
+BEXPORT size_t availableMemory();
 
 #if BPLATFORM(IOS_FAMILY) || BOS(LINUX)
 struct MemoryStatus {

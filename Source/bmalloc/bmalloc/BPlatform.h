@@ -89,6 +89,10 @@
 #define BPLATFORM_APPLETV 1
 #endif
 
+#if defined(__SCE__)
+#define BPLATORM_PLAYSTATION 1
+#endif
+
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
 
 /* BUSE() - use a particular third-party library or optional OS service */
@@ -275,11 +279,19 @@
 
 #define BATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 
+/* Export macro support. Detects the attributes available for shared library symbol export
+   decorations. */
+#if BOS(WINDOWS) || (BCOMPILER_HAS_CLANG_DECLSPEC(dllimport) && BCOMPILER_HAS_CLANG_DECLSPEC(dllexport))
+#define BUSE_DECLSPEC_ATTRIBUTE 1
+#elif BCOMPILER(GCC_COMPATIBLE)
+#define BUSE_VISIBILITY_ATTRIBUTE 1
+#endif
+
 #if BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY)
 #define BUSE_OS_LOG 1
 #endif
 
-#if !defined(BUSE_EXPORT_MACROS) && (BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY))
+#if !defined(BUSE_EXPORT_MACROS) && (BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY) || BPLATFORM(PLAYSTATION))
 #define BUSE_EXPORT_MACROS 1
 #endif
 

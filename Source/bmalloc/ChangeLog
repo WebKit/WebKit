@@ -1,3 +1,41 @@
+2020-02-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [bmalloc] Add declspec support for export macros
+        https://bugs.webkit.org/show_bug.cgi?id=207158
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a check for __has_declspec_attribute which is a Clang extension for Microsoft
+        style __declspec attributes in BCompiler.h. Then use that check within BPlatform.h
+        to determine if __declspec or visibility("default") should be used for the export
+        macros.
+
+        The BExport.h file was then expanded to properly implement __declspec definitions
+        for export and import. Libraries that could be compiled statically in WebKit have
+        a STATICALLY_LINKED_WITH_${library} definition for when they're compiled statically
+        and later exposed through a different shared library. In practice though this is
+        really only needed when __declspec is used since this is the only case where the
+        import and export declarations differ.
+
+        The BEXPORT on StaticPerProcess resulted in undefined symbol errors when WebCore
+        was linked. Specifically IsoSharedHeap::getFastCase and IsoSharedHeap::getSlowCase
+        which is a subclass. It appears that Storage was the only one required to be
+        exported. This only appeared due to how __declspec requires exports and imports
+        to be defined differently.
+
+        Also added support for export macros on PlayStation in the BPlatform.h file and
+        fixed any exports for that platform when building.
+
+        * CMakeLists.txt:
+        * bmalloc/Allocator.h:
+        * bmalloc/AvailableMemory.h:
+        * bmalloc/BCompiler.h:
+        * bmalloc/BExport.h:
+        * bmalloc/BPlatform.h:
+        * bmalloc/Cache.h:
+        * bmalloc/IsoTLS.h:
+        * bmalloc/StaticPerProcess.h:
+
 2020-01-21  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] Make use of LockHolder strict in some methods of Scavenger

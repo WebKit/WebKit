@@ -54,8 +54,8 @@ public:
 
 private:
     void* allocateImpl(size_t, FailureAction);
-    void* allocateImpl(size_t alignment, size_t, FailureAction);
-    void* reallocateImpl(void*, size_t, FailureAction);
+    BEXPORT void* allocateImpl(size_t alignment, size_t, FailureAction);
+    BEXPORT void* reallocateImpl(void*, size_t, FailureAction);
 
     bool allocateFastCase(size_t, void*&);
     BEXPORT void* allocateSlowCase(size_t, FailureAction);
