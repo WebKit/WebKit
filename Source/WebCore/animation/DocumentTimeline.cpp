@@ -42,7 +42,6 @@
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
-#include "Settings.h"
 #include <JavaScriptCore/VM.h>
 
 static const Seconds defaultAnimationInterval { 15_ms };
@@ -66,13 +65,8 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(&document)
     , m_originTime(originTime)
 {
-    if (m_document) {
-        m_document->addTimeline(*this);
-        if (auto* page = m_document->page()) {
-            if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
-                suspendAnimations();
-        }
-    }
+    if (m_document && m_document->page() && !m_document->page()->isVisible())
+        suspendAnimations();
 }
 
 DocumentTimeline::~DocumentTimeline() = default;
@@ -343,18 +337,15 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-void DocumentTimeline::updateCurrentTime(DOMHighResTimeStamp timestamp)
+void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
 {
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
     // it has to match the rAF timestamp.
     if (!m_isSuspended)
         cacheCurrentTime(timestamp);
-}
 
-void DocumentTimeline::updateAnimationsAndSendEvents()
-{
-    if (m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+    if (m_isSuspended || !m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
 
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
