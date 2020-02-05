@@ -357,11 +357,12 @@ public:
 
     PropertyOffset maxOffset() const
     {
-        if (m_maxOffset == shortInvalidOffset)
+        uint16_t maxOffset = m_maxOffset;
+        if (maxOffset == shortInvalidOffset)
             return invalidOffset;
-        if (m_maxOffset == useRareDataFlag)
+        if (maxOffset == useRareDataFlag)
             return rareData()->m_maxOffset;
-        return m_maxOffset;
+        return maxOffset;
     }
 
     void setMaxOffset(VM& vm, PropertyOffset offset)
@@ -370,19 +371,23 @@ public:
             m_maxOffset = shortInvalidOffset;
         else if (offset < useRareDataFlag && offset < shortInvalidOffset)
             m_maxOffset = offset;
+        else if (m_maxOffset == useRareDataFlag)
+            rareData()->m_maxOffset = offset;
         else {
-            m_maxOffset = useRareDataFlag;
             ensureRareData(vm)->m_maxOffset = offset;
+            WTF::storeStoreFence();
+            m_maxOffset = useRareDataFlag;
         }
     }
 
     PropertyOffset transitionOffset() const
     {
-        if (m_transitionOffset == shortInvalidOffset)
+        uint16_t transitionOffset = m_transitionOffset;
+        if (transitionOffset == shortInvalidOffset)
             return invalidOffset;
-        if (m_transitionOffset == useRareDataFlag)
+        if (transitionOffset == useRareDataFlag)
             return rareData()->m_transitionOffset;
-        return m_transitionOffset;
+        return transitionOffset;
     }
 
     void setTransitionOffset(VM& vm, PropertyOffset offset)
@@ -391,9 +396,12 @@ public:
             m_transitionOffset = shortInvalidOffset;
         else if (offset < useRareDataFlag && offset < shortInvalidOffset)
             m_transitionOffset = offset;
+        else if (m_transitionOffset == useRareDataFlag)
+            rareData()->m_transitionOffset = offset;
         else {
-            m_transitionOffset = useRareDataFlag;
             ensureRareData(vm)->m_transitionOffset = offset;
+            WTF::storeStoreFence();
+            m_transitionOffset = useRareDataFlag;
         }
     }
 
