@@ -315,7 +315,7 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 #endif
 

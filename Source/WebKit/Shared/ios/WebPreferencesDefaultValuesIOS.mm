@@ -43,10 +43,12 @@ bool defaultTextAutosizingUsesIdempotentMode()
 
 #endif
 
+#if !PLATFORM(MACCATALYST)
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 {
     return [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
 }
+#endif
 
 } // namespace WebKit
 
