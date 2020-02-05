@@ -1,5 +1,29 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r253647. rdar://problem/59098087
+
+    REGRSSION: [ High Sierra Catalina ] (r253310) compositing/video/video-border-radius-clipping.html is failing
+    https://bugs.webkit.org/show_bug.cgi?id=205226
+    
+    Unreviewed test gardening. Mark the test as an image failure on WK1.
+    The test fails with a few different pixels in the video frames.
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253647 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRSSION: [ High Sierra Catalina ] (r253310) compositing/video/video-border-radius-clipping.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=205226
+
+            Unreviewed test gardening. Mark the test as an image failure on WK1.
+            The test fails with a few different pixels in the video frames.
+
+            * platform/mac-wk1/TestExpectations:
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255532. rdar://problem/59098561
 
     Add support for specifying background colors when setting marked text
