@@ -1,3 +1,18 @@
+2020-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: (r255611) [ Mac ] 3 lldb tests failing related to HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=207204
+
+        Reviewed by Simon Fraser.
+
+        Remove support for HashSet and HashMap until we are able to do the equivalent of reinterpret_cast<unsigned*>(pointer)[-1]
+        in LLDB's python API.
+
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFHashMap_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashMap_of_vectors_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+
 2020-02-04  Lauro Moura  <lmoura@igalia.com>
 
         [EWS] Stop GTK/WPE build if jhbuild fails.
