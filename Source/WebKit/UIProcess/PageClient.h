@@ -459,8 +459,6 @@ public:
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
 
-    virtual void didFinishProcessingAllPendingMouseEvents() = 0;
-
     virtual void videoControlsManagerDidChange() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

@@ -248,8 +248,6 @@ private:
 
     void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
 
-    void didFinishProcessingAllPendingMouseEvents() final { }
-
 #if HAVE(PENCILKIT)
     RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
 #endif

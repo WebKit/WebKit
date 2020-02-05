@@ -59,4 +59,5 @@
 @property (nonatomic, readonly) BOOL _hasServiceWorkerForegroundActivityForTesting;
 - (void)_setAssertionStateForTesting:(int)state;
 
+- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
 @end

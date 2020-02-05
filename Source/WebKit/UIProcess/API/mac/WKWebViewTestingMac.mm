@@ -101,11 +101,6 @@
     _page->setFooterBannerHeightForTesting(height);
 }
 
-- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action
-{
-    _impl->doAfterProcessingAllPendingMouseEvents(action);
-}
-
 - (NSMenu *)_activeMenu
 {
     // FIXME: Only the DOM paste access menu is supported for now. In the future, it could be

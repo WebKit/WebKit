@@ -731,8 +731,13 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     return handled;
 }
 
-static inline bool canMouseDownStartSelect(Node* node)
+bool EventHandler::canMouseDownStartSelect(Node* node)
 {
+    if (Page* page = m_frame.page()) {
+        if (!page->chrome().client().shouldUseMouseEventsForSelection())
+            return false;
+    }
+    
     if (!node || !node->renderer())
         return true;
 
