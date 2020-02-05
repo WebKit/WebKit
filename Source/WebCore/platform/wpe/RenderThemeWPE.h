@@ -43,7 +43,15 @@ private:
     RenderThemeWPE() = default;
     virtual ~RenderThemeWPE() = default;
 
+    bool supportsHover(const RenderStyle&) const override { return true; }
+    bool supportsFocusRing(const RenderStyle&) const override;
+
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+
+    bool popsMenuBySpaceOrReturn() const override { return true; }
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
+    bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 };
 
 } // namespace WebCore
