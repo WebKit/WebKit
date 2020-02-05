@@ -52,7 +52,7 @@ public:
     using TaskIdentifier = uint64_t;
 
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend);
-    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, ChallengeCompletionHandler&&);
+    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
     void didReceiveData(Ref<WebCore::SharedBuffer>&&);

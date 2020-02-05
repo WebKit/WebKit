@@ -52,7 +52,7 @@ private:
     const URL& currentURL() const;
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
-    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, ChallengeCompletionHandler&&) final;
+    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) final;

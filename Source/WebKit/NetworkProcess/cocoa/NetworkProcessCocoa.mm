@@ -70,8 +70,6 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
-    WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(parameters.enableLegacyTLS);
-
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     WebCore::setApplicationSDKVersion(parameters.uiProcessSDKVersion);
 

@@ -146,11 +146,11 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
     });
 }
 
-void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
+void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, WTFMove(completionHandler));
+        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
     auto weakThis = makeWeakPtr(*this);

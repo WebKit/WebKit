@@ -86,6 +86,8 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView;
 
+- (void)_webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowLegacyTLS:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)_webViewDidBeginNavigationGesture:(WKWebView *)webView;
 // Item is nil if the gesture ended without navigation.
 - (void)_webViewDidEndNavigationGesture:(WKWebView *)webView withNavigationToBackForwardListItem:(WKBackForwardListItem *)item;
