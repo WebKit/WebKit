@@ -31,13 +31,14 @@
 #include "Timer.h"
 #include <wtf/Markable.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AnimationPlaybackEvent;
 class RenderElement;
 
-class DocumentTimeline final : public AnimationTimeline
+class DocumentTimeline final : public AnimationTimeline, public CanMakeWeakPtr<DocumentTimeline>
 {
 public:
     static Ref<DocumentTimeline> create(Document&);
