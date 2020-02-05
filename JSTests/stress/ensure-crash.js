@@ -1,0 +1,3 @@
+//@ crash!
+
+$vm.crash();

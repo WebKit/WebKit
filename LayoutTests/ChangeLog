@@ -1,5 +1,106 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255365. rdar://problem/59097795
+
+    [JSC] Give up IC when unknown structure transition happens
+    https://bugs.webkit.org/show_bug.cgi?id=206846
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/ensure-crash.js: Added.
+    * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition-debug.js: Added.
+    (shouldBe):
+    (putter):
+    (not_string.toString):
+    * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition.js: Added.
+    (shouldBe):
+    (putter):
+    (not_string.toString):
+    * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js: Added.
+    (shouldBe):
+    (putter):
+    (not_string.toString):
+    * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten.js: Added.
+    (shouldBe):
+    (dictionary):
+    (putter):
+    (not_string.toString):
+    
+    Source/JavaScriptCore:
+    
+    When we are creating Put IC for a new property, we grab the old Structure before performing
+    the put. For a custom ::put, our convention is that the implemented ::put should mark the PutPropertySlot
+    as non-cachable. The IC code relies on this in order to work correctly. If we didn't mark it as non-cacheable,
+    a semantic failure can happen. This patch hardens the code against this semantic failure case by giving up trying
+    to cache the IC when the newStructure calculated from oldStructure does not match against
+    the actual structure after the put operation.
+    
+    * jit/Repatch.cpp:
+    (JSC::tryCachePutByID):
+    (JSC::repatchPutByID):
+    * llint/LLIntSlowPaths.cpp:
+    (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+    * runtime/Structure.cpp:
+    (JSC::Structure::flattenDictionaryStructure):
+    * tools/JSDollarVM.cpp:
+    (JSC::functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus):
+    (JSC::JSDollarVM::finishCreation):
+    (JSC::JSDollarVM::visitChildren):
+    * tools/JSDollarVM.h:
+    
+    Source/WebCore:
+    
+    IDL Code Generator should taint PutPropertySlot or taint implemented object to avoid Put IC caching
+    when it implements custom ::put operation which has side-effect regardless of Structure. Otherwise, IC can be setup
+    and IC can do fast path without consulting the custom ::put operation.
+    
+    Test: js/dom/put-override-should-not-use-ic.html
+    
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GenerateHeader):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h:
+    * bindings/scripts/test/JS/JSTestPluginInterface.h:
+    
+    Tools:
+    
+    Add `crash!` annotation, which allows us to write a crashing JS test.
+    
+    * Scripts/run-jsc-stress-tests:
+    * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+    * Scripts/webkitruby/jsc-stress-test-writer-playstation.rb:
+    * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+    
+    LayoutTests:
+    
+    * js/dom/put-override-should-not-use-ic-expected.txt: Added.
+    * js/dom/put-override-should-not-use-ic.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255365 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Give up IC when unknown structure transition happens
+            https://bugs.webkit.org/show_bug.cgi?id=206846
+
+            Reviewed by Mark Lam.
+
+            * js/dom/put-override-should-not-use-ic-expected.txt: Added.
+            * js/dom/put-override-should-not-use-ic.html: Added.
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255331. rdar://problem/59098086
 
     REGRESSION: [ Mac ] fast/hidpi/image-srcset-relative-svg-canvas-2x.html is a flaky failure

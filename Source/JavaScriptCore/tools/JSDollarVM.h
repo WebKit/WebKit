@@ -54,6 +54,8 @@ public:
         instance->finishCreation(vm);
         return instance;
     }
+
+    Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.get(); }
     
 private:
     JSDollarVM(VM& vm, Structure* structure)
@@ -62,10 +64,13 @@ private:
         DollarVMAssertScope assertScope;
     }
 
-
     void finishCreation(VM&);
     void addFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
     void addConstructibleFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<Structure> m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure;
 };
 
 } // namespace JSC

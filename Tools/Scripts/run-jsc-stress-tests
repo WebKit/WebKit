@@ -613,6 +613,10 @@ def slow!
     $runCommandOptions[:isSlow] = true
 end
 
+def crash!
+    $runCommandOptions[:shouldCrash] = true
+end
+
 def requireOptions(*options)
     $testSpecificRequiredOptions += options
 end
