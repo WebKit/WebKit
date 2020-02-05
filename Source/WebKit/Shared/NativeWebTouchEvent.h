@@ -27,14 +27,11 @@
 
 #include "WebEvent.h"
 
-#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
-#include <UIKit/UIKit.h>
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 
 #if PLATFORM(IOS_FAMILY)
 #if defined(__OBJC__)
+#include <UIKit/UIKit.h>
 struct _UIWebTouchEvent;
 #endif
 #elif PLATFORM(GTK)
