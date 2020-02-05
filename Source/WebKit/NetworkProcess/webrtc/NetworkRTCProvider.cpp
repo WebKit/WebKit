@@ -205,6 +205,11 @@ void NetworkRTCProvider::didReceiveNetworkRTCSocketMessage(IPC::Connection& conn
 
 void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
 {
+    ASSERT(m_resolvers.isValidKey(identifier));
+    ASSERT(!address.isEmpty());
+    if (!m_resolvers.isValidKey(identifier) || address.isEmpty())
+        return;
+
     auto resolver = NetworkRTCResolver::create(identifier, [this, identifier](WebCore::DNSAddressesOrError&& result) mutable {
         if (!result.has_value()) {
             if (result.error() != WebCore::DNSError::Cancelled)
