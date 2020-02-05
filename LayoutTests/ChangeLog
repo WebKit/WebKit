@@ -1,3 +1,14 @@
+2020-02-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: replaceTextInRange should handle when called on the WebArea element
+        https://bugs.webkit.org/show_bug.cgi?id=207242
+        <rdar://problem/59173196>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/replace-text-with-range-on-webarea-element-expected.txt: Added.
+        * accessibility/mac/replace-text-with-range-on-webarea-element.html: Added.
+
 2020-02-05  youenn fablet  <youenn@apple.com>
 
         Improve stability of webrtc/video-autoplay.html by splitting tests in multiple files
