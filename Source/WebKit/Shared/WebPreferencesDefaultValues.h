@@ -315,5 +315,8 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
+#if PLATFORM(IOS_FAMILY)
+bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
+#endif
 
 } // namespace WebKit
