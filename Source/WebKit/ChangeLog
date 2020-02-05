@@ -1,3 +1,28 @@
+2020-02-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Defer ending AppSSO sheets til NSWindowDidDeminiaturize or NSApplicationDidUnhide
+        https://bugs.webkit.org/show_bug.cgi?id=207173
+        <rdar://problem/55669065>
+
+        Reviewed by Brent Fulgham.
+
+        AppKit has a bug that [m_sheetWindow sheetParent] is null if the parent is minimized or the host app is hidden.
+        SheetParent is used to endSheet. Therefore, WebKit cannot dismiss AppSSO UIs in the above two cases if asked
+        by extensions.
+
+        This patch implements a workaround to detect those two cases and defer the endSheet til NSWindowDidDeminiaturize
+        or NSApplicationDidUnhide is received.
+
+        Covered by API tests.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::dismissViewController):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::abortInternal):
+        Treat abort like falling back to the web path for sub frame case given displaying an empty
+        iframe after aborting seems bad.
+
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Protect against targetId String being invalid in WebPageProxy::createInspectorTarget() / destroyInspectorTarget()

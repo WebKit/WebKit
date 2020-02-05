@@ -394,7 +394,7 @@ static UICalloutBar *suppressUICalloutBar()
 - (void)_setUpTestWindow:(NSRect)frame
 {
 #if PLATFORM(MAC)
-    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:(NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable) backing:NSBackingStoreBuffered defer:NO]);
     [_hostWindow setFrameOrigin:NSMakePoint(0, 0)];
     [_hostWindow setIsVisible:YES];
     [_hostWindow contentView].wantsLayer = YES;

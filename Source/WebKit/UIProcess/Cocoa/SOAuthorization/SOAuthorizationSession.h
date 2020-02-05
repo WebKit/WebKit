@@ -117,6 +117,8 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<NSWindow> m_sheetWindow;
     RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
+    RetainPtr<NSObject> m_presentingWindowDidDeminiaturizeObserver;
+    RetainPtr<NSObject> m_applicationDidUnhideObserver;
 #endif
 };
 

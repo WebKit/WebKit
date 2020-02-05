@@ -83,6 +83,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 
 void SubFrameSOAuthorizationSession::abortInternal()
 {
+    fallBackToWebPathInternal();
 }
 
 void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)

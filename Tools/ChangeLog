@@ -1,3 +1,17 @@
+2020-02-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Defer ending AppSSO sheets til NSWindowDidDeminiaturize or NSApplicationDidUnhide
+        https://bugs.webkit.org/show_bug.cgi?id=207173
+        <rdar://problem/55669065>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView _setUpTestWindow:]):
+        Make the TestWKWebViewHostWindow miniaturizable to enable the test.
+
 2020-02-05  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Apply ttl to archive shards

@@ -296,6 +296,32 @@ void SOAuthorizationSession::dismissViewController()
 #if PLATFORM(MAC)
     ASSERT(m_sheetWindow && m_sheetWindowWillCloseObserver);
 
+    // This is a workaround for an AppKit issue: <rdar://problem/59125329>.
+    // [m_sheetWindow sheetParent] is null if the parent is minimized or the host app is hidden.
+    if (auto *presentingWindow = m_page->platformWindow()) {
+        if (presentingWindow.miniaturized) {
+            if (m_presentingWindowDidDeminiaturizeObserver)
+                return;
+            m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
+                dismissViewController();
+                [[NSNotificationCenter defaultCenter] removeObserver:m_presentingWindowDidDeminiaturizeObserver.get()];
+                m_presentingWindowDidDeminiaturizeObserver = nullptr;
+            }];
+            return;
+        }
+    }
+
+    if (NSApp.hidden) {
+        if (m_applicationDidUnhideObserver)
+            return;
+        m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
+            dismissViewController();
+            [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidUnhideObserver.get()];
+            m_applicationDidUnhideObserver = nullptr;
+        }];
+        return;
+    }
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_sheetWindowWillCloseObserver.get()];
     m_sheetWindowWillCloseObserver = nullptr;
 
