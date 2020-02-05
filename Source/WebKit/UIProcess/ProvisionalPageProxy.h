@@ -96,6 +96,8 @@ public:
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
     void cancel();
 
+    void unfreezeLayerTreeDueToSwipeAnimation();
+
     void processDidTerminate();
 
 private:
