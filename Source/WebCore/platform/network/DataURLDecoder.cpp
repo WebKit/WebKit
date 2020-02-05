@@ -43,7 +43,7 @@ namespace DataURLDecoder {
 
 static WorkQueue& decodeQueue()
 {
-    static auto& queue = WorkQueue::create("org.webkit.DataURLDecoder").leakRef();
+    static auto& queue = WorkQueue::create("org.webkit.DataURLDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::UserInitiated).leakRef();
     return queue;
 }
 
