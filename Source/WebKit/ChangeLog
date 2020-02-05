@@ -1,3 +1,35 @@
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r254381. rdar://problem/59097774
+
+    [iOS] Remove reporting for some well-understood sandbox rules
+    https://bugs.webkit.org/show_bug.cgi?id=206111
+    
+    Reviewed by Per Arne Vollan.
+    
+    Remove sandbox rules designed to generate reporting about resource use for some well-understood
+    items that are frequently hit in WebKit use.
+    
+    No new tests. No change in behavior.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254381 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+            [iOS] Remove reporting for some well-understood sandbox rules
+            https://bugs.webkit.org/show_bug.cgi?id=206111
+
+            Reviewed by Per Arne Vollan.
+
+            Remove sandbox rules designed to generate reporting about resource use for some well-understood
+            items that are frequently hit in WebKit use.
+
+            No new tests. No change in behavior.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-01-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r255339. rdar://problem/58936679
