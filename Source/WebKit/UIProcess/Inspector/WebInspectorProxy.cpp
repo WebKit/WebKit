@@ -307,7 +307,7 @@ void WebInspectorProxy::attach(AttachmentSide side)
 
 void WebInspectorProxy::detach()
 {
-    if (!m_inspectedPage)
+    if (!m_inspectedPage || !m_inspectorPage)
         return;
 
     m_isAttached = false;
