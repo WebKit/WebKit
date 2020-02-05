@@ -85,6 +85,11 @@ void Encoder::encode(uint16_t value)
     encodeNumber(value);
 }
 
+void Encoder::encode(int16_t value)
+{
+    encodeNumber(value);
+}
+
 void Encoder::encode(uint32_t value)
 {
     encodeNumber(value);

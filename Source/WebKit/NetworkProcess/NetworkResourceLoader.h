@@ -55,6 +55,8 @@ class NetworkLoadChecker;
 class ServiceWorkerFetchTask;
 class WebSWServerConnection;
 
+enum class NegotiatedLegacyTLS : bool;
+
 struct ResourceLoadInfo;
 
 namespace NetworkCache {

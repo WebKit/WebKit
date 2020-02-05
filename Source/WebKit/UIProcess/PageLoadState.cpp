@@ -317,7 +317,7 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad(const Transaction::Token& token, WebCertificateInfo& certificateInfo, bool hasInsecureContent)
+void PageLoadState::didCommitLoad(const Transaction::Token& token, WebCertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Provisional);
@@ -328,7 +328,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, WebCertificat
 
     m_uncommittedState.url = m_uncommittedState.provisionalURL;
     m_uncommittedState.provisionalURL = String();
-    m_uncommittedState.negotiatedLegacyTLS = false;
+    m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
 
     m_uncommittedState.title = String();
 }

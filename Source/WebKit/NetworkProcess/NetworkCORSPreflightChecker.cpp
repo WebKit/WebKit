@@ -104,7 +104,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
     m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
 }
 
-void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse");
 

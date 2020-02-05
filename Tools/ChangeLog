@@ -1,3 +1,24 @@
+2020-02-05  Alex Christensen  <achristensen@webkit.org>
+
+        Make WKWebView._negotiatedLegacyTLS accurate when loading main resouorce from network or cache
+        https://bugs.webkit.org/show_bug.cgi?id=207207
+
+        Reviewed by Chris Dumez.
+
+        HTTPServer now supports HTTPS. Tell your friends!
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (testCertificate):
+        (testIdentity):
+        (credentialWithIdentity):
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::webViewWithNavigationDelegate):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+        (TestWebKitAPI::HTTPServer::request const):
+
 2020-02-05  Brady Eidson  <beidson@apple.com>
 
         _WKDownload should expose the originating FrameInfo.

@@ -87,6 +87,11 @@ bool Decoder::decode(uint16_t& result)
     return decodeNumber(result);
 }
 
+bool Decoder::decode(int16_t& result)
+{
+    return decodeNumber(result);
+}
+
 bool Decoder::decode(uint32_t& result)
 {
     return decodeNumber(result);

@@ -85,6 +85,7 @@ private:
     WTF_EXPORT_PRIVATE void encode(uint16_t);
     WTF_EXPORT_PRIVATE void encode(uint32_t);
     WTF_EXPORT_PRIVATE void encode(uint64_t);
+    WTF_EXPORT_PRIVATE void encode(int16_t);
     WTF_EXPORT_PRIVATE void encode(int32_t);
     WTF_EXPORT_PRIVATE void encode(int64_t);
     WTF_EXPORT_PRIVATE void encode(float);
@@ -110,6 +111,7 @@ template <> struct Encoder::Salt<int64_t> { static constexpr unsigned value = 19
 template <> struct Encoder::Salt<float> { static constexpr unsigned value = 23; };
 template <> struct Encoder::Salt<double> { static constexpr unsigned value = 29; };
 template <> struct Encoder::Salt<uint8_t*> { static constexpr unsigned value = 101; };
+template <> struct Encoder::Salt<int16_t> { static constexpr unsigned value = 103; };
 
 template <typename Type>
 void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)

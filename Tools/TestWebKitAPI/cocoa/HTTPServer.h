@@ -38,7 +38,8 @@ namespace TestWebKitAPI {
 class HTTPServer {
 public:
     struct HTTPResponse;
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>);
+    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS };
+    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http);
     uint16_t port() const;
     NSURLRequest *request() const;
     
@@ -46,6 +47,7 @@ private:
     void respondToRequests(nw_connection_t);
     
     RetainPtr<nw_listener_t> m_listener;
+    const Protocol m_protocol;
     const HashMap<String, HTTPResponse> m_requestResponseMap;
 };
 
@@ -74,3 +76,5 @@ struct HTTPServer::HTTPResponse {
 } // namespace TestWebKitAPI
 
 #endif // HAVE(NETWORK_FRAMEWORK)
+
+RetainPtr<SecIdentityRef> testIdentity();

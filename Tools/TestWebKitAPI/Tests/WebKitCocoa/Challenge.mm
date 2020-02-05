@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "Test.h"
@@ -43,11 +44,14 @@
 
 static bool navigationFinished;
 
-static RetainPtr<NSURLCredential> credentialWithIdentity()
+static RetainPtr<SecCertificateRef> testCertificate()
 {
     auto certificateBytes = TestWebKitAPI::TCPServer::testCertificate();
-    auto certificate = adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));
-    
+    return adoptCF(SecCertificateCreateWithData(nullptr, (__bridge CFDataRef)[NSData dataWithBytes:certificateBytes.data() length:certificateBytes.size()]));
+}
+
+RetainPtr<SecIdentityRef> testIdentity()
+{
     auto privateKeyBytes = TestWebKitAPI::TCPServer::testPrivateKey();
     NSData *derEncodedPrivateKey = [NSData dataWithBytes:privateKeyBytes.data() length:privateKeyBytes.size()];
     NSDictionary* options = @{
@@ -61,10 +65,15 @@ static RetainPtr<NSURLCredential> credentialWithIdentity()
     EXPECT_NULL(error);
     EXPECT_NOT_NULL(privateKey.get());
 
-    auto identity = adoptCF(SecIdentityCreate(kCFAllocatorDefault, certificate.get(), privateKey.get()));
+    return adoptCF(SecIdentityCreate(kCFAllocatorDefault, testCertificate().get(), privateKey.get()));
+}
+
+static RetainPtr<NSURLCredential> credentialWithIdentity()
+{
+    auto identity = testIdentity();
     EXPECT_NOT_NULL(identity);
     
-    return [NSURLCredential credentialWithIdentity:identity.get() certificates:@[(id)certificate.get()] persistence:NSURLCredentialPersistenceNone];
+    return [NSURLCredential credentialWithIdentity:identity.get() certificates:@[(id)testCertificate().get()] persistence:NSURLCredentialPersistenceNone];
 }
 
 @interface ChallengeDelegate : NSObject <WKNavigationDelegate>
