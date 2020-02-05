@@ -1,5 +1,58 @@
 2020-02-04  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255507. rdar://problem/59098088
+
+    REGRESSION: [ iPadOS ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html always fails
+    <https://webkit.org/b/206759>
+    <rdar://problem/58872607>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    Test: imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    (-[UIViewController isPerformingModalTransition]): Add SPI
+    declaration.
+    
+    Tools:
+    
+    * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+    (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+    - Add declaration.
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+    - Implement by waiting for
+      -[UIViewController isPerformingModalTransition] to return NO
+      while spinning the runloop.
+    (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+    - Call waitForModalTransitionToFinish() to fix the test.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION: [ iPadOS ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html always fails
+            <https://webkit.org/b/206759>
+            <rdar://problem/58872607>
+
+            Reviewed by Brent Fulgham.
+
+            * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+            (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+            - Add declaration.
+            * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+            (WTR::UIScriptControllerIOS::waitForModalTransitionToFinish const):
+            - Implement by waiting for
+              -[UIViewController isPerformingModalTransition] to return NO
+              while spinning the runloop.
+            (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+            - Call waitForModalTransitionToFinish() to fix the test.
+
+2020-02-04  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255322. rdar://problem/59097817
 
     macCatalyst: Triple clicking to select a sentence results in an empty selection

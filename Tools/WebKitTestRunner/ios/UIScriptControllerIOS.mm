@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -253,6 +253,12 @@ void UIScriptControllerIOS::activateAtPoint(long x, long y, JSValueRef callback)
     singleTapAtPoint(x, y, callback);
 }
 
+void UIScriptControllerIOS::waitForModalTransitionToFinish() const
+{
+    while ([webView().window.rootViewController isPerformingModalTransition])
+        [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:NSDate.distantFuture];
+}
+
 void UIScriptControllerIOS::waitForSingleTapToReset() const
 {
     bool doneWaitingForSingleTapToReset = false;
@@ -288,6 +294,9 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint lo
 {
     // Animations on the scroll view could be in progress to reveal a form control which may interfere with hit testing (see wkb.ug/205458).
     [webView().scrollView _removeAllAnimations:NO];
+
+    // Necessary for popovers on iPad (used for elements such as <select>) to finish dismissing (see wkb.ug/206759).
+    waitForModalTransitionToFinish();
 
     waitForSingleTapToReset();
 
