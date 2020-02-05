@@ -1311,6 +1311,16 @@ webkit.org/b/206872 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-whee
 
 webkit.org/b/206874 imported/w3c/web-platform-tests/cors/origin.htm [ Failure ]
 
+imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/207254 compositing/backing/page-scale-overlap-in-iframe.html [ Failure ] 
+
+webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html  [ Failure ]
+
+webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ ImageOnlyFailure ] 
+
+webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2088,7 +2098,7 @@ webkit.org/b/190703 inspector/worker/debugger-pause.html [ Failure Pass Timeout 
 
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure Pass ]
 
-webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Timeout ]
+webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Crash Pass Timeout ]
 
 webkit.org/b/191010 editing/pasteboard/5075944.html [ Pass Failure ]
 webkit.org/b/191010 editing/pasteboard/paste-text-006.html [ Pass Failure ]
@@ -2409,6 +2419,8 @@ webkit.org/b/206691 animations/no-style-recalc-during-accelerated-animation.html
 
 webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass ]
 
+webkit.org/b/206498 animations/transform-non-accelerated.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2512,6 +2524,10 @@ webkit.org/b/159754 workers/bomb.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm [ Slow ]
+
+webkit.org/b/207246 fast/forms/image/image-error-event-modifies-type-crash.html [ Slow ]
+webkit.org/b/207246 http/tests/contentextensions/make-https.html [ Slow ]
+webkit.org/b/207246 js/dom/custom-constructors.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
@@ -2666,7 +2682,7 @@ webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
 
-webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Timeout Pass ]
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash Timeout Pass ]
 
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 

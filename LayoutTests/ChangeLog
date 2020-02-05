@@ -1,3 +1,17 @@
+2020-02-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, new baselines and update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=207259
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Added.
+        * platform/gtk/inspector/css/shadow-scoped-style-expected.txt: Added.
+        * platform/gtk/webanimations/opacity-animation-yields-compositing-expected.txt: Added.
+        * platform/gtk/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Added.
+        * platform/gtk/webanimations/width-and-opacity-separate-animation-yields-compositing-expected.txt: Added.
+
 2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iPadOS wk2 Debug ] compositing/shared-backing/sharing-child-contributes-to-overlap.html is flaky crashing.
