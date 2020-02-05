@@ -224,10 +224,10 @@ public:
         m_endColumn = endColumn;
     }
 
-    const String& sourceURLDirective() const { return m_sourceURLDirective; }
-    const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
-    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
-    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
+    StringImpl* sourceURLDirective() const { return m_sourceURLDirective.get(); }
+    StringImpl* sourceMappingURLDirective() const { return m_sourceMappingURLDirective.get(); }
+    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL.impl(); }
+    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL.impl(); }
 
     CodeFeatures codeFeatures() const { return m_features; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
@@ -366,8 +366,8 @@ private:
     int m_numCalleeLocals { 0 };
     int m_numParameters { 0 };
 
-    String m_sourceURLDirective;
-    String m_sourceMappingURLDirective;
+    PackedRefPtr<StringImpl> m_sourceURLDirective;
+    PackedRefPtr<StringImpl> m_sourceMappingURLDirective;
 
     RefCountedArray<InstructionStream::Offset> m_jumpTargets;
     Ref<UnlinkedMetadataTable> m_metadata;
