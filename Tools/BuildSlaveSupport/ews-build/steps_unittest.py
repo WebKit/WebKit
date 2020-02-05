@@ -819,7 +819,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(InstallGtkDependencies())
-        self.assertEqual(InstallGtkDependencies.haltOnFailure, False)
+        self.assertEqual(InstallGtkDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -832,7 +832,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(InstallGtkDependencies())
-        self.assertEqual(InstallGtkDependencies.haltOnFailure, False)
+        self.assertEqual(InstallGtkDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -855,7 +855,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(InstallWpeDependencies())
-        self.assertEqual(InstallWpeDependencies.haltOnFailure, False)
+        self.assertEqual(InstallWpeDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -868,7 +868,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(InstallWpeDependencies())
-        self.assertEqual(InstallWpeDependencies.haltOnFailure, False)
+        self.assertEqual(InstallWpeDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,

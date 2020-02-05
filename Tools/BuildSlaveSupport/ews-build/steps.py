@@ -794,7 +794,7 @@ class InstallGtkDependencies(shell.ShellCommand):
     description = ['updating gtk dependencies']
     descriptionDone = ['Updated gtk dependencies']
     command = ['perl', 'Tools/Scripts/update-webkitgtk-libs']
-    haltOnFailure = False
+    haltOnFailure = True
 
     def __init__(self, **kwargs):
         super(InstallGtkDependencies, self).__init__(logEnviron=False, **kwargs)
@@ -805,7 +805,7 @@ class InstallWpeDependencies(shell.ShellCommand):
     description = ['updating wpe dependencies']
     descriptionDone = ['Updated wpe dependencies']
     command = ['perl', 'Tools/Scripts/update-webkitwpe-libs']
-    haltOnFailure = False
+    haltOnFailure = True
 
     def __init__(self, **kwargs):
         super(InstallWpeDependencies, self).__init__(logEnviron=False, **kwargs)

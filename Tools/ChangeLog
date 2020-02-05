@@ -1,3 +1,14 @@
+2020-02-04  Lauro Moura  <lmoura@igalia.com>
+
+        [EWS] Stop GTK/WPE build if jhbuild fails.
+        https://bugs.webkit.org/show_bug.cgi?id=207220
+
+        Reviewed by Adrian Perez de Castro.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (InstallGtkDependencies): Halt on failure
+        (InstallWpeDependencies): Ditto
+
 2020-02-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build
