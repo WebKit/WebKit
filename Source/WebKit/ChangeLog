@@ -1,5 +1,23 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255111. rdar://problem/59097777
+
+    Unreviewed, a speculative test fix after r255041
+    
+    * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+    (WebKit::MockLocalConnection::getAttestation const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255111 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, a speculative test fix after r255041
+
+            * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+            (WebKit::MockLocalConnection::getAttestation const):
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255058. rdar://problem/59097764
 
     Make sure fetch tasks go to network if service worker never gets to activated
