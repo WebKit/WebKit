@@ -112,6 +112,7 @@ RenderBlockFlow::RenderBlockFlow(Element& element, RenderStyle&& style)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
+    , m_complexLineLayout(*this)
 {
     setChildrenInline(true);
 }
@@ -122,6 +123,7 @@ RenderBlockFlow::RenderBlockFlow(Document& document, RenderStyle&& style)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
 #endif
+    , m_complexLineLayout(*this)
 {
     setChildrenInline(true);
 }
@@ -153,8 +155,7 @@ void RenderBlockFlow::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().deleteLineBoxes();
+    lineBoxes().deleteLineBoxes();
 
     blockWillBeDestroyed();
 
@@ -686,17 +687,8 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         return;
     }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (lineLayoutPath() == LayoutFormattingContextPath) {
-        layoutLFCLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-        return;
-    }
-#endif
-
-    if (!complexLineLayout())
-        m_lineLayout = makeUnique<ComplexLineLayout>(*this);
-
-    complexLineLayout()->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    m_simpleLineLayout = nullptr;
+    complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -918,7 +910,7 @@ void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
 void RenderBlockFlow::updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop, IndentTextOrNot shouldIndentText)
 {
     if (child.style().isOriginalDisplayInlineType())
-        setStaticInlinePositionForChild(child, logicalTop, startAlignedOffsetForLine(logicalTop, shouldIndentText));
+        setStaticInlinePositionForChild(child, logicalTop, complexLineLayout().startAlignedOffsetForLine(logicalTop, shouldIndentText));
     else
         setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
 }
@@ -2121,7 +2113,14 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& n
 
 void RenderBlockFlow::deleteLines()
 {
-    m_lineLayout = WTF::Monostate();
+    if (containsFloats())
+        m_floatingObjects->clearLineBoxTreePointers();
+
+    if (m_simpleLineLayout) {
+        ASSERT(!lineBoxes().firstLineBox());
+        m_simpleLineLayout = nullptr;
+    } else
+        lineBoxes().deleteLineBoxTree();
 
     RenderBlock::deleteLines();
 }
@@ -2963,7 +2962,7 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
         return layoutFormattingContextLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 #endif
 
-    return complexLineLayout() && complexLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
@@ -2974,15 +2973,7 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         return;
     }
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (layoutFormattingContextLineLayout()) {
-        layoutFormattingContextLineLayout()->collectOverflow(*this);
-        return;
-    }
-#endif
-    
-    if (complexLineLayout())
-        complexLineLayout()->addOverflowFromInlineChildren();
+    complexLineLayout().addOverflowFromInlineChildren();
 }
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
@@ -3579,9 +3570,7 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
         SimpleLineLayout::paintFlow(*this, *simpleLineLayout, paintInfo, paintOffset);
         return;
     }
-
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().paint(this, paintInfo, paintOffset);
+    lineBoxes().paint(this, paintInfo, paintOffset);
 }
 
 bool RenderBlockFlow::relayoutForPagination()
@@ -3683,8 +3672,8 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
 
     for (auto& renderer : childrenOfType<RenderObject>(*this))
         renderer.clearNeedsLayout();
-
-    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, simpleLineLayout);
+    ASSERT(!lineBoxes().firstLineBox());
+    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
     repaintLogicalTop = lineLayoutTop;
     repaintLogicalBottom = needsLayout ? repaintLogicalTop + lineLayoutHeight + borderAndPaddingAfter() : repaintLogicalTop;
@@ -3749,14 +3738,14 @@ void RenderBlockFlow::ensureLineBoxes()
     LayoutUnit repaintLogicalBottom;
     if (simpleLineLayout && simpleLineLayout->isPaginated()) {
         PaginatedLayoutStateMaintainer state(*this);
-        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.
         if (shouldBreakAtLineToAvoidWidow())
-            complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+            complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
         repaint();
     } else
-        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        complexLineLayout().layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     updateLogicalHeight();
     ASSERT(didNeedLayout || logicalHeight() == oldHeight);
