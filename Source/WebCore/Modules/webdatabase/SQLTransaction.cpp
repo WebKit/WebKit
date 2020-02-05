@@ -127,10 +127,6 @@ void SQLTransaction::performPendingCallback()
 
 void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
 {
-    callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
-        callErrorCallbackDueToInterruption();
-    });
-
     m_backend.notifyDatabaseThreadIsShuttingDown();
 }
 
