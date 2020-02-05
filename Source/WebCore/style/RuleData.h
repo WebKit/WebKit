@@ -78,9 +78,8 @@ private:
     // Keep in sync with RuleFeature's selectorIndex and selectorListIndex size.
     unsigned m_selectorIndex : 16;
     unsigned m_selectorListIndex : 16;
-    // This number was picked fairly arbitrarily. We can probably lower it if we need to.
-    // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 18;
+    // If we have more rules than 2^bitcount here we'll get confused about rule order.
+    unsigned m_position : 22;
     unsigned m_matchBasedOnRuleHash : 3;
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
