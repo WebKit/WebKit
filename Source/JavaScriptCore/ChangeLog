@@ -1,5 +1,34 @@
 2020-02-03  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255171. rdar://problem/59098090
+
+    REGRESSION (r250009): testair crashes in (anonymous namespace)::matchAll
+    <https://webkit.org/b/206797>
+    <rdar://problem/58893221>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    * b3/air/testair.cpp:
+    ((anonymous namespace)::matchAll): Don't replace `str` in the
+    body of the for loop since `match` references it.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255171 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r250009): testair crashes in (anonymous namespace)::matchAll
+            <https://webkit.org/b/206797>
+            <rdar://problem/58893221>
+
+            Reviewed by Yusuke Suzuki.
+
+            * b3/air/testair.cpp:
+            ((anonymous namespace)::matchAll): Don't replace `str` in the
+            body of the for loop since `match` references it.
+
+2020-02-03  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255120. rdar://problem/58942705
 
     Move singleton Intl string locales out of JSGlobalObject.
