@@ -1,3 +1,12 @@
+2020-02-05  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk2 ] webgpu/whlsl/dot-expressions.html  is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207294
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
 
         Regression: [ Mac Debug wk2 ] http/tests/websocket/tests/hybi/server-close.html is flaky crashing.

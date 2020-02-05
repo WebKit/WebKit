@@ -994,3 +994,5 @@ webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html 
 webkit.org/b/207271 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
 
 webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failure ]
+
+webkit.org/b/207294 webgpu/whlsl/dot-expressions.html [ Pass ImageOnlyFailure ]
