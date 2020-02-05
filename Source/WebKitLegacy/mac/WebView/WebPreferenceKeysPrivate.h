@@ -54,6 +54,7 @@
 #define WebKitJavaScriptMarkupEnabledPreferenceKey @"WebKitJavaScriptMarkupEnabled"
 #define WebKitWebAnimationsEnabledPreferenceKey @"WebKitWebAnimationsEnabled"
 #define WebKitWebAnimationsCompositeOperationsEnabledPreferenceKey @"WebKitWebAnimationsCompositeOperationsEnabled"
+#define WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey @"WebKitWebAnimationsMutableTimelinesEnabled"
 #define WebKitPointerEventsEnabledPreferenceKey @"WebKitPointerEventsEnabled"
 #define WebKitSyntheticEditingCommandsEnabledPreferenceKey @"WebKitSyntheticEditingCommandsEnabled"
 #define WebKitWebSecurityEnabledPreferenceKey @"WebKitWebSecurityEnabled"

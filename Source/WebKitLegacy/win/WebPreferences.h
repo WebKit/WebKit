@@ -295,6 +295,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAsyncClipboardAPIEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webAnimationsCompositeOperationsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE webAnimationsMutableTimelinesEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setWebAnimationsMutableTimelinesEnabled(BOOL);
 
     // WebPreferences
 
