@@ -1,5 +1,16 @@
 2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
 
+        Regression: [ Mac Debug wk2 ] http/tests/websocket/tests/hybi/server-close.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=207269
+
+        Unreviewed test gardening.
+
+        Updated test expectations.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-05  Jason Lawrence  <lawrence.j@apple.com>
+
         REGRESSION (r228901): Layout Test http/tests/appcache/abort-cache-onprogress.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=183684
 

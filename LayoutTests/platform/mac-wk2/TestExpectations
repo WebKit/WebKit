@@ -989,7 +989,7 @@ webkit.org/b/206627 storage/websql [ Skip ]
 
 webkit.org/b/207267 webgpu/whlsl/ensure-proper-variable-lifetime.html [ Pass Failure ]
 
-webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Crash ]
+webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html [ Pass Crash ]
 
 webkit.org/b/207271 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
 
