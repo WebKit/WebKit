@@ -13,6 +13,7 @@
 
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/Symbol.h"
+#include "compiler/translator/ValidateVaryingLocations.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -35,25 +36,29 @@ TOutputVulkanGLSL::TOutputVulkanGLSL(TInfoSinkBase &objSink,
                   shaderType,
                   shaderVersion,
                   output,
-                  compileOptions)
+                  compileOptions),
+      mNextUnusedBinding(0),
+      mNextUnusedInputLocation(0),
+      mNextUnusedOutputLocation(0)
 {}
 
-// TODO(jmadill): This is not complete.
 void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
 {
     const TType &type = variable->getType();
 
-    bool needsCustomLayout =
-        type.getQualifier() == EvqAttribute || type.getQualifier() == EvqFragmentOut ||
-        type.getQualifier() == EvqVertexIn || IsVarying(type.getQualifier()) ||
+    bool needsSetBinding =
         IsSampler(type.getBasicType()) || type.isInterfaceBlock() || IsImage(type.getBasicType());
+    bool needsLocation = type.getQualifier() == EvqAttribute ||
+                         type.getQualifier() == EvqVertexIn ||
+                         type.getQualifier() == EvqFragmentOut || IsVarying(type.getQualifier());
 
-    if (!NeedsToWriteLayoutQualifier(type) && !needsCustomLayout)
+    if (!NeedsToWriteLayoutQualifier(type) && !needsSetBinding && !needsLocation)
     {
         return;
     }
 
-    TInfoSinkBase &out = objSink();
+    TInfoSinkBase &out                      = objSink();
+    const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
 
     // This isn't super clean, but it gets the job done.
     // See corresponding code in glslang_wrapper_utils.cpp.
@@ -87,28 +92,40 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
         {
             blockStorage = getBlockStorageString(storage);
         }
-
-        // We expect all interface blocks to have been transformed to column major, so we don't
-        // specify the packing.  Any remaining interface block qualified with row_major shouldn't
-        // have any matrices inside.
-        ASSERT(type.getLayoutQualifier().matrixPacking != EmpRowMajor ||
-               !interfaceBlock->containsMatrices());
     }
 
-    if (needsCustomLayout)
+    // Specify matrix packing if necessary.
+    if (layoutQualifier.matrixPacking != EmpUnspecified)
     {
-        out << "@@ LAYOUT-" << name << "(";
+        matrixPacking = getMatrixPackingString(layoutQualifier.matrixPacking);
     }
-    else
+
+    const char *separator = "";
+    out << "layout(";
+
+    // If the resource declaration requires set & binding layout qualifiers, specify arbitrary
+    // ones.
+    if (needsSetBinding)
     {
-        out << "layout(";
+        out << "set=0, binding=" << nextUnusedBinding();
+        separator = ", ";
+    }
+
+    if (needsLocation)
+    {
+        const unsigned int locationCount = CalculateVaryingLocationCount(symbol, getShaderType());
+        uint32_t location                = IsShaderIn(type.getQualifier())
+                                ? nextUnusedInputLocation(locationCount)
+                                : nextUnusedOutputLocation(locationCount);
+
+        out << "location=" << location;
+        separator = ", ";
     }
 
     // Output the list of qualifiers already known at this stage, i.e. everything other than
     // `location` and `set`/`binding`.
     std::string otherQualifiers = getCommonLayoutQualifiers(variable);
 
-    const char *separator = "";
     if (blockStorage)
     {
         out << separator << blockStorage;
@@ -125,50 +142,11 @@ void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
     }
 
     out << ") ";
-    if (needsCustomLayout)
-    {
-        out << "@@";
-    }
 }
 
-void TOutputVulkanGLSL::writeFieldLayoutQualifier(const TField *field)
-{
-    // We expect all interface blocks to have been transformed to column major, as Vulkan GLSL
-    // doesn't allow layout qualifiers on interface block fields.  Any remaining interface block
-    // qualified with row_major shouldn't have any matrices inside, so the qualifier can be
-    // dropped.
-}
-
-void TOutputVulkanGLSL::writeQualifier(TQualifier qualifier,
-                                       const TType &type,
-                                       const TSymbol *symbol)
-{
-    if (qualifier != EvqUniform && qualifier != EvqBuffer && qualifier != EvqAttribute &&
-        qualifier != EvqVertexIn && !sh::IsVarying(qualifier))
-    {
-        TOutputGLSLBase::writeQualifier(qualifier, type, symbol);
-        return;
-    }
-
-    if (symbol == nullptr)
-    {
-        return;
-    }
-
-    ImmutableString name = symbol->name();
-
-    // For interface blocks, use the block name instead.  When the qualifier is being replaced in
-    // the backend, that would be the name that's available.
-    if (type.isInterfaceBlock())
-    {
-        name = type.getInterfaceBlock()->name();
-    }
-
-    TInfoSinkBase &out = objSink();
-    out << "@@ QUALIFIER-" << name.data() << "(" << getMemoryQualifiers(type) << ") @@ ";
-}
-
-void TOutputVulkanGLSL::writeVariableType(const TType &type, const TSymbol *symbol)
+void TOutputVulkanGLSL::writeVariableType(const TType &type,
+                                          const TSymbol *symbol,
+                                          bool isFunctionArgument)
 {
     TType overrideType(type);
 
@@ -178,7 +156,7 @@ void TOutputVulkanGLSL::writeVariableType(const TType &type, const TSymbol *symb
         overrideType.setBasicType(EbtSampler2D);
     }
 
-    TOutputGLSL::writeVariableType(overrideType, symbol);
+    TOutputGLSL::writeVariableType(overrideType, symbol, isFunctionArgument);
 }
 
 void TOutputVulkanGLSL::writeStructType(const TStructure *structure)

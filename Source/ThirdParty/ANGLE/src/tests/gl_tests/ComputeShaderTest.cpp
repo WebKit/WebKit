@@ -637,6 +637,10 @@ TEST_P(ComputeShaderTest, DispatchComputeIndirect)
     // Flaky crash on teardown, see http://anglebug.com/3349
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel() && IsWindows());
 
+    // ASAN error on vulkan backend; ASAN tests only enabled on Mac Swangle
+    // (http://crbug.com/1029378)
+    ANGLE_SKIP_TEST_IF(IsOSX() && isSwiftshader());
+
     GLTexture texture;
     GLFramebuffer framebuffer;
     const char kCSSource[] = R"(#version 310 es
@@ -1724,6 +1728,7 @@ TEST_P(ComputeShaderTest, groupMemoryBarrierAndBarrierTest)
     // TODO(xinghua.cao@intel.com): Figure out why we get this error message
     // that shader uses features not recognized by this D3D version.
     ANGLE_SKIP_TEST_IF((IsAMD() || IsNVIDIA()) && IsD3D11());
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLTexture texture;
     GLFramebuffer framebuffer;
@@ -1971,6 +1976,8 @@ TEST_P(ComputeShaderTest, AtomicFunctionsNoReturnValue)
 
     // Fails to link on Android.  http://anglebug.com/3874
     ANGLE_SKIP_TEST_IF(IsAndroid());
+
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     const char kCSShader[] = R"(#version 310 es
 layout (local_size_x = 8, local_size_y = 1, local_size_z = 1) in;
@@ -3592,14 +3599,14 @@ void main(void) {
     glEnableVertexAttribArray(posTex);
     glVertexAttribPointer(posTex, 2, GL_FLOAT, GL_FALSE, 0, texCoords);
 
-    // Draw with level 0, the whole frame buffer should be Red.
+    // Draw with level 0, the whole framebuffer should be Red.
     glViewport(0, 0, getWindowWidth(), getWindowHeight());
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
-    // Draw with level 1, the whole frame buffer should be Green.
+    // Draw with level 1, a quarter of the framebuffer should be Green.
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -3622,7 +3629,7 @@ void main(void) {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
-    // Draw with level 1, the whole frame buffer should be Green.
+    // Draw with level 1, a quarter of the framebuffer should be Green.
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight() / 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -3661,6 +3668,130 @@ void main()
 
     glDeleteProgram(program);
     EXPECT_GL_NO_ERROR();
+}
+
+// Validate that on Vulkan, compute pipeline driver uniforms descriptor set is updated after an
+// internal compute-based UtilsVk function is used.  The latter is achieved through a draw with a
+// vertex buffer whose format is not natively supported.  Atomic counters are used to make sure the
+// compute pipeline uses the driver uniforms descriptor set.
+TEST_P(ComputeShaderTest, DispatchConvertVertexDispatch)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_vertex_type_10_10_10_2"));
+
+    // Skipping due to a bug on the Qualcomm Vulkan Android driver.
+    // http://anglebug.com/3726
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
+
+    constexpr uint32_t kVertexCount = 6;
+
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=6, local_size_y=1, local_size_z=1) in;
+
+layout(binding = 0) uniform atomic_uint ac;
+
+layout(binding=0, std140) buffer VertexData
+{
+    uint data[];
+};
+
+void main()
+{
+    atomicCounterIncrement(ac);
+    data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x;
+})";
+
+    constexpr char kVS[] = R"(#version 310 es
+precision mediump float;
+
+layout(location = 0) in vec4 position;
+layout(location = 1) in uvec4 data;
+
+out vec4 color;
+
+void main() {
+    color = data.x < 6u && data.y == 0u && data.z == 0u && data.w == 0u
+        ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+in vec4 color;
+out vec4 colorOut;
+void main() {
+    colorOut = color;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(programCS, kCS);
+    ANGLE_GL_PROGRAM(programVSFS, kVS, kFS);
+    EXPECT_GL_NO_ERROR();
+
+    // Create atomic counter buffer
+    GLBuffer atomicCounterBuffer;
+    constexpr GLuint kInitialAcbData = 0;
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(kInitialAcbData), &kInitialAcbData,
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    // Create vertex buffer
+    constexpr unsigned kVertexBufferInitData[kVertexCount] = {};
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, vertexBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kVertexBufferInitData), kVertexBufferInitData,
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, vertexBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    // Create position buffer
+    constexpr GLfloat positions[kVertexCount * 2] = {1.0, 1.0, -1.0, 1.0,  -1.0, -1.0,
+                                                     1.0, 1.0, -1.0, -1.0, 1.0,  -1.0};
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    // Create vertex array
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_UNSIGNED_INT_10_10_10_2_OES, false, 0, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Fill the vertex buffer with a dispatch call
+    glUseProgram(programCS);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+
+    // Draw using the vertex buffer, causing vertex format conversion in compute (in the Vulkan
+    // backend)
+    glUseProgram(programVSFS);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, kVertexCount);
+    EXPECT_GL_NO_ERROR();
+
+    // Issue another dispatch call. The driver uniforms descriptor set must be rebound.
+    glUseProgram(programCS);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    // Verify that the atomic counter has the expected value.
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
+    GLuint *mappedBuffer = static_cast<GLuint *>(
+        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), GL_MAP_READ_BIT));
+    EXPECT_EQ(kVertexCount * 2, mappedBuffer[0]);
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 }
 
 ANGLE_INSTANTIATE_TEST_ES31(ComputeShaderTest);

@@ -80,16 +80,11 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
     bool srcIsFixed = params.srcFormat->isFixed;
     bool srcIsFloat = params.srcFormat->isFloat();
     bool srcIsA2BGR10 =
-        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010) ||
-         (params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010));
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010 ||
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010;
     bool srcIsRGB10A2 =
-        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
-         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
-        params.srcFormat->alphaBits;
-    bool srcIsRGB10X2 =
-        ((params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102) ||
-         params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102) &&
-        !params.srcFormat->alphaBits;
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102 ||
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102;
     bool srcIsHalfFloat = params.srcFormat->isVertexTypeHalfFloat();
 
     bool destIsSint      = params.destFormat->isSint();
@@ -113,9 +108,7 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
     // is not added to the build configuration file (to reduce binary size).  If necessary, add
     // IsBigEndian to ConvertVertex.comp.json and select the appropriate flag based on the
     // endian-ness test here.
-    uint32_t endiannessTest                       = 0;
-    *reinterpret_cast<uint8_t *>(&endiannessTest) = 1;
-    ASSERT(endiannessTest == 1);
+    ASSERT(IsLittleEndian());
 
     uint32_t flags = 0;
 
@@ -163,29 +156,6 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
         else if (srcIsUnorm)
         {
             flags |= ConvertVertex_comp::kRGB10A2UnormToFloat;
-        }
-        else
-        {
-            UNREACHABLE();
-        }
-    }
-    else if (srcIsRGB10X2)
-    {
-        if (srcIsSint)
-        {
-            flags |= ConvertVertex_comp::kRGB10X2SintToFloat;
-        }
-        else if (srcIsUint)
-        {
-            flags |= ConvertVertex_comp::kRGB10X2UintToFloat;
-        }
-        else if (srcIsSnorm)
-        {
-            flags |= ConvertVertex_comp::kRGB10X2SnormToFloat;
-        }
-        else if (srcIsUnorm)
-        {
-            flags |= ConvertVertex_comp::kRGB10X2UnormToFloat;
         }
         else
         {
@@ -781,6 +751,14 @@ angle::Result UtilsVk::setupProgram(ContextVk *contextVk,
     {
         commandBuffer->bindDescriptorSets(pipelineLayout.get(), pipelineBindPoint, 0, 1,
                                           &descriptorSet, 0, nullptr);
+        if (isCompute)
+        {
+            contextVk->invalidateComputeDescriptorSet(0);
+        }
+        else
+        {
+            contextVk->invalidateGraphicsDescriptorSet(0);
+        }
     }
 
     if (pushConstants)
@@ -802,7 +780,7 @@ angle::Result UtilsVk::clearBuffer(ContextVk *contextVk,
     ANGLE_TRY(dest->recordCommands(contextVk, &commandBuffer));
 
     // Tell dest it's being written to.
-    dest->onSelfReadWrite(contextVk, 0, VK_ACCESS_SHADER_WRITE_BIT);
+    dest->onSelfReadWrite(contextVk, VK_ACCESS_SHADER_WRITE_BIT);
 
     const vk::Format &destFormat = dest->getViewFormat();
 
@@ -1149,10 +1127,6 @@ angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
 
     uint32_t flags = GetConvertVertexFlags(params);
 
-    bool isAligned =
-        shaderParams.outputCount % 64 == 0 && shaderParams.componentCount % shaderParams.Ed == 0;
-    flags |= isAligned ? ConvertVertex_comp::kIsAligned : 0;
-
     VkDescriptorSet descriptorSet;
     vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
     ANGLE_TRY(allocateDescriptorSet(contextVk, Function::ConvertVertexBuffer,
@@ -1238,8 +1212,8 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
     const gl::Rectangle &scissoredRenderArea = params.clearArea;
 
     vk::CommandBuffer *commandBuffer;
-    if (!framebuffer->appendToStartedRenderPass(contextVk->getCommandGraph(), scissoredRenderArea,
-                                                &commandBuffer))
+    if (!framebuffer->appendToStartedRenderPass(&contextVk->getResourceUseList(),
+                                                scissoredRenderArea, &commandBuffer))
     {
         ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, scissoredRenderArea, &commandBuffer));
     }
@@ -1467,7 +1441,7 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     }
 
     vk::CommandBuffer *commandBuffer;
-    if (!framebuffer->appendToStartedRenderPass(contextVk->getCommandGraph(), params.blitArea,
+    if (!framebuffer->appendToStartedRenderPass(&contextVk->getResourceUseList(), params.blitArea,
                                                 &commandBuffer))
     {
         ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, params.blitArea, &commandBuffer));
@@ -1578,7 +1552,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     ANGLE_TRY(
         blitBuffer.get().init(contextVk, blitBufferInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
-    blitBuffer.get().onGraphAccess(contextVk->getCommandGraph());
+    blitBuffer.get().onResourceAccess(&contextVk->getResourceUseList());
 
     BlitResolveStencilNoExportShaderParams shaderParams;
     if (isResolve)

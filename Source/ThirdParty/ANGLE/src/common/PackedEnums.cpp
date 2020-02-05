@@ -38,6 +38,8 @@ TextureType TextureTargetToType(TextureTarget target)
             return TextureType::_2DMultisampleArray;
         case TextureTarget::_3D:
             return TextureType::_3D;
+        case TextureTarget::VideoImage:
+            return TextureType::VideoImage;
         case TextureTarget::InvalidEnum:
             return TextureType::InvalidEnum;
         default:
@@ -69,6 +71,8 @@ TextureTarget NonCubeTextureTypeToTarget(TextureType type)
             return TextureTarget::_2DMultisampleArray;
         case TextureType::_3D:
             return TextureTarget::_3D;
+        case TextureType::VideoImage:
+            return TextureTarget::VideoImage;
         default:
             UNREACHABLE();
             return TextureTarget::InvalidEnum;
@@ -151,6 +155,9 @@ TextureType SamplerTypeToTextureType(GLenum samplerType)
 
         case GL_SAMPLER_2D_RECT_ANGLE:
             return TextureType::Rectangle;
+
+        case GL_SAMPLER_VIDEO_IMAGE_WEBGL:
+            return TextureType::VideoImage;
 
         default:
             UNREACHABLE();

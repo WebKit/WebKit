@@ -406,7 +406,7 @@ angle::Result Framebuffer11::getSamplePosition(const gl::Context *context,
     ASSERT(attachment);
     GLsizei sampleCount = attachment->getSamples();
 
-    d3d11_gl::GetSamplePosition(sampleCount, index, xy);
+    rx::GetSamplePosition(sampleCount, index, xy);
     return angle::Result::Continue;
 }
 

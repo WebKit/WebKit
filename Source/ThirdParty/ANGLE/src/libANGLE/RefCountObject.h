@@ -17,6 +17,7 @@
 #include "common/debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/Observer.h"
+#include "libANGLE/renderer/serial_utils.h"
 
 #include <cstddef>
 
@@ -140,14 +141,17 @@ template <typename IDType>
 class RefCountObject : public gl::RefCountObjectNoID
 {
   public:
-    explicit RefCountObject(IDType id) : mId(id) {}
+    explicit RefCountObject(rx::Serial serial, IDType id) : mSerial(serial), mId(id) {}
 
+    rx::Serial serial() const { return mSerial; }
     IDType id() const { return mId; }
 
   protected:
     ~RefCountObject() override {}
 
   private:
+    // Unique serials are used to identify resources for frame capture.
+    rx::Serial mSerial;
     IDType mId;
 };
 
@@ -203,8 +207,16 @@ class OffsetBindingPointer : public BindingPointer<ObjectType>
     void assign(ObjectType *object, GLintptr offset, GLsizeiptr size)
     {
         assign(object);
-        mOffset = offset;
-        mSize   = size;
+        if (object)
+        {
+            mOffset = offset;
+            mSize   = size;
+        }
+        else
+        {
+            mOffset = 0;
+            mSize   = 0;
+        }
     }
 
   private:

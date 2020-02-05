@@ -320,6 +320,9 @@ void QueryTexParameterBase(const Context *context,
             *params = CastFromGLintStateValue<ParamType>(
                 pname, texture->getImplementationColorReadType(context));
             break;
+        case GL_IMAGE_FORMAT_COMPATIBILITY_TYPE:
+            *params = GL_IMAGE_FORMAT_COMPATIBILITY_BY_SIZE;
+            break;
         default:
             UNREACHABLE();
             break;
@@ -3054,7 +3057,7 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
-            if (!extensions.eglStreamConsumerExternal && !extensions.eglImageExternal)
+            if (!extensions.eglStreamConsumerExternalNV && !extensions.eglImageExternalOES)
             {
                 return false;
             }
@@ -3199,7 +3202,7 @@ bool GetQueryParameterInfo(const State &glState,
             return true;
 
         case GL_NUM_PROGRAM_BINARY_FORMATS_OES:
-            if ((clientMajorVersion < 3) && !extensions.getProgramBinary)
+            if ((clientMajorVersion < 3) && !extensions.getProgramBinaryOES)
             {
                 return false;
             }
@@ -3208,7 +3211,7 @@ bool GetQueryParameterInfo(const State &glState,
             return true;
 
         case GL_PROGRAM_BINARY_FORMATS_OES:
-            if ((clientMajorVersion < 3) && !extensions.getProgramBinary)
+            if ((clientMajorVersion < 3) && !extensions.getProgramBinaryOES)
             {
                 return false;
             }
@@ -3237,7 +3240,7 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         case GL_VERTEX_ARRAY_BINDING:
-            if ((clientMajorVersion < 3) && !extensions.vertexArrayObject)
+            if ((clientMajorVersion < 3) && !extensions.vertexArrayObjectOES)
             {
                 return false;
             }
@@ -3246,7 +3249,7 @@ bool GetQueryParameterInfo(const State &glState,
             return true;
         case GL_PIXEL_PACK_BUFFER_BINDING:
         case GL_PIXEL_UNPACK_BUFFER_BINDING:
-            if ((clientMajorVersion < 3) && !extensions.pixelBufferObject)
+            if ((clientMajorVersion < 3) && !extensions.pixelBufferObjectNV)
             {
                 return false;
             }
@@ -3267,7 +3270,7 @@ bool GetQueryParameterInfo(const State &glState,
             return true;
 
             case GL_FRAGMENT_SHADER_DERIVATIVE_HINT:
-                if ((clientMajorVersion < 3) && !extensions.standardDerivatives)
+                if ((clientMajorVersion < 3) && !extensions.standardDerivativesOES)
                 {
                     return false;
                 }
@@ -3712,6 +3715,9 @@ void QueryConfigAttrib(const Config *config, EGLint attribute, EGLint *value)
         case EGL_RECORDABLE_ANDROID:
             *value = config->recordable;
             break;
+        case EGL_FRAMEBUFFER_TARGET_ANDROID:
+            *value = config->framebufferTarget;
+            break;
         default:
             UNREACHABLE();
             break;
@@ -3743,6 +3749,9 @@ void QueryContextAttrib(const gl::Context *context, EGLint attribute, EGLint *va
             break;
         case EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE:
             *value = context->isRobustResourceInitEnabled();
+            break;
+        case EGL_CONTEXT_PRIORITY_LEVEL_IMG:
+            *value = static_cast<EGLint>(context->getContextPriority());
             break;
         default:
             UNREACHABLE();

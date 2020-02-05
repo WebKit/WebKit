@@ -111,10 +111,10 @@ const BlockMemberInfo GetBlockMemberInfoByType(const TType &type,
     }
 
     std::vector<unsigned int> arraySizes;
-    auto *typeArraySizes = type.getArraySizes();
-    if (typeArraySizes != nullptr)
+    const TSpan<const unsigned int> &typeArraySizes = type.getArraySizes();
+    if (!typeArraySizes.empty())
     {
-        arraySizes.assign(typeArraySizes->begin(), typeArraySizes->end());
+        arraySizes.assign(typeArraySizes.begin(), typeArraySizes.end());
     }
     return encoder->encodeType(GLVariableType(type), arraySizes, rowMajor);
 }
@@ -677,7 +677,7 @@ void ShaderStorageBlockOutputHLSL::writeEOpIndexDirectOrIndirectOutput(TInfoSink
         {
             if (type.isArrayOfArrays())
             {
-                const TVector<unsigned int> &arraySizes = *type.getArraySizes();
+                const TSpan<const unsigned int> &arraySizes = type.getArraySizes();
                 // Don't need to concern the tail comma which will be used to multiply the index.
                 for (unsigned int i = 0; i < (arraySizes.size() - 1); i++)
                 {

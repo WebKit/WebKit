@@ -184,6 +184,7 @@ void main()
 TEST_P(MultisampleTest, Line)
 {
     ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
     glUseProgram(program);

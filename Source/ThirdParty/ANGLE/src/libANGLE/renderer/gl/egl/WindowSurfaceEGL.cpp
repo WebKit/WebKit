@@ -26,9 +26,8 @@ WindowSurfaceEGL::~WindowSurfaceEGL() {}
 egl::Error WindowSurfaceEGL::initialize(const egl::Display *display)
 {
     constexpr EGLint kForwardedWindowSurfaceAttributes[] = {
-        EGL_RENDER_BUFFER,
-        EGL_POST_SUB_BUFFER_SUPPORTED_NV,
-    };
+        EGL_RENDER_BUFFER, EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_GL_COLORSPACE,
+        EGL_COLOR_COMPONENT_TYPE_EXT};
 
     native_egl::AttributeVector nativeAttribs =
         native_egl::TrimAttributeMap(mState.attributes, kForwardedWindowSurfaceAttributes);

@@ -48,10 +48,33 @@ TInfoSinkBase &TInfoSinkBase::operator<<(const TType &type)
         sink.append(type.getPrecisionString());
         sink.append(" ");
     }
+
+    const TMemoryQualifier &memoryQualifier = type.getMemoryQualifier();
+    if (memoryQualifier.readonly)
+    {
+        sink.append("readonly ");
+    }
+    if (memoryQualifier.writeonly)
+    {
+        sink.append("writeonly ");
+    }
+    if (memoryQualifier.coherent)
+    {
+        sink.append("coherent ");
+    }
+    if (memoryQualifier.restrictQualifier)
+    {
+        sink.append("restrict ");
+    }
+    if (memoryQualifier.volatileQualifier)
+    {
+        sink.append("volatile ");
+    }
+
     if (type.isArray())
     {
-        for (auto arraySizeIter = type.getArraySizes()->rbegin();
-             arraySizeIter != type.getArraySizes()->rend(); ++arraySizeIter)
+        for (auto arraySizeIter = type.getArraySizes().rbegin();
+             arraySizeIter != type.getArraySizes().rend(); ++arraySizeIter)
         {
             *this << "array[" << (*arraySizeIter) << "] of ";
         }

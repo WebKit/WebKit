@@ -433,6 +433,8 @@ GLenum GLVariableType(const TType &type)
             return GL_UNSIGNED_INT_IMAGE_CUBE;
         case EbtAtomicCounter:
             return GL_UNSIGNED_INT_ATOMIC_COUNTER;
+        case EbtSamplerVideoWEBGL:
+            return GL_SAMPLER_VIDEO_IMAGE_WEBGL;
         default:
             UNREACHABLE();
     }
@@ -486,7 +488,7 @@ ImmutableString ArrayString(const TType &type)
     if (!type.isArray())
         return ImmutableString("");
 
-    const TVector<unsigned int> &arraySizes         = *type.getArraySizes();
+    const TSpan<const unsigned int> &arraySizes     = type.getArraySizes();
     constexpr const size_t kMaxDecimalDigitsPerSize = 10u;
     ImmutableStringBuilder arrayString(arraySizes.size() * (kMaxDecimalDigitsPerSize + 2u));
     for (auto arraySizeIter = arraySizes.rbegin(); arraySizeIter != arraySizes.rend();

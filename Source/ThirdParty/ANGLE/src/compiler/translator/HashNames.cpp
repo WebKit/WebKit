@@ -18,11 +18,6 @@ namespace
 {
 constexpr const ImmutableString kHashedNamePrefix("webgl_");
 
-// Can't prefix with just _ because then we might introduce a double underscore, which is not safe
-// in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
-// use by the underlying implementation). u is short for user-defined.
-constexpr const ImmutableString kUnhashedNamePrefix("_u");
-
 ImmutableString HashName(const ImmutableString &name, ShHashFunction64 hashFunction)
 {
     ASSERT(!name.empty());
@@ -47,6 +42,8 @@ ImmutableString HashName(const ImmutableString &name,
                          ShHashFunction64 hashFunction,
                          NameMap *nameMap)
 {
+    const ImmutableString kUnhashedNamePrefix(kUserDefinedNamePrefix);
+
     if (hashFunction == nullptr)
     {
         if (name.length() + kUnhashedNamePrefix.length() > kESSLMaxIdentifierLength)

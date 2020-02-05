@@ -201,6 +201,18 @@ Texture::Texture(ContextMtl *context,
     }
 }
 
+Texture::Texture(Texture *original, MTLPixelFormat format)
+    : Resource(original),
+      mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        auto view = [original->get() newTextureViewWithPixelFormat:format];
+
+        set([view ANGLE_MTL_AUTORELEASE]);
+    }
+}
+
 Texture::Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRange, uint32_t slice)
     : Resource(original),
       mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
@@ -242,6 +254,17 @@ void Texture::syncContent(ContextMtl *context)
 #endif
 }
 
+bool Texture::isCPUAccessible() const
+{
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    if (get().storageMode == MTLStorageModeManaged)
+    {
+        return true;
+    }
+#endif
+    return get().storageMode == MTLStorageModeShared;
+}
+
 void Texture::replaceRegion(ContextMtl *context,
                             MTLRegion region,
                             uint32_t mipmapLevel,
@@ -253,6 +276,9 @@ void Texture::replaceRegion(ContextMtl *context,
     {
         return;
     }
+
+    ASSERT(isCPUAccessible());
+
     CommandQueue &cmdQueue = context->cmdQueue();
 
     syncContent(context);
@@ -279,6 +305,8 @@ void Texture::getBytes(ContextMtl *context,
                        uint32_t mipmapLevel,
                        uint8_t *dataOut)
 {
+    ASSERT(isCPUAccessible());
+
     CommandQueue &cmdQueue = context->cmdQueue();
 
     syncContent(context);
@@ -325,6 +353,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, uint32_t level)
                 return nullptr;
         }
     }
+}
+
+TextureRef Texture::createViewWithDifferentFormat(MTLPixelFormat format)
+{
+    return TextureRef(new Texture(this, format));
 }
 
 MTLPixelFormat Texture::pixelFormat() const
@@ -407,6 +440,9 @@ angle::Result Buffer::reset(ContextMtl *context, size_t size, const uint8_t *dat
         id<MTLDevice> metalDevice = context->getMetalDevice();
 
         options = 0;
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        options |= MTLResourceStorageModeManaged;
+#endif
 
         if (data)
         {
@@ -439,7 +475,12 @@ uint8_t *Buffer::map(ContextMtl *context)
     return reinterpret_cast<uint8_t *>([get() contents]);
 }
 
-void Buffer::unmap(ContextMtl *context) {}
+void Buffer::unmap(ContextMtl *context)
+{
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    [get() didModifyRange:NSMakeRange(0, size())];
+#endif
+}
 
 size_t Buffer::size() const
 {

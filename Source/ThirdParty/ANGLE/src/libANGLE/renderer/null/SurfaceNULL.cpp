@@ -69,6 +69,12 @@ egl::Error SurfaceNULL::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLu
     return egl::EglBadAccess();
 }
 
+egl::Error SurfaceNULL::getMscRate(EGLint *numerator, EGLint *denominator)
+{
+    UNIMPLEMENTED();
+    return egl::EglBadAccess();
+}
+
 void SurfaceNULL::setSwapInterval(EGLint interval) {}
 
 EGLint SurfaceNULL::getWidth() const

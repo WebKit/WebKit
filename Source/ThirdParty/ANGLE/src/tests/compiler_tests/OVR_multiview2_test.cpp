@@ -582,6 +582,25 @@ TEST_F(OVRMultiview2FragmentShaderTest, ViewIDDeclaredAsFlatInput)
     VariableOccursNTimes(mASTRoot, ImmutableString("ViewID_OVR"), EvqFlatIn, 1u);
 }
 
+// Test that GL_OVR_multiview is not defined by the preprocessor for WebGL spec shader;
+// Test that GL_OVR_multiview2 is defined by the preprocessor for WebGL spec shader.
+TEST_F(OVRMultiview2FragmentShaderTest, PreprocessorOutput)
+{
+    const std::string &shaderString =
+        "#version 300 es\n"
+        "#extension GL_OVR_multiview2 : require\n"
+        "#ifdef GL_OVR_multiview\n"
+        "    #error legacy GL_OVR_multiview support must be forbidden\n"
+        "#endif\n"
+        "#ifndef GL_OVR_multiview2\n"
+        "    #error GL_OVR_multiview2 support must be enabled\n"
+        "#endif\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+    compileAssumeSuccess(shaderString);
+}
+
 // Test that ViewID_OVR is declared as a flat output variable in an ESSL 1.00 vertex shader.
 TEST_F(OVRMultiview2VertexShaderTest, ViewIDDeclaredAsFlatOutput)
 {
@@ -593,6 +612,25 @@ TEST_F(OVRMultiview2VertexShaderTest, ViewIDDeclaredAsFlatOutput)
     mExtraCompileOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
     compileAssumeSuccess(shaderString);
     VariableOccursNTimes(mASTRoot, ImmutableString("ViewID_OVR"), EvqFlatOut, 2u);
+}
+
+// Test that GL_OVR_multiview is not defined by the preprocessor for WebGL spec shader;
+// Test that GL_OVR_multiview2 is defined by the preprocessor for WebGL spec shader.
+TEST_F(OVRMultiview2VertexShaderTest, PreprocessorOutput)
+{
+    const std::string &shaderString =
+        "#version 300 es\n"
+        "#extension GL_OVR_multiview2 : require\n"
+        "#ifdef GL_OVR_multiview\n"
+        "    #error legacy GL_OVR_multiview support must be forbidden\n"
+        "#endif\n"
+        "#ifndef GL_OVR_multiview2\n"
+        "    #error GL_OVR_multiview2 support must be enabled\n"
+        "#endif\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+    compileAssumeSuccess(shaderString);
 }
 
 // The test checks that the GL_NV_viewport_array2 extension is emitted in a vertex shader if the
@@ -641,6 +679,30 @@ TEST_F(OVRMultiview2FragmentShaderOutputCodeTest, ViewportArray2IsNotEmitted)
                               SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER);
     EXPECT_FALSE(foundInGLSLCode("#extension GL_NV_viewport_array2"));
     EXPECT_FALSE(foundInESSLCode("#extension GL_NV_viewport_array2"));
+}
+
+// The test checks if OVR_multiview2 is emitted only once and no other
+// multiview extensions are emitted.
+TEST_F(OVRMultiview2FragmentShaderOutputCodeTest, NativeOvrMultiview2Output)
+{
+    const std::string &shaderString =
+        "#version 300 es\n"
+        "#extension GL_OVR_multiview2 : require\n"
+        "void main()\n"
+        "{\n"
+        "}\n";
+    compile(shaderString);
+    EXPECT_FALSE(foundInGLSLCode("#extension GL_NV_viewport_array2"));
+    EXPECT_FALSE(foundInESSLCode("#extension GL_NV_viewport_array2"));
+
+    EXPECT_TRUE(foundInESSLCode("#extension GL_OVR_multiview2"));
+    EXPECT_TRUE(foundInGLSLCode("#extension GL_OVR_multiview2"));
+
+    // no double extension
+    std::vector<const char *> notExpectedStrings1 = {"#extension GL_OVR_multiview",
+                                                     "#extension GL_OVR_multiview"};
+    EXPECT_FALSE(foundInCodeInOrder(SH_ESSL_OUTPUT, notExpectedStrings1));
+    EXPECT_FALSE(foundInCodeInOrder(SH_GLSL_COMPATIBILITY_OUTPUT, notExpectedStrings1));
 }
 
 // The test checks that the GL_NV_viewport_array2 extension is not emitted in a compute shader if
@@ -700,7 +762,9 @@ TEST_F(OVRMultiview2VertexShaderOutputCodeTest, GlLayerIsSet)
     EXPECT_TRUE(foundInCodeInOrder(SH_GLSL_COMPATIBILITY_OUTPUT, expectedStrings));
 }
 
-// Test that the OVR_multiview2 without emulation is emits OVR_multiview2 output.
+// Test that the OVR_multiview2 without emulation emits OVR_multiview2 output.
+// It also tests that the GL_OVR_multiview2 is emitted only once and no other
+// multiview extensions are emitted.
 TEST_F(OVRMultiview2VertexShaderOutputCodeTest, NativeOvrMultiview2Output)
 {
     const std::string &shaderString =
@@ -722,6 +786,17 @@ TEST_F(OVRMultiview2VertexShaderOutputCodeTest, NativeOvrMultiview2Output)
 
     EXPECT_FALSE(foundInGLSLCode("gl_ViewportIndex"));
     EXPECT_FALSE(foundInESSLCode("gl_ViewportIndex"));
+
+    // no double extension
+    std::vector<const char *> notExpectedStrings1 = {"#extension GL_OVR_multiview",
+                                                     "#extension GL_OVR_multiview"};
+    EXPECT_FALSE(foundInCodeInOrder(SH_ESSL_OUTPUT, notExpectedStrings1));
+    EXPECT_FALSE(foundInCodeInOrder(SH_GLSL_COMPATIBILITY_OUTPUT, notExpectedStrings1));
+
+    // no double num_views
+    std::vector<const char *> notExpectedStrings2 = {"layout(num_views", "layout(num_views"};
+    EXPECT_FALSE(foundInCodeInOrder(SH_ESSL_OUTPUT, notExpectedStrings2));
+    EXPECT_FALSE(foundInCodeInOrder(SH_GLSL_COMPATIBILITY_OUTPUT, notExpectedStrings2));
 }
 
 }  // namespace

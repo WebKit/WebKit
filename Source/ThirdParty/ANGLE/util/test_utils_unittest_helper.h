@@ -16,6 +16,7 @@ constexpr char kRunAppTestStdout[]      = "RunAppTest stdout test\n";
 constexpr char kRunAppTestStderr[] = "RunAppTest stderr test\n  .. that expands multiple lines\n";
 constexpr char kRunAppTestArg1[]   = "--expected-arg1";
 constexpr char kRunAppTestArg2[]   = "expected_arg2";
+constexpr char kRunTestSuite[]     = "--run-test-suite";
 }  // anonymous namespace
 
 #endif  // COMMON_SYSTEM_UTILS_UNITTEST_HELPER_H_

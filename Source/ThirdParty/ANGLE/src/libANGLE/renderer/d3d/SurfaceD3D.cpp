@@ -169,6 +169,12 @@ egl::Error SurfaceD3D::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLui
     return mSwapChain->getSyncValues(ust, msc, sbc);
 }
 
+egl::Error SurfaceD3D::getMscRate(EGLint *numerator, EGLint *denominator)
+{
+    UNIMPLEMENTED();
+    return egl::EglBadAccess();
+}
+
 egl::Error SurfaceD3D::resetSwapChain(const egl::Display *display)
 {
     ASSERT(!mSwapChain);

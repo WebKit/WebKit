@@ -341,6 +341,7 @@ class Renderer11 : public RendererD3D
     angle::Result getSamplerState(const gl::Context *context,
                                   const gl::SamplerState &samplerState,
                                   ID3D11SamplerState **outSamplerState);
+    UINT getSampleDescQuality(GLuint supportedSamples) const;
 
     Blit11 *getBlitter() { return mBlit; }
     Clear11 *getClearer() { return mClear; }

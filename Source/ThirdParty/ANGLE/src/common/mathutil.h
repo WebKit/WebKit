@@ -40,8 +40,10 @@ inline constexpr bool isPow2(T x)
     return (x & (x - 1)) == 0 && (x != 0);
 }
 
-inline int log2(int x)
+template <typename T>
+inline int log2(T x)
 {
+    static_assert(std::is_integral<T>::value, "log2 must be called on an integer type.");
     int r = 0;
     while ((x >> r) > 1)
         r++;

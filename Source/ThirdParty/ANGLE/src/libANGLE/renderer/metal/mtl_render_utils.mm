@@ -716,7 +716,7 @@ angle::Result RenderUtils::convertIndexBuffer(const gl::Context *context,
 
     cmdEncoder->setComputePipelineState(pipelineState);
 
-    ASSERT((dstOffset % kBufferSettingOffsetAlignment) == 0);
+    ASSERT((dstOffset % kIndexBufferOffsetAlignment) == 0);
 
     IndexConversionUniform uniform;
     uniform.srcOffset  = srcOffset;
@@ -743,7 +743,7 @@ angle::Result RenderUtils::generateTriFanBufferFromArrays(const gl::Context *con
 
     cmdEncoder->setComputePipelineState(mTriFanFromArraysGeneratorPipeline);
 
-    ASSERT((params.dstOffset % kBufferSettingOffsetAlignment) == 0);
+    ASSERT((params.dstOffset % kIndexBufferOffsetAlignment) == 0);
 
     struct TriFanArrayParams
     {
@@ -794,7 +794,7 @@ angle::Result RenderUtils::generateTriFanBufferFromElementsArrayGPU(
     const BufferRef &srcBuffer,
     uint32_t srcOffset,
     const BufferRef &dstBuffer,
-    // Must be multiples of kBufferSettingOffsetAlignment
+    // Must be multiples of kIndexBufferOffsetAlignment
     uint32_t dstOffset)
 {
     ContextMtl *contextMtl            = GetImpl(context);
@@ -808,7 +808,7 @@ angle::Result RenderUtils::generateTriFanBufferFromElementsArrayGPU(
 
     cmdEncoder->setComputePipelineState(pipelineState);
 
-    ASSERT((dstOffset % kBufferSettingOffsetAlignment) == 0);
+    ASSERT((dstOffset % kIndexBufferOffsetAlignment) == 0);
     ASSERT(indexCount > 2);
 
     IndexConversionUniform uniform;

@@ -40,6 +40,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         compileOptions |= SH_CLAMP_POINT_SIZE;
     }
 
+    if (contextVk->getFeatures().basicGLLineRasterization.enabled)
+    {
+        compileOptions |= SH_ADD_BRESENHAM_LINE_RASTER_EMULATION;
+    }
+
     if (contextVk->emulateSeamfulCubeMapSampling())
     {
         compileOptions |= SH_EMULATE_SEAMFUL_CUBE_MAP_SAMPLING;

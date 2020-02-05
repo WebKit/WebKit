@@ -205,6 +205,19 @@ class CommandGraphNode final : angle::NonCopyable
         mGlobalMemoryBarrierStages |= stages;
     }
 
+    ANGLE_INLINE void setActiveTransformFeedbackInfo(size_t validBufferCount,
+                                                     const VkBuffer *counterBuffers,
+                                                     bool rebindBuffer)
+    {
+        mValidTransformFeedbackBufferCount = static_cast<uint32_t>(validBufferCount);
+        mRebindTransformFeedbackBuffers    = rebindBuffer;
+
+        for (size_t index = 0; index < validBufferCount; index++)
+        {
+            mTransformFeedbackCounterBuffers[index] = counterBuffers[index];
+        }
+    }
+
     // This can only be set for RenderPass nodes. Each RenderPass node can have at most one owner.
     void setRenderPassOwner(RenderPassOwner *owner)
     {
@@ -269,6 +282,11 @@ class CommandGraphNode final : angle::NonCopyable
 
     // Render pass command buffer notifications.
     RenderPassOwner *mRenderPassOwner;
+
+    // Active transform feedback state
+    gl::TransformFeedbackBuffersArray<VkBuffer> mTransformFeedbackCounterBuffers;
+    uint32_t mValidTransformFeedbackBufferCount;
+    bool mRebindTransformFeedbackBuffers;
 };
 
 // Tracks how a resource is used in a command graph and in a VkQueue. The reference count indicates
@@ -333,18 +351,29 @@ class SharedResourceUse final : angle::NonCopyable
         mUse->counter++;
     }
 
+    // The base counter value for a live resource is "1". Any value greater than one indicates
+    // the resource is in use by a vk::CommandGraph.
+    ANGLE_INLINE bool hasRecordedCommands() const
+    {
+        ASSERT(valid());
+        return mUse->counter > 1;
+    }
+
+    ANGLE_INLINE bool hasRunningCommands(Serial lastCompletedSerial) const
+    {
+        ASSERT(valid());
+        return mUse->serial > lastCompletedSerial;
+    }
+
+    ANGLE_INLINE bool isCurrentlyInUse(Serial lastCompletedSerial) const
+    {
+        return hasRecordedCommands() || hasRunningCommands(lastCompletedSerial);
+    }
+
     ANGLE_INLINE Serial getSerial() const
     {
         ASSERT(valid());
         return mUse->serial;
-    }
-
-    // The base counter value for an live resource is "1". Any value greater than one indicates
-    // the resource is in use by a vk::CommandGraph.
-    ANGLE_INLINE bool isCurrentlyInGraph() const
-    {
-        ASSERT(valid());
-        return mUse->counter > 1;
     }
 
   private:
@@ -369,6 +398,33 @@ class SharedGarbage
 
 using SharedGarbageList = std::vector<SharedGarbage>;
 
+// Mixin to abstract away the resource use tracking.
+class ResourceUseList final : angle::NonCopyable
+{
+  public:
+    ResourceUseList();
+    virtual ~ResourceUseList();
+
+    void add(const SharedResourceUse &resourceUse);
+
+    void releaseResourceUses();
+    void releaseResourceUsesAndUpdateSerials(Serial serial);
+
+  private:
+    std::vector<SharedResourceUse> mResourceUses;
+};
+
+// ResourceUser inlines.
+ANGLE_INLINE void ResourceUseList::add(const SharedResourceUse &resourceUse)
+{
+    // Disabled the assert because of difficulties with ImageView references.
+    // TODO(jmadill): Clean up with graph redesign. http://anglebug.com/4029
+    // ASSERT(!empty());
+    SharedResourceUse newUse;
+    newUse.set(resourceUse);
+    mResourceUses.emplace_back(std::move(newUse));
+}
+
 // This is a helper class for back-end objects used in Vk command buffers. It records a serial
 // at command recording times indicating an order in the queue. We use Fences to detect when
 // commands finish, and then release any unreferenced and deleted resources based on the stored
@@ -380,11 +436,24 @@ class CommandGraphResource : angle::NonCopyable
   public:
     virtual ~CommandGraphResource();
 
-    // Returns true if the resource is in use by the renderer.
-    bool isResourceInUse(ContextVk *contextVk) const;
+    // Returns true if the resource has commands in the graph.  This is used to know if a flush
+    // should be performed, e.g. if we need to wait for the GPU to finish with the resource.
+    bool hasRecordedCommands() const { return mUse.hasRecordedCommands(); }
 
-    // queries, to know if the queue they are submitted on has finished execution.
-    Serial getLatestSerial() const { return mUse.getSerial(); }
+    // Determine if the driver has finished execution with this resource.
+    bool hasRunningCommands(Serial lastCompletedSerial) const
+    {
+        return mUse.hasRunningCommands(lastCompletedSerial);
+    }
+
+    // Returns true if the resource is in use by ANGLE or the driver.
+    bool isCurrentlyInUse(Serial lastCompletedSerial) const
+    {
+        return mUse.isCurrentlyInUse(lastCompletedSerial);
+    }
+
+    // Ensures the driver is caught up to this resource and it is only in use by ANGLE.
+    angle::Result finishRunningCommands(ContextVk *contextVk);
 
     // Sets up dependency relations. 'this' resource is the resource being written to.
     void addWriteDependency(ContextVk *contextVk, CommandGraphResource *writingResource);
@@ -394,8 +463,16 @@ class CommandGraphResource : angle::NonCopyable
 
     // Updates the in-use serial tracked for this resource. Will clear dependencies if the resource
     // was not used in this set of command nodes.
-    void onGraphAccess(CommandGraph *commandGraph);
+    void onResourceAccess(ResourceUseList *resourceUseList);
     void updateCurrentAccessNodes();
+
+    // If a resource is recreated, as in released and reinitialized, the next access to the
+    // resource will not create an edge from its last node and will create a new independent node.
+    // This is because mUse is reset and the graph believes it's an entirely new resource.  In very
+    // particular cases, such as recreating an image with full mipchain or adding STORAGE_IMAGE flag
+    // to its uses, this function is used to preserve the link between the previous and new
+    // nodes allocated for this resource.
+    void onResourceRecreated(ResourceUseList *resourceUseList);
 
     // Allocates a write node via getNewWriteNode and returns a started command buffer.
     // The started command buffer will render outside of a RenderPass.
@@ -417,7 +494,7 @@ class CommandGraphResource : angle::NonCopyable
 
     // Checks if we're in a RenderPass that encompasses renderArea, returning true if so. Updates
     // serial internally. Returns the started command buffer in commandBufferOut.
-    bool appendToStartedRenderPass(CommandGraph *graph,
+    bool appendToStartedRenderPass(ResourceUseList *resourceUseList,
                                    const gl::Rectangle &renderArea,
                                    CommandBuffer **commandBufferOut);
 
@@ -442,6 +519,11 @@ class CommandGraphResource : angle::NonCopyable
 
     // Store a deferred memory barrier. Will be recorded into a primary command buffer at submit.
     void addGlobalMemoryBarrier(VkFlags srcAccess, VkFlags dstAccess, VkPipelineStageFlags stages);
+
+    // Sets active transform feedback information to current writing node.
+    void setActiveTransformFeedbackInfo(size_t validBufferCount,
+                                        const VkBuffer *counterBuffers,
+                                        bool rebindBuffer);
 
   protected:
     explicit CommandGraphResource(CommandGraphResourceType resourceType);
@@ -524,9 +606,8 @@ class CommandGraph final : angle::NonCopyable
     void popDebugMarker();
     // Host-visible buffer write availability operation:
     void makeHostVisibleBufferWriteAvailable();
-
-    void onResourceUse(const SharedResourceUse &resourceUse);
-    void releaseResourceUses();
+    // External memory synchronization:
+    void syncExternalMemory();
 
   private:
     CommandGraphNode *allocateBarrierNode(CommandGraphNodeFunction function,
@@ -538,7 +619,6 @@ class CommandGraph final : angle::NonCopyable
 
     void dumpGraphDotFile(std::ostream &out) const;
     void updateOverlay(ContextVk *contextVk) const;
-    void releaseResourceUsesAndUpdateSerials(Serial serial);
 
     std::vector<CommandGraphNode *> mNodes;
     bool mEnableGraphDiagnostics;
@@ -592,8 +672,6 @@ class CommandGraph final : angle::NonCopyable
     // issued.
     static constexpr size_t kInvalidNodeIndex = std::numeric_limits<std::size_t>::max();
     size_t mLastBarrierIndex;
-
-    std::vector<SharedResourceUse> mResourceUses;
 };
 
 // CommandGraphResource inlines.
@@ -605,22 +683,28 @@ ANGLE_INLINE bool CommandGraphResource::hasStartedRenderPass() const
 ANGLE_INLINE void CommandGraphResource::updateCurrentAccessNodes()
 {
     // Clear dependencies if this is a new access.
-    if (!mUse.isCurrentlyInGraph())
+    if (!mUse.hasRecordedCommands())
     {
         mCurrentWritingNode = nullptr;
         mCurrentReadingNodes.clear();
     }
 }
 
-ANGLE_INLINE void CommandGraphResource::onGraphAccess(CommandGraph *commandGraph)
+ANGLE_INLINE void CommandGraphResource::onResourceRecreated(ResourceUseList *resourceUseList)
+{
+    // Store reference in resource list.
+    resourceUseList->add(mUse);
+}
+
+ANGLE_INLINE void CommandGraphResource::onResourceAccess(ResourceUseList *resourceUseList)
 {
     updateCurrentAccessNodes();
 
-    // Store reference to usage in graph.
-    commandGraph->onResourceUse(mUse);
+    // Store reference in resource list.
+    resourceUseList->add(mUse);
 }
 
-ANGLE_INLINE bool CommandGraphResource::appendToStartedRenderPass(CommandGraph *graph,
+ANGLE_INLINE bool CommandGraphResource::appendToStartedRenderPass(ResourceUseList *resourceUseList,
                                                                   const gl::Rectangle &renderArea,
                                                                   CommandBuffer **commandBufferOut)
 {
@@ -628,8 +712,8 @@ ANGLE_INLINE bool CommandGraphResource::appendToStartedRenderPass(CommandGraph *
 
     if (hasStartedRenderPass())
     {
-        // Store reference to usage in graph.
-        graph->onResourceUse(mUse);
+        // Store reference in resource list.
+        resourceUseList->add(mUse);
 
         if (mCurrentWritingNode->getRenderPassRenderArea().encloses(renderArea))
         {
@@ -702,6 +786,16 @@ ANGLE_INLINE void CommandGraphResource::addGlobalMemoryBarrier(VkFlags srcAccess
     mCurrentWritingNode->addGlobalMemoryBarrier(srcAccess, dstAccess, stages);
 }
 
+ANGLE_INLINE void CommandGraphResource::setActiveTransformFeedbackInfo(
+    size_t validBufferCount,
+    const VkBuffer *counterBuffers,
+    bool rebindBuffer)
+{
+    ASSERT(mCurrentWritingNode);
+    mCurrentWritingNode->setActiveTransformFeedbackInfo(validBufferCount, counterBuffers,
+                                                        rebindBuffer);
+}
+
 ANGLE_INLINE bool CommandGraphResource::hasChildlessWritingNode() const
 {
     // Note: currently, we don't have a resource that can issue both generic and special
@@ -712,17 +806,6 @@ ANGLE_INLINE bool CommandGraphResource::hasChildlessWritingNode() const
     ASSERT(mCurrentWritingNode == nullptr ||
            mCurrentWritingNode->getFunction() == CommandGraphNodeFunction::Generic);
     return (mCurrentWritingNode != nullptr && !mCurrentWritingNode->hasChildren());
-}
-
-// CommandGraph inlines.
-ANGLE_INLINE void CommandGraph::onResourceUse(const SharedResourceUse &resourceUse)
-{
-    // Disabled the assert because of difficulties with ImageView references.
-    // TODO(jmadill): Clean up with graph redesign. http://anglebug.com/4029
-    // ASSERT(!empty());
-    SharedResourceUse newUse;
-    newUse.set(resourceUse);
-    mResourceUses.emplace_back(std::move(newUse));
 }
 }  // namespace vk
 }  // namespace rx

@@ -18,7 +18,7 @@ namespace gl
 
 namespace
 {
-constexpr std::array<UniformTypeInfo, 62> kInfoTable = {
+constexpr std::array<UniformTypeInfo, 63> kInfoTable = {
     {{GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE, SamplerFormat::InvalidEnum, 0, 0, 0, 0, 0 * 0,
       0 * 0, false, false, false, ""},
      {GL_BOOL, GL_BOOL, GL_NONE, GL_NONE, GL_NONE, SamplerFormat::InvalidEnum, 1, 1, 1,
@@ -172,7 +172,10 @@ constexpr std::array<UniformTypeInfo, 62> kInfoTable = {
       false, false, false, "uintBitsToFloat"},
      {GL_UNSIGNED_INT_VEC4, GL_UNSIGNED_INT, GL_NONE, GL_NONE, GL_BOOL_VEC4,
       SamplerFormat::InvalidEnum, 1, 4, 4, sizeof(GLuint), sizeof(GLuint) * 4, sizeof(GLuint) * 4,
-      false, false, false, "uintBitsToFloat"}}};
+      false, false, false, "uintBitsToFloat"},
+     {GL_SAMPLER_VIDEO_IMAGE_WEBGL, GL_INT, GL_TEXTURE_VIDEO_IMAGE_WEBGL, GL_NONE, GL_NONE,
+      SamplerFormat::Float, 1, 1, 1, sizeof(GLint), sizeof(GLint) * 4, sizeof(GLint) * 1, true,
+      false, false, "intBitsToFloat"}}};
 
 size_t GetTypeInfoIndex(GLenum uniformType)
 {
@@ -302,6 +305,8 @@ size_t GetTypeInfoIndex(GLenum uniformType)
             return 60;
         case GL_UNSIGNED_INT_VEC4:
             return 61;
+        case GL_SAMPLER_VIDEO_IMAGE_WEBGL:
+            return 62;
         default:
             UNREACHABLE();
             return 0;

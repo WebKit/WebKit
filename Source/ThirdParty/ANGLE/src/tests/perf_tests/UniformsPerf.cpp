@@ -174,7 +174,15 @@ std::vector<Matrix4> GenMatrixData(size_t count, int parity)
     return data;
 }
 
-UniformsBenchmark::UniformsBenchmark() : ANGLERenderTest("Uniforms", GetParam()), mPrograms({}) {}
+UniformsBenchmark::UniformsBenchmark() : ANGLERenderTest("Uniforms", GetParam()), mPrograms({})
+{
+    // Fails on Windows NVIDIA Vulkan. http://crbug.com/1041672
+    if (IsWindows() && IsNVIDIA() &&
+        GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
+    {
+        mSkipTest = true;
+    }
+}
 
 void UniformsBenchmark::initializeBenchmark()
 {

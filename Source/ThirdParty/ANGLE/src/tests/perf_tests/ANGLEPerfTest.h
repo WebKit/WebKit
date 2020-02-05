@@ -19,6 +19,7 @@
 #include "platform/Platform.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/angle_test_instantiate.h"
+#include "test_utils/angle_test_platform.h"
 #include "third_party/perf/perf_result_reporter.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
@@ -130,6 +131,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     bool popEvent(Event *event);
 
     OSWindow *getWindow();
+    GLWindowBase *getGLWindow();
 
     std::vector<TraceEvent> &getTraceEventBuffer();
 
@@ -163,6 +165,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     angle::PlatformMethods mPlatformMethods;
     ConfigParameters mConfigParams;
 
+    bool mIsTimestampQueryAvailable;
     GLuint mTimestampQuery;
 
     // Trace event record that can be output.

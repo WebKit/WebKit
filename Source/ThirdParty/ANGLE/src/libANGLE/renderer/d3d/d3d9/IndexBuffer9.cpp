@@ -46,7 +46,7 @@ angle::Result IndexBuffer9::initialize(const gl::Context *context,
         }
         else if (indexType == gl::DrawElementsType::UnsignedInt)
         {
-            ASSERT(mRenderer->getNativeExtensions().elementIndexUint);
+            ASSERT(mRenderer->getNativeExtensions().elementIndexUintOES);
             format = D3DFMT_INDEX32;
         }
         else

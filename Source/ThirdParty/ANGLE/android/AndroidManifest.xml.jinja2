@@ -10,7 +10,7 @@
           package="{{manifest_package|default('com.chromium.angle')}}">
 
     <application android:label="Angle for Android"
-                 android:extractNativeLibs="false"
+                 android:extractNativeLibs="{{extract_native_libs|default('false')}}"
                  android:multiArch="true">
     </application>
 </manifest>

@@ -56,6 +56,7 @@ class WindowSurfaceGLX : public SurfaceGLX
     glx::Drawable getDrawable() const override;
 
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
+    egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
 
   private:
     bool getWindowDimensions(Window window, unsigned int *width, unsigned int *height) const;

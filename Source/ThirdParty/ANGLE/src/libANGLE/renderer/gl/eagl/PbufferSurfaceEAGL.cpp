@@ -1,50 +1,31 @@
-/*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+//
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
 
-// PBufferSurfaceEAGL.cpp: an implementation of egl::Surface for PBuffers for the CLG backend,
+// PBufferSurfaceEAGL.cpp: an implementation of egl::Surface for PBuffers for the EAGL backend,
 //                      currently implemented using renderbuffers
 
 #import "common/platform.h"
 
 #if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
-#include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
+#    include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
 
-#include "common/debug.h"
-#include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/FramebufferGL.h"
-#include "libANGLE/renderer/gl/RendererGL.h"
-#include "libANGLE/renderer/gl/StateManagerGL.h"
+#    include "common/debug.h"
+#    include "libANGLE/renderer/gl/FramebufferGL.h"
+#    include "libANGLE/renderer/gl/FunctionsGL.h"
+#    include "libANGLE/renderer/gl/RendererGL.h"
+#    include "libANGLE/renderer/gl/StateManagerGL.h"
 
 namespace rx
 {
 
 PbufferSurfaceEAGL::PbufferSurfaceEAGL(const egl::SurfaceState &state,
-                                     RendererGL *renderer,
-                                     EGLint width,
-                                     EGLint height)
+                                       RendererGL *renderer,
+                                       EGLint width,
+                                       EGLint height)
     : SurfaceGL(state),
       mWidth(width),
       mHeight(height),
@@ -52,8 +33,7 @@ PbufferSurfaceEAGL::PbufferSurfaceEAGL(const egl::SurfaceState &state,
       mStateManager(renderer->getStateManager()),
       mColorRenderbuffer(0),
       mDSRenderbuffer(0)
-{
-}
+{}
 
 PbufferSurfaceEAGL::~PbufferSurfaceEAGL()
 {
@@ -93,10 +73,10 @@ egl::Error PbufferSurfaceEAGL::swap(const gl::Context *context)
 }
 
 egl::Error PbufferSurfaceEAGL::postSubBuffer(const gl::Context *context,
-                                            EGLint x,
-                                            EGLint y,
-                                            EGLint width,
-                                            EGLint height)
+                                             EGLint x,
+                                             EGLint y,
+                                             EGLint width,
+                                             EGLint height)
 {
     return egl::NoError();
 }
@@ -108,8 +88,8 @@ egl::Error PbufferSurfaceEAGL::querySurfacePointerANGLE(EGLint attribute, void *
 }
 
 egl::Error PbufferSurfaceEAGL::bindTexImage(const gl::Context *context,
-                                           gl::Texture *texture,
-                                           EGLint buffer)
+                                            gl::Texture *texture,
+                                            EGLint buffer)
 {
     ERR() << "PbufferSurfaceEAGL::bindTexImage";
     UNIMPLEMENTED();
@@ -122,9 +102,7 @@ egl::Error PbufferSurfaceEAGL::releaseTexImage(const gl::Context *context, EGLin
     return egl::NoError();
 }
 
-void PbufferSurfaceEAGL::setSwapInterval(EGLint interval)
-{
-}
+void PbufferSurfaceEAGL::setSwapInterval(EGLint interval) {}
 
 EGLint PbufferSurfaceEAGL::getWidth() const
 {
@@ -148,7 +126,7 @@ EGLint PbufferSurfaceEAGL::getSwapBehavior() const
 }
 
 FramebufferImpl *PbufferSurfaceEAGL::createDefaultFramebuffer(const gl::Context *context,
-                                                             const gl::FramebufferState &state)
+                                                              const gl::FramebufferState &state)
 {
     const FunctionsGL *functions = GetFunctionsGL(context);
     StateManagerGL *stateManager = GetStateManagerGL(context);

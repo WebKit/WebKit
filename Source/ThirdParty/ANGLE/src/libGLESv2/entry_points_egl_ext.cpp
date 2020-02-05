@@ -1020,6 +1020,42 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSync sync
     return EGL_TRUE;
 }
 
+EGLBoolean EGLAPIENTRY EGL_GetMscRateCHROMIUM(EGLDisplay dpy,
+                                              EGLSurface surface,
+                                              EGLint *numerator,
+                                              EGLint *denominator)
+{
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    FUNC_EVENT("EGLDisplay dpy = 0x%016" PRIxPTR ", EGLSurface surface = 0x%016" PRIxPTR
+               ", EGLint* numerator = 0x%016" PRIxPTR
+               ", "
+               "EGLint* denomintor = 0x%016" PRIxPTR "",
+               (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)numerator, (uintptr_t)denominator);
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *display = static_cast<egl::Display *>(dpy);
+    Surface *eglSurface   = static_cast<Surface *>(surface);
+
+    Error error = ValidateGetMscRateCHROMIUM(display, eglSurface, numerator, denominator);
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglGetMscRateCHROMIUM",
+                         GetSurfaceIfValid(display, eglSurface));
+        return EGL_FALSE;
+    }
+
+    error = eglSurface->getMscRate(numerator, denominator);
+    if (error.isError())
+    {
+        thread->setError(error, GetDebug(), "eglGetMscRateCHROMIUM",
+                         GetSurfaceIfValid(display, eglSurface));
+        return EGL_FALSE;
+    }
+
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
 EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
                                                  EGLSurface surface,
                                                  EGLuint64KHR *ust,

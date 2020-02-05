@@ -94,6 +94,7 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
                                    egl::Stream *stream,
                                    const egl::Stream::GLTextureDescription &desc) override;
     angle::Result generateMipmap(const gl::Context *context) override;
+    bool hasStorage() const { return mTexStorage != nullptr; }
     TextureStorage *getStorage();
     ImageD3D *getBaseLevelImage() const;
 

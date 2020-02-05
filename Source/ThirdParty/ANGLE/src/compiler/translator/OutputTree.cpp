@@ -49,7 +49,8 @@ class TOutputTraverser : public TIntermTraverser
     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *) override;
     bool visitBlock(Visit visit, TIntermBlock *) override;
-    bool visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node) override;
+    bool visitGlobalQualifierDeclaration(Visit visit,
+                                         TIntermGlobalQualifierDeclaration *node) override;
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
     bool visitLoop(Visit visit, TIntermLoop *) override;
     bool visitBranch(Visit visit, TIntermBranch *) override;
@@ -358,10 +359,18 @@ bool TOutputTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionDefin
     return true;
 }
 
-bool TOutputTraverser::visitInvariantDeclaration(Visit visit, TIntermInvariantDeclaration *node)
+bool TOutputTraverser::visitGlobalQualifierDeclaration(Visit visit,
+                                                       TIntermGlobalQualifierDeclaration *node)
 {
     OutputTreeText(mOut, node, getCurrentIndentDepth());
-    mOut << "Invariant Declaration:\n";
+    if (node->isPrecise())
+    {
+        mOut << "Precise Declaration:\n";
+    }
+    else
+    {
+        mOut << "Invariant Declaration:\n";
+    }
     return true;
 }
 
@@ -376,7 +385,7 @@ void TOutputTraverser::visitFunctionPrototype(TIntermFunctionPrototype *node)
     {
         const TVariable *param = node->getFunction()->getParam(i);
         OutputTreeText(mOut, node, getCurrentIndentDepth() + 1);
-        mOut << "parameter: " << param->name() << " (" << param->getType() << ")";
+        mOut << "parameter: " << param->name() << " (" << param->getType() << ")\n";
     }
 }
 
@@ -396,7 +405,7 @@ bool TOutputTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
     switch (node->getOp())
     {
         case EOpCallFunctionInAST:
-            OutputFunction(mOut, "Call an user-defined function", node->getFunction());
+            OutputFunction(mOut, "Call a user-defined function", node->getFunction());
             break;
         case EOpCallInternalRawFunction:
             OutputFunction(mOut, "Call an internal function with raw implementation",

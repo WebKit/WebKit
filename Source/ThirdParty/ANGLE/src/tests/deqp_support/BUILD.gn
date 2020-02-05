@@ -108,111 +108,6 @@ copy("vk_gl_cts_data_data_gles2_shaders") {
   ]
 }
 
-copy("vk_gl_cts_data_data_gles3_data") {
-  sources = [
-    "$deqp_path/data/gles3/data/brick.png",
-  ]
-  outputs = [
-    "$root_gen_dir/vk_gl_cts_data/data/gles3/data/{{source_file_part}}",
-  ]
-}
-
-copy("vk_gl_cts_data_data_gles3_data_etc1") {
-  sources = [
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_113x89.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_7.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_x.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_y.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_z.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_x.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_y.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_z.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_6.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_0.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_1.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_2.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_3.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_4.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_5.pkm",
-    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_6.pkm",
-  ]
-  outputs = [
-    "$root_gen_dir/vk_gl_cts_data/data/gles3/data/etc1/{{source_file_part}}",
-  ]
-}
-
-copy("vk_gl_cts_data_data_gles3_shaders") {
-  sources = [
-    "$deqp_path/data/gles3/shaders/arrays.test",
-    "$deqp_path/data/gles3/shaders/conditionals.test",
-    "$deqp_path/data/gles3/shaders/constant_expressions.test",
-    "$deqp_path/data/gles3/shaders/constants.test",
-    "$deqp_path/data/gles3/shaders/conversions.test",
-    "$deqp_path/data/gles3/shaders/declarations.test",
-    "$deqp_path/data/gles3/shaders/fragdata.test",
-    "$deqp_path/data/gles3/shaders/functions.test",
-    "$deqp_path/data/gles3/shaders/indexing.test",
-    "$deqp_path/data/gles3/shaders/invalid_implicit_conversions.test",
-    "$deqp_path/data/gles3/shaders/invalid_texture_functions.test",
-    "$deqp_path/data/gles3/shaders/keywords.test",
-    "$deqp_path/data/gles3/shaders/large_constant_arrays.test",
-    "$deqp_path/data/gles3/shaders/linkage.test",
-    "$deqp_path/data/gles3/shaders/loops.test",
-    "$deqp_path/data/gles3/shaders/negative.test",
-    "$deqp_path/data/gles3/shaders/preprocessor.test",
-    "$deqp_path/data/gles3/shaders/qualification_order.test",
-    "$deqp_path/data/gles3/shaders/scoping.test",
-    "$deqp_path/data/gles3/shaders/switch.test",
-    "$deqp_path/data/gles3/shaders/swizzle_math_operations.test",
-    "$deqp_path/data/gles3/shaders/swizzles.test",
-    "$deqp_path/data/gles3/shaders/uniform_block.test",
-  ]
-  outputs = [
-    "$root_gen_dir/vk_gl_cts_data/data/gles3/shaders/{{source_file_part}}",
-  ]
-}
-
 copy("vk_gl_cts_data_data_gles31_data_tessellation") {
   sources = [
     "$deqp_path/data/gles31/data/tessellation/barrier_ref.png",
@@ -330,6 +225,111 @@ copy("vk_gl_cts_data_data_gles31_shaders_es32") {
   ]
   outputs = [
     "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/{{source_file_part}}",
+  ]
+}
+
+copy("vk_gl_cts_data_data_gles3_data") {
+  sources = [
+    "$deqp_path/data/gles3/data/brick.png",
+  ]
+  outputs = [
+    "$root_gen_dir/vk_gl_cts_data/data/gles3/data/{{source_file_part}}",
+  ]
+}
+
+copy("vk_gl_cts_data_data_gles3_data_etc1") {
+  sources = [
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_113x89.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/photo_helsinki_mip_7.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_x.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_y.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_neg_z.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_x.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_y.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_61x61_pos_z.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_x_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_y_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_neg_z_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_x_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_y_mip_6.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_0.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_1.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_2.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_3.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_4.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_5.pkm",
+    "$deqp_path/data/gles3/data/etc1/skybox_pos_z_mip_6.pkm",
+  ]
+  outputs = [
+    "$root_gen_dir/vk_gl_cts_data/data/gles3/data/etc1/{{source_file_part}}",
+  ]
+}
+
+copy("vk_gl_cts_data_data_gles3_shaders") {
+  sources = [
+    "$deqp_path/data/gles3/shaders/arrays.test",
+    "$deqp_path/data/gles3/shaders/conditionals.test",
+    "$deqp_path/data/gles3/shaders/constant_expressions.test",
+    "$deqp_path/data/gles3/shaders/constants.test",
+    "$deqp_path/data/gles3/shaders/conversions.test",
+    "$deqp_path/data/gles3/shaders/declarations.test",
+    "$deqp_path/data/gles3/shaders/fragdata.test",
+    "$deqp_path/data/gles3/shaders/functions.test",
+    "$deqp_path/data/gles3/shaders/indexing.test",
+    "$deqp_path/data/gles3/shaders/invalid_implicit_conversions.test",
+    "$deqp_path/data/gles3/shaders/invalid_texture_functions.test",
+    "$deqp_path/data/gles3/shaders/keywords.test",
+    "$deqp_path/data/gles3/shaders/large_constant_arrays.test",
+    "$deqp_path/data/gles3/shaders/linkage.test",
+    "$deqp_path/data/gles3/shaders/loops.test",
+    "$deqp_path/data/gles3/shaders/negative.test",
+    "$deqp_path/data/gles3/shaders/preprocessor.test",
+    "$deqp_path/data/gles3/shaders/qualification_order.test",
+    "$deqp_path/data/gles3/shaders/scoping.test",
+    "$deqp_path/data/gles3/shaders/switch.test",
+    "$deqp_path/data/gles3/shaders/swizzle_math_operations.test",
+    "$deqp_path/data/gles3/shaders/swizzles.test",
+    "$deqp_path/data/gles3/shaders/uniform_block.test",
+  ]
+  outputs = [
+    "$root_gen_dir/vk_gl_cts_data/data/gles3/shaders/{{source_file_part}}",
   ]
 }
 

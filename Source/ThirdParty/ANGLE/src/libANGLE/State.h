@@ -75,7 +75,8 @@ class State : angle::NonCopyable
           bool bindGeneratesResource,
           bool clientArraysEnabled,
           bool robustResourceInit,
-          bool programBinaryCacheEnabled);
+          bool programBinaryCacheEnabled,
+          EGLenum contextPriority);
     ~State();
 
     int id() const { return mID; }
@@ -86,6 +87,7 @@ class State : angle::NonCopyable
     // Getters
     ContextID getContextID() const { return mContext; }
     EGLenum getClientType() const { return mClientType; }
+    EGLenum getContextPriority() const { return mContextPriority; }
     GLint getClientMajorVersion() const { return mClientVersion.major; }
     GLint getClientMinorVersion() const { return mClientVersion.minor; }
     const Version &getClientVersion() const { return mClientVersion; }
@@ -566,8 +568,8 @@ class State : angle::NonCopyable
         DIRTY_BIT_PROGRAM_BINDING,
         DIRTY_BIT_PROGRAM_EXECUTABLE,
         // TODO(jmadill): Fine-grained dirty bits for each texture/sampler.
-        DIRTY_BIT_TEXTURE_BINDINGS,
         DIRTY_BIT_SAMPLER_BINDINGS,
+        DIRTY_BIT_TEXTURE_BINDINGS,
         DIRTY_BIT_IMAGE_BINDINGS,
         DIRTY_BIT_TRANSFORM_FEEDBACK_BINDING,
         DIRTY_BIT_UNIFORM_BUFFER_BINDINGS,
@@ -722,6 +724,7 @@ class State : angle::NonCopyable
                                   size_t textureIndex,
                                   const Sampler *sampler,
                                   Texture *texture);
+    Texture *getTextureForActiveSampler(TextureType type, size_t index);
 
     // Functions to synchronize dirty states
     angle::Result syncTexturesInit(const Context *context);
@@ -768,6 +771,7 @@ class State : angle::NonCopyable
     int mID;
 
     EGLenum mClientType;
+    EGLenum mContextPriority;
     Version mClientVersion;
     ContextID mContext;
 
@@ -912,6 +916,9 @@ class State : angle::NonCopyable
 
     // GL_ANGLE_program_cache_control
     const bool mProgramBinaryCacheEnabled;
+
+    // GL_ANGLE_webgl_compatibility
+    bool mTextureRectangleEnabled;
 
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;

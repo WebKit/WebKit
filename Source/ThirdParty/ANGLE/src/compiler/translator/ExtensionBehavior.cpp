@@ -20,6 +20,7 @@
     OP(EXT_draw_buffers)                         \
     OP(EXT_frag_depth)                           \
     OP(EXT_geometry_shader)                      \
+    OP(EXT_gpu_shader5)                          \
     OP(EXT_shader_framebuffer_fetch)             \
     OP(EXT_shader_texture_lod)                   \
     OP(EXT_YUV_target)                           \
@@ -33,7 +34,8 @@
     OP(OVR_multiview)                            \
     OP(OVR_multiview2)                           \
     OP(ANGLE_multi_draw)                         \
-    OP(ANGLE_base_vertex_base_instance)
+    OP(ANGLE_base_vertex_base_instance)          \
+    OP(WEBGL_video_texture)
 
 namespace sh
 {

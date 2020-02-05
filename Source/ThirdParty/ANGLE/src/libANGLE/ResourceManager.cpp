@@ -335,7 +335,7 @@ void SyncManager::DeleteObject(const Context *context, Sync *sync)
 GLuint SyncManager::createSync(rx::GLImplFactory *factory)
 {
     GLuint handle = mHandleAllocator.allocate();
-    Sync *sync    = new Sync(factory->createSync(), handle);
+    Sync *sync    = new Sync(factory, handle);
     sync->addRef();
     mObjectMap.assign(handle, sync);
     return handle;

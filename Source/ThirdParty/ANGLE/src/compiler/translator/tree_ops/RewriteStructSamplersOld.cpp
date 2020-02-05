@@ -27,7 +27,7 @@ TType *GetStructSamplerParameterType(TSymbolTable *symbolTable, const TVariable 
 
     if (param.getType().isArray())
     {
-        structType->makeArrays(*param.getType().getArraySizes());
+        structType->makeArrays(param.getType().getArraySizes());
     }
 
     ASSERT(!structType->isStructureContainingSamplers());
@@ -290,7 +290,7 @@ class Traverser final : public TIntermTraverser
                     newType                       = new TType(fieldStruct, true);
                     if (fieldType.isArray())
                     {
-                        newType->makeArrays(*fieldType.getArraySizes());
+                        newType->makeArrays(fieldType.getArraySizes());
                     }
                 }
                 else
@@ -372,7 +372,7 @@ class Traverser final : public TIntermTraverser
             size_t nonSamplerCount = 0;
 
             // Name the samplers internally as varName_<index>_fieldName
-            const TVector<unsigned int> &arraySizes = *containingType.getArraySizes();
+            const TSpan<const unsigned int> &arraySizes = containingType.getArraySizes();
             for (unsigned int arrayElement = 0; arrayElement < arraySizes[0]; ++arrayElement)
             {
                 ImmutableStringBuilder stringBuilder(prefix.length() + kHexSize + 1);
@@ -530,7 +530,7 @@ class Traverser final : public TIntermTraverser
 
             if (baseType.isArray())
             {
-                const TVector<unsigned int> &arraySizes = *baseType.getArraySizes();
+                const TSpan<const unsigned int> &arraySizes = baseType.getArraySizes();
                 ASSERT(arraySizes.size() == 1);
 
                 for (unsigned int arrayIndex = 0; arrayIndex < arraySizes[0]; ++arrayIndex)

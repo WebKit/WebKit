@@ -243,6 +243,9 @@ TEST_F(ShaderImageTest, ImageMemoryQualifiers)
         "layout(rgba32f) uniform highp volatile writeonly image2D image2;\n"
         "layout(rgba32f) uniform highp volatile restrict readonly writeonly image2D image3;\n"
         "void main() {\n"
+        "    imageSize(image1);\n"
+        "    imageSize(image2);\n"
+        "    imageSize(image3);\n"
         "}";
     if (!compile(shaderString))
     {

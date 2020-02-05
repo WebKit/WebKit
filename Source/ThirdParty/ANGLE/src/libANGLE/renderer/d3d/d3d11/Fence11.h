@@ -23,6 +23,7 @@ class FenceNV11 : public FenceNVImpl
     explicit FenceNV11(Renderer11 *renderer);
     ~FenceNV11() override;
 
+    void onDestroy(const gl::Context *context) override {}
     angle::Result set(const gl::Context *context, GLenum condition) override;
     angle::Result test(const gl::Context *context, GLboolean *outFinished) override;
     angle::Result finish(const gl::Context *context) override;

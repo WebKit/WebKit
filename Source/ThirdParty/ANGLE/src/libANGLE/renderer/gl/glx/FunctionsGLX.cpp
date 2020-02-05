@@ -60,7 +60,8 @@ struct FunctionsGLX::GLXFunctionTable
           swapIntervalEXTPtr(nullptr),
           swapIntervalMESAPtr(nullptr),
           swapIntervalSGIPtr(nullptr),
-          getSyncValuesOMLPtr(nullptr)
+          getSyncValuesOMLPtr(nullptr),
+          getMscRateOMLPtr(nullptr)
     {}
 
     // GLX 1.0
@@ -104,6 +105,7 @@ struct FunctionsGLX::GLXFunctionTable
 
     // GLX_OML_sync_control
     PFNGLXGETSYNCVALUESOMLPROC getSyncValuesOMLPtr;
+    PFNGLXGETMSCRATEOMLPROC getMscRateOMLPtr;
 };
 
 FunctionsGLX::FunctionsGLX()
@@ -247,6 +249,7 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     if (hasExtension("GLX_OML_sync_control"))
     {
         GET_PROC_OR_ERROR(&mFnPtrs->getSyncValuesOMLPtr, glXGetSyncValuesOML);
+        GET_PROC_OR_ERROR(&mFnPtrs->getMscRateOMLPtr, glXGetMscRateOML);
     }
 
 #undef GET_FNPTR_OR_ERROR
@@ -414,6 +417,13 @@ bool FunctionsGLX::getSyncValuesOML(glx::Drawable drawable,
                                     int64_t *sbc) const
 {
     return mFnPtrs->getSyncValuesOMLPtr(mXDisplay, drawable, ust, msc, sbc);
+}
+
+bool FunctionsGLX::getMscRateOML(glx::Drawable drawable,
+                                 int32_t *numerator,
+                                 int32_t *denominator) const
+{
+    return mFnPtrs->getMscRateOMLPtr(mXDisplay, drawable, numerator, denominator);
 }
 
 }  // namespace rx

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <vulkan/vulkan.h>
+#include "volk.h"
 
 // THIS FILE SHOULD BE DELETED IF VK_EXT_provoking_vertex IS EVER ADDED TO THE VULKAN HEADERS
 #ifdef VK_EXT_provoking_vertex

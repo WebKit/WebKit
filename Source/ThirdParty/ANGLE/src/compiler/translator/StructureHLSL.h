@@ -34,7 +34,7 @@ class Std140PaddingHelper
     int elementIndex() const { return mElementIndex; }
     int prePadding(const TType &type);
     TString prePaddingString(const TType &type);
-    TString postPaddingString(const TType &type, bool useHLSLRowMajorPacking);
+    TString postPaddingString(const TType &type, bool useHLSLRowMajorPacking, bool forcePadding);
 
   private:
     TString next();
@@ -90,7 +90,8 @@ class StructureHLSL : angle::NonCopyable
     void storeStd140ElementIndex(const TStructure &structure, bool useHLSLRowMajorPacking);
     TString defineQualified(const TStructure &structure,
                             bool useHLSLRowMajorPacking,
-                            bool useStd140Packing);
+                            bool useStd140Packing,
+                            bool forcePackingEnd);
     DefinedStructs::iterator defineVariants(const TStructure &structure, const TString &name);
 };
 }  // namespace sh

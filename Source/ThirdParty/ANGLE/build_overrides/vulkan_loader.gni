@@ -7,4 +7,4 @@ import("//gni/angle.gni")
 vulkan_headers_dir = "//third_party/vulkan-headers/src"
 
 vulkan_gen_subdir = "angle/vulkan"
-vulkan_loader_shared = angle_shared_libvulkan
+vulkan_loader_shared = true

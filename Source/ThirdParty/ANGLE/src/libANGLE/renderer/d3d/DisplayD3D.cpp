@@ -145,6 +145,7 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
 
         // Failed to create the renderer, try the next
         SafeDelete(renderer);
+        ERR() << "Failed to create D3D renderer: " << result.getMessage();
     }
 
     return egl::EglNotInitialized() << "No available renderers.";
@@ -348,7 +349,7 @@ void DisplayD3D::generateCaps(egl::Caps *outCaps) const
     // Display must be initialized to generate caps
     ASSERT(mRenderer != nullptr);
 
-    outCaps->textureNPOT = mRenderer->getNativeExtensions().textureNPOT;
+    outCaps->textureNPOT = mRenderer->getNativeExtensions().textureNPOTOES;
 }
 
 egl::Error DisplayD3D::waitClient(const gl::Context *context)

@@ -6,9 +6,6 @@
         "",
         "ConvertVertex.comp.json: Build parameters for ConvertVertex.comp."
     ],
-    "Flags": [
-        "IsAligned"
-    ],
     "Conversion": [
         "SintToSint",
         "UintToUint",
@@ -26,11 +23,7 @@
         "RGB10A2SintToFloat",
         "RGB10A2UintToFloat",
         "RGB10A2SnormToFloat",
-        "RGB10A2UnormToFloat",
-        "RGB10X2SintToFloat",
-        "RGB10X2UintToFloat",
-        "RGB10X2SnormToFloat",
-        "RGB10X2UnormToFloat"
+        "RGB10A2UnormToFloat"
     ]
 }
 

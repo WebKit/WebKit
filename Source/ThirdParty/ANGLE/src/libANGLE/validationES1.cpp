@@ -60,7 +60,7 @@ bool ValidateClientStateCommon(Context *context, ClientVertexArrayType arrayType
         case ClientVertexArrayType::TextureCoord:
             return true;
         case ClientVertexArrayType::PointSize:
-            if (!context->getExtensions().pointSizeArray)
+            if (!context->getExtensions().pointSizeArrayOES)
             {
                 context->validationError(GL_INVALID_ENUM, kPointSizeArrayExtensionNotEnabled);
                 return false;
@@ -106,7 +106,7 @@ bool ValidateBuiltinVertexAttributeCommon(Context *context,
             maxSize = 4;
             break;
         case ClientVertexArrayType::PointSize:
-            if (!context->getExtensions().pointSizeArray)
+            if (!context->getExtensions().pointSizeArrayOES)
             {
                 context->validationError(GL_INVALID_ENUM, kPointSizeArrayExtensionNotEnabled);
                 return false;
@@ -519,7 +519,7 @@ bool ValidateTexEnvCommon(Context *context,
             }
             break;
         case TextureEnvTarget::PointSprite:
-            if (!context->getExtensions().pointSprite)
+            if (!context->getExtensions().pointSpriteOES)
             {
                 context->validationError(GL_INVALID_ENUM, kInvalidTextureEnvTarget);
                 return false;

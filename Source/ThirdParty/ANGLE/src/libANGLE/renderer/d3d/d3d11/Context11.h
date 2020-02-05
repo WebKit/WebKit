@@ -100,12 +100,25 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                GLsizei count,
                                gl::DrawElementsType type,
                                const void *indices) override;
+    angle::Result drawElementsBaseVertex(const gl::Context *context,
+                                         gl::PrimitiveMode mode,
+                                         GLsizei count,
+                                         gl::DrawElementsType type,
+                                         const void *indices,
+                                         GLint baseVertex) override;
     angle::Result drawElementsInstanced(const gl::Context *context,
                                         gl::PrimitiveMode mode,
                                         GLsizei count,
                                         gl::DrawElementsType type,
                                         const void *indices,
                                         GLsizei instances) override;
+    angle::Result drawElementsInstancedBaseVertex(const gl::Context *context,
+                                                  gl::PrimitiveMode mode,
+                                                  GLsizei count,
+                                                  gl::DrawElementsType type,
+                                                  const void *indices,
+                                                  GLsizei instances,
+                                                  GLint baseVertex) override;
     angle::Result drawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
                                                               gl::PrimitiveMode mode,
                                                               GLsizei count,
@@ -121,6 +134,14 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
                                     GLsizei count,
                                     gl::DrawElementsType type,
                                     const void *indices) override;
+    angle::Result drawRangeElementsBaseVertex(const gl::Context *context,
+                                              gl::PrimitiveMode mode,
+                                              GLuint start,
+                                              GLuint end,
+                                              GLsizei count,
+                                              gl::DrawElementsType type,
+                                              const void *indices,
+                                              GLint baseVertex) override;
     angle::Result drawArraysIndirect(const gl::Context *context,
                                      gl::PrimitiveMode mode,
                                      const void *indirect) override;

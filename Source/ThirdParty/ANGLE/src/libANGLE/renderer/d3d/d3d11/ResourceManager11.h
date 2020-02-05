@@ -17,7 +17,7 @@
 #include "common/angleutils.h"
 #include "common/debug.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/renderer/serial_utils.h"
 
 namespace rx
 {

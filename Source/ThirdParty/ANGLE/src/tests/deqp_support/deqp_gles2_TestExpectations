@@ -29,6 +29,9 @@
 // fails on Nexus5X with GLES backend (hangs)
 //  91531 NEXUS5X GLES : conformance_more_* = SKIP
 
+// Globally disable Metal testing for now
+4235 METAL : dEQP-GLES2.* = SKIP
+
 // Skip these tests due to timeouts
 1034 : dEQP-GLES2.functional.flush_finish.* = SKIP
 
@@ -310,6 +313,16 @@
 2808 VULKAN ANDROID : dEQP-GLES2.functional.shaders.builtin_variable.fragcoord_w = FAIL
 3306 VULKAN ANDROID : dEQP-GLES2.functional.polygon_offset.default_factor_1_slope = FAIL
 3306 VULKAN ANDROID : dEQP-GLES2.functional.polygon_offset.fixed16_factor_1_slope = FAIL
+
+// Failing on the Pixel 2 due to Qualcomm Vulkan driver
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.1 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.30 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.35 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.38 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.60 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.62 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.random.62 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES2.functional.fragment_ops.random.78 = FAIL
 
 // These tests also fail on AMD windows driver as it is not allowed to use emulation due to errors.
 3243 VULKAN WIN AMD : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL

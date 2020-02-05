@@ -97,7 +97,7 @@ TEST_F(EmulateGLDrawIDTest, EmulatesUniform)
 
 #ifdef ANGLE_ENABLE_VULKAN
     EXPECT_TRUE(
-        foundInCode(SH_GLSL_VULKAN_OUTPUT, "uniform defaultUniforms\n{\n    int angle_DrawID;"));
+        foundInCode(SH_GLSL_VULKAN_OUTPUT, "uniform defaultUniformsVS\n{\n    int angle_DrawID;"));
 #endif
 #ifdef ANGLE_ENABLE_HLSL
     EXPECT_TRUE(foundInCode(SH_HLSL_3_0_OUTPUT, "uniform int angle_DrawID : register"));

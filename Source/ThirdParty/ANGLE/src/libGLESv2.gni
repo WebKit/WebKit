@@ -89,10 +89,11 @@ if (is_mac) {
 }
 
 if (is_win) {
+  angle_system_utils_sources += [ "src/common/system_utils_win.cpp" ]
   if (current_os == "winuwp") {
     angle_system_utils_sources += [ "src/common/system_utils_winuwp.cpp" ]
   } else {
-    angle_system_utils_sources += [ "src/common/system_utils_win.cpp" ]
+    angle_system_utils_sources += [ "src/common/system_utils_win32.cpp" ]
   }
 }
 
@@ -121,15 +122,26 @@ libangle_gpu_info_util_sources = [
 
 libangle_gpu_info_util_win_sources = [ "src/gpu_info_util/SystemInfo_win.cpp" ]
 
+libangle_gpu_info_util_android_sources =
+    [ "src/gpu_info_util/SystemInfo_android.cpp" ]
+
 libangle_gpu_info_util_linux_sources =
     [ "src/gpu_info_util/SystemInfo_linux.cpp" ]
+
+libangle_gpu_info_util_fuchsia_sources =
+    [ "src/gpu_info_util/SystemInfo_fuchsia.cpp" ]
+
+libangle_gpu_info_util_vulkan_sources = [
+  "src/gpu_info_util/SystemInfo_vulkan.cpp",
+  "src/gpu_info_util/SystemInfo_vulkan.h",
+]
 
 libangle_gpu_info_util_libpci_sources =
     [ "src/gpu_info_util/SystemInfo_libpci.cpp" ]
 
 libangle_gpu_info_util_x11_sources = [ "src/gpu_info_util/SystemInfo_x11.cpp" ]
 
-libangle_gpu_info_util_mac_sources = [ "src/gpu_info_util/SystemInfo_mac.mm" ]
+libangle_gpu_info_util_mac_sources = [ "src/gpu_info_util/SystemInfo_macos.mm" ]
 
 libangle_includes = [
   "include/angle_gl.h",
@@ -304,6 +316,7 @@ libangle_headers = [
   "src/libANGLE/renderer/copyvertex.inc.h",
   "src/libANGLE/renderer/load_functions_table.h",
   "src/libANGLE/renderer/renderer_utils.h",
+  "src/libANGLE/renderer/serial_utils.h",
   "src/libANGLE/validationEGL.h",
   "src/libANGLE/validationES.h",
   "src/libANGLE/validationES1.h",

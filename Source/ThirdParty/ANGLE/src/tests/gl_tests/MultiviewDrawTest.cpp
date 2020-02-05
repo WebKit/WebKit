@@ -932,6 +932,7 @@ TEST_P(MultiviewDrawValidationTest, ActiveTimeElapsedQuery)
 TEST_P(MultiviewRenderDualViewTest, DrawArrays)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     drawQuad(mProgram, "vPosition", 0.0f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
@@ -943,6 +944,7 @@ TEST_P(MultiviewRenderDualViewTest, DrawArrays)
 TEST_P(MultiviewRenderDualViewTest, DrawElements)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     drawIndexedQuad(mProgram, "vPosition", 0.0f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
@@ -954,6 +956,7 @@ TEST_P(MultiviewRenderDualViewTest, DrawElements)
 TEST_P(MultiviewRenderDualViewTest, DrawRangeElements)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     drawIndexedQuad(mProgram, "vPosition", 0.0f, 1.0f, true, true);
     ASSERT_GL_NO_ERROR();
@@ -965,6 +968,7 @@ TEST_P(MultiviewRenderDualViewTest, DrawRangeElements)
 TEST_P(MultiviewRenderTest, DrawArraysFourViews)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     const std::string VS =
         "#version 300 es\n"
@@ -1027,6 +1031,7 @@ TEST_P(MultiviewRenderTest, DrawArraysFourViews)
 TEST_P(MultiviewRenderTest, DrawArraysInstanced)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     const std::string VS =
         "#version 300 es\n"
@@ -1097,6 +1102,7 @@ TEST_P(MultiviewRenderTest, DrawArraysInstanced)
 TEST_P(MultiviewRenderTest, AttribDivisor)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows AMD and NVIDIA.
     // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
@@ -1185,6 +1191,7 @@ TEST_P(MultiviewRenderTest, AttribDivisor)
 TEST_P(MultiviewRenderTest, DivisorOrderOfOperation)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     updateFBOs(1, 1, 2);
 
@@ -1352,6 +1359,7 @@ TEST_P(MultiviewOcclusionQueryTest, OcclusionQueryNothingVisible)
 {
     ANGLE_SKIP_TEST_IF(!requestMultiviewExtension());
     ANGLE_SKIP_TEST_IF(!requestOcclusionQueryExtension());
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     const std::string VS =
         "#version 300 es\n"
@@ -1589,6 +1597,7 @@ TEST_P(MultiviewRenderPrimitiveTest, Points)
 
     // Test failing on P400 graphics card (anglebug.com/2228)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11() && IsNVIDIA());
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     const std::string VS =
         "#version 300 es\n"
@@ -1646,6 +1655,7 @@ TEST_P(MultiviewRenderPrimitiveTest, Lines)
     {
         return;
     }
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLuint program = CreateSimplePassthroughProgram(2, GetParam().mMultiviewExtension);
     ASSERT_NE(program, 0u);
@@ -1683,6 +1693,7 @@ TEST_P(MultiviewRenderPrimitiveTest, LineStrip)
     {
         return;
     }
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLuint program = CreateSimplePassthroughProgram(2, GetParam().mMultiviewExtension);
     ASSERT_NE(program, 0u);
@@ -1723,6 +1734,7 @@ TEST_P(MultiviewRenderPrimitiveTest, LineLoop)
     // Only this subtest fails on intel-hd-630-ubuntu-stable. Driver bug?
     // https://bugs.chromium.org/p/angleproject/issues/detail?id=3472
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLuint program = CreateSimplePassthroughProgram(2, GetParam().mMultiviewExtension);
     ASSERT_NE(program, 0u);
@@ -1757,6 +1769,7 @@ TEST_P(MultiviewRenderPrimitiveTest, TriangleStrip)
     {
         return;
     }
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLuint program = CreateSimplePassthroughProgram(2, GetParam().mMultiviewExtension);
     ASSERT_NE(program, 0u);
@@ -1788,6 +1801,7 @@ TEST_P(MultiviewRenderPrimitiveTest, TriangleFan)
     {
         return;
     }
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLuint program = CreateSimplePassthroughProgram(2, GetParam().mMultiviewExtension);
     ASSERT_NE(program, 0u);
@@ -1817,6 +1831,7 @@ TEST_P(MultiviewRenderPrimitiveTest, TriangleFan)
 // to each other. The quads' position and color depend on the corresponding attribute divisors.
 TEST_P(MultiviewRenderTest, ProgramRelinkUpdatesAttribDivisor)
 {
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
     if (!requestMultiviewExtension(isMultisampled()))
     {
         return;
@@ -1970,6 +1985,7 @@ TEST_P(MultiviewRenderTest, DivisorUpdatedOnProgramChange)
 
     // Test failing on P400 graphics card (anglebug.com/2228)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11() && IsNVIDIA());
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     // Looks like an incorrect D3D debug layer message is generated on Windows / AMD.
     // May be specific to Windows 7 / Windows Server 2008. http://anglebug.com/2778
@@ -2080,6 +2096,7 @@ TEST_P(MultiviewRenderTest, SelectColorBasedOnViewIDOVR)
 // multi-view program.
 TEST_P(MultiviewLayeredRenderTest, RenderToSubrangeOfLayers)
 {
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
     if (!requestMultiviewExtension())
     {
         return;

@@ -179,10 +179,10 @@ void GetInterfaceBlockInfo(const std::vector<ShaderVariable> &fields,
                            BlockLayoutMap *blockInfoOut);
 
 // Used for laying out the default uniform block on the Vulkan backend.
-void GetUniformBlockInfo(const std::vector<ShaderVariable> &uniforms,
-                         const std::string &prefix,
-                         BlockLayoutEncoder *encoder,
-                         BlockLayoutMap *blockInfoOut);
+void GetActiveUniformBlockInfo(const std::vector<ShaderVariable> &uniforms,
+                               const std::string &prefix,
+                               BlockLayoutEncoder *encoder,
+                               BlockLayoutMap *blockInfoOut);
 
 class ShaderVariableVisitor
 {
@@ -296,6 +296,20 @@ void TraverseShaderVariables(const std::vector<T> &vars,
     for (const T &var : vars)
     {
         TraverseShaderVariable(var, isRowMajorLayout, visitor);
+    }
+}
+
+template <typename T>
+void TraverseActiveShaderVariables(const std::vector<T> &vars,
+                                   bool isRowMajorLayout,
+                                   ShaderVariableVisitor *visitor)
+{
+    for (const T &var : vars)
+    {
+        if (var.active)
+        {
+            TraverseShaderVariable(var, isRowMajorLayout, visitor);
+        }
     }
 }
 }  // namespace sh

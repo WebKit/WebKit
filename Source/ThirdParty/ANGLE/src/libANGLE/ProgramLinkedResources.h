@@ -190,14 +190,18 @@ class AtomicCounterBufferLinker final : angle::NonCopyable
 // TODO(jmadill): Integrate uniform linking/filtering as well as interface blocks.
 struct UnusedUniform
 {
-    UnusedUniform(std::string name, bool isSampler)
+    UnusedUniform(std::string name, bool isSampler, bool isImage, bool isAtomicCounter)
     {
-        this->name      = name;
-        this->isSampler = isSampler;
+        this->name            = name;
+        this->isSampler       = isSampler;
+        this->isImage         = isImage;
+        this->isAtomicCounter = isAtomicCounter;
     }
 
     std::string name;
     bool isSampler;
+    bool isImage;
+    bool isAtomicCounter;
 };
 
 struct ProgramLinkedResources

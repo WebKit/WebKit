@@ -20,6 +20,7 @@ class FenceNVNULL : public FenceNVImpl
     FenceNVNULL();
     ~FenceNVNULL() override;
 
+    void onDestroy(const gl::Context *context) override {}
     angle::Result set(const gl::Context *context, GLenum condition) override;
     angle::Result test(const gl::Context *context, GLboolean *outFinished) override;
     angle::Result finish(const gl::Context *context) override;

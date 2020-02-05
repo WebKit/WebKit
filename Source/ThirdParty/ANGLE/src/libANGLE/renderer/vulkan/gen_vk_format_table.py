@@ -106,7 +106,7 @@ def verify_vk_map_keys(angle_to_gl, vk_json_data):
     entry in the Vulkan file is incorrect and needs to be fixed."""
 
     no_error = True
-    for table in ["map", "overrides", "fallbacks"]:
+    for table in ["map", "fallbacks"]:
         for angle_format in vk_json_data[table].keys():
             if not angle_format in angle_to_gl.keys():
                 print "Invalid format " + angle_format + " in vk_format_map.json in " + table
@@ -140,22 +140,23 @@ def get_vertex_copy_function(src_format, dst_format, vk_format):
 
 def gen_format_case(angle, internal_format, vk_json_data):
     vk_map = vk_json_data["map"]
-    vk_overrides = vk_json_data["overrides"]
     vk_fallbacks = vk_json_data["fallbacks"]
     args = dict(
         format_id=angle, internal_format=internal_format, image_template="", buffer_template="")
 
-    if ((angle not in vk_map) and (angle not in vk_overrides) and
-        (angle not in vk_fallbacks)) or angle == 'NONE':
+    if ((angle not in vk_map) and (angle not in vk_fallbacks)) or angle == 'NONE':
         return empty_format_entry_template.format(**args)
 
+    # get_formats returns override format (if any) + fallbacks
+    # this was necessary to support D32_UNORM. There is no appropriate override that allows
+    # us to fallback to D32_FLOAT, so now we leave the image override empty and function will
+    # give us the fallbacks.
     def get_formats(format, type):
-        format = vk_overrides.get(format, {}).get(type, format)
-        if format not in vk_map:
-            return []
         fallbacks = vk_fallbacks.get(format, {}).get(type, [])
         if not isinstance(fallbacks, list):
             fallbacks = [fallbacks]
+        if format not in vk_map:
+            return fallbacks
         return [format] + fallbacks
 
     def image_args(format):

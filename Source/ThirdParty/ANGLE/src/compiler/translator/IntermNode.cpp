@@ -152,6 +152,7 @@ bool CanFoldAggregateBuiltInOp(TOperator op)
         case EOpMix:
         case EOpStep:
         case EOpSmoothstep:
+        case EOpFma:
         case EOpLdexp:
         case EOpMulMatrixComponentWise:
         case EOpOuterProduct:
@@ -350,19 +351,20 @@ bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacem
     return false;
 }
 
-size_t TIntermInvariantDeclaration::getChildCount() const
+size_t TIntermGlobalQualifierDeclaration::getChildCount() const
 {
     return 1;
 }
 
-TIntermNode *TIntermInvariantDeclaration::getChildNode(size_t index) const
+TIntermNode *TIntermGlobalQualifierDeclaration::getChildNode(size_t index) const
 {
     ASSERT(mSymbol);
     ASSERT(index == 0);
     return mSymbol;
 }
 
-bool TIntermInvariantDeclaration::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
+bool TIntermGlobalQualifierDeclaration::replaceChildNode(TIntermNode *original,
+                                                         TIntermNode *replacement)
 {
     REPLACE_IF_IS(mSymbol, TIntermSymbol, original, replacement);
     return false;
@@ -1332,17 +1334,20 @@ TIntermBinary *TIntermBinary::CreateComma(TIntermTyped *left,
     return node;
 }
 
-TIntermInvariantDeclaration::TIntermInvariantDeclaration(TIntermSymbol *symbol,
-                                                         const TSourceLoc &line)
-    : TIntermNode(), mSymbol(symbol)
+TIntermGlobalQualifierDeclaration::TIntermGlobalQualifierDeclaration(TIntermSymbol *symbol,
+                                                                     bool isPrecise,
+                                                                     const TSourceLoc &line)
+    : TIntermNode(), mSymbol(symbol), mIsPrecise(isPrecise)
 {
     ASSERT(symbol);
     setLine(line);
 }
 
-TIntermInvariantDeclaration::TIntermInvariantDeclaration(const TIntermInvariantDeclaration &node)
-    : TIntermInvariantDeclaration(static_cast<TIntermSymbol *>(node.mSymbol->deepCopy()),
-                                  node.mLine)
+TIntermGlobalQualifierDeclaration::TIntermGlobalQualifierDeclaration(
+    const TIntermGlobalQualifierDeclaration &node)
+    : TIntermGlobalQualifierDeclaration(static_cast<TIntermSymbol *>(node.mSymbol->deepCopy()),
+                                        node.mIsPrecise,
+                                        node.mLine)
 {}
 
 TIntermTernary::TIntermTernary(TIntermTyped *cond,
@@ -3561,15 +3566,16 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
 
         case EOpMix:
         {
-            ASSERT(basicType == EbtFloat);
             resultArray = new TConstantUnion[maxObjectSize];
             for (size_t i = 0; i < maxObjectSize; i++)
             {
-                float x         = unionArrays[0][i].getFConst();
-                float y         = unionArrays[1][i].getFConst();
                 TBasicType type = (*arguments)[2]->getAsTyped()->getType().getBasicType();
                 if (type == EbtFloat)
                 {
+                    ASSERT(basicType == EbtFloat);
+                    float x = unionArrays[0][i].getFConst();
+                    float y = unionArrays[1][i].getFConst();
+
                     // Returns the linear blend of x and y, i.e., x * (1 - a) + y * a.
                     float a = unionArrays[2][i].getFConst();
                     resultArray[i].setFConst(x * (1.0f - a) + y * a);
@@ -3583,7 +3589,40 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
                     // For a component of a that is true, the corresponding component of y is
                     // returned.
                     bool a = unionArrays[2][i].getBConst();
-                    resultArray[i].setFConst(a ? y : x);
+                    switch (basicType)
+                    {
+                        case EbtFloat:
+                        {
+                            float x = unionArrays[0][i].getFConst();
+                            float y = unionArrays[1][i].getFConst();
+                            resultArray[i].setFConst(a ? y : x);
+                        }
+                        break;
+                        case EbtInt:
+                        {
+                            int x = unionArrays[0][i].getIConst();
+                            int y = unionArrays[1][i].getIConst();
+                            resultArray[i].setIConst(a ? y : x);
+                        }
+                        break;
+                        case EbtUInt:
+                        {
+                            unsigned int x = unionArrays[0][i].getUConst();
+                            unsigned int y = unionArrays[1][i].getUConst();
+                            resultArray[i].setUConst(a ? y : x);
+                        }
+                        break;
+                        case EbtBool:
+                        {
+                            bool x = unionArrays[0][i].getBConst();
+                            bool y = unionArrays[1][i].getBConst();
+                            resultArray[i].setBConst(a ? y : x);
+                        }
+                        break;
+                        default:
+                            UNREACHABLE();
+                            break;
+                    }
                 }
             }
             break;
@@ -3610,6 +3649,22 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
                     float t = gl::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
                     resultArray[i].setFConst(t * t * (3.0f - 2.0f * t));
                 }
+            }
+            break;
+        }
+
+        case EOpFma:
+        {
+            ASSERT(basicType == EbtFloat);
+            resultArray = new TConstantUnion[maxObjectSize];
+            for (size_t i = 0; i < maxObjectSize; i++)
+            {
+                float a = unionArrays[0][i].getFConst();
+                float b = unionArrays[1][i].getFConst();
+                float c = unionArrays[2][i].getFConst();
+
+                // Returns a * b + c.
+                resultArray[i].setFConst(a * b + c);
             }
             break;
         }

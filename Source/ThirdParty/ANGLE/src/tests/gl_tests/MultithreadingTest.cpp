@@ -29,11 +29,6 @@ class MultithreadingTest : public ANGLETest
         setConfigAlphaBits(8);
     }
 
-    bool platformSupportsMultithreading() const
-    {
-        return (IsOpenGLES() && IsAndroid()) || IsVulkan();
-    }
-
     void runMultithreadedGLTest(
         std::function<void(EGLSurface surface, size_t threadIndex)> testBody,
         size_t threadCount)
@@ -51,7 +46,7 @@ class MultithreadingTest : public ANGLETest
         {
             threads[threadIdx] = std::thread([&, threadIdx]() {
                 EGLSurface surface = EGL_NO_SURFACE;
-                EGLConfig ctx      = EGL_NO_CONTEXT;
+                EGLContext ctx     = EGL_NO_CONTEXT;
 
                 {
                     std::lock_guard<decltype(mutex)> lock(mutex);

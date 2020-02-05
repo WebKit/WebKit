@@ -73,6 +73,10 @@ generators = {
         'src/libANGLE/renderer/gen_angle_format_table.py',
     'ANGLE load functions table':
         'src/libANGLE/renderer/gen_load_functions_table.py',
+    'ANGLE shader preprocessor':
+        'src/compiler/preprocessor/generate_parser.py',
+    'ANGLE shader translator':
+        'src/compiler/translator/generate_parser.py',
     'D3D11 blit shader selection':
         'src/libANGLE/renderer/d3d/d3d11/gen_blit11helper.py',
     'D3D11 format':
@@ -228,7 +232,8 @@ def main():
         # line length limits. Work around this by calling git cl format with --full.
         args += ['cl', 'format', '--full']
         print('Calling git cl format')
-        subprocess.call(args)
+        if subprocess.call(args) != 0:
+            sys.exit(1)
 
         # Update the output hashes again since they can be formatted.
         for name, script in sorted(generators.iteritems()):

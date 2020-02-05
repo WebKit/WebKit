@@ -21,7 +21,9 @@ void InitExtensionBehavior(const ShBuiltInResources &resources,
 // undefined state. These extensions will only be those initially supported in
 // the ShBuiltInResources object for this compiler instance. All other
 // extensions will remain unsupported.
-void ResetExtensionBehavior(TExtensionBehavior &extensionBehavior);
+void ResetExtensionBehavior(const ShBuiltInResources &resources,
+                            TExtensionBehavior &extensionBehavior,
+                            const ShCompileOptions compileOptions);
 
 }  // namespace sh
 

@@ -302,7 +302,7 @@ bool TextureState::computeSamplerCompleteness(const SamplerState &samplerState,
     {
         return false;
     }
-    bool npotSupport = data.getExtensions().textureNPOT || data.getClientMajorVersion() >= 3;
+    bool npotSupport = data.getExtensions().textureNPOTOES || data.getClientMajorVersion() >= 3;
     if (!npotSupport)
     {
         if ((samplerState.getWrapS() != GL_CLAMP_TO_EDGE &&
@@ -639,7 +639,7 @@ void TextureState::clearImageDescs()
 }
 
 Texture::Texture(rx::GLImplFactory *factory, TextureID id, TextureType type)
-    : RefCountObject(id),
+    : RefCountObject(factory->generateSerial(), id),
       mState(type),
       mTexture(factory->createTexture(mState)),
       mImplObserver(this, rx::kTextureImageImplObserverMessageIndex),
@@ -1350,6 +1350,10 @@ angle::Result Texture::setStorageMultisample(Context *context,
     // Release from previous calls to eglBindTexImage, to avoid calling the Impl after
     ANGLE_TRY(releaseTexImageInternal(context));
     ANGLE_TRY(orphanImages(context));
+
+    // Potentially adjust "samples" to a supported value
+    const TextureCaps &formatCaps = context->getTextureCaps().get(internalFormat);
+    samples                       = formatCaps.getNearestSamples(samples);
 
     ANGLE_TRY(mTexture->setStorageMultisample(context, type, samples, internalFormat, size,
                                               fixedSampleLocations));

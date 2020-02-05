@@ -16,11 +16,7 @@
 #            define ANGLE_UTIL_EXPORT __declspec(dllimport)
 #        endif
 #    elif defined(__GNUC__)
-#        if defined(LIBANGLE_UTIL_IMPLEMENTATION)
-#            define ANGLE_UTIL_EXPORT __attribute__((visibility("default")))
-#        else
-#            define ANGLE_UTIL_EXPORT
-#        endif
+#        define ANGLE_UTIL_EXPORT __attribute__((visibility("default")))
 #    else
 #        define ANGLE_UTIL_EXPORT
 #    endif

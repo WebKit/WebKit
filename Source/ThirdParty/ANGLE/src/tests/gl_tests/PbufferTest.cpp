@@ -202,6 +202,7 @@ TEST_P(PbufferTest, TextureSizeReset)
 {
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers);
     ANGLE_SKIP_TEST_IF(!mSupportsBindTexImage);
+    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);

@@ -101,36 +101,6 @@ angle::Result RenderbufferVk::setStorageMultisample(const gl::Context *context,
                                                     size_t width,
                                                     size_t height)
 {
-    // If the specific number of samples requested is not supported, the smallest number that's at
-    // least that many needs to be selected.
-    const RendererVk *renderer           = vk::GetImpl(context)->getRenderer();
-    const angle::Format &format          = renderer->getFormat(internalformat).actualImageFormat();
-    const VkPhysicalDeviceLimits &limits = renderer->getPhysicalDeviceProperties().limits;
-
-    const uint32_t colorSampleCounts        = limits.framebufferColorSampleCounts;
-    const uint32_t depthSampleCounts        = limits.framebufferDepthSampleCounts;
-    const uint32_t stencilSampleCounts      = limits.framebufferStencilSampleCounts;
-    const uint32_t depthStencilSampleCounts = depthSampleCounts & stencilSampleCounts;
-    uint32_t formatSampleCounts             = colorSampleCounts;
-
-    if (format.depthBits > 0)
-    {
-        if (format.stencilBits > 0)
-        {
-            formatSampleCounts = depthStencilSampleCounts;
-        }
-        else
-        {
-            formatSampleCounts = depthSampleCounts;
-        }
-    }
-    else if (format.stencilBits > 0)
-    {
-        formatSampleCounts = stencilSampleCounts;
-    }
-
-    samples = vk_gl::GetSampleCount(formatSampleCounts, static_cast<uint32_t>(samples));
-
     return setStorageImpl(context, samples, internalformat, width, height);
 }
 

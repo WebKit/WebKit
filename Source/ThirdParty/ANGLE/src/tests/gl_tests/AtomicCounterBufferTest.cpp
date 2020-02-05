@@ -439,8 +439,10 @@ void main()
 // on Vulkan makes every shard our bots currently make do have at least some OpenGL test run before
 // any Vulkan test. When these tests can be enabled on Vulkan, can replace the current macros with
 // the updated macros below that include Vulkan:
-// ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(AtomicCounterBufferTest);
-// ANGLE_INSTANTIATE_TEST_ES31(AtomicCounterBufferTest31);
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(AtomicCounterBufferTest);
+ANGLE_INSTANTIATE_TEST_ES31(AtomicCounterBufferTest31);
+#else
 ANGLE_INSTANTIATE_TEST(AtomicCounterBufferTest,
                        ES3_OPENGL(),
                        ES3_OPENGLES(),
@@ -448,5 +450,6 @@ ANGLE_INSTANTIATE_TEST(AtomicCounterBufferTest,
                        ES31_OPENGLES(),
                        ES31_D3D11());
 ANGLE_INSTANTIATE_TEST(AtomicCounterBufferTest31, ES31_OPENGL(), ES31_OPENGLES(), ES31_D3D11());
+#endif
 
 }  // namespace

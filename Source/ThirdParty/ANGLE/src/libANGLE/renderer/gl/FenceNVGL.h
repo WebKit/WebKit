@@ -22,6 +22,7 @@ class FenceNVGL : public FenceNVImpl
     explicit FenceNVGL(const FunctionsGL *functions);
     ~FenceNVGL() override;
 
+    void onDestroy(const gl::Context *context) override {}
     angle::Result set(const gl::Context *context, GLenum condition) override;
     angle::Result test(const gl::Context *context, GLboolean *outFinished) override;
     angle::Result finish(const gl::Context *context) override;
@@ -41,6 +42,7 @@ class FenceNVSyncGL : public FenceNVImpl
     explicit FenceNVSyncGL(const FunctionsGL *functions);
     ~FenceNVSyncGL() override;
 
+    void onDestroy(const gl::Context *context) override {}
     angle::Result set(const gl::Context *context, GLenum condition) override;
     angle::Result test(const gl::Context *context, GLboolean *outFinished) override;
     angle::Result finish(const gl::Context *context) override;

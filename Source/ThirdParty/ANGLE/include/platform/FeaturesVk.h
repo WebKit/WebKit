@@ -134,17 +134,17 @@ struct FeaturesVk : FeatureSetBase
         "Emulate transform feedback as the VK_EXT_transform_feedback is not present.", &members,
         "http://anglebug.com/3205"};
 
+    // Where VK_EXT_transform_feedback is supported, it's preferred over an emulation path.
+    // http://anglebug.com/3206
+    Feature supportsTransformFeedbackExtension = {
+        "supports_transform_feedback_extension", FeatureCategory::VulkanFeatures,
+        "Transform feedback uses the VK_EXT_transform_feedback extension.", &members,
+        "http://anglebug.com/3206"};
+
     // VK_PRESENT_MODE_FIFO_KHR causes random timeouts on Linux Intel. http://anglebug.com/3153
     Feature disableFifoPresentMode = {
         "disable_fifo_present_mode", FeatureCategory::VulkanWorkarounds,
         "VK_PRESENT_MODE_FIFO_KHR causes random timeouts", &members, "http://anglebug.com/3153"};
-
-    // On Qualcomm, a bug is preventing us from using loadOp=Clear with inline commands in the
-    // render pass.  http://anglebug.com/2361
-    Feature restartRenderPassAfterLoadOpClear = {
-        "restart_render_pass_after_load_op_clear", FeatureCategory::VulkanWorkarounds,
-        "A bug is preventing us from using loadOp=Clear with inline commands in the render pass",
-        &members, "http://anglebug.com/2361"};
 
     // On Qualcomm, gaps in bound descriptor set indices causes the post-gap sets to misbehave.
     // For example, binding only descriptor set 3 results in zero being read from a uniform buffer
@@ -182,16 +182,6 @@ struct FeaturesVk : FeatureSetBase
         "Vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE when window resizing", &members,
         "http://anglebug.com/3623, http://anglebug.com/3624, http://anglebug.com/3625"};
 
-    // On Pixel1XL and Pixel2, reset a vkCommandBuffer seems to have side effects on binding
-    // descriptor sets to it afterwards, Work-around by keep using transient vkCommandBuffer on
-    // those devices.
-    // http://b/135763283
-    Feature transientCommandBuffer = {
-        "transient_command_buffer", FeatureCategory::VulkanWorkarounds,
-        "Keep using transient vkCommandBuffer to work around driver issue in reseting"
-        "vkCommandBuffer",
-        &members, "http://b/135763283"};
-
     // Seamful cube map emulation misbehaves on the AMD windows driver, so it's disallowed.
     Feature disallowSeamfulCubeMapEmulation = {
         "disallow_seamful_cube_map_emulation", FeatureCategory::VulkanWorkarounds,
@@ -205,6 +195,40 @@ struct FeaturesVk : FeatureSetBase
         "Some shader compilers don't support sampler arrays as parameters, so revert to old "
         "RewriteStructSamplers behavior, which produces fewer.",
         &members, "http://anglebug.com/2703"};
+
+    // If the robustBufferAccess feature is enabled, Vulkan considers vertex attribute accesses only
+    // valid up to the last multiple of stride.  If a vertex's attribute range is such that it falls
+    // within the range of the buffer, but beyond the last multiple of stride, the driver is allowed
+    // to either read that range from the buffer anyway, or to return (0, 0, 0, 1).  Most drivers
+    // implement the former, while amdvlk on Linux and AMD's windows driver implement the latter.
+    // For the latter, this workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a reasonable value, and
+    // rounds up every buffer allocation size to be a multiple of that.
+    // http://anglebug.com/2514
+    Feature roundUpBuffersToMaxVertexAttribStride = {
+        "round_up_buffers_to_max_vertex_attrib_stride", FeatureCategory::VulkanWorkarounds,
+        "If the robustBufferAccess feature is enabled, Vulkan considers vertex attribute accesses "
+        "only valid up to the last multiple of stride. If a vertex's attribute range is such that "
+        "it falls within the range of the buffer, but beyond the last multiple of stride, the "
+        "driver is allowed to either read that range from the buffer anyway, or to return "
+        "(0, 0, 0, 1). Most drivers implement the former, while some drivers the latter. For the "
+        "latter, this workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a reasonable value, and "
+        "rounds up every buffer allocation size to be a multiple of that.",
+        &members, "http://anglebug.com/2848"};
+
+    // Whether the VkDevice supports the VK_EXT_swapchain_colorspace extension
+    // http://anglebug.com/2514
+    Feature supportsSwapchainColorspace = {
+        "supports_swapchain_colorspace", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_swapchain_colorspace extension", &members,
+        "http://anglebug.com/2514"};
+
+    // Whether to use ANGLE's deferred command graph. http://anglebug.com/4029
+    Feature commandGraph = {
+        "command_graph",
+        FeatureCategory::VulkanFeatures,
+        "Use ANGLE's Vulkan deferred command graph.",
+        &members,
+    };
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

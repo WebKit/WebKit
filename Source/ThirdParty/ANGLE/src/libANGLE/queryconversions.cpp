@@ -61,7 +61,16 @@ NativeT CastQueryValueToInt(GLenum pname, QueryT value)
 
     if (queryType == GL_FLOAT)
     {
-        return static_cast<NativeT>(std::round(value));
+        // ARM devices cast float to uint differently than Intel.
+        // Basically, any negative floating point number becomes 0
+        // when converted to unsigned int. Instead, convert to a signed
+        // int and then convert to unsigned int to "preserve the value"
+        // E.g. common case for tests is to pass in -1 as an invalid query
+        // value. If cast to a unsigned int it becomes 0 (GL_NONE) and is now
+        // a valid enum and negative tests fail. But converting to int
+        // and then to final unsigned int gives us 4294967295 (0xffffffff)
+        // which is what we want.
+        return static_cast<NativeT>(static_cast<GLint64>(std::round(value)));
     }
 
     return static_cast<NativeT>(value);

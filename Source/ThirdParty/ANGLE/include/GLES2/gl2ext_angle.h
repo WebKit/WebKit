@@ -707,6 +707,12 @@ GL_APICALL void GL_APIENTRY glGetRenderbufferImageANGLE (GLenum target, GLenum f
 #endif
 #endif /* GL_ANGLE_texture_external_update */
 
+#ifndef GL_WEBGL_video_texture
+#define GL_WEBGL_video_texture 1
+#define GL_TEXTURE_VIDEO_IMAGE_WEBGL 0x9248
+#define GL_SAMPLER_VIDEO_IMAGE_WEBGL 0x9249
+#endif /* GL_WEBGL_video_texture */
+
 // clang-format on
 
 #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_

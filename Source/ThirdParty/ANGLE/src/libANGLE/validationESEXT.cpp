@@ -125,4 +125,173 @@ bool ValidateGetRenderbufferImageANGLE(Context *context,
 
     return true;
 }
+
+bool ValidateDrawElementsBaseVertexEXT(Context *context,
+                                       PrimitiveMode mode,
+                                       GLsizei count,
+                                       DrawElementsType type,
+                                       const void *indices,
+                                       GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
+}
+
+bool ValidateDrawElementsInstancedBaseVertexEXT(Context *context,
+                                                PrimitiveMode mode,
+                                                GLsizei count,
+                                                DrawElementsType type,
+                                                const void *indices,
+                                                GLsizei instancecount,
+                                                GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsInstancedBase(context, mode, count, type, indices, instancecount);
+}
+
+bool ValidateDrawRangeElementsBaseVertexEXT(Context *context,
+                                            PrimitiveMode mode,
+                                            GLuint start,
+                                            GLuint end,
+                                            GLsizei count,
+                                            DrawElementsType type,
+                                            const void *indices,
+                                            GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (end < start)
+    {
+        context->validationError(GL_INVALID_VALUE, kInvalidElementRange);
+        return false;
+    }
+
+    if (!ValidateDrawElementsCommon(context, mode, count, type, indices, 0))
+    {
+        return false;
+    }
+
+    // Skip range checks for no-op calls.
+    if (count <= 0)
+    {
+        return true;
+    }
+
+    // Note that resolving the index range is a bit slow. We should probably optimize this.
+    IndexRange indexRange;
+    ANGLE_VALIDATION_TRY(context->getState().getVertexArray()->getIndexRange(context, type, count,
+                                                                             indices, &indexRange));
+
+    if (indexRange.end > end || indexRange.start < start)
+    {
+        // GL spec says that behavior in this case is undefined - generating an error is fine.
+        context->validationError(GL_INVALID_OPERATION, kExceedsElementRange);
+        return false;
+    }
+    return true;
+}
+
+bool ValidateMultiDrawElementsBaseVertexEXT(Context *context,
+                                            PrimitiveMode mode,
+                                            const GLsizei *count,
+                                            DrawElementsType type,
+                                            const void *const *indices,
+                                            GLsizei drawcount,
+                                            const GLint *basevertex)
+{
+    return true;
+}
+
+bool ValidateDrawElementsBaseVertexOES(Context *context,
+                                       PrimitiveMode mode,
+                                       GLsizei count,
+                                       DrawElementsType type,
+                                       const void *indices,
+                                       GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
+}
+
+bool ValidateDrawElementsInstancedBaseVertexOES(Context *context,
+                                                PrimitiveMode mode,
+                                                GLsizei count,
+                                                DrawElementsType type,
+                                                const void *indices,
+                                                GLsizei instancecount,
+                                                GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsInstancedBase(context, mode, count, type, indices, instancecount);
+}
+
+bool ValidateDrawRangeElementsBaseVertexOES(Context *context,
+                                            PrimitiveMode mode,
+                                            GLuint start,
+                                            GLuint end,
+                                            GLsizei count,
+                                            DrawElementsType type,
+                                            const void *indices,
+                                            GLint basevertex)
+{
+    if (!context->getExtensions().drawElementsBaseVertexAny())
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (end < start)
+    {
+        context->validationError(GL_INVALID_VALUE, kInvalidElementRange);
+        return false;
+    }
+
+    if (!ValidateDrawElementsCommon(context, mode, count, type, indices, 0))
+    {
+        return false;
+    }
+
+    // Skip range checks for no-op calls.
+    if (count <= 0)
+    {
+        return true;
+    }
+
+    // Note that resolving the index range is a bit slow. We should probably optimize this.
+    IndexRange indexRange;
+    ANGLE_VALIDATION_TRY(context->getState().getVertexArray()->getIndexRange(context, type, count,
+                                                                             indices, &indexRange));
+
+    if (indexRange.end > end || indexRange.start < start)
+    {
+        // GL spec says that behavior in this case is undefined - generating an error is fine.
+        context->validationError(GL_INVALID_OPERATION, kExceedsElementRange);
+        return false;
+    }
+    return true;
+}
 }  // namespace gl

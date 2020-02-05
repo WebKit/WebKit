@@ -32,6 +32,8 @@ void FillTextureFormatCaps(RendererVk *renderer, VkFormat format, gl::TextureCap
         renderer->hasImageFormatFeatureBits(format, VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
     outTextureCaps->filterable = renderer->hasImageFormatFeatureBits(
         format, VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
+    outTextureCaps->blendable =
+        renderer->hasImageFormatFeatureBits(format, VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT);
 
     // For renderbuffer and texture attachments we require transfer and sampling for
     // GLES 2.0 CopyTexImage support. Sampling is also required for other features like
@@ -50,9 +52,11 @@ void FillTextureFormatCaps(RendererVk *renderer, VkFormat format, gl::TextureCap
         }
         if (hasDepthAttachmentFeatureBit)
         {
-            vk_gl::AddSampleCounts(physicalDeviceLimits.framebufferDepthSampleCounts,
-                                   &outTextureCaps->sampleCounts);
-            vk_gl::AddSampleCounts(physicalDeviceLimits.framebufferStencilSampleCounts,
+            // Some drivers report different depth and stencil sample counts.  We'll AND those
+            // counts together, limiting all depth and/or stencil formats to the lower number of
+            // sample counts.
+            vk_gl::AddSampleCounts((physicalDeviceLimits.framebufferDepthSampleCounts &
+                                    physicalDeviceLimits.framebufferStencilSampleCounts),
                                    &outTextureCaps->sampleCounts);
         }
     }
@@ -68,20 +72,26 @@ using SupportTest = bool (*)(RendererVk *renderer, VkFormat vkFormat);
 template <class FormatInitInfo>
 int FindSupportedFormat(RendererVk *renderer,
                         const FormatInitInfo *info,
+                        size_t skip,
                         int numInfo,
                         SupportTest hasSupport)
 {
     ASSERT(numInfo > 0);
     const int last = numInfo - 1;
 
-    for (int i = 0; i < last; ++i)
+    for (int i = static_cast<int>(skip); i < last; ++i)
     {
         ASSERT(info[i].format != angle::FormatID::NONE);
         if (hasSupport(renderer, info[i].vkFormat))
             return i;
     }
 
-    // List must contain a supported item.  We failed on all the others so the last one must be it.
+    if (skip > 0 && !hasSupport(renderer, info[last].vkFormat))
+    {
+        // We couldn't find a valid fallback, try again without skip
+        return FindSupportedFormat(renderer, info, 0, numInfo, hasSupport);
+    }
+
     ASSERT(info[last].format != angle::FormatID::NONE);
     ASSERT(hasSupport(renderer, info[last].vkFormat));
     return last;
@@ -128,9 +138,7 @@ void Format::initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *
         // Compressed textures also need to perform this check.
         testFunction = HasNonRenderableTextureFormatSupport;
     }
-    int i = FindSupportedFormat(renderer, info + skip, static_cast<uint32_t>(numInfo - skip),
-                                testFunction);
-    i += skip;
+    int i = FindSupportedFormat(renderer, info, skip, static_cast<uint32_t>(numInfo), testFunction);
 
     actualImageFormatID      = info[i].format;
     vkImageFormat            = info[i].vkFormat;
@@ -140,9 +148,8 @@ void Format::initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *
 void Format::initBufferFallback(RendererVk *renderer, const BufferFormatInitInfo *info, int numInfo)
 {
     size_t skip = renderer->getFeatures().forceFallbackFormat.enabled ? 1 : 0;
-    int i       = FindSupportedFormat(renderer, info + skip, static_cast<uint32_t>(numInfo - skip),
+    int i       = FindSupportedFormat(renderer, info, skip, static_cast<uint32_t>(numInfo),
                                 HasFullBufferFormatSupport);
-    i += skip;
 
     actualBufferFormatID         = info[i].format;
     vkBufferFormat               = info[i].vkFormat;

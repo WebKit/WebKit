@@ -87,7 +87,7 @@ GLsizeiptr TransformFeedbackState::getPrimitivesDrawn() const
 TransformFeedback::TransformFeedback(rx::GLImplFactory *implFactory,
                                      TransformFeedbackID id,
                                      const Caps &caps)
-    : RefCountObject(id),
+    : RefCountObject(implFactory->generateSerial(), id),
       mState(caps.maxTransformFeedbackSeparateAttributes),
       mImplementation(implFactory->createTransformFeedback(mState))
 {
@@ -107,6 +107,11 @@ void TransformFeedback::onDestroy(const Context *context)
     for (size_t i = 0; i < mState.mIndexedBuffers.size(); i++)
     {
         mState.mIndexedBuffers[i].set(context, nullptr, 0, 0);
+    }
+
+    if (mImplementation)
+    {
+        mImplementation->onDestroy(context);
     }
 }
 

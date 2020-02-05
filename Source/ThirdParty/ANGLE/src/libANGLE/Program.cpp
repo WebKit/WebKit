@@ -472,6 +472,8 @@ const char *GetLinkMismatchErrorString(LinkMismatchError linkError)
             return "Offset layout qualifier";
         case LinkMismatchError::INSTANCE_NAME_MISMATCH:
             return "Instance name qualifier";
+        case LinkMismatchError::FORMAT_MISMATCH:
+            return "Format qualifier";
 
         case LinkMismatchError::LAYOUT_QUALIFIER_MISMATCH:
             return "Layout qualifier";
@@ -1059,6 +1061,7 @@ ProgramState::ProgramState()
       mAttachedShaders{},
       mTransformFeedbackBufferMode(GL_INTERLEAVED_ATTRIBS),
       mMaxActiveAttribLocation(0),
+      mDefaultUniformRange(0, 0),
       mSamplerUniformRange(0, 0),
       mImageUniformRange(0, 0),
       mAtomicCounterUniformRange(0, 0),
@@ -1232,7 +1235,8 @@ ShaderType ProgramState::getLastAttachedShaderStageType() const
 }
 
 Program::Program(rx::GLImplFactory *factory, ShaderProgramManager *manager, ShaderProgramID handle)
-    : mProgram(factory->createProgram(mState)),
+    : mSerial(factory->generateSerial()),
+      mProgram(factory->createProgram(mState)),
       mValidated(false),
       mLinked(false),
       mLinkResolved(true),
@@ -1487,8 +1491,9 @@ angle::Result Program::link(const Context *context)
             &mState.mShaderStorageBlocks, &mState.mBufferVariables, &mState.mAtomicCounterBuffers));
 
         GLuint combinedImageUniforms = 0u;
-        if (!linkUniforms(context->getCaps(), mInfoLog, mUniformLocationBindings,
-                          &combinedImageUniforms, &resources->unusedUniforms))
+        if (!linkUniforms(context->getCaps(), context->getClientVersion(), mInfoLog,
+                          mUniformLocationBindings, &combinedImageUniforms,
+                          &resources->unusedUniforms))
         {
             return angle::Result::Continue;
         }
@@ -1551,8 +1556,9 @@ angle::Result Program::link(const Context *context)
         }
 
         GLuint combinedImageUniforms = 0u;
-        if (!linkUniforms(context->getCaps(), mInfoLog, mUniformLocationBindings,
-                          &combinedImageUniforms, &resources->unusedUniforms))
+        if (!linkUniforms(context->getCaps(), context->getClientVersion(), mInfoLog,
+                          mUniformLocationBindings, &combinedImageUniforms,
+                          &resources->unusedUniforms))
         {
             return angle::Result::Continue;
         }
@@ -1668,7 +1674,12 @@ void Program::resolveLinkImpl(const Context *context)
         (mState.mLinkedTransformFeedbackVaryings.empty() ||
          !context->getFrontendFeatures().disableProgramCachingForTransformFeedback.enabled))
     {
-        cache->putProgram(linkingState->programHash, context, this);
+        if (cache->putProgram(linkingState->programHash, context, this) == angle::Result::Stop)
+        {
+            // Don't fail linking if putting the program binary into the cache fails, the program is
+            // still usable.
+            WARN() << "Failed to save linked program to memory program cache.";
+        }
     }
 }
 
@@ -1856,6 +1867,7 @@ void Program::unlink()
     mState.mUniforms.clear();
     mState.mUniformLocations.clear();
     mState.mUniformBlocks.clear();
+    mState.mShaderStorageBlocks.clear();
     mState.mActiveUniformBlockBindings.reset();
     mState.mAtomicCounterBuffers.clear();
     mState.mOutputVariables.clear();
@@ -1937,7 +1949,7 @@ angle::Result Program::saveBinary(Context *context,
     }
 
     angle::MemoryBuffer memoryBuf;
-    serialize(context, &memoryBuf);
+    ANGLE_TRY(serialize(context, &memoryBuf));
 
     GLsizei streamLength       = static_cast<GLsizei>(memoryBuf.size());
     const uint8_t *streamState = memoryBuf.data();
@@ -3500,6 +3512,7 @@ bool Program::linkValidateFragmentInputBindings(gl::InfoLog &infoLog) const
 }
 
 bool Program::linkUniforms(const Caps &caps,
+                           const Version &version,
                            InfoLog &infoLog,
                            const ProgramAliasedBindings &uniformLocationBindings,
                            GLuint *combinedImageUniformsCount,
@@ -3520,6 +3533,17 @@ bool Program::linkUniforms(const Caps &caps,
         return false;
     }
 
+    if (version >= Version(3, 1))
+    {
+        GLint locationSize = static_cast<GLint>(mState.getUniformLocations().size());
+
+        if (locationSize > caps.maxUniformLocations)
+        {
+            infoLog << "Exceeded maximum uniform location size";
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -3527,21 +3551,29 @@ void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
 {
     ASSERT(combinedImageUniforms);
 
+    // Iterate over mUniforms from the back, and find the range of atomic counters, images and
+    // samplers in that order.
+    auto highIter = mState.mUniforms.rbegin();
+    auto lowIter  = highIter;
+
     unsigned int high = static_cast<unsigned int>(mState.mUniforms.size());
     unsigned int low  = high;
 
-    for (auto counterIter = mState.mUniforms.rbegin();
-         counterIter != mState.mUniforms.rend() && counterIter->isAtomicCounter(); ++counterIter)
+    // Note that uniform block uniforms are not yet appended to this list.
+    ASSERT(mState.mUniforms.size() == 0 || highIter->isAtomicCounter() || highIter->isImage() ||
+           highIter->isSampler() || highIter->isInDefaultBlock());
+
+    for (; lowIter != mState.mUniforms.rend() && lowIter->isAtomicCounter(); ++lowIter)
     {
         --low;
     }
 
     mState.mAtomicCounterUniformRange = RangeUI(low, high);
 
-    high = low;
+    highIter = lowIter;
+    high     = low;
 
-    for (auto imageIter = mState.mUniforms.rbegin();
-         imageIter != mState.mUniforms.rend() && imageIter->isImage(); ++imageIter)
+    for (; lowIter != mState.mUniforms.rend() && lowIter->isImage(); ++lowIter)
     {
         --low;
     }
@@ -3571,10 +3603,10 @@ void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
         *combinedImageUniforms += imageUniform.activeShaderCount() * arraySize;
     }
 
-    high = low;
+    highIter = lowIter;
+    high     = low;
 
-    for (auto samplerIter = mState.mUniforms.rbegin() + mState.mImageUniformRange.length();
-         samplerIter != mState.mUniforms.rend() && samplerIter->isSampler(); ++samplerIter)
+    for (; lowIter != mState.mUniforms.rend() && lowIter->isSampler(); ++lowIter)
     {
         --low;
     }
@@ -3590,6 +3622,9 @@ void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
         SamplerFormat format       = samplerUniform.typeInfo->samplerFormat;
         mState.mSamplerBindings.emplace_back(textureType, format, elementCount, false);
     }
+
+    // Whatever is left constitutes the default uniforms.
+    mState.mDefaultUniformRange = RangeUI(0, low);
 }
 
 bool Program::linkAtomicCounterBuffers()
@@ -3632,7 +3667,7 @@ bool Program::linkAtomicCounterBuffers()
     return true;
 }
 
-// Assigns locations to all attributes from the bindings and program locations.
+// Assigns locations to all attributes (except built-ins) from the bindings and program locations.
 bool Program::linkAttributes(const Context *context, InfoLog &infoLog)
 {
     const Caps &caps               = context->getCaps();
@@ -3768,21 +3803,23 @@ bool Program::linkAttributes(const Context *context, InfoLog &infoLog)
         ASSERT(attribute.location != -1);
         unsigned int regs = static_cast<unsigned int>(VariableRegisterCount(attribute.type));
 
+        unsigned int location = static_cast<unsigned int>(attribute.location);
         for (unsigned int r = 0; r < regs; r++)
         {
-            unsigned int location = static_cast<unsigned int>(attribute.location) + r;
-            mState.mActiveAttribLocationsMask.set(location);
-            mState.mMaxActiveAttribLocation =
-                std::max(mState.mMaxActiveAttribLocation, location + 1);
-
-            // gl_VertexID and gl_InstanceID are active attributes but don't have a bound attribute.
+            // Built-in active program inputs don't have a bound attribute.
             if (!attribute.isBuiltIn())
             {
+                mState.mActiveAttribLocationsMask.set(location);
+                mState.mMaxActiveAttribLocation =
+                    std::max(mState.mMaxActiveAttribLocation, location + 1);
+
                 ComponentType componentType =
                     GLenumToComponentType(VariableComponentType(attribute.type));
 
                 SetComponentTypeMask(componentType, location, &mState.mAttributesTypeMask);
                 mState.mAttributesMask.set(location);
+
+                location++;
             }
         }
     }
@@ -3907,6 +3944,10 @@ LinkMismatchError Program::LinkValidateVariablesBase(const sh::ShaderVariable &v
     if (variable1.structName != variable2.structName)
     {
         return LinkMismatchError::STRUCT_NAME_MISMATCH;
+    }
+    if (variable1.imageUnitFormat != variable2.imageUnitFormat)
+    {
+        return LinkMismatchError::FORMAT_MISMATCH;
     }
 
     if (variable1.fields.size() != variable2.fields.size())
@@ -4331,13 +4372,18 @@ ProgramMergedVaryings Program::getMergedVaryings() const
     {
         if (shader)
         {
+            ShaderType shaderType = shader->getType();
             for (const sh::ShaderVariable &varying : shader->getOutputVaryings())
             {
-                merged[varying.name].frontShader = &varying;
+                ProgramVaryingRef *ref = &merged[varying.name];
+                ref->frontShader       = &varying;
+                ref->frontShaderStage  = shaderType;
             }
             for (const sh::ShaderVariable &varying : shader->getInputVaryings())
             {
-                merged[varying.name].backShader = &varying;
+                ProgramVaryingRef *ref = &merged[varying.name];
+                ref->backShader        = &varying;
+                ref->backShaderStage   = shaderType;
             }
         }
     }
@@ -4965,7 +5011,7 @@ angle::Result Program::syncState(const Context *context)
     return angle::Result::Continue;
 }
 
-void Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut) const
+angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut) const
 {
     BinaryOutputStream stream;
 
@@ -5119,6 +5165,9 @@ void Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut) 
     stream.writeInt(static_cast<int>(mState.mDrawBufferTypeMask.to_ulong()));
     stream.writeInt(static_cast<int>(mState.mActiveOutputVariables.to_ulong()));
 
+    stream.writeInt(mState.getDefaultUniformRange().low());
+    stream.writeInt(mState.getDefaultUniformRange().high());
+
     stream.writeInt(mState.getSamplerUniformRange().low());
     stream.writeInt(mState.getSamplerUniformRange().high());
 
@@ -5152,8 +5201,14 @@ void Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut) 
     mProgram->save(context, &stream);
 
     ASSERT(binaryOut);
-    binaryOut->resize(stream.length());
+    if (!binaryOut->resize(stream.length()))
+    {
+        WARN() << "Failed to allocate enough memory to serialize a program. (" << stream.length()
+               << " bytes )";
+        return angle::Result::Incomplete;
+    }
     memcpy(binaryOut->data(), stream.data(), stream.length());
+    return angle::Result::Continue;
 }
 
 angle::Result Program::deserialize(const Context *context,
@@ -5356,6 +5411,10 @@ angle::Result Program::deserialize(const Context *context,
                   "into 32 bits each");
     mState.mDrawBufferTypeMask    = gl::ComponentTypeMask(stream.readInt<uint32_t>());
     mState.mActiveOutputVariables = stream.readInt<gl::DrawBufferMask>();
+
+    unsigned int defaultUniformRangeLow  = stream.readInt<unsigned int>();
+    unsigned int defaultUniformRangeHigh = stream.readInt<unsigned int>();
+    mState.mDefaultUniformRange          = RangeUI(defaultUniformRangeLow, defaultUniformRangeHigh);
 
     unsigned int samplerRangeLow  = stream.readInt<unsigned int>();
     unsigned int samplerRangeHigh = stream.readInt<unsigned int>();

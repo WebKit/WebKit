@@ -262,6 +262,11 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->actualFormatId = angle::FormatID::D32_FLOAT;
             break;
 
+        case angle::FormatID::D32_UNORM:
+            this->metalFormat    = MTLPixelFormatDepth32Float;
+            this->actualFormatId = angle::FormatID::D32_FLOAT;
+            break;
+
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case angle::FormatID::L16A16_FLOAT:
             if (metalDevice.depth24Stencil8PixelFormatSupported)

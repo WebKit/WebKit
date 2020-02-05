@@ -91,7 +91,8 @@ void CaptureCompressedTexSubImage2D_data(const State &glState,
                                          const void *data,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureCompressedTexImage2D_data(glState, isCallValid, targetPacked, level, 0, width, height, 0,
+                                     imageSize, data, paramCapture);
 }
 
 void CaptureDeleteBuffers_buffersPacked(const State &glState,
@@ -735,7 +736,8 @@ void CaptureTexSubImage2D_pixels(const State &glState,
                                  const void *pixels,
                                  ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureTexImage2D_pixels(glState, isCallValid, targetPacked, level, 0, width, height, 0, format,
+                             type, pixels, paramCapture);
 }
 
 void CaptureUniform1fv_value(const State &glState,

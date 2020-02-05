@@ -44,6 +44,7 @@ TEST_P(EGLChooseConfigTest, Defaults)
                                     defaultConfigs.size(), &defaultConfigCount));
     ASSERT_EGL_SUCCESS();
     ASSERT_LE(defaultConfigCount, allConfigCount);
+    defaultConfigs.resize(defaultConfigCount);
 
     // Check that the default configs all have the default attribute values we care about:
     for (EGLConfig config : defaultConfigs)
@@ -117,6 +118,7 @@ TEST_P(EGLChooseConfigTest, Defaults)
 ANGLE_INSTANTIATE_TEST(EGLChooseConfigTest,
                        ES2_D3D11(),
                        ES2_D3D9(),
+                       ES2_METAL(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN());

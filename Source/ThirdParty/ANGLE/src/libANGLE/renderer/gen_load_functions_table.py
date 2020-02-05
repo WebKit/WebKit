@@ -198,7 +198,7 @@ def main():
 
     # auto_script parameters.
     if len(sys.argv) > 1:
-        inputs = ['load_functions_data.json']
+        inputs = ['angle_format.py', 'load_functions_data.json']
         outputs = ['load_functions_table_autogen.cpp']
 
         if sys.argv[1] == 'inputs':

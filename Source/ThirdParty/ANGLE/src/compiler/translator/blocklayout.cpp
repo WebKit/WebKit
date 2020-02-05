@@ -48,10 +48,18 @@ void GetInterfaceBlockInfo(const std::vector<VarT> &fields,
                            const std::string &prefix,
                            BlockLayoutEncoder *encoder,
                            bool inRowMajorLayout,
+                           bool onlyActiveVariables,
                            BlockLayoutMap *blockInfoOut)
 {
     BlockLayoutMapVisitor visitor(blockInfoOut, prefix, encoder);
-    TraverseShaderVariables(fields, inRowMajorLayout, &visitor);
+    if (onlyActiveVariables)
+    {
+        TraverseActiveShaderVariables(fields, inRowMajorLayout, &visitor);
+    }
+    else
+    {
+        TraverseShaderVariables(fields, inRowMajorLayout, &visitor);
+    }
 }
 
 void TraverseStructVariable(const ShaderVariable &variable,
@@ -345,17 +353,19 @@ void GetInterfaceBlockInfo(const std::vector<ShaderVariable> &fields,
 {
     // Matrix packing is always recorded in individual fields, so they'll set the row major layout
     // flag to true if needed.
-    GetInterfaceBlockInfo(fields, prefix, encoder, false, blockInfoOut);
+    // Iterates over all variables.
+    GetInterfaceBlockInfo(fields, prefix, encoder, false, false, blockInfoOut);
 }
 
-void GetUniformBlockInfo(const std::vector<ShaderVariable> &uniforms,
-                         const std::string &prefix,
-                         BlockLayoutEncoder *encoder,
-                         BlockLayoutMap *blockInfoOut)
+void GetActiveUniformBlockInfo(const std::vector<ShaderVariable> &uniforms,
+                               const std::string &prefix,
+                               BlockLayoutEncoder *encoder,
+                               BlockLayoutMap *blockInfoOut)
 {
     // Matrix packing is always recorded in individual fields, so they'll set the row major layout
     // flag to true if needed.
-    GetInterfaceBlockInfo(uniforms, prefix, encoder, false, blockInfoOut);
+    // Iterates only over the active variables.
+    GetInterfaceBlockInfo(uniforms, prefix, encoder, false, true, blockInfoOut);
 }
 
 // VariableNameVisitor implementation.

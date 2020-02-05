@@ -90,6 +90,11 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     // Write array bounds clamping emulation if needed.
     getArrayBoundsClamper().OutputClampingFunctionDefinition(sink);
 
+    if (getShaderType() == GL_FRAGMENT_SHADER)
+    {
+        EmitEarlyFragmentTestsGLSL(*this, sink);
+    }
+
     if (getShaderType() == GL_COMPUTE_SHADER)
     {
         EmitWorkGroupSizeGLSL(*this, sink);
@@ -150,7 +155,12 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
             }
             else if (isMultiview)
             {
-                EmitMultiviewGLSL(*this, compileOptions, iter->second, sink);
+                // Only either OVR_multiview OR OVR_multiview2 should be emitted.
+                if ((iter->first != TExtension::OVR_multiview) ||
+                    !IsExtensionEnabled(extBehavior, TExtension::OVR_multiview2))
+                {
+                    EmitMultiviewGLSL(*this, compileOptions, iter->first, iter->second, sink);
+                }
             }
             else if (iter->first == TExtension::EXT_geometry_shader)
             {
@@ -178,6 +188,12 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
             {
                 // Don't emit anything. This extension is emulated
                 ASSERT((compileOptions & SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE) != 0);
+                continue;
+            }
+            else if (iter->first == TExtension::WEBGL_video_texture)
+            {
+                // Don't emit anything. This extension is emulated
+                // TODO(crbug.com/776222): support external image.
                 continue;
             }
             else

@@ -166,11 +166,13 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->OVR_multiview2                           = 0;
     resources->EXT_YUV_target                           = 0;
     resources->EXT_geometry_shader                      = 0;
+    resources->EXT_gpu_shader5                          = 0;
     resources->OES_texture_storage_multisample_2d_array = 0;
     resources->OES_texture_3D                           = 0;
     resources->ANGLE_texture_multisample                = 0;
     resources->ANGLE_multi_draw                         = 0;
     resources->ANGLE_base_vertex_base_instance          = 0;
+    resources->WEBGL_video_texture                      = 0;
 
     resources->NV_draw_buffers = 0;
 
@@ -544,6 +546,19 @@ bool GetUniformBlockRegister(const ShHandle handle,
 #endif  // ANGLE_ENABLE_HLSL
 }
 
+bool ShouldUniformBlockUseStructuredBuffer(const ShHandle handle,
+                                           const std::string &uniformBlockName)
+{
+#ifdef ANGLE_ENABLE_HLSL
+    TranslatorHLSL *translator = GetTranslatorHLSLFromHandle(handle);
+    ASSERT(translator);
+
+    return translator->shouldUniformBlockUseStructuredBuffer(uniformBlockName);
+#else
+    return false;
+#endif  // ANGLE_ENABLE_HLSL
+}
+
 const std::map<std::string, unsigned int> *GetUniformRegisterMap(const ShHandle handle)
 {
 #ifdef ANGLE_ENABLE_HLSL
@@ -670,5 +685,43 @@ int GetGeometryShaderMaxVertices(const ShHandle handle)
     ASSERT(maxVertices >= 0);
     return maxVertices;
 }
+
+unsigned int GetShaderSharedMemorySize(const ShHandle handle)
+{
+    ASSERT(handle);
+
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    unsigned int sharedMemorySize = compiler->getSharedMemorySize();
+    return sharedMemorySize;
+}
+
+// Can't prefix with just _ because then we might introduce a double underscore, which is not safe
+// in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are reserved for
+// use by the underlying implementation). u is short for user-defined.
+const char kUserDefinedNamePrefix[] = "_u";
+
+namespace vk
+{
+// Interface block name containing the aggregate default uniforms
+const char kDefaultUniformsNameVS[]  = "defaultUniformsVS";
+const char kDefaultUniformsNameTCS[] = "defaultUniformsTCS";
+const char kDefaultUniformsNameTES[] = "defaultUniformsTES";
+const char kDefaultUniformsNameGS[]  = "defaultUniformsGS";
+const char kDefaultUniformsNameFS[]  = "defaultUniformsFS";
+const char kDefaultUniformsNameCS[]  = "defaultUniformsCS";
+
+// Interface block and variable name containing driver uniforms
+const char kDriverUniformsBlockName[] = "ANGLEUniformBlock";
+const char kDriverUniformsVarName[]   = "ANGLEUniforms";
+
+// Interface block array variable name used for atomic counter emulation
+const char kAtomicCountersVarName[] = "atomicCounters";
+
+const char kLineRasterEmulationPosition[] = "ANGLEPosition";
+
+}  // namespace vk
 
 }  // namespace sh

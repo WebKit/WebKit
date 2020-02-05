@@ -541,7 +541,7 @@ TEST_P(DrawBaseVertexBaseInstanceTest, DrawArraysInstancedBaseInstance)
     if (IsAMD() && IsWindows() && IsDesktopOpenGL())
     {
         SystemInfo *systemInfo = GetTestSystemInfo();
-        if (!(systemInfo->activeGPUIndex < 0 || systemInfo->gpus.empty()))
+        if (!systemInfo->gpus.empty())
         {
             ANGLE_SKIP_TEST_IF(0x6613 == systemInfo->gpus[systemInfo->activeGPUIndex].deviceId);
         }
