@@ -49,11 +49,10 @@ TestPage.registerInitializer(() => {
             let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
             InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be ${contextDisplayName}.`);
 
+            let traceText = "";
             for (let i = 0; i < canvas.backtrace.length; ++i) {
                 let callFrame = canvas.backtrace[i];
-                let traceText = `  ${i}: `;
-                traceText += callFrame.functionName || "(anonymous function)";
-
+                traceText += `  ${i}: ` + (callFrame.functionName || "(anonymous function)");
                 if (callFrame.nativeCode)
                     traceText += " - [native code]";
                 else if (callFrame.programCode)
@@ -62,11 +61,9 @@ TestPage.registerInitializer(() => {
                     let location = callFrame.sourceCodeLocation;
                     traceText += " - " + sanitizeURL(location.sourceCode.url) + `:${location.lineNumber}:${location.columnNumber}`;
                 }
-
-                InspectorTest.log(traceText);
+                traceText += "\n";
             }
-
-            InspectorTest.log("");
+            InspectorTest.log(traceText);
 
             return canvas;
         });

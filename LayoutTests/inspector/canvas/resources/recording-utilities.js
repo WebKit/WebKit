@@ -1,39 +1,41 @@
 TestPage.registerInitializer(() => {
-    function log(object, indent) {
-        for (let [name, value] of object) {
-            if (typeof value === "string")
-                value = sanitizeURL(value);
-            else if (Array.isArray(value)) {
-                if (value[0] instanceof DOMMatrix)
-                    value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
-                else if (value[0] instanceof Path2D)
-                    value[0] = value[0].__data;
-            }
-            InspectorTest.log(indent + name + ": " + JSON.stringify(value));
-        }
-    }
-
     async function logRecording(recording, options = {}) {
-        InspectorTest.log("initialState:");
+        let lines = [];
 
-        InspectorTest.log("  attributes:");
+        function log(object, indent) {
+            for (let [name, value] of object) {
+                if (typeof value === "string")
+                    value = sanitizeURL(value);
+                else if (Array.isArray(value)) {
+                    if (value[0] instanceof DOMMatrix)
+                        value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
+                    else if (value[0] instanceof Path2D)
+                        value[0] = value[0].__data;
+                }
+                lines.push(indent + name + ": " + JSON.stringify(value));
+            }
+        }
+
+        lines.push("initialState:");
+
+        lines.push("  attributes:");
         log(Object.entries(recording.initialState.attributes), "    ");
 
         let currentState = recording.initialState.states.lastValue;
         if (currentState) {
-            InspectorTest.log("  current state:");
+            lines.push("  current state:");
             let state = await WI.RecordingState.swizzleInitialState(recording, currentState);
             log(state, "    ");
         }
 
-        InspectorTest.log("  parameters:");
+        lines.push("  parameters:");
         log(Object.entries(recording.initialState.parameters), "    ");
 
         let currentContent = recording.initialState.content;
         if (currentContent)
-            InspectorTest.log("  content: <filtered>");
+            lines.push("  content: <filtered>");
 
-        InspectorTest.log("frames:");
+        lines.push("frames:");
         for (let i = 0; i < recording.frames.length; ++i) {
             let frame = recording.frames[i];
 
@@ -42,7 +44,7 @@ TestPage.registerInitializer(() => {
                 frameText += " (duration)";
             if (frame.incomplete)
                 frameText += " (incomplete)";
-            InspectorTest.log(frameText);
+            lines.push(frameText);
 
             for (let j = 0; j < frame.actions.length; ++j) {
                 let action = frame.actions[j];
@@ -58,31 +60,33 @@ TestPage.registerInitializer(() => {
                 else if (!action.isGetter)
                     actionText += " = " + parameters[0];
 
-                InspectorTest.log(actionText);
+                lines.push(actionText);
 
                 if (action.swizzleTypes.length) {
                     let swizzleNames = action.swizzleTypes.map((item) => WI.Recording.displayNameForSwizzleType(item));
-                    InspectorTest.log("      swizzleTypes: [" + swizzleNames.join(", ") + "]");
+                    lines.push("      swizzleTypes: [" + swizzleNames.join(", ") + "]");
                 }
 
                 if (action.trace.length) {
-                    InspectorTest.log("      trace:");
+                    lines.push("      trace:");
 
                     for (let k = 0; k < action.trace.length; ++k) {
                         let functionName = action.trace[k].functionName || "(anonymous function)";
-                        InspectorTest.log(`        ${k}: ` + functionName);
+                        lines.push(`        ${k}: ` + functionName);
                     }
                 }
 
                 if (action.snapshot) {
                     if (options.checkForContentChange)
-                        InspectorTest.log(`      snapshot: <${currentContent === action.snapshot ? "FAIL" : "PASS"}: content changed>`);
+                        lines.push(`      snapshot: <${currentContent === action.snapshot ? "FAIL" : "PASS"}: content changed>`);
                     else
-                        InspectorTest.log("      snapshot: <filtered>");
+                        lines.push("      snapshot: <filtered>");
                     currentContent = action.snapshot;
                 }
             }
         }
+
+        InspectorTest.log(lines.join("\n"));
     }
 
     window.getCanvas = function(type) {
