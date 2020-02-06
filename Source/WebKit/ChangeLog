@@ -1,3 +1,30 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r248734) StorageAreaMap objects are getting leaked
+        https://bugs.webkit.org/show_bug.cgi?id=207073
+        <rdar://problem/59168065>
+
+        Reviewed by Darin Adler.
+
+        Make sure that StorageAreaMap objects are getting removed from the HashMap
+        in StorageNamespaceImpl, once they no longer have any users.
+
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::~StorageAreaImpl):
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::incrementUseCount):
+        (WebKit::StorageAreaMap::decrementUseCount):
+        * WebProcess/WebStorage/StorageAreaMap.h:
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::destroyStorageAreaMap):
+        (WebKit::StorageNamespaceImpl::didDestroyStorageAreaMap): Deleted.
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+        (WebKit::StorageNamespaceImpl::storageType const): Deleted.
+        (WebKit::StorageNamespaceImpl::storageNamespaceID const): Deleted.
+        (WebKit::StorageNamespaceImpl::topLevelOrigin const): Deleted.
+        (WebKit::StorageNamespaceImpl::quotaInBytes const): Deleted.
+
 2020-02-05  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Do not create sandbox reports when the UI process cannot issue extensions to diagnostics service

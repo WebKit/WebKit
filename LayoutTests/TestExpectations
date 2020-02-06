@@ -827,6 +827,9 @@ fast/repaint/placeholder-after-caps-lock-hidden.html [ Skip ]
 # This test currently only works for mac-wk2
 fast/events/inactive-window-no-mouse-event.html [ Skip ]
 
+# This test is only relevant for WebKit2.
+http/tests/storage/storage-map-leaking.html [ Skip ]
+
 # The Web Share API is currently only implemented for modern WebKit on iOS and macOS
 fast/web-share [ Skip ]
 
