@@ -213,6 +213,7 @@ WI.BezierEditor = class BezierEditor extends WI.Object
         if (event.button !== 0)
             return;
 
+        event.stop();
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
 
