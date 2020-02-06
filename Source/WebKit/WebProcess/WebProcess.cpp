@@ -70,6 +70,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadObserver.h"
+#include "WebSWClientConnection.h"
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
@@ -1202,6 +1203,11 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
+
+#if ENABLE(SERVICE_WORKER)
+        if (!Document::allDocuments().isEmpty())
+            m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
+#endif
     }
     
     return *m_networkProcessConnection;
@@ -1858,11 +1864,6 @@ void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageG
     auto& ipcConnection = ensureNetworkProcessConnection().connection();
     SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
     SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
-}
-
-void WebProcess::registerServiceWorkerClients()
-{
-    ServiceWorkerProvider::singleton().registerServiceWorkerClients();
 }
 
 void WebProcess::addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)

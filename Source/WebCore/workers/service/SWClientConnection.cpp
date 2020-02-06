@@ -263,6 +263,14 @@ void SWClientConnection::clearPendingJobs()
     }
 }
 
+void SWClientConnection::registerServiceWorkerClients()
+{
+    for (auto* document : Document::allDocuments()) {
+        auto controllingServiceWorkerRegistrationIdentifier = document->activeServiceWorker() ? makeOptional<ServiceWorkerRegistrationIdentifier>(document->activeServiceWorker()->registrationIdentifier()) : WTF::nullopt;
+        registerServiceWorkerClient(document->topOrigin(), ServiceWorkerClientData::from(*document, *this), controllingServiceWorkerRegistrationIdentifier, document->userAgent(document->url()));
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

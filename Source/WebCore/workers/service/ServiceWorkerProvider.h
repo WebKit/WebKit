@@ -42,8 +42,6 @@ public:
 
     virtual SWClientConnection& serviceWorkerConnection() = 0;
 
-    void registerServiceWorkerClients();
-
     void setMayHaveRegisteredServiceWorkers() { m_mayHaveRegisteredServiceWorkers = true; }
 
 private:
