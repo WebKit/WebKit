@@ -1,3 +1,13 @@
+2020-02-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Set up fonts for layout tests for test bot image
+        https://bugs.webkit.org/show_bug.cgi?id=207223
+
+        Reviewed by Fujii Hironori.
+
+        * WebKitTestRunner/InjectedBundle/win/ActivateFontsWin.cpp:
+          Implement activateFonts to load fonts for test
+
 2020-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Miscellaneous build fixes February 2020 edition

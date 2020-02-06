@@ -26,10 +26,57 @@
 #include "config.h"
 #include "ActivateFonts.h"
 
+#include <string>
+#include <vector>
+#include <windows.h>
+
 namespace WTR {
+
+static const wchar_t* fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
+
+static const std::wstring& fontsPath()
+{
+    static std::wstring path;
+    static bool initialized;
+
+    if (initialized)
+        return path;
+    initialized = true;
+
+    DWORD size = GetEnvironmentVariableW(fontsEnvironmentVariable, 0, 0);
+    std::vector<wchar_t> buffer(size);
+    if (GetEnvironmentVariableW(fontsEnvironmentVariable, buffer.data(), buffer.size())) {
+        path = buffer.data();
+        if (path[path.length() - 1] != '\\')
+            path.append(L"\\");
+    }
+
+    return path;
+}
 
 void activateFonts()
 {
+    static const wchar_t* fontFilenames[] = {
+        L"AHEM____.TTF",
+        L"WebKitWeightWatcher100.ttf",
+        L"WebKitWeightWatcher200.ttf",
+        L"WebKitWeightWatcher300.ttf",
+        L"WebKitWeightWatcher400.ttf",
+        L"WebKitWeightWatcher500.ttf",
+        L"WebKitWeightWatcher600.ttf",
+        L"WebKitWeightWatcher700.ttf",
+        L"WebKitWeightWatcher800.ttf",
+        L"WebKitWeightWatcher900.ttf",
+        0
+    };
+
+    std::wstring baseFontPath = fontsPath();
+    if (!baseFontPath.empty()) {
+        for (size_t i = 0; fontFilenames[i]; ++i) {
+            std::wstring fontPath = baseFontPath + fontFilenames[i];
+            AddFontResourceExW(fontPath.c_str(), FR_PRIVATE, nullptr);
+        }
+    }
 }
 
 void installFakeHelvetica(WKStringRef)
