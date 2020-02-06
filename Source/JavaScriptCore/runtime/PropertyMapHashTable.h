@@ -169,8 +169,7 @@ public:
     find_iterator find(const KeyType&);
     ValueType* get(const KeyType&);
     // Add a value to the table
-    enum EffectOnPropertyOffset { PropertyOffsetMayChange, PropertyOffsetMustNotChange };
-    std::pair<find_iterator, bool> add(const ValueType& entry, PropertyOffset&, EffectOnPropertyOffset);
+    std::pair<find_iterator, bool> WARN_UNUSED_RETURN add(const ValueType& entry);
     // Remove a value from the table.
     void remove(const find_iterator& iter);
     void remove(const KeyType& key);
@@ -321,6 +320,7 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
 {
     ASSERT(key);
     ASSERT(key->isAtom() || key->isSymbol());
+    ASSERT(key != PROPERTY_MAP_DELETED_ENTRY_KEY);
 
     if (!m_keyCount)
         return nullptr;
@@ -335,8 +335,10 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
         unsigned entryIndex = m_index[hash & m_indexMask];
         if (entryIndex == EmptyEntryIndex)
             return nullptr;
-        if (key == table()[entryIndex - 1].key)
+        if (key == table()[entryIndex - 1].key) {
+            ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(table()[entryIndex - 1].offset));
             return &table()[entryIndex - 1];
+        }
 
 #if DUMP_PROPERTYMAP_STATS
         ++propertyMapHashTableStats->numLookupProbing;
@@ -346,14 +348,14 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
     }
 }
 
-inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const ValueType& entry, PropertyOffset& offset, EffectOnPropertyOffset offsetEffect)
+inline std::pair<PropertyTable::find_iterator, bool> WARN_UNUSED_RETURN PropertyTable::add(const ValueType& entry)
 {
+    ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset));
+
     // Look for a value with a matching key already in the array.
     find_iterator iter = find(entry.key);
-    if (iter.first) {
-        RELEASE_ASSERT(iter.first->offset <= offset);
+    if (iter.first)
         return std::make_pair(iter, false);
-    }
 
 #if DUMP_PROPERTYMAP_STATS
     ++propertyMapHashTableStats->numAdds;
@@ -376,11 +378,6 @@ inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const Va
     *iter.first = entry;
 
     ++m_keyCount;
-    
-    if (offsetEffect == PropertyOffsetMayChange)
-        offset = std::max(offset, entry.offset);
-    else
-        RELEASE_ASSERT(offset >= entry.offset);
     
     return std::make_pair(iter, true);
 }
@@ -451,6 +448,7 @@ inline void PropertyTable::addDeletedOffset(PropertyOffset offset)
 {
     if (!m_deletedOffsets)
         m_deletedOffsets = makeUnique<Vector<PropertyOffset>>();
+    ASSERT(!m_deletedOffsets->contains(offset));
     m_deletedOffsets->append(offset);
 }
 

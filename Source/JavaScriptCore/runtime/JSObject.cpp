@@ -2001,12 +2001,22 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
     if (propertyIsPresent) {
         if (attributes & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
             return false;
+        DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
 
-        PropertyOffset offset;
+        PropertyOffset offset = invalidOffset;
         if (structure->isUncacheableDictionary())
-            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const ConcurrentJSLocker&, PropertyOffset) { });
-        else
-            thisObject->setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
+            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset) { });
+        else {
+            structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
+            if (thisObject->m_butterfly && !structure->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
+                thisObject->nukeStructureAndSetButterfly(vm, thisObject->structureID(), nullptr);
+                offset = invalidOffset;
+                ASSERT(structure->maxOffset() == invalidOffset);
+            }
+            thisObject->setStructure(vm, structure);
+        }
+
+        ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
 
         if (offset != invalidOffset)
             thisObject->locationForOffset(offset)->clear();

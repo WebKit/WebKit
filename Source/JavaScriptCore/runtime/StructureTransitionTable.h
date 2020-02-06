@@ -144,11 +144,11 @@ class StructureTransitionTable {
 
     
     struct Hash {
-        typedef std::pair<UniquedStringImpl*, unsigned> Key;
+        typedef std::tuple<UniquedStringImpl*, unsigned, bool> Key;
         
         static unsigned hash(const Key& p)
         {
-            return PtrHash<UniquedStringImpl*>::hash(p.first) + p.second;
+            return PtrHash<UniquedStringImpl*>::hash(std::get<0>(p)) + std::get<1>(p);
         }
 
         static bool equal(const Key& a, const Key& b)
@@ -181,8 +181,8 @@ public:
     }
 
     void add(VM&, Structure*);
-    bool contains(UniquedStringImpl*, unsigned attributes) const;
-    Structure* get(UniquedStringImpl*, unsigned attributes) const;
+    bool contains(UniquedStringImpl*, unsigned attributes, bool isAddition) const;
+    Structure* get(UniquedStringImpl*, unsigned attributes, bool isAddition) const;
 
 private:
     friend class SingleSlotTransitionWeakOwner;
