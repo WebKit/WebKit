@@ -1,3 +1,64 @@
+2020-02-05  Justin Michaud  <justin_michaud@apple.com>
+
+        Deleting a property should not turn structures into uncacheable dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=206430
+
+        Reviewed by Yusuke Suzuki.
+
+        Right now, deleteProperty/removePropertyTransition causes a structure transition to uncacheable dictionary. Instead, we should allow it to transition to a new regular structure like adding a property does. This means that we have to:
+
+        1) Break the assumption that structure transition offsets increase monotonically
+
+        We add a new flag to tell that a structure has deleted its property, and update materializePropertyTable to use it.
+
+        2) Add a new transition map and transition kind for deletes
+
+        We cache the delete transition. We will not transition back to a previous structure if you add then immediately remove a property.
+
+        3) Find some heuristic for when we should actually transition to uncacheable dictionary.
+
+        Since deleting properties is expected to be rare, we just walk the structure list and count its size on removal. 
+
+        This patch also fixes a related bug in addProperty, where we did not use a GCSafeConcurrentJSLocker, and adds an option to trigger the bug. Finally, we add some helper methods to dollarVM to test.
+
+        This gives a 24x speedup on delete-property-keeps-cacheable-structure.js, and is neutral on delete-property-from-prototype-chain.js (which was already generating code using the inline cache).
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        * runtime/OptionsList.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::get):
+        (JSC::PropertyTable::add):
+        (JSC::PropertyTable::addDeletedOffset):
+        (JSC::PropertyTable::reinsert):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains const):
+        (JSC::StructureTransitionTable::get const):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::removePropertyTransitionFromExistingStructure):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::remove):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::removePropertyWithoutTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::Hash::hash):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMHelper::functionGetStructureTransitionList):
+        (JSC::functionGetConcurrently):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-02-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: add a special breakpoint for controlling whether `debugger` statements pause
