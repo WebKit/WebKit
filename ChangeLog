@@ -1,3 +1,9 @@
+2020-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Use radio buttons instead of a combo for text direction in theme test
+
+        * ManualTests/gtk/theme.html:
+
 2020-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Build a shared JavaScriptCore

@@ -8,8 +8,9 @@
     GTK_THEME=theme-name[:variant] environment variable.
   </p>
 
-  <p>Text direction: <select onchange="body = document.getElementById('body'); if (this.selectedIndex == 0) body.style.direction='ltr'; else body.style.direction='rtl';">
-      <option>Left to right</option><option>Right to left</option></select>
+  <p>Text direction:
+    <input type="radio" name="direction" id="ltr" checked onchange="if (document.getElementById('ltr').checked) body.setAttribute('dir', 'ltr');"/>Left to right
+    <input type="radio" name="direction" id="rtl" onchange="if (document.getElementById('rtl').checked) body.setAttribute('dir', 'rtl');"/> Right to left<br/>
   </p>
 
   <h1>Buttons</h1>
