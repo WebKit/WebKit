@@ -67,6 +67,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration.processPool = (__bridge WKProcessPool *)context;
     globalWebViewConfiguration.websiteDataStore = (__bridge WKWebsiteDataStore *)TestController::websiteDataStore();
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
+    globalWebViewConfiguration._allowTopNavigationToDataURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
     WKContextSetStorageAccessAPIEnabled(context, true);
@@ -153,6 +154,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         
     if (options.useEphemeralSession)
         [copiedConfiguration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+
+    [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs];
 
     configureContentMode(copiedConfiguration.get(), options);
 

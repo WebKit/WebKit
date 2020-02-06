@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
@@ -716,7 +717,11 @@ TEST(_WKDownload, SystemPreviewUSDZBlobNaming)
 TEST(_WKDownload, DownloadAttributeDoesNotStartDownloads)
 {
     auto delegate = adoptNS([[DownloadAttributeTestDelegate alloc] init]);
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._allowTopNavigationToDataURLs = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
     [webView setNavigationDelegate:delegate.get()];
     [webView configuration].processPool._downloadDelegate = delegate.get();
 
@@ -731,7 +736,11 @@ TEST(_WKDownload, DownloadAttributeDoesNotStartDownloads)
 TEST(_WKDownload, StartDownloadWithDownloadAttribute)
 {
     auto delegate = adoptNS([[DownloadAttributeTestDelegate alloc] init]);
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._allowTopNavigationToDataURLs = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
     [webView setNavigationDelegate:delegate.get()];
     [webView configuration].processPool._downloadDelegate = delegate.get();
 

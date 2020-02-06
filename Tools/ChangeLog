@@ -1,3 +1,38 @@
+2020-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent navigating top level frames to Data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=206962
+        <rdar://problem/56770676>
+
+        Reviewed by Youenn Fablet.
+
+        Revise test running code to allow data URL navigations by default, since they are so frequently
+        used in testing. However, provide a flag to turn this off in tests so we can confirm proper
+        function.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (DownloadAttributeDoesNotStartDownloads): Revise configuration to allow script navigation of the main frame to a Data URL.
+        (StartDownloadWithDownloadAttribute): Ditto.
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (WebViewWillPerformClientRedirect): Ditto.
+        (WebViewDidCancelClientRedirect): Ditto.
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (NavigateToDataURLThenBack): Ditto.
+        (ContentExtensionBlocksMainLoadThenReloadWithoutExtensions): Ditto.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformCreateWebView):
+
 2020-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Provide a way to suppress software keyboards on WKWebView's WKContentView

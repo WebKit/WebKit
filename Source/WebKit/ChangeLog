@@ -1,3 +1,35 @@
+2020-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent navigating top level frames to Data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=206962
+        <rdar://problem/56770676>
+
+        Reviewed by Youenn Fablet.
+
+        Expose a new off-by-default preference to allow top-level navigation to Data URIs.
+
+        Tests:  fast/loader/data-url-frame-allowed.html, fast/loader/data-url-load-denied.html
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTopNavigationToDataURLsAllowed):
+        (WKPreferencesGetTopNavigationToDataURLsAllowed):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setTopNavigationToDataURLsAllowed:]):
+        (-[WKPreferences _topNavigationToDataURLsAllowed]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _allowTopNavigationToDataURLs]):
+        (-[WKWebViewConfiguration _setAllowTopNavigationToDataURLs:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController configuration]):
+
 2020-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused SPI WKWebViewConfiguration._treatsSHA1SignedCertificatesAsInsecure

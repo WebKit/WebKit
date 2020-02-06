@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,7 @@ struct TestOptions {
     bool enableCaptureVideoInUIProcess { false };
     bool enableCaptureVideoInGPUProcess { false };
     bool enableCaptureAudioInGPUProcess { false };
+    bool allowTopNavigationToDataURLs { true };
 
     double contentInsetTop { 0 };
 
@@ -166,7 +167,8 @@ struct TestOptions {
             || allowsLinkPreview != options.allowsLinkPreview
             || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess
             || enableCaptureVideoInGPUProcess != options.enableCaptureVideoInGPUProcess
-            || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess)
+            || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess
+            || allowTopNavigationToDataURLs != options.allowTopNavigationToDataURLs)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

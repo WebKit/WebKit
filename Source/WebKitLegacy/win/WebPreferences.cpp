@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -231,6 +231,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptRuntimeFlagsPreferenceKey), CFSTR("0"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAllowTopNavigationToDataURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
@@ -646,6 +647,8 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebPreferencesPrivate6*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate7))
         *ppvObject = static_cast<IWebPreferencesPrivate7*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate8))
+        *ppvObject = static_cast<IWebPreferencesPrivate8*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
@@ -2483,3 +2486,16 @@ HRESULT WebPreferences::setRenderingUpdateThrottlingEnabled(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::allowTopNavigationToDataURLs(_Out_ BOOL* allowAccess)
+{
+    if (!allowAccess)
+        return E_POINTER;
+    *allowAccess = boolValueForKey(WebKitAllowTopNavigationToDataURLsPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setAllowTopNavigationToDataURLs(BOOL allowAccess)
+{
+    setBoolValue(WebKitAllowTopNavigationToDataURLsPreferenceKey, allowAccess);
+    return S_OK;
+}

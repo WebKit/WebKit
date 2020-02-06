@@ -1,3 +1,26 @@
+2020-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent navigating top level frames to Data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=206962
+        <rdar://problem/56770676>
+
+        Reviewed by Youenn Fablet.
+
+        Expose a new off-by-default preference to allow top-level navigation to Data URIs.
+
+        * Interfaces/WebKit.idl: Touch file to trigger a build.
+        * Interfaces/IWebPreferences.idl: Ditto.
+        * Interfaces/IWebPreferencesPrivate.idl: Expose new API version to avoid breaking shipping binaries.
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Update for new setting.
+        (WebPreferences::QueryInterface): Add support for IWebPreferencesPrivate8 interface.
+        (WebPreferences::allowTopNavigationToDataURLs): Added.
+        (WebPreferences::setAllowTopNavigationToDataURLs): Added.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Update to handle Data URL setting.
+
 2020-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for specifying background colors when setting marked text

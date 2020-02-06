@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,6 +131,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _convertsPositionStyleOnCopy;
     BOOL _allowsMetaRefresh;
     BOOL _allowUniversalAccessFromFileURLs;
+    BOOL _allowTopNavigationToDataURLs;
 
 #if PLATFORM(IOS_FAMILY)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
@@ -235,6 +236,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
+    _allowTopNavigationToDataURLs = NO;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS_FAMILY)
@@ -382,6 +384,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
     configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
     configuration->_allowUniversalAccessFromFileURLs = self->_allowUniversalAccessFromFileURLs;
+    configuration->_allowTopNavigationToDataURLs = self->_allowTopNavigationToDataURLs;
 
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
@@ -669,6 +672,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setAllowUniversalAccessFromFileURLs:(BOOL)allowUniversalAccessFromFileURLs
 {
     _allowUniversalAccessFromFileURLs = allowUniversalAccessFromFileURLs;
+}
+
+- (BOOL)_allowTopNavigationToDataURLs
+{
+    return _allowTopNavigationToDataURLs;
+}
+
+- (void)_setAllowTopNavigationToDataURLs:(BOOL)allowTopNavigationToDataURLs
+{
+    _allowTopNavigationToDataURLs = allowTopNavigationToDataURLs;
 }
 
 - (BOOL)_convertsPositionStyleOnCopy
