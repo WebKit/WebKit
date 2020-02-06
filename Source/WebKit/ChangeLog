@@ -1,5 +1,44 @@
 2020-02-06  Chris Dumez  <cdumez@apple.com>
 
+        [IPC hardening] Update WebPasteboardProxy methods to validate their parameters
+        https://bugs.webkit.org/show_bug.cgi?id=207308
+        <rdar://problem/58632938>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardTypes):
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::pasteboardCopy):
+        (WebKit::WebPasteboardProxy::getPasteboardChangeCount):
+        (WebKit::WebPasteboardProxy::getPasteboardColor):
+        (WebKit::WebPasteboardProxy::getPasteboardURL):
+        (WebKit::WebPasteboardProxy::addPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getNumberOfFiles):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+        (WebKit::WebPasteboardProxy::updateSupportedTypeIdentifiers):
+
+2020-02-06  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] Protect against bad identifier in WebPageProxy::DidInsertAttachmentWithIdentifier()
         https://bugs.webkit.org/show_bug.cgi?id=207311
         <rdar://problem/58632517>
