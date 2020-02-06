@@ -1,3 +1,16 @@
+2020-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Some cookie table column headers should not be localizable
+        https://bugs.webkit.org/show_bug.cgi?id=206920
+
+        Reviewed by Timothy Hatcher.
+
+        Keep headers that match cookie directives always in English.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype.initialLayout):
+
 2020-02-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: slightly increase the horizontal padding around scope bar items
