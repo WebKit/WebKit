@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {

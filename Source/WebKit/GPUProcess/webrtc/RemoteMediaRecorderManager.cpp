@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaRecorderManager.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
 #include "DataReference.h"
 #include "Decoder.h"
