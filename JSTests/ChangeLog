@@ -1,3 +1,20 @@
+2020-02-06  Sukolsak Sakshuwong  <sukolsak@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JavaScript string corruption using RegExp with unicode character
+        https://bugs.webkit.org/show_bug.cgi?id=187947
+
+        Reviewed by Yusuke Suzuki.
+
+        This change adds regression test for string corruption that occured after
+        non-BMP character was removed by String.prototype.replace.
+        The issue was fixed in https://trac.webkit.org/changeset/253648/webkit.
+
+        Also, this patch brings back:
+        1. An out-of-order character class range test.
+        2. Dangling and combined surrogates tests (as webkit.org/b/154863 is now resolved).
+
+        * stress/regress-187947.js: Added.
+
 2020-02-05  Justin Michaud  <justin_michaud@apple.com>
 
         Deleting a property should not turn structures into uncacheable dictionaries

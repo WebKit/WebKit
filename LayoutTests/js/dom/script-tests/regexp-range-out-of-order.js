@@ -4,4 +4,5 @@ description(
 
 );
 
-shouldThrow('/^[\s{-.\[\]\(\)]$/');
+shouldThrow('/^[\s{-.\[\]\(\)]$/', '"SyntaxError: Invalid regular expression: range out of order in character class"');
+shouldThrow('new RegExp("[\u0101-\u0100]")', '"SyntaxError: Invalid regular expression: range out of order in character class"');

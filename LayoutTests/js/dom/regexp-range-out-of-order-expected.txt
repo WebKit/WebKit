@@ -4,6 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS /^[s{-.[]()]$/ threw exception SyntaxError: Invalid regular expression: range out of order in character class.
+PASS new RegExp("[ā-Ā]") threw exception SyntaxError: Invalid regular expression: range out of order in character class.
 PASS successfullyParsed is true
 
 TEST COMPLETE
