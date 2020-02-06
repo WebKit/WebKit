@@ -119,7 +119,11 @@ Optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
     if (!decoder.decode(port))
         return WTF::nullopt;
     
-    return {{ WTFMove(*protocol), WTFMove(*host), WTFMove(port) }};
+    SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(port) };
+    if (data.isHashTableDeletedValue())
+        return WTF::nullopt;
+
+    return data;
 }
 
 struct SecurityOriginDataHashTraits : WTF::SimpleClassHashTraits<SecurityOriginData> {

@@ -80,10 +80,10 @@ template<class Decoder> inline Optional<ClientOrigin> ClientOrigin::decode(Decod
     Optional<SecurityOriginData> topOrigin;
     Optional<SecurityOriginData> clientOrigin;
     decoder >> topOrigin;
-    if (!topOrigin)
+    if (!topOrigin || topOrigin->isEmpty())
         return WTF::nullopt;
     decoder >> clientOrigin;
-    if (!clientOrigin)
+    if (!clientOrigin || clientOrigin->isEmpty())
         return WTF::nullopt;
 
     return ClientOrigin { WTFMove(*topOrigin), WTFMove(*clientOrigin) };
