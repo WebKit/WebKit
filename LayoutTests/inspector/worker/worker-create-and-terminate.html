@@ -43,6 +43,33 @@ function test()
             ProtocolTest.log("No Workers");
     }
 
+    async function checkInternalProperties(expression, {terminated} = {}) {
+        let evaluateResult = await InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {
+                expression,
+                objectGroup: "test",
+            },
+        });
+
+        ProtocolTest.assert(evaluateResult.result.type === "object", `Evaluate result of '${expression}' should have type 'object'.`);
+        ProtocolTest.assert(evaluateResult.result.className === "Worker", `Evaluate result of '${expression}' should have className 'Worker'.`);
+
+        let getPropertiesResult = await InspectorProtocol.awaitCommand({
+            method: "Runtime.getProperties",
+            params: {
+                objectId: evaluateResult.result.objectId,
+            },
+        });
+
+        let internalProperties = getPropertiesResult.internalProperties;
+        ProtocolTest.assert(internalProperties.length === 1, `Worker '${expression}' should only have one internal property.`);
+
+        ProtocolTest.assert(internalProperties[0].name === "terminated", `Worker '${expression}' should have 'terminated' internal property.`);
+        ProtocolTest.assert(internalProperties[0].value.type === "boolean", `Internal 'terminated' property of '${expression}' should be a boolean.`);
+        ProtocolTest.assert(internalProperties[0].value.value === terminated, `Internal 'terminated' property of '${expression}' should have value '${terminated}'.`);
+    }
+
 
     let triggerNextCreate;
     let triggerNextTerminate;
@@ -78,70 +105,92 @@ function test()
     suite.addTestCase({
         name: "Worker.enable",
         description: "Worker.enable informs the frontend of the two existing Workers",
-        test(resolve, reject) {
-            InspectorProtocol.awaitCommand({method: "Worker.enable", params: {}})
-                .then(() => {
-                    ProtocolTest.expectEqual(workers.length, 2, "Should be informed of two existing Workers.");
-                    dumpWorkers();
-                    resolve();
-                }).catch(reject);
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Worker.enable", params: {}});
+
+            ProtocolTest.expectEqual(workers.length, 2, "Should be informed of two existing Workers.");
+            dumpWorkers();
+
+            await Promise.all([
+                checkInternalProperties(`worker1`, {terminated: false}),
+                checkInternalProperties(`worker2`, {terminated: false}),
+            ]);
         }
     });
 
     suite.addTestCase({
         name: "Worker.workerCreated",
         description: "Should receive a Worker.workerCreated event when creating a Worker.",
-        test(resolve, reject) {
-            ProtocolTest.evaluateInPage("createWorker3()");
-            waitForWorkerCreatedEvent()
-                .then(() => {
-                    ProtocolTest.pass("Worker.workerCreated");
-                    dumpWorkers();
-                    resolve();
-                }).catch(reject);
+        async test() {
+            await Promise.all([
+                waitForWorkerCreatedEvent(),
+                ProtocolTest.evaluateInPage("createWorker3()"),
+            ]);
+
+            ProtocolTest.pass("Worker.workerCreated");
+            dumpWorkers();
+
+            await Promise.all([
+                checkInternalProperties(`worker1`, {terminated: false}),
+                checkInternalProperties(`worker2`, {terminated: false}),
+                checkInternalProperties(`worker3`, {terminated: false}),
+            ]);
         }
     });
 
     suite.addTestCase({
         name: "Worker.workerTerminated.Page",
         description: "Should receive a Worker.workerTerminated event when terminating a Worker from the Page.",
-        test(resolve, reject) {
-            ProtocolTest.evaluateInPage("terminateWorker2FromPage()");
-            waitForWorkerTerminatedEvent()
-                .then(() => {
-                    ProtocolTest.pass("Worker.workerTerminated");
-                    dumpWorkers();
-                    resolve();
-                }).catch(reject);
+        async test() {
+            await Promise.all([
+                waitForWorkerTerminatedEvent(),
+                ProtocolTest.evaluateInPage("terminateWorker2FromPage()"),
+            ]);
+
+            ProtocolTest.pass("Worker.workerTerminated");
+            dumpWorkers();
+
+            await Promise.all([
+                checkInternalProperties(`worker1`, {terminated: false}),
+                checkInternalProperties(`worker2`, {terminated: true}),
+                checkInternalProperties(`worker3`, {terminated: false}),
+            ]);
         }
     });
 
     suite.addTestCase({
         name: "Worker.workerTerminated.Worker",
         description: "Should receive a Worker.workerTerminated event when terminating a Worker from the Worker.",
-        test(resolve, reject) {
-            ProtocolTest.evaluateInPage("terminateWorker3FromWorker()");
-            waitForWorkerTerminatedEvent()
-                .then(() => {
-                    ProtocolTest.pass("Worker.workerTerminated");
-                    dumpWorkers();
-                    resolve();
-                }).catch(reject);
+        async test() {
+            await Promise.all([
+                waitForWorkerTerminatedEvent(),
+                ProtocolTest.evaluateInPage("terminateWorker3FromWorker()"),
+            ]);
+
+            ProtocolTest.pass("Worker.workerTerminated");
+            dumpWorkers();
+
+            await Promise.all([
+                checkInternalProperties(`worker1`, {terminated: false}),
+                checkInternalProperties(`worker2`, {terminated: true}),
+            ]);
         }
     });
 
     suite.addTestCase({
         name: "Worker.workerTerminated.GC",
         description: "Should receive a Worker.workerTerminated event when terminating a Worker via Garbage Collection.",
-        test(resolve, reject) {
-            ProtocolTest.evaluateInPage("terminateWorker1ViaCollection()");
-            InspectorProtocol.sendCommand("Heap.gc", {});
-            waitForWorkerTerminatedEvent()
-                .then(() => {
-                    ProtocolTest.pass("Worker.workerTerminated");
-                    dumpWorkers();
-                    resolve();
-                }).catch(reject);
+        async test() {
+            let workerTerminatedPromise = waitForWorkerTerminatedEvent();
+            await ProtocolTest.evaluateInPage("terminateWorker1ViaCollection()");
+            await InspectorProtocol.awaitCommand({method: "Runtime.releaseObjectGroup", params: {objectGroup: "test"}});
+            await InspectorProtocol.awaitCommand({method: "Heap.gc", params: {}});
+            await workerTerminatedPromise;
+
+            ProtocolTest.pass("Worker.workerTerminated");
+            dumpWorkers();
+
+            await checkInternalProperties(`worker2`, {terminated: true});
         }
     });
 

@@ -32,6 +32,8 @@
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
+#include "JSWorker.h"
+#include "Worker.h"
 
 #if ENABLE(PAYMENT_REQUEST)
 #include "JSPaymentRequest.h"
@@ -59,7 +61,6 @@ JSValue WebInjectedScriptHost::subtype(JSGlobalObject* exec, JSValue value)
     return jsUndefined();
 }
 
-#if ENABLE(PAYMENT_REQUEST)
 static JSObject* constructInternalProperty(VM& vm, JSGlobalObject* exec, const String& name, JSValue value)
 {
     auto* object = constructEmptyObject(exec);
@@ -68,6 +69,7 @@ static JSObject* constructInternalProperty(VM& vm, JSGlobalObject* exec, const S
     return object;
 }
 
+#if ENABLE(PAYMENT_REQUEST)
 static JSObject* objectForPaymentOptions(VM& vm, JSGlobalObject* exec, const PaymentOptions& paymentOptions)
 {
     auto* object = constructEmptyObject(exec);
@@ -161,9 +163,17 @@ static JSString* jsStringForPaymentRequestState(VM& vm, PaymentRequest::State st
 
 JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exec, JSC::JSValue value)
 {
-#if ENABLE(PAYMENT_REQUEST)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (auto* worker = JSWorker::toWrapped(vm, value)) {
+        unsigned index = 0;
+        auto* array = constructEmptyArray(exec, nullptr);
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_s, jsBoolean(worker->wasTerminated())));
+        RETURN_IF_EXCEPTION(scope, { });
+        return array;
+    }
+
+#if ENABLE(PAYMENT_REQUEST)
     if (PaymentRequest* paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
@@ -173,10 +183,6 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
         RETURN_IF_EXCEPTION(scope, { });
         return array;
     }
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(value);
 #endif
 
     return { };
