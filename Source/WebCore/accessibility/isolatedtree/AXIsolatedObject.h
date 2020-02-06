@@ -65,10 +65,10 @@ private:
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
 
     AXID parent() const { return m_parent; }
-    
+
     AXIsolatedTreeID treeIdentifier() const { return m_treeIdentifier; }
-    AXIsolatedTree* tree() const;
-    
+    AXIsolatedTree* tree() const { return m_cachedTree.get(); }
+
     AXIsolatedObject() = default;
     AXIsolatedObject(AXCoreObject&, bool isRoot);
     void initializeAttributeData(AXCoreObject&, bool isRoot);
