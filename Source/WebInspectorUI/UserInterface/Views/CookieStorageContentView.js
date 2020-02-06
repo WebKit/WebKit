@@ -180,19 +180,19 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             hideable: false,
         });
 
-        this._domainColumn = new WI.TableColumn("domain", WI.UIString("Domain"), {
+        this._domainColumn = new WI.TableColumn("domain", WI.unlocalizedString("Domain"), {
             minWidth: 100,
             maxWidth: 200,
             initialWidth: 120,
         });
 
-        this._pathColumn = new WI.TableColumn("path", WI.UIString("Path"), {
+        this._pathColumn = new WI.TableColumn("path", WI.unlocalizedString("Path"), {
             minWidth: 50,
             maxWidth: 300,
             initialWidth: 100,
         });
 
-        this._expiresColumn = new WI.TableColumn("expires", WI.UIString("Expires"), {
+        this._expiresColumn = new WI.TableColumn("expires", WI.unlocalizedString("Expires"), {
             minWidth: 100,
             maxWidth: 200,
             initialWidth: 150,
