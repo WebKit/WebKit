@@ -2851,6 +2851,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     }
 }
 
+- (void)_setSuppressSoftwareKeyboard:(BOOL)suppressSoftwareKeyboard
+{
+    [super _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
+    [_contentView _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
+}
+
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {

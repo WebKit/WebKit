@@ -41,9 +41,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK(UIKit, UIApplicationInstantiateSingleton, void, (Class singletonClass), (singletonClass))
-
 using namespace TestWebKitAPI;
 
 @implementation WKWebView (DragAndDropTesting)

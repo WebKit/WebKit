@@ -27,6 +27,7 @@
 #import "TestWKWebView.h"
 
 #import "ClassMethodSwizzler.h"
+#import "InstanceMethodSwizzler.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
@@ -306,6 +307,30 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     return _forceKeyWindow || [super isKeyWindow];
 }
 
+#if PLATFORM(IOS_FAMILY)
+static NeverDestroyed<RetainPtr<UIWindow>> gOverriddenApplicationKeyWindow;
+static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gApplicationKeyWindowSwizzler;
+static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gSharedApplicationSwizzler;
+
+static void setOverriddenApplicationKeyWindow(UIWindow *window)
+{
+    if (gOverriddenApplicationKeyWindow.get() == window)
+        return;
+
+    ASSERT(UIApplication.sharedApplication);
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        gApplicationKeyWindowSwizzler.get() = makeUnique<InstanceMethodSwizzler>(UIApplication.class, @selector(keyWindow), reinterpret_cast<IMP>(applicationKeyWindowOverride));
+    });
+    gOverriddenApplicationKeyWindow.get() = window;
+}
+
+static UIWindow *applicationKeyWindowOverride(id, SEL)
+{
+    return gOverriddenApplicationKeyWindow.get().get();
+}
+#endif
+
 - (void)makeKeyWindow
 {
     if (_forceKeyWindow)
@@ -315,6 +340,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 #if PLATFORM(MAC)
     [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidBecomeKeyNotification object:self];
 #else
+    setOverriddenApplicationKeyWindow(self);
     [[NSNotificationCenter defaultCenter] postNotificationName:UIWindowDidBecomeKeyNotification object:self];
 #endif
 }

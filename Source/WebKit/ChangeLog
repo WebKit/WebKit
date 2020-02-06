@@ -1,3 +1,21 @@
+2020-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Provide a way to suppress software keyboards on WKWebView's WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=207272
+        <rdar://problem/59190828>
+
+        Reviewed by Tim Horton.
+
+        Allow SPI clients to suppress the software keyboard using -_setSuppressSoftwareKeyboard: on WKWebView by
+        propagating the call to the WKContentView, which is the view that actually becomes first responder when an
+        element (e.g. a form control) is focused.
+
+        Test: KeyboardInputTests.SuppressSoftwareKeyboard
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setSuppressSoftwareKeyboard:]):
+
 2020-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Miscellaneous build fixes February 2020 edition

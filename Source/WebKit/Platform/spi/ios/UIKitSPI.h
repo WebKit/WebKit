@@ -1237,6 +1237,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (UIResponder *)firstResponder;
 - (void)pasteAndMatchStyle:(id)sender;
 - (void)makeTextWritingDirectionNatural:(id)sender;
+@property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
 @end
 
 @interface _UINavigationInteractiveTransitionBase ()

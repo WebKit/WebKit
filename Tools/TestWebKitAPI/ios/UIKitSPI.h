@@ -62,6 +62,7 @@ IGNORE_WARNINGS_END
 WTF_EXTERN_C_BEGIN
 
 void UIApplicationInitialize(void);
+void UIApplicationInstantiateSingleton(Class principalClass);
 
 WTF_EXTERN_C_END
 
@@ -195,6 +196,16 @@ IGNORE_WARNINGS_END
 @property (nonatomic, readonly) CGRect _referenceBounds;
 @end
 
+@interface UIResponder (UIKitSPI)
+- (UIResponder *)firstResponder;
+- (void)makeTextWritingDirectionNatural:(id)sender;
+@property (nonatomic, setter=_setSuppressSoftwareKeyboard:) BOOL _suppressSoftwareKeyboard;
+@end
+
+@interface UIKeyboardImpl : UIView
++ (instancetype)sharedInstance;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
@@ -207,13 +218,12 @@ IGNORE_WARNINGS_END
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 
-@interface UIResponder (UIKitSPI)
-- (UIResponder *)firstResponder;
-- (void)makeTextWritingDirectionNatural:(id)sender;
-@end
-
 @interface UIKeyboard ()
 + (BOOL)isInHardwareKeyboardMode;
+@end
+
+@interface UIKeyboardImpl (UIKitIPI)
+- (BOOL)_shouldSuppressSoftwareKeyboard;
 @end
 
 #if PLATFORM(IOS)
