@@ -410,9 +410,10 @@ void AXIsolatedObject::setParent(AXID parent)
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
 {
     ASSERT_UNUSED(detachmentType, isMainThread() ? detachmentType == AccessibilityDetachmentType::CacheDestroyed : detachmentType != AccessibilityDetachmentType::CacheDestroyed);
-    for (const auto& childID : m_childrenIDs)
-        tree()->nodeForID(childID)->detachFromParent();
-
+    for (const auto& childID : m_childrenIDs) {
+        if (auto child = tree()->nodeForID(childID))
+            child->detachFromParent();
+    }
     m_childrenIDs.clear();
 }
 
@@ -439,9 +440,10 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
     if (!isMainThread()) {
         m_children.clear();
         m_children.reserveInitialCapacity(m_childrenIDs.size());
-        auto tree = this->tree();
-        for (auto childID : m_childrenIDs)
-            m_children.uncheckedAppend(tree->nodeForID(childID));
+        for (const auto& childID : m_childrenIDs) {
+            if (auto child = tree()->nodeForID(childID))
+                m_children.uncheckedAppend(child);
+        }
     }
     return m_children;
 }
@@ -460,9 +462,9 @@ bool AXIsolatedObject::isDetachedFromParent()
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
     auto isolatedTexts = vectorAttributeValue<AccessibilityIsolatedTreeText>(AXPropertyName::AccessibilityText);
-    for (auto isolatedText : isolatedTexts) {
+    for (const auto& isolatedText : isolatedTexts) {
         AccessibilityText text(isolatedText.text, isolatedText.textSource);
-        for (auto axID : isolatedText.textElements) {
+        for (const auto& axID : isolatedText.textElements) {
             if (auto object = tree()->nodeForID(axID))
                 text.textElements.append(object);
         }
@@ -506,11 +508,11 @@ String AXIsolatedObject::documentEncoding() const
 
 void AXIsolatedObject::insertMathPairs(Vector<AccessibilityIsolatedTreeMathMultiscriptPair>& isolatedPairs, AccessibilityMathMultiscriptPairs& pairs)
 {
-    for (auto pair : isolatedPairs) {
+    for (const auto& pair : isolatedPairs) {
         AccessibilityMathMultiscriptPair prescriptPair;
-        if (auto* coreObject = tree()->nodeForID(pair.first).get())
+        if (auto coreObject = tree()->nodeForID(pair.first).get())
             prescriptPair.first = coreObject;
-        if (auto* coreObject = tree()->nodeForID(pair.second).get())
+        if (auto coreObject = tree()->nodeForID(pair.second).get())
             prescriptPair.second = coreObject;
         pairs.append(prescriptPair);
     }
@@ -652,11 +654,6 @@ AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) cons
     return const_cast<AXIsolatedObject*>(this);
 }
 
-AXIsolatedTree* AXIsolatedObject::tree() const
-{
-    return m_cachedTree.get();
-}
-
 IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
@@ -673,7 +670,7 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
         [] (AXID& typedValue) { return typedValue; },
         [] (auto&) { return InvalidAXID; }
     );
-    
+
     return tree()->nodeForID(nodeID).get();
 }
 
@@ -792,7 +789,7 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
 {
     Vector<AXID> childIDs = vectorAttributeValue<AXID>(propertyName);
     children.reserveCapacity(childIDs.size());
-    for (auto childID : childIDs) {
+    for (const auto& childID : childIDs) {
         if (auto object = tree()->nodeForID(childID))
             children.uncheckedAppend(object);
     }
