@@ -121,11 +121,6 @@ public:
     bool isJITEnabled() const { return m_isJITEnabled; }
     void setJITEnabled(bool enabled) { m_isJITEnabled = enabled; }
 
-#if PLATFORM(IOS_FAMILY)
-    const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
-    void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
-#endif
-
     ProcessID presentingApplicationPID() const { return m_presentingApplicationPID; }
     void setPresentingApplicationPID(ProcessID pid) { m_presentingApplicationPID = pid; }
 
@@ -144,11 +139,6 @@ public:
 
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
-
-#if PLATFORM(COCOA)
-    bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
-    void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
-#endif
 
 private:
     WTF::String m_injectedBundlePath;
@@ -179,13 +169,6 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
-
-#if PLATFORM(IOS_FAMILY)
-    WTF::String m_ctDataConnectionServiceType;
-#endif
-#if PLATFORM(COCOA)
-    bool m_suppressesConnectionTerminationOnSystemChange { false };
-#endif
 };
 
 } // namespace API
