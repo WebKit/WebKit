@@ -1,0 +1,10 @@
+Tests for Debugger.setPauseOnDebuggerStatements command.
+
+
+== Running test suite: Debugger.setPauseOnDebuggerStatements
+-- Running test case: Debugger.setPauseOnDebuggerStatements.Disabled
+PASS: Should not pause.
+
+-- Running test case: Debugger.setPauseOnDebuggerStatements.Enabled
+PASS: Should paused.
+

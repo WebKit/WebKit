@@ -249,6 +249,13 @@
             ]
         },
         {
+            "name": "setPauseOnDebuggerStatements",
+            "description": "Control whether the debugger pauses execution before `debugger` statements.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" }
+            ]
+        },
+        {
             "name": "setPauseOnExceptions",
             "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>.",
             "parameters": [

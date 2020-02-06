@@ -156,7 +156,7 @@ static void dumpLineColumnEntry(size_t index, const InstructionStream& instructi
         case WillExecuteProgram: event = " WillExecuteProgram"; break;
         case DidExecuteProgram: event = " DidExecuteProgram"; break;
         case DidEnterCallFrame: event = " DidEnterCallFrame"; break;
-        case DidReachBreakpoint: event = " DidReachBreakpoint"; break;
+        case DidReachDebuggerStatement: event = " DidReachDebuggerStatement"; break;
         case WillLeaveCallFrame: event = " WillLeaveCallFrame"; break;
         case WillExecuteStatement: event = " WillExecuteStatement"; break;
         case WillExecuteExpression: event = " WillExecuteExpression"; break;

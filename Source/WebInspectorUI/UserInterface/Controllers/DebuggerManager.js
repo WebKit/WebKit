@@ -55,6 +55,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         const specialBreakpointLocation = new WI.SourceCodeLocation(null, Infinity, Infinity);
 
+        this._debuggerStatementsBreakpointEnabledSetting = new WI.Setting("break-on-debugger-statements", true);
+        this._debuggerStatementsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
+            disabled: !this._debuggerStatementsBreakpointEnabledSetting.value,
+        });
+        this._debuggerStatementsBreakpoint.resolved = true;
+
         this._allExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-all-exceptions", false);
         this._allExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
             disabled: !this._allExceptionsBreakpointEnabledSetting.value,
@@ -147,6 +153,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // Initialize global state.
         target.DebuggerAgent.enable();
         target.DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+
+        // COMPATIBILITY (iOS 13.1): Debugger.setPauseOnDebuggerStatements did not exist yet.
+        if (target.hasCommand("Debugger.setPauseOnDebuggerStatements"))
+            target.DebuggerAgent.setPauseOnDebuggerStatements(!this._debuggerStatementsBreakpoint.disabled);
+
         target.DebuggerAgent.setPauseOnExceptions(this._breakOnExceptionsState);
 
         // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
@@ -288,6 +299,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return targetData;
     }
 
+    get debuggerStatementsBreakpoint() { return this._debuggerStatementsBreakpoint; }
     get allExceptionsBreakpoint() { return this._allExceptionsBreakpoint; }
     get uncaughtExceptionsBreakpoint() { return this._uncaughtExceptionsBreakpoint; }
     get assertionFailuresBreakpoint() { return this._assertionFailuresBreakpoint; }
@@ -337,7 +349,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     isBreakpointRemovable(breakpoint)
     {
-        return breakpoint !== this._allExceptionsBreakpoint
+        return breakpoint !== this._debuggerStatementsBreakpoint
+            && breakpoint !== this._allExceptionsBreakpoint
             && breakpoint !== this._uncaughtExceptionsBreakpoint;
     }
 
@@ -1160,6 +1173,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         let breakpoint = event.target;
         switch (breakpoint) {
+        case this._debuggerStatementsBreakpoint:
+            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
+                this.breakpointsEnabled = true;
+            this._debuggerStatementsBreakpointEnabledSetting.value = !breakpoint.disabled;
+            for (let target of WI.targets)
+                target.DebuggerAgent.setPauseOnDebuggerStatements(!breakpoint.disabled);
+            return;
+
         case this._allExceptionsBreakpoint:
             if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;

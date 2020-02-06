@@ -331,6 +331,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }, this);
         }
 
+        // COMPATIBILITY (iOS 13.1): Debugger.setPauseOnDebuggerStatements did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.setPauseOnDebuggerStatements"))
+            WI.debuggerManager.addBreakpoint(WI.debuggerManager.debuggerStatementsBreakpoint);
+
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
 
@@ -1093,6 +1097,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         let comparator = (a, b) => {
             const rankFunctions = [
+                (treeElement) => treeElement.representedObject === WI.debuggerManager.debuggerStatementsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.allExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.uncaughtExceptionsBreakpoint,
                 (treeElement) => treeElement.representedObject === WI.debuggerManager.assertionFailuresBreakpoint,
@@ -1163,7 +1168,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return domNodeTreeElement;
         };
 
-        if (breakpoint === WI.debuggerManager.allExceptionsBreakpoint) {
+        if (breakpoint === WI.debuggerManager.debuggerStatementsBreakpoint) {
+            options.className = "breakpoint-debugger-statement-icon";
+            options.title = WI.UIString("Debugger Statements");
+        } else if (breakpoint === WI.debuggerManager.allExceptionsBreakpoint) {
             options.className = "breakpoint-exception-icon";
             options.title = WI.repeatedUIString.allExceptions();
         } else if (breakpoint === WI.debuggerManager.uncaughtExceptionsBreakpoint) {
