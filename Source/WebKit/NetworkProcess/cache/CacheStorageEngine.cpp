@@ -394,11 +394,6 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
             return;
         }
 
-        if (!m_caches.isValidKey(origin)) {
-            callback(makeUnexpected(Error::Internal));
-            return;
-        }
-
         auto& caches = m_caches.ensure(origin, [&origin, this] {
             auto path = cachesRootPath(origin);
             return Caches::create(*this, WebCore::ClientOrigin { origin }, WTFMove(path));
