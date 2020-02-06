@@ -37,7 +37,7 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
     auto attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CFDictionarySetValue(attributesDictionary.get(), kCTFontAttributeName, platformData().ctFont());
-#if HAVE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
+#if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
     if (!locale.isEmpty())
         CFDictionarySetValue(attributesDictionary.get(), kCTLanguageAttributeName, locale.string().createCFString().get());
 #else

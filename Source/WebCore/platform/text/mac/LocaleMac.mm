@@ -35,8 +35,10 @@
 #import <Foundation/NSDateFormatter.h>
 #import <Foundation/NSLocale.h>
 #import <wtf/DateMath.h>
+#import <wtf/HashMap.h>
 #import <wtf/Language.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/AtomStringHash.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "LocalizedDateCache.h"
@@ -62,7 +64,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
     if (equalIgnoringASCIICase(currentLocaleLanguage, localeLanguage))
         return currentLocale;
     // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
-     return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
+    return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);
 }
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
@@ -275,6 +277,26 @@ const Vector<String>& LocaleMac::timeAMPMLabels()
 }
 
 #endif
+
+using CanonicalLocaleMap = HashMap<AtomString, AtomString>;
+
+static CanonicalLocaleMap& canonicalLocaleMap()
+{
+    static NeverDestroyed<CanonicalLocaleMap> canonicalLocaleMap;
+    return canonicalLocaleMap.get();
+}
+
+AtomString LocaleMac::canonicalLanguageIdentifierFromString(const AtomString& string)
+{
+    return canonicalLocaleMap().ensure(string, [&] {
+        return [NSLocale canonicalLanguageIdentifierFromString:string];
+    }).iterator->value;
+}
+
+void LocaleMac::releaseMemory()
+{
+    canonicalLocaleMap().clear();
+}
 
 void LocaleMac::initializeLocaleData()
 {

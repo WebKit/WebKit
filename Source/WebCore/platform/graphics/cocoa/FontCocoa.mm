@@ -32,6 +32,7 @@
 #import "FontCache.h"
 #import "FontCascade.h"
 #import "FontDescription.h"
+#import "LocaleMac.h"
 #import "OpenTypeCG.h"
 #import "SharedBuffer.h"
 #import <CoreText/CoreText.h>
@@ -547,7 +548,7 @@ void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningIndex, bo
 {
     // FIXME: Implement GlyphBuffer initial advance.
     CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | (requiresShaping ? kCTFontTransformApplyShaping : 0);
-#if HAVE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
+#if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
     auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer) {
         range.location = std::min(std::max(range.location, static_cast<CFIndex>(0)), static_cast<CFIndex>(glyphBuffer.size()));
         if (range.length < 0) {
@@ -559,7 +560,7 @@ void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningIndex, bo
         *newGlyphsPointer = glyphBuffer.glyphs(beginningIndex);
         *newAdvancesPointer = glyphBuffer.advances(beginningIndex);
     };
-    CTFontTransformGlyphsWithLanguage(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options, locale.string().createCFString().get(), handler);
+    CTFontTransformGlyphsWithLanguage(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options, LocaleMac::canonicalLanguageIdentifierFromString(locale).string().createCFString().get(), handler);
 #else
     UNUSED_PARAM(locale);
     CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options);

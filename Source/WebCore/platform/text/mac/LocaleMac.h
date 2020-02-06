@@ -67,6 +67,9 @@ public:
     const Vector<String>& timeAMPMLabels() override;
 #endif
 
+    static AtomString canonicalLanguageIdentifierFromString(const AtomString&);
+    static void releaseMemory();
+
 private:
     RetainPtr<NSDateFormatter> shortDateFormatter();
     void initializeLocaleData() override;
