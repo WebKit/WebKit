@@ -1999,3 +1999,5 @@ webkit.org/b/207333 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 webkit.org/b/207307 imported/w3c/web-platform-tests/notifications/constructor-basic.html [ Pass Crash ]
 
 webkit.org/b/112939 fast/performance/performance-now-timestamps.html [ Pass Failure ]
+
+webkit.org/b/207363 inspector/css/pseudo-creation.html [ Pass Failure ]
