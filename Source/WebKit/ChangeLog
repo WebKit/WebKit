@@ -1,5 +1,17 @@
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
+        [IPC Hardening] Protect against targetId String being invalid in WebPageProxy::createInspectorTarget() / destroyInspectorTarget()
+        https://bugs.webkit.org/show_bug.cgi?id=207288
+        <rdar://problem/57645953>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createInspectorTarget):
+        (WebKit::WebPageProxy::destroyInspectorTarget):
+
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
         [IPC hardening] Protect against m_inspectorPage being null inWebInspectorProxy::attach()
         https://bugs.webkit.org/show_bug.cgi?id=207289
         <rdar://problem/58419789>
