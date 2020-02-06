@@ -903,3 +903,5 @@ webkit.org/b/207167 inspector/unit-tests/server-timing-entry.html [ Pass Timeout
 webkit.org/b/207237 http/tests/notifications/event-listener-crash.html [ Pass Crash ]
 
 webkit.org/b/207278 imported/w3c/web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html [ Pass Failure ]
+
+webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass Failure ]
