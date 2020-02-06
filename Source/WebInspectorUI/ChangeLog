@@ -1,5 +1,30 @@
 2020-02-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Tab Bar: move window management items to the left and don't show reload/download unless remotely inspecting
+        https://bugs.webkit.org/show_bug.cgi?id=207318
+
+        Reviewed by Timothy Hatcher.
+
+        Move the window management buttons to the left side to match the system look/feel.
+
+        Hide the reload/download buttons when inspecting locally, as there are other ways of
+        reloading the inspected page or downloading a Web Archive.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI._updateDockNavigationItems):
+        (WI._updateReloadTabBarButton):
+        (WI._updateDownloadTabBarButton):
+        (WI._updateInspectModeTabBarButton):
+        (WI._updateTabBarDividers): Added.
+        (WI._updateConsoleTabBarButtons):
+
+        * UserInterface/Debug/Bootstrap.js:
+        (updateDebugUI):
+        (WI.runBootstrapOperations):
+
+2020-02-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Network: the resource detail view cuts off the bottom statistics bar
         https://bugs.webkit.org/show_bug.cgi?id=207320
 

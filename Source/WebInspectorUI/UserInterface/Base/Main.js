@@ -362,63 +362,8 @@ WI.contentLoaded = function()
 
     WI._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", WI._togglePreviousDockConfiguration);
 
-    let leftTabBarNavigationItems = [];
-
-    let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    WI._inspectModeTabBarButton = new WI.ActivateButtonNavigationItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
-    WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
-    leftTabBarNavigationItems.push(WI._inspectModeTabBarButton);
-
-    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if ((InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
-        const deviceSettingsTooltip = WI.UIString("Device Settings");
-        WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
-        WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked);
-        leftTabBarNavigationItems.push(WI._deviceSettingsTabBarButton);
-
-        WI._deviceSettingsPopover = null;
-    }
-
-    let reloadToolTip;
-    if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
-        reloadToolTip = WI.UIString("Restart (%s)").format(WI._reloadPageKeyboardShortcut.displayName);
-    else
-        reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(WI._reloadPageKeyboardShortcut.displayName, WI._reloadPageFromOriginKeyboardShortcut.displayName);
-    WI._reloadTabBarButton = new WI.ButtonNavigationItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
-    WI._reloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadTabBarButtonClicked);
-    leftTabBarNavigationItems.push(WI._reloadTabBarButton);
-
-    WI._downloadTabBarButton = new WI.ButtonNavigationItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
-    WI._downloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive);
-    leftTabBarNavigationItems.push(WI._downloadTabBarButton);
-
-    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem(leftTabBarNavigationItems));
-
-    WI.tabBar.addNavigationItemBefore(new WI.DividerNavigationItem);
-
-    WI._consoleWarningsTabBarButton = new WI.ButtonNavigationItem("console-warnings", WI.UIString("0 Console warnings"), "Images/Issues.svg");
-    WI._consoleWarningsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
-    WI._consoleWarningsTabBarButton.enabled = false;
-    WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
-        WI.showConsoleTab(WI.LogContentView.Scopes.Warnings, {
-            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
-        });
-    }, WI);
-
-    WI._consoleErrorsTabBarButton = new WI.ButtonNavigationItem("console-errors", WI.UIString("0 Console errors"), "Images/Errors.svg");
-    WI._consoleErrorsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
-    WI._consoleErrorsTabBarButton.enabled = false;
-    WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
-        WI.showConsoleTab(WI.LogContentView.Scopes.Errors, {
-            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
-        });
-    }, WI);
-
-    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem([
-        WI._consoleWarningsTabBarButton,
-        WI._consoleErrorsTabBarButton,
-    ]));
+    WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
+    WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
 
     WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 18, 16);
     WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
@@ -432,18 +377,76 @@ WI.contentLoaded = function()
     WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
     WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
 
-    WI.tabBar.addNavigationItemAfter(new WI.GroupNavigationItem([
+    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem([
+        WI._closeTabBarButton,
         WI._dockToSideTabBarButton,
         WI._dockBottomTabBarButton,
         WI._undockTabBarButton,
     ]));
 
     WI._dockDividerTabBarNavigationItem = new WI.DividerNavigationItem;
-    WI.tabBar.addNavigationItemAfter(WI._dockDividerTabBarNavigationItem);
+    WI.tabBar.addNavigationItemBefore(WI._dockDividerTabBarNavigationItem);
 
-    WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
-    WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
-    WI.tabBar.addNavigationItemAfter(WI._closeTabBarButton);
+    let inspectedPageControlNavigationItems = [];
+
+    let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    WI._inspectModeTabBarButton = new WI.ActivateButtonNavigationItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
+    WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
+    inspectedPageControlNavigationItems.push(WI._inspectModeTabBarButton);
+
+    if (InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) {
+        // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
+        if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
+            const deviceSettingsTooltip = WI.UIString("Device Settings");
+            WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
+            WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked);
+            inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
+
+            WI._deviceSettingsPopover = null;
+        }
+
+        let reloadToolTip;
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
+            reloadToolTip = WI.UIString("Restart (%s)").format(WI._reloadPageKeyboardShortcut.displayName);
+        else
+            reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(WI._reloadPageKeyboardShortcut.displayName, WI._reloadPageFromOriginKeyboardShortcut.displayName);
+        WI._reloadTabBarButton = new WI.ButtonNavigationItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
+        WI._reloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._reloadTabBarButtonClicked);
+        inspectedPageControlNavigationItems.push(WI._reloadTabBarButton);
+
+        WI._downloadTabBarButton = new WI.ButtonNavigationItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
+        WI._downloadTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._downloadWebArchive);
+        inspectedPageControlNavigationItems.push(WI._downloadTabBarButton);
+    }
+
+    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem(inspectedPageControlNavigationItems));
+
+    WI._consoleDividerNavigationItem = new WI.DividerNavigationItem;
+    WI.tabBar.addNavigationItemBefore(WI._consoleDividerNavigationItem);
+
+    WI._consoleWarningsTabBarButton = new WI.ButtonNavigationItem("console-warnings", WI.UIString("0 Console warnings"), "Images/IssuesEnabled.svg");
+    WI._consoleWarningsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+    WI._consoleWarningsTabBarButton.hidden = false;
+    WI._consoleWarningsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+        WI.showConsoleTab(WI.LogContentView.Scopes.Warnings, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
+        });
+    }, WI);
+
+    WI._consoleErrorsTabBarButton = new WI.ButtonNavigationItem("console-errors", WI.UIString("0 Console errors"), "Images/ErrorsEnabled.svg");
+    WI._consoleErrorsTabBarButton.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+    WI._consoleErrorsTabBarButton.hidden = false;
+    WI._consoleErrorsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+        WI.showConsoleTab(WI.LogContentView.Scopes.Errors, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
+        });
+    }, WI);
+
+    WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem([
+        WI._consoleWarningsTabBarButton,
+        WI._consoleErrorsTabBarButton,
+    ]));
 
     WI._updateInspectModeTabBarButton();
     WI._updateDownloadTabBarButton();
@@ -1715,16 +1718,14 @@ WI._updateDockNavigationItems = function()
         WI._undockTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Undocked;
         WI._dockBottomTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Bottom;
         WI._dockToSideTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Right || WI._dockConfiguration === WI.DockConfiguration.Left;
-        WI._dockDividerTabBarNavigationItem.hidden = WI._closeTabBarButton.hidden;
     } else {
         WI._closeTabBarButton.hidden = true;
         WI._undockTabBarButton.hidden = true;
         WI._dockBottomTabBarButton.hidden = true;
         WI._dockToSideTabBarButton.hidden = true;
-        WI._dockDividerTabBarNavigationItem.hidden = true;
     }
 
-    WI.tabBar.needsLayout();
+    WI._updateTabBarDividers();
 };
 
 WI._tabBrowserSizeDidChange = function()
@@ -2205,15 +2206,21 @@ WI._reloadTabBarButtonClicked = function(event)
 
 WI._updateReloadTabBarButton = function()
 {
+    if (!WI._reloadTabBarButton)
+        return;
+
     WI._reloadTabBarButton.hidden = !InspectorBackend.hasDomain("Page");
-    WI.tabBar.needsLayout();
+    WI._updateTabBarDividers();
 };
 
 WI._updateDownloadTabBarButton = function()
 {
+    if (!WI._downloadTabBarButton)
+        return;
+
     if (!InspectorBackend.hasDomain("Page")) {
         WI._downloadTabBarButton.hidden = true;
-        WI.tabBar.needsLayout();
+        WI._updateTabBarDividers();
         return;
     }
 
@@ -2228,6 +2235,28 @@ WI._updateDownloadTabBarButton = function()
 WI._updateInspectModeTabBarButton = function()
 {
     WI._inspectModeTabBarButton.hidden = !InspectorBackend.hasDomain("DOM");
+    WI._updateTabBarDividers();
+};
+
+WI._updateTabBarDividers = function()
+{
+    let closeHidden = WI._closeTabBarButton.hidden;
+    let dockToSideHidden = WI._dockToSideTabBarButton.hidden;
+    let dockBottomHidden = WI._dockBottomTabBarButton.hidden;
+    let undockHidden = WI._undockTabBarButton.hidden;
+
+    let inspectModeHidden = WI._inspectModeTabBarButton.hidden;
+    let deviceSettingsHidden = WI._deviceSettingsTabBarButton && WI._deviceSettingsTabBarButton.hidden;
+    let reloadHidden = WI._reloadTabBarButton && WI._reloadTabBarButton.hidden;
+    let downloadHidden = WI._downloadTabBarButton && WI._downloadTabBarButton.hidden;
+
+    let warningsHidden = WI._consoleWarningsTabBarButton.hidden;
+    let errorsHidden = WI._consoleErrorsTabBarButton.hidden;
+
+    // Hide the divider if everything to the left is hidden OR if everything to the right is hidden.
+    WI._dockDividerTabBarNavigationItem.hidden = (closeHidden && dockToSideHidden && dockBottomHidden && undockHidden) || (inspectModeHidden && deviceSettingsHidden && reloadHidden && downloadHidden && warningsHidden && errorsHidden);
+    WI._consoleDividerNavigationItem.hidden = (closeHidden && dockToSideHidden && dockBottomHidden && undockHidden && inspectModeHidden && deviceSettingsHidden && reloadHidden && downloadHidden) || (warningsHidden && errorsHidden);
+
     WI.tabBar.needsLayout();
 };
 
@@ -2250,34 +2279,28 @@ WI._updateConsoleTabBarButtons = function()
     let warningCount = WI.consoleManager.warningCount;
     if (warningCount) {
         let warningFormat = (warningCount === 1) ? WI.UIString("Click to show %d warning in the Console") : WI.UIString("Click to show %d warnings in the Console");
-        WI._consoleWarningsTabBarButton.image = "Images/IssuesEnabled.svg";
         WI._consoleWarningsTabBarButton.tooltip = warningFormat.format(warningCount);
-        WI._consoleWarningsTabBarButton.enabled = true;
+        WI._consoleWarningsTabBarButton.hidden = false;
 
         if (warningCount !== WI._consoleWarningsTabBarButton.__lastWarningCount)
             pulse(WI._consoleWarningsTabBarButton.element);
     } else {
-        WI._consoleWarningsTabBarButton.image = "Images/Issues.svg";
-        WI._consoleWarningsTabBarButton.tooltip = WI.UIString("0 Console warnings")
-        WI._consoleWarningsTabBarButton.enabled = false;
+        WI._consoleWarningsTabBarButton.hidden = true;
     }
 
     let errorCount = WI.consoleManager.errorCount;
     if (errorCount) {
         let errorFormat = (errorCount === 1) ? WI.UIString("Click to show %d error in the Console") : WI.UIString("Click to show %d errors in the Console");
-        WI._consoleErrorsTabBarButton.image = "Images/ErrorsEnabled.svg";
         WI._consoleErrorsTabBarButton.tooltip = errorFormat.format(errorCount);
-        WI._consoleErrorsTabBarButton.enabled = true;
+        WI._consoleErrorsTabBarButton.hidden = false;
 
         if (errorCount !== WI._consoleErrorsTabBarButton.__lastErrorCount)
             pulse(WI._consoleErrorsTabBarButton.element);
     } else {
-        WI._consoleErrorsTabBarButton.image = "Images/Errors.svg";
-        WI._consoleErrorsTabBarButton.tooltip = WI.UIString("0 Console errors")
-        WI._consoleErrorsTabBarButton.enabled = false;
+        WI._consoleErrorsTabBarButton.hidden = true;
     }
 
-    WI.tabBar.needsLayout();
+    WI._updateTabBarDividers();
 
     WI._consoleWarningsTabBarButton.__lastWarningCount = warningCount;
     WI._consoleErrorsTabBarButton.__lastErrorCount = errorCount;
