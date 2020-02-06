@@ -1,5 +1,17 @@
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
+        [IPC hardening] Protect against bad identifier in CacheStorageEngineConnection::reference() / dereference()
+        https://bugs.webkit.org/show_bug.cgi?id=207302
+        <rdar://problem/59016099>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
         [IPC hardening] Protect against bad parameters in NetworkRTCProvider::createResolver()
         https://bugs.webkit.org/show_bug.cgi?id=207301
         <rdar://problem/59011449>

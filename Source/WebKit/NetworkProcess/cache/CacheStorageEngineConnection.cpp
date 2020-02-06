@@ -116,6 +116,10 @@ void CacheStorageEngineConnection::putRecords(uint64_t cacheIdentifier, Vector<R
 void CacheStorageEngineConnection::reference(uint64_t cacheIdentifier)
 {
     RELEASE_LOG_IF_ALLOWED("reference cache %" PRIu64, cacheIdentifier);
+    ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
+    if (!m_cachesLocks.isValidKey(cacheIdentifier))
+        return;
+
     auto& counter = m_cachesLocks.ensure(cacheIdentifier, []() {
         return 0;
     }).iterator->value;
@@ -126,6 +130,9 @@ void CacheStorageEngineConnection::reference(uint64_t cacheIdentifier)
 void CacheStorageEngineConnection::dereference(uint64_t cacheIdentifier)
 {
     RELEASE_LOG_IF_ALLOWED("dereference cache %" PRIu64, cacheIdentifier);
+    ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
+    if (!m_cachesLocks.isValidKey(cacheIdentifier))
+        return;
 
     auto referenceResult = m_cachesLocks.find(cacheIdentifier);
     if (referenceResult == m_cachesLocks.end())
