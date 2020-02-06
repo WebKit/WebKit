@@ -542,8 +542,16 @@ WI.contentLoaded = function()
     function updateConsoleSavedResultPrefixCSSVariable() {
         document.body.style.setProperty("--console-saved-result-prefix", "\"" + WI.RuntimeManager.preferredSavedResultPrefix() + "\"");
     }
-    WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateConsoleSavedResultPrefixCSSVariable);
+
+    WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateConsoleSavedResultPrefixCSSVariable, WI.settings);
     updateConsoleSavedResultPrefixCSSVariable();
+
+    function updateZoomFactorCSSVariable() {
+        document.body.style.setProperty("--zoom-factor", WI.settings.zoomFactor.value);
+    }
+
+    WI.settings.zoomFactor.addEventListener(WI.Setting.Event.Changed, updateZoomFactorCSSVariable, WI.settings);
+    updateZoomFactorCSSVariable();
 
     // Signal that the frontend is now ready to receive messages.
     WI._backendTargetAvailablePromise.promise.then(() => {

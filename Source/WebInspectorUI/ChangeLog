@@ -1,3 +1,21 @@
+2020-02-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: the height of the undocked title area shouldn't change when zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=207228
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.contentLoaded.updateZoomFactorCSSVariable): Added.
+        Save the zoom factor as a number in a CSS variable on the `<body>`.
+
+        * UserInterface/Views/Variables.css:
+        (body.mac-platform:not(.docked)): Added.
+        (body:not(.docked)): Deleted.
+        Divide the default `22px` by the current zoom factor so that it cancels out when rendered.
+        Make it so that the undocked title area is only shown on macOS <https://webkit.org/b/204627#c47>
+
 2020-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Some cookie table column headers should not be localizable
