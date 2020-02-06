@@ -781,6 +781,7 @@ inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObje
 inline String AccessibilityObject::actionVerb() const { return emptyString(); }
 inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
 inline void AccessibilityObject::updateBackingStore() { }
+inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible);

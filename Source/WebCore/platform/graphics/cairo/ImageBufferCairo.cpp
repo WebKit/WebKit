@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
+#include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Pattern.h"

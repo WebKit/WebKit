@@ -46,6 +46,7 @@ class NetworkProcessProxy;
 class ProcessAssertion;
 class WebProcessPool;
 class WebsiteDataStore;
+struct FrameInfoData;
 
 class DownloadProxyMap : public CanMakeWeakPtr<DownloadProxyMap> {
     WTF_MAKE_FAST_ALLOCATED;

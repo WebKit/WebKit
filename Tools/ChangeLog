@@ -1,3 +1,12 @@
+2020-02-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Miscellaneous build fixes February 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=207312
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/PlatformWebView.h: Remove #elif guard and just use #else
+
 2020-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Try using 75% load factor for HashTable

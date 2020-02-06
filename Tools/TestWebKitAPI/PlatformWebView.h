@@ -91,7 +91,7 @@ public:
 private:
 #if PLATFORM(MAC)
     void initialize(WKPageConfigurationRef, Class wkViewSubclass);
-#elif PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+#else
     void initialize(WKPageConfigurationRef);
 #endif
 #if PLATFORM(WIN)

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "NetworkDataTaskBlob.h"
 
+#include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Download.h"
 #include "Logging.h"
