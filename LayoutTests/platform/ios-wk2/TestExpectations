@@ -1378,3 +1378,5 @@ webkit.org/b/207197 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pas
 webkit.org/b/206627 storage/websql [ Skip ]
 
 webkit.org/b/207077 [ Debug ] imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html [ Pass Failure ]
+
+webkit.org/b/207038 [ Release ] fast/hidpi/image-srcset-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
