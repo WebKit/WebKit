@@ -40,7 +40,7 @@ namespace WebKit {
 class StorageAreaMap;
 class WebPage;
 
-class StorageNamespaceImpl : public WebCore::StorageNamespace {
+class StorageNamespaceImpl final : public WebCore::StorageNamespace {
 public:
     using Identifier = StorageNamespaceIdentifier;
 
@@ -58,7 +58,7 @@ public:
     unsigned quotaInBytes() const { return m_quotaInBytes; }
     PAL::SessionID sessionID() const override;
 
-    void didDestroyStorageAreaMap(StorageAreaMap&);
+    void destroyStorageAreaMap(StorageAreaMap&);
 
     void setSessionIDForTesting(PAL::SessionID) override;
 
@@ -66,6 +66,7 @@ private:
     StorageNamespaceImpl(WebCore::StorageType, Identifier, const Optional<WebCore::PageIdentifier>&, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
+    uint64_t storageAreaMapCountForTesting() const final { return m_storageAreaMaps.size(); }
 
     // FIXME: This is only valid for session storage and should probably be moved to a subclass.
     Ref<WebCore::StorageNamespace> copy(WebCore::Page&) override;

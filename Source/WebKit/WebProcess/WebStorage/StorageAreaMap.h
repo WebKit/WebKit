@@ -70,6 +70,9 @@ public:
 
     void disconnect();
 
+    void incrementUseCount();
+    void decrementUseCount();
+
 private:
     void didSetItem(uint64_t mapSeed, const String& key, bool quotaError);
     void didRemoveItem(uint64_t mapSeed, const String& key);
@@ -97,6 +100,7 @@ private:
     uint64_t m_currentSeed { 0 };
     unsigned m_quotaInBytes;
     WebCore::StorageType m_type;
+    uint64_t m_useCount { 0 };
     bool m_hasPendingClear { false };
 };
 

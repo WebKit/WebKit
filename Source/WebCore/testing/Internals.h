@@ -424,6 +424,8 @@ public:
     uint64_t documentIdentifier(const Document&) const;
     bool isDocumentAlive(uint64_t documentIdentifier) const;
 
+    uint64_t storageAreaMapCount() const;
+
     uint64_t elementIdentifier(Element&) const;
     uint64_t frameIdentifier(const Document&) const;
     uint64_t pageIdentifier(const Document&) const;
