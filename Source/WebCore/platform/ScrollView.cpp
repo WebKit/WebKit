@@ -513,7 +513,7 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping)
+void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping, bool/* animated*/)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
 
@@ -527,13 +527,16 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollC
 
     ScrollPosition newScrollPosition = (!delegatesScrolling() && clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
 
-    if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && newScrollPosition == this->scrollPosition())
+    if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation && newScrollPosition == this->scrollPosition())
         return;
 
-    if (requestScrollPositionUpdate(newScrollPosition, currentScrollType(), clamping))
-        return;
+    if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
+        scrollAnimator().cancelAnimations();
 
-    updateScrollbars(newScrollPosition);
+    if (!requestScrollPositionUpdate(newScrollPosition, currentScrollType(), clamping))
+        updateScrollbars(newScrollPosition);
+
+    setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
 }
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)

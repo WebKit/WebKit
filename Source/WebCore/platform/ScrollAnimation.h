@@ -32,12 +32,14 @@ namespace WebCore {
 
 class FloatPoint;
 class ScrollableArea;
+enum class ScrollClamping : uint8_t;
 
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ScrollAnimation() { };
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float /* step */, float /* multiplier */) { return true; };
+    virtual void scroll(const FloatPoint&) { };
     virtual void stop() = 0;
     virtual void updateVisibleLengths() { };
     virtual void setCurrentPosition(const FloatPoint&) { };

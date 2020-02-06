@@ -1753,6 +1753,7 @@ platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
 platform/ScrollAnimator.cpp
+platform/ScrollAnimationSmooth.cpp
 platform/ScrollTypes.cpp
 platform/ScrollView.cpp
 platform/ScrollableArea.cpp

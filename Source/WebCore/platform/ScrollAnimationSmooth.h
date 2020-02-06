@@ -27,14 +27,13 @@
 
 #include "ScrollAnimation.h"
 
-#if ENABLE(SMOOTH_SCROLLING)
-
 #include "Timer.h"
 
 namespace WebCore {
 
 class FloatPoint;
 class ScrollableArea;
+enum class ScrollClamping : uint8_t;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
 public:
@@ -51,6 +50,7 @@ public:
 
 private:
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+    void scroll(const FloatPoint&) override;
     void stop() override;
     void updateVisibleLengths() override;
     void setCurrentPosition(const FloatPoint&) override;
@@ -89,7 +89,7 @@ private:
         int visibleLength { 0 };
     };
 
-    bool updatePerAxisData(PerAxisData&, ScrollGranularity, float delta, float minScrollPosition, float maxScrollPosition);
+    bool updatePerAxisData(PerAxisData&, ScrollGranularity, float delta, float minScrollPosition, float maxScrollPosition, double smoothFactor = 1);
     bool animateScroll(PerAxisData&, MonotonicTime currentTime);
 
     void requestAnimationTimerFired();
@@ -108,4 +108,3 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SMOOTH_SCROLLING)

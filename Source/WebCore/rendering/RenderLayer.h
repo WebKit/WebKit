@@ -50,6 +50,7 @@
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderPtr.h"
+#include "ScrollBehavior.h"
 #include "ScrollableArea.h"
 #include <memory>
 #include <wtf/WeakPtr.h>
@@ -134,6 +135,7 @@ struct ScrollRectToVisibleOptions {
     const ScrollAlignment& alignX { ScrollAlignment::alignCenterIfNeeded };
     const ScrollAlignment& alignY { ScrollAlignment::alignCenterIfNeeded };
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
+    ScrollBehavior behavior { ScrollBehavior::Auto };
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
@@ -442,9 +444,11 @@ public:
     bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) override;
 
     WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
+    WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
-    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped);
-    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
+    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
+    void scrollToPosition(const ScrollPosition&, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
 
     // These are only used by marquee.
     void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, ScrollClamping::Unclamped); }

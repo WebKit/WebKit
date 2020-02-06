@@ -46,6 +46,7 @@ namespace WebCore {
 
 class FloatPoint;
 class PlatformTouchEvent;
+class ScrollAnimation;
 class ScrollableArea;
 class Scrollbar;
 class WheelEventTestMonitor;
@@ -68,6 +69,7 @@ public:
     // The base class implementation always scrolls immediately, never animates.
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
 
+    void scrollToOffset(const FloatPoint&);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
@@ -85,8 +87,8 @@ public:
     void setCurrentPosition(const FloatPoint&);
     const FloatPoint& currentPosition() const { return m_currentPosition; }
 
-    virtual void cancelAnimations() { }
-    virtual void serviceScrollAnimations() { }
+    virtual void cancelAnimations();
+    virtual void serviceScrollAnimations();
 
     virtual void contentAreaWillPaint() const { }
     virtual void mouseEnteredContentArea() { }
@@ -97,16 +99,16 @@ public:
     virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
     virtual void willStartLiveResize() { }
     virtual void contentsResized() const { }
-    virtual void willEndLiveResize() { }
+    virtual void willEndLiveResize();
     virtual void contentAreaDidShow() { }
     virtual void contentAreaDidHide() { }
 
     virtual void lockOverlayScrollbarStateToHidden(bool) { }
     virtual bool scrollbarsCanBeActive() const { return true; }
 
-    virtual void didAddVerticalScrollbar(Scrollbar*) { }
+    virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
-    virtual void didAddHorizontalScrollbar(Scrollbar*) { }
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
     virtual void invalidateScrollbarPartLayers(Scrollbar*) { }
@@ -151,6 +153,8 @@ protected:
     ScrollController m_scrollController;
 #endif
     FloatPoint m_currentPosition;
+
+    std::unique_ptr<ScrollAnimation> m_animationProgrammaticScroll;
 };
 
 } // namespace WebCore

@@ -376,13 +376,13 @@ int RenderTextControlSingleLine::scrollTop() const
     return RenderBlockFlow::scrollTop();
 }
 
-void RenderTextControlSingleLine::setScrollLeft(int newLeft, ScrollType, ScrollClamping)
+void RenderTextControlSingleLine::setScrollLeft(int newLeft, ScrollType, ScrollClamping, bool)
 {
     if (innerTextElement())
         innerTextElement()->setScrollLeft(newLeft);
 }
 
-void RenderTextControlSingleLine::setScrollTop(int newTop, ScrollType, ScrollClamping)
+void RenderTextControlSingleLine::setScrollTop(int newTop, ScrollType, ScrollClamping, bool)
 {
     if (innerTextElement())
         innerTextElement()->setScrollTop(newTop);
