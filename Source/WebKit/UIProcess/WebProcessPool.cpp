@@ -756,9 +756,6 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         return;
     }
 
-    if (m_serviceWorkerProcesses.isEmpty())
-        sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
-
     WebProcessProxy* serviceWorkerProcessProxy { nullptr };
     if (!m_useSeparateServiceWorkerProcess) {
         for (auto& process : m_processes) {

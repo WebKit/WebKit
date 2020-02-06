@@ -87,6 +87,8 @@ public:
     virtual void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback) { callback(); }
     virtual void isServiceWorkerRunning(ServiceWorkerIdentifier, CompletionHandler<void(bool)>&& callback) { callback(false); }
 
+    WEBCORE_EXPORT void registerServiceWorkerClients();
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
