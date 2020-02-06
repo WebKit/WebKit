@@ -87,7 +87,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
         self.assertEqual(len(results), 1)
         self.assertEqual(len(list(results.values())[0]), 5)
-        self.assertEqual(list(results.values())[0][0], {
+        self.assertEqual(sorted(list(results.values())[0], key=lambda value: value['uuid'])[0], {
             'fast/encoding/css-cached-bom.html': 'FAIL',
             'fast/encoding/css-charset-default.xhtml': 'FAIL',
             'start_time': list(results.values())[0][0]['start_time'],
@@ -104,7 +104,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
         self.assertEqual(len(results), 1)
         self.assertEqual(len(list(results.values())[0]), 5)
-        self.assertEqual(list(results.values())[0][0], {
+        self.assertEqual(sorted(list(results.values())[0], key=lambda value: value['uuid'])[0], {
             'fast/encoding/css-cached-bom.html': 'FAIL',
             'start_time': list(results.values())[0][0]['start_time'],
             'uuid': 153802947900

@@ -1,3 +1,20 @@
+2020-02-05  Jonathan Bedard  <jbedard@apple.com>
+
+        resulsdbpy: Fix unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=207304
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/configuration_context_unittest.py:
+        (ConfigurationContextTest.test_partition_by_configuration): Add branch to testing table.
+        (ConfigurationContextTest.test_partition_by_partial_configuration): Ditto.
+        * resultsdbpy/resultsdbpy/model/failure_context_unittest.py:
+        (FailureContextTest.test_failures): Sort test failures by uuid for a predictable order in testing.
+        (FailureContextTest.test_unexpected_failures): Ditto.
+        * resultsdbpy/resultsdbpy/model/mock_model_factory.py:
+        (MockModelFactory.iterate_all_commits): Do not batch requests since this function has no way
+        of knowing how expensive the callback may be.
+
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, another build fix after r255846

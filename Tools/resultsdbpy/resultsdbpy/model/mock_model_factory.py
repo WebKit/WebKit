@@ -110,31 +110,31 @@ class MockModelFactory(object):
         for branch in branches:
             commit_index = {repo: 0 for repo in repos}
             commits_for_repo = {repo: sorted(model.commit_context.find_commits_in_range(repo, branch)) for repo in repos}
-            with model.upload_context.cassandra.batch_query_context():
-                for repo in repos:
-                    while max([commits_for_repo[r][commit_index[r]] for r in repos]) > commits_for_repo[repo][commit_index[repo]]:
-                        if commit_index[repo] + 1 >= len(commits_for_repo[repo]):
-                            break
-                        commit_index[repo] += 1
 
-                while True:
-                    commits = []
-                    for repo in repos:
-                        commits.append(commits_for_repo[repo][commit_index[repo]])
-                    callback(commits)
-
-                    youngest_next_repo = None
-                    for repo in repos:
-                        if commit_index[repo] + 1 >= len(commits_for_repo[repo]):
-                            continue
-                        if not youngest_next_repo:
-                            youngest_next_repo = repo
-                            continue
-                        if commits_for_repo[youngest_next_repo][commit_index[youngest_next_repo] + 1] > commits_for_repo[repo][commit_index[repo] + 1]:
-                            youngest_next_repo = repo
-                    if not youngest_next_repo:
+            for repo in repos:
+                while max([commits_for_repo[r][commit_index[r]] for r in repos]) > commits_for_repo[repo][commit_index[repo]]:
+                    if commit_index[repo] + 1 >= len(commits_for_repo[repo]):
                         break
-                    commit_index[youngest_next_repo] += 1
+                    commit_index[repo] += 1
+
+            while True:
+                commits = []
+                for repo in repos:
+                    commits.append(commits_for_repo[repo][commit_index[repo]])
+                callback(commits)
+
+                youngest_next_repo = None
+                for repo in repos:
+                    if commit_index[repo] + 1 >= len(commits_for_repo[repo]):
+                        continue
+                    if not youngest_next_repo:
+                        youngest_next_repo = repo
+                        continue
+                    if commits_for_repo[youngest_next_repo][commit_index[youngest_next_repo] + 1] > commits_for_repo[repo][commit_index[repo] + 1]:
+                        youngest_next_repo = repo
+                if not youngest_next_repo:
+                    break
+                commit_index[youngest_next_repo] += 1
 
     @classmethod
     def add_mock_results(cls, model, configuration=Configuration(), suite='layout-tests', test_results=None):

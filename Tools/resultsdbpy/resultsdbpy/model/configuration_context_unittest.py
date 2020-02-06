@@ -205,6 +205,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
         class ExampleModel(ClusteredByConfiguration):
             __table_name__ = 'example_table'
+            branch = columns.Text(partition_key=True, required=True)
             index = columns.Integer(primary_key=True, required=True)
             sdk = columns.Text(primary_key=True, required=True)
             json = columns.Text()
@@ -213,7 +214,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
             self.database.cassandra.create_table(ExampleModel)
             for configuration in self.CONFIGURATIONS:
                 for i in range(5):
-                    self.database.insert_row_with_configuration(ExampleModel.__table_name__, configuration, index=i, sdk=configuration.sdk, json=configuration.to_json())
+                    self.database.insert_row_with_configuration(ExampleModel.__table_name__, configuration, branch=CommitContext.DEFAULT_BRANCH_KEY, index=i, sdk=configuration.sdk, json=configuration.to_json())
 
             for configuration in self.CONFIGURATIONS:
                 result = self.database.select_from_table_with_configurations(ExampleModel.__table_name__, [configuration], index=2).get(configuration, [])
@@ -227,6 +228,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
         class ExampleModel(ClusteredByConfiguration):
             __table_name__ = 'example_table'
+            branch = columns.Text(partition_key=True, required=True)
             index = columns.Integer(primary_key=True, required=True)
             json = columns.Text()
 
@@ -234,7 +236,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
             self.database.cassandra.create_table(ExampleModel)
             for configuration in self.CONFIGURATIONS:
                 for i in range(5):
-                    self.database.insert_row_with_configuration(ExampleModel.__table_name__, configuration, index=i, json=configuration.to_json())
+                    self.database.insert_row_with_configuration(ExampleModel.__table_name__, configuration, branch=CommitContext.DEFAULT_BRANCH_KEY, index=i, json=configuration.to_json())
 
             configuration_to_search_for = Configuration(model='iPhone Xs')
             results = self.database.select_from_table_with_configurations(ExampleModel.__table_name__, [configuration_to_search_for], index=4)
