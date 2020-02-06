@@ -1,5 +1,16 @@
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
+        [IPC Hardening] Protect against m_inspectedPage / m_inspectorPage being null in WebInspectorProxy::resetState()
+        https://bugs.webkit.org/show_bug.cgi?id=207285
+        <rdar://problem/55420035>
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::resetState):
+
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] Protect against bad RegistrableDomain under WebProcessProxy::didCollectPrewarmInformation()
         https://bugs.webkit.org/show_bug.cgi?id=207281
         <rdar://problem/55318108>

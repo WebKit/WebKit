@@ -186,6 +186,11 @@ void WebInspectorProxy::reopen()
 
 void WebInspectorProxy::resetState()
 {
+    ASSERT(m_inspectedPage);
+    ASSERT(m_inspectorPage);
+    if (!m_inspectedPage || !m_inspectorPage)
+        return;
+
     inspectorPagePreferences().deleteInspectorAttachedHeight();
     inspectorPagePreferences().deleteInspectorAttachedWidth();
     inspectorPagePreferences().deleteInspectorAttachmentSide();
