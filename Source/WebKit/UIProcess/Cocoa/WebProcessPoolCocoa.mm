@@ -50,6 +50,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
@@ -60,6 +61,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if PLATFORM(MAC)
@@ -327,7 +329,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
     if (isInternalInstall()) {
         SandboxExtension::Handle diagnosticsExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.diagnosticd", WTF::nullopt, diagnosticsExtensionHandle);
+        SandboxExtension::createHandleForMachLookup("com.apple.diagnosticd", WTF::nullopt, diagnosticsExtensionHandle, SandboxExtension::Flags::NoReport);
         parameters.diagnosticsExtensionHandle = WTFMove(diagnosticsExtensionHandle);
     }
 #endif

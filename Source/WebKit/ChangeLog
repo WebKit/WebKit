@@ -1,3 +1,25 @@
+2020-02-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Do not create sandbox reports when the UI process cannot issue extensions to diagnostics service
+        https://bugs.webkit.org/show_bug.cgi?id=207279
+        <rdar://problem/59030957>
+        
+        Reviewed by Brent Fulgham.
+
+        Do not create sandbox reports when the UI process cannot issue mach extensions to the diagnostics service.
+        The majority of clients are capable of doing this.
+
+        No new tests, since it is not trivial to test if no sandbox reports are generated for a violation.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::create):
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        (WebKit::SandboxExtensionImpl::SandboxExtensionImpl):
+        (WebKit::SandboxExtension::createHandleForMachLookup):
+        * Shared/SandboxExtension.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-02-05  Chris Dumez  <cdumez@apple.com>
 
         [IPC hardening] Protect against bad identifier in CacheStorageEngineConnection::reference() / dereference()
