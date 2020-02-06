@@ -1,3 +1,26 @@
+2020-02-05  Jer Noble  <jer.noble@apple.com>
+
+        Adopt MTOverrideShouldPlayHDRVideo()
+        https://bugs.webkit.org/show_bug.cgi?id=207275
+        <rdar://problem/58837093>
+
+        Reviewed by Eric Carlson.
+
+        The WebProcess sandbox can block access to the services necessary for MediaToolbox to determine whether
+        the current display is capable of displaying HDR. Rather than opening up the sandbox, provide the information
+        gathered by the UIProcess by way of MTOverrideShouldPlayHDRVideo().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowScreenDidChange):
+        (WebKit::WebPage::displayID const):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setScreenProperties): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::setScreenProperties):
+        (WebKit::WebProcess::updatePageScreenProperties):
+
 2020-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macCatalyst] Incorrect IBeam cursor when selecting text on Wikipedia

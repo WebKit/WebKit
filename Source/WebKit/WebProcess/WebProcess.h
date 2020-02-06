@@ -323,6 +323,10 @@ public:
     void revokeAccessToAssetServices();
 #endif
 
+#if PLATFORM(MAC)
+    void updatePageScreenProperties();
+#endif
+
 private:
     WebProcess();
     ~WebProcess();
