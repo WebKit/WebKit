@@ -1,5 +1,24 @@
 2020-02-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Network: the resource detail view cuts off the bottom statistics bar
+        https://bugs.webkit.org/show_bug.cgi?id=207320
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add a `--network-statistics-height` variable.
+
+        * UserInterface/Views/NetworkDetailView.css:
+        (.network-detail):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .statistics):
+        Use the `--network-statistics-height` variable to make sure the statistics row and the
+        details view for the selected network entry don't overlap.
+        Drive-by: center the content of the statistics row to better match the system look/feel.
+
+2020-02-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: increase the height of the tab bar to match other navigation bars
         https://bugs.webkit.org/show_bug.cgi?id=207317
 

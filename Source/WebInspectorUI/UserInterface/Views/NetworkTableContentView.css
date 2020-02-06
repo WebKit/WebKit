@@ -322,7 +322,9 @@ body[dir=rtl] .waterfall .block {
 
 .network-table > .statistics {
     display: flex;
+    justify-content: center;
     align-items: center;
+    min-height: var(--network-statistics-height);
     padding: 4px 0;
     border-top: 1px solid var(--border-color);
 }
