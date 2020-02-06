@@ -1,3 +1,17 @@
+2020-02-06  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in WebCore::findPlaceForCounter with pseudo element that has display:contents host.
+        https://bugs.webkit.org/show_bug.cgi?id=207241
+
+        When the pseudo element's host element does not initiate a renderer
+        (e.g. display: contents) we need to look further in the DOM tree 
+        for a previous-sibling-or-parent-element candidate.
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/counters/findPlaceForCounter-pseudo-element-display-content-host-crash-expected.txt: Added.
+        * fast/css/counters/findPlaceForCounter-pseudo-element-display-content-host-crash.html: Added.
+
 2020-02-06  Sukolsak Sakshuwong  <sukolsak@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JavaScript string corruption using RegExp with unicode character

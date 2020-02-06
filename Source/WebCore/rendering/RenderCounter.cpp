@@ -75,23 +75,28 @@ static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
     return renderer.element() ? renderer.element()->parentElement() : nullptr;
 }
 
-static Element* previousSiblingOrParentElement(const Element* element)
+static Element* previousSiblingOrParentElement(const Element& element)
 {
-    auto* previous = ElementTraversal::pseudoAwarePreviousSibling(*element);
-    while (previous && !previous->renderer())
-        previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
+    if (auto* previous = ElementTraversal::pseudoAwarePreviousSibling(element)) {
+        while (previous && !previous->renderer())
+            previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
 
-    if (previous)
-        return previous;
+        if (previous)
+            return previous;
+    }
 
-    auto* renderer = element->renderer();
-    if (renderer && renderer->isPseudoElement())
-        return renderer->generatingElement();
-
-    previous = element->parentElement();
-    if (previous && !previous->renderer())
-        previous = previousSiblingOrParentElement(previous);
-    return previous;
+    if (is<PseudoElement>(element)) {
+        auto* hostElement = downcast<PseudoElement>(element).hostElement();
+        ASSERT(hostElement);
+        if (hostElement->renderer())
+            return hostElement;
+        return previousSiblingOrParentElement(*hostElement);
+    }
+    
+    auto* parent = element.parentElement();
+    if (parent && !parent->renderer())
+        parent = previousSiblingOrParentElement(*parent);
+    return parent;
 }
 
 // This function processes the renderer tree in the order of the DOM tree
@@ -100,7 +105,7 @@ static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
 
-    auto* previous = previousSiblingOrParentElement(renderer.element());
+    auto* previous = previousSiblingOrParentElement(*renderer.element());
     return previous ? previous->renderer() : nullptr;
 }
 
