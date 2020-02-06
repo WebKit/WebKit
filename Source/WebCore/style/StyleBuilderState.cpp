@@ -322,8 +322,6 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
 void BuilderState::updateFont()
 {
-    auto& fontSelector = const_cast<Document&>(document()).fontSelector();
-
     auto needsUpdate = [&] {
         if (m_fontDirty)
             return true;
