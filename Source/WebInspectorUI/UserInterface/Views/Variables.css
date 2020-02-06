@@ -212,8 +212,8 @@ body:matches(.window-inactive, .window-docked-inactive) * {
     --border-color-dark: hsl(0, 0%, 72%);
 }
 
-body:not(.docked) {
-    --undocked-title-area-height: 22px;
+body.mac-platform:not(.docked) {
+    --undocked-title-area-height: calc(22px / var(--zoom-factor));
 }
 
 @media (prefers-color-scheme: dark) {
