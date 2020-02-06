@@ -561,6 +561,10 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
 
+            // Make sure we don't leave any renderers behind in nodes outside the composed tree.
+            if (element.shadowRoot())
+                tearDownLeftoverShadowHostChildren(element, builder);
+
             switch (teardownType) {
             case TeardownType::Full:
             case TeardownType::RendererUpdateCancelingAnimations:
@@ -588,10 +592,6 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer);
                 element.setRenderer(nullptr);
             }
-
-            // Make sure we don't leave any renderers behind in nodes outside the composed tree.
-            if (element.shadowRoot())
-                tearDownLeftoverShadowHostChildren(element, builder);
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.didDetachRenderers();

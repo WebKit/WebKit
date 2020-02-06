@@ -1,3 +1,13 @@
+2020-02-06  Ali Juma  <ajuma@chromium.org>
+
+        Crash in RenderTableCol::willBeRemovedFromTree()
+        https://bugs.webkit.org/show_bug.cgi?id=207031
+
+        Reviewed by Antti Koivisto.
+
+        * tables/table-col-indent-crash-expected.txt: Added.
+        * tables/table-col-indent-crash.html: Added.
+
 2020-02-06  Jason Lawrence  <lawrence.j@apple.com>
 
         Regression: (r255150?) [ Mac wk1 ] http/wpt/css/css-animations/start-animation-001.html is flaky failing.
