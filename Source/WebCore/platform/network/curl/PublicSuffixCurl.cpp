@@ -54,6 +54,8 @@ static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, const c
 
 String topPrivatelyControlledDomain(const String& domain)
 {
+    if (domain.isEmpty())
+        return String();
     if (URL::hostIsIPAddress(domain) || !domain.isAllASCII())
         return domain;
 
@@ -64,9 +66,19 @@ String topPrivatelyControlledDomain(const String& domain)
     if (isPublicSuffix(lowercaseDomain))
         return String();
 
+    // This function is expected to work with the format used by cookies, so skip any leading dots.
+    auto domainUTF8 = lowercaseDomain.utf8();
+
+    unsigned position = 0;
+    while (domainUTF8.data()[position] == '.')
+        position++;
+
+    if (position == domainUTF8.length())
+        return String();
+
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);
-    return topPrivatelyControlledDomainInternal(psl, lowercaseDomain.utf8().data());
+    return topPrivatelyControlledDomainInternal(psl, domainUTF8.data() + position);
 }
 
 } // namespace WebCore
