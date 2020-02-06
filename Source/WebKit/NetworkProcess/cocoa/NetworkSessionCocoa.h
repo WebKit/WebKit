@@ -74,7 +74,6 @@ public:
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
 #if PLATFORM(IOS_FAMILY)
-    static void setCTDataConnectionServiceType(const String&);
     const String& dataConnectionServiceType() const;
 #endif
 
