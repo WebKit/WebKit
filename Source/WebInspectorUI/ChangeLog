@@ -1,3 +1,20 @@
+2020-02-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: increase the height of the tab bar to match other navigation bars
+        https://bugs.webkit.org/show_bug.cgi?id=207317
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Define `--tab-bar-height` in terms of `--navigation-bar-height` so they share the same value.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .tabs > .item):
+        (.tab-bar > .tabs > .item.pinned):
+        (.tab-bar > .tabs > .item.pinned.tab-picker): Deleted.
+        Increase the width to match the `--tab-bar-height` so that pinned tab bar items are square.
+
 2020-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dragging handles in the easing popover selects sidebar text
