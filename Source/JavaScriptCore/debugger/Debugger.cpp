@@ -914,9 +914,12 @@ void Debugger::clearNextPauseState()
     m_afterBlackboxedScript = false;
 }
 
-void Debugger::didReachBreakpoint(CallFrame* callFrame)
+void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
 {
     if (m_isPaused)
+        return;
+
+    if (!m_pauseOnDebuggerStatements)
         return;
 
     PauseReasonDeclaration reason(*this, PausedForDebuggerStatement);

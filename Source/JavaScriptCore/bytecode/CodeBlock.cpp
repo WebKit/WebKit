@@ -758,7 +758,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         case op_debug: {
-            if (instruction->as<OpDebug>().m_debugHookType == DidReachBreakpoint)
+            if (instruction->as<OpDebug>().m_debugHookType == DidReachDebuggerStatement)
                 m_hasDebuggerStatement = true;
             break;
         }

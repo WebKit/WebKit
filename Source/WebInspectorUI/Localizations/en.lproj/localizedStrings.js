@@ -368,6 +368,7 @@ localizedStrings["Databases"] = "Databases";
 localizedStrings["Date"] = "Date";
 localizedStrings["Debug: "] = "Debug: ";
 localizedStrings["Debugger Statement"] = "Debugger Statement";
+localizedStrings["Debugger Statements"] = "Debugger Statements";
 localizedStrings["Debugger disabled during Audit"] = "Debugger disabled during Audit";
 localizedStrings["Debugger disabled during Timeline recording"] = "Debugger disabled during Timeline recording";
 localizedStrings["Debugging:"] = "Debugging:";

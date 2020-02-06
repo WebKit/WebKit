@@ -67,7 +67,7 @@ namespace JSC {
         WillExecuteProgram,
         DidExecuteProgram,
         DidEnterCallFrame,
-        DidReachBreakpoint,
+        DidReachDebuggerStatement,
         WillLeaveCallFrame,
         WillExecuteStatement,
         WillExecuteExpression,

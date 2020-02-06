@@ -80,6 +80,7 @@ public:
     void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>&) final;
     void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) final;
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>&) final;
+    void setPauseOnDebuggerStatements(ErrorString&, bool enabled) final;
     void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
     void setPauseOnAssertions(ErrorString&, bool enabled) final;
     void setPauseOnMicrotasks(ErrorString&, bool enabled) final;

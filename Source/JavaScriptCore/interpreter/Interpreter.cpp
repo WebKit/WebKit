@@ -1252,8 +1252,8 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
         case DidExecuteProgram:
             debugger->didExecuteProgram(callFrame);
             break;
-        case DidReachBreakpoint:
-            debugger->didReachBreakpoint(callFrame);
+        case DidReachDebuggerStatement:
+            debugger->didReachDebuggerStatement(callFrame);
             break;
     }
     scope.assertNoException();
@@ -1275,8 +1275,8 @@ void printInternal(PrintStream& out, JSC::DebugHookType type)
     case JSC::DidEnterCallFrame:
         out.print("DidEnterCallFrame");
         return;
-    case JSC::DidReachBreakpoint:
-        out.print("DidReachBreakpoint");
+    case JSC::DidReachDebuggerStatement:
+        out.print("DidReachDebuggerStatement");
         return;
     case JSC::WillLeaveCallFrame:
         out.print("WillLeaveCallFrame");

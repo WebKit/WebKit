@@ -832,6 +832,11 @@ void InspectorDebuggerAgent::didBecomeIdle()
     }
 }
 
+void InspectorDebuggerAgent::setPauseOnDebuggerStatements(ErrorString&, bool enabled)
+{
+    m_scriptDebugServer.setPauseOnDebuggerStatements(enabled);
+}
+
 void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, const String& stringPauseState)
 {
     JSC::Debugger::PauseOnExceptionsState pauseState;

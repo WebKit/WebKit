@@ -3059,7 +3059,7 @@ void EmptyStatementNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 
 void DebuggerStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(DidReachBreakpoint, position());
+    generator.emitDebugHook(DidReachDebuggerStatement, position());
 }
 
 // ------------------------------ ExprStatementNode ----------------------------
