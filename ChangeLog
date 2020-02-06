@@ -1,3 +1,16 @@
+2020-02-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Build a shared JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=198446
+
+        Reviewed by Fujii Hironori.
+
+        Compile bmalloc and WTF as OBJECT libraries that are then linked into a shared
+        JavaScriptCore. Using OBJECT libraries is a modern CMake way to have the behavior
+        of --whole-archive.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-02-04  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable TestWebKit

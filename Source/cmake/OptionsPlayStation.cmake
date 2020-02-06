@@ -164,10 +164,20 @@ set(WebKit_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WebKit/DerivedSources)
 set(WTF_SCRIPTS_DIR ${CMAKE_BINARY_DIR}/WTF/Scripts)
 set(JavaScriptCore_SCRIPTS_DIR ${CMAKE_BINARY_DIR}/JavaScriptCore/Scripts)
 
-# Override library types
-set(WTF_LIBRARY_TYPE STATIC)
-set(JavaScriptCore_LIBRARY_TYPE STATIC)
+# Create a shared JavaScriptCore with WTF and bmalloc exposed through it.
+#
+# Use OBJECT libraries for bmalloc and WTF. This is the modern CMake way to emulate
+# the behavior of --whole-archive. If this is not done then all the exports will
+# not be exposed.
+set(bmalloc_LIBRARY_TYPE OBJECT)
+set(WTF_LIBRARY_TYPE OBJECT)
+set(JavaScriptCore_LIBRARY_TYPE SHARED)
+
+# For the shared WebKit just link a STATIC WebCore since the exports from WebCore
+# and PAL are not needed.
+set(PAL_LIBRARY_TYPE STATIC)
 set(WebCore_LIBRARY_TYPE STATIC)
+set(WebKit_LIBRARY_TYPE SHARED)
 
 # Enable multi process builds for Visual Studio
 if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")

@@ -10,6 +10,14 @@ list(APPEND TestWTF_SOURCES
     generic/UtilitiesGeneric.cpp
 )
 
+# Both bmalloc and WTF are built as object libraries. The WebKit:: interface
+# targets are used. A limitation of that is the object files are not propagated
+# so they are added here.
+list(APPEND TestWTF_PRIVATE_LIBRARIES
+    $<TARGET_OBJECTS:WTF>
+    $<TARGET_OBJECTS:bmalloc>
+)
+
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 )
