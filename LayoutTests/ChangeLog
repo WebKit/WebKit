@@ -1,5 +1,14 @@
 2020-02-06  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Flaky Test: fast/performance/performance-now-timestamps.html
+        https://bugs.webkit.org/show_bug.cgi?id=112939
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-02-06  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         REGRESSION: [ macOS wk1 ] ASSERTION FAILED: _notifications.contains(notificationID) imported/w3c/web-platform-tests/notifications/constructor-basic.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=207307
 
