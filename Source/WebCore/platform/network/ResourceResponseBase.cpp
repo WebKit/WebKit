@@ -261,11 +261,12 @@ void ResourceResponseBase::setType(Type type)
     m_type = type;
 }
 
-void ResourceResponseBase::includeCertificateInfo() const
+void ResourceResponseBase::includeCertificateInfo(UsedLegacyTLS usedLegacyTLS) const
 {
     if (m_certificateInfo)
         return;
     m_certificateInfo = static_cast<const ResourceResponse*>(this)->platformCertificateInfo();
+    m_usedLegacyTLS = usedLegacyTLS;
 }
 
 String ResourceResponseBase::suggestedFilename() const

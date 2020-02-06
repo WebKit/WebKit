@@ -50,6 +50,7 @@ public:
     WTF_EXPORT_PRIVATE bool decode(uint16_t&);
     WTF_EXPORT_PRIVATE bool decode(uint32_t&);
     WTF_EXPORT_PRIVATE bool decode(uint64_t&);
+    WTF_EXPORT_PRIVATE bool decode(int16_t&);
     WTF_EXPORT_PRIVATE bool decode(int32_t&);
     WTF_EXPORT_PRIVATE bool decode(int64_t&);
     WTF_EXPORT_PRIVATE bool decode(float&);

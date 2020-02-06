@@ -107,7 +107,7 @@ public:
     size_t approximateSize() const;
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
-    static const unsigned version = 15;
+    static const unsigned version = 16;
 
     String basePathIsolatedCopy() const;
     String versionPath() const;

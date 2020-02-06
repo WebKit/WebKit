@@ -27,6 +27,7 @@
 
 #if HAVE(SSL)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "TestNavigationDelegate.h"
@@ -37,13 +38,14 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebKit/WebUIKitSupport.h>
 #import <WebKit/WebCoreThread.h>
 #endif
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(TLS_PROTOCOL_VERSION_T) || HAVE(NETWORK_FRAMEWORK)
 @interface TLSObserver : NSObject
 - (void)waitUntilNegotiatedLegacyTLSChanged;
 @end
@@ -228,13 +230,9 @@ TEST(TLSVersion, DISABLED_NavigationDelegateSPI)
 }
 
 #if HAVE(TLS_PROTOCOL_VERSION_T)
-TEST(TLSVersion, NegotiatedLegacyTLS)
-{
-    TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL *ssl) {
-        TCPServer::respondWithOK(ssl);
-        TCPServer::respondWithOK(ssl);
-    }, tls1_1);
 
+static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate()
+{
     auto delegate = adoptNS([TestNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -242,6 +240,20 @@ TEST(TLSVersion, NegotiatedLegacyTLS)
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
         callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     }];
+    return { webView, delegate };
+}
+
+#endif // HAVE(TLS_PROTOCOL_VERSION_T) || HAVE(NETWORK_FRAMEWORK)
+
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+
+TEST(TLSVersion, NegotiatedLegacyTLS)
+{
+    HTTPServer server({
+        { "/", { "hello" } }
+    }, HTTPServer::Protocol::HttpsWithLegacyTLS);
+
+    auto [webView, delegate] = webViewWithNavigationDelegate();
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
     [webView loadRequest:request];
 
@@ -262,7 +274,64 @@ TEST(TLSVersion, NegotiatedLegacyTLS)
 
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
 }
-#endif
+
+#endif // HAVE(TLS_PROTOCOL_VERSION_T)
+
+#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+
+TEST(TLSVersion, NavigateBack)
+{
+    HTTPServer legacyTLSServer({
+        { "/", { "hello" } }
+    }, HTTPServer::Protocol::HttpsWithLegacyTLS);
+
+    HTTPServer modernTLSServer({
+        { "/", { "hello" } }
+    }, HTTPServer::Protocol::Https);
+    
+    auto [webView, delegate] = webViewWithNavigationDelegate();
+    auto observer = adoptNS([TLSObserver new]);
+    [webView addObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS" options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView loadRequest:legacyTLSServer.request()];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+
+    [webView loadRequest:modernTLSServer.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView goBack];
+    [observer waitUntilNegotiatedLegacyTLSChanged];
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+
+    [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
+}
+
+TEST(TLSVersion, Subresource)
+{
+    HTTPServer legacyTLSServer({
+        { "/", { "hello" } }
+    }, HTTPServer::Protocol::HttpsWithLegacyTLS);
+
+    HTTPServer modernTLSServer({
+        { "/", { makeString("<script>fetch('https://127.0.0.1:", static_cast<unsigned>(legacyTLSServer.port()), "/',{mode:'no-cors'})</script>") } }
+    }, HTTPServer::Protocol::Https);
+    
+    auto [webView, delegate] = webViewWithNavigationDelegate();
+    auto observer = adoptNS([TLSObserver new]);
+    [webView addObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS" options:NSKeyValueObservingOptionNew context:nil];
+
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+    [webView loadRequest:modernTLSServer.request()];
+    while (![webView _negotiatedLegacyTLS])
+        [observer waitUntilNegotiatedLegacyTLSChanged];
+
+    [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 // FIXME: Add some tests for WKWebView.hasOnlySecureContent
 
