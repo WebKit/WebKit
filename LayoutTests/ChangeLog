@@ -1,3 +1,14 @@
+2020-02-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r249831): Sources: endless spinner when trying to view a resource
+        https://bugs.webkit.org/show_bug.cgi?id=207346
+        <rdar://problem/59209016>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/formatting/resources/html-tests/attributes.html:
+        * inspector/formatting/resources/html-tests/attributes-expected.html:
+
 2020-02-06  Truitt Savell  <tsavell@apple.com>
 
         Fix my mistakenly landed expectations from r255962
