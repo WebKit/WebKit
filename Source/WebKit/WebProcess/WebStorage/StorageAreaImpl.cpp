@@ -37,14 +37,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<StorageAreaImpl> StorageAreaImpl::create(Ref<StorageAreaMap>&& storageAreaMap)
+Ref<StorageAreaImpl> StorageAreaImpl::create(StorageAreaMap& storageAreaMap)
 {
-    return adoptRef(*new StorageAreaImpl(WTFMove(storageAreaMap)));
+    return adoptRef(*new StorageAreaImpl(storageAreaMap));
 }
 
-StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
+StorageAreaImpl::StorageAreaImpl(StorageAreaMap& storageAreaMap)
     : m_identifier(Identifier::generate())
-    , m_storageAreaMap(WTFMove(storageAreaMap))
+    , m_storageAreaMap(makeWeakPtr(storageAreaMap))
 {
 }
 
@@ -54,44 +54,54 @@ StorageAreaImpl::~StorageAreaImpl()
 
 unsigned StorageAreaImpl::length()
 {
-    return m_storageAreaMap->length();
+    return m_storageAreaMap ? m_storageAreaMap->length() : 0;
 }
 
 String StorageAreaImpl::key(unsigned index)
 {
-    return m_storageAreaMap->key(index);
+    return m_storageAreaMap ? m_storageAreaMap->key(index) : nullString();
 }
 
 String StorageAreaImpl::item(const String& key)
 {
-    return m_storageAreaMap->item(key);
+    return m_storageAreaMap ? m_storageAreaMap->item(key) : nullString();
 }
 
 void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!value.isNull());
 
-    m_storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
+    if (m_storageAreaMap)
+        m_storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
 }
 
 void StorageAreaImpl::removeItem(Frame* sourceFrame, const String& key)
 {
-    m_storageAreaMap->removeItem(sourceFrame, this, key);
+    if (m_storageAreaMap)
+        m_storageAreaMap->removeItem(sourceFrame, this, key);
 }
 
 void StorageAreaImpl::clear(Frame* sourceFrame)
 {
-    m_storageAreaMap->clear(sourceFrame, this);
+    if (m_storageAreaMap)
+        m_storageAreaMap->clear(sourceFrame, this);
 }
 
 bool StorageAreaImpl::contains(const String& key)
 {
-    return m_storageAreaMap->contains(key);
+    if (m_storageAreaMap)
+        return m_storageAreaMap->contains(key);
+
+    return false;
 }
 
 StorageType StorageAreaImpl::storageType() const
 {
-    return m_storageAreaMap->type();
+    if (m_storageAreaMap)
+        return m_storageAreaMap->type();
+
+    // We probably need an Invalid type.
+    return StorageType::Local;
 }
 
 size_t StorageAreaImpl::memoryBytesUsedByCache()
