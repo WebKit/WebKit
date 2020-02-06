@@ -392,8 +392,6 @@ void JITCompiler::compile()
     link(*linkBuffer);
     m_speculative->linkOSREntries(*linkBuffer);
 
-    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
-
     disassemble(*linkBuffer);
 
     m_graph.m_plan.setFinalizer(makeUnique<JITFinalizer>(
@@ -493,8 +491,6 @@ void JITCompiler::compileFunction()
     link(*linkBuffer);
     m_speculative->linkOSREntries(*linkBuffer);
     
-    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
-
     if (requiresArityFixup)
         linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm().getCTIStub(arityFixupGenerator).code()));
 
