@@ -77,12 +77,14 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
 
 DocumentTimeline::~DocumentTimeline()
 {
-    if (m_document)
-        m_document->removeTimeline(*this);
+    detachFromDocument();
 }
 
 void DocumentTimeline::detachFromDocument()
 {
+    if (m_document)
+        m_document->removeTimeline(*this);
+
     m_currentTimeClearingTaskQueue.close();
     m_elementsWithRunningAcceleratedAnimations.clear();
 
@@ -287,6 +289,8 @@ Optional<Seconds> DocumentTimeline::currentTime()
 
 void DocumentTimeline::cacheCurrentTime(DOMHighResTimeStamp newCurrentTime)
 {
+    ASSERT(m_document);
+
     m_cachedCurrentTime = Seconds(newCurrentTime);
     // We want to be sure to keep this time cached until we've both finished running JS and finished updating
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
