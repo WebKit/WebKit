@@ -31,6 +31,7 @@ WI.BezierEditor = class BezierEditor extends WI.Object
 
         this._element = document.createElement("div");
         this._element.classList.add("bezier-editor");
+        this._element.dir = "ltr";
 
         var editorWidth = 184;
         var editorHeight = 200;

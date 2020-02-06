@@ -30,14 +30,6 @@
     --bezier-editor-preview-translateX: 170px;
 }
 
-body[dir=ltr] .bezier-editor {
-    --bezier-editor-preview-translateX-animate: var(--bezier-editor-preview-translateX);
-}
-
-body[dir=rtl] .bezier-editor {
-    --bezier-editor-preview-translateX-animate: calc(-1 * var(--bezier-editor-preview-translateX));
-}
-
 .bezier-editor > .bezier-preview {
     width: calc(100% - 10px);
     height: 25px;
@@ -69,16 +61,12 @@ body[dir=rtl] .bezier-editor {
 @keyframes bezierPreview {
     from { transform: translateX(0); }
     10% { transform: translateX(0); }
-    90% { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
-    to { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
+    90% { transform: translateX(var(--bezier-editor-preview-translateX)); }
+    to { transform: translateX(var(--bezier-editor-preview-translateX)); }
 }
 
 .bezier-editor > .bezier-container {
     margin: 0 8px;
-}
-
-body[dir=rtl] .bezier-editor > .bezier-container {
-    transform: scaleX(-1);
 }
 
 .bezier-editor > .bezier-container .linear-curve {

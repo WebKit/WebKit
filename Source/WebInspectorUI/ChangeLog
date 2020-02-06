@@ -1,3 +1,22 @@
+2020-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Bezier editor popover should be strictly LTR
+        https://bugs.webkit.org/show_bug.cgi?id=206968
+        <rdar://problem/59007065>
+
+        Reviewed by Timothy Hatcher.
+
+        - Don't mirror the coordinate system.
+        - Don't reverste the order of the cubic bezier values, e.g. `cubic-bezier(0, 0.5, 1, 0.5)`.
+
+        * UserInterface/Views/BezierEditor.css:
+        (90%):
+        (to):
+        (body[dir=ltr] .bezier-editor): Deleted.
+        (body[dir=rtl] .bezier-editor): Deleted.
+        (body[dir=rtl] .bezier-editor > .bezier-container): Deleted.
+        * UserInterface/Views/BezierEditor.js:
+
 2020-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the inspector files combination after r255547
