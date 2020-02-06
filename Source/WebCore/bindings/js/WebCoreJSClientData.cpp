@@ -104,10 +104,35 @@ JSVMClientData::~JSVMClientData()
 void JSVMClientData::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
     ASSERT(worlds.isEmpty());
-    
+
     worlds.reserveInitialCapacity(m_worldSet.size());
-    for (auto it = m_worldSet.begin(), end = m_worldSet.end(); it != end; ++it)
-        worlds.uncheckedAppend(*(*it));
+
+    // It is necessary to order the `DOMWrapperWorld`s because certain callers expect the main world
+    // to be the first item in the list, as they use the main world as an indicator of when the page
+    // is ready to start evaluating JavaScript. For example, Web Inspector waits for the main world
+    // change to clear any injected scripts and debugger/breakpoint state.
+
+    auto& mainNormalWorld = mainThreadNormalWorld();
+
+    // Add main normal world.
+    if (m_worldSet.contains(&mainNormalWorld))
+        worlds.uncheckedAppend(mainNormalWorld);
+
+    // Add other normal worlds.
+    for (auto* world : m_worldSet) {
+        if (world->type() != DOMWrapperWorld::Type::Normal)
+            continue;
+        if (world == &mainNormalWorld)
+            continue;
+        worlds.uncheckedAppend(*world);
+    }
+
+    // Add non-normal worlds.
+    for (auto* world : m_worldSet) {
+        if (world->type() == DOMWrapperWorld::Type::Normal)
+            continue;
+        worlds.uncheckedAppend(*world);
+    }
 }
 
 void JSVMClientData::initNormalWorld(VM* vm)
