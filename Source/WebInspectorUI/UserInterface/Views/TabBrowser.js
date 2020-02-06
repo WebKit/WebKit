@@ -231,7 +231,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
         let tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
 
         if (tabContentView) {
-            let shouldSaveTab = tabContentView.constructor.shouldSaveTab();
+            let tabClass = tabContentView.constructor;
+            let shouldSaveTab = tabClass.shouldSaveTab() || tabClass.shouldPinTab();
             if (shouldSaveTab) {
                 this._recentTabContentViews.remove(tabContentView);
                 this._recentTabContentViews.unshift(tabContentView);
