@@ -1,3 +1,9 @@
+2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, another build fix after r255846
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+
 2020-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed infrastructure fix.

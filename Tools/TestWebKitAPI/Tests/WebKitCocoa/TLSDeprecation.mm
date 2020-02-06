@@ -245,7 +245,7 @@ static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webVie
 
 #endif // HAVE(TLS_PROTOCOL_VERSION_T) || HAVE(NETWORK_FRAMEWORK)
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(TLSVersion, NegotiatedLegacyTLS)
 {
@@ -274,10 +274,6 @@ TEST(TLSVersion, NegotiatedLegacyTLS)
 
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
 }
-
-#endif // HAVE(TLS_PROTOCOL_VERSION_T)
-
-#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(TLSVersion, NavigateBack)
 {
