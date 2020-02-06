@@ -40,10 +40,6 @@ using namespace WebCore;
 
 void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler({ });
-
     Vector<String> pasteboardTypes;
     PlatformPasteboard(pasteboardName).getTypes(pasteboardTypes);
     completionHandler(WTFMove(pasteboardTypes));
@@ -52,11 +48,6 @@ void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Comple
 void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType,
     CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&& sandboxExtensions)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler({ }, { });
-
     Vector<String> pathnames;
     SandboxExtension::HandleArray sandboxExtensions;
     for (auto* webProcessProxy : m_webProcessProxyList) {
@@ -81,31 +72,16 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 
 void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler({ });
-
     completionHandler(PlatformPasteboard(pasteboardName).stringForType(pasteboardType));
 }
 
 void WebPasteboardProxy::getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler({ });
-
     completionHandler(PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType));
 }
 
 void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler({ }, 0);
-
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
     if (!buffer)
         return completionHandler({ }, 0);
@@ -123,20 +99,11 @@ void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName
 
 void WebPasteboardProxy::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!fromPasteboard.isNull());
-    ASSERT(!toPasteboard.isNull());
-    if (fromPasteboard.isNull() || toPasteboard.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(toPasteboard).copy(fromPasteboard));
 }
 
 void WebPasteboardProxy::getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).changeCount());
 }
 
@@ -147,49 +114,26 @@ void WebPasteboardProxy::getPasteboardUniqueName(CompletionHandler<void(String&&
 
 void WebPasteboardProxy::getPasteboardColor(const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler({ });
-
-
     completionHandler(PlatformPasteboard(pasteboardName).color());
 }
 
 void WebPasteboardProxy::getPasteboardURL(const String& pasteboardName, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler({ });
-
-
     completionHandler(PlatformPasteboard(pasteboardName).url().string());
 }
 
 void WebPasteboardProxy::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
-
     completionHandler(PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes));
 }
 
 void WebPasteboardProxy::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes));
 }
 
 void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     for (auto* webProcessProxy : m_webProcessProxyList) {
         if (!webProcessProxy->hasConnection(connection))
             continue;
@@ -204,30 +148,18 @@ void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const Pas
 
 void WebPasteboardProxy::setPasteboardColor(const String& pasteboardName, const WebCore::Color& color, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).setColor(color));
 }
 
 void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType));
 }
 
 void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
     if (pasteboardName.isNull() || pasteboardType.isNull())
         return completionHandler(0);
-
     if (handle.isNull())
         return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType));
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
@@ -239,74 +171,41 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
 
 void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).numberOfFiles());
 }
 
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!origin.isNull());
-    if (pasteboardName.isNull() || origin.isNull())
-        return completionHandler({ });
-
     completionHandler(PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin));
 }
 
 void WebPasteboardProxy::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).write(data));
 }
 
 void WebPasteboardProxy::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<Vector<PasteboardItemInfo>>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler({ });
-
     completionHandler(PlatformPasteboard(pasteboardName).allPasteboardItemInfo(changeCount));
 }
 
 void WebPasteboardProxy::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<PasteboardItemInfo>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(WTF::nullopt);
-
     completionHandler(PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount));
 }
 
 void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(0);
-
     completionHandler(PlatformPasteboard(pasteboardName).count());
 }
 
 void WebPasteboardProxy::readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(String());
-
     completionHandler(PlatformPasteboard(pasteboardName).readString(index, pasteboardType));
 }
 
 void WebPasteboardProxy::readURLFromPasteboard(size_t index, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return completionHandler(String(), String());
-
     String title;
     String url = PlatformPasteboard(pasteboardName).readURL(index, title);
     completionHandler(WTFMove(url), WTFMove(title));
@@ -314,11 +213,6 @@ void WebPasteboardProxy::readURLFromPasteboard(size_t index, const String& paste
 
 void WebPasteboardProxy::readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
 {
-    ASSERT(!pasteboardName.isNull());
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardName.isNull() || pasteboardType.isNull())
-        return completionHandler({ }, 0);
-
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).readBuffer(index, pasteboardType);
     if (!buffer)
         return completionHandler({ }, 0);
@@ -338,46 +232,26 @@ void WebPasteboardProxy::readBufferFromPasteboard(size_t index, const String& pa
 
 void WebPasteboardProxy::writeURLToPasteboard(const PasteboardURL& url, const String& pasteboardName)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return;
-
     PlatformPasteboard(pasteboardName).write(url);
 }
 
 void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return;
-
     PlatformPasteboard(pasteboardName).write(content);
 }
 
 void WebPasteboardProxy::writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage, const String& pasteboardName)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return;
-
     PlatformPasteboard(pasteboardName).write(pasteboardImage);
 }
 
 void WebPasteboardProxy::writeStringToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return;
-
     PlatformPasteboard(pasteboardName).write(pasteboardType, text);
 }
 
 void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)
 {
-    ASSERT(!pasteboardName.isNull());
-    if (pasteboardName.isNull())
-        return;
-
     PlatformPasteboard(pasteboardName).updateSupportedTypeIdentifiers(identifiers);
 }
 

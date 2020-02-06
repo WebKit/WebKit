@@ -1,3 +1,16 @@
+2020-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r255955.
+
+        Caused API test failures on iOS
+
+        Reverted changeset:
+
+        "[IPC hardening] Update WebPasteboardProxy methods to validate
+        their parameters"
+        https://bugs.webkit.org/show_bug.cgi?id=207308
+        https://trac.webkit.org/changeset/255955
+
 2020-02-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r255910, r255970, and r255972.
