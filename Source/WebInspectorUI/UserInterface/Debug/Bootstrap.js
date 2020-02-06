@@ -122,21 +122,13 @@ WI.runBootstrapOperations = function() {
         InspectorFrontendHost.inspectInspector();
     });
 
-    let dividerNavigationItem = new WI.DividerNavigationItem;
-    WI.tabBar.addNavigationItemAfter(dividerNavigationItem);
-
     let groupNavigationItem = new WI.GroupNavigationItem([
         dumpMessagesTabBarNavigationItem,
         inspectInspectorTabBarNavigationItem,
     ]);
     WI.tabBar.addNavigationItemAfter(groupNavigationItem);
 
-    // Move the close button to the end of the tab bar after the debug items are added.
-    WI.tabBar.addNavigationItemAfter(WI._dockDividerTabBarNavigationItem);
-    WI.tabBar.addNavigationItemAfter(WI._closeTabBarButton);
-
     function updateDebugUI() {
-        dividerNavigationItem.hidden = !WI.showDebugUISetting.value;
         groupNavigationItem.hidden = !WI.showDebugUISetting.value;
         WI.tabBar.needsLayout();
     }
