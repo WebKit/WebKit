@@ -1,5 +1,22 @@
 2020-02-06  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r254706): Crash under WebProcessPool::terminateServiceWorkerProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=207354
+        <rdar://problem/59184818>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests, not easily testable AFAIK since this happens on failure to send sync IPC to
+        the service worker when terminating it.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+        'auto' resolved to 'WeakPtr<WebProcessProxy>' in this method and the call to
+        disableServiceWorkers() could cause the process to get destroyed. We would then
+        do a null dereference on the next line.
+
+2020-02-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r255955.
 
         Caused API test failures on iOS
