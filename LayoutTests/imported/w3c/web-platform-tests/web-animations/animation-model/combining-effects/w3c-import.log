@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/combining-effects/applying-interpolated-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/combining-effects/applying-the-composited-result.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/combining-effects/effect-composition.html

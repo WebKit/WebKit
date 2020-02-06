@@ -14,6 +14,7 @@
     "custom-elements": "import", 
     "shadow-dom": "import", 
     "tools": "import", 
+    "web-animations": "import", 
     "web-platform-tests/2dcontext": "import", 
     "web-platform-tests/2dcontext/imagebitmap": "import", 
     "web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001-ref.html": "import", 

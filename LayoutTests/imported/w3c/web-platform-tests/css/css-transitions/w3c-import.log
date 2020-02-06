@@ -15,7 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/AnimationEffect-getComputedTiming.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-canceling.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-currentTime.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/CSSTransition-effect.tentative.html

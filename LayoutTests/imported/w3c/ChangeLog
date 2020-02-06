@@ -1,3 +1,166 @@
+2020-02-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update snapshot of Web Animations, CSS Animations and CSS Transitions WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=207263
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-animations/AnimationEffect-getComputedTiming.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-canceling.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-compositeOrder.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-compositeOrder.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-finished.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-getCurrentTime.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-id.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-playState.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-ready.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-startTime.tentative.html:
+        * web-platform-tests/css/css-animations/CSSPseudoElement-getAnimations.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-animations/CSSPseudoElement-getAnimations.tentative.html: Removed.
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative.html:
+        * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative.html:
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative.html:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+        * web-platform-tests/css/css-animations/KeyframeEffect-target.tentative.html:
+        * web-platform-tests/css/css-animations/animation-before-initial-box-construction-001-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-before-initial-box-construction-001.html: Added.
+        * web-platform-tests/css/css-animations/animationevent-interface.js:
+        (test):
+        * web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html:
+        * web-platform-tests/css/css-animations/support/empty-sheet.css: Added.
+        * web-platform-tests/css/css-animations/support/w3c-import.log:
+        * web-platform-tests/css/css-animations/w3c-import.log:
+        * web-platform-tests/css/css-backgrounds/animations/border-bottom-left-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-bottom-right-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-bottom-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-left-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-right-width-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-top-left-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-top-right-radius-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-top-width-composition-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-variation-settings-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/AnimationEffect-getComputedTiming.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative.html: Removed.
+        * web-platform-tests/css/css-transitions/CSSTransition-canceling.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSTransition-currentTime.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSTransition-effect.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSTransition-finished.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html:
+        * web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative.html:
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative.html:
+        * web-platform-tests/css/css-transitions/Element-getAnimations.tentative.html:
+        * web-platform-tests/css/css-transitions/KeyframeEffect-getKeyframes.tentative.html:
+        * web-platform-tests/css/css-transitions/KeyframeEffect-target.tentative.html:
+        * web-platform-tests/css/css-transitions/README.md:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition.html: Added.
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation.html: Added.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition.html: Added.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation.html: Added.
+        * web-platform-tests/css/css-transitions/animations/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/combining-effects/w3c-import.log.
+        * web-platform-tests/css/css-transitions/animations/z-index-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/animations/z-index-interpolation.html: Added.
+        * web-platform-tests/css/css-transitions/before-load-001.html:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed.html:
+        * web-platform-tests/css/css-transitions/properties-value-001.html:
+        * web-platform-tests/css/css-transitions/properties-value-002.html:
+        * web-platform-tests/css/css-transitions/properties-value-003.html:
+        * web-platform-tests/css/css-transitions/properties-value-auto-001.html:
+        * web-platform-tests/css/css-transitions/properties-value-implicit-001.html:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-001.html:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-002.html:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-003.html:
+        * web-platform-tests/css/css-transitions/pseudo-elements-001.html:
+        * web-platform-tests/css/css-transitions/transition-001.html:
+        * web-platform-tests/css/css-transitions/transition-delay-001.html:
+        * web-platform-tests/css/css-transitions/transition-duration-001.html:
+        * web-platform-tests/css/css-transitions/transition-property-001.html:
+        * web-platform-tests/css/css-transitions/transition-property-002.html:
+        * web-platform-tests/css/css-transitions/transitionevent-interface.html:
+        * web-platform-tests/css/css-transitions/w3c-import.log:
+        * web-platform-tests/css/support/interpolation-testcommon.js:
+        (cssAnimationsInterpolation.isSupported):
+        (cssTransitionsInterpolation.isSupported):
+        (cssTransitionAllInterpolation.isSupported):
+        (webAnimationsInterpolation.isSupported):
+        (webAnimationsInterpolation.interpolateComposite):
+        (createInterpolationTestTargets):
+        (create_tests):
+        (test_interpolation):
+        * web-platform-tests/web-animations/README.md:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+        (testAnimationSamplesWithAnyOrder):
+        * web-platform-tests/web-animations/animation-model/combining-effects/applying-interpolated-transform-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/combining-effects/applying-interpolated-transform.html: Added.
+        * web-platform-tests/web-animations/animation-model/combining-effects/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles.html:
+        * web-platform-tests/web-animations/interfaces/Animation/onremove-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/onremove.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/pause.html:
+        * web-platform-tests/web-animations/interfaces/Animation/play.html:
+        * web-platform-tests/web-animations/interfaces/Animation/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/updateTiming.html:
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt: Removed.
+        * web-platform-tests/web-animations/interfaces/Document/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/DocumentOrShadowRoot/getAnimations-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentOrShadowRoot/getAnimations.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Document/getAnimations.html.
+        * web-platform-tests/web-animations/interfaces/DocumentOrShadowRoot/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/w3c-import.log:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/w3c-import.log:
+        * web-platform-tests/web-animations/testcommon.js:
+        (cubicBezier): Deleted.
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/reverse-running-animation-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-playback-rate-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-playback-rate-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/sync-start-times-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/sync-start-times.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-slow.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero-expected.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/w3c-import.log:
+        * web-platform-tests/web-animations/w3c-import.log:
+
 2020-02-04  Rob Buis  <rbuis@igalia.com>
 
         Tighten up stylesheet loading

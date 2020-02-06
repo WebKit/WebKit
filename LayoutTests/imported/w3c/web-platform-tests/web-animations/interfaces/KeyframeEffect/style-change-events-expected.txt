@@ -1,5 +1,5 @@
 
-PASS All property keys are recognized 
+FAIL All property keys are recognized assert_in_array: Test property 'pseudoElement' should be one of the properties on  KeyframeEffect value "pseudoElement" not in array ["getTiming", "getComputedTiming", "updateTiming", "target", "iterationComposite", "composite", "getKeyframes", "setKeyframes", "KeyframeEffect constructor", "KeyframeEffect copy constructor"]
 PASS KeyframeEffect.getTiming does NOT trigger a style change event 
 PASS KeyframeEffect.getComputedTiming does NOT trigger a style change event 
 PASS KeyframeEffect.updateTiming does NOT trigger a style change event 

@@ -1,5 +1,15 @@
 2020-02-05  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Update snapshot of Web Animations, CSS Animations and CSS Transitions WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=207263
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * tests-options.json:
+
+2020-02-05  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
         https://bugs.webkit.org/show_bug.cgi?id=207253
         <rdar://problem/59143624>

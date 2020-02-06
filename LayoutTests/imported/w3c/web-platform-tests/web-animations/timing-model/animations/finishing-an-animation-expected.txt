@@ -18,4 +18,5 @@ PASS An exception should be thrown if the effective playback rate is zero
 PASS An exception should be thrown when finishing if the effective playback rate is positive and the target effect end is infinity 
 PASS An exception is NOT thrown when finishing if the effective playback rate is negative and the target effect end is infinity 
 PASS Finishing an animation fires finish event on orphaned element 
+PASS Finishing a canceled animation sets the current and start times 
 
