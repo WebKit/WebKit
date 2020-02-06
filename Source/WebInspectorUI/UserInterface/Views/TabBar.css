@@ -134,7 +134,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .navigation-b
 
     padding: 0 6px;
 
-    min-width: 24px;
+    min-width: calc(var(--tab-bar-height) - 1px); /* subtract the width of the border */
     overflow: hidden;
 
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
@@ -169,14 +169,8 @@ body[dir=rtl] .tab-bar > .tabs.dragging-tab > .item.selected {
 }
 
 .tab-bar > .tabs > .item.pinned {
-    width: 24px;
     flex: none;
     justify-content: center;
-}
-
-.tab-bar > .tabs > .item.pinned.tab-picker {
-    width: 18px;
-    min-width: initial;
 }
 
 .tab-bar > .tabs > .item:not(.disabled).selected {
