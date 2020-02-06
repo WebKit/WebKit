@@ -1,3 +1,13 @@
+2020-02-06  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] Protect against bad identifier in WebPageProxy::DidInsertAttachmentWithIdentifier()
+        https://bugs.webkit.org/show_bug.cgi?id=207311
+        <rdar://problem/58632517>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2020-02-06  youenn fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
