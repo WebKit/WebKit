@@ -205,6 +205,21 @@ public:
 #if USE(GSTREAMER_GL)
         m_flags = flags | (m_hasAlphaChannel ? TextureMapperGL::ShouldBlend : 0);
 
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+        GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
+        if (gst_is_gl_memory(memory)) {
+            GstGLMemory* glMemory = GST_GL_MEMORY_CAST(memory);
+            GRefPtr<GstEGLImage> eglImage = adoptGRef(gst_egl_image_from_texture(GST_GL_BASE_MEMORY_CAST(memory)->context, glMemory, nullptr));
+            gsize offset;
+            if (eglImage && gst_egl_image_export_dmabuf(eglImage.get(), &m_dmabufFD, &m_dmabufStride, &offset))
+                return;
+        }
+        static std::once_flag s_onceFlag;
+        std::call_once(s_onceFlag, [] {
+            GST_WARNING("Texture export to DMABuf failed, falling back to internal rendering");
+        });
+#endif // USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+
         if (gstGLEnabled) {
             m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
             if (m_isMapped) {
@@ -218,20 +233,6 @@ public:
 #endif // USE(GSTREAMER_GL)
 
         {
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-            GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
-            if (gst_is_gl_memory(memory)) {
-                GstGLMemory* glMemory = GST_GL_MEMORY_CAST(memory);
-                GRefPtr<GstEGLImage> eglImage = adoptGRef(gst_egl_image_from_texture(GST_GL_BASE_MEMORY_CAST(memory)->context, glMemory, nullptr));
-                gsize offset;
-                if (eglImage && gst_egl_image_export_dmabuf(eglImage.get(), &m_dmabufFD, &m_dmabufStride, &offset))
-                    return;
-            }
-            static std::once_flag onceFlag;
-            std::call_once(onceFlag, [] {
-                GST_WARNING("Texture export to DMABuf failed, falling back to internal rendering");
-            });
-#endif
             m_textureID = 0;
             m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), GST_MAP_READ);
             if (m_isMapped) {
@@ -363,6 +364,15 @@ public:
         }
 
         return nullptr;
+    }
+
+    bool hasDMABuf() const
+    {
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+        return m_dmabufFD >= 0;
+#else
+        return false;
+#endif
     }
 
 private:
@@ -3159,51 +3169,55 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+    auto internalCompositingOperation = [this](TextureMapperPlatformLayerProxy& proxy, std::unique_ptr<GstVideoFrameHolder>&& frameHolder) {
+        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
+        if (frameHolder->hasMappedTextures()) {
+            layerBuffer = frameHolder->platformLayerBuffer();
+            if (!layerBuffer)
+                return;
+            layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
+        } else {
+            layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
+            if (UNLIKELY(!layerBuffer)) {
+                auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
+                texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+                layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
+            }
+            frameHolder->updateTexture(layerBuffer->textureGL());
+            layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
+        }
+        proxy.pushNextBuffer(WTFMove(layerBuffer));
+    };
 
+#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxy& proxy)
+        [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
             LockHolder holder(proxy.lock());
 
             if (!proxy.isActive())
                 return;
 
-            std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, false);
-
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
-            auto holePunchClient = makeUnique<GStreamerDMABufHolePunchClient>(WTFMove(frameHolder), m_wpeVideoPlaneDisplayDmaBuf.get());
-            layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
-            proxy.pushNextBuffer(WTFMove(layerBuffer));
+            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
+            if (frameHolder->hasDMABuf()) {
+                auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
+                auto holePunchClient = makeUnique<GStreamerDMABufHolePunchClient>(WTFMove(frameHolder), m_wpeVideoPlaneDisplayDmaBuf.get());
+                layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
+                proxy.pushNextBuffer(WTFMove(layerBuffer));
+            } else
+                internalCompositingOperation(proxy, WTFMove(frameHolder));
         };
 #else
     auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxy& proxy)
+        [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
             LockHolder holder(proxy.lock());
 
             if (!proxy.isActive())
                 return;
 
-            std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
-
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
-            if (frameHolder->hasMappedTextures()) {
-                layerBuffer = frameHolder->platformLayerBuffer();
-                if (!layerBuffer)
-                    return;
-                layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
-            } else {
-                layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
-                if (UNLIKELY(!layerBuffer)) {
-                    auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
-                    texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-                    layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-                }
-                frameHolder->updateTexture(layerBuffer->textureGL());
-                layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
-            }
-            proxy.pushNextBuffer(WTFMove(layerBuffer));
+            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
+            internalCompositingOperation(proxy, WTFMove(frameHolder));
         };
 #endif // USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 
