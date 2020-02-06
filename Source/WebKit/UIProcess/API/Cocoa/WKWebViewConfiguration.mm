@@ -621,16 +621,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _groupIdentifier = groupIdentifier;
 }
 
-- (BOOL)_treatsSHA1SignedCertificatesAsInsecure
-{
-    return _pageConfiguration->treatsSHA1SignedCertificatesAsInsecure();
-}
-
-- (void)_setTreatsSHA1SignedCertificatesAsInsecure:(BOOL)insecure
-{
-    _pageConfiguration->setTreatsSHA1SignedCertificatesAsInsecure(insecure);
-}
-
 - (BOOL)_respectsImageOrientation
 {
     return _respectsImageOrientation;

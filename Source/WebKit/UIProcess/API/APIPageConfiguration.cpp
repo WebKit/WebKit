@@ -72,7 +72,6 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_relatedPage = this->m_relatedPage;
     copy->m_visitedLinkStore = this->m_visitedLinkStore;
     copy->m_websiteDataStore = this->m_websiteDataStore;
-    copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS_FAMILY)
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
     copy->m_canShowWhileLocked = this->m_canShowWhileLocked;

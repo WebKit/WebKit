@@ -2292,8 +2292,6 @@ private:
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
 
-    bool m_treatsSHA1CertificatesAsInsecure { true };
-
     RefPtr<WebInspectorProxy> m_inspector;
 
 #if ENABLE(FULLSCREEN_API)

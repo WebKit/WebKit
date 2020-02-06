@@ -1,3 +1,26 @@
+2020-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused SPI WKWebViewConfiguration._treatsSHA1SignedCertificatesAsInsecure
+        https://bugs.webkit.org/show_bug.cgi?id=207314
+
+        Reviewed by Youenn Fablet.
+
+        The transition period is over.  SHA1 certificates are insecure.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::treatsSHA1SignedCertificatesAsInsecure): Deleted.
+        (API::PageConfiguration::setTreatsSHA1SignedCertificatesAsInsecure): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _treatsSHA1SignedCertificatesAsInsecure]): Deleted.
+        (-[WKWebViewConfiguration _setTreatsSHA1SignedCertificatesAsInsecure:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+
 2020-02-06  Chris Dumez  <cdumez@apple.com>
 
         [IPC hardening] Update WebPasteboardProxy methods to validate their parameters

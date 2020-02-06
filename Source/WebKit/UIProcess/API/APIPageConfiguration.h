@@ -91,9 +91,6 @@ public:
     WebsitePolicies* defaultWebsitePolicies() const;
     void setDefaultWebsitePolicies(WebsitePolicies*);
 
-    bool treatsSHA1SignedCertificatesAsInsecure() { return m_treatsSHA1SignedCertificatesAsInsecure; }
-    void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
-
 #if PLATFORM(IOS_FAMILY)
     bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
     void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; }
@@ -155,7 +152,6 @@ private:
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
 
-    bool m_treatsSHA1SignedCertificatesAsInsecure { true };
 #if PLATFORM(IOS_FAMILY)
     bool m_alwaysRunsAtForegroundPriority { false };
     bool m_canShowWhileLocked { false };
