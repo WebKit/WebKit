@@ -59,7 +59,7 @@ protected:
 
 private:
     friend class Internals;
-    WEBCORE_TESTSUPPORT_EXPORT StorageNamespace& localStorageNamespace(PAL::SessionID);
+    WEBCORE_EXPORT StorageNamespace& localStorageNamespace(PAL::SessionID);
     StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&, PAL::SessionID);
 
     virtual Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID) = 0;
