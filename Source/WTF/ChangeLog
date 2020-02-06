@@ -1,3 +1,28 @@
+2020-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Try using 75% load factor for HashTable
+        https://bugs.webkit.org/show_bug.cgi?id=207183
+
+        Reviewed by Mark Lam.
+
+        We know that hash-table is one of the most memory consuming part in WebKit.
+        By analyzing many production hash-table implementations[1], I found that many
+        of them are using 75% load-factor while our one is 50%.
+
+        A/B test shows that 75% load-factor is performance-neutral in Speedometer2 and
+        JetStream2, while it offers 2~% improvement in Membuster. This means that we are
+        wasting too much memory for no-performance-improvement.
+
+        This patch changes the load-factor from 50% to 75%.
+
+        [1]: LLVM DenseMap, Abseil's, rust's, and so on.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::shouldExpand):
+        (WTF::HashTable::shouldExpand const):
+        (WTF::HashTableCapacityForSize::capacityForSize):
+        (WTF::KeyTraits>::computeBestTableSize):
+
 2020-02-05  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Do not create sandbox reports when the UI process cannot issue extensions to diagnostics service

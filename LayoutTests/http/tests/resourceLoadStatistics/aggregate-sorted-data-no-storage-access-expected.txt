@@ -4,15 +4,22 @@ Check correct UI data gets reported with no storage access granted.
 
 Resource load statistics:
 
-Registrable domain: topframe2
+Registrable domain: subframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
     gotLinkDecorationFromPrevalentResource: No
-    isPrevalentResource: No
+    subframeUnderTopFrameDomains:
+        topframe1
+        topframe4
+    subresourceUnderTopFrameDomains:
+        topframe3
+    subresourceUniqueRedirectsTo:
+        topframe2
+    isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-Registrable domain: topframe3
+Registrable domain: topframe2
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
@@ -58,19 +65,12 @@ Registrable domain: subframe2
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
-Registrable domain: subframe3
+Registrable domain: topframe3
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
     gotLinkDecorationFromPrevalentResource: No
-    subframeUnderTopFrameDomains:
-        topframe1
-        topframe4
-    subresourceUnderTopFrameDomains:
-        topframe3
-    subresourceUniqueRedirectsTo:
-        topframe2
-    isPrevalentResource: Yes
+    isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
 
