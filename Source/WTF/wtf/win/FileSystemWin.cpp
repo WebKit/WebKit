@@ -151,8 +151,9 @@ static String getFinalPathName(const String& path)
     if (!isHandleValid(handle))
         return String();
 
-    Vector<UChar> buffer(MAX_PATH);
-    if (::GetFinalPathNameByHandleW(handle, wcharFrom(buffer.data()), buffer.size(), VOLUME_NAME_NT) >= MAX_PATH) {
+    // VOLUME_NAME_DOS can return a \\?\ prefixed path, so it can be longer than MAX_PATH
+    Vector<UChar> buffer(32768);
+    if (::GetFinalPathNameByHandleW(handle, wcharFrom(buffer.data()), buffer.size(), VOLUME_NAME_DOS) >= 32768) {
         closeFile(handle);
         return String();
     }
@@ -221,7 +222,7 @@ Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
 {
-    return !::CreateSymbolicLinkW(symbolicLinkPath.wideCharacters().data(), targetPath.wideCharacters().data(), 0);
+    return ::CreateSymbolicLinkW(symbolicLinkPath.wideCharacters().data(), targetPath.wideCharacters().data(), 0);
 }
 
 bool fileExists(const String& path)
@@ -316,8 +317,9 @@ String pathGetFileName(const String& path)
 String directoryName(const String& path)
 {
     String name = path.left(path.length() - pathGetFileName(path).length());
-    if (name.characterStartingAt(name.length() - 1) == '\\') {
-        // Remove any trailing "\".
+    if (name.characterStartingAt(name.length() - 1) == '\\'
+        || name.characterStartingAt(name.length() - 1) == '/') {
+        // Remove any trailing "\" or "/"
         name.truncate(name.length() - 1);
     }
     return name;

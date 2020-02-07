@@ -1,3 +1,15 @@
+2020-02-07  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] Two FileSystem API tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=207388
+
+        Reviewed by Don Olmstead.
+
+        * wtf/win/FileSystemWin.cpp:
+        Make getFinalPathName return dos path rather than nt volume path.
+        Change createSymbolicLink return to match CreateSymbolicLinkW
+        Have directoryName strip trailing slashes.
+
 2020-02-03  Sam Weinig  <weinig@apple.com>
 
         Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
