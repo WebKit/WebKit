@@ -1,3 +1,31 @@
+2020-02-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255178. rdar://problem/59264259
+
+    Unreviewed, revert r254210 as it seems to be causing process assertion leaks.
+    https://bugs.webkit.org/show_bug.cgi?id=205836
+    
+    * Shared/AuxiliaryProcess.cpp:
+    (WebKit::AuxiliaryProcess::initializeConnection):
+    * Shared/AuxiliaryProcess.h:
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::initializeConnection):
+    * WebProcess/WebProcess.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255178 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, revert r254210 as it seems to be causing process assertion leaks.
+            https://bugs.webkit.org/show_bug.cgi?id=205836
+
+            * Shared/AuxiliaryProcess.cpp:
+            (WebKit::AuxiliaryProcess::initializeConnection):
+            * Shared/AuxiliaryProcess.h:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::initializeConnection):
+            * WebProcess/WebProcess.h:
+
 2020-01-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254993. rdar://problem/58778970
