@@ -1760,7 +1760,7 @@ private:
     void didFinishProgress();
     void setNetworkRequestsInProgress(bool);
 
-    void hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent)>&&);
+    void hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent, WebCore::UsedLegacyTLS)>&&);
 
     void didDestroyNavigation(uint64_t navigationID);
 
