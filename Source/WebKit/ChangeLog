@@ -1,3 +1,16 @@
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        BackgroundProcessResponsivenessTimer should not be active if running active pages and service workers
+        https://bugs.webkit.org/show_bug.cgi?id=207264
+
+        Reviewed by Chris Dumez.
+
+        In case a service worker is running, the process might still be foreground if a page is running in the same process.
+        Not observable.
+
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::shouldBeActive const):
+
 2020-02-07  Chris Dumez  <cdumez@apple.com>
 
         Address post-landing review comments from Darin on r255989.
