@@ -321,22 +321,10 @@ class CheckPatchRelevance(buildstep.BuildStep):
         return None
 
 
-class ValidatePatch(buildstep.BuildStep):
-    name = 'validate-patch'
-    description = ['validate-patch running']
-    descriptionDone = ['Validated patch']
-    flunkOnFailure = True
-    haltOnFailure = True
+class BugzillaMixin(object):
+    addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-
-    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, verifycqplus=False):
-        self.verifyObsolete = verifyObsolete
-        self.verifyBugClosed = verifyBugClosed
-        self.verifyReviewDenied = verifyReviewDenied
-        self.verifycqplus = verifycqplus
-        self.addURLs = addURLs
-        buildstep.BuildStep.__init__(self)
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -442,6 +430,36 @@ class ValidatePatch(buildstep.BuildStep):
             return 1
         return 0
 
+    def get_bugzilla_api_key(self):
+        passwords = json.load(open('passwords.json'))
+        return passwords['BUGZILLA_API_KEY']
+
+    def remove_flags_on_patch(self, patch_id):
+        patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
+        flags = [{'name': 'review', 'status': 'X'}, {'name': 'commit-queue', 'status': 'X'}]
+        try:
+            response = requests.put(patch_url, json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+        except Exception as e:
+            self._addToLog('stdio', 'Error in removing flags on Patch {}'.format(patch_id))
+            return FAILURE
+        return SUCCESS
+
+
+class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
+    name = 'validate-patch'
+    description = ['validate-patch running']
+    descriptionDone = ['Validated patch']
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, verifycqplus=False):
+        self.verifyObsolete = verifyObsolete
+        self.verifyBugClosed = verifyBugClosed
+        self.verifyReviewDenied = verifyReviewDenied
+        self.verifycqplus = verifycqplus
+        self.addURLs = addURLs
+        buildstep.BuildStep.__init__(self)
+
     def getResultSummary(self):
         if self.results == FAILURE:
             return {u'step': unicode(self.descriptionDone)}
@@ -499,6 +517,29 @@ class ValidatePatch(buildstep.BuildStep):
             self._addToLog('stdio', 'Patch is marked cq+.\n')
         self.finished(SUCCESS)
         return None
+
+
+class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
+    name = 'remove-flags-from-patch'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def start(self):
+        patch_id = self.getProperty('patch_id', '')
+        if not patch_id:
+            self._addToLog('stdio', 'patch_id build property not found.\n')
+            self.descriptionDone = 'No patch id found'
+            self.finished(FAILURE)
+            return None
+
+        rc = self.remove_flags_on_patch(patch_id)
+        self.finished(rc)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Removed flags on bugzilla patch'}
+        return {u'step': u'Failed to remove flags on bugzilla patch'}
 
 
 class UnApplyPatchIfRequired(CleanWorkingDirectory):
