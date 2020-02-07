@@ -1,5 +1,14 @@
 2020-02-07  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ iOS wk2 ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207386
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-02-07  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk2 ] http/tests/paymentrequest/page-cache-completed-payment-response.https.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=207385
 
