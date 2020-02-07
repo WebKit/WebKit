@@ -1,3 +1,13 @@
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        Filter out TURN/STUN .local URLs from a RTCPeerConnection iceServers list
+        https://bugs.webkit.org/show_bug.cgi?id=207332
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/stun-server-filtering-expected.txt: Added.
+        * webrtc/stun-server-filtering.html: Added.
+
 2020-02-07  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [OpenSSL] Implement WebCrypto APIs for AES-CBC, AES-CFB and AES-GCM

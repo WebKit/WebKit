@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+test((test) => {
+    let pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com', 'stun:blabla.local']}]});
+    let configuration = pc.getConfiguration();
+
+    assert_equals(configuration.iceServers[0].urls.length, 1);
+    assert_equals(configuration.iceServers[0].urls[0], 'stun:foo.com');
+}, "RTCPeerConnection and local STUN server");
+
+test((test) => {
+    let pc = new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com', 'turn:blabla.local']}]});
+    let configuration = pc.getConfiguration();
+
+    assert_equals(configuration.iceServers[0].urls.length, 1);
+    assert_equals(configuration.iceServers[0].urls[0], 'turn:foo.com');
+}, "RTCPeerConnection and local TURN server");
+</script>

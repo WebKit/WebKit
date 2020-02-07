@@ -294,15 +294,22 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
     if (newConfiguration.iceServers) {
         servers.reserveInitialCapacity(newConfiguration.iceServers->size());
         for (auto& server : newConfiguration.iceServers.value()) {
-            Vector<URL> serverURLs;
-            WTF::switchOn(server.urls, [&serverURLs] (const String& string) {
-                serverURLs.reserveInitialCapacity(1);
-                serverURLs.uncheckedAppend(URL { URL { }, string });
-            }, [&serverURLs] (const Vector<String>& vector) {
-                serverURLs.reserveInitialCapacity(vector.size());
-                for (auto& string : vector)
-                    serverURLs.uncheckedAppend(URL { URL { }, string });
+            Vector<String> urls;
+            WTF::switchOn(server.urls, [&urls] (String& url) {
+                urls = { WTFMove(url) };
+            }, [&urls] (Vector<String>& vector) {
+                urls = WTFMove(vector);
             });
+
+            urls.removeAllMatching([](auto& url) {
+                return URL { URL { }, url }.path().endsWithIgnoringASCIICase(".local");
+            });
+
+            auto serverURLs = WTF::map(urls, [](auto& url) -> URL {
+                return { URL { }, url };
+            });
+            server.urls = WTFMove(urls);
+
             for (auto& serverURL : serverURLs) {
                 if (serverURL.isNull())
                     return Exception { TypeError, "Bad ICE server URL" };
