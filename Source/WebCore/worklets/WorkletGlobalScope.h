@@ -65,6 +65,8 @@ public:
 
     void evaluate();
 
+    ReferrerPolicy referrerPolicy() const final;
+
     using RefCounted::ref;
     using RefCounted::deref;
 

@@ -62,21 +62,22 @@ using namespace Inspector;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
-    : m_url(url)
-    , m_identifier(identifier)
-    , m_userAgent(userAgent)
+WorkerGlobalScope::WorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+    : m_url(params.scriptURL)
+    , m_identifier(params.identifier)
+    , m_userAgent(params.userAgent)
     , m_thread(thread)
     , m_script(makeUnique<WorkerScriptController>(this))
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
-    , m_isOnline(isOnline)
-    , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
+    , m_isOnline(params.isOnline)
+    , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_topOrigin(WTFMove(topOrigin))
 #if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
 #endif
     , m_socketProvider(socketProvider)
-    , m_performance(Performance::create(this, timeOrigin))
+    , m_performance(Performance::create(this, params.timeOrigin))
+    , m_referrerPolicy(params.referrerPolicy)
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);
@@ -533,6 +534,11 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
     if (!m_cssValuePool)
         m_cssValuePool = makeUnique<CSSValuePool>();
     return *m_cssValuePool;
+}
+
+ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
+{
+    return m_referrerPolicy;
 }
 
 } // namespace WebCore
