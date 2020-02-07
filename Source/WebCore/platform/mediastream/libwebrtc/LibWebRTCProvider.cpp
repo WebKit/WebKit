@@ -247,8 +247,10 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
     if (m_factory)
         return m_factory.get();
 
-    if (!webRTCAvailable())
+    if (!webRTCAvailable()) {
+        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC is not available to create a factory");
         return nullptr;
+    }
 
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
