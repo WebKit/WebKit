@@ -23,22 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKContentWorld.h"
+#import "config.h"
+#import "WKContentWorldInternal.h"
 
-#import "APIContentWorld.h"
-#import "WKObject.h"
-#import <wtf/text/WTFString.h>
+@implementation WKContentWorld
 
-namespace WebKit {
-
-template<> struct WrapperTraits<API::ContentWorld> {
-    using WrapperClass = _WKContentWorld;
-};
-
++ (WKContentWorld *)pageWorld
+{
+    return wrapper(API::ContentWorld::pageContentWorld());
 }
 
-@interface _WKContentWorld () <WKObject> {
-@package
-    API::ObjectStorage<API::ContentWorld> _contentWorld;
++ (WKContentWorld *)defaultClientWorld
+{
+    return wrapper(API::ContentWorld::defaultClientWorld());
 }
+
++ (WKContentWorld *)worldWithName:(NSString *)name
+{
+    return wrapper(API::ContentWorld::sharedWorldWithName(name));
+}
+
+- (void)dealloc
+{
+    _contentWorld->~ContentWorld();
+
+    [super dealloc];
+}
+
+- (NSString *)name
+{
+    if (_contentWorld->name().isNull())
+        return nil;
+
+    return _contentWorld->name();
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_contentWorld;
+}
+
 @end

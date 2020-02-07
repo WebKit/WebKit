@@ -55,6 +55,7 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKContentWorldInternal.h"
 #import "WKErrorInternal.h"
 #import "WKFindConfiguration.h"
 #import "WKFindResultInternal.h"
@@ -91,7 +92,6 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "WebViewImpl.h"
 #import "_WKActivatedElementInfoInternal.h"
-#import "_WKContentWorldInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -817,7 +817,17 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES completionHandler:completionHandler inWorld:_WKContentWorld.pageContentWorld];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES completionHandler:completionHandler inWorld:WKContentWorld.pageWorld];
+}
+
+- (void)evaluateJavaScript:(NSString *)javaScriptString inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
+{
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES completionHandler:completionHandler inWorld:contentWorld];
+}
+
+- (void)callAsyncJavaScript:(NSString *)javaScriptString arguments:(NSDictionary<NSString *, id> *)arguments inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
+{
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withArguments:arguments forceUserGesture:YES completionHandler:completionHandler inWorld:contentWorld];
 }
 
 static bool validateArgument(id argument)
@@ -854,7 +864,7 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture completionHandler:(void (^)(id, NSError *))completionHandler inWorld:(_WKContentWorld *)world
+- (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture completionHandler:(void (^)(id, NSError *))completionHandler inWorld:(WKContentWorld *)world
 {
     auto handler = adoptNS([completionHandler copy]);
 
@@ -1507,16 +1517,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 #pragma mark - macOS/iOS WKPrivate
 
-- (void)_callAsyncJavaScriptFunction:(NSString *)javaScriptString withArguments:(NSDictionary<NSString *, id> *)arguments inWorld:(_WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
-{
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withArguments:arguments forceUserGesture:YES completionHandler:completionHandler inWorld:contentWorld];
-}
-
-- (void)_evaluateJavaScript:(NSString *)javaScriptString inWorld:(_WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
-{
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES completionHandler:completionHandler inWorld:contentWorld];
-}
-
 - (_WKSelectionAttributes)_selectionAttributes
 {
     return _selectionAttributes;
@@ -2157,7 +2157,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:NO completionHandler:completionHandler inWorld:_WKContentWorld.pageContentWorld];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:NO completionHandler:completionHandler inWorld:WKContentWorld.pageWorld];
 }
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies

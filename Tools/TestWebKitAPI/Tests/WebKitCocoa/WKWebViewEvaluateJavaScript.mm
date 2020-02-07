@@ -31,9 +31,9 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKContentWorld.h>
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKContentWorld.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
@@ -117,13 +117,13 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
 
 TEST(WKWebView, WKContentWorld)
 {
-    EXPECT_NULL(_WKContentWorld.pageContentWorld.name);
-    EXPECT_NULL(_WKContentWorld.defaultClientWorld.name);
-    EXPECT_FALSE(_WKContentWorld.pageContentWorld == _WKContentWorld.defaultClientWorld);
+    EXPECT_NULL(WKContentWorld.pageWorld.name);
+    EXPECT_NULL(WKContentWorld.defaultClientWorld.name);
+    EXPECT_FALSE(WKContentWorld.pageWorld == WKContentWorld.defaultClientWorld);
 
-    _WKContentWorld *namedWorld = [_WKContentWorld worldWithName:@"Name"];
+    WKContentWorld *namedWorld = [WKContentWorld worldWithName:@"Name"];
     EXPECT_TRUE([namedWorld.name isEqualToString:@"Name"]);
-    EXPECT_EQ(namedWorld, [_WKContentWorld worldWithName:@"Name"]);
+    EXPECT_EQ(namedWorld, [WKContentWorld worldWithName:@"Name"]);
 }
 
 TEST(WKWebView, EvaluateJavaScriptInWorlds)
@@ -138,8 +138,8 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     }];
     isDone = false;
 
-    // Verify that value is visible when evaluating in the pageContentWorld
-    [webView _evaluateJavaScript:@"foo" inWorld:_WKContentWorld.pageContentWorld completionHandler:^(id result, NSError *error) {
+    // Verify that value is visible when evaluating in the pageWorld
+    [webView evaluateJavaScript:@"foo" inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);
         isDone = true;
@@ -147,14 +147,14 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     isDone = false;
 
     // Verify that value is not visible when evaluating in the defaultClientWorld
-    [webView _evaluateJavaScript:@"foo" inWorld:_WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"foo" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
-    // Verify that value is visible when calling a function in the pageContentWorld
-    [webView _callAsyncJavaScriptFunction:@"return foo" withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    // Verify that value is visible when calling a function in the pageWorld
+    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);
         isDone = true;
@@ -162,22 +162,22 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     isDone = false;
 
     // Verify that value is not visible when calling a function in the defaultClientWorld
-    [webView _callAsyncJavaScriptFunction:@"return foo" withArguments:nil inWorld:_WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
     // Set a varibale value in a named world.
-    RetainPtr<_WKContentWorld> namedWorld = [_WKContentWorld worldWithName:@"NamedWorld"];
-    [webView _evaluateJavaScript:@"var bar = baz" inWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    RetainPtr<WKContentWorld> namedWorld = [WKContentWorld worldWithName:@"NamedWorld"];
+    [webView evaluateJavaScript:@"var bar = baz" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
     // Set a global varibale value in a named world via a function call.
-    [webView _callAsyncJavaScriptFunction:@"window.baz = bat" withArguments:nil inWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    [webView callAsyncJavaScript:@"window.baz = bat" arguments:nil inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NULL(error);
         isDone = true;
@@ -185,14 +185,14 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     isDone = false;
 
     // Verify they are there in that named world.
-    [webView _evaluateJavaScript:@"bar" inWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"bar" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"baz"]);
         isDone = true;
     }];
     isDone = false;
 
-    [webView _evaluateJavaScript:@"window.baz" inWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"window.baz" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bat"]);
         isDone = true;
@@ -200,26 +200,26 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     isDone = false;
 
     // Verify they aren't there in the defaultClientWorld.
-    [webView _evaluateJavaScript:@"bar" inWorld:_WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"bar" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
-    [webView _evaluateJavaScript:@"window.baz" inWorld:_WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"window.baz" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
-    // Verify they aren't there in the pageContentWorld.
-    [webView _evaluateJavaScript:@"bar" inWorld:_WKContentWorld.pageContentWorld completionHandler:^(id result, NSError *error) {
+    // Verify they aren't there in the pageWorld.
+    [webView evaluateJavaScript:@"bar" inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];
     isDone = false;
 
-    [webView _evaluateJavaScript:@"window.baz" inWorld:_WKContentWorld.pageContentWorld completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"window.baz" inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
     }];

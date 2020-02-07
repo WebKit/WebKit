@@ -1,3 +1,42 @@
+2020-02-06  Brady Eidson  <beidson@apple.com>
+
+        Cleanup and promote WKContentWorld and its clients in WKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=207351
+
+        Reviewed by Alex Christensen.
+
+        Renames and updated comments.
+        
+        API tests updated.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        * SourcesCocoa.txt:
+
+        * UIProcess/API/Cocoa/WKContentWorld.h: Renamed from Source/WebKit/UIProcess/API/Cocoa/_WKContentWorld.h.
+        * UIProcess/API/Cocoa/WKContentWorld.mm: Renamed from Source/WebKit/UIProcess/API/Cocoa/_WKContentWorld.mm.
+        (+[WKContentWorld pageWorld]):
+        (+[WKContentWorld defaultClientWorld]):
+        (+[WKContentWorld worldWithName:]):
+        (-[WKContentWorld dealloc]):
+        (-[WKContentWorld name]):
+        (-[WKContentWorld _apiObject]):
+        * UIProcess/API/Cocoa/WKContentWorldInternal.h: Renamed from Source/WebKit/UIProcess/API/Cocoa/_WKContentWorldInternal.h.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        (-[WKWebView evaluateJavaScript:inContentWorld:completionHandler:]):
+        (-[WKWebView callAsyncJavaScript:arguments:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:completionHandler:inWorld:]):
+        (-[WKWebView _evaluateJavaScriptWithoutUserGesture:completionHandler:]):
+        (-[WKWebView _callAsyncJavaScriptFunction:withArguments:inWorld:completionHandler:]): Deleted.
+        (-[WKWebView _evaluateJavaScript:inWorld:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Accelerator keys don't work unless the main window is focused

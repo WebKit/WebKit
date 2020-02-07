@@ -28,9 +28,9 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKContentWorld.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKContentWorld.h>
 
 namespace TestWebKitAPI {
 
@@ -186,7 +186,7 @@ TEST(AsyncFunction, Promise)
     NSString *functionBody = @"return new Promise(function(resolve, reject) { setTimeout(function(){ resolve(42) }, 0); })";
 
     bool done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
         EXPECT_TRUE([result isEqualToNumber:@42]);
@@ -198,7 +198,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"return new Promise(function(resolve, reject) { setTimeout(function(){ reject('Rejected!') }, 0); })";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_TRUE(error != nil);
         EXPECT_TRUE([[error description] containsString:@"Rejected!"]);
@@ -209,7 +209,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"let p = new Proxy(function(resolve, reject) { setTimeout(function() { resolve(42); }, 0); }, { }); return { then: p };";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
         EXPECT_TRUE([result isEqualToNumber:@42]);
@@ -220,7 +220,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"let p = new Proxy(function(resolve, reject) { setTimeout(function() { reject('Rejected!'); }, 0); }, { }); return { then: p };";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_TRUE(error != nil);
         EXPECT_TRUE([[error description] containsString:@"Rejected!"]);
@@ -232,7 +232,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"var r = 0; var p = new Promise(function(fulfill, reject) { setTimeout(function(){ r = 42; fulfill(); }, 5);}); await p; return r;";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
         EXPECT_TRUE([result isEqualToNumber:@42]);
@@ -244,7 +244,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"var p = new Promise(function(fulfill, reject) { setTimeout(function(){ fulfill('Fulfilled!') }, 5);}); await p; return p;";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"Fulfilled!"]);
@@ -256,7 +256,7 @@ TEST(AsyncFunction, Promise)
     functionBody = @"var p = new Promise(function (r) { r(new Promise(function (r) { r(42); })); }); await p; return 'Done';";
 
     done = false;
-    [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"Done"]);
@@ -268,7 +268,7 @@ TEST(AsyncFunction, Promise)
     done = false;
     functionBody = @"return new Promise(function(resolve, reject) { })";
     for (int i = 0; i < 500; ++i) {
-        [webView _callAsyncJavaScriptFunction:functionBody withArguments:nil inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+        [webView callAsyncJavaScript:functionBody arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
             EXPECT_NULL(result);
             EXPECT_TRUE(error != nil);
             EXPECT_TRUE([[error description] containsString:@"no longer reachable"]);

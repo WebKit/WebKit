@@ -33,6 +33,7 @@
 #import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
+#import "WKContentWorldInternal.h"
 #import "WKContextMenuElementInfoInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
@@ -71,7 +72,6 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
-#import "_WKContentWorldInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
@@ -348,7 +348,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::ContentWorld:
-        wrapper = [_WKContentWorld alloc];
+        wrapper = [WKContentWorld alloc];
         break;
 
     case Type::UserContentWorld:

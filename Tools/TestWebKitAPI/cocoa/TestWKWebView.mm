@@ -31,10 +31,10 @@
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
+#import <WebKit/WKContentWorld.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKitPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKContentWorld.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -187,7 +187,7 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
         *errorOut = nil;
 
     RetainPtr<id> evalResult;
-    [self _callAsyncJavaScriptFunction:script withArguments:arguments inWorld:_WKContentWorld.pageContentWorld completionHandler:[&] (id result, NSError *error) {
+    [self callAsyncJavaScript:script arguments:arguments inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
         if (errorOut)
             *errorOut = [error retain];
