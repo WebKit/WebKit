@@ -1777,7 +1777,7 @@ void WebProcessPool::terminateServiceWorkerProcess(const WebCore::RegistrableDom
 {
 #if ENABLE(SERVICE_WORKER)
     auto protectedThis = makeRef(*this);
-    if (RefPtr<WebProcessProxy> process = m_serviceWorkerProcesses.get({ domain, sessionID }).get()) {
+    if (auto process = makeRefPtr(m_serviceWorkerProcesses.get({ domain, sessionID }).get())) {
         process->disableServiceWorkers();
         process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
     }

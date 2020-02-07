@@ -1,5 +1,12 @@
 2020-02-07  Chris Dumez  <cdumez@apple.com>
 
+        Address post-landing review comments from Darin on r255989.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+
+2020-02-07  Chris Dumez  <cdumez@apple.com>
+
         [IPC hardening] Update WebPasteboardProxy methods to validate their parameters
         https://bugs.webkit.org/show_bug.cgi?id=207308
         <rdar://problem/58632938>
