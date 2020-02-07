@@ -551,9 +551,15 @@ void ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics(CompletionHan
 
     StringBuilder result;
     result.appendLiteral("Resource load statistics:\n\n");
+    Vector<String> sortedMapEntries;
     for (auto& mapEntry : m_resourceStatisticsMap.values())
-        result.append(mapEntry.toString());
+        sortedMapEntries.append(mapEntry.toString());
 
+    std::sort(sortedMapEntries.begin(), sortedMapEntries.end(), WTF::codePointCompareLessThan);
+
+    for (auto& entry : sortedMapEntries)
+        result.append(entry);
+    
     auto thirdPartyData = aggregatedThirdPartyData();
     if (!thirdPartyData.isEmpty()) {
         result.append("\nITP Data:\n");

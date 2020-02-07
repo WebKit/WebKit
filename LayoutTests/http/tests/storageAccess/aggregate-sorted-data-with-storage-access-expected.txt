@@ -10,6 +10,18 @@ TEST COMPLETE
 
 Resource load statistics:
 
+Registrable domain: 127.0.0.1
+    hadUserInteraction: Yes
+    mostRecentUserInteraction: within 24 hours
+    grandfathered: No
+    topFrameUniqueRedirectsTo:
+        localhost
+    topFrameUniqueRedirectsFrom:
+        localhost
+    gotLinkDecorationFromPrevalentResource: No
+    isPrevalentResource: Yes
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
 Registrable domain: localhost
     hadUserInteraction: Yes
     mostRecentUserInteraction: within 24 hours
@@ -23,18 +35,6 @@ Registrable domain: localhost
     gotLinkDecorationFromPrevalentResource: No
     subframeUnderTopFrameDomains:
         127.0.0.1
-    isPrevalentResource: Yes
-    isVeryPrevalentResource: No
-    dataRecordsRemoved: 0
-Registrable domain: 127.0.0.1
-    hadUserInteraction: Yes
-    mostRecentUserInteraction: within 24 hours
-    grandfathered: No
-    topFrameUniqueRedirectsTo:
-        localhost
-    topFrameUniqueRedirectsFrom:
-        localhost
-    gotLinkDecorationFromPrevalentResource: No
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0

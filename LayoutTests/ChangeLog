@@ -1,3 +1,20 @@
+2020-02-07  Kate Cheney  <katherine_cheney@apple.com>
+
+       Regression (r256011): http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access.html is consistently failing
+       https://bugs.webkit.org/show_bug.cgi?id=207382
+       <rdar://problem/59259844>
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated test expectations to reflect new sorting.
+
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-expected.txt:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-expected.txt:
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects-expected.txt:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-expected.txt:
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt:
+
 2020-02-07  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/zero-initialize-values-2.html is a flaky failure

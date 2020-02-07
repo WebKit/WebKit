@@ -1,3 +1,17 @@
+2020-02-07  Kate Cheney  <katherine_cheney@apple.com>
+
+       Regression (r256011): http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access.html is consistently failing
+       https://bugs.webkit.org/show_bug.cgi?id=207382
+       <rdar://problem/59259844>
+
+       Sort the resource load statistics dumping results so they consistently
+       print in the same order.
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics):
+
 2020-02-07  Sam Weinig  <weinig@apple.com>
 
         Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
