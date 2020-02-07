@@ -1,3 +1,22 @@
+2020-02-07  Chris Dumez  <cdumez@apple.com>
+
+        [IPC hardening] Update WebPasteboardProxy methods to validate their parameters
+        https://bugs.webkit.org/show_bug.cgi?id=207308
+        <rdar://problem/58632938>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+
 2020-02-07  youenn fablet  <youenn@apple.com>
 
         Mandate UUID version 4 for mDNS ICE candidates

@@ -48,6 +48,10 @@ void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Comple
 void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType,
     CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&& sandboxExtensions)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ }, { });
+
     Vector<String> pathnames;
     SandboxExtension::HandleArray sandboxExtensions;
     for (auto* webProcessProxy : m_webProcessProxyList) {
@@ -72,16 +76,28 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 
 void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).stringForType(pasteboardType));
 }
 
 void WebPasteboardProxy::getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType));
 }
 
 void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ }, 0);
+
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
     if (!buffer)
         return completionHandler({ }, 0);
@@ -153,13 +169,19 @@ void WebPasteboardProxy::setPasteboardColor(const String& pasteboardName, const 
 
 void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler(0);
+
     completionHandler(PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType));
 }
 
 void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    if (pasteboardName.isNull() || pasteboardType.isNull())
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
         return completionHandler(0);
+
     if (handle.isNull())
         return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType));
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
@@ -176,6 +198,10 @@ void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, Completi
 
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    ASSERT(!origin.isNull());
+    if (origin.isNull())
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin));
 }
 
@@ -201,6 +227,10 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, C
 
 void WebPasteboardProxy::readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).readString(index, pasteboardType));
 }
 
@@ -213,6 +243,10 @@ void WebPasteboardProxy::readURLFromPasteboard(size_t index, const String& paste
 
 void WebPasteboardProxy::readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
 {
+    ASSERT(!pasteboardType.isNull());
+    if (pasteboardType.isNull())
+        return completionHandler({ }, 0);
+
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).readBuffer(index, pasteboardType);
     if (!buffer)
         return completionHandler({ }, 0);
