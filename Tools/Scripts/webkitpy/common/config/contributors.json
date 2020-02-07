@@ -2628,6 +2628,12 @@
          "jarrednicholls"
       ]
    },
+   "Jason Lawrence" : {
+      "emails" : [
+         "lawrence.j@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Jason Liu" : {
       "emails" : [
          "jasonliuwebkit@gmail.com"
