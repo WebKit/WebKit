@@ -1,3 +1,17 @@
+2020-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Double tapping shouldn't scroll the page when the body has `overflow: hidden`
+        https://bugs.webkit.org/show_bug.cgi?id=207390
+        <rdar://problem/56960774>
+
+        Reviewed by Tim Horton and Simon Fraser.
+
+        Add a new layout test to verify that double tapping an element doesn't cause the page to scroll if `overflow:
+        hidden` is applied to the body.
+
+        * fast/scrolling/ios/double-tap-to-scroll-with-scrolling-disabled-expected.txt: Added.
+        * fast/scrolling/ios/double-tap-to-scroll-with-scrolling-disabled.html: Added.
+
 2020-02-07  Kate Cheney  <katherine_cheney@apple.com>
 
        Regression (r256011): http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access.html is consistently failing

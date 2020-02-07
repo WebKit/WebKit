@@ -1,3 +1,26 @@
+2020-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Double tapping shouldn't scroll the page when the body has `overflow: hidden`
+        https://bugs.webkit.org/show_bug.cgi?id=207390
+        <rdar://problem/56960774>
+
+        Reviewed by Tim Horton and Simon Fraser.
+
+        Bail out of several codepaths that zoom and scroll WKScrollView as a result of smart magnification gestures
+        (e.g. one-finger double taps), in the case where scrolling has been disabled on WKScrollView. This may occur
+        if the page has `overflow: hidden` on the body or root, but may also happen due to a WebKit client disabling
+        scrolling via native API, such as `webView.scrollView.scrollingEnabled = NO;`.
+
+        Test: fast/scrolling/ios/double-tap-to-scroll-with-scrolling-disabled.html
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _zoomToPoint:atScale:animated:]):
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]):
+
+        Drive-by fix: change some `false`s to `NO`s, and `true`s to `YES`s.
+
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
 2020-02-07  Timothy Hatcher  <timothy@apple.com>
 
         Crash under WKBundleFrameForJavaScriptContext dereferencing a NULL WebCore::Frame.

@@ -1042,6 +1042,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
 - (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated
 {
+    if (![_scrollView isScrollEnabled])
+        return;
+
     CFTimeInterval duration = 0;
     CGFloat zoomScale = contentZoomScale(self);
 
@@ -1124,6 +1127,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
 {
+    if (![_scrollView isScrollEnabled])
+        return NO;
+
     WebCore::FloatRect unobscuredContentRect([self _contentRectForUserInteraction]);
     WebCore::FloatPoint unobscuredContentOffset = unobscuredContentRect.location();
     WebCore::FloatSize contentSize([self._currentContentView bounds].size);
@@ -1154,14 +1160,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     float scrollDistance = scrollViewOffsetDelta.diagonalLength();
     if (scrollDistance < minimumScrollDistance)
-        return false;
+        return NO;
 
     [_contentView willStartZoomOrScroll];
 
     LOG_WITH_STREAM(VisibleRects, stream << "_scrollToRect: scrolling to " << [_scrollView contentOffset] + scrollViewOffsetDelta);
 
     [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
-    return true;
+    return YES;
 }
 
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
@@ -1181,6 +1187,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect:" << focusedElementRectInDocumentCoordinates << " selectionRect:" << selectionRectInDocumentCoordinates);
     UNUSED_PARAM(insideFixed);
+    if (![_scrollView isScrollEnabled])
+        return;
 
     const double minimumHeightToShowContentAboveKeyboard = 106;
     const CFTimeInterval formControlZoomAnimationDuration = 0.25;
