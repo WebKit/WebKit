@@ -1,3 +1,14 @@
+2020-02-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] add commit-queue build step to close the bug
+        https://bugs.webkit.org/show_bug.cgi?id=207387
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin.close_bug): Method to close the bugzilla bug.
+        (CloseBug): Build step to close bugzilla bug.
+
 2020-02-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] add commit-queue build step to clear flags on patch

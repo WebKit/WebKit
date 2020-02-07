@@ -444,6 +444,15 @@ class BugzillaMixin(object):
             return FAILURE
         return SUCCESS
 
+    def close_bug(self, bug_id):
+        bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
+        try:
+            response = requests.put(bug_url, json={'status': 'RESOLVED', 'resolution': 'FIXED', 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+        except Exception as e:
+            self._addToLog('stdio', 'Error in closing bug {}'.format(bug_id))
+            return FAILURE
+        return SUCCESS
+
 
 class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
     name = 'validate-patch'
@@ -540,6 +549,29 @@ class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
         if self.results == SUCCESS:
             return {u'step': u'Removed flags on bugzilla patch'}
         return {u'step': u'Failed to remove flags on bugzilla patch'}
+
+
+class CloseBug(buildstep.BuildStep, BugzillaMixin):
+    name = 'close-bugzilla-bug'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def start(self):
+        self.bug_id = self.getProperty('bug_id', '')
+        if not self.bug_id:
+            self._addToLog('stdio', 'bug_id build property not found.\n')
+            self.descriptionDone = 'No bug id found'
+            self.finished(FAILURE)
+            return None
+
+        rc = self.close_bug(self.bug_id)
+        self.finished(rc)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Closed bug {}'.format(self.bug_id)}
+        return {u'step': u'Failed to close bug {}'.format(self.bug_id)}
 
 
 class UnApplyPatchIfRequired(CleanWorkingDirectory):
