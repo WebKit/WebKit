@@ -2,6 +2,20 @@
 
         Mandate UUID version 4 for mDNS ICE candidates
         https://bugs.webkit.org/show_bug.cgi?id=207329
+        <rdar://problem/59221606>
+
+        Address post-commit comments from Darin by using isASCIIHexDigit.
+
+        Unreviewed.
+
+        * wtf/UUID.cpp:
+        (WTF::isVersion4UUID):
+        (WTF::isHexadecimalCharacter): Deleted.
+
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        Mandate UUID version 4 for mDNS ICE candidates
+        https://bugs.webkit.org/show_bug.cgi?id=207329
 
         Reviewed by Alex Christensen.
 

@@ -32,6 +32,7 @@
 #include <wtf/UUID.h>
 
 #include <mutex>
+#include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -81,13 +82,6 @@ String bootSessionUUIDString()
 #endif
 }
 
-static inline bool isHexadecimalCharacter(UChar character)
-{
-    return (character >= '0' && character <= '9')
-        || (character >= 'a' && character <= 'f')
-        || (character >= 'A' && character <= 'F');
-}
-
 bool isVersion4UUID(StringView value)
 {
     // Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8, 9, A, or B for y.
@@ -111,7 +105,7 @@ bool isVersion4UUID(StringView value)
                 return false;
             continue;
         }
-        if (!isHexadecimalCharacter(value[cptr]))
+        if (!isASCIIHexDigit(value[cptr]))
             return false;
     }
     return true;
