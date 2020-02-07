@@ -189,6 +189,7 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy, readonly, nullable) PKPaymentNetwork network;
 @property (nonatomic, readonly) PKPaymentMethodType type;
 @property (nonatomic, copy, readonly, nullable) PKPaymentPass *paymentPass;
+@property (nonatomic, copy, readonly, nullable) CNContact *billingAddress;
 @end
 
 @interface PKPaymentToken : NSObject

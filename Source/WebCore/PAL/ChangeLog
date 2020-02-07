@@ -1,3 +1,14 @@
+2020-02-07  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        [Apple Pay] Provide a redacted billing contact during payment method selection
+        https://bugs.webkit.org/show_bug.cgi?id=207169
+
+        Reviewed by Andy Estes.
+        
+        Fix for build problem.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2020-02-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r256051.
