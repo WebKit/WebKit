@@ -46,6 +46,38 @@ namespace WebKit {
 using namespace WebCore;
 using namespace fido;
 
+namespace {
+WebAuthenticationStatus toStatus(const CtapDeviceResponseCode& error)
+{
+    switch (error) {
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
+        return WebAuthenticationStatus::PinInvalid;
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:
+        return WebAuthenticationStatus::PinAuthBlocked;
+    case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
+        return WebAuthenticationStatus::PinBlocked;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebAuthenticationStatus::PinInvalid;
+    }
+}
+
+bool isPinError(const CtapDeviceResponseCode& error)
+{
+    switch (error) {
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
+        return true;
+    default:
+        return false;
+    }
+}
+
+} // namespace
+
 CtapAuthenticator::CtapAuthenticator(std::unique_ptr<CtapDriver>&& driver, AuthenticatorGetInfoResponse&& info)
     : FidoAuthenticator(WTFMove(driver))
     , m_info(WTFMove(info))
@@ -76,13 +108,20 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
     auto response = readCTAPMakeCredentialResponse(data, WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
         auto error = getResponseCode(data);
-        if (error == CtapDeviceResponseCode::kCtap2ErrCredentialExcluded)
+
+        if (error == CtapDeviceResponseCode::kCtap2ErrCredentialExcluded) {
             receiveRespond(ExceptionData { InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
-        // FIXME(205837)
-        else if (error == CtapDeviceResponseCode::kCtap2ErrPinInvalid || error == CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid)
-            getRetries();
-        else
-            receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
+            return;
+        }
+
+        if (isPinError(error)) {
+            if (!m_pinAuth.isEmpty()) // Skip the very first command that acts like wink.
+                observer()->authenticatorStatusUpdated(toStatus(error));
+            if (tryRestartPin(error))
+                return;
+        }
+
+        receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
     receiveRespond(response.releaseNonNull());
@@ -110,15 +149,20 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     auto response = readCTAPGetAssertionResponse(data);
     if (!response) {
         auto error = getResponseCode(data);
-        // FIXME(205837)
-        if (error == CtapDeviceResponseCode::kCtap2ErrPinInvalid || error == CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid) {
-            getRetries();
+
+        if (!isPinError(error) && tryDowngrade())
             return;
+
+        if (isPinError(error)) {
+            if (!m_pinAuth.isEmpty()) // Skip the very first command that acts like wink.
+                observer()->authenticatorStatusUpdated(toStatus(error));
+            if (tryRestartPin(error))
+                return;
         }
-        if (error != CtapDeviceResponseCode::kCtap2ErrInvalidCBOR && tryDowngrade())
-            return;
+
         if (error == CtapDeviceResponseCode::kCtap2ErrNoCredentials && observer())
             observer()->authenticatorStatusUpdated(WebAuthenticationStatus::NoCredentialsFound);
+
         receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
@@ -249,6 +293,13 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
     auto token = pin::TokenResponse::parse(tokenRequest.sharedKey(), data);
     if (!token) {
         auto error = getResponseCode(data);
+
+        if (isPinError(error)) {
+            observer()->authenticatorStatusUpdated(toStatus(error));
+            if (tryRestartPin(error))
+                return;
+        }
+
         receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
@@ -259,6 +310,18 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         getAssertion();
     });
+}
+
+bool CtapAuthenticator::tryRestartPin(const CtapDeviceResponseCode& error)
+{
+    switch (error) {
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthInvalid:
+    case CtapDeviceResponseCode::kCtap2ErrPinInvalid:
+        getRetries();
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool CtapAuthenticator::tryDowngrade()

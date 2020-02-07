@@ -1,3 +1,33 @@
+2020-02-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Report CTAP Client Pin Error to clients
+        https://bugs.webkit.org/show_bug.cgi?id=205837
+        <rdar://problem/58356872>
+
+        Reviewed by Brent Fulgham.
+
+        Authenticators could return four different errors { kCtap2ErrPinInvalid, kCtap2ErrPinBlocked, kCtap2ErrPinAuthInvalid, kCtap2ErrPinAuthBlocked }
+        during 1) GetPinToken or 2) MakeCredential/GetAssertion with PinAuth.
+
+        All errors should be reported to the client so that appropriate UI can be displayed to users.
+        For kCtap2ErrPinAuthInvalid and kCtap2ErrPinInvalid, we will restart the whole Pin process to get
+        another Pin from the user.
+
+        Covered by API tests.
+
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::wkWebAuthenticationPanelUpdate):
+        * UIProcess/WebAuthentication/WebAuthenticationFlags.h:
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::fido::toStatus):
+        (WebKit::fido::isPinError):
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueRequestAfterGetPinToken):
+        (WebKit::CtapAuthenticator::tryRestartPin):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+
 2020-02-07  Jonathan Bedard  <jbedard@apple.com>
 
         Handle deprecated APIs in WKImagePreviewViewController

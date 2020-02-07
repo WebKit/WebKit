@@ -59,6 +59,12 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
         return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
     if (status == WebAuthenticationStatus::NoCredentialsFound)
         return _WKWebAuthenticationPanelUpdateNoCredentialsFound;
+    if (status == WebAuthenticationStatus::PinBlocked)
+        return _WKWebAuthenticationPanelUpdatePINBlocked;
+    if (status == WebAuthenticationStatus::PinAuthBlocked)
+        return _WKWebAuthenticationPanelUpdatePINAuthBlocked;
+    if (status == WebAuthenticationStatus::PinInvalid)
+        return _WKWebAuthenticationPanelUpdatePINInvalid;
     ASSERT_NOT_REACHED();
     return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
 }

@@ -65,6 +65,7 @@ private:
     void continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&, uint64_t retries);
     void continueGetPinTokenAfterRequestPin(const String& pin, const WebCore::CryptoKeyEC&);
     void continueRequestAfterGetPinToken(Vector<uint8_t>&&, const fido::pin::TokenRequest&);
+    bool tryRestartPin(const fido::CtapDeviceResponseCode&);
 
     bool tryDowngrade();
     bool processGoogleLegacyAppIdSupportExtension();

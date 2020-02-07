@@ -37,7 +37,7 @@ class AuthenticatorAssertionResponse;
 }
 
 namespace WebKit {
-enum class WebAuthenticationStatus : bool;
+enum class WebAuthenticationStatus : uint8_t;
 enum class WebAuthenticationResult : bool;
 }
 

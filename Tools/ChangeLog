@@ -1,3 +1,24 @@
+2020-02-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Report CTAP Client Pin Error to clients
+        https://bugs.webkit.org/show_bug.cgi?id=205837
+        <rdar://problem/58356872>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-pin-auth-blocked-error.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-error.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-pin-invalid-error-retry.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-auth-blocked-error.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-error.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-error.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-error.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid-pin-invalid-error-retry.html: Added.
+
 2020-02-07  Jonathan Bedard  <jbedard@apple.com>
 
         run-safari Doesn't work with the latest Xcode version and iOS

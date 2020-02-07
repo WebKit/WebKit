@@ -333,7 +333,7 @@
 		55F9D2E52205031800A9AB38 /* AdditionalSupportedImageTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55F9D2E42205031800A9AB38 /* AdditionalSupportedImageTypes.mm */; };
 		570D26F423C3CA6A00D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */; };
 		570D26F623C3D33000D5CF67 /* web-authentication-make-credential-hid-pin.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F523C3D32700D5CF67 /* web-authentication-make-credential-hid-pin.html */; };
-		570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-error.html */; };
+		570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */; };
 		570D26FC23C3F87000D5CF67 /* web-authentication-get-assertion-hid-pin.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */; };
 		5714ECB91CA8B5B000051AC8 /* DownloadRequestOriginalURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */; };
 		5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */; };
@@ -366,6 +366,13 @@
 		5774AA6821FBBF7800AF2A1B /* TestSOAuthorization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */; };
 		5778D05622110A2600899E3B /* LoadWebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5778D05522110A2600899E3B /* LoadWebArchive.mm */; };
 		578CBD67204FB2C80083B9F2 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */; };
+		578DA44223ECC7A000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44123ECC76B00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html */; };
+		578DA44423ECCAE900246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44323ECC8A800246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html */; };
+		578DA44623ECCC0A00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44523ECCBD000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html */; };
+		578DA44823ECD09B00246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44723ECD01300246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html */; };
+		578DA44A23ECD18600246010 /* web-authentication-make-credential-hid-pin-invalid-error-retry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44923ECD15500246010 /* web-authentication-make-credential-hid-pin-invalid-error-retry.html */; };
+		578DA44C23ECD23000246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44B23ECD20300246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html */; };
+		578DA44E23ECD28B00246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 578DA44D23ECD26100246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html */; };
 		57901FB11CAF142D00ED64F9 /* LoadInvalidURLRequest.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57901FB01CAF141C00ED64F9 /* LoadInvalidURLRequest.html */; };
 		579651E7216BFDED006EBFE5 /* FidoHidMessageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 579651E6216BFD53006EBFE5 /* FidoHidMessageTest.cpp */; };
 		5797FE311EB15A6800B2F4A0 /* NavigationClientDefaultCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5797FE2F1EB15A5F00B2F4A0 /* NavigationClientDefaultCrypto.cpp */; };
@@ -1501,15 +1508,22 @@
 				57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */,
 				579F1C0123C93AF500C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html in Copy Resources */,
 				577454D02359B378008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html in Copy Resources */,
+				578DA44C23ECD23000246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html in Copy Resources */,
+				578DA44E23ECD28B00246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html in Copy Resources */,
 				570D26FC23C3F87000D5CF67 /* web-authentication-get-assertion-hid-pin.html in Copy Resources */,
 				57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */,
 				579833922368FA37008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html in Copy Resources */,
 				57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */,
 				577454D22359BB01008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html in Copy Resources */,
 				57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */,
+				578DA44823ECD09B00246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html in Copy Resources */,
 				570D26F423C3CA6A00D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html in Copy Resources */,
-				570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-error.html in Copy Resources */,
+				578DA44223ECC7A000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html in Copy Resources */,
+				578DA44623ECCC0A00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html in Copy Resources */,
+				570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html in Copy Resources */,
+				578DA44423ECCAE900246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html in Copy Resources */,
 				5758598423C3C3A400C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html in Copy Resources */,
+				578DA44A23ECD18600246010 /* web-authentication-make-credential-hid-pin-invalid-error-retry.html in Copy Resources */,
 				570D26F623C3D33000D5CF67 /* web-authentication-make-credential-hid-pin.html in Copy Resources */,
 				5798337E236019A4008E5547 /* web-authentication-make-credential-hid.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
@@ -1925,7 +1939,7 @@
 		55F9D2E42205031800A9AB38 /* AdditionalSupportedImageTypes.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AdditionalSupportedImageTypes.mm; sourceTree = "<group>"; };
 		570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-key-agreement-error.html"; sourceTree = "<group>"; };
 		570D26F523C3D32700D5CF67 /* web-authentication-make-credential-hid-pin.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin.html"; sourceTree = "<group>"; };
-		570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-error.html"; sourceTree = "<group>"; };
+		570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html"; sourceTree = "<group>"; };
 		570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-pin.html"; sourceTree = "<group>"; };
 		5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURL.html; sourceTree = "<group>"; };
 		5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURLFrame.html; sourceTree = "<group>"; };
@@ -1960,6 +1974,13 @@
 		5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestSOAuthorization.mm; sourceTree = "<group>"; };
 		5778D05522110A2600899E3B /* LoadWebArchive.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadWebArchive.mm; sourceTree = "<group>"; };
 		578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		578DA44123ECC76B00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html"; sourceTree = "<group>"; };
+		578DA44323ECC8A800246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html"; sourceTree = "<group>"; };
+		578DA44523ECCBD000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html"; sourceTree = "<group>"; };
+		578DA44723ECD01300246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-auth-blocked-error.html"; sourceTree = "<group>"; };
+		578DA44923ECD15500246010 /* web-authentication-make-credential-hid-pin-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-invalid-error-retry.html"; sourceTree = "<group>"; };
+		578DA44B23ECD20300246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-pin-auth-blocked-error.html"; sourceTree = "<group>"; };
+		578DA44D23ECD26100246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-pin-invalid-error-retry.html"; sourceTree = "<group>"; };
 		57901FAC1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadInvalidURLRequest.mm; sourceTree = "<group>"; };
 		57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadInvalidURLRequest.mm; sourceTree = "<group>"; };
 		57901FB01CAF141C00ED64F9 /* LoadInvalidURLRequest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LoadInvalidURLRequest.html; sourceTree = "<group>"; };
@@ -3538,15 +3559,22 @@
 				57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */,
 				579F1BFF23C92FD300C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html */,
 				577454CF2359B338008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html */,
+				578DA44B23ECD20300246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html */,
+				578DA44D23ECD26100246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html */,
 				570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */,
 				57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */,
 				5798337B235EB65C008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html */,
 				57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */,
 				577454D12359BAD5008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html */,
 				57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */,
+				578DA44723ECD01300246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html */,
 				570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */,
-				570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-error.html */,
+				578DA44123ECC76B00246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-blocked-error.html */,
+				578DA44523ECCBD000246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-auth-invalid-error-retry.html */,
+				570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */,
+				578DA44323ECC8A800246010 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-invalid-error-retry.html */,
 				5758598323C3C36200C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html */,
+				578DA44923ECD15500246010 /* web-authentication-make-credential-hid-pin-invalid-error-retry.html */,
 				570D26F523C3D32700D5CF67 /* web-authentication-make-credential-hid-pin.html */,
 				5798337D2360196D008E5547 /* web-authentication-make-credential-hid.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
