@@ -257,6 +257,9 @@ void WebAnimation::effectTargetDidChange(Element* previousTarget, Element* newTa
 
     if (newTarget)
         m_timeline->animationWasAddedToElement(*this, *newTarget);
+
+    // This could have changed whether we have replaced animations, so we may need to schedule an update.
+    m_timeline->animationTimingDidChange(*this);
 }
 
 Optional<double> WebAnimation::startTime() const
@@ -1137,6 +1140,11 @@ bool WebAnimation::isRunningAccelerated() const
     return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isRunningAccelerated();
 }
 
+bool WebAnimation::isCompletelyAccelerated() const
+{
+    return is<KeyframeEffect>(m_effect) && downcast<KeyframeEffect>(*m_effect).isCompletelyAccelerated();
+}
+
 bool WebAnimation::needsTick() const
 {
     return pending() || playState() == PlayState::Running;
@@ -1235,6 +1243,9 @@ bool WebAnimation::computeRelevance()
 {
     // To be listed in getAnimations() an animation needs a target effect which is current or in effect.
     if (!m_effect)
+        return false;
+
+    if (m_replaceState == ReplaceState::Removed)
         return false;
 
     auto timing = m_effect->getBasicTiming();
@@ -1376,7 +1387,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
 Seconds WebAnimation::timeToNextTick() const
 {
-    // Any animation that is pending needs immediate resolution.
     if (pending())
         return 0_s;
 
@@ -1393,7 +1403,7 @@ Seconds WebAnimation::timeToNextTick() const
         return (effect.delay() - timing.localTime.value()) / playbackRate;
     case AnimationEffectPhase::Active:
         // Non-accelerated animations in the "active" phase will need to update their animated value at the immediate next opportunity.
-        if (!isRunningAccelerated())
+        if (!isCompletelyAccelerated())
             return 0_s;
         // Accelerated CSS Animations need to trigger "animationiteration" events, in this case we can wait until the next iteration.
         if (isCSSAnimation()) {

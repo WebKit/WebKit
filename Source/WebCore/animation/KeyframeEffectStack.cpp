@@ -60,6 +60,15 @@ void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
     m_effects.removeFirst(&effect);
 }
 
+bool KeyframeEffectStack::isCurrentlyAffectingProperty(CSSPropertyID property) const
+{
+    for (auto& effect : m_effects) {
+        if (effect->isCurrentlyAffectingProperty(property))
+            return true;
+    }
+    return false;
+}
+
 Vector<WeakPtr<KeyframeEffect>> KeyframeEffectStack::sortedEffects()
 {
     ensureEffectsAreSorted();
