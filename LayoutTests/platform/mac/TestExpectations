@@ -2009,3 +2009,5 @@ webkit.org/b/207363 inspector/css/pseudo-creation.html [ Pass Failure ]
 webkit.org/b/207392 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_message.htm [ Pass Failure ]
 
 webkit.org/b/207395 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ Pass Failure ]
+
+webkit.org/b/184617 legacy-animation-engine/animations/suspend-resume-animation-events.html [ Pass Failure ]
