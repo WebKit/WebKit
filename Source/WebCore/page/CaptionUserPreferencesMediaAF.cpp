@@ -813,36 +813,32 @@ static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>
 {
     String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));
     String aLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(a->validBCP47Language()));
-    String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->language()));
+    String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->validBCP47Language()));
 
     // Tracks in the user's preferred language are always at the top of the menu.
     bool aIsPreferredLanguage = !codePointCompare(aLanguageDisplayName, preferredLanguageDisplayName);
     bool bIsPreferredLanguage = !codePointCompare(bLanguageDisplayName, preferredLanguageDisplayName);
-    if ((aIsPreferredLanguage || bIsPreferredLanguage) && (aIsPreferredLanguage != bIsPreferredLanguage))
+    if (aIsPreferredLanguage != bIsPreferredLanguage)
         return aIsPreferredLanguage;
 
     // Tracks not in the user's preferred language sort first by language ...
-    if (codePointCompare(aLanguageDisplayName, bLanguageDisplayName))
-        return codePointCompare(aLanguageDisplayName, bLanguageDisplayName) < 0;
+    if (auto languageDisplayNameComparison = codePointCompare(aLanguageDisplayName, bLanguageDisplayName))
+        return languageDisplayNameComparison < 0;
 
     // ... but when tracks have the same language, main program content sorts next highest ...
     bool aIsMainContent = a->isMainProgramContent();
     bool bIsMainContent = b->isMainProgramContent();
-    if ((aIsMainContent || bIsMainContent) && (aIsMainContent != bIsMainContent))
+    if (aIsMainContent != bIsMainContent)
         return aIsMainContent;
 
-    // ... and main program trakcs sort higher than CC tracks ...
+    // ... and main program tracks sort higher than CC tracks ...
     bool aIsCC = a->isClosedCaptions();
     bool bIsCC = b->isClosedCaptions();
-    if ((aIsCC || bIsCC) && (aIsCC != bIsCC)) {
-        if (aIsCC)
-            return aIsMainContent;
-        return bIsMainContent;
-    }
+    if (aIsCC != bIsCC)
+        return aIsCC;
 
     // ... and tracks of the same type and language sort by the menu item text.
-    auto trackDisplayComparison = codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get()));
-    if (trackDisplayComparison)
+    if (auto trackDisplayComparison = codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())))
         return trackDisplayComparison < 0;
 
     // ... and if the menu item text is the same, compare the unique IDs
