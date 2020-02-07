@@ -144,11 +144,19 @@ void WebAnimation::unsuspendEffectInvalidation()
     --m_suspendCount;
 }
 
-void WebAnimation::effectTimingDidChange()
+void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previousTiming)
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
+
+    if (!previousTiming)
+        return;
+
+    auto* effect = this->effect();
+    ASSERT(effect);
+    if (previousTiming->progress != effect->getComputedTiming().progress)
+        effect->animationDidSeek();
 }
 
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
