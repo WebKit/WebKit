@@ -1,3 +1,11 @@
+2020-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, revert 75% load-factor because of JetStream2/string-unpack-code-SP regression
+        https://bugs.webkit.org/show_bug.cgi?id=207183
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::testInitialCapacity):
+
 2020-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebPage::rangeForGranularityAtPoint always returns null in the case of CharacterGranularity
