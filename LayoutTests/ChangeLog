@@ -1,5 +1,21 @@
 2020-02-07  youenn fablet  <youenn@apple.com>
 
+        [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+
+        Reviewed by Eric Carlson.
+
+        Disable tests on all platforms except the ones supporting AVAssetWriterDelegate.
+
+        * TestExpectations:
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html:
+        Remove web audio generation since there seems to be some unstability in web audio -> stream -> media recorder.
+        which should be fixed as follow-up specific patches.
+        * platform/mac/TestExpectations:
+        Enable running tests.
+
+2020-02-07  youenn fablet  <youenn@apple.com>
+
         Do not process newly gathered ICE candidates if document is suspended
         https://bugs.webkit.org/show_bug.cgi?id=207326
         <rdar://problem/57336453>
