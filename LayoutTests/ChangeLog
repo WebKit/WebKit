@@ -1,3 +1,15 @@
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        Do not process newly gathered ICE candidates if document is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=207326
+        <rdar://problem/57336453>
+
+        Reviewed by Alex Christensen.
+
+        * fast/history/resources/page-cache-helper-100ms.html: Added.
+        * webrtc/peerconnection-new-candidate-page-cache-expected.txt: Added.
+        * webrtc/peerconnection-new-candidate-page-cache.html: Added.
+
 2020-02-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] authenticatorGetAssertion should be sent without pinAuth if UV = "discouraged"

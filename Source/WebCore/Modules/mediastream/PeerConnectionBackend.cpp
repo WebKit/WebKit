@@ -437,25 +437,28 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
 
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "Gathered ice candidate:", sdp);
-    m_finishedGatheringCandidates = false;
+    m_peerConnection.doTask([logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL)]() mutable {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
+        m_finishedGatheringCandidates = false;
 
-    if (!m_shouldFilterICECandidates) {
-        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
-        return;
-    }
-    if (sdp.find(" host ", 0) != notFound) {
-        // FIXME: We might need to clear all pending candidates when setting again local description.
-        m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
-        if (RuntimeEnabledFeatures::sharedFeatures().webRTCMDNSICECandidatesEnabled()) {
-            auto ipAddress = extractIPAddres(sdp);
-            // We restrict to IPv4 candidates for now.
-            if (ipAddress.contains('.'))
-                registerMDNSName(ipAddress);
+        if (!m_shouldFilterICECandidates) {
+            fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
+            return;
         }
-        return;
-    }
-    fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
+        if (sdp.find(" host ", 0) != notFound) {
+            // FIXME: We might need to clear all pending candidates when setting again local description.
+            m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
+            if (RuntimeEnabledFeatures::sharedFeatures().webRTCMDNSICECandidatesEnabled()) {
+                auto ipAddress = extractIPAddres(sdp);
+                // We restrict to IPv4 candidates for now.
+                if (ipAddress.contains('.'))
+                    registerMDNSName(ipAddress);
+            }
+            return;
+        }
+        fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
+    });
 }
 
 void PeerConnectionBackend::doneGatheringCandidates()
