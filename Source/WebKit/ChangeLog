@@ -1,3 +1,14 @@
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        Mandate UUID version 4 for mDNS ICE candidates
+        https://bugs.webkit.org/show_bug.cgi?id=207329
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        Remove the count at the end of the mDNS name to make it a fully version 4 UUID.
+
 2020-02-07  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Add same-site cookie support
