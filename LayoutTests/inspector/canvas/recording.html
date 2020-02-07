@@ -25,7 +25,7 @@ function test() {
         name: "Canvas.ActionParameterNaN",
         description: "Check that NaN is converted into the proper value for serialization.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases[0];
+            let canvas = Array.from(WI.canvasManager.canvasCollection)[0];
             InspectorTest.assert(canvas, "There should be at least one canvas context.");
 
             canvas.awaitEvent(WI.Canvas.Event.RecordingStopped)
@@ -58,7 +58,7 @@ function test() {
         name: "Canvas.MultipleRecording",
         description: "Check that multiple recordings are able to be started/stopped at the same time.",
         test(resolve, reject) {
-            let canvases = WI.canvasManager.canvases;
+            let canvases = Array.from(WI.canvasManager.canvasCollection);
             InspectorTest.assert(canvases.length === 2, "There should be two canvas contexts.");
 
             canvases[1].awaitEvent(WI.Canvas.Event.RecordingStopped)
@@ -112,7 +112,7 @@ function test() {
         name: "Canvas.NoActions",
         description: "Check that a canvas is still able to be recorded after stopping a recording with no actions.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases[0];
+            let canvas = Array.from(WI.canvasManager.canvasCollection)[0];
             InspectorTest.assert(canvas, "There should be at least one canvas context.");
 
             let eventCount = 0;

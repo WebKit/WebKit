@@ -22,14 +22,14 @@ function test()
         name: `Canvas.resolveContextWebGPU.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         async test() {
-            InspectorTest.assert(!WI.canvasManager.canvases.length, "There should be no canvases.");
+            InspectorTest.assert(!WI.canvasManager.canvasCollection.size, "There should be no canvases.");
 
-            let [canvasAddedEvent] = await Promise.all([
-                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded),
+            let [canvasCollectionItemAddedEvent] = await Promise.all([
+                WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded),
                 InspectorTest.evaluateInPage(`createDevice()`),
             ]);
 
-            let {canvas} = canvasAddedEvent.data;
+            let canvas = canvasCollectionItemAddedEvent.data.item;
             InspectorTest.assert(canvas.contextType, WI.Canvas.ContextType.WebGPU, "Added canvas should be a WebGPU device.");
 
             const objectGroup = "test";

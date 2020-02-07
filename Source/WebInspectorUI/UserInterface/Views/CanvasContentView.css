@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.canvas:not(.tab) {
+.content-view.canvas {
     background-color: hsl(0, 0%, 90%);
 }
 
-.content-view.canvas:not(.tab) > .preview {
+.content-view.canvas > .preview {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,17 +36,17 @@
     padding: 15px;
 }
 
-.content-view.canvas:not(.tab) {
+.content-view.canvas {
     display: flex;
     flex-direction: column;
 }
 
-.content-view.canvas:not(.tab) > .preview > img {
+.content-view.canvas > .preview > img {
     max-width: 100%;
     max-height: 100%;
 }
 
-.content-view.canvas:not(.tab) > :matches(header, footer) {
+.content-view.canvas > :matches(header, footer) {
     display: none;
 }
 
@@ -56,7 +56,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .content-view.canvas:not(.tab) {
+    .content-view.canvas {
         background-color: unset;
     }
 }

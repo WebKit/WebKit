@@ -20,9 +20,9 @@ function test() {
             name,
             description: "Check that created canvases have the correct type and attributes sent to the frontend.",
             test(resolve, reject) {
-                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
+                WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded)
                 .then((event) => {
-                    let canvas = event.data.canvas;
+                    let canvas = event.data.item;
                     InspectorTest.log("Added canvas.");
 
                     let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);

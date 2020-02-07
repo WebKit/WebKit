@@ -17,7 +17,7 @@ function test()
         name: `Canvas.resolveContextBitmapRenderer.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
-            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;

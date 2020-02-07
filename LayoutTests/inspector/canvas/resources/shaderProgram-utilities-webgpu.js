@@ -64,7 +64,7 @@ async function createRenderPipeline(code = renderPipelineSource) {
 function deleteDevice() {
     device = null;
     // Force GC to make sure the device is destroyed, otherwise the frontend
-    // does not receive WI.CanvasManager.Event.CanvasRemoved events.
+    // does not receive Canvas.canvasRemoved events.
     setTimeout(() => { GCController.collect(); }, 0);
 }
 

@@ -30,6 +30,9 @@
 
     <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
 
+    <link rel="stylesheet" href="Views/AnimationCollectionContentView.css">
+    <link rel="stylesheet" href="Views/AnimationContentView.css">
+    <link rel="stylesheet" href="Views/AnimationDetailsSidebarPanel.css">
     <link rel="stylesheet" href="Views/ApplicationCacheFrameContentView.css">
     <link rel="stylesheet" href="Views/AuditNavigationSidebarPanel.css">
     <link rel="stylesheet" href="Views/AuditTestCaseContentView.css">
@@ -56,7 +59,6 @@
     <link rel="stylesheet" href="Views/CanvasDetailsSidebarPanel.css">
     <link rel="stylesheet" href="Views/CanvasOverviewContentView.css">
     <link rel="stylesheet" href="Views/CanvasSidebarPanel.css">
-    <link rel="stylesheet" href="Views/CanvasTabContentView.css">
     <link rel="stylesheet" href="Views/ChangesDetailsSidebarPanel.css">
     <link rel="stylesheet" href="Views/ChartDetailsSectionRow.css">
     <link rel="stylesheet" href="Views/CheckboxNavigationItem.css">
@@ -113,6 +115,8 @@
     <link rel="stylesheet" href="Views/GoToLineDialog.css">
     <link rel="stylesheet" href="Views/GradientEditor.css">
     <link rel="stylesheet" href="Views/GradientSlider.css">
+    <link rel="stylesheet" href="Views/GraphicsOverviewContentView.css">
+    <link rel="stylesheet" href="Views/GraphicsTabContentView.css">
     <link rel="stylesheet" href="Views/HeapAllocationsTimelineOverviewGraph.css">
     <link rel="stylesheet" href="Views/HeapAllocationsTimelineView.css">
     <link rel="stylesheet" href="Views/HeapSnapshotInstancesContentView.css">
@@ -349,6 +353,7 @@
     <script src="Protocol/WorkerObserver.js"></script>
 
     <script src="Models/BreakpointAction.js"></script>
+    <script src="Models/Collection.js"></script>
     <script src="Models/ConsoleMessage.js"></script>
     <script src="Models/Instrument.js"></script>
     <script src="Models/SourceCode.js"></script>
@@ -361,6 +366,8 @@
     <script src="Models/Script.js"></script>
     <script src="Models/LocalScript.js"></script>
 
+    <script src="Models/Animation.js"></script>
+    <script src="Models/AnimationCollection.js"></script>
     <script src="Models/ApplicationCacheFrame.js"></script>
     <script src="Models/ApplicationCacheManifest.js"></script>
     <script src="Models/BackForwardEntry.js"></script>
@@ -380,7 +387,6 @@
     <script src="Models/CallingContextTree.js"></script>
     <script src="Models/CallingContextTreeNode.js"></script>
     <script src="Models/Canvas.js"></script>
-    <script src="Models/Collection.js"></script>
     <script src="Models/CollectionEntry.js"></script>
     <script src="Models/CollectionEntryPreview.js"></script>
     <script src="Models/CollectionTypes.js"></script>
@@ -566,9 +572,9 @@
     <script src="Views/StyleDetailsPanel.js"></script>
 
     <script src="Views/AuditTabContentView.js"></script>
-    <script src="Views/CanvasTabContentView.js"></script>
     <script src="Views/ConsoleTabContentView.js"></script>
     <script src="Views/ElementsTabContentView.js"></script>
+    <script src="Views/GraphicsTabContentView.js"></script>
     <script src="Views/LayersTabContentView.js"></script>
     <script src="Views/ResourceTreeElement.js"></script>
     <script src="Views/ScriptTreeElement.js"></script>
@@ -594,6 +600,9 @@
 
     <script src="Views/ActivateButtonNavigationItem.js"></script>
     <script src="Views/ActivateButtonToolbarItem.js"></script>
+    <script src="Views/AnimationCollectionContentView.js"></script>
+    <script src="Views/AnimationContentView.js"></script>
+    <script src="Views/AnimationDetailsSidebarPanel.js"></script>
     <script src="Views/ApplicationCacheDetailsSidebarPanel.js"></script>
     <script src="Views/ApplicationCacheFrameContentView.js"></script>
     <script src="Views/ApplicationCacheFrameTreeElement.js"></script>
@@ -692,6 +701,7 @@
     <script src="Views/GoToLineDialog.js"></script>
     <script src="Views/GradientEditor.js"></script>
     <script src="Views/GradientSlider.js"></script>
+    <script src="Views/GraphicsOverviewContentView.js"></script>
     <script src="Views/HeapAllocationsTimelineDataGridNode.js"></script>
     <script src="Views/HeapAllocationsTimelineDataGridNodePathComponent.js"></script>
     <script src="Views/HeapAllocationsTimelineOverviewGraph.js"></script>
@@ -856,6 +866,7 @@
     <script src="Controllers/Annotator.js"></script>
     <script src="Controllers/CodeMirrorEditingController.js"></script>
 
+    <script src="Controllers/AnimationManager.js"></script>
     <script src="Controllers/AuditManager.js"></script>
     <script src="Controllers/ApplicationCacheManager.js"></script>
     <script src="Controllers/BasicBlockAnnotator.js"></script>

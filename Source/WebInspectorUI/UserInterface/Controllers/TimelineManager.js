@@ -781,7 +781,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 return;
             }
 
-            let domNode = WI.domManager.nodeForId(event.nodeId) || null;
+            let domNode = WI.domManager.nodeForId(event.nodeId);
             console.assert(domNode);
 
             record = new WI.MediaTimelineRecord(eventType, domNode, details);
