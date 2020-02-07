@@ -69,6 +69,7 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATALIST_ELEMENT)
     bool preventTextInteraction { false };
 #endif
+    bool shouldNotUseIBeamInEditableContent { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
