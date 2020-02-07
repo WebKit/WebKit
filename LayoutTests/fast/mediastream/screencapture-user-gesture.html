@@ -4,7 +4,7 @@
 promise_test(() => {
     let promise;
     internals.withUserGesture(() => {
-        promise = navigator.mediaDevices.getDisplayMedia({video : true});
+        promise = navigator.mediaDevices.getDisplayMedia();
     });
     return promise;
 }, "Allow getDisplayMedia call in case of user gesture");

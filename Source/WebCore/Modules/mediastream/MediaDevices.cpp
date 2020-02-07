@@ -139,7 +139,7 @@ void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& 
     request->start();
 }
 
-void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise)
+void MediaDevices::getDisplayMedia(const DisplayMediaStreamConstraints& constraints, Promise&& promise)
 {
     auto* document = this->document();
     if (!document)

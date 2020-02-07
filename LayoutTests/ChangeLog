@@ -1,3 +1,13 @@
+2020-02-07  youenn fablet  <youenn@apple.com>
+
+        Align getDisplayMedia() with spec
+        https://bugs.webkit.org/show_bug.cgi?id=207191
+        <rdar://problem/59151017>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/screencapture-user-gesture.html:
+
 2020-02-07  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_message.htm is flaky failing.
