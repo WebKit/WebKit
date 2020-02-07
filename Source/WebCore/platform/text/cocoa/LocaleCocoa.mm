@@ -288,6 +288,8 @@ static CanonicalLocaleMap& canonicalLocaleMap()
 
 AtomString LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
 {
+    if (string.isEmpty())
+        return string;
     return canonicalLocaleMap().ensure(string, [&] {
         return [NSLocale canonicalLanguageIdentifierFromString:string];
     }).iterator->value;
