@@ -275,6 +275,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #if PLATFORM(IOS_FAMILY)
     m_viewUpdateDispatcher->initializeConnection(connection);
 #endif // PLATFORM(IOS_FAMILY)
+
     m_webInspectorInterruptDispatcher->initializeConnection(connection);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -285,12 +286,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 
     m_webConnection = WebConnectionToUIProcess::create(this);
-
-#if PLATFORM(IOS_FAMILY)
-    // Make sure we have an IPC::Connection before creating the ProcessTaskStateObserver since it may call
-    // WebProcess::processTaskStateDidChange() on a background thread and deference the IPC connection.
-    m_taskStateObserver = ProcessTaskStateObserver::create(*this);
-#endif
 }
 
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
