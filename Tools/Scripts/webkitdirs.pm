@@ -2733,7 +2733,14 @@ sub iosSimulatorRuntime()
 {
     my $xcodeSDKVersion = xcodeSDKVersion();
     $xcodeSDKVersion =~ s/\./-/;
-    return "com.apple.CoreSimulator.SimRuntime.iOS-$xcodeSDKVersion";
+    my $runtime = "com.apple.CoreSimulator.SimRuntime.iOS-$xcodeSDKVersion";
+
+    open(TEST, "-|", "xcrun --sdk iphonesimulator simctl list 2>&1") or die "Failed to run find simulator runtime";
+    while ( my $line = <TEST> ) {
+        $runtime = $1 if ($line =~ m/.+ - (com.apple.CoreSimulator.SimRuntime.iOS-\S+)/);
+    }
+    close(TEST);
+    return $runtime;
 }
 
 sub findOrCreateSimulatorForIOSDevice($)
@@ -2741,13 +2748,9 @@ sub findOrCreateSimulatorForIOSDevice($)
     my ($simulatorNameSuffix) = @_;
     my $simulatorName;
     my $simulatorDeviceType;
-    if (architecture() eq "x86_64") {
-        $simulatorName = "iPhone SE " . $simulatorNameSuffix;
-        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-SE";
-    } else {
-        $simulatorName = "iPhone 5 " . $simulatorNameSuffix;
-        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-5";
-    }
+    $simulatorName = "iPhone SE " . $simulatorNameSuffix;
+    $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-SE";
+
     my $simulatedDevice = iosSimulatorDeviceByName($simulatorName);
     return $simulatedDevice if $simulatedDevice;
     return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, iosSimulatorRuntime());
