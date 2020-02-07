@@ -1,3 +1,18 @@
+2020-02-07  Jonathan Bedard  <jbedard@apple.com>
+
+        iPad testers failing to launch processes
+        https://bugs.webkit.org/show_bug.cgi?id=207401
+        <rdar://problem/58184777>
+
+        Unreviewed infrastructure fix.
+
+        This is a speculative fix because I've had problems reproducing this error.
+        The only time I managed to reproduce the problem was immediately after killing the 
+        SimulatorTrampoline and CoreSimulator.xpc processes.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main): Only kill Simulator.app, not all associated simulator processes.
+
 2020-02-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Report CTAP Client Pin Error to clients

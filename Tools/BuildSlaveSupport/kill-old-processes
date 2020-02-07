@@ -99,7 +99,7 @@ def main(user=None):
         "WebProcess",
         "xcodebuild",
         # FIXME: Consider moving iOS-specific tasks to their own list.
-        "Simulator",
+        "Simulator.app",
     ]
 
     taskToKillUnix = [
