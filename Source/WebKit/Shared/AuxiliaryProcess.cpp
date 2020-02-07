@@ -26,7 +26,6 @@
 #include "config.h"
 #include "AuxiliaryProcess.h"
 
-#include "ContentWorldShared.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
 #include <pal/SessionID.h>
