@@ -34,29 +34,50 @@ namespace WebCore {
 
 RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation, const AtomString& locale) const
 {
-    auto attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFTypeRef keys[5];
+    CFTypeRef values[5];
 
-    CFDictionarySetValue(attributesDictionary.get(), kCTFontAttributeName, platformData().ctFont());
+    keys[0] = kCTFontAttributeName;
+    values[0] = platformData().ctFont();
+    size_t count = 1;
+
 #if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
-    if (!locale.isEmpty())
-        CFDictionarySetValue(attributesDictionary.get(), kCTLanguageAttributeName, locale.string().createCFString().get());
+    RetainPtr<CFStringRef> localeString;
+    if (!locale.isEmpty()) {
+        localeString = locale.string().createCFString();
+        keys[count] = kCTLanguageAttributeName;
+        values[count] = localeString.get();
+        ++count;
+    }
 #else
     UNUSED_PARAM(locale);
 #endif
-    auto paragraphStyle = adoptCF(CTParagraphStyleCreate(nullptr, 0));
-    CTParagraphStyleSetCompositionLanguage(paragraphStyle.get(), kCTCompositionLanguageNone);
-    CFDictionarySetValue(attributesDictionary.get(), kCTParagraphStyleAttributeName, paragraphStyle.get());
+    static CTParagraphStyleRef paragraphStyle = [] {
+        auto paragraphStyle = CTParagraphStyleCreate(nullptr, 0);
+        CTParagraphStyleSetCompositionLanguage(paragraphStyle, kCTCompositionLanguageNone);
+        return paragraphStyle;
+    }();
+    keys[count] = kCTParagraphStyleAttributeName;
+    values[count] = paragraphStyle;
+    ++count;
 
     if (!enableKerning) {
         const float zero = 0;
         static CFNumberRef zeroKerningValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &zero);
-        CFDictionarySetValue(attributesDictionary.get(), kCTKernAttributeName, zeroKerningValue);
+        keys[count] = kCTKernAttributeName;
+        values[count] = zeroKerningValue;
+        ++count;
     }
 
-    if (orientation == FontOrientation::Vertical)
-        CFDictionarySetValue(attributesDictionary.get(), kCTVerticalFormsAttributeName, kCFBooleanTrue);
+    if (orientation == FontOrientation::Vertical) {
+        keys[count] = kCTVerticalFormsAttributeName;
+        values[count] = kCFBooleanTrue;
+        ++count;
+    }
 
-    return attributesDictionary;
+    ASSERT(count <= WTF_ARRAY_LENGTH(keys));
+
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 #if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)

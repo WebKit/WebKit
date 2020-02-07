@@ -428,8 +428,6 @@ float FontCascade::widthForSimpleText(StringView text) const
         return *cacheEntry;
 
     GlyphBuffer glyphBuffer;
-    Vector<GlyphBufferGlyph, 16> glyphs;
-    Vector<GlyphBufferAdvance, 16> advances;
     bool hasKerningOrLigatures = enableKerning() || requiresShaping();
     float runWidth = 0;
     auto& font = primaryFont();
