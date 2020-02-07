@@ -703,12 +703,14 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
     JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
     if (!window)
         return nullptr;
-    return WebFrame::fromCoreFrame(*(window->wrapped().frame()));
+    auto* coreFrame = window->wrapped().frame();
+    if (!coreFrame)
+        return nullptr;
+    return WebFrame::fromCoreFrame(*coreFrame);
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
