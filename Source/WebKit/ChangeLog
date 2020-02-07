@@ -1,3 +1,17 @@
+2020-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Build entitlements into GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=207367
+        <rdar://problem/59208411>
+
+        Reviewed by Geoffrey Garen.
+
+        When the new GPU process was added, we did not update the build system to add
+        necessary entitlements, or to encode the sandbox name for process startup.
+        This patch corrects these issues.
+
+        * Scripts/process-entitlements.sh:
+
 2020-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics relies on the order of m_getAllDomainsStatement, which can be changed by HashTable's implementation
