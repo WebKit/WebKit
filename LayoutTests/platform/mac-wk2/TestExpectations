@@ -983,7 +983,7 @@ webkit.org/b/206718 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass
 
 webkit.org/b/207209 [ Release ] inspector/heap/getPreview.html [ Pass Failure ]
 
-webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass Failure ]
+webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206627 storage/websql [ Skip ]
 
