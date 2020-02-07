@@ -1071,6 +1071,7 @@ static void setDefaultsToConsistentValuesForTesting()
         WebKitFullScreenEnabledPreferenceKey: @YES,
         WebKitAllowsInlineMediaPlaybackPreferenceKey: @YES,
         WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey: @NO,
+        @"WebKitLinkedOnOrAfterEverything": @YES,
         @"UseWebKitWebInspector": @YES,
 #if !PLATFORM(IOS_FAMILY)
         @"NSPreferredSpellServerLanguage": @"en_US",

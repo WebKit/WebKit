@@ -1,3 +1,18 @@
+2020-02-07  Daniel Bates  <dabates@apple.com>
+
+        Legacy WebKit: Have linkedOnOrAfter() respect the NSDefault WebKitLinkedOnOrAfterEverything and opt DumpRenderTree in
+        https://bugs.webkit.org/show_bug.cgi?id=207366
+
+        Reviewed by Brent Fulgham.
+
+        If the user default WebKitLinkedOnOrAfterEverything is enabled then have linkedOnOrAfter()
+        always return true.
+
+        * Misc/WebKitVersionChecks.mm:
+        (linkedOnOrAfter): Read the user default WebKitLinkedOnOrAfterEverything once and cache it.
+        If the default is enabled then early return true. Outside of tooling this default is unlikely
+        to be set.
+
 2020-02-07  Sam Weinig  <weinig@apple.com>
 
         Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
