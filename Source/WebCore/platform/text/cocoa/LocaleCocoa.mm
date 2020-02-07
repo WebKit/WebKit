@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "LocaleMac.h"
+#include "LocaleCocoa.h"
 
 #import "LocalizedStrings.h"
 #import <Foundation/NSDateFormatter.h>
@@ -69,7 +69,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return makeUnique<LocaleMac>(determineLocale(locale.string()).get());
+    return makeUnique<LocaleCocoa>(determineLocale(locale.string()).get());
 }
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
@@ -83,7 +83,7 @@ static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCa
     return adoptNS(formatter);
 }
 
-LocaleMac::LocaleMac(NSLocale* locale)
+LocaleCocoa::LocaleCocoa(NSLocale* locale)
     : m_locale(locale)
     , m_gregorianCalendar(adoptNS([[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]))
     , m_didInitializeNumberData(false)
@@ -96,17 +96,17 @@ LocaleMac::LocaleMac(NSLocale* locale)
     [m_gregorianCalendar.get() setLocale:m_locale.get()];
 }
 
-LocaleMac::~LocaleMac()
+LocaleCocoa::~LocaleCocoa()
 {
 }
 
-RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()
+RetainPtr<NSDateFormatter> LocaleCocoa::shortDateFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatType)
+String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
 {
     double msec = dateComponents.millisecondsSinceEpoch();
     DateComponents::Type type = dateComponents.type();
@@ -125,7 +125,7 @@ String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatTyp
     return [dateFormatter stringFromDate:date];
 }
 
-const Vector<String>& LocaleMac::monthLabels()
+const Vector<String>& LocaleCocoa::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
@@ -141,27 +141,27 @@ const Vector<String>& LocaleMac::monthLabels()
     return m_monthLabels;
 }
 
-RetainPtr<NSDateFormatter> LocaleMac::timeFormatter()
+RetainPtr<NSDateFormatter> LocaleCocoa::timeFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterMediumStyle);
 }
 
-RetainPtr<NSDateFormatter> LocaleMac::shortTimeFormatter()
+RetainPtr<NSDateFormatter> LocaleCocoa::shortTimeFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
 }
 
-RetainPtr<NSDateFormatter> LocaleMac::dateTimeFormatterWithSeconds()
+RetainPtr<NSDateFormatter> LocaleCocoa::dateTimeFormatterWithSeconds()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterMediumStyle);
 }
 
-RetainPtr<NSDateFormatter> LocaleMac::dateTimeFormatterWithoutSeconds()
+RetainPtr<NSDateFormatter> LocaleCocoa::dateTimeFormatterWithoutSeconds()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterShortStyle);
 }
 
-String LocaleMac::dateFormat()
+String LocaleCocoa::dateFormat()
 {
     if (!m_dateFormat.isNull())
         return m_dateFormat;
@@ -169,7 +169,7 @@ String LocaleMac::dateFormat()
     return m_dateFormat;
 }
 
-String LocaleMac::monthFormat()
+String LocaleCocoa::monthFormat()
 {
     if (!m_monthFormat.isNull())
         return m_monthFormat;
@@ -179,7 +179,7 @@ String LocaleMac::monthFormat()
     return m_monthFormat;
 }
 
-String LocaleMac::shortMonthFormat()
+String LocaleCocoa::shortMonthFormat()
 {
     if (!m_shortMonthFormat.isNull())
         return m_shortMonthFormat;
@@ -187,7 +187,7 @@ String LocaleMac::shortMonthFormat()
     return m_shortMonthFormat;
 }
 
-String LocaleMac::timeFormat()
+String LocaleCocoa::timeFormat()
 {
     if (!m_timeFormatWithSeconds.isNull())
         return m_timeFormatWithSeconds;
@@ -195,7 +195,7 @@ String LocaleMac::timeFormat()
     return m_timeFormatWithSeconds;
 }
 
-String LocaleMac::shortTimeFormat()
+String LocaleCocoa::shortTimeFormat()
 {
     if (!m_timeFormatWithoutSeconds.isNull())
         return m_timeFormatWithoutSeconds;
@@ -203,7 +203,7 @@ String LocaleMac::shortTimeFormat()
     return m_timeFormatWithoutSeconds;
 }
 
-String LocaleMac::dateTimeFormatWithSeconds()
+String LocaleCocoa::dateTimeFormatWithSeconds()
 {
     if (!m_dateTimeFormatWithSeconds.isNull())
         return m_dateTimeFormatWithSeconds;
@@ -211,7 +211,7 @@ String LocaleMac::dateTimeFormatWithSeconds()
     return m_dateTimeFormatWithSeconds;
 }
 
-String LocaleMac::dateTimeFormatWithoutSeconds()
+String LocaleCocoa::dateTimeFormatWithoutSeconds()
 {
     if (!m_dateTimeFormatWithoutSeconds.isNull())
         return m_dateTimeFormatWithoutSeconds;
@@ -219,7 +219,7 @@ String LocaleMac::dateTimeFormatWithoutSeconds()
     return m_dateTimeFormatWithoutSeconds;
 }
 
-const Vector<String>& LocaleMac::shortMonthLabels()
+const Vector<String>& LocaleCocoa::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
@@ -235,7 +235,7 @@ const Vector<String>& LocaleMac::shortMonthLabels()
     return m_shortMonthLabels;
 }
 
-const Vector<String>& LocaleMac::standAloneMonthLabels()
+const Vector<String>& LocaleCocoa::standAloneMonthLabels()
 {
     if (!m_standAloneMonthLabels.isEmpty())
         return m_standAloneMonthLabels;
@@ -250,7 +250,7 @@ const Vector<String>& LocaleMac::standAloneMonthLabels()
     return m_standAloneMonthLabels;
 }
 
-const Vector<String>& LocaleMac::shortStandAloneMonthLabels()
+const Vector<String>& LocaleCocoa::shortStandAloneMonthLabels()
 {
     if (!m_shortStandAloneMonthLabels.isEmpty())
         return m_shortStandAloneMonthLabels;
@@ -265,7 +265,7 @@ const Vector<String>& LocaleMac::shortStandAloneMonthLabels()
     return m_shortStandAloneMonthLabels;
 }
 
-const Vector<String>& LocaleMac::timeAMPMLabels()
+const Vector<String>& LocaleCocoa::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;
@@ -286,19 +286,19 @@ static CanonicalLocaleMap& canonicalLocaleMap()
     return canonicalLocaleMap.get();
 }
 
-AtomString LocaleMac::canonicalLanguageIdentifierFromString(const AtomString& string)
+AtomString LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
 {
     return canonicalLocaleMap().ensure(string, [&] {
         return [NSLocale canonicalLanguageIdentifierFromString:string];
     }).iterator->value;
 }
 
-void LocaleMac::releaseMemory()
+void LocaleCocoa::releaseMemory()
 {
     canonicalLocaleMap().clear();
 }
 
-void LocaleMac::initializeLocaleData()
+void LocaleCocoa::initializeLocaleData()
 {
     if (m_didInitializeNumberData)
         return;

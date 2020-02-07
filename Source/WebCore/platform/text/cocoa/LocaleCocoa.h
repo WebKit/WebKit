@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocaleMac_h
-#define LocaleMac_h
+#pragma once
 
 #include "PlatformLocale.h"
 #include <wtf/Forward.h>
@@ -45,10 +44,10 @@ namespace WebCore {
 
 class DateComponents;
 
-class LocaleMac : public Locale {
+class LocaleCocoa : public Locale {
 public:
-    explicit LocaleMac(NSLocale*);
-    ~LocaleMac();
+    explicit LocaleCocoa(NSLocale*);
+    ~LocaleCocoa();
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
@@ -99,4 +98,3 @@ private:
 };
 
 } // namespace WebCore
-#endif

@@ -32,7 +32,7 @@
 #import "FontCache.h"
 #import "FontCascade.h"
 #import "FontDescription.h"
-#import "LocaleMac.h"
+#import "LocaleCocoa.h"
 #import "OpenTypeCG.h"
 #import "SharedBuffer.h"
 #import <CoreText/CoreText.h>
@@ -560,7 +560,7 @@ void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningIndex, bo
         *newGlyphsPointer = glyphBuffer.glyphs(beginningIndex);
         *newAdvancesPointer = glyphBuffer.advances(beginningIndex);
     };
-    CTFontTransformGlyphsWithLanguage(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options, LocaleMac::canonicalLanguageIdentifierFromString(locale).string().createCFString().get(), handler);
+    CTFontTransformGlyphsWithLanguage(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options, LocaleCocoa::canonicalLanguageIdentifierFromString(locale).string().createCFString().get(), handler);
 #else
     UNUSED_PARAM(locale);
     CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options);

@@ -537,10 +537,11 @@ platform/network/mac/WebCoreURLResponse.mm
 
 platform/text/cf/HyphenationCF.cpp
 
+platform/text/cocoa/LocaleCocoa.mm
+
 platform/text/ios/LocalizedDateCache.mm
 platform/text/ios/TextEncodingRegistryIOS.mm
 
-platform/text/mac/LocaleMac.mm
 platform/text/mac/TextBoundaries.mm
 platform/text/mac/TextCheckingMac.mm
 platform/text/mac/TextEncodingRegistryMac.mm

@@ -30,7 +30,7 @@
 #import "GCController.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
-#import "LocaleMac.h"
+#import "LocaleCocoa.h"
 #import "SystemFontDatabaseCoreText.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -56,7 +56,7 @@ void platformReleaseMemory(Critical)
     GSFontPurgeFontCache();
 #endif
 
-    LocaleMac::releaseMemory();
+    LocaleCocoa::releaseMemory();
 
     for (auto& pool : LayerPool::allLayerPools())
         pool->drain();

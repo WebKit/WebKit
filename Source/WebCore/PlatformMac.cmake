@@ -430,9 +430,10 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
     platform/network/mac/WebCoreURLResponse.mm
 
+    platform/text/cocoa/LocaleCocoa.mm
+
     platform/text/cf/HyphenationCF.cpp
 
-    platform/text/mac/LocaleMac.mm
     platform/text/mac/TextBoundaries.mm
     platform/text/mac/TextCheckingMac.mm
     platform/text/mac/TextEncodingRegistryMac.mm

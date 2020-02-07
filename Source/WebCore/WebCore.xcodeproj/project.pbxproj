@@ -5013,7 +5013,7 @@
 		F55B3DDC1251F12D003EF269 /* TimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DA81251F12D003EF269 /* TimeInputType.h */; };
 		F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAA1251F12D003EF269 /* URLInputType.h */; };
 		F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAC1251F12D003EF269 /* WeekInputType.h */; };
-		F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = F5973DDE15CFB2030027F804 /* LocaleMac.h */; };
+		F5973DE015CFB2030027F804 /* LocaleCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F5973DDE15CFB2030027F804 /* LocaleCocoa.h */; };
 		F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */; };
 		F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A154261279534D00D0B0C0 /* ValidationMessage.h */; };
 		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15533,8 +15533,8 @@
 		F587864902DE3A9A01EA4122 /* CachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CachePolicy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5973DDE15CFB2030027F804 /* LocaleMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleMac.h; sourceTree = "<group>"; };
-		F5973DDF15CFB2030027F804 /* LocaleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocaleMac.mm; sourceTree = "<group>"; };
+		F5973DDE15CFB2030027F804 /* LocaleCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleCocoa.h; sourceTree = "<group>"; };
+		F5973DDF15CFB2030027F804 /* LocaleCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LocaleCocoa.mm; path = "../cocoa/LocaleCocoa.mm"; sourceTree = "<group>"; };
 		F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDateAndTimeInputType.h; sourceTree = "<group>"; };
 		F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidationMessage.cpp; sourceTree = "<group>"; };
@@ -17352,6 +17352,15 @@
 				1C09D0501E31C32900725F18 /* libPAL.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1C165E4F23ECF55E00B0FCFB /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F5973DDE15CFB2030027F804 /* LocaleCocoa.h */,
+				F5973DDF15CFB2030027F804 /* LocaleCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		1C5FAECA0DCFD8C900D58F78 /* Inspector */ = {
@@ -25142,6 +25151,7 @@
 			isa = PBXGroup;
 			children = (
 				B2B264590D00A77E000ACC1D /* cf */,
+				1C165E4F23ECF55E00B0FCFB /* cocoa */,
 				A516E8B2136E04C00076C3C0 /* ios */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */,
@@ -25198,8 +25208,6 @@
 		B2C3D9F90D006C1D00EF6F26 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				F5973DDE15CFB2030027F804 /* LocaleMac.h */,
-				F5973DDF15CFB2030027F804 /* LocaleMac.mm */,
 				B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */,
 				CEA84720212622AD00940809 /* TextCheckingMac.mm */,
 				A1F55DC41F54D3F000EDB75F /* TextEncodingRegistryMac.mm */,
@@ -31350,7 +31358,7 @@
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				1C43DE6B22AB4B8A001527D9 /* LocalCurrentTraitCollection.h in Headers */,
 				445775E520472F73008DCE5D /* LocalDefaultSystemAppearance.h in Headers */,
-				F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */,
+				F5973DE015CFB2030027F804 /* LocaleCocoa.h in Headers */,
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
