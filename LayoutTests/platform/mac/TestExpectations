@@ -2005,3 +2005,5 @@ webkit.org/b/207307 imported/w3c/web-platform-tests/notifications/constructor-ba
 webkit.org/b/112939 fast/performance/performance-now-timestamps.html [ Pass Failure ]
 
 webkit.org/b/207363 inspector/css/pseudo-creation.html [ Pass Failure ]
+
+webkit.org/b/207392 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_message.htm [ Pass Failure ]
