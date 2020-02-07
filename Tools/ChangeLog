@@ -1,3 +1,24 @@
+2020-02-07  Jonathan Bedard  <jbedard@apple.com>
+
+        EWS should run resultsdbpy tests
+        https://bugs.webkit.org/show_bug.cgi?id=201928
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (ServicesFactory.__init__): Add RunResultsdbpyTests.
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestTestsFactory.test_services_factory): Add RunResultsdbpyTests.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): resultsdbpy changes should trigger service tests.
+        (RunResultsdbpyTests): Add step which runs resultsdbpy tests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunResultsdbpyTests):
+        (TestRunResultsdbpyTests.setUp):
+        (TestRunResultsdbpyTests.tearDown):
+        (TestRunResultsdbpyTests.test_success):
+        (TestRunResultsdbpyTests.test_failure):
+
 2020-02-07  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Adding myself to contributors.json

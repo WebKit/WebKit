@@ -151,5 +151,6 @@ class TestTestsFactory(TestCase):
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.RunEWSUnitTests),
             _BuildStepFactory(steps.RunEWSBuildbotCheckConfig),
+            _BuildStepFactory(steps.RunResultsdbpyTests),
             _BuildStepFactory(steps.RunBuildWebKitOrgUnitTests),
         ])

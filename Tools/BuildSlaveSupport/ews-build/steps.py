@@ -238,6 +238,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools/BuildSlaveSupport/build.webkit.org-config',
         'Tools/BuildSlaveSupport/ews-build',
         'Tools/BuildSlaveSupport/Shared',
+        'Tools/resultsdbpy',
     ]
 
     jsc_paths = [
@@ -710,6 +711,26 @@ class RunEWSBuildbotCheckConfig(shell.ShellCommand):
         if self.results == SUCCESS:
             return {u'step': u'Passed buildbot checkconfig'}
         return {u'step': u'Failed buildbot checkconfig'}
+
+
+class RunResultsdbpyTests(shell.ShellCommand):
+    name = 'resultsdbpy-unit-tests'
+    description = ['resultsdbpy-unit-tests running']
+    command = [
+        'python3',
+        'Tools/resultsdbpy/resultsdbpy/run-tests',
+        '--verbose',
+        '--no-selenium',
+        '--fast-tests',
+    ]
+
+    def __init__(self, **kwargs):
+        super(RunResultsdbpyTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Passed resultsdbpy unit tests'}
+        return {u'step': u'Failed resultsdbpy unit tests'}
 
 
 class WebKitPyTest(shell.ShellCommand):
