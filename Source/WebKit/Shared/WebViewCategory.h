@@ -28,6 +28,7 @@
 namespace WebKit {
 
 enum class WebViewCategory : uint8_t {
+    AppBoundDomain,
     HybridApp,
     InAppBrowser,
     WebBrowser

@@ -1161,6 +1161,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static WebKit::WebViewCategory toWebKitWebViewCategory(_WKWebViewCategory category)
 {
     switch (category) {
+    case _WKWebViewCategoryAppBoundDomain:
+        return WebKit::WebViewCategory::AppBoundDomain;
     case _WKWebViewCategoryHybridApp:
         return WebKit::WebViewCategory::HybridApp;
     case _WKWebViewCategoryInAppBrowser:
@@ -1169,12 +1171,14 @@ static WebKit::WebViewCategory toWebKitWebViewCategory(_WKWebViewCategory catego
         return WebKit::WebViewCategory::WebBrowser;
     }
     ASSERT_NOT_REACHED();
-    return WebKit::WebViewCategory::HybridApp;
+    return WebKit::WebViewCategory::AppBoundDomain;
 }
 
 static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
 {
     switch (category) {
+    case WebKit::WebViewCategory::AppBoundDomain:
+        return _WKWebViewCategoryAppBoundDomain;
     case WebKit::WebViewCategory::HybridApp:
         return _WKWebViewCategoryHybridApp;
     case WebKit::WebViewCategory::InAppBrowser:
@@ -1183,7 +1187,7 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
         return _WKWebViewCategoryWebBrowser;
     }
     ASSERT_NOT_REACHED();
-    return _WKWebViewCategoryHybridApp;
+    return _WKWebViewCategoryAppBoundDomain;
 }
 
 - (_WKWebViewCategory)_webViewCategory

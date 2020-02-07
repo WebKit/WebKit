@@ -38,6 +38,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 #endif
 
 typedef NS_ENUM(NSUInteger, _WKWebViewCategory) {
+    _WKWebViewCategoryAppBoundDomain,
     _WKWebViewCategoryHybridApp,
     _WKWebViewCategoryInAppBrowser,
     _WKWebViewCategoryWebBrowser

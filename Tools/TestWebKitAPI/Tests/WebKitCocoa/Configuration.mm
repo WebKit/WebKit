@@ -62,7 +62,7 @@ TEST(WebKit, ConfigurationDrawsBackground)
 TEST(WebKit, WebViewCategory)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryHybridApp);
+    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
 
     [configuration _setWebViewCategory:_WKWebViewCategoryInAppBrowser];
     EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryInAppBrowser);
@@ -70,8 +70,8 @@ TEST(WebKit, WebViewCategory)
     [configuration _setWebViewCategory:_WKWebViewCategoryWebBrowser];
     EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryWebBrowser);
 
-    [configuration _setWebViewCategory:_WKWebViewCategoryHybridApp];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryHybridApp);
+    [configuration _setWebViewCategory:_WKWebViewCategoryAppBoundDomain];
+    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
 }
 
 #endif

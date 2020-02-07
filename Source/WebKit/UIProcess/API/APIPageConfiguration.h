@@ -178,7 +178,7 @@ private:
 
     HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
     Vector<WTF::String> m_corsDisablingPatterns;
-    WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::HybridApp };
+    WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
 };
 
 } // namespace API
