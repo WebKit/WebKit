@@ -4231,9 +4231,9 @@ void WebPage::extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&&
 #endif
 
 #if ENABLE(GEOLOCATION)
-void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, const String& authorizationToken)
 {
-    geolocationPermissionRequestManager().didReceiveGeolocationPermissionDecision(geolocationID, allowed);
+    geolocationPermissionRequestManager().didReceiveGeolocationPermissionDecision(geolocationID, authorizationToken);
 }
 #endif
 

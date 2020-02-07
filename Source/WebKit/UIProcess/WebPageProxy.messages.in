@@ -284,6 +284,7 @@ messages -> WebPageProxy {
 
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, WebCore::FrameIdentifier frameID, String originIdentifier)
+    RevokeGeolocationAuthorizationToken(String authorizationToken);
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages

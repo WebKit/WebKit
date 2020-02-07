@@ -50,14 +50,14 @@ WebGeolocationManager::WebGeolocationManager(WebProcess& process)
     m_process.addMessageReceiver(Messages::WebGeolocationManager::messageReceiverName(), *this);
 }
 
-void WebGeolocationManager::registerWebPage(WebPage& page)
+void WebGeolocationManager::registerWebPage(WebPage& page, const String& authorizationToken)
 {
     bool wasUpdating = isUpdating();
 
     m_pageSet.add(&page);
 
     if (!wasUpdating)
-        m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(), 0);
+        m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(page.webPageProxyIdentifier(), authorizationToken), 0);
 }
 
 void WebGeolocationManager::unregisterWebPage(WebPage& page)

@@ -51,7 +51,7 @@ public:
 
     static const char* supplementName();
 
-    void registerWebPage(WebPage&);
+    void registerWebPage(WebPage&, const String& authorizationToken);
     void unregisterWebPage(WebPage&);
     void setEnableHighAccuracyForPage(WebPage&, bool);
 

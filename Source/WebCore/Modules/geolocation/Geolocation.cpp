@@ -146,6 +146,7 @@ Geolocation::Geolocation(Navigator& navigator)
 Geolocation::~Geolocation()
 {
     ASSERT(m_allowGeolocation != InProgress);
+    revokeAuthorizationTokenIfNecessary();
 }
 
 SecurityOrigin* Geolocation::securityOrigin() const
@@ -206,7 +207,7 @@ void Geolocation::resumeTimerFired()
 
     if ((isAllowed() || isDenied()) && !m_pendingForPermissionNotifiers.isEmpty()) {
         // The pending permission was granted while the object was suspended.
-        setIsAllowed(isAllowed());
+        setIsAllowed(isAllowed(), authorizationToken());
         ASSERT(!m_hasChangedPosition);
         ASSERT(!m_errorWaitingForResume);
         return;
@@ -214,7 +215,7 @@ void Geolocation::resumeTimerFired()
 
     if (isDenied() && hasListeners()) {
         // The permission was revoked while the object was suspended.
-        setIsAllowed(false);
+        setIsAllowed(false, { });
         return;
     }
 
@@ -248,7 +249,7 @@ void Geolocation::resetAllGeolocationPermission()
 
     // 1) Reset our own state.
     stopUpdating();
-    m_allowGeolocation = Unknown;
+    resetIsAllowed();
     m_hasChangedPosition = false;
     m_errorWaitingForResume = nullptr;
 
@@ -271,7 +272,7 @@ void Geolocation::stop()
     if (page && m_allowGeolocation == InProgress)
         GeolocationController::from(page)->cancelPermissionRequest(*this);
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
-    m_allowGeolocation = Unknown;
+    resetIsAllowed();
     cancelAllRequests();
     stopUpdating();
     m_hasChangedPosition = false;
@@ -480,7 +481,7 @@ void Geolocation::clearWatch(int watchID)
         stopUpdating();
 }
 
-void Geolocation::setIsAllowed(bool allowed)
+void Geolocation::setIsAllowed(bool allowed, const String& authorizationToken)
 {
     // Protect the Geolocation object from garbage collection during a callback.
     Ref<Geolocation> protectedThis(*this);
@@ -488,6 +489,7 @@ void Geolocation::setIsAllowed(bool allowed)
     // This may be due to either a new position from the service, or a cached
     // position.
     m_allowGeolocation = allowed ? Yes : No;
+    m_authorizationToken = authorizationToken;
     
     if (m_isSuspended)
         return;
@@ -635,6 +637,24 @@ void Geolocation::requestPermission()
 
     // Ask the embedder: it maintains the geolocation challenge policy itself.
     GeolocationController::from(page)->requestPermission(*this);
+}
+
+void Geolocation::revokeAuthorizationTokenIfNecessary()
+{
+    if (m_authorizationToken.isNull())
+        return;
+
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    GeolocationController::from(page)->revokeAuthorizationToken(std::exchange(m_authorizationToken, String()));
+}
+
+void Geolocation::resetIsAllowed()
+{
+    m_allowGeolocation = Unknown;
+    revokeAuthorizationTokenIfNecessary();
 }
 
 void Geolocation::makeSuccessCallbacks(GeolocationPosition& position)

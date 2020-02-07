@@ -29,6 +29,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/UUID.h>
 
 namespace WebKit {
 
@@ -62,12 +63,28 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
         return;
 
 #if ENABLE(GEOLOCATION)
-    m_page.process().send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page.webPageID());
+    String authorizationToken = allowed ? createCanonicalUUIDString() : String();
+    if (!authorizationToken.isNull())
+        m_validAuthorizationTokens.add(authorizationToken);
+    m_page.process().send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageID());
 #else
     UNUSED_PARAM(allowed);
 #endif
 
     m_pendingRequests.remove(it);
+}
+
+bool GeolocationPermissionRequestManagerProxy::isValidAuthorizationToken(const String& authorizationToken) const
+{
+    return !authorizationToken.isNull() && m_validAuthorizationTokens.contains(authorizationToken);
+}
+
+void GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken(const String& authorizationToken)
+{
+    ASSERT(isValidAuthorizationToken(authorizationToken));
+    if (!isValidAuthorizationToken(authorizationToken))
+        return;
+    m_validAuthorizationTokens.remove(authorizationToken);
 }
 
 } // namespace WebKit
