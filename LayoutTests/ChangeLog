@@ -1,3 +1,17 @@
+2020-02-06  Antti Koivisto  <antti@apple.com>
+
+        Add slot based test for the accelerated animations freezing bug (201048)
+        https://bugs.webkit.org/show_bug.cgi?id=207359
+
+        Reviewed by Ryosuke Niwa.
+
+        201048 had a simpler test case but it is good to add one for the original problem too.
+
+        Based on the original test by Tim Guan-tin Chien.
+
+        * webanimations/accelerated-animation-slot-invalidation-expected.html: Added.
+        * webanimations/accelerated-animation-slot-invalidation.html: Added.
+
 2020-02-06  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] inspector/css/pseudo-creation.html is flaky failing.
