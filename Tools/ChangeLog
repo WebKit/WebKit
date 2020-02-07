@@ -1,3 +1,12 @@
+2020-02-07  Jonathan Bedard  <jbedard@apple.com>
+
+        TestWebKitAPI: Disable legacy ActionSheet tests on Catalyst
+        https://bugs.webkit.org/show_bug.cgi?id=207405
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+
 2020-02-07  Alex Christensen  <achristensen@apple.com>
 
         Remember if we used legacy TLS in the back/forward cache like we remember if we have only secure content

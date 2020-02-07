@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Test.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "ClassMethodSwizzler.h"
 #import "IPadUserInterfaceSwizzler.h"
@@ -354,4 +354,4 @@ TEST(ActionSheetTests, CopyLinkWritesURLAndPlainText)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
