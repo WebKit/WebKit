@@ -196,6 +196,11 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
+#if PLATFORM(IOS_FAMILY)
+    // Return whether the application is visible.
+    virtual bool isApplicationVisible() = 0;
+#endif
+
     // Return whether the view is visible, or occluded by another window.
     virtual bool isViewVisibleOrOccluded() { return isViewVisible(); }
 

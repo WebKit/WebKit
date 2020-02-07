@@ -34,6 +34,7 @@
 
 OBJC_CLASS BKSApplicationStateMonitor;
 OBJC_CLASS UIView;
+OBJC_CLASS UIWindow;
 
 namespace WebKit {
 
@@ -63,6 +64,14 @@ private:
     id m_didFinishSnapshottingAfterEnteringBackgroundObserver;
     id m_willEnterForegroundObserver;
 };
+
+enum class ApplicationType {
+    Application,
+    ViewService,
+    Extension,
+};
+
+ApplicationType applicationType(UIWindow *);
 
 }
 

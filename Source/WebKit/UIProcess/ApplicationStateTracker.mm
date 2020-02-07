@@ -50,13 +50,7 @@ static NSNotificationName const viewServiceForegroundNotificationName = @"_UIVie
 
 namespace WebKit {
 
-enum class ApplicationType {
-    Application,
-    ViewService,
-    Extension,
-};
-
-static ApplicationType applicationType(UIWindow *window)
+ApplicationType applicationType(UIWindow *window)
 {
     ASSERT(window);
 
