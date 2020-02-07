@@ -108,7 +108,7 @@ void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Elem
             return m_elementToCSSAnimationsMap;
         return m_elementToAnimationsMap;
     }().ensure(&element, [] {
-        return ListHashSet<RefPtr<WebAnimation>> { };
+        return AnimationCollection { };
     }).iterator->value.add(&animation);
 }
 
@@ -161,18 +161,7 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
 {
     ASSERT(is<DeclarativeAnimation>(animation));
 
-    if (is<CSSAnimation>(animation)) {
-        auto iterator = m_elementToCSSAnimationByName.find(&element);
-        if (iterator != m_elementToCSSAnimationByName.end()) {
-            auto& cssAnimationsByName = iterator->value;
-            auto& name = downcast<CSSAnimation>(animation).animationName();
-            if (cssAnimationsByName.get(name) == &animation) {
-                cssAnimationsByName.remove(name);
-                if (cssAnimationsByName.isEmpty())
-                    m_elementToCSSAnimationByName.remove(&element);
-            }
-        }
-    } else if (is<CSSTransition>(animation)) {
+    if (is<CSSTransition>(animation)) {
         auto& transition = downcast<CSSTransition>(animation);
         if (!removeCSSTransitionFromMap(transition, element, m_elementToRunningCSSTransitionByCSSPropertyID))
             removeCSSTransitionFromMap(transition, element, m_elementToCompletedCSSTransitionByCSSPropertyID);
@@ -182,47 +171,68 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
 Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element, Ordering ordering) const
 {
     Vector<RefPtr<WebAnimation>> animations;
-    if (m_elementToCSSTransitionsMap.contains(&element)) {
-        const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
-        if (ordering == Ordering::Sorted) {
-            auto sortedCSSTransitions = copyToVector(cssTransitions);
-            std::sort(sortedCSSTransitions.begin(), sortedCSSTransitions.end(), [](auto& lhs, auto& rhs) {
-                // Sort transitions first by their generation time, and then by transition-property.
-                // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
-                auto* lhsTransition = downcast<CSSTransition>(lhs.get());
-                auto* rhsTransition = downcast<CSSTransition>(rhs.get());
-                if (lhsTransition->generationTime() != rhsTransition->generationTime())
-                    return lhsTransition->generationTime() < rhsTransition->generationTime();
-                return lhsTransition->transitionProperty().utf8() < rhsTransition->transitionProperty().utf8();
-            });
-            animations.appendVector(sortedCSSTransitions);
-        } else
+
+    if (ordering == Ordering::Sorted) {
+        if (element.hasKeyframeEffects()) {
+            for (auto& effect : element.ensureKeyframeEffectStack().sortedEffects())
+                animations.append(effect->animation());
+        }
+    } else {
+        if (m_elementToCSSTransitionsMap.contains(&element)) {
+            const auto& cssTransitions = m_elementToCSSTransitionsMap.get(&element);
             animations.appendRange(cssTransitions.begin(), cssTransitions.end());
-    }
-    if (m_elementToCSSAnimationsMap.contains(&element)) {
-        const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
-        animations.appendRange(cssAnimations.begin(), cssAnimations.end());
-    }
-    if (m_elementToAnimationsMap.contains(&element)) {
-        const auto& webAnimations = m_elementToAnimationsMap.get(&element);
-        if (ordering == Ordering::Sorted) {
-            auto sortedWebAnimations = copyToVector(webAnimations);
-            std::sort(sortedWebAnimations.begin(), sortedWebAnimations.end(), [](auto& lha, auto& rha) {
-                return lha->globalPosition() < rha->globalPosition();
-            });
-            animations.appendVector(sortedWebAnimations);
-        } else
+        }
+        if (m_elementToCSSAnimationsMap.contains(&element)) {
+            const auto& cssAnimations = m_elementToCSSAnimationsMap.get(&element);
+            animations.appendRange(cssAnimations.begin(), cssAnimations.end());
+        }
+        if (m_elementToAnimationsMap.contains(&element)) {
+            const auto& webAnimations = m_elementToAnimationsMap.get(&element);
             animations.appendRange(webAnimations.begin(), webAnimations.end());
+        }
     }
+
     return animations;
+}
+
+void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSAnimation& cssAnimation)
+{
+    auto iterator = m_elementToCSSAnimationsCreatedByMarkupMap.find(&element);
+    if (iterator != m_elementToCSSAnimationsCreatedByMarkupMap.end()) {
+        auto& cssAnimations = iterator->value;
+        cssAnimations.remove(&cssAnimation);
+        if (!cssAnimations.size())
+            m_elementToCSSAnimationsCreatedByMarkupMap.remove(iterator);
+    }
+
+    if (!element.hasKeyframeEffects())
+        return;
+
+    auto& keyframeEffectStack = element.ensureKeyframeEffectStack();
+    auto* cssAnimationList = keyframeEffectStack.cssAnimationList();
+    if (!cssAnimationList || cssAnimationList->isEmpty())
+        return;
+
+    auto& backingAnimation = cssAnimation.backingAnimation();
+    for (size_t i = 0; i < cssAnimationList->size(); ++i) {
+        if (cssAnimationList->animation(i) == backingAnimation) {
+            auto newAnimationList = cssAnimationList->copy();
+            newAnimationList->remove(i);
+            keyframeEffectStack.setCSSAnimationList(WTFMove(newAnimationList));
+            return;
+        }
+    }
 }
 
 void AnimationTimeline::elementWasRemoved(Element& element)
 {
     for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
         cssTransition->cancel(WebAnimation::Silently::Yes);
-    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element))
+    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element)) {
+        if (is<CSSAnimation>(cssAnimation))
+            removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
         cssAnimation->cancel(WebAnimation::Silently::Yes);
+    }
 }
 
 void AnimationTimeline::removeAnimationsForElement(Element& element)
@@ -235,8 +245,11 @@ void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
 {
     for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
         cssTransition->cancel();
-    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element))
+    for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element)) {
+        if (is<CSSAnimation>(cssAnimation))
+            removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
         cssAnimation->cancel();
+    }
 }
 
 static bool shouldConsiderAnimation(Element& element, const Animation& animation)
@@ -258,66 +271,75 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
 
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle)
 {
-    Vector<String> animationNames;
+    auto& keyframeEffectStack = element.ensureKeyframeEffectStack();
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
-    if (currentStyle && currentStyle->hasAnimations() && currentStyle->display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
-        if (m_elementToCSSAnimationByName.contains(&element)) {
-            for (const auto& cssAnimationsByNameMapItem : m_elementToCSSAnimationByName.take(&element))
-                cssAnimationsByNameMapItem.value->cancelFromStyle();
+    if (currentStyle && currentStyle->display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
+        auto iterator = m_elementToCSSAnimationsCreatedByMarkupMap.find(&element);
+        if (iterator != m_elementToCSSAnimationsCreatedByMarkupMap.end()) {
+            auto& cssAnimations = iterator->value;
+            for (auto& cssAnimation : cssAnimations)
+                cssAnimation->cancelFromStyle();
+            m_elementToCSSAnimationsCreatedByMarkupMap.remove(iterator);
         }
-        element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
+        keyframeEffectStack.setCSSAnimationList(nullptr);
         return;
     }
 
-    if (currentStyle && currentStyle->hasAnimations() && afterChangeStyle.hasAnimations() && *(currentStyle->animations()) == *(afterChangeStyle.animations()))
+    auto* currentAnimationList = afterChangeStyle.animations();
+    auto* previousAnimationList = keyframeEffectStack.cssAnimationList();
+    if (previousAnimationList && !previousAnimationList->isEmpty() && afterChangeStyle.hasAnimations() && *(previousAnimationList) == *(afterChangeStyle.animations()))
         return;
 
-    // First, compile the list of animation names that were applied to this element up to this point.
-    HashSet<String> namesOfPreviousAnimations;
-    if (currentStyle && currentStyle->hasAnimations()) {
-        auto* previousAnimations = currentStyle->animations();
-        for (size_t i = 0; i < previousAnimations->size(); ++i) {
-            auto& previousAnimation = previousAnimations->animation(i);
-            if (shouldConsiderAnimation(element, previousAnimation))
-                namesOfPreviousAnimations.add(previousAnimation.name());
-        }
-    }
-
-    // Create or get the CSSAnimations by animation name map for this element.
-    auto& cssAnimationsByName = m_elementToCSSAnimationByName.ensure(&element, [] {
-        return HashMap<String, RefPtr<CSSAnimation>> { };
+    CSSAnimationCollection newAnimations;
+    auto& previousAnimations = m_elementToCSSAnimationsCreatedByMarkupMap.ensure(&element, [] {
+        return CSSAnimationCollection { };
     }).iterator->value;
 
-    if (auto* currentAnimations = afterChangeStyle.animations()) {
-        for (size_t i = 0; i < currentAnimations->size(); ++i) {
-            auto& currentAnimation = currentAnimations->animation(i);
-            auto& name = currentAnimation.name();
-            if (namesOfPreviousAnimations.contains(name)) {
-                // We've found the name of this animation in our list of previous animations, this means we've already
-                // created a CSSAnimation object for it and need to ensure that this CSSAnimation is backed by the current
-                // animation object for this animation name.
-                if (auto cssAnimation = cssAnimationsByName.get(name))
-                    cssAnimation->setBackingAnimation(currentAnimation);
-                animationNames.append(name);
-            } else if (shouldConsiderAnimation(element, currentAnimation)) {
-                // Otherwise we are dealing with a new animation name and must create a CSSAnimation for it.
-                cssAnimationsByName.set(name, CSSAnimation::create(element, currentAnimation, currentStyle, afterChangeStyle));
-                animationNames.append(name);
+    // https://www.w3.org/TR/css-animations-1/#animations
+    // The same @keyframes rule name may be repeated within an animation-name. Changes to the animation-name update existing
+    // animations by iterating over the new list of animations from last to first, and, for each animation, finding the last
+    // matching animation in the list of existing animations. If a match is found, the existing animation is updated using the
+    // animation properties corresponding to its position in the new list of animations, whilst maintaining its current playback
+    // time as described above. The matching animation is removed from the existing list of animations such that it will not match
+    // twice. If a match is not found, a new animation is created. As a result, updating animation-name from ‘a’ to ‘a, a’ will
+    // cause the existing animation for ‘a’ to become the second animation in the list and a new animation will be created for the
+    // first item in the list.
+    if (currentAnimationList) {
+        for (size_t i = currentAnimationList->size(); i > 0; --i) {
+            auto& currentAnimation = currentAnimationList->animation(i - 1);
+            if (!shouldConsiderAnimation(element, currentAnimation))
+                continue;
+
+            bool foundMatchingAnimation = false;
+            for (auto& previousAnimation : previousAnimations) {
+                if (previousAnimation->animationName() == currentAnimation.name()) {
+                    // Timing properties or play state may have changed so we need to update the backing animation with
+                    // the Animation found in the current style.
+                    previousAnimation->setBackingAnimation(currentAnimation);
+                    newAnimations.add(previousAnimation);
+                    // Remove the matched animation from the list of previous animations so we may not match it again.
+                    previousAnimations.remove(previousAnimation);
+                    foundMatchingAnimation = true;
+                    break;
+                }
             }
-            // Remove the name of this animation from our list since it's now known to be current.
-            namesOfPreviousAnimations.remove(name);
+
+            if (!foundMatchingAnimation)
+                newAnimations.add(CSSAnimation::create(element, currentAnimation, currentStyle, afterChangeStyle));
         }
     }
 
-    // The animations names left in namesOfPreviousAnimations are now known to no longer apply so we need to
-    // remove the CSSAnimation object created for them.
-    for (const auto& nameOfAnimationToRemove : namesOfPreviousAnimations) {
-        if (auto animation = cssAnimationsByName.take(nameOfAnimationToRemove))
-            animation->cancelFromStyle();
+    // Any animation found in previousAnimations but not found in newAnimations is not longer current and should be canceled.
+    for (auto& previousAnimation : previousAnimations) {
+        if (!newAnimations.contains(previousAnimation)) {
+            if (previousAnimation->owningElement())
+                previousAnimation->cancelFromStyle();
+        }
     }
 
-    element.ensureKeyframeEffectStack().setCSSAnimationNames(WTFMove(animationNames));
+    m_elementToCSSAnimationsCreatedByMarkupMap.set(&element, WTFMove(newAnimations));
+    keyframeEffectStack.setCSSAnimationList(currentAnimationList);
 }
 
 RefPtr<WebAnimation> AnimationTimeline::cssAnimationForElementAndProperty(Element& element, CSSPropertyID property)

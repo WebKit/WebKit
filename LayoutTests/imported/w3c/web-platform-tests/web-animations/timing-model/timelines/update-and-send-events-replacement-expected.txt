@@ -11,7 +11,7 @@ PASS Removes an animation after updating the fill mode of another animation
 PASS Removes an animation after updating its fill mode 
 PASS Removes an animation after updating another animation's effect to one with different timing 
 PASS Removes an animation after updating its effect to one with different timing 
-FAIL Removes an animation after updating another animation's timeline assert_equals: expected "removed" but got "active"
+PASS Removes an animation after updating another animation's timeline 
 PASS Removes an animation after updating its timeline 
 PASS Removes an animation after updating another animation's effect's properties 
 PASS Removes an animation after updating its effect's properties 

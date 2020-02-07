@@ -177,8 +177,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
             return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(lhsOwningElement, rhsOwningElement);
 
         // Otherwise, sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-        // In our case, this matches the time at which the animations were created and thus their relative position in m_allAnimations.
-        return false;
+        return compareAnimationsByCompositeOrder(*lhs, *rhs, lhsOwningElement->ensureKeyframeEffectStack().cssAnimationList());
     });
 
     std::sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {

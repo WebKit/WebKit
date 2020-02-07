@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnimationList.h"
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,14 +43,14 @@ public:
     void removeEffect(KeyframeEffect&);
     bool hasEffects() const { return !m_effects.isEmpty(); }
     Vector<WeakPtr<KeyframeEffect>> sortedEffects();
-    Vector<String> cssAnimationNames() const { return m_cssAnimationNames; }
-    void setCSSAnimationNames(Vector<String>&&);
+    const AnimationList* cssAnimationList() const { return m_cssAnimationList.get(); }
+    void setCSSAnimationList(RefPtr<const AnimationList>&&);
 
 private:
     void ensureEffectsAreSorted();
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
-    Vector<String> m_cssAnimationNames;
+    RefPtr<const AnimationList> m_cssAnimationList;
     bool m_isSorted { true };
 
 };
