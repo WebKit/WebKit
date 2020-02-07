@@ -58,10 +58,11 @@ void CtapAuthenticator::makeCredential()
     if (processGoogleLegacyAppIdSupportExtension())
         return;
     Vector<uint8_t> cborCmd;
+    auto& options = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
     if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, WTF::get<PublicKeyCredentialCreationOptions>(requestData().options), m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, WTF::get<PublicKeyCredentialCreationOptions>(requestData().options), m_info.options().userVerificationAvailability());
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability());
     driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
@@ -91,10 +92,11 @@ void CtapAuthenticator::getAssertion()
 {
     ASSERT(!m_isDowngraded);
     Vector<uint8_t> cborCmd;
-    if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
-        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, WTF::get<PublicKeyCredentialRequestOptions>(requestData().options), m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
+    auto& options = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet && options.userVerification != UserVerificationRequirement::Discouraged)
+        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability(), PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
-        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, WTF::get<PublicKeyCredentialRequestOptions>(requestData().options), m_info.options().userVerificationAvailability());
+        cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, m_info.options().userVerificationAvailability());
     driver().transact(WTFMove(cborCmd), [weakThis = makeWeakPtr(*this)](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
