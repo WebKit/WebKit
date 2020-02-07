@@ -1,3 +1,16 @@
+2020-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebPage::rangeForGranularityAtPoint always returns null in the case of CharacterGranularity
+        https://bugs.webkit.org/show_bug.cgi?id=207350
+        <rdar://problem/59239914>
+
+        Reviewed by Tim Horton.
+
+        Add a test to exercise the corner case in the SPI.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm: Added.
+
 2020-02-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Adopt new SOAuthorizationOption constants

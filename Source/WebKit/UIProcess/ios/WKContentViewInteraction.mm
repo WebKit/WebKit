@@ -6382,6 +6382,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return !_ignoreSelectionCommandFadeCount;
 }
 
+- (BOOL)supportsTextSelectionWithCharacterGranularity
+{
+    return YES;
+}
+
 - (BOOL)hasHiddenContentEditable
 {
     return _suppressSelectionAssistantReasons.contains(WebKit::EditableRootIsTransparentOrFullyClipped);
