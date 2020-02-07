@@ -1,3 +1,21 @@
+2020-02-07  Sam Weinig  <weinig@apple.com>
+
+        Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=207155
+
+        Reviewed by Tim Horton.
+        
+        Move all trivial definitions (just ENABLE_FOO = ENABLE_FOO; or ENABLE_BAR = ;)
+        from the FeatureDefines.xcconfigs to PlatformEnableCocoa.h, ensuring each one
+        also has a default value in PlatformEnable.h
+
+        To support the move, DerivedSources.make has been updated to generate the list
+        of ENABLE_* features by directly from preprocessing Platform.h, rather than 
+        just getting the partial list from the xcconfig file.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+
 2020-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CodeBlock::shrinkToFit should shrink m_constantRegisters and m_constantsSourceCodeRepresentation in 64bit architectures
