@@ -4154,6 +4154,8 @@ webkit.org/b/207246 imported/w3c/web-platform-tests/content-security-policy/gene
 webkit.org/b/207246 imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html [ Failure ]
 webkit.org/b/207246 imported/w3c/web-platform-tests/css/css-backgrounds/parsing/border-image-source-computed.sub.html [ Failure ]
 
+webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.php [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -4334,6 +4336,8 @@ webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-6.html [ Pass ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-7.html [ Pass ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family.html [ Pass ]
+
+http/tests/cookies/same-site [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

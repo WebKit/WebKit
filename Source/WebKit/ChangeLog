@@ -1,3 +1,15 @@
+2020-02-07  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Add same-site cookie support
+        https://bugs.webkit.org/show_bug.cgi?id=204137
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implements same-site cookie support in the soup backend.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+
 2020-02-07  youenn fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder

@@ -26,13 +26,14 @@
 #include "config.h"
 #include "SameSiteInfo.h"
 
+#include "HTTPParsers.h"
 #include "ResourceRequest.h"
 
 namespace WebCore {
 
 SameSiteInfo SameSiteInfo::create(const ResourceRequest& request)
 {
-    return { request.isSameSite(), request.isTopSite() };
+    return { request.isSameSite(), request.isTopSite(), isSafeMethod(request.httpMethod()) };
 }
 
 } // namespace WebCore
