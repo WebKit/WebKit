@@ -1,3 +1,47 @@
+2020-02-06  Robin Morisset  <rmorisset@apple.com>
+
+        Most of B3 and Air does not need to include CCallHelpers.h
+        https://bugs.webkit.org/show_bug.cgi?id=206975
+
+        Reviewed by Mark Lam.
+
+        They only do to use CCallHelpers::Jump or CCallHelpers::Label.
+        But CCallHelpers inherit those from MacroAssembler. And MacroAssembler.h is dramatically cheaper to include (since CCallHelpers includes AssemblyHelpers which includes CodeBlock.h which includes roughly the entire runtime).
+
+        * b3/B3CheckSpecial.cpp:
+        * b3/B3CheckSpecial.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3PatchpointSpecial.h:
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::successorLabels const):
+        * b3/B3StackmapGenerationParams.h:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h:
+        * b3/air/AirCCallSpecial.cpp:
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirCode.cpp:
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::entrypointLabel const):
+        * b3/air/AirCustom.cpp:
+        (JSC::B3::Air::CCallCustom::generate):
+        (JSC::B3::Air::ShuffleCustom::generate):
+        (JSC::B3::Air::WasmBoundsCheckCustom::generate):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::generate):
+        (JSC::B3::Air::EntrySwitchCustom::generate):
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::addInst):
+        * b3/air/AirDisassembler.h:
+        * b3/air/AirGenerationContext.h:
+        * b3/air/AirInst.h:
+        * b3/air/AirPrintSpecial.cpp:
+        (JSC::B3::Air::PrintSpecial::generate):
+        * b3/air/AirPrintSpecial.h:
+        * b3/air/AirSpecial.h:
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+
 2020-02-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r255987.

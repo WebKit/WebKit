@@ -804,6 +804,7 @@ writeH("OpcodeUtils") {
 writeH("OpcodeGenerated") {
     | outp |
     outp.puts "#include \"AirInstInlines.h\""
+    outp.puts "#include \"CCallHelpers.h\""
     outp.puts "#include \"wtf/PrintStream.h\""
     outp.puts "namespace WTF {"
     outp.puts "using namespace JSC::B3::Air;"

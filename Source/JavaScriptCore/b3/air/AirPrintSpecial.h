@@ -33,6 +33,9 @@
 #include "MacroAssemblerPrinter.h"
 
 namespace JSC {
+
+class CCallHelpers;
+
 namespace Printer {
 
 typedef Vector<B3::Air::Arg> ArgList;
@@ -105,7 +108,7 @@ protected:
     bool admitsStack(Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Inst&, unsigned) final;
     void reportUsedRegisters(Inst&, const RegisterSet&) final;
-    CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
+    MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
     RegisterSet extraEarlyClobberedRegs(Inst&) final;
     RegisterSet extraClobberedRegs(Inst&) final;
     

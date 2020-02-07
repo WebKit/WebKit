@@ -29,11 +29,15 @@
 
 #include "AirGenerationContext.h"
 #include "B3ValueRep.h"
-#include "CCallHelpers.h"
+#include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include <wtf/Box.h>
 
-namespace JSC { namespace B3 {
+namespace JSC {
+
+class CCallHelpers;
+
+namespace B3 {
 
 class CheckSpecial;
 class PatchpointSpecial;
@@ -89,7 +93,7 @@ public:
     
     // This is computed lazily, so it won't work if you capture StackmapGenerationParams by value.
     // These labels will get populated before any late paths or link tasks execute.
-    JS_EXPORT_PRIVATE Vector<Box<CCallHelpers::Label>> successorLabels() const;
+    JS_EXPORT_PRIVATE Vector<Box<MacroAssembler::Label>> successorLabels() const;
     
     // This is computed lazily, so it won't work if you capture StackmapGenerationParams by value.
     // Returns true if the successor at the given index is going to be emitted right after the

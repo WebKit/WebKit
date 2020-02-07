@@ -33,6 +33,7 @@
 #include "AirInstInlines.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
+#include "CCallHelpers.h"
 
 namespace JSC { namespace B3 {
 

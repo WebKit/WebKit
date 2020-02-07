@@ -83,7 +83,7 @@ public:
     // Currently, we do (1) for B3 stackmaps.
     virtual void reportUsedRegisters(Inst&, const RegisterSet&) = 0;
     
-    virtual CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) = 0;
+    virtual MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) = 0;
 
     virtual RegisterSet extraEarlyClobberedRegs(Inst&) = 0;
     virtual RegisterSet extraClobberedRegs(Inst&) = 0;

@@ -31,6 +31,7 @@
 #include "AirCode.h"
 #include "AirValidate.h"
 #include "B3Common.h"
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

@@ -34,13 +34,19 @@
 #include "AirStackSlot.h"
 #include "AirTmp.h"
 #include "B3SparseCollection.h"
-#include "CCallHelpers.h"
+#include "GPRInfo.h"
+#include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"
+#include <wtf/HashSet.h>
 #include <wtf/IndexMap.h>
 #include <wtf/WeakRandom.h>
 
-namespace JSC { namespace B3 {
+namespace JSC {
+
+class CCallHelpers;
+
+namespace B3 {
 
 class Procedure;
 
@@ -196,7 +202,7 @@ public:
         RELEASE_ASSERT(m_entrypoints.size() == m_prologueGenerators.size());
     }
     
-    CCallHelpers::Label entrypointLabel(unsigned index) const
+    MacroAssembler::Label entrypointLabel(unsigned index) const
     {
         return m_entrypointLabels[index];
     }
@@ -383,7 +389,7 @@ private:
     RegisterSet m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
-    Vector<CCallHelpers::Label> m_entrypointLabels; // This is empty until code generation.
+    Vector<MacroAssembler::Label> m_entrypointLabels; // This is empty until code generation.
     Vector<Ref<PrologueGenerator>, 1> m_prologueGenerators;
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;

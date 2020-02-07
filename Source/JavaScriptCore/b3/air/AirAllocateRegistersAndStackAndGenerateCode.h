@@ -29,6 +29,7 @@
 
 #include "AirLiveness.h"
 #include "AirTmpMap.h"
+#include <wtf/Nonmovable.h>
 
 namespace JSC { 
 
@@ -87,8 +88,8 @@ private:
     std::unique_ptr<UnifiedTmpLiveness> m_liveness;
 
     struct PatchSpillData {
-        CCallHelpers::Jump jump;
-        CCallHelpers::Label continueLabel;
+        MacroAssembler::Jump jump;
+        MacroAssembler::Label continueLabel;
         HashMap<Tmp, Arg*> defdTmps;
     };
 

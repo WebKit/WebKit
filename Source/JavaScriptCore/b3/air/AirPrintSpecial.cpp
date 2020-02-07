@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 #if ENABLE(MASM_PROBE)
 
+#include "CCallHelpers.h"
 #include "MacroAssemblerPrinter.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -65,7 +66,7 @@ void PrintSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 {
 }
 
-CCallHelpers::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext&)
+MacroAssembler::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext&)
 {
     size_t currentArg = 1; // Skip the PrintSpecial arg.
     for (auto& term : *m_printRecordList) {

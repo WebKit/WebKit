@@ -31,6 +31,7 @@
 #include "AirCode.h"
 #include "AirInstInlines.h"
 #include "B3Procedure.h"
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
