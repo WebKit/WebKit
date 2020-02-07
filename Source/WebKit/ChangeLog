@@ -1,3 +1,17 @@
+2020-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics relies on the order of m_getAllDomainsStatement, which can be changed by HashTable's implementation
+        https://bugs.webkit.org/show_bug.cgi?id=207348
+
+        Reviewed by Mark Lam.
+
+        It turns out that ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics's output
+        is relying on HashTable's particular iteration order which is not guaranteed.
+        This patch fixes this assumption by sorting domains before dumping.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::CompletionHandler<void):
+
 2020-02-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] authenticatorGetAssertion should be sent without pinAuth if UV = "discouraged"

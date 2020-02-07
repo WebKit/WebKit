@@ -1709,10 +1709,15 @@ void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionH
         return;
     }
 
+    Vector<String> domains;
+    while (m_getAllDomainsStatement.step() == SQLITE_ROW)
+        domains.append(m_getAllDomainsStatement.getColumnText(0));
+    std::sort(domains.begin(), domains.end(), WTF::codePointCompareLessThan);
+
     StringBuilder result;
     result.appendLiteral("Resource load statistics:\n\n");
-    while (m_getAllDomainsStatement.step() == SQLITE_ROW)
-        resourceToString(result, m_getAllDomainsStatement.getColumnText(0));
+    for (auto& domain : domains)
+        resourceToString(result, domain);
 
     auto thirdPartyData = aggregatedThirdPartyData();
     if (!thirdPartyData.isEmpty()) {
