@@ -337,6 +337,9 @@ namespace JSC {
         void compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator&, CompileOpEqType, int jumpTarget);
         bool isOperandConstantDouble(VirtualRegister);
         
+        void emitLoadDouble(VirtualRegister, FPRegisterID value);
+        void emitLoadInt32ToDouble(VirtualRegister, FPRegisterID value);
+
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
@@ -414,7 +417,6 @@ namespace JSC {
 #if USE(JSVALUE32_64)
         bool getOperandConstantInt(VirtualRegister op1, VirtualRegister op2, VirtualRegister& op, int32_t& constant);
 
-        void emitLoadDouble(VirtualRegister, FPRegisterID value);
         void emitLoadTag(VirtualRegister, RegisterID tag);
         void emitLoadPayload(VirtualRegister, RegisterID payload);
 

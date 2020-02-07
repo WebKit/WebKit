@@ -377,15 +377,6 @@ ALWAYS_INLINE void JIT::emitInitRegister(VirtualRegister dst)
 
 #if USE(JSVALUE32_64)
 
-inline void JIT::emitLoadDouble(VirtualRegister reg, FPRegisterID value)
-{
-    if (reg.isConstant()) {
-        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(reg);
-        loadDouble(TrustedImmPtr(&inConstantPool), value);
-    } else
-        loadDouble(addressFor(reg), value);
-}
-
 inline void JIT::emitLoadTag(VirtualRegister reg, RegisterID tag)
 {
     if (reg.isConstant()) {
@@ -447,6 +438,25 @@ inline void JIT::emitLoad2(VirtualRegister reg1, RegisterID tag1, RegisterID pay
 {
     emitLoad(reg2, tag2, payload2);
     emitLoad(reg1, tag1, payload1);
+}
+
+inline void JIT::emitLoadDouble(VirtualRegister reg, FPRegisterID value)
+{
+    if (reg.isConstant()) {
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(reg);
+        loadDouble(TrustedImmPtr(&inConstantPool), value);
+    } else
+        loadDouble(addressFor(reg), value);
+}
+
+inline void JIT::emitLoadInt32ToDouble(VirtualRegister reg, FPRegisterID value)
+{
+    if (reg.isConstant()) {
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(reg);
+        char* bytePointer = reinterpret_cast<char*>(&inConstantPool);
+        convertInt32ToDouble(AbsoluteAddress(bytePointer + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), value);
+    } else
+        convertInt32ToDouble(payloadFor(reg), value);
 }
 
 inline void JIT::emitStore(VirtualRegister reg, RegisterID tag, RegisterID payload, RegisterID base)
@@ -602,6 +612,24 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, VirtualRegis
 {
     if (!m_codeBlock->isKnownNotImmediate(vReg))
         emitJumpSlowCaseIfNotJSCell(reg);
+}
+
+inline void JIT::emitLoadDouble(VirtualRegister reg, FPRegisterID value)
+{
+    if (reg.isConstant()) {
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(reg);
+        loadDouble(TrustedImmPtr(&inConstantPool), value);
+    } else
+        loadDouble(addressFor(reg), value);
+}
+
+inline void JIT::emitLoadInt32ToDouble(VirtualRegister reg, FPRegisterID value)
+{
+    if (reg.isConstant()) {
+        ASSERT(isOperandConstantInt(reg));
+        convertInt32ToDouble(Imm32(getConstantOperand(reg).asInt32()), value);
+    } else
+        convertInt32ToDouble(addressFor(reg), value);
 }
 
 ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)

@@ -635,16 +635,16 @@ public:
 
     DirectEvalCodeCache& directEvalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_directEvalCodeCache; }
 
-    enum class ShrinkMode {
+    enum ShrinkMode {
         // Shrink prior to generating machine code that may point directly into vectors.
         EarlyShrink,
 
         // Shrink after generating machine code, and after possibly creating new vectors
         // and appending to others. At this time it is not safe to shrink certain vectors
         // because we would have generated machine code that references them directly.
-        LateShrink,
+        LateShrink
     };
-    void shrinkToFit(const ConcurrentJSLocker&, ShrinkMode);
+    void shrinkToFit(ShrinkMode);
 
     // Functions for controlling when JITting kicks in, in a mixed mode
     // execution world.

@@ -1953,20 +1953,14 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, Optional<unsigned> col
     return false;
 }
 
-void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
+void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     ConcurrentJSLocker locker(m_lock);
 
-#if USE(JSVALUE32_64)
-    // Only 32bit Baseline JIT is touching m_constantRegisters address directly.
-    if (shrinkMode == ShrinkMode::EarlyShrink)
+    if (shrinkMode == EarlyShrink) {
         m_constantRegisters.shrinkToFit();
-#else
-    m_constantRegisters.shrinkToFit();
-#endif
-    m_constantsSourceCodeRepresentation.shrinkToFit();
-
-    if (shrinkMode == ShrinkMode::EarlyShrink) {
+        m_constantsSourceCodeRepresentation.shrinkToFit();
+        
         if (m_rareData) {
             m_rareData->m_switchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
