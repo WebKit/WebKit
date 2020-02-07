@@ -1,3 +1,14 @@
+2020-02-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 13.4)
+        https://bugs.webkit.org/show_bug.cgi?id=207213
+        <rdar://problem/52846208>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Legacy/13.4/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-13.4.json: Added.
+
 2020-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Web Inspector][WinCairo] Selecting an error message in Console causes "TypeError:​ selection.focusNode.closest is not a function."
