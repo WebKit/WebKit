@@ -1,3 +1,16 @@
+2020-02-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Adopt new SOAuthorizationOption constants
+        https://bugs.webkit.org/show_bug.cgi?id=207186
+        <rdar://problem/48909336>
+
+        Reviewed by Brent Fulgham.
+
+        No change of behaviors.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::continueStartAfterDecidePolicy):
+
 2020-02-06  Brady Eidson  <beidson@apple.com>
 
         Cleanup and promote WKContentWorld and its clients in WKWebView.

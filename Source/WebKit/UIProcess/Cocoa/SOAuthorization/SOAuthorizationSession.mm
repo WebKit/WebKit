@@ -169,7 +169,6 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     if (!m_soAuthorization || !m_page || !m_navigationAction)
         return;
 
-    // FIXME: <rdar://problem/48909336> Replace the below with AppSSO constants.
     auto initiatorOrigin = emptyString();
     if (m_navigationAction->sourceFrame())
         initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
@@ -177,8 +176,8 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
         initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
     NSDictionary *authorizationOptions = @{
         SOAuthorizationOptionUserActionInitiated: @(m_navigationAction->isProcessingUserGesture()),
-        @"initiatorOrigin": (NSString *)initiatorOrigin,
-        @"initiatingAction": @(static_cast<NSInteger>(m_action))
+        SOAuthorizationOptionInitiatorOrigin: (NSString *)initiatorOrigin,
+        SOAuthorizationOptionInitiatingAction: @(static_cast<NSInteger>(m_action))
     };
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 

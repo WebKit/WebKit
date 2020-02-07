@@ -362,17 +362,12 @@ static String generateHtml(const char* templateHtml, const String& substitute, c
     return stream.toString();
 }
 
-// FIXME<rdar://problem/48909336>: Replace the below with AppSSO constants.
 static void checkAuthorizationOptions(bool userActionInitiated, String initiatorOrigin, int initiatingAction)
 {
     EXPECT_TRUE(gAuthorization);
-    // FIXME: Remove the selector once the iOS bots has been updated to a recent SDK.
-    auto selector = NSSelectorFromString(@"authorizationOptions");
-    if ([gAuthorization respondsToSelector:selector]) {
-        EXPECT_EQ(((NSNumber *)[gAuthorization performSelector:selector][SOAuthorizationOptionUserActionInitiated]).boolValue, userActionInitiated);
-        EXPECT_WK_STREQ([gAuthorization performSelector:selector][@"initiatorOrigin"], initiatorOrigin);
-        EXPECT_EQ(((NSNumber *)[gAuthorization performSelector:selector][@"initiatingAction"]).intValue, initiatingAction);
-    }
+    EXPECT_EQ(((NSNumber *)[gAuthorization authorizationOptions][SOAuthorizationOptionUserActionInitiated]).boolValue, userActionInitiated);
+    EXPECT_WK_STREQ([gAuthorization authorizationOptions][SOAuthorizationOptionInitiatorOrigin], initiatorOrigin);
+    EXPECT_EQ(((NSNumber *)[gAuthorization authorizationOptions][SOAuthorizationOptionInitiatingAction]).intValue, initiatingAction);
 }
 
 namespace TestWebKitAPI {
