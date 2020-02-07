@@ -32,4 +32,5 @@
     DOMString network;
     ApplePayPaymentMethodType type;
     ApplePayPaymentPass paymentPass;
+    ApplePayPaymentContact billingContact;
 };

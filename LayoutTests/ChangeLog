@@ -1,3 +1,17 @@
+2020-02-07  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        [Apple Pay] Provide a redacted billing contact during payment method selection
+        https://bugs.webkit.org/show_bug.cgi?id=207169
+        <rdar://problem/42737441>
+
+        Reviewed by Andy Estes.
+
+        Test that billing address field of ApplePayPaymentMethod is properly 
+        populated in the PaymentMethodChange callback.
+
+        * http/tests/ssl/applepay/ApplePayBillingAddress-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayBillingAddress.html: Added.
+
 2020-02-07  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm is flaky failing.

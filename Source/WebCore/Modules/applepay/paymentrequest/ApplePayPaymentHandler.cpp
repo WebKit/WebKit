@@ -201,6 +201,10 @@ static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPa
     requiredShippingContactFields.postalAddress |= options.requestShipping;
     request.setRequiredShippingContactFields(requiredShippingContactFields);
 
+    auto requiredBillingContactFields = request.requiredBillingContactFields();
+    requiredBillingContactFields.postalAddress |= options.requestBillingAddress;
+    request.setRequiredBillingContactFields(requiredBillingContactFields);
+    
     if (options.requestShipping)
         request.setShippingType(convert(options.shippingType));
 }

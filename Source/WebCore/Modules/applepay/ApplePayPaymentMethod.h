@@ -45,6 +45,7 @@ struct ApplePayPaymentMethod {
     String network;
     Optional<Type> type;
     Optional<ApplePayPaymentPass> paymentPass;
+    Optional<ApplePayPaymentContact> billingContact;
 
 #if defined(APPLEPAYPAYMENTMETHOD_ADDITIONS)
 APPLEPAYPAYMENTMETHOD_ADDITIONS
