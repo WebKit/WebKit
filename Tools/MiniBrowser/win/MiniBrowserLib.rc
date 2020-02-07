@@ -51,7 +51,7 @@ BEGIN
     POPUP "&View"
     BEGIN
         MENUITEM "Reload\tCtrl-R",              IDM_RELOAD
-        MENUITEM "Actual Size",                 IDM_ACTUAL_SIZE
+        MENUITEM "Actual Size\tCtrl+0",         IDM_ACTUAL_SIZE
         MENUITEM "Zoom In\tCtrl++",             IDM_ZOOM_IN
         MENUITEM "Zoom Out\tCtrl+-",            IDM_ZOOM_OUT
         MENUITEM "Invert Colors",               IDM_INVERT_COLORS
@@ -129,11 +129,18 @@ END
 IDC_MINIBROWSER ACCELERATORS
 BEGIN
     "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "0",            IDM_ACTUAL_SIZE,        VIRTKEY, CONTROL, NOINVERT
     "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
-    VK_ADD,         IDM_ZOOM_IN,            VIRTKEY, CONTROL, NOINVERT
-    VK_SUBTRACT,    IDM_ZOOM_OUT,           VIRTKEY, CONTROL, NOINVERT
-    "W",            IDM_CLOSE_WINDOW,       VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RELOAD,             VIRTKEY, CONTROL, NOINVERT
+    VK_ADD,         IDM_ZOOM_IN,            VIRTKEY, CONTROL, NOINVERT
+    VK_OEM_MINUS,   IDM_ZOOM_OUT,           VIRTKEY, CONTROL, NOINVERT
+    VK_OEM_PLUS,    IDM_ZOOM_IN,            VIRTKEY, CONTROL, NOINVERT
+    VK_SUBTRACT,    IDM_ZOOM_OUT,           VIRTKEY, CONTROL, NOINVERT
+END
+
+IDR_ACCELERATORS_PRE ACCELERATORS
+BEGIN
+    "W",            IDM_CLOSE_WINDOW,       VIRTKEY, CONTROL, NOINVERT
 END
 
 

@@ -184,6 +184,9 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MENUCOMMAND:
         lResult = onMenuCommand(hWnd, message, wParam, lParam, handled);
         break;
+    case WM_COMMAND:
+        SendMessage(GetParent(hWnd), message, wParam, lParam);
+        break;
     default:
         handled = false;
         break;

@@ -91,6 +91,14 @@ void MainWindow::registerClass(HINSTANCE hInstance)
     RegisterClassEx(&wcex);
 }
 
+bool MainWindow::isInstance(HWND hwnd)
+{
+    wchar_t buff[64];
+    if (!GetClassName(hwnd, buff, _countof(buff)))
+        return false;
+    return s_windowClass == buff;
+}
+
 MainWindow::MainWindow()
 {
     s_numInstances++;
@@ -172,6 +180,13 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 {
     RefPtr<MainWindow> thisWindow = reinterpret_cast<MainWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     switch (message) {
+    case WM_ACTIVATE:
+        switch (LOWORD(wParam)) {
+        case WA_ACTIVE:
+        case WA_CLICKACTIVE:
+            SetFocus(thisWindow->browserWindow()->hwnd());
+        }
+        break;
     case WM_CREATE:
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(reinterpret_cast<LPCREATESTRUCT>(lParam)->lpCreateParams));
         break;

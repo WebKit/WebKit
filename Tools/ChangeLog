@@ -1,3 +1,62 @@
+2020-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Accelerator keys don't work unless the main window is focused
+        https://bugs.webkit.org/show_bug.cgi?id=207250
+
+        Reviewed by Alex Christensen.
+
+        MiniBrowser has shortcut keys, Ctrl-W to close window, Ctrl-R to
+        reload. However, they don't work unless the main window is
+        focused.
+
+        Ctrl-W should be processed differently. Ctrl-W should be handled
+        without dispatching to WebKit, others should be handled only when
+        WebKit didn't consume. So, this change split the accelerator table
+        into two, one is for Ctrl-W, another is for other shortcut keys.
+
+        For Ctrl-W, key events are processed before dispatching to
+        WebView. It is converted to IDM_CLOSE_WINDOW of WM_COMMAND, and
+        dispatched to WebView. WebKit2 WebView bubbles up unhandled
+        WM_COMMAND to the parent window. Then, IDM_CLOSE_WINDOW is handled
+        in the main window's WndProc. However, it doesn't work for WebKit1
+        because this change doesn't add the bubbling up code to WebKit1
+        WebView.
+
+        For other shortcut keys, for example Ctrl-R, key events are
+        dispatched to WebView without accelerator key translations. Then,
+        WebKitBrowserWindow::didNotHandleKeyEvent is called back if they
+        aren't consumed. didNotHandleKeyEvent posts the messasge to the
+        main window. The message loop processed key events dispatched to
+        the main window with another accelerator table. However, it
+        doesn't work for WebKit1, because WebKit1 doesn't have a API
+        equivalent to didNotHandleKeyEvent.
+
+        After switching the active window by pressing Alt-Tab and
+        reactivating the main window, the main window got the focus. This
+        was the reason shortcut keys worked only after reactivating the
+        main window. But, this is not the desired behavior after this
+        change because other shortcut keys don't work if the main window
+        is focused. So. set the focus to the brower window when
+        WM_ACTIVATE of the main window.
+
+        Shortcut keys Ctrl++ (zoom in) and Ctrl+- (zoom out) were
+        effective only for keyboard numpad. Add VK_OEM_MINUS and
+        VK_OEM_PLUS for them.
+
+        Add a shortcut key Ctrl-0 to reset page zoom scale to actual.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::isInstance):
+        (MainWindow::WndProc):
+        * MiniBrowser/win/MainWindow.h:
+        * MiniBrowser/win/MiniBrowserLib.rc: Add a new accelerator table
+        IDR_ACCELERATORS_PRE for Ctrl-W.
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::didNotHandleKeyEvent):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+
 2020-02-06  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkitorg: Dead CI links

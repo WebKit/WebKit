@@ -45,6 +45,8 @@ public:
     BrowserWindow* browserWindow() const { return m_browserWindow.get(); }
 
     void loadURL(std::wstring);
+
+    static bool isInstance(HWND);
     
 private:
     static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

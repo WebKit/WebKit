@@ -399,5 +399,5 @@ WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfiguration
 void WebKitBrowserWindow::didNotHandleKeyEvent(WKPageRef, WKNativeEventPtr event, const void* clientInfo)
 {
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
-    DefWindowProc(thisWindow.hwnd(), event->message, event->wParam, event->lParam);
+    PostMessage(thisWindow.m_hMainWnd, event->message, event->wParam, event->lParam);
 }
