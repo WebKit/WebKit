@@ -2512,6 +2512,12 @@
          "jkjiang"
       ]
    },
+   "Jacob Uphoff" : {
+      "emails" : [
+         "jacob_uphoff@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Jae Hyun Park" : {
       "emails" : [
          "jaepark@webkit.org",
