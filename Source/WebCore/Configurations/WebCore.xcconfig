@@ -50,7 +50,7 @@ WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/We
 ANGLE_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/ANGLE $(SDKROOT)/usr/local/include/ANGLE;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc/sdk/objc/Framework/Headers $(SDKROOT)/usr/local/include/webrtc/sdk/objc/Framework/Headers;
 
-HEADER_SEARCH_PATHS = PAL ForwardingHeaders /usr/include/libxslt /usr/include/libxml2 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(ANGLE_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
+HEADER_SEARCH_PATHS = PAL ForwardingHeaders /usr/include/libxslt /usr/include/libxml2 "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(ANGLE_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
 INFOPLIST_FILE = Info.plist;
 
 INSTALL_PATH = $(INSTALL_PATH_$(WK_COCOA_TOUCH));

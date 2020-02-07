@@ -1148,38 +1148,44 @@ ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
     TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
 endif
 
-ENABLED_FEATURES = $(shell $(CC) -std=$(CLANG_CXX_LANGUAGE_STANDARD) -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(patsubst %, -D%, $(FEATURE_DEFINES)) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep '\#define ENABLE_.* 1' | cut -d' ' -f2)
-
-ifeq ($(shell $(CC) -std=$(CLANG_CXX_LANGUAGE_STANDARD) -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
     WTF_PLATFORM_IOS_FAMILY = 1
 else
     WTF_PLATFORM_IOS_FAMILY = 0
 endif
 
-ifeq ($(shell $(CC) -std=$(CLANG_CXX_LANGUAGE_STANDARD) -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
     WTF_PLATFORM_MAC = 1
 else
     WTF_PLATFORM_MAC = 0
 endif
 
-ifeq ($(shell $(CC) -std=$(CLANG_CXX_LANGUAGE_STANDARD) -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
     USE_APPLE_INTERNAL_SDK = 1
 else
     USE_APPLE_INTERNAL_SDK = 0
 endif
 
-ifeq ($(shell $(CC) -std=$(CLANG_CXX_LANGUAGE_STANDARD) -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
     HAVE_OS_DARK_MODE_SUPPORT = 1
 else
     HAVE_OS_DARK_MODE_SUPPORT = 0
 endif
 
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+    ENABLE_ORIENTATION_EVENTS = 1
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_MEDIA_SOURCE | cut -d' ' -f3), 1)
+	ENABLE_MEDIA_SOURCE = 1
+endif
+
 ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
-FEATURE_AND_PLATFORM_DEFINES = $(ENABLED_FEATURES) WTF_PLATFORM_IOS_FAMILY
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_IOS_FAMILY
 else ifeq ($(WTF_PLATFORM_MAC), 1)
-FEATURE_AND_PLATFORM_DEFINES = $(ENABLED_FEATURES) WTF_PLATFORM_MAC
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_MAC
 else
-FEATURE_AND_PLATFORM_DEFINES = $(ENABLED_FEATURES)
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES)
 endif
 
 ifeq ($(HAVE_OS_DARK_MODE_SUPPORT), 1)
@@ -1195,16 +1201,16 @@ endif
 endif
 
 ADDITIONAL_BINDING_IDLS =
-ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(ENABLED_FEATURES)), ENABLE_MAC_GESTURE_EVENTS)
+ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
 endif
 
-ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(ENABLED_FEATURES)), ENABLE_IOS_GESTURE_EVENTS)
+ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
 endif
 
 ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
-ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(ENABLED_FEATURES)), ENABLE_IOS_TOUCH_EVENTS)
+ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 ADDITIONAL_BINDING_IDLS += \
     DocumentTouch.idl \
     Touch.idl \
@@ -1301,8 +1307,24 @@ all : \
 
 ADDITIONAL_IDL_DEFINES :=
 
+ifndef ENABLE_ORIENTATION_EVENTS
+    ENABLE_ORIENTATION_EVENTS = 0
+endif
+
+ifndef ENABLE_MEDIA_SOURCE
+	ENABLE_MEDIA_SOURCE = 0
+endif
+
+ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_ORIENTATION_EVENTS
+endif
+
 ifeq ($(USE_APPLE_INTERNAL_SDK), 1)
     ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) USE_APPLE_INTERNAL_SDK
+endif
+
+ifeq ($(ENABLE_MEDIA_SOURCE), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_MEDIA_SOURCE
 endif
 
 # CSS property names and value keywords
@@ -1341,10 +1363,10 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalu
 # CSS Selector pseudo type name to value map.
 
 SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(ENABLED_FEATURES)"
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(FEATURE_DEFINES)"
 
 SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(ENABLED_FEATURES)"
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(FEATURE_DEFINES)"
 
 # --------
 
@@ -1412,19 +1434,19 @@ ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 
 USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html.css $(WebCore)/css/dialog.css $(WebCore)/css/quirks.css $(WebCore)/css/plugIns.css $(WebCore)/css/svg.css
 
-ifeq ($(findstring ENABLE_MATHML,$(ENABLED_FEATURES)), ENABLE_MATHML)
+ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mathml.css
 endif
 
-ifeq ($(findstring ENABLE_VIDEO,$(ENABLED_FEATURES)), ENABLE_VIDEO)
+ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mediaControls.css
 endif
 
-ifeq ($(findstring ENABLE_FULLSCREEN_API,$(ENABLED_FEATURES)), ENABLE_FULLSCREEN_API)
+ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_DEFINES)), ENABLE_FULLSCREEN_API)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/fullscreen.css
 endif
 
-ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(ENABLED_FEATURES)), ENABLE_SERVICE_CONTROLS)
+ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(FEATURE_DEFINES)), ENABLE_SERVICE_CONTROLS)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/mac/imageControlsMac.css
 endif
 
@@ -1436,7 +1458,7 @@ ifeq ($(OS), Windows_NT)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/themeWin.css $(WebCore)/css/themeWinQuirks.css
 endif
 
-ifeq ($(findstring ENABLE_METER_ELEMENT,$(ENABLED_FEATURES)), ENABLE_METER_ELEMENT)
+ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
 	USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
 endif
 
@@ -1489,35 +1511,35 @@ $(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): dom/make_names.pl bindings/scripts/Ha
 
 # HTML tag and attribute names
 
-ifeq ($(findstring ENABLE_DATALIST_ELEMENT,$(ENABLED_FEATURES)), ENABLE_DATALIST_ELEMENT)
+ifeq ($(findstring ENABLE_DATALIST_ELEMENT,$(FEATURE_DEFINES)), ENABLE_DATALIST_ELEMENT)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST_ELEMENT=1
 endif
 
-ifeq ($(findstring ENABLE_METER_ELEMENT,$(ENABLED_FEATURES)), ENABLE_METER_ELEMENT)
+ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_METER_ELEMENT=1
 endif
 
-ifeq ($(findstring ENABLE_VIDEO,$(ENABLED_FEATURES)), ENABLE_VIDEO)
+ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO=1
 endif
 
-ifeq ($(findstring ENABLE_VIDEO_TRACK,$(ENABLED_FEATURES)), ENABLE_VIDEO_TRACK)
+ifeq ($(findstring ENABLE_VIDEO_TRACK,$(FEATURE_DEFINES)), ENABLE_VIDEO_TRACK)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO_TRACK=0
 endif
 
-ifeq ($(findstring ENABLE_DATACUE_VALUE,$(ENABLED_FEATURES)), ENABLE_DATACUE_VALUE)
+ifeq ($(findstring ENABLE_DATACUE_VALUE,$(FEATURE_DEFINES)), ENABLE_DATACUE_VALUE)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATACUE_VALUE=0
 endif
 
-ifeq ($(findstring ENABLE_MEDIA_STREAM,$(ENABLED_FEATURES)), ENABLE_MEDIA_STREAM)
+ifeq ($(findstring ENABLE_MEDIA_STREAM,$(FEATURE_DEFINES)), ENABLE_MEDIA_STREAM)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_MEDIA_STREAM=1
 endif
 
-ifeq ($(findstring ENABLE_LEGACY_ENCRYPTED_MEDIA,$(ENABLED_FEATURES)), ENABLE_LEGACY_ENCRYPTED_MEDIA)
+ifeq ($(findstring ENABLE_LEGACY_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_LEGACY_ENCRYPTED_MEDIA)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_LEGACY_ENCRYPTED_MEDIA=1
 endif
 
-ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA,$(ENABLED_FEATURES)), ENABLE_ENCRYPTED_MEDIA)
+ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_ENCRYPTED_MEDIA)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_ENCRYPTED_MEDIA=1
 endif
 
@@ -1547,7 +1569,7 @@ XMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/Sta
 
 # SVG tag and attribute names, and element factory
 
-ifeq ($(findstring ENABLE_SVG_FONTS,$(ENABLED_FEATURES)), ENABLE_SVG_FONTS)
+ifeq ($(findstring ENABLE_SVG_FONTS,$(FEATURE_DEFINES)), ENABLE_SVG_FONTS)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FONTS=1
 endif
 
