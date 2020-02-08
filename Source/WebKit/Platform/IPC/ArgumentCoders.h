@@ -389,6 +389,11 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             if (UNLIKELY(!value))
                 return WTF::nullopt;
 
+            if (UNLIKELY(!HashMapType::isValidKey(*key))) {
+                decoder.markInvalid();
+                return WTF::nullopt;
+            }
+
             if (UNLIKELY(!hashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry)) {
                 // The hash map already has the specified key, bail.
                 decoder.markInvalid();
@@ -444,7 +449,12 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
             if (!key)
                 return WTF::nullopt;
 
-            if (!hashSet.add(WTFMove(key.value())).isNewEntry) {
+            if (UNLIKELY(!HashSetType::isValidValue(*key))) {
+                decoder.markInvalid();
+                return WTF::nullopt;
+            }
+
+            if (UNLIKELY(!hashSet.add(WTFMove(*key)).isNewEntry)) {
                 // The hash set already has the specified key, bail.
                 decoder.markInvalid();
                 return WTF::nullopt;
@@ -483,8 +493,13 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
             unsigned count;
             if (!decoder.decode(count))
                 return false;
-            
-            if (!tempHashCountedSet.add(key, count).isNewEntry) {
+
+            if (UNLIKELY(!HashCountedSetType::isValidValue(key))) {
+                decoder.markInvalid();
+                return false;
+            }
+
+            if (UNLIKELY(!tempHashCountedSet.add(key, count).isNewEntry)) {
                 // The hash counted set already has the specified key, bail.
                 decoder.markInvalid();
                 return false;

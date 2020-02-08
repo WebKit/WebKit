@@ -110,6 +110,8 @@ public:
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, unsigned>::type count(typename GetPtrHelper<V>::PtrType) const;
     template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
 
+    static bool isValidValue(const ValueType& value) { return ImplType::isValidValue(value); }
+
 private:
     ImplType m_impl;
 };
