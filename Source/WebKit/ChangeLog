@@ -1,3 +1,20 @@
+2020-02-07  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] Convert some debug assertions into MESSAGE_CHECKs in WebPaymentCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=207414
+        <rdar://problem/58507177>
+
+        Reviewed by Andy Estes.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup):
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::completeMerchantValidation):
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingMethodSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completeShippingContactSelection):
+        (WebKit::WebPaymentCoordinatorProxy::completePaymentMethodSelection):
+
 2020-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Harden HashTable IPC decoders

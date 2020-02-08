@@ -35,6 +35,8 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PaymentAuthorizationStatus.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, messageSenderConnection())
+
 namespace WebKit {
 
 static WeakPtr<WebPaymentCoordinatorProxy>& activePaymentCoordinatorProxy()
@@ -76,11 +78,15 @@ void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&&
 
 void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
+    MESSAGE_CHECK(!merchantIdentifier.isNull());
+    MESSAGE_CHECK(!domainName.isNull());
     platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
+    MESSAGE_CHECK(!merchantIdentifier.isNull());
+    MESSAGE_CHECK(!domainName.isNull());
     platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
@@ -90,10 +96,9 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
         coordinator->didCancelPaymentSession();
     activePaymentCoordinatorProxy() = makeWeakPtr(this);
 
-    // FIXME: Make this a message check.
-    ASSERT(canBegin());
-    ASSERT(!m_destinationID);
-    ASSERT(!m_authorizationPresenter);
+    MESSAGE_CHECK(canBegin());
+    MESSAGE_CHECK(!m_destinationID);
+    MESSAGE_CHECK(!m_authorizationPresenter);
 
     m_destinationID = destinationID;
     m_state = State::Activating;
@@ -133,8 +138,7 @@ void WebPaymentCoordinatorProxy::completeMerchantValidation(const WebCore::Payme
     if (m_state == State::Idle)
         return;
 
-    // FIXME: This should be a MESSAGE_CHECK.
-    ASSERT(m_merchantValidationState == MerchantValidationState::Validating);
+    MESSAGE_CHECK(m_merchantValidationState == MerchantValidationState::Validating);
 
     platformCompleteMerchantValidation(paymentMerchantSession);
     m_merchantValidationState = MerchantValidationState::ValidationComplete;
@@ -146,8 +150,7 @@ void WebPaymentCoordinatorProxy::completeShippingMethodSelection(const Optional<
     if (m_state == State::Idle)
         return;
 
-    // FIXME: This should be a MESSAGE_CHECK.
-    ASSERT(m_state == State::ShippingMethodSelected);
+    MESSAGE_CHECK(m_state == State::ShippingMethodSelected);
 
     platformCompleteShippingMethodSelection(update);
     m_state = State::Active;
@@ -159,8 +162,7 @@ void WebPaymentCoordinatorProxy::completeShippingContactSelection(const Optional
     if (m_state == State::Idle)
         return;
 
-    // FIXME: This should be a MESSAGE_CHECK.
-    ASSERT(m_state == State::ShippingContactSelected);
+    MESSAGE_CHECK(m_state == State::ShippingContactSelected);
 
     platformCompleteShippingContactSelection(update);
     m_state = State::Active;
@@ -172,8 +174,7 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(const Optional<W
     if (m_state == State::Idle)
         return;
 
-    // FIXME: This should be a MESSAGE_CHECK.
-    ASSERT(m_state == State::PaymentMethodSelected);
+    MESSAGE_CHECK(m_state == State::PaymentMethodSelected);
 
     platformCompletePaymentMethodSelection(update);
     m_state = State::Active;
@@ -345,5 +346,7 @@ void WebPaymentCoordinatorProxy::didReachFinalState()
 }
 
 }
+
+#undef MESSAGE_CHECK
 
 #endif
