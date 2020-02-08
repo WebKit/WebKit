@@ -25,9 +25,11 @@
 
 WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 {
-    constructor()
+    constructor(identifier)
     {
-        super(NetworkTabContentView.tabInfo());
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.NetworkTabContentView.tabInfo());
+
+        super(identifier || "network", "network", tabBarItem);
 
         this._networkTableContentView = new WI.NetworkTableContentView;
 
@@ -48,7 +50,6 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
     static tabInfo()
     {
         return {
-            identifier: NetworkTabContentView.Type,
             image: "Images/Network.svg",
             title: WI.UIString("Network"),
         };

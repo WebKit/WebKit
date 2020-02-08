@@ -216,6 +216,11 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
+void WebInspectorFrontendClient::startWindowDrag()
+{
+    [[m_frontendWindowController window] performWindowDragWithEvent:[NSApp currentEvent]];
+}
+
 String WebInspectorFrontendClient::localizedStringsURL() const
 {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];

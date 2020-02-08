@@ -1,0 +1,242 @@
+/*
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--toolbar-height);
+
+    display: flex;
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    outline: none;
+
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
+    box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
+}
+
+body.window-inactive .toolbar {
+    background-image: none;
+    background-color: hsl(0, 0%, 96%);
+}
+
+body.mac-platform:not(.docked) .toolbar {
+    padding-top: 21px;
+}
+
+body.mac-platform:not(.docked) {
+    --toolbar-height: 54px;
+}
+
+.toolbar .control-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: min-content;
+    -webkit-padding-start: 6px;
+    -webkit-padding-end: 2px;
+}
+
+.toolbar .item-section {
+    display: flex;
+    flex: 1;
+    min-width: min-content;
+}
+
+.toolbar .item-section.left {
+    justify-content: flex-start;
+}
+
+.toolbar .item-section.center-left {
+    justify-content: flex-start;
+}
+
+.toolbar .item-section.center-right {
+    justify-content: center;
+}
+
+.toolbar .item-section.center {
+    justify-content: center;
+}
+
+.toolbar .item-section.right {
+    justify-content: flex-end;
+    padding-right: 4px;
+}
+
+.toolbar .item {
+    display: flex;
+    outline: none;
+}
+
+.toolbar .search-bar {
+    width: 100%;
+    min-width: 125px;
+}
+
+.toolbar .search-bar > input[type="search"] {
+    width: 100%;
+    font-size: 12px;
+    background-clip: initial;
+    margin: 4px;
+}
+
+.toolbar .item.button,
+.toolbar .search-bar > input[type="search"],
+.toolbar .dashboard-container {
+    background-image: linear-gradient(hsl(0, 0%, 99%), var(--panel-background-color));
+    box-shadow: hsla(0, 0%, 0%, 0.3) 0 1px 1px -1px;
+
+    border-radius: 4px;
+    border: 1px solid hsl(0, 1%, 82%);
+    border-top-color: hsl(0, 0%, 83%);
+    border-bottom-color: hsl(0, 0%, 76%);
+}
+
+.toolbar .search-bar > input[type="search"] {
+    box-shadow: hsla(0, 0%, 0%, 0.3) 0 1px 1px -1px, 0 0 0 7px hsla(211, 96%, 48%, 0);
+    transition: box-shadow .25s cubic-bezier(0.165, 0.840, 0.440, 1) /* easeOutQuart */;
+}
+
+.toolbar .search-bar > input[type="search"]:focus {
+    box-shadow: hsla(0, 0%, 0%, 0.15) 0 1px 0, 0 0 0 3px hsla(211, 96%, 48%, 0.4);
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .toolbar .item.button,
+    .toolbar .search-bar > input[type="search"],
+    .toolbar .dashboard-container {
+        border: 0.5px solid hsl(0, 0%, 78%);
+        border-top-color: hsl(0, 0%, 80%);
+        border-bottom-color: hsl(0, 0%, 65%);
+    }
+}
+
+.toolbar .item.button:active {
+    background-image: linear-gradient(hsl(0, 0%, 89%), hsl(0, 0%, 86%));
+    box-shadow: hsla(0, 0%, 0%, 0.3) 0 1px 1px -1px, inset 0 1px 1px -1px white;
+}
+
+body.window-inactive .toolbar .item.button,
+body.window-inactive .toolbar .search-bar > input[type="search"],
+body.window-inactive .toolbar .dashboard-container {
+    opacity: 0.65;
+    border-color: hsla(0, 0%, 0%, 0.15);
+    background-color: transparent;
+    background-image: none;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    body.window-inactive .toolbar .item.button,
+    body.window-inactive .toolbar .search-bar > input[type="search"],
+    body.window-inactive .toolbar .dashboard-container {
+        box-shadow: inset 0 0 1px 0 hsla(0, 0%, 0%, 0.1);
+    }
+}
+
+@media (max-width: 539px) {
+    .toolbar .item.download {
+        display: none;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .toolbar {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 26%), hsl(0, 0%, 23%));
+        box-shadow: none;
+    }
+
+    body.window-inactive .toolbar {
+        background-color: var(--background-color);
+    }
+
+    .toolbar .item.button,
+    .toolbar .search-bar > input[type="search"] {
+        background-image: none;
+        background-color: var(--button-background-color);
+        border-color: var(--button-background-color);
+        border-top-color: hsla(0, 100%, 100%, 0.2);
+        box-shadow: none;
+    }
+
+    .toolbar .search-bar > input[type="search"] {
+        color: var(--text-color);
+    }
+
+    .toolbar .search-bar > input[type="search"]:focus {
+        color: var(--text-color-active);
+
+        /* FIXME: Use native outline for the default theme as well. */
+        box-shadow: unset;
+        transition: unset;
+        outline: -webkit-focus-ring-color auto 5px;
+        outline-offset: -3px;
+    }
+
+    .toolbar .search-bar > input[type="search"]::placeholder {
+        color: var(--text-color-secondary);
+    }
+
+    body.window-inactive .toolbar .search-bar > input[type="search"]::placeholder {
+        color: var(--text-color-tertiary);
+    }
+
+    body.window-inactive .toolbar .search-bar > input[type="search"]::-webkit-search-results-button {
+        /* Setting `color` has no effect on the magnifying glass icon. */
+        opacity: 0.5;
+    }
+
+    .toolbar .dashboard-container {
+        background-image: none;
+        background-color: var(--dashboard-background-color);
+        border-color: var(--dashboard-background-color);
+        border-top-color: hsla(0, 100%, 100%, 0.1);
+        box-shadow: none;
+    }
+
+    .toolbar .item.button:active {
+        background-image: none;
+        border-top-color: hsla(0, 100%, 100%, 0.2);
+        box-shadow: none;
+    }
+
+    body.window-inactive .toolbar .item.button,
+    body.window-inactive .toolbar .search-bar > input[type="search"],
+    body.window-inactive .toolbar .dashboard-container {
+        opacity: 1;
+        color: var(--glyph-color);
+        border-color: transparent;
+        border-top-color: hsla(0, 100%, 100%, 0.1);
+        background-image: none;
+        background: var(--button-background-color-inactive);
+    }
+}

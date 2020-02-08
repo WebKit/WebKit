@@ -1,3 +1,83 @@
+2020-02-07  Jon Lee  <jonlee@apple.com>
+
+        Web Inspector: Revert slim toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=207422
+
+        Reviewed by Timothy Hatcher.
+
+        The slim toolbar needs a little more work before landing.
+
+        This patch reverts r255547, r255557, r255890, r255892, r255893, r255901, r255980.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/ConsoleManager.js:
+        * UserInterface/Debug/Bootstrap.js:
+        * UserInterface/Images/NewTab.svg: Added.
+        * UserInterface/Images/NewTabPlus.svg: Added.
+        * UserInterface/Images/Origin.svg:
+        * UserInterface/Images/SearchResults.svg: Added.
+        * UserInterface/Images/SourcesPaused.svg: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Models/DebuggerDashboard.js: Copied from Source/WebInspectorUI/UserInterface/Views/FlexibleSpaceNavigationItem.css.
+        * UserInterface/Models/DefaultDashboard.js: Added.
+        * UserInterface/Views/ActivateButtonToolbarItem.js: Copied from Source/WebInspectorUI/UserInterface/Views/FlexibleSpaceNavigationItem.css.
+        * UserInterface/Views/AuditTabContentView.js:
+        * UserInterface/Views/ButtonNavigationItem.css:
+        * UserInterface/Views/ButtonNavigationItem.js:
+        * UserInterface/Views/ButtonToolbarItem.css: Copied from Source/WebInspectorUI/UserInterface/Views/DividerNavigationItem.css.
+        * UserInterface/Views/ButtonToolbarItem.js: Copied from Source/WebInspectorUI/UserInterface/Views/FlexibleSpaceNavigationItem.css.
+        * UserInterface/Views/ConsoleTabContentView.js:
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        * UserInterface/Views/ControlToolbarItem.css: Copied from Source/WebInspectorUI/UserInterface/Views/DividerNavigationItem.css.
+        * UserInterface/Views/ControlToolbarItem.js: Copied from Source/WebInspectorUI/UserInterface/Views/DividerNavigationItem.css.
+        * UserInterface/Views/DOMTreeContentView.css:
+        * UserInterface/Views/DashboardContainerView.css: Added.
+        * UserInterface/Views/DashboardContainerView.js: Added.
+        * UserInterface/Views/DashboardView.js: Copied from Source/WebInspectorUI/UserInterface/Views/PinnedTabBarItem.js.
+        * UserInterface/Views/DebuggerDashboardView.css: Added.
+        * UserInterface/Views/DebuggerDashboardView.js: Added.
+        * UserInterface/Views/DefaultDashboardView.css: Added.
+        * UserInterface/Views/DefaultDashboardView.js: Added.
+        * UserInterface/Views/DividerNavigationItem.css:
+        * UserInterface/Views/ElementsTabContentView.js:
+        * UserInterface/Views/FlexibleSpaceNavigationItem.css:
+        * UserInterface/Views/GeneralTabBarItem.js:
+        * UserInterface/Views/GraphicsTabContentView.js:
+        * UserInterface/Views/GroupNavigationItem.js:
+        * UserInterface/Views/LayersTabContentView.js:
+        * UserInterface/Views/LegacyTabBar.js: Copied from Source/WebInspectorUI/UserInterface/Views/TabBar.js.
+        * UserInterface/Views/Main.css:
+        * UserInterface/Views/NavigationBar.js:
+        * UserInterface/Views/NetworkDetailView.css:
+        * UserInterface/Views/NetworkTabContentView.js:
+        * UserInterface/Views/NetworkTableContentView.css:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/NewTabContentView.css: Copied from Source/WebInspectorUI/UserInterface/Views/RenderingFrameTimelineOverviewGraph.css.
+        * UserInterface/Views/NewTabContentView.js: Added.
+        * UserInterface/Views/PinnedTabBarItem.js:
+        * UserInterface/Views/QuickConsole.js:
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        * UserInterface/Views/SearchTabContentView.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Views/Sidebar.js:
+        * UserInterface/Views/SizesToFitNavigationBar.js: Copied from Source/WebInspectorUI/UserInterface/Views/FlexibleSpaceNavigationItem.css.
+        * UserInterface/Views/SourcesTabContentView.js:
+        * UserInterface/Views/StorageTabContentView.js:
+        * UserInterface/Views/TabBar.css:
+        * UserInterface/Views/TabBar.js:
+        * UserInterface/Views/TabBarItem.js:
+        * UserInterface/Views/TabBrowser.js:
+        * UserInterface/Views/TabContentView.js:
+        * UserInterface/Views/TimelineOverview.css:
+        * UserInterface/Views/TimelineRecordFrame.css:
+        * UserInterface/Views/TimelineRuler.css:
+        * UserInterface/Views/TimelineTabContentView.js:
+        * UserInterface/Views/Toolbar.css: Added.
+        * UserInterface/Views/Toolbar.js: Added.
+        * UserInterface/Views/Variables.css:
+
 2020-02-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add another Protocol Version (iOS 13.4)

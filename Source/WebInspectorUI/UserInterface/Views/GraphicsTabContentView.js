@@ -27,16 +27,17 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
 {
     constructor()
     {
-        super(GraphicsTabContentView.tabInfo(), {
-            navigationSidebarPanelConstructor: WI.CanvasSidebarPanel,
-            detailsSidebarPanelConstructors: [
-                WI.RecordingStateDetailsSidebarPanel,
-                WI.RecordingTraceDetailsSidebarPanel,
-                WI.CanvasDetailsSidebarPanel,
-                WI.AnimationDetailsSidebarPanel,
-            ],
-            disableBackForward: true,
-        });
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.GraphicsTabContentView.tabInfo());
+
+        const navigationSidebarPanelConstructor = WI.CanvasSidebarPanel;
+        const detailsSidebarPanelConstructors = [
+            WI.RecordingStateDetailsSidebarPanel,
+            WI.RecordingTraceDetailsSidebarPanel,
+            WI.CanvasDetailsSidebarPanel,
+            WI.AnimationDetailsSidebarPanel,
+        ];
+        const disableBackForward = true;
+        super("graphics", ["graphics"], tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward);
 
         this._canvasesTreeOutline = new WI.TreeOutline;
         this._canvasesTreeOutline.allowsRepeatSelection = true;
@@ -64,7 +65,6 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
     static tabInfo()
     {
         return {
-            identifier: GraphicsTabContentView.Type,
             image: "Images/Graphics.svg",
             title: WI.UIString("Graphics"),
         };

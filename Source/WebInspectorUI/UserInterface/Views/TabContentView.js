@@ -25,42 +25,44 @@
 
 WI.TabContentView = class TabContentView extends WI.ContentView
 {
-    constructor(tabInfo, {navigationSidebarPanelConstructor, detailsSidebarPanelConstructors} = {})
+    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors)
     {
-        console.assert(!navigationSidebarPanelConstructor || navigationSidebarPanelConstructor.prototype instanceof WI.NavigationSidebarPanel);
-        console.assert(!detailsSidebarPanelConstructors || detailsSidebarPanelConstructors.every((detailsSidebarPanelConstructor) => detailsSidebarPanelConstructor.prototype instanceof WI.DetailsSidebarPanel));
+        console.assert(typeof identifier === "string");
+        console.assert(typeof styleClassNames === "string" || styleClassNames.every((className) => typeof className === "string"));
+        console.assert(tabBarItem instanceof WI.TabBarItem);
+        console.assert(!navigationSidebarPanelConstructor || typeof navigationSidebarPanelConstructor === "function");
+        console.assert(!detailsSidebarPanelConstructors || detailsSidebarPanelConstructors.every((detailsSidebarPanelConstructor) => typeof detailsSidebarPanelConstructor === "function"));
 
         super(null);
 
-        this._identifier = tabInfo.identifier;
-        this._tabBarItem = this.constructor.shouldPinTab() ? WI.PinnedTabBarItem.fromTabContentView(this) : WI.GeneralTabBarItem.fromTabContentView(this);
+        this.element.classList.add("tab");
+
+        if (typeof styleClassNames === "string")
+            styleClassNames = [styleClassNames];
+
+        this.element.classList.add(...styleClassNames);
+
+        this._identifier = identifier;
+        this._tabBarItem = tabBarItem;
         this._navigationSidebarPanelConstructor = navigationSidebarPanelConstructor || null;
         this._detailsSidebarPanelConstructors = detailsSidebarPanelConstructors || [];
 
         const defaultSidebarWidth = 300;
 
-        this._navigationSidebarCollapsedSetting = new WI.Setting(this._identifier + "-navigation-sidebar-collapsed", false);
-        this._navigationSidebarWidthSetting = new WI.Setting(this._identifier + "-navigation-sidebar-width", defaultSidebarWidth);
+        this._navigationSidebarCollapsedSetting = new WI.Setting(identifier + "-navigation-sidebar-collapsed", false);
+        this._navigationSidebarWidthSetting = new WI.Setting(identifier + "-navigation-sidebar-width", defaultSidebarWidth);
 
-        this._detailsSidebarCollapsedSetting = new WI.Setting(this._identifier + "-details-sidebar-collapsed", !this.detailsSidebarExpandedByDefault);
-        this._detailsSidebarSelectedPanelSetting = new WI.Setting(this._identifier + "-details-sidebar-selected-panel", null);
-        this._detailsSidebarWidthSetting = new WI.Setting(this._identifier + "-details-sidebar-width", defaultSidebarWidth);
+        this._detailsSidebarCollapsedSetting = new WI.Setting(identifier + "-details-sidebar-collapsed", !this.detailsSidebarExpandedByDefault);
+        this._detailsSidebarSelectedPanelSetting = new WI.Setting(identifier + "-details-sidebar-selected-panel", null);
+        this._detailsSidebarWidthSetting = new WI.Setting(identifier + "-details-sidebar-width", defaultSidebarWidth);
 
-        this._cookieSetting = new WI.Setting(this._identifier + "-tab-cookie", {});
-
-        this.element.classList.add("tab", this._identifier);
+        this._cookieSetting = new WI.Setting(identifier + "-tab-cookie", {});
     }
 
     static isTabAllowed()
     {
         // Returns false if a necessary domain or other features are unavailable.
         return true;
-    }
-
-    static shouldPinTab()
-    {
-        // Returns true if the tab should not be allowed to be closed.
-        return false;
     }
 
     static shouldSaveTab()

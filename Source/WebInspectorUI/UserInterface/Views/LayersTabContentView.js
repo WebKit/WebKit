@@ -27,9 +27,12 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
 {
     constructor()
     {
-        super(LayersTabContentView.tabInfo(), {
-            detailsSidebarPanelConstructors: [WI.LayerDetailsSidebarPanel],
-        });
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.LayersTabContentView.tabInfo());
+
+        const navigationSidebarPanelConstructor = null;
+        const detailsSidebarPanelConstructors = [WI.LayerDetailsSidebarPanel];
+        const disableBackForward = true;
+        super("layers", "layers", tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward);
 
         this._layerDetailsSidebarPanel = this.detailsSidebarPanels[0];
         this._layerDetailsSidebarPanel.addEventListener(WI.LayerDetailsSidebarPanel.Event.SelectedLayerChanged, this._detailsSidebarSelectedLayerChanged, this);
@@ -43,7 +46,6 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
     static tabInfo()
     {
         return {
-            identifier: LayersTabContentView.Type,
             image: "Images/Layers.svg",
             title: WI.UIString("Layers"),
         };

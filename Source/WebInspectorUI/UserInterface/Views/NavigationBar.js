@@ -25,7 +25,7 @@
 
 WI.NavigationBar = class NavigationBar extends WI.View
 {
-    constructor(element, {role, sizesToFit} = {})
+    constructor(element, navigationItems, role, label)
     {
         super(element);
 
@@ -34,6 +34,8 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         if (role)
             this.element.setAttribute("role", role);
+        if (label)
+            this.element.setAttribute("aria-label", label);
 
         this.element.addEventListener("focus", this._focus.bind(this), false);
         this.element.addEventListener("blur", this._blur.bind(this), false);
@@ -43,19 +45,21 @@ WI.NavigationBar = class NavigationBar extends WI.View
         this._mouseMovedEventListener = this._mouseMoved.bind(this);
         this._mouseUpEventListener = this._mouseUp.bind(this);
 
-        this._sizesToFit = sizesToFit || false;
         this._minimumWidth = NaN;
         this._navigationItems = [];
         this._selectedNavigationItem = null;
+
+        if (navigationItems) {
+            for (var i = 0; i < navigationItems.length; ++i)
+                this.addNavigationItem(navigationItems[i]);
+        }
     }
 
     // Public
 
-    get sizesToFit() { return this._sizesToFit; }
-
     addNavigationItem(navigationItem, parentElement)
     {
-        return this.insertNavigationItem(navigationItem, Infinity, parentElement);
+        return this.insertNavigationItem(navigationItem, this._navigationItems.length, parentElement);
     }
 
     insertNavigationItem(navigationItem, index, parentElement)
@@ -69,7 +73,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         navigationItem.didAttach(this);
 
-        console.assert(!isFinite(index) || (index >= 0 && index <= this._navigationItems.length));
+        console.assert(index >= 0 && index <= this._navigationItems.length);
         index = Math.max(0, Math.min(index, this._navigationItems.length));
 
         this._navigationItems.splice(index, 0, navigationItem);
@@ -164,6 +168,12 @@ WI.NavigationBar = class NavigationBar extends WI.View
         return this._minimumWidth;
     }
 
+    get sizesToFit()
+    {
+        // Can be overridden by subclasses.
+        return false;
+    }
+
     findNavigationItem(identifier)
     {
         function matchingSelfOrChild(item) {
@@ -214,7 +224,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
             item.update({expandOnly: true});
         }
 
-        if (this._sizesToFit)
+        if (this.sizesToFit)
             return;
 
         let visibleNavigationItems = this._visibleNavigationItems;

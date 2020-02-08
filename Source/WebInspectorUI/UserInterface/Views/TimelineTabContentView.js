@@ -25,9 +25,10 @@
 
 WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor()
+    constructor(identifier)
     {
-        super(TimelineTabContentView.tabInfo());
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.TimelineTabContentView.tabInfo());
+        super(identifier || "timeline", "timeline", tabBarItem);
 
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
@@ -101,7 +102,6 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
     static tabInfo()
     {
         return {
-            identifier: TimelineTabContentView.Type,
             image: "Images/Timeline.svg",
             title: WI.UIString("Timelines"),
         };

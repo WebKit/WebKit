@@ -62,6 +62,8 @@ public:
     void windowObjectCleared() override;
     void frontendLoaded() override;
     void changeSheetRect(const WebCore::FloatRect&) override;
+    void startWindowDrag() override;
+    void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return true; }
     String localizedStringsURL() const override;
