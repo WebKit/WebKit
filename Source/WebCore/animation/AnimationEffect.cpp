@@ -345,10 +345,6 @@ ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> t
     if (!timing)
         return { };
 
-    Optional<ComputedEffectTiming> previousTiming;
-    if (m_animation)
-        previousTiming = getComputedTiming();
-
     // 1. If the iterationStart member of input is present and less than zero, throw a TypeError and abort this procedure.
     if (timing->iterationStart) {
         if (timing->iterationStart.value() < 0)
@@ -417,7 +413,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> t
     updateStaticTimingProperties();
 
     if (m_animation)
-        m_animation->effectTimingDidChange(previousTiming);
+        m_animation->effectTimingDidChange();
 
     return { };
 }

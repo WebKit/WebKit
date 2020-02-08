@@ -14,11 +14,9 @@ window.beforeTest = async function() {
 function test() {
     let suite = InspectorTest.createAsyncSuite(`Canvas.ShaderProgram.WebGPU`);
 
-    let canvases = Array.from(WI.canvasManager.canvasCollection);
-    InspectorTest.assert(canvases.length === 1, "There should only be one canvas.");
-
-    let canvas = canvases[0];
+    let canvas = WI.canvasManager.canvases[0];
     InspectorTest.assert(canvas, "There should be a canvas.");
+    InspectorTest.assert(WI.canvasManager.canvases.length === 1, "There should only be one canvas.");
     InspectorTest.assert(canvas.contextType === WI.Canvas.ContextType.WebGPU, "Canvas should be WebGPU.");
 
     async function awaitProgramAdded(programType) {
@@ -120,7 +118,7 @@ function test() {
         test(resolve, reject) {
             let canvasRemoved = false;
 
-            WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+            WI.canvasManager.singleFireEventListener(WI.CanvasManager.Event.CanvasRemoved, (event) => {
                 canvasRemoved = true;
             });
 

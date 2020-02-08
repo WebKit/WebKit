@@ -26,14 +26,11 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "ComputedEffectTiming.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
 #include <wtf/Markable.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 #include <wtf/UniqueRef.h>
@@ -56,9 +53,6 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*);
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
-
-    static HashSet<WebAnimation*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
 
     virtual bool isDeclarativeAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
@@ -125,10 +119,9 @@ public:
     void applyPendingAcceleratedActions();
 
     bool isRunningAccelerated() const;
-    bool isCompletelyAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void updateRelevance();
-    void effectTimingDidChange(Optional<ComputedEffectTiming> = WTF::nullopt);
+    void effectTimingDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
     void setSuspended(bool);

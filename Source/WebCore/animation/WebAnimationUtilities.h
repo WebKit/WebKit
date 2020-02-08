@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class AnimationList;
 class WebAnimation;
 
 inline double secondsToWebAnimationsAPITime(const Seconds time)
@@ -64,7 +63,7 @@ struct WebAnimationsMarkableDoubleTraits {
 
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
-bool compareAnimationsByCompositeOrder(WebAnimation&, WebAnimation&, const AnimationList*);
+bool compareAnimationsByCompositeOrder(WebAnimation&, WebAnimation&, Vector<String>& cssAnimationNames);
 
 } // namespace WebCore
 

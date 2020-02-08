@@ -180,8 +180,6 @@ public:
 
     int pushNodeToFrontend(Node*);
     int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
-    int pushNodePathToFrontend(Node*);
-    int pushNodePathToFrontend(ErrorString, Node*);
     Node* nodeForId(int nodeId);
     int boundNodeId(const Node*);
 
@@ -219,6 +217,7 @@ private:
     Node* assertEditableNode(ErrorString&, int nodeId);
     Element* assertEditableElement(ErrorString&, int nodeId);
 
+    int pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(int nodeId, int depth = 1);
 
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);

@@ -39,7 +39,7 @@ function deleteProgram() {
 function deleteContext() {
     context = null;
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
-    // does not receive Canvas.canvasRemoved events.
+    // does not receive WI.CanvasManager.Event.CanvasRemoved events.
     setTimeout(() => { GCController.collect(); }, 0);
 }
 
@@ -47,9 +47,8 @@ TestPage.registerInitializer(() => {
     let suite = null;
 
     function whenProgramAdded(callback) {
-        let canvases = Array.from(WI.canvasManager.canvasCollection);
-        InspectorTest.assert(canvases.length === 1, "There should only be one canvas.");
-        canvases[0].shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
+        InspectorTest.assert(WI.canvasManager.canvases.length === 1, "There should only be one canvas.");
+        WI.canvasManager.canvases[0].shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
             let program = event.data.item;
             InspectorTest.expectThat(program instanceof WI.ShaderProgram, "Added ShaderProgram.");
             InspectorTest.expectThat(program.canvas instanceof WI.Canvas, "ShaderProgram should have a parent Canvas.");
@@ -58,9 +57,8 @@ TestPage.registerInitializer(() => {
     }
 
     function whenProgramRemoved(callback) {
-        let canvases = Array.from(WI.canvasManager.canvasCollection);
-        InspectorTest.assert(canvases.length === 1, "There should only be one canvas.");
-        canvases[0].shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+        InspectorTest.assert(WI.canvasManager.canvases.length === 1, "There should only be one canvas.");
+        WI.canvasManager.canvases[0].shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
             let program = event.data.item;
             InspectorTest.expectThat(program instanceof WI.ShaderProgram, "Removed ShaderProgram.");
             InspectorTest.expectThat(program.canvas instanceof WI.Canvas, "ShaderProgram should have a parent Canvas.");
@@ -76,7 +74,7 @@ TestPage.registerInitializer(() => {
             description: "Check that ShaderProgramAdded is sent for a program created before CanvasAgent is enabled.",
             test(resolve, reject) {
                 // This can't use `awaitEvent` since the promise resolution happens on the next tick.
-                WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                WI.canvasManager.singleFireEventListener(WI.CanvasManager.Event.CanvasAdded, (event) => {
                     whenProgramAdded((program) => {
                         resolve();
                     });
@@ -115,7 +113,7 @@ TestPage.registerInitializer(() => {
             test(resolve, reject) {
                 let canvasRemoved = false;
 
-                WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+                WI.canvasManager.singleFireEventListener(WI.CanvasManager.Event.CanvasRemoved, (event) => {
                     canvasRemoved = true;
                 });
 

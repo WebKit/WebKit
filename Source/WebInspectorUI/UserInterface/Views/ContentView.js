@@ -60,6 +60,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.Canvas)
             return new WI.CanvasContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WI.CanvasCollection)
+            return new WI.CanvasOverviewContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WI.ShaderProgram)
             return new WI.ShaderProgramContentView(representedObject, extraArguments);
 
@@ -179,9 +182,6 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.AuditTestGroup || representedObject instanceof WI.AuditTestGroupResult)
             return new WI.AuditTestGroupContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WI.Animation)
-            return new WI.AnimationContentView(representedObject, extraArguments);
-
         if (representedObject instanceof WI.Collection)
             return new WI.CollectionContentView(representedObject, extraArguments);
 
@@ -273,6 +273,8 @@ WI.ContentView = class ContentView extends WI.View
             return true;
         if (representedObject instanceof WI.Canvas)
             return true;
+        if (representedObject instanceof WI.CanvasCollection)
+            return true;
         if (representedObject instanceof WI.ShaderProgram)
             return true;
         if (representedObject instanceof WI.TimelineRecording)
@@ -316,13 +318,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.AuditTestCase || representedObject instanceof WI.AuditTestGroup
             || representedObject instanceof WI.AuditTestCaseResult || representedObject instanceof WI.AuditTestGroupResult)
             return true;
-        if (representedObject instanceof WI.Animation)
-            return true;
         if (representedObject instanceof WI.Collection)
             return true;
         if (typeof representedObject === "string" || representedObject instanceof String)
-            return true;
-        if (representedObject[WI.ContentView.isViewableSymbol])
             return true;
         return false;
     }
@@ -514,5 +512,4 @@ WI.ContentView.Event = {
     NavigationItemsDidChange: "content-view-navigation-items-did-change"
 };
 
-WI.ContentView.isViewableSymbol = Symbol("is-viewable");
 WI.ContentView.ContentViewForRepresentedObjectSymbol = Symbol("content-view-for-represented-object");

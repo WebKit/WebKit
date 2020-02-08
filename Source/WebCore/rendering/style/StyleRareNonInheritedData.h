@@ -137,8 +137,8 @@ public:
     
     RefPtr<StyleReflection> boxReflect;
 
-    RefPtr<AnimationList> animations;
-    RefPtr<AnimationList> transitions;
+    std::unique_ptr<AnimationList> animations;
+    std::unique_ptr<AnimationList> transitions;
 
     FillLayer mask;
     NinePieceImage maskBoxImage;

@@ -27,7 +27,6 @@
 #include "WebAnimationUtilities.h"
 
 #include "Animation.h"
-#include "AnimationList.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DeclarativeAnimation.h"
@@ -35,7 +34,7 @@
 
 namespace WebCore {
 
-bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation& rhsAnimation, const AnimationList* cssAnimationList)
+bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation& rhsAnimation, Vector<String>& cssAnimationNames)
 {
     bool lhsHasOwningElement = is<DeclarativeAnimation>(lhsAnimation) && downcast<DeclarativeAnimation>(lhsAnimation).owningElement();
     bool rhsHasOwningElement = is<DeclarativeAnimation>(rhsAnimation) && downcast<DeclarativeAnimation>(rhsAnimation).owningElement();
@@ -61,23 +60,17 @@ bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation&
     bool rhsIsCSSAnimation = rhsHasOwningElement && is<CSSAnimation>(rhsAnimation);
     if (lhsIsCSSAnimation || rhsIsCSSAnimation) {
         if (lhsIsCSSAnimation == rhsIsCSSAnimation) {
-            // We must have a list of CSS Animations if we have CSS Animations to sort through.
-            ASSERT(cssAnimationList);
-            ASSERT(!cssAnimationList->isEmpty());
-
             // https://drafts.csswg.org/css-animations-2/#animation-composite-order
             // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-            auto& lhsBackingAnimation = downcast<CSSAnimation>(lhsAnimation).backingAnimation();
-            auto& rhsBackingAnimation = downcast<CSSAnimation>(rhsAnimation).backingAnimation();
+            auto& lhsCSSAnimationName = downcast<CSSAnimation>(lhsAnimation).backingAnimation().name();
+            auto& rhsCSSAnimationName = downcast<CSSAnimation>(rhsAnimation).backingAnimation().name();
 
-            for (size_t i = 0; i < cssAnimationList->size(); ++i) {
-                auto& animation = cssAnimationList->animation(i);
-                if (animation == lhsBackingAnimation)
+            for (auto& animationName : cssAnimationNames) {
+                if (animationName == lhsCSSAnimationName)
                     return true;
-                if (animation == rhsBackingAnimation)
+                if (animationName == rhsCSSAnimationName)
                     return false;
             }
-
             // We should have found either of those CSS animations in the CSS animations list.
             ASSERT_NOT_REACHED();
         }

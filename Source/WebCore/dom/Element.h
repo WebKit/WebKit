@@ -481,7 +481,6 @@ public:
     void setHasCSSAnimation();
     void clearHasCSSAnimation();
 
-    KeyframeEffectStack* keyframeEffectStack() const;
     KeyframeEffectStack& ensureKeyframeEffectStack();
     bool hasKeyframeEffects() const;
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);

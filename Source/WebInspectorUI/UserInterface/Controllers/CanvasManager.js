@@ -32,7 +32,6 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         super();
 
         this._enabled = false;
-        this._canvasCollection = new WI.CanvasCollection;
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
         this._savedRecordings = new Set;
@@ -77,8 +76,12 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     // Public
 
-    get canvasCollection() { return this._canvasCollection; }
     get savedRecordings() { return this._savedRecordings; }
+
+    get canvases()
+    {
+        return Array.from(this._canvasIdentifierMap.values());
+    }
 
     get shaderPrograms()
     {
@@ -130,7 +133,6 @@ WI.CanvasManager = class CanvasManager extends WI.Object
                 target.CanvasAgent.disable();
         }
 
-        this._canvasCollection.clear();
         this._canvasIdentifierMap.clear();
         this._shaderProgramIdentifierMap.clear();
         this._savedRecordings.clear();
@@ -159,8 +161,9 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         console.assert(!this._canvasIdentifierMap.has(canvasPayload.canvasId), `Canvas already exists with id ${canvasPayload.canvasId}.`);
 
         let canvas = WI.Canvas.fromPayload(canvasPayload);
-        this._canvasCollection.add(canvas);
         this._canvasIdentifierMap.set(canvas.identifier, canvas);
+
+        this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasAdded, {canvas});
     }
 
     canvasRemoved(canvasIdentifier)
@@ -170,14 +173,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!canvas)
             return;
 
-        this._saveRecordings(canvas);
-
-        this._canvasCollection.remove(canvas);
-
-        for (let program of canvas.shaderProgramCollection)
-            this._shaderProgramIdentifierMap.delete(program.identifier);
-
-        canvas.shaderProgramCollection.clear();
+        this._removeCanvas(canvas);
     }
 
     canvasMemoryChanged(canvasIdentifier, memoryCost)
@@ -279,14 +275,21 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     // Private
 
-    _saveRecordings(canvas)
+    _removeCanvas(canvas)
     {
+        for (let program of canvas.shaderProgramCollection)
+            this._shaderProgramIdentifierMap.delete(program.identifier);
+
+        canvas.shaderProgramCollection.clear();
+
         for (let recording of canvas.recordingCollection) {
             recording.source = null;
             recording.createDisplayName(recording.displayName);
             this._savedRecordings.add(recording);
             this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingSaved, {recording});
         }
+
+        this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasRemoved, {canvas});
     }
 
     _mainResourceDidChange(event)
@@ -298,14 +301,15 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         WI.Canvas.resetUniqueDisplayNameNumbers();
 
         for (let canvas of this._canvasIdentifierMap.values())
-            this._saveRecordings(canvas);
+            this._removeCanvas(canvas);
 
-        this._canvasCollection.clear();
-        this._canvasIdentifierMap.clear();
         this._shaderProgramIdentifierMap.clear();
+        this._canvasIdentifierMap.clear();
     }
 };
 
 WI.CanvasManager.Event = {
+    CanvasAdded: "canvas-manager-canvas-was-added",
+    CanvasRemoved: "canvas-manager-canvas-was-removed",
     RecordingSaved: "canvas-manager-recording-saved",
 };

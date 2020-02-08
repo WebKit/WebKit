@@ -177,7 +177,8 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
             return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(lhsOwningElement, rhsOwningElement);
 
         // Otherwise, sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-        return compareAnimationsByCompositeOrder(*lhs, *rhs, lhsOwningElement->ensureKeyframeEffectStack().cssAnimationList());
+        // In our case, this matches the time at which the animations were created and thus their relative position in m_allAnimations.
+        return false;
     });
 
     std::sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {
@@ -596,7 +597,7 @@ bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& re
         auto* effect = animation->effect();
         if (is<KeyframeEffect>(effect)) {
             auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-            if (keyframeEffect->isCurrentlyAffectingProperty(property, KeyframeEffect::Accelerated::Yes))
+            if (keyframeEffect->isRunningAccelerated() && keyframeEffect->animatedProperties().contains(property))
                 return true;
         }
     }

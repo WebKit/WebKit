@@ -566,7 +566,7 @@ int InspectorDOMAgent::pushNodeToFrontend(ErrorString& errorString, int document
         return 0;
     }
 
-    return pushNodePathToFrontend(errorString, nodeToPush);
+    return pushNodePathToFrontend(nodeToPush);
 }
 
 Node* InspectorDOMAgent::nodeForId(int id)
@@ -613,7 +613,7 @@ void InspectorDOMAgent::querySelector(ErrorString& errorString, int nodeId, cons
     }
 
     if (auto* element = queryResult.releaseReturnValue())
-        *elementId = pushNodePathToFrontend(errorString, element);
+        *elementId = pushNodePathToFrontend(element);
 }
 
 void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, const String& selectors, RefPtr<JSON::ArrayOf<int>>& result)
@@ -640,23 +640,12 @@ void InspectorDOMAgent::querySelectorAll(ErrorString& errorString, int nodeId, c
 
 int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 {
-    ErrorString ignored;
-    return pushNodePathToFrontend(ignored, nodeToPush);
-}
-
-int InspectorDOMAgent::pushNodePathToFrontend(ErrorString errorString, Node* nodeToPush)
-{
     ASSERT(nodeToPush);  // Invalid input
 
-    if (!m_document) {
-        errorString = "Missing document"_s;
+    if (!m_document)
         return 0;
-    }
-
-    if (!m_documentNodeToIdMap.contains(m_document)) {
-        errorString = "Document must have been requested"_s;
+    if (!m_documentNodeToIdMap.contains(m_document))
         return 0;
-    }
 
     // Return id in case the node is known.
     int result = m_documentNodeToIdMap.get(nodeToPush);
@@ -801,7 +790,7 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     if (!m_domEditor->removeChild(*parent, *oldNode, errorString))
         return;
 
-    *newId = pushNodePathToFrontend(errorString, newElement.ptr());
+    *newId = pushNodePathToFrontend(newElement.ptr());
     if (m_childrenRequested.contains(nodeId))
         pushChildNodesToFrontend(*newId);
 }
@@ -841,7 +830,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const
         return;
     }
 
-    int newId = pushNodePathToFrontend(errorString, newNode);
+    int newId = pushNodePathToFrontend(newNode);
 
     bool childrenRequested = m_childrenRequested.contains(nodeId);
     if (childrenRequested)
@@ -1433,7 +1422,7 @@ void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetE
     if (!m_domEditor->insertBefore(*targetElement, *node, anchorNode, errorString))
         return;
 
-    *newNodeId = pushNodePathToFrontend(errorString, node);
+    *newNodeId = pushNodePathToFrontend(node);
 }
 
 void InspectorDOMAgent::undo(ErrorString& errorString)
@@ -1509,11 +1498,11 @@ void InspectorDOMAgent::getAttributes(ErrorString& errorString, int nodeId, RefP
     result = buildArrayForElementAttributes(element);
 }
 
-void InspectorDOMAgent::requestNode(ErrorString& errorString, const String& objectId, int* nodeId)
+void InspectorDOMAgent::requestNode(ErrorString&, const String& objectId, int* nodeId)
 {
     Node* node = nodeForObjectId(objectId);
     if (node)
-        *nodeId = pushNodePathToFrontend(errorString, node);
+        *nodeId = pushNodePathToFrontend(node);
     else
         *nodeId = 0;
 }
@@ -2657,7 +2646,7 @@ Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
 void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString& errorString, const String& path, int* nodeId)
 {
     if (Node* node = nodeForPath(path))
-        *nodeId = pushNodePathToFrontend(errorString, node);
+        *nodeId = pushNodePathToFrontend(node);
     else
         errorString = "Missing node for given path"_s;
 }

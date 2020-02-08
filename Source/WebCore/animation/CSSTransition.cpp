@@ -28,7 +28,6 @@
 
 #include "Animation.h"
 #include "Element.h"
-#include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -41,9 +40,6 @@ Ref<CSSTransition> CSSTransition::create(Element& owningElement, CSSPropertyID p
     auto result = adoptRef(*new CSSTransition(owningElement, property, generationTime, backingAnimation, newStyle, reversingAdjustedStartStyle, reversingShorteningFactor));
     result->initialize(oldStyle, newStyle);
     result->setTimingProperties(delay, duration);
-
-    InspectorInstrumentation::didCreateWebAnimation(result.get());
-
     return result;
 }
 

@@ -1661,14 +1661,14 @@ void RenderStyle::adjustTransitions()
 AnimationList& RenderStyle::ensureAnimations()
 {
     if (!m_rareNonInheritedData.access().animations)
-        m_rareNonInheritedData.access().animations = AnimationList::create();
+        m_rareNonInheritedData.access().animations = makeUnique<AnimationList>();
     return *m_rareNonInheritedData->animations;
 }
 
 AnimationList& RenderStyle::ensureTransitions()
 {
     if (!m_rareNonInheritedData.access().transitions)
-        m_rareNonInheritedData.access().transitions = AnimationList::create();
+        m_rareNonInheritedData.access().transitions = makeUnique<AnimationList>();
     return *m_rareNonInheritedData->transitions;
 }
 

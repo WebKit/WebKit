@@ -209,12 +209,12 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     margin-bottom: 15px;
 }
 
-.navigation-item-help {
+.message-text-view .navigation-item-help {
     display: block;
     line-height: 22px;
 }
 
-.navigation-item-help > .navigation-bar {
+.message-text-view .navigation-item-help .navigation-bar {
     display: inline-flex;
     height: 20px;
     padding: 0 4px;
@@ -222,9 +222,9 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     vertical-align: -3px;
 }
 
-.navigation-item-help > .navigation-bar > .item {
+.message-text-view .navigation-item-help .navigation-bar > .item {
     height: 100%;
-    padding: 0 4px !important;
+    padding: 0 4px;
     font-size: 11px;
     border-radius: 4px;
     border: solid 1px var(--border-color);
