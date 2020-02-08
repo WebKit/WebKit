@@ -1,3 +1,24 @@
+2020-02-08  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Hold off non-cookie website data deletion until an hour after user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=207418
+        <rdar://problem/58550164>
+
+        Reviewed by Chris Dumez.
+
+        This change makes sure there is at least a one-hour or older timestamp
+        for user interaction for some website before activating deletion of
+        non-cookie website data for sites the user has not interacted with.
+        This ensures that a fresh start such as after a reset or on a new
+        device doesn't interpret the lack of data as lack of user interaction.
+
+        No new tests. Existing tests make sure we don't regress the functionality.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor):
+
 2020-02-07  Jon Lee  <jonlee@apple.com>
 
         Web Inspector: Revert slim toolbar
