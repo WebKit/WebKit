@@ -1,3 +1,32 @@
+2020-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r256072): ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndInputView fails
+        https://bugs.webkit.org/show_bug.cgi?id=207425
+        Followup to <rdar://problem/56960774>
+
+        Reviewed by Tim Horton.
+
+        The failing test ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndInputView relies on -[WKWebView
+        _zoomToFocusRect:...:] to modify the zoom scale of WKScrollView in order for the next layer tree transaction to
+        have a zoom scale not equal to the initial scale, which in turn ensures that we make the UIScrollView scrollable
+        after the next remote layer tree update.
+
+        The change in r256072 caused us to bail early in -_zoomToFocusRect: and -_zoomToPoint: in the case where the
+        scroll view is not scrollable (i.e. the page has `overflow: hidden`); this means that if all the following
+        conditions are met, we now avoid zooming into focused elements, whereas we would've zoomed before the change:
+
+        1.  The user is focusing an element on an iPhone.
+        2.  The document body has `overflow: hidden;`, or the WebKit client has called `-setScrollEnabled:NO`.
+        3.  Either an SPI client has vended an empty input view and input accessory view, or the focused element has
+            inputmode="none".
+
+        To fix the test and restore zooming behavior, we partially revert the change in r256072, such that we no longer
+        bail from WKWebView's zooming codepaths if the scrollEnabled property is NO.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _zoomToPoint:atScale:animated:]):
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
 2020-02-08  Sam Weinig  <weinig@apple.com>
 
         Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
