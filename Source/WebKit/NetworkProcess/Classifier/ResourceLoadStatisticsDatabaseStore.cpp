@@ -946,7 +946,13 @@ static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase&
 
 unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources() const
 {
-    if (m_countPrevalentResourcesStatement.step() == SQLITE_ROW) {
+    auto stepValue = m_countPrevalentResourcesStatement.step();
+    if (stepValue != SQLITE_ROW && stepValue != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources failed to step, error message: %{public}s", m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    if (stepValue == SQLITE_ROW) {
         unsigned prevalentResourceCount = m_countPrevalentResourcesStatement.getColumnInt(0);
         if (prevalentResourceCount >= minimumPrevalentResourcesForTelemetry) {
             resetStatement(m_countPrevalentResourcesStatement);

@@ -1,3 +1,16 @@
+2020-02-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION: ASSERTION FAILED: resetResult == 0 on regression tests in ITP code, resetting SQLite statement
+        https://bugs.webkit.org/show_bug.cgi?id=207269
+        <rdar://problem/59188891>
+
+        Reviewed by Brady Eidson.
+
+        Adds logging if ITP telemetry calculations fail to step and makes sure
+        not to reset the statement in this case as it will result in an error.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+
 2020-02-07  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Protect against bad parameters in WebProcessProxy::getPluginProcessConnection()
