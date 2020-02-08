@@ -630,17 +630,8 @@ TEST(KeyboardInputTests, SupportsImagePaste)
     EXPECT_TRUE(contentView.supportsImagePaste);
 }
 
-static NSString *overrideBundleIdentifier()
-{
-    return @"com.apple.TestWebKitAPI";
-}
-
 TEST(KeyboardInputTests, SuppressSoftwareKeyboard)
 {
-    InstanceMethodSwizzler bundleIdentifierSwizzler(NSBundle.class, @selector(bundleIdentifier), reinterpret_cast<IMP>(overrideBundleIdentifier));
-    UIApplicationInitialize();
-    UIApplicationInstantiateSingleton(UIApplication.class);
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView _setSuppressSoftwareKeyboard:YES];
     [[webView window] makeKeyWindow];

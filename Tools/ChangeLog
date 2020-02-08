@@ -1,3 +1,22 @@
+2020-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Several iOS API tests that call -makeKeyWindow assert after r255907
+        https://bugs.webkit.org/show_bug.cgi?id=207411
+
+        Reviewed by Tim Horton.
+
+        r255907 asserted in -makeKeyWindow that the shared UIApplication exists. While this was guaranteed for all call
+        sites of -makeKeyWindow from API tests, -makeKeyWindow may also be invoked from within UIKit code; in this case,
+        nothing guarantees that the application has been initialized, and we end up hitting this assertion. To fix this,
+        replace the assertion with logic to bootstrap the shared UIApplication (if it didn't already exist).
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::overrideBundleIdentifier): Deleted.
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (overrideBundleIdentifier):
+        (setOverriddenApplicationKeyWindow):
+
 2020-02-07  Jonathan Bedard  <jbedard@apple.com>
 
         TestWebKitAPI: Disable legacy ActionSheet tests on Catalyst

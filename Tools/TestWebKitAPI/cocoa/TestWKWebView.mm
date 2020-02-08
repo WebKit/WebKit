@@ -312,12 +312,22 @@ static NeverDestroyed<RetainPtr<UIWindow>> gOverriddenApplicationKeyWindow;
 static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gApplicationKeyWindowSwizzler;
 static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gSharedApplicationSwizzler;
 
+static NSString *overrideBundleIdentifier()
+{
+    return @"com.apple.TestWebKitAPI";
+}
+
 static void setOverriddenApplicationKeyWindow(UIWindow *window)
 {
     if (gOverriddenApplicationKeyWindow.get() == window)
         return;
 
-    ASSERT(UIApplication.sharedApplication);
+    if (!UIApplication.sharedApplication) {
+        InstanceMethodSwizzler bundleIdentifierSwizzler(NSBundle.class, @selector(bundleIdentifier), reinterpret_cast<IMP>(overrideBundleIdentifier));
+        UIApplicationInitialize();
+        UIApplicationInstantiateSingleton(UIApplication.class);
+    }
+
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         gApplicationKeyWindowSwizzler.get() = makeUnique<InstanceMethodSwizzler>(UIApplication.class, @selector(keyWindow), reinterpret_cast<IMP>(applicationKeyWindowOverride));
