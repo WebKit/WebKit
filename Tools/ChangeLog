@@ -1,3 +1,13 @@
+2020-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Try using 75% load factor for HashTable
+        https://bugs.webkit.org/show_bug.cgi?id=207183
+
+        Reviewed by Mark Lam.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::testInitialCapacity):
+
 2020-02-08  Sam Weinig  <weinig@apple.com>
 
         Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h

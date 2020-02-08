@@ -55,8 +55,8 @@ void testInitialCapacity()
         ASSERT_EQ(initialCapacity, static_cast<unsigned>(testSet.capacity()));
     }
 
-    // Adding items up to less than half the capacity should not change the capacity.
-    unsigned capacityLimit = initialCapacity / 2 - 1;
+    // Adding items up to less than 3/4 of the capacity should not change the capacity.
+    unsigned capacityLimit = initialCapacity * 3 / 4 - 1;
     for (size_t i = size; i < capacityLimit; ++i) {
         testSet.add(i);
         ASSERT_EQ(initialCapacity, static_cast<unsigned>(testSet.capacity()));
