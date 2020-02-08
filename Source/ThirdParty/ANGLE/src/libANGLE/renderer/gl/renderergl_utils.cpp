@@ -1649,6 +1649,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                             // IsApple() && functions->standard == STANDARD_GL_DESKTOP);
                             // TODO(anglebug.com/2273): diagnose crashes with this workaround.
                             false);
+
+    // bugs.webkit.org/show_bug.cgi?id=206625
+    ANGLE_FEATURE_CONDITION(features, flushBeforeBindFramebuffer, IsApple() && isIntel);
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

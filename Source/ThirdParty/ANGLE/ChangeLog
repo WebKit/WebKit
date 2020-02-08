@@ -1,3 +1,16 @@
+2020-02-07  Kenneth Russell  <kbr@chromium.org>
+
+        Try adding glBindFramebuffer flush workaround to ANGLE as remedy for flaky WebGL tests
+        https://bugs.webkit.org/show_bug.cgi?id=206625
+
+        Reviewed by Dean Jackson.
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/renderer/gl/StateManagerGL.cpp:
+        (rx::StateManagerGL::bindFramebuffer):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-02-05  Dean Jackson  <dino@apple.com>
 
         Fix MacCatalyst build.
