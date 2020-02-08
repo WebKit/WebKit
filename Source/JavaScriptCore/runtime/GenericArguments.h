@@ -54,9 +54,9 @@ protected:
     static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
     static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     
-    void initModifiedArgumentsDescriptor(VM&, unsigned length);
-    void initModifiedArgumentsDescriptorIfNecessary(VM&, unsigned length);
-    void setModifiedArgumentDescriptor(VM&, unsigned index, unsigned length);
+    void initModifiedArgumentsDescriptor(JSGlobalObject*, unsigned length);
+    void initModifiedArgumentsDescriptorIfNecessary(JSGlobalObject*, unsigned length);
+    void setModifiedArgumentDescriptor(JSGlobalObject*, unsigned index, unsigned length);
     bool isModifiedArgumentDescriptor(unsigned index, unsigned length);
 
     void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);

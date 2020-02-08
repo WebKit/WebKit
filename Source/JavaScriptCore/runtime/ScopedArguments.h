@@ -123,18 +123,18 @@ public:
     }
 
     bool overrodeThings() const { return m_overrodeThings; }
-    void overrideThings(VM&);
-    void overrideThingsIfNecessary(VM&);
-    void unmapArgument(VM&, uint32_t index);
+    void overrideThings(JSGlobalObject*);
+    void overrideThingsIfNecessary(JSGlobalObject*);
+    void unmapArgument(JSGlobalObject*, uint32_t index);
     
-    void initModifiedArgumentsDescriptorIfNecessary(VM& vm)
+    void initModifiedArgumentsDescriptorIfNecessary(JSGlobalObject* globalObject)
     {
-        GenericArguments<ScopedArguments>::initModifiedArgumentsDescriptorIfNecessary(vm, m_table->length());
+        GenericArguments<ScopedArguments>::initModifiedArgumentsDescriptorIfNecessary(globalObject, m_table->length());
     }
 
-    void setModifiedArgumentDescriptor(VM& vm, unsigned index)
+    void setModifiedArgumentDescriptor(JSGlobalObject* globalObject, unsigned index)
     {
-        GenericArguments<ScopedArguments>::setModifiedArgumentDescriptor(vm, index, m_table->length());
+        GenericArguments<ScopedArguments>::setModifiedArgumentDescriptor(globalObject, index, m_table->length());
     }
 
     bool isModifiedArgumentDescriptor(unsigned index)

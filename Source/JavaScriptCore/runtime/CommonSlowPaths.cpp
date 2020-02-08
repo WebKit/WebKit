@@ -987,6 +987,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
         CHECK_EXCEPTION();
         couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, globalObject, property);
     }
+    CHECK_EXCEPTION();
     
     if (!couldDelete && codeBlock->isStrictMode())
         THROW(createTypeError(globalObject, UnableToDeletePropertyError));

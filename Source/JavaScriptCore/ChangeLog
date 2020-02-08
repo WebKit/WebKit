@@ -1,3 +1,29 @@
+2020-02-07  Robin Morisset  <rmorisset@apple.com>
+
+        Throw OutOfMemory exception instead of crashing if DirectArguments/ScopedArguments can't be created
+        https://bugs.webkit.org/show_bug.cgi?id=207423
+
+        Reviewed by Mark Lam.
+
+        AllocationFailureMode::Assert is problematic because fuzzers keep producing spurious error reports when they generate code that tries allocating infinite amount of memory.
+        The right approach is to use AllocationFailureMode::ReturnNull, and throw a JS exception upon receiving null.
+
+        In this patch I fixed two functions that were using AllocationFailureMode::Assert:
+            DirectArguments::DirectArguments::overrideThings
+            GenericArguments<Type>::initModifiedArgumentsDescriptor
+
+        No test added, because the only test we have is highly non-deterministic/flaky (only triggers about 10 to 20% of the time even before the fix).
+
+        * runtime/DirectArguments.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::deletePropertyByIndex):
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptorIfNecessary):
+        (JSC::GenericArguments<Type>::setModifiedArgumentDescriptor):
+        * runtime/ScopedArguments.h:
+
 2020-02-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r256051.

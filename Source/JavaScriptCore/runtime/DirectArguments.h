@@ -125,18 +125,18 @@ public:
     
     // Methods intended for use by the GenericArguments mixin.
     bool overrodeThings() const { return !!m_mappedArguments; }
-    void overrideThings(VM&);
-    void overrideThingsIfNecessary(VM&);
-    void unmapArgument(VM&, unsigned index);
+    void overrideThings(JSGlobalObject*);
+    void overrideThingsIfNecessary(JSGlobalObject*);
+    void unmapArgument(JSGlobalObject*, unsigned index);
 
-    void initModifiedArgumentsDescriptorIfNecessary(VM& vm)
+    void initModifiedArgumentsDescriptorIfNecessary(JSGlobalObject* globalObject)
     {
-        GenericArguments<DirectArguments>::initModifiedArgumentsDescriptorIfNecessary(vm, m_length);
+        GenericArguments<DirectArguments>::initModifiedArgumentsDescriptorIfNecessary(globalObject, m_length);
     }
 
-    void setModifiedArgumentDescriptor(VM& vm, unsigned index)
+    void setModifiedArgumentDescriptor(JSGlobalObject* globalObject, unsigned index)
     {
-        GenericArguments<DirectArguments>::setModifiedArgumentDescriptor(vm, index, m_length);
+        GenericArguments<DirectArguments>::setModifiedArgumentDescriptor(globalObject, index, m_length);
     }
 
     bool isModifiedArgumentDescriptor(unsigned index)
