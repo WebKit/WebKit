@@ -1,3 +1,13 @@
+2020-02-08  Doug Kelly  <dougk@apple.com>
+
+        Crash in RenderTreeBuilder::Table::findOrCreateParentForChild with multicol spanner
+        https://bugs.webkit.org/show_bug.cgi?id=206917
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/multicol/spanner-crash-when-finding-table-parent-expected.txt: Added.
+        * fast/multicol/spanner-crash-when-finding-table-parent.html: Added.
+
 2020-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Double tapping shouldn't scroll the page when the body has `overflow: hidden`

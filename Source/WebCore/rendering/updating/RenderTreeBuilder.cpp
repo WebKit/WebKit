@@ -38,6 +38,7 @@
 #include "RenderMathMLFenced.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
@@ -208,6 +209,20 @@ void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> ch
     if (is<RenderText>(beforeChild)) {
         if (auto* wrapperInline = downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents())
             beforeChild = wrapperInline;
+    } else if (is<RenderBox>(beforeChild)) {
+        // Adjust the beforeChild if it happens to be a spanner and the its actual location is inside the fragmented flow.
+        auto& beforeChildBox = downcast<RenderBox>(*beforeChild);
+        if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow()) {
+            auto columnSpannerPlaceholderForBeforeChild = [&]() -> RenderMultiColumnSpannerPlaceholder* {
+                if (!is<RenderMultiColumnFlow>(enclosingFragmentedFlow))
+                    return nullptr;
+                auto& multiColumnFlow = downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow);
+                return multiColumnFlow.findColumnSpannerPlaceholder(&beforeChildBox);
+            };
+
+            if (auto* spannerPlaceholder = columnSpannerPlaceholderForBeforeChild())
+                beforeChild = spannerPlaceholder;
+        }
     }
 
     if (is<RenderTableRow>(parent)) {

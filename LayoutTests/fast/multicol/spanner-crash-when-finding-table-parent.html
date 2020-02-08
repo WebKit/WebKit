@@ -1,0 +1,21 @@
+<style>
+body {
+    display: table-header-group;
+    overflow-y: -webkit-paged-x;
+}
+div {
+    column-span: all;
+}
+</style>
+<body>
+    <span id=span></span>
+    <div></div>
+    <script>
+        document.body.offsetHeight;
+        span.outerText = "remove";
+        document.body.offsetHeight;
+        document.body.innerText = "This test verifies that adding an element which is a sibling to a multicol spanner finds the correct table row. Test passes if WebKit does not crash. PASS";
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>
