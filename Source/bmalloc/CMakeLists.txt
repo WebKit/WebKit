@@ -31,7 +31,6 @@ set(bmalloc_SOURCES
     bmalloc/ObjectType.cpp
     bmalloc/PerProcess.cpp
     bmalloc/Scavenger.cpp
-    bmalloc/VMHeap.cpp
     bmalloc/bmalloc.cpp
 )
 
@@ -127,7 +126,6 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/StdLibExtras.h
     bmalloc/Syscall.h
     bmalloc/VMAllocate.h
-    bmalloc/VMHeap.h
     bmalloc/Vector.h
     bmalloc/Zone.h
     bmalloc/bmalloc.h

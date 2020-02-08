@@ -1,3 +1,23 @@
+2020-02-08  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] VMHeap can be merge into Heap
+        https://bugs.webkit.org/show_bug.cgi?id=207410
+
+        Reviewed by Yusuke Suzuki.
+
+        VMHeap has only one member function in it and Heap is the only client of that.
+        No member variable is defined. It does nothing special with its context as a class.
+        It is safe to merge the function into Heap.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::tryAllocateLargeChunk): Moved from VMHeap.
+        * bmalloc/Heap.h:
+        * bmalloc/VMHeap.cpp: Removed.
+        * bmalloc/VMHeap.h: Removed.
+
 2020-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         [bmalloc] Add declspec support for export macros
