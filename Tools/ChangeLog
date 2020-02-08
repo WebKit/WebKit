@@ -1,3 +1,16 @@
+2020-02-08  Sam Weinig  <weinig@apple.com>
+
+        Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=207155
+
+        Reviewed by Tim Horton.
+
+        Move all trivial definitions (just ENABLE_FOO = ENABLE_FOO; or ENABLE_BAR = ;)
+        from the FeatureDefines.xcconfigs to PlatformEnableCocoa.h, ensuring each one
+        also has a default value in PlatformEnable.h
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2020-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Several iOS API tests that call -makeKeyWindow assert after r255907

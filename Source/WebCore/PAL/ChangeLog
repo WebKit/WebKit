@@ -1,3 +1,19 @@
+2020-02-08  Sam Weinig  <weinig@apple.com>
+
+        Move trivial definitions from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=207155
+
+        Reviewed by Tim Horton.
+
+        Move all trivial definitions (just ENABLE_FOO = ENABLE_FOO; or ENABLE_BAR = ;)
+        from the FeatureDefines.xcconfigs to PlatformEnableCocoa.h, ensuring each one
+        also has a default value in PlatformEnable.h
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/PAL.xcconfig:
+        Remove quotes as they should not be necessary (other uses of BUILT_PRODUCTS_DIR 
+        are not quoted) and complicate scripts that want to use HEADER_SEARCH_PATHS.
+
 2020-02-07  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         [Apple Pay] Provide a redacted billing contact during payment method selection
