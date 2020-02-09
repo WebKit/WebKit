@@ -118,7 +118,7 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
     }
 
     if (formattingContextRoot.establishesBlockFormattingContext()) {
-        ASSERT(formattingContextRoot.establishesBlockFormattingContextOnly());
+        ASSERT(!formattingContextRoot.establishesInlineFormattingContext());
         auto& blockFormattingState = layoutState.ensureBlockFormattingState(formattingContextRoot);
         return makeUnique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
     }
