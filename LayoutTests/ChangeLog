@@ -1,3 +1,26 @@
+2020-02-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Extent of a composited animation should not include the untransformed position
+        https://bugs.webkit.org/show_bug.cgi?id=207434
+
+        Reviewed by Sam Weinig.
+        
+        New test that checks backing store attachment and overlap for an element which is positioned in-view,
+        but is move offscreen by the animation.
+
+        New baselines for overlap tests, since overlap no longer considers the unanimated position.
+
+        * compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+        * compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+        * compositing/layer-creation/translate-animation-overlap-expected.txt:
+        * compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+        * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+        * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+        * legacy-animation-engine/compositing/layer-creation/translate-animation-overlap-expected.txt:
+        * legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+        * platform/ios-wk2/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+        * platform/ios-wk2/legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+
 2020-02-08  Doug Kelly  <dougk@apple.com>
 
         Crash in RenderTreeBuilder::Table::findOrCreateParentForChild with multicol spanner
