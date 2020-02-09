@@ -276,22 +276,23 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
     return { };
 }
 
-FloatingContext::Constraints FloatingContext::constraints(PositionInContextRoot verticalPosition) const
+FloatingContext::Constraints FloatingContext::constraints(LayoutUnit logicalTop, LayoutUnit logicalBottom) const
 {
     if (isEmpty())
         return { };
 
     // 1. Convert vertical position if this floating context is inherited.
-    // 2. Find the inner left/right floats at verticalPosition.
+    // 2. Find the inner left/right floats at logicalTop/logicalBottom.
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
     auto coordinateMappingIsRequired = &floatingState().root() != &root();
-    auto adjustedPosition = Point { 0, verticalPosition };
+    auto adjustedLogicalTop = logicalTop;
     LayoutSize adjustingDelta;
-
     if (coordinateMappingIsRequired) {
-        adjustedPosition = mapPointFromFormattingContextRootToFloatingStateRoot(adjustedPosition);
-        adjustingDelta = { adjustedPosition.x, adjustedPosition.y - verticalPosition };
+        auto adjustedPosition = mapPointFromFormattingContextRootToFloatingStateRoot({ 0, logicalTop });
+        adjustedLogicalTop = adjustedPosition.y;
+        adjustingDelta = { adjustedPosition.x, adjustedLogicalTop - logicalTop };
     }
+    auto adjustedLogicalBottom = adjustedLogicalTop + (logicalBottom - logicalTop);
 
     Constraints constraints;
     auto& floats = floatingState().floats();
@@ -305,7 +306,7 @@ FloatingContext::Constraints FloatingContext::constraints(PositionInContextRoot 
             continue;
 
         auto rect = floatItem.rectWithMargin();
-        if (!(rect.top() <= adjustedPosition.y && adjustedPosition.y < rect.bottom()))
+        if (rect.top() >= adjustedLogicalBottom || rect.bottom() <= adjustedLogicalTop)
             continue;
 
         if (floatItem.isLeftPositioned())

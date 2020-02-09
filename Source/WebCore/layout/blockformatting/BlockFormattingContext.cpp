@@ -183,7 +183,9 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
         return { };
     // Vertical static position is not computed yet, so let's just pre-compute it for now.
     auto verticalPosition = mapTopToFormattingContextRoot(layoutBox);
-    auto constraints = floatingContext.constraints({ verticalPosition });
+    // FIXME: Check if the non-yet-computed height affects this computation - and whether we have to resolve it
+    // at a later point or not (can't find this in the spec).
+    auto constraints = floatingContext.constraints(verticalPosition, verticalPosition);
     if (!constraints.left && !constraints.right)
         return { };
     auto& containingBlock = *layoutBox.containingBlock();
