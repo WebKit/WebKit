@@ -1,3 +1,13 @@
+2020-02-08  Sam Weinig  <weinig@apple.com>
+
+        Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=207436
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        Remove ENABLE_FAST_JIT_PERMISSIONS and ENABLE_FTL_JIT.
+
 2020-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Try using 75% load factor for HashTable
