@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Tests for Prevalent Resource Without User Interaction</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -16,7 +17,7 @@
         else
             testPassed("Cookie deleted.");
         internals.setResourceLoadStatisticsEnabled(false);
-        testRunner.statisticsResetToConsistentState(function() {
+        setEnableFeature(false, function() {
             testRunner.notifyDone();
         });
     }
@@ -49,9 +50,10 @@
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        runTestRunnerTest();
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            runTestRunnerTest();
+        });
     }
 </script>
 </body>

@@ -2,6 +2,7 @@
 <html>
 <body>
 <script src="/js-test-resources/js-test.js"></script>
+<script src="resources/util.js"></script>
 <script>
 description("Tests that we grant User Interaction credit for handled keypresses.");
 jsTestIsAsync = true;
@@ -12,8 +13,9 @@ onload = function() {
     const testFrame = document.getElementById("testFrame");
 
     if (window.testRunner && window.internals) {
-        internals.setResourceLoadStatisticsEnabled(true);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+        });
     }
 
     testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
@@ -37,9 +39,7 @@ onload = function() {
                 setTimeout(function() {
                     testFrame.src = "about:blank";
                     setTimeout(function() {
-                        testRunner.statisticsResetToConsistentState(function() {
-                            finishJSTest();
-                        });
+                        setEnableFeature(false, finishJSTest);
                     }, 0);
                 }, 0);
             });

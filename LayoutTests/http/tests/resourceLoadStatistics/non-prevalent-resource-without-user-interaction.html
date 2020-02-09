@@ -54,10 +54,7 @@
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.waitUntilDone();
-        setEnableFeature(true, function() {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-            runTestRunnerTest();
-        });
+        setEnableFeature(true, runTestRunnerTest);
     }
 </script>
 </body>

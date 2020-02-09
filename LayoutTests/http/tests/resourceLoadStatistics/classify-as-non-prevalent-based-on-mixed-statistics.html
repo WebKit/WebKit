@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Tests for Classification Based on Mixed Statistics</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -19,14 +20,12 @@
         else
             testPassed("Host did not get classified as prevalent resource.");
 
-        testRunner.statisticsResetToConsistentState(function() {
+        setEnableFeature(false, function() {
             testRunner.notifyDone();
         });
     }
 
     function runTestRunnerTest() {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-
         testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
             if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host did not get set as non-prevalent resource.");
@@ -43,8 +42,7 @@
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
-        runTestRunnerTest();
+        setEnableFeature(true, runTestRunnerTest);
     }
 </script>
 </body>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Tests for Prevalent Resource With User Interaction Timeout</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -48,9 +49,8 @@
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.setUseITPDatabase(true);
         testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        runTestRunnerTest();
+        setEnableFeature(true, runTestRunnerTest);
     }
 </script>
 </body>

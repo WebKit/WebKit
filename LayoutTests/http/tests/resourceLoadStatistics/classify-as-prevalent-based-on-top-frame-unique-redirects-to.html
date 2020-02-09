@@ -41,8 +41,6 @@
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         setEnableFeature(true, function() {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-
             testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
                 if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                     testFailed("Host did not get set as non-prevalent resource.");

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Test for Resource Load Statistics Pruning</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body>
 <script>
@@ -33,11 +34,8 @@
                 failed = true;
             }
         }
-        if (failed) {
-            testRunner.statisticsResetToConsistentState(function() {
-                finishJSTest();
-            });
-        }
+        if (failed)
+            setEnableFeature(false, finishJSTest);
     }
 
     function checkIfPrevalent(begin, end, expected) {
@@ -48,11 +46,8 @@
                 failed = true;
             }
         }
-        if (failed) {
-            testRunner.statisticsResetToConsistentState(function() {
-                finishJSTest();
-            });
-        }
+        if (failed)
+            setEnableFeature(false, finishJSTest);
     }
 
     function initializeStatisticsAndRunTests(step) {
@@ -127,11 +122,9 @@
             ++currentTest;
             testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
             initializeStatisticsAndRunTests(1);
-        } else {
-            testRunner.statisticsResetToConsistentState(function() {
-                finishJSTest();
-            });
-        }
+        } else
+            setEnableFeature(false, finishJSTest);
+
     }
 
     let fillerUrl;
@@ -147,15 +140,16 @@
     }
 
     if (window.testRunner) {
-        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
-        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        testRunner.setStatisticsMaxStatisticsEntries(urlsToBePruned.length);
-        testRunner.setStatisticsPruneEntriesDownTo(urlsToBePruned.length);
+        setEnableFeature(true, function () {
+            testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+            testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
+            testRunner.setStatisticsMaxStatisticsEntries(urlsToBePruned.length);
+            testRunner.setStatisticsPruneEntriesDownTo(urlsToBePruned.length);
 
-        currentTest = 1;
-        testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
-        initializeStatisticsAndRunTests(1);
+            currentTest = 1;
+            testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
+            initializeStatisticsAndRunTests(1);
+        });
     }
 </script>
 </body>

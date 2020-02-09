@@ -235,6 +235,9 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     ASSERT(!RunLoop::isMain());
 
+    if (parameters().isRunningTest && !m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
+        return;
+
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval)
         classifyPrevalentResources();
     

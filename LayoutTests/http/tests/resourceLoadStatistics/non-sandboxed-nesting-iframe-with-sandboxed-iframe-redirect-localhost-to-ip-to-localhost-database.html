@@ -42,7 +42,6 @@
         if (testRunner) {
             testRunner.setUseITPDatabase(true);
             setEnableFeature(true, function() {
-                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
             });
         }

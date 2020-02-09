@@ -1,3 +1,18 @@
+2020-02-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ Mac wk2 ] http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207271
+        <rdar://problem/59190346>
+
+        Reviewed by Maciej Stachowiak.
+
+        This patch adds a check to make sure a test is expecting a statistics
+        processing call before proceeding. Otherwise, this can cause
+        flakiness in ITP tests if data is removed/changed during the test.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+
 2020-02-08  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h

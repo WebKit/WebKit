@@ -29,9 +29,7 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    function runTestRunnerTest() {
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
- 
+    function runTestRunnerTest() { 
         testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
             if (testRunner.isStatisticsPrevalentResource(statisticsUrl))
                 testFailed("Host started out as prevalent resource.");

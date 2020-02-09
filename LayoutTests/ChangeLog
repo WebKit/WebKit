@@ -1,3 +1,95 @@
+2020-02-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ Mac wk2 ] http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207271
+        <rdar://problem/59190346>
+
+        Reviewed by Maciej Stachowiak.
+
+        This patch updates all ITP tests to follow the pattern
+        setEnableFeature(true) at test setup and setEnableFeature(false) when
+        finished. This enables/disables both ITP and the isRunningTest
+        parameter so tests don't have to make two calls. It also ensures that
+        each test which relies on statistics processing notifies the testRunner
+        so it knows to wait for a callback, and deletes unecessary calls
+        to setStatisticsNotifyPagesWhenDataRecordsWereScanned which is called
+        in installStatisticsDidScanDataRecordsCallback.
+
+        This will help limit flakiness by processing statistics only for ITP
+        tests which require it for their purpose.
+
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics-database.html:
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-database.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/prune-statistics-database.html:
+        * http/tests/resourceLoadStatistics/prune-statistics.html:
+        * http/tests/resourceLoadStatistics/resources/util.js:
+        (setEnableFeature):
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-database.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html:
+        * http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html:
+        * http/tests/resourceLoadStatistics/telemetry-generation.html:
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database.html:
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html:
+
 2020-02-08  Simon Fraser  <simon.fraser@apple.com>
 
         Extent of a composited animation should not include the untransformed position

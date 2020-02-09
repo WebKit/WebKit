@@ -55,10 +55,7 @@
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
         testRunner.setUseITPDatabase(true);
         testRunner.waitUntilDone();
-        setEnableFeature(true, function() {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-            runTestRunnerTest();
-        });
+        setEnableFeature(true, runTestRunnerTest);
     }
 </script>
 </body>

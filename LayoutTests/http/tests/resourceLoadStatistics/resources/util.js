@@ -1,7 +1,6 @@
 function setEnableFeature(enable, completionHandler) {
     if (typeof completionHandler !== "function")
         testFailed("setEnableFeature() requires a completion handler function.");
-    testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
     if (enable) {
         internals.setResourceLoadStatisticsEnabled(true);
         testRunner.setStatisticsIsRunningTest(true);
@@ -10,6 +9,7 @@ function setEnableFeature(enable, completionHandler) {
         testRunner.statisticsResetToConsistentState(function() {
             testRunner.setStatisticsIsRunningTest(false);
             internals.setResourceLoadStatisticsEnabled(false);
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(false);
             completionHandler();
         });
     }

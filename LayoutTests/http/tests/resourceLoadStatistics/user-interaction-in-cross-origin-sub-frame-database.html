@@ -28,7 +28,6 @@ function finishTest() {
 onload = function() {
     setEnableFeature(true, function() {
         if (testRunner) {
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
             testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
         }
 
