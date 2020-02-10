@@ -1,3 +1,17 @@
+2020-02-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Use SetBuildSummary instead of buildFinished in Layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=207492
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.evaluateCommand):
+        (ReRunWebKitTests.evaluateCommand):
+        (AnalyzeLayoutTestsResults.report_pre_existing_failures):
+        * BuildSlaveSupport/ews-build/factories.py:
+        (TestFactory.__init__):
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256091.

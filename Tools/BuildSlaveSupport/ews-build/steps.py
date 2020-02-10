@@ -1434,7 +1434,7 @@ class RunWebKitTests(shell.Test):
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
-            self.build.buildFinished([message], SUCCESS)
+            self.setProperty('build_summary', message)
         else:
             self.build.addStepsAfterCurrentStep([
                 ArchiveTestResults(),
@@ -1475,7 +1475,7 @@ class ReRunWebKitTests(RunWebKitTests):
             self.build.results = SUCCESS
             if not first_results_did_exceed_test_failure_limit:
                 message = 'Found flaky tests: {}'.format(flaky_failures_string)
-            self.build.buildFinished([message], SUCCESS)
+            self.setProperty('build_summary', message)
         else:
             self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
@@ -1545,7 +1545,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
         clean_tree_failures_string = ', '.join([failure_name for failure_name in clean_tree_failures])
         message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
-        self.build.buildFinished([message], SUCCESS)
+        self.setProperty('build_summary', message)
         return defer.succeed(None)
 
     def retry_build(self, message=''):

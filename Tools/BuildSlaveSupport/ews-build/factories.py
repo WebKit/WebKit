@@ -113,6 +113,7 @@ class TestFactory(Factory):
         self.addStep(KillOldProcesses())
         if self.LayoutTestClass:
             self.addStep(self.LayoutTestClass())
+            self.addStep(SetBuildSummary())
         if self.APITestClass:
             self.addStep(self.APITestClass())
 
