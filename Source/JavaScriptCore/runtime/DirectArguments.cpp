@@ -110,30 +110,42 @@ Structure* DirectArguments::createStructure(VM& vm, JSGlobalObject* globalObject
     return Structure::create(vm, globalObject, prototype, TypeInfo(DirectArgumentsType, StructureFlags), info());
 }
 
-void DirectArguments::overrideThings(VM& vm)
+void DirectArguments::overrideThings(JSGlobalObject* globalObject)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     RELEASE_ASSERT(!m_mappedArguments);
     
     putDirect(vm, vm.propertyNames->length, jsNumber(m_length), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject(vm)->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
-    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::Assert);
+    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
+    if (UNLIKELY(!backingStore)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return;
+    }
     bool* overrides = static_cast<bool*>(backingStore);
     m_mappedArguments.set(vm, this, overrides, internalLength());
     for (unsigned i = internalLength(); i--;)
         overrides[i] = false;
 }
 
-void DirectArguments::overrideThingsIfNecessary(VM& vm)
+void DirectArguments::overrideThingsIfNecessary(JSGlobalObject* globalObject)
 {
     if (!m_mappedArguments)
-        overrideThings(vm);
+        overrideThings(globalObject);
 }
 
-void DirectArguments::unmapArgument(VM& vm, unsigned index)
+void DirectArguments::unmapArgument(JSGlobalObject* globalObject, unsigned index)
 {
-    overrideThingsIfNecessary(vm);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    overrideThingsIfNecessary(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
     m_mappedArguments.at(index, internalLength()) = true;
 }
 

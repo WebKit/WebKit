@@ -121,25 +121,28 @@ Structure* ScopedArguments::createStructure(VM& vm, JSGlobalObject* globalObject
     return Structure::create(vm, globalObject, prototype, TypeInfo(ScopedArgumentsType, StructureFlags), info());
 }
 
-void ScopedArguments::overrideThings(VM& vm)
+void ScopedArguments::overrideThings(JSGlobalObject* globalObject)
 {
+    VM& vm = globalObject->vm();
+
     RELEASE_ASSERT(!m_overrodeThings);
     
     putDirect(vm, vm.propertyNames->length, jsNumber(m_table->length()), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject(vm)->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     m_overrodeThings = true;
 }
 
-void ScopedArguments::overrideThingsIfNecessary(VM& vm)
+void ScopedArguments::overrideThingsIfNecessary(JSGlobalObject* globalObject)
 {
     if (!m_overrodeThings)
-        overrideThings(vm);
+        overrideThings(globalObject);
 }
 
-void ScopedArguments::unmapArgument(VM& vm, uint32_t i)
+void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
 {
+    VM& vm = globalObject->vm();
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_totalLength);
     unsigned namedLength = m_table->length();
     if (i < namedLength)
