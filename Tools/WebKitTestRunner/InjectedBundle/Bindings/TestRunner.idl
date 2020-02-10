@@ -285,7 +285,7 @@ interface TestRunner {
     void installCustomMenuAction(DOMString name, boolean dismissesAutomatically, object callback);
 
     // Gamepad
-    void setMockGamepadDetails(unsigned long index, DOMString id, unsigned long axisCount, unsigned long buttonCount);
+    void setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount);
     void setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);
     void setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
     void connectMockGamepad(unsigned long index);

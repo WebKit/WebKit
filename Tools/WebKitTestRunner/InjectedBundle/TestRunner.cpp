@@ -2450,13 +2450,16 @@ void TestRunner::disconnectMockGamepad(unsigned index)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::setMockGamepadDetails(unsigned index, JSStringRef gamepadID, unsigned axisCount, unsigned buttonCount)
+void TestRunner::setMockGamepadDetails(unsigned index, JSStringRef gamepadID, JSStringRef mapping, unsigned axisCount, unsigned buttonCount)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
 
     keys.append(adoptWK(WKStringCreateWithUTF8CString("GamepadID")));
     values.append(toWK(gamepadID));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("Mapping")));
+    values.append(toWK(mapping));
 
     keys.append(adoptWK(WKStringCreateWithUTF8CString("GamepadIndex")));
     values.append(adoptWK(WKUInt64Create(index)));
@@ -2551,7 +2554,7 @@ void TestRunner::disconnectMockGamepad(unsigned)
 {
 }
 
-void TestRunner::setMockGamepadDetails(unsigned, JSStringRef, unsigned, unsigned)
+void TestRunner::setMockGamepadDetails(unsigned, JSStringRef, JSStringRef, unsigned, unsigned)
 {
 }
 

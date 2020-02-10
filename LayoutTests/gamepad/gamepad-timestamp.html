@@ -72,13 +72,13 @@ function handleGamepadConnect()
 function runTest() {
     addEventListener("gamepadconnected", handleGamepadConnect);
 
-    testRunner.setMockGamepadDetails(0, "Test Joystick", 2, 2);
+    testRunner.setMockGamepadDetails(0, "Test Joystick", "", 2, 2);
     testRunner.setMockGamepadAxisValue(0, 0, 0.7);
     testRunner.setMockGamepadAxisValue(0, 1, -1.0);
     testRunner.setMockGamepadButtonValue(0, 0, 1.0);
     testRunner.setMockGamepadButtonValue(0, 1, 1.0);
     testRunner.connectMockGamepad(0);
-    testRunner.setMockGamepadDetails(1, "Test Joystick 2", 2, 2);
+    testRunner.setMockGamepadDetails(1, "Test Joystick 2", "", 2, 2);
     testRunner.setMockGamepadAxisValue(1, 0, 0.7);
     testRunner.setMockGamepadAxisValue(1, 1, -1.0);
     testRunner.setMockGamepadButtonValue(1, 0, 1.0);

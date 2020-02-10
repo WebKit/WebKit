@@ -55,15 +55,15 @@ void MockGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     m_clients.remove(&client);
 }
 
-void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, unsigned axisCount, unsigned buttonCount)
+void MockGamepadProvider::setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount)
 {
     if (index >= m_mockGamepadVector.size())
         m_mockGamepadVector.resize(index + 1);
 
     if (m_mockGamepadVector[index])
-        m_mockGamepadVector[index]->updateDetails(gamepadID, axisCount, buttonCount);
+        m_mockGamepadVector[index]->updateDetails(gamepadID, mapping, axisCount, buttonCount);
     else
-        m_mockGamepadVector[index] = makeUnique<MockGamepad>(index, gamepadID, axisCount, buttonCount);
+        m_mockGamepadVector[index] = makeUnique<MockGamepad>(index, gamepadID, mapping, axisCount, buttonCount);
 }
 
 bool MockGamepadProvider::connectMockGamepad(unsigned index)

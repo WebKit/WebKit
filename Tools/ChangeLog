@@ -1,3 +1,17 @@
+2020-02-10  James Howard  <jameshoward@mac.com>
+
+        Standard gamepad mapping for GameControllerGamepads
+        https://bugs.webkit.org/show_bug.cgi?id=206033
+
+        Reviewed by Dean Jackson.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMockGamepadDetails):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-02-10  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Display flaky layout test names in build summary

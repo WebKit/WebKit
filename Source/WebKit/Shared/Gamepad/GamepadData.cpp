@@ -41,9 +41,10 @@ GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const
 {
 }
 
-GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
+GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
     , m_id(id)
+    , m_mapping(mapping)
     , m_axisValues(axisValues)
     , m_buttonValues(buttonValues)
     , m_lastUpdateTime(lastUpdateTime)
@@ -56,7 +57,7 @@ void GamepadData::encode(IPC::Encoder& encoder) const
     if (m_isNull)
         return;
 
-    encoder << m_index << m_id << m_axisValues << m_buttonValues << m_lastUpdateTime;
+    encoder << m_index << m_id << m_mapping << m_axisValues << m_buttonValues << m_lastUpdateTime;
 }
 
 Optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
@@ -72,6 +73,9 @@ Optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
         return WTF::nullopt;
 
     if (!decoder.decode(data.m_id))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.m_mapping))
         return WTF::nullopt;
 
     if (!decoder.decode(data.m_axisValues))

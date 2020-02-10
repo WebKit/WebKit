@@ -54,6 +54,7 @@ public:
 private:
     unsigned m_index;
     String m_id;
+    String m_mapping;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
     MonotonicTime m_lastUpdateTime;

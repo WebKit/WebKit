@@ -39,6 +39,7 @@ public:
     virtual ~PlatformGamepad() = default;
 
     const String& id() const { return m_id; }
+    const String& mapping() const { return m_mapping; }
     unsigned index() const { return m_index; }
     MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     MonotonicTime connectTime() const { return m_connectTime; }
@@ -52,6 +53,7 @@ protected:
     }
 
     String m_id;
+    String m_mapping;
     unsigned m_index;
     MonotonicTime m_lastUpdateTime;
     MonotonicTime m_connectTime;

@@ -1,3 +1,28 @@
+2020-02-10  James Howard  <jameshoward@mac.com>
+
+        Standard gamepad mapping for GameControllerGamepads
+        https://bugs.webkit.org/show_bug.cgi?id=206033
+
+        Reviewed by Dean Jackson.
+        
+        Make the mapping as provided by PlatformGamepad
+        available in UIGamepad, and pass it along to
+        GamepadData so it can be correctly reflected
+        in the Gamepad API.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::GamepadData):
+        (WebKit::GamepadData::encode const):
+        (WebKit::GamepadData::decode):
+        * Shared/Gamepad/GamepadData.h:
+        (WebKit::GamepadData::mapping const):
+        * UIProcess/Gamepad/UIGamepad.cpp:
+        (WebKit::UIGamepad::UIGamepad):
+        (WebKit::UIGamepad::fullGamepadData const):
+        * UIProcess/Gamepad/UIGamepad.h:
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        (WebKit::WebGamepad::WebGamepad):
+
 2020-02-10  Daniel Bates  <dabates@apple.com>
 
         Disallow setting base URL to a data or JavaScript URL

@@ -1,3 +1,15 @@
+2020-02-10  James Howard  <jameshoward@mac.com>
+
+        Standard gamepad mapping for GameControllerGamepads
+        https://bugs.webkit.org/show_bug.cgi?id=206033
+
+        Reviewed by Dean Jackson.
+
+        * gamepad/gamepad-polling-access-expected.txt:
+        * gamepad/gamepad-polling-access.html:
+        * gamepad/gamepad-timestamp.html:
+        * gamepad/gamepad-visibility-1.html:
+
 2020-02-10  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Debug wk2 ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html is flaky crashing.

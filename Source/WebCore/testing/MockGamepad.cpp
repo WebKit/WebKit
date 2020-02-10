@@ -30,16 +30,17 @@
 
 namespace WebCore {
 
-MockGamepad::MockGamepad(unsigned index, const String& gamepadID, unsigned axisCount, unsigned buttonCount)
+MockGamepad::MockGamepad(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount)
     : PlatformGamepad(index)
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
-    updateDetails(gamepadID, axisCount, buttonCount);
+    updateDetails(gamepadID, mapping, axisCount, buttonCount);
 }
 
-void MockGamepad::updateDetails(const String& gamepadID, unsigned axisCount, unsigned buttonCount)
+void MockGamepad::updateDetails(const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount)
 {
     m_id = gamepadID;
+    m_mapping = mapping;
     m_axisValues = Vector<double>(axisCount, 0.0);
     m_buttonValues = Vector<double>(buttonCount, 0.0);
     m_lastUpdateTime = MonotonicTime::now();

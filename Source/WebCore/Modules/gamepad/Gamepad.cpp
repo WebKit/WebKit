@@ -39,6 +39,7 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     , m_index(platformGamepad.index())
     , m_connected(true)
     , m_timestamp(platformGamepad.lastUpdateTime())
+    , m_mapping(platformGamepad.mapping())
     , m_axes(platformGamepad.axisValues().size(), 0.0)
 {
     unsigned buttonCount = platformGamepad.buttonValues().size();

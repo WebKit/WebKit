@@ -36,6 +36,7 @@ function logGamepad(gp)
 {
     log("Name: " + gp.id);
     log("Index: " + gp.index);
+    log("Mapping: " + gp.mapping);
     log("Axes: " + gp.axes);
     
     var buttonString = "";
@@ -53,7 +54,7 @@ function* testSteps() {
     log("Initial gamepads length: " + navigator.getGamepads().length);
     log("Connecting 20 different gamepads");
     for (var i = 0; i < 20; ++i) {
-        testRunner.setMockGamepadDetails(i, i, i, i);
+        testRunner.setMockGamepadDetails(i, i, "", i, i);
         testRunner.connectMockGamepad(i);
         yield;
     }
@@ -73,12 +74,12 @@ function* testSteps() {
 
     log("Checking non-zero'ed details for a gamepad");
 
-    testRunner.setMockGamepadDetails(10, "Awesome Joystick 5000", 4, 20);
+    testRunner.setMockGamepadDetails(10, "Awesome Joystick 5000", "standard", 4, 16);
     testRunner.setMockGamepadAxisValue(10, 0, 0.7);
     testRunner.setMockGamepadAxisValue(10, 1, -0.9);
     testRunner.setMockGamepadAxisValue(10, 2, 1.0);
     testRunner.setMockGamepadAxisValue(10, 3, -1.0);
-    for (var i = 0; i < 20; ++i)
+    for (var i = 0; i < 16; ++i)
         testRunner.setMockGamepadButtonValue(10, i, 1.0);
         
     testRunner.connectMockGamepad(10);

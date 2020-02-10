@@ -164,13 +164,14 @@ void disconnectMockGamepad(unsigned gamepadIndex)
 #endif
 }
 
-void setMockGamepadDetails(unsigned gamepadIndex, const WTF::String& gamepadID, unsigned axisCount, unsigned buttonCount)
+void setMockGamepadDetails(unsigned gamepadIndex, const WTF::String& gamepadID, const WTF::String& mapping, unsigned axisCount, unsigned buttonCount)
 {
 #if ENABLE(GAMEPAD)
-    MockGamepadProvider::singleton().setMockGamepadDetails(gamepadIndex, gamepadID, axisCount, buttonCount);
+    MockGamepadProvider::singleton().setMockGamepadDetails(gamepadIndex, gamepadID, mapping, axisCount, buttonCount);
 #else
     UNUSED_PARAM(gamepadIndex);
     UNUSED_PARAM(gamepadID);
+    UNUSED_PARAM(mapping);
     UNUSED_PARAM(axisCount);
     UNUSED_PARAM(buttonCount);
 #endif

@@ -1029,15 +1029,17 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> gamepadIndexKey = adoptWK(WKStringCreateWithUTF8CString("GamepadIndex"));
         WKRetainPtr<WKStringRef> gamepadIDKey = adoptWK(WKStringCreateWithUTF8CString("GamepadID"));
+        WKRetainPtr<WKStringRef> mappingKey = adoptWK(WKStringCreateWithUTF8CString("Mapping"));
         WKRetainPtr<WKStringRef> axisCountKey = adoptWK(WKStringCreateWithUTF8CString("AxisCount"));
         WKRetainPtr<WKStringRef> buttonCountKey = adoptWK(WKStringCreateWithUTF8CString("ButtonCount"));
 
         WKUInt64Ref gamepadIndex = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIndexKey.get()));
         WKStringRef gamepadID = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, gamepadIDKey.get()));
+        WKStringRef mapping = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, mappingKey.get()));
         WKUInt64Ref axisCount = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, axisCountKey.get()));
         WKUInt64Ref buttonCount = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonCountKey.get()));
 
-        WebCoreTestSupport::setMockGamepadDetails(WKUInt64GetValue(gamepadIndex), toWTFString(gamepadID), WKUInt64GetValue(axisCount), WKUInt64GetValue(buttonCount));
+        WebCoreTestSupport::setMockGamepadDetails(WKUInt64GetValue(gamepadIndex), toWTFString(gamepadID), toWTFString(mapping), WKUInt64GetValue(axisCount), WKUInt64GetValue(buttonCount));
         return nullptr;
     }
 

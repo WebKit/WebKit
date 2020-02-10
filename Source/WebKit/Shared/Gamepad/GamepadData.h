@@ -46,7 +46,7 @@ public:
     }
 
     GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime);
-    GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime);
+    GamepadData(unsigned index, const String& id, const String& mapping, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime);
 
     void encode(IPC::Encoder&) const;
     static Optional<GamepadData> decode(IPC::Decoder&);
@@ -56,12 +56,14 @@ public:
     MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     unsigned index() const { return m_index; }
     const String& id() const { return m_id; }
+    const String& mapping() const { return m_mapping; }
     const Vector<double>& axisValues() const { return m_axisValues; }
     const Vector<double>& buttonValues() const { return m_buttonValues; }
 
 private:
     unsigned m_index;
     String m_id;
+    String m_mapping;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
     MonotonicTime m_lastUpdateTime;
