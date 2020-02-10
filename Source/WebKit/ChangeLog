@@ -1,5 +1,17 @@
 2020-02-10  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [geolocation] Fix non-unified build issues
+        https://bugs.webkit.org/show_bug.cgi?id=207457
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * UIProcess/GeolocationPermissionRequestManagerProxy.h: Add missing includes.
+        * UIProcess/WebGeolocationManagerProxy.cpp: Ditto.
+
+2020-02-10  Adrian Perez de Castro  <aperez@igalia.com>
+
         [GTK][WebInspector] Do not make Web Inspector windows transient
         https://bugs.webkit.org/show_bug.cgi?id=207455
 

@@ -28,6 +28,8 @@
 
 #include "GeolocationPermissionRequestProxy.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
