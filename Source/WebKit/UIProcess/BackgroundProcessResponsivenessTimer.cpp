@@ -134,10 +134,11 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
 bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
 {
 #if !PLATFORM(IOS_FAMILY)
-    // Service worker process are always in the background.
-    if (m_webProcessProxy.isRunningServiceWorkers())
+    if (m_webProcessProxy.visiblePageCount())
+        return false;
+    if (m_webProcessProxy.isStandaloneServiceWorkerProcess())
         return true;
-    return !m_webProcessProxy.visiblePageCount() && m_webProcessProxy.pageCount();
+    return m_webProcessProxy.pageCount();
 #else
     // Disable background process responsiveness checking on iOS since such processes usually get suspended.
     return false;
