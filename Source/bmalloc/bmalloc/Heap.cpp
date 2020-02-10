@@ -38,10 +38,13 @@
 #include "Scavenger.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
-#include "VMHeap.h"
 #include "bmalloc.h"
 #include <thread>
 #include <vector>
+
+#if BOS(DARWIN)
+#include "Zone.h"
+#endif
 
 namespace bmalloc {
 
@@ -574,7 +577,7 @@ void* Heap::allocateLarge(UniqueLockHolder& lock, size_t alignment, size_t size,
 
         ASSERT_OR_RETURN_ON_FAILURE(!usingGigacage());
 
-        range = VMHeap::get()->tryAllocateLargeChunk(alignment, size);
+        range = tryAllocateLargeChunk(alignment, size);
         ASSERT_OR_RETURN_ON_FAILURE(range);
         
         m_largeFree.add(range);
@@ -591,6 +594,31 @@ void* Heap::allocateLarge(UniqueLockHolder& lock, size_t alignment, size_t size,
     return result;
 
 #undef ASSERT_OR_RETURN_ON_FAILURE
+}
+
+LargeRange Heap::tryAllocateLargeChunk(size_t alignment, size_t size)
+{
+    // We allocate VM in aligned multiples to increase the chances that
+    // the OS will provide contiguous ranges that we can merge.
+    size_t roundedAlignment = roundUpToMultipleOf<chunkSize>(alignment);
+    if (roundedAlignment < alignment) // Check for overflow
+        return LargeRange();
+    alignment = roundedAlignment;
+
+    size_t roundedSize = roundUpToMultipleOf<chunkSize>(size);
+    if (roundedSize < size) // Check for overflow
+        return LargeRange();
+    size = roundedSize;
+
+    void* memory = tryVMAllocate(alignment, size);
+    if (!memory)
+        return LargeRange();
+    
+#if BOS(DARWIN)
+    PerProcess<Zone>::get()->addRange(Range(memory, size));
+#endif
+
+    return LargeRange(memory, size, 0, 0);
 }
 
 bool Heap::isLarge(UniqueLockHolder&, void* object)

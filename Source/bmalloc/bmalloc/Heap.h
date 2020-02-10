@@ -47,11 +47,9 @@
 
 namespace bmalloc {
 
-class BeginTag;
 class BulkDecommit;
 class BumpAllocator;
 class DebugHeap;
-class EndTag;
 class HeapConstants;
 class Scavenger;
 
@@ -121,10 +119,7 @@ private:
     void allocateSmallChunk(UniqueLockHolder&, size_t pageClass, FailureAction);
     void deallocateSmallChunk(Chunk*, size_t pageClass);
 
-    void mergeLarge(BeginTag*&, EndTag*&, Range&);
-    void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
-    void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
-
+    LargeRange tryAllocateLargeChunk(size_t alignment, size_t);
     LargeRange splitAndAllocate(UniqueLockHolder&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
