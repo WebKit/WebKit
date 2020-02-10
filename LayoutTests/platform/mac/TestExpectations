@@ -2011,3 +2011,5 @@ webkit.org/b/207392 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlob
 webkit.org/b/207395 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ Pass Failure ]
 
 webkit.org/b/184617 legacy-animation-engine/animations/suspend-resume-animation-events.html [ Pass Failure ]
+
+webkit.org/b/207461 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Pass Failure ]
