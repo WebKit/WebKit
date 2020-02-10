@@ -135,10 +135,6 @@ public:
     WEBCORE_EXPORT void setHTTPUserAgent(const String&);
     void clearHTTPUserAgent();
 
-    String httpAccept() const;
-    void setHTTPAccept(const String&);
-    void clearHTTPAccept();
-
     void clearHTTPAcceptEncoding();
 
     WEBCORE_EXPORT void clearPurpose();

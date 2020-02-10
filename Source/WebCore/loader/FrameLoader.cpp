@@ -161,8 +161,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace SVGNames;
 
-static const char defaultAcceptHeader[] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-
 bool isBackForwardLoadType(FrameLoadType type)
 {
     switch (type) {
@@ -2967,9 +2965,6 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
 
     applyUserAgentIfNeeded(request);
-
-    if (isMainResource)
-        request.setHTTPAccept(defaultAcceptHeader);
 
     // Make sure we send the Origin header.
     addHTTPOriginIfNeeded(request, String());

@@ -446,25 +446,6 @@ void ResourceRequestBase::clearHTTPUserAgent()
     m_platformRequestUpdated = false;
 }
 
-String ResourceRequestBase::httpAccept() const
-{
-    return httpHeaderField(HTTPHeaderName::Accept);
-}
-
-void ResourceRequestBase::setHTTPAccept(const String& httpAccept)
-{
-    setHTTPHeaderField(HTTPHeaderName::Accept, httpAccept);
-}
-
-void ResourceRequestBase::clearHTTPAccept()
-{
-    updateResourceRequest(); 
-
-    m_httpHeaderFields.remove(HTTPHeaderName::Accept);
-
-    m_platformRequestUpdated = false;
-}
-
 void ResourceRequestBase::clearHTTPAcceptEncoding()
 {
     updateResourceRequest();
