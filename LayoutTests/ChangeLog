@@ -1,5 +1,14 @@
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207474
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk1 ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=207470
 
