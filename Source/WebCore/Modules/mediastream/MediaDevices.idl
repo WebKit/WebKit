@@ -39,7 +39,14 @@
 
     MediaTrackSupportedConstraints getSupportedConstraints();
     [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
-    [EnabledAtRuntime=ScreenCapture] Promise<MediaStream> getDisplayMedia(optional MediaStreamConstraints constraints);
+    [EnabledAtRuntime=ScreenCapture] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints);
+};
+
+[
+    Conditional=MEDIA_STREAM,
+] dictionary DisplayMediaStreamConstraints {
+    (boolean or MediaTrackConstraints) video = true;
+    (boolean or MediaTrackConstraints) audio = false;
 };
 
 [
