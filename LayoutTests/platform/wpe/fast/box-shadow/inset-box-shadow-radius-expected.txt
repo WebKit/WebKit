@@ -20,18 +20,18 @@ layer at (0,0) size 800x592
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (12,12) size 280x280
-  RenderBlock (positioned) {DIV} at (12,12) size 280x280 [border: (10px solid #00FF000C)]
+  RenderBlock (positioned) {DIV} at (12,12) size 280x280 [border: (10px solid #00FF000D)]
 layer at (12,12) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280
 layer at (304,12) size 280x280
-  RenderBlock (positioned) {DIV} at (304,12) size 280x280 [border: (20px solid #00FF000C)]
+  RenderBlock (positioned) {DIV} at (304,12) size 280x280 [border: (20px solid #00FF000D)]
 layer at (304,12) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280
 layer at (12,300) size 280x280
-  RenderBlock (positioned) {DIV} at (12,300) size 280x280 [border: (50px solid #00FF000C)]
+  RenderBlock (positioned) {DIV} at (12,300) size 280x280 [border: (50px solid #00FF000D)]
 layer at (12,300) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280
 layer at (304,300) size 280x280
-  RenderBlock (positioned) {DIV} at (304,300) size 280x280 [border: (90px solid #00FF000C)]
+  RenderBlock (positioned) {DIV} at (304,300) size 280x280 [border: (90px solid #00FF000D)]
 layer at (304,300) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280

@@ -1,3 +1,38 @@
+2020-02-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update baselines and synchronize with GTK
+        https://bugs.webkit.org/show_bug.cgi?id=207442
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css3/selectors3/html/css3-modsel-161-expected.txt:
+        * platform/wpe/css3/selectors3/xhtml/css3-modsel-161-expected.txt:
+        * platform/wpe/css3/selectors3/xml/css3-modsel-161-expected.txt:
+        * platform/wpe/fast/block/float/float-avoidance-expected.txt:
+        * platform/wpe/fast/block/margin-collapse/103-expected.txt:
+        * platform/wpe/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/wpe/fast/css/text-transform-select-expected.txt:
+        * platform/wpe/fast/html/keygen-expected.txt:
+        * platform/wpe/fast/invalid/014-expected.txt:
+        * platform/wpe/fast/parser/document-write-option-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/wpe/fast/replaced/three-selects-break-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/wpe/tables/mozilla/core/margins-expected.txt:
+        * platform/wpe/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/wpe/transforms/2d/zoom-menulist-expected.txt:
+
 2020-02-09  Kate Cheney  <katherine_cheney@apple.com>
 
         [ Mac wk2 ] http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html is a flaky failure
