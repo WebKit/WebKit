@@ -1,5 +1,16 @@
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk2 ] webgpu/whlsl/buffer-vertex.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207127
+
+        Correcting test expectations for ImageOnlyFailure
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk2 ] webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=207460
 

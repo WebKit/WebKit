@@ -957,7 +957,7 @@ webkit.org/b/207117 webgpu/whlsl/nested-loop.html [ Pass Failure ]
 
 webkit.org/b/207120 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity.html [ Pass Failure ]
 
-webkit.org/b/207127 webgpu/whlsl/buffer-vertex.html [ Pass Failure ]
+webkit.org/b/207127 webgpu/whlsl/buffer-vertex.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash ]
 
