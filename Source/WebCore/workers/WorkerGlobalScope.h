@@ -53,6 +53,7 @@ class WorkerLocation;
 class WorkerNavigator;
 class WorkerSWClientConnection;
 class WorkerThread;
+struct WorkerParameters;
 
 namespace IDBClient {
 class IDBConnectionProxy;
@@ -138,8 +139,10 @@ public:
 
     CSSValuePool& cssValuePool();
 
+    ReferrerPolicy referrerPolicy() const final;
+
 protected:
-    WorkerGlobalScope(const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
@@ -216,6 +219,7 @@ private:
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
+    ReferrerPolicy m_referrerPolicy;
 };
 
 } // namespace WebCore

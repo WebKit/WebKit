@@ -65,6 +65,7 @@ class RejectedPromiseTracker;
 class ResourceRequest;
 class SecurityOrigin;
 class SocketProvider;
+enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 
 #if ENABLE(SERVICE_WORKER)
@@ -98,6 +99,8 @@ public:
     virtual URL completeURL(const String& url, ForceUTF8 = ForceUTF8::No) const = 0;
 
     virtual String userAgent(const URL&) const = 0;
+
+    virtual ReferrerPolicy referrerPolicy() const = 0;
 
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;

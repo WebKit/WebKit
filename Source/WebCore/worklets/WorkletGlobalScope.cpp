@@ -166,5 +166,10 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
     m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTFMove(callStack), nullptr, requestIdentifier);
 }
 
+ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
+{
+    return ReferrerPolicy::NoReferrer;
+}
+
 } // namespace WebCore
 #endif
