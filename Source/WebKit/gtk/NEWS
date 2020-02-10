@@ -1,3 +1,20 @@
+=================
+WebKitGTK 2.27.90
+=================
+
+What's new in WebKitGTK 2.27.90?
+
+  - Add support for same-site cookies.
+  - Add flatpak sandbox support.
+  - Enable WebAudio and WebGL by default in WebKitSettings.
+  - Add a setting to disallow top level navigation to a data URI.
+  - Add support for the -webkit-font-smoothing CSS property.
+  - Always use a light theme for rendering form controls.
+  - Stop making the Web Inspector windows transient.
+  - Ensure mouse cursor is hidden during fullscreen video playback.
+  - Add support for inspecting service workers to the remote inspector.
+  - Fix several crashes and rendering issues.
+
 ================
 WebKitGTK 2.27.4
 ================
