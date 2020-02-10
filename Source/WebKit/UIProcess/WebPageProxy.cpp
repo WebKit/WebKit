@@ -9362,6 +9362,8 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Atta
 
 void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source, bool hasEnclosingImage)
 {
+    MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
+
     auto attachment = ensureAttachment(identifier);
     attachment->setHasEnclosingImage(hasEnclosingImage);
     attachment->setInsertionState(API::Attachment::InsertionState::Inserted);
