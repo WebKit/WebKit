@@ -2,6 +2,21 @@
 # being compiled with a static runtime.
 set(MSVC_STATIC_RUNTIME ON)
 
+if (DEFINED ENV{AppleApplicationSupportSDK})
+    file(TO_CMAKE_PATH "$ENV{AppleApplicationSupportSDK}/AppleInternal" WEBKIT_LIBRARIES_DIR)
+    set(WEBKIT_LIBRARIES_INCLUDE_DIR "${WEBKIT_LIBRARIES_DIR}/include")
+    include_directories(${WEBKIT_LIBRARIES_INCLUDE_DIR})
+    set(APPLE_BUILD 1)
+endif ()
+
+if (NOT WEBKIT_LIBRARIES_DIR)
+    if (DEFINED ENV{WEBKIT_LIBRARIES})
+        file(TO_CMAKE_PATH "$ENV{WEBKIT_LIBRARIES}" WEBKIT_LIBRARIES_DIR)
+    else ()
+        file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/WebKitLibraries/win" WEBKIT_LIBRARIES_DIR)
+    endif ()
+endif ()
+
 include(OptionsWin)
 
 set(ENABLE_WEBCORE ON)

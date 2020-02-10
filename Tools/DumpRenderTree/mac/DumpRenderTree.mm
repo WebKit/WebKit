@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1044,6 +1044,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.usesPageCache = options.enableBackForwardCache;
     preferences.layoutFormattingContextIntegrationEnabled = options.layoutFormattingContextIntegrationEnabled;
     preferences.aspectRatioOfImgFromWidthAndHeightEnabled = options.enableAspectRatioOfImgFromWidthAndHeight;
+    preferences.allowTopNavigationToDataURLs = options.allowTopNavigationToDataURLs;
 }
 
 // Called once on DumpRenderTree startup.

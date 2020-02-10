@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Not allowed to navigate top frame to data URL 'data:text/html,<body onload='testRunner.notifyDone()'>FAIL: This should not have loaded.'.
+Tests that we do not redirect to a data URL. This test PASSED if you see an entry in the dumped frame load callbacks of the form: "willPerformClientRedirectToURL: data:text/html,<body onload=...b" followed by "didCancelClientRedirectForFrame" followed by didFailProvisionalLoadWithError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testRunner.didCancelClientRedirect became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

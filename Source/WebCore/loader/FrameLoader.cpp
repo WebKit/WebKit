@@ -1479,6 +1479,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
 
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request.resourceRequest(), request.substituteData());
     loader->setAllowsWebArchiveForMainFrame(request.isRequestFromClientOrUserInput());
+    loader->setAllowsDataURLsForMainFrame(request.isRequestFromClientOrUserInput());
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
@@ -1779,6 +1780,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
     loader->setAllowsWebArchiveForMainFrame(m_documentLoader->allowsWebArchiveForMainFrame());
+    loader->setAllowsDataURLsForMainFrame(m_documentLoader->allowsDataURLsForMainFrame());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, InitiatedByMainFrame::Unknown, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
     loader->setUserContentExtensionsEnabled(!options.contains(ReloadOption::DisableContentBlockers));

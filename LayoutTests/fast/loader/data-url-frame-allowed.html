@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("Tests that we can load an iframe from a data URL.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+    }
+
+    var frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+
+    frame.src = "data:text/html,PASS: Load succeeded.<script>window.testRunner && window.testRunner.notifyDone()</" + "script>";
+}
+</script>
+</head>
+<body onload=runTest()>
+</body>
+</html>

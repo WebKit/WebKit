@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -433,6 +433,7 @@ public:
         @YES, WebKitWebSecurityEnabledPreferenceKey,
         @YES, WebKitAllowUniversalAccessFromFileURLsPreferenceKey,
         @YES, WebKitAllowFileAccessFromFileURLsPreferenceKey,
+        @YES, WebKitAllowTopNavigationToDataURLsPreferenceKey,
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
 #else
@@ -1568,6 +1569,16 @@ public:
 - (void)setAllowFileAccessFromFileURLs:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitAllowFileAccessFromFileURLsPreferenceKey];
+}
+
+- (BOOL)allowTopNavigationToDataURLs
+{
+    return [self _boolValueForKey: WebKitAllowTopNavigationToDataURLsPreferenceKey];
+}
+
+- (void)setAllowTopNavigationToDataURLs:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitAllowTopNavigationToDataURLsPreferenceKey];
 }
 
 - (BOOL)allowCrossOriginSubresourcesToAskForCredentials

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -394,6 +394,9 @@ public:
     void setAllowsWebArchiveForMainFrame(bool allowsWebArchiveForMainFrame) { m_allowsWebArchiveForMainFrame = allowsWebArchiveForMainFrame; }
     bool allowsWebArchiveForMainFrame() const { return m_allowsWebArchiveForMainFrame; }
 
+    void setAllowsDataURLsForMainFrame(bool allowsDataURLsForMainFrame) { m_allowsDataURLsForMainFrame = allowsDataURLsForMainFrame; }
+    bool allowsDataURLsForMainFrame() const { return m_allowsDataURLsForMainFrame; }
+
     void setDownloadAttribute(const String& attribute) { m_downloadAttribute = attribute; }
     const String& downloadAttribute() const { return m_downloadAttribute; }
 
@@ -502,6 +505,7 @@ private:
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) final;
 
     bool disallowWebArchive() const;
+    bool disallowDataRequest() const;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
@@ -640,6 +644,7 @@ private:
 #endif
 
     bool m_allowsWebArchiveForMainFrame { false };
+    bool m_allowsDataURLsForMainFrame { false };
     String m_downloadAttribute;
 };
 

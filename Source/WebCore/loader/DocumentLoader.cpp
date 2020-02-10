@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -908,6 +908,26 @@ bool DocumentLoader::disallowWebArchive() const
     return true;
 }
 
+// Prevent data URIs from loading as the main frame unless the result of user action.
+bool DocumentLoader::disallowDataRequest() const
+{
+    if (!m_response.url().protocolIsData())
+        return false;
+
+    if (!frame() || !frame()->isMainFrame() || m_allowsDataURLsForMainFrame || frame()->settings().allowTopNavigationToDataURLs())
+        return false;
+
+    if (auto* currentDocument = frame()->document()) {
+        unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
+        ASSERT(identifier);
+
+        currentDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to navigate top frame to data URL '", m_response.url().stringCenterEllipsizedToLength(), "'."), identifier);
+    }
+    RELEASE_LOG_IF_ALLOWED("continueAfterContentPolicy: cannot show URL (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+
+    return true;
+}
+
 void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 {
     ASSERT(m_waitingForContentPolicy);
@@ -922,7 +942,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     switch (policy) {
     case PolicyAction::Use: {
-        if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || disallowWebArchive()) {
+        if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || disallowWebArchive() || disallowDataRequest()) {
             frameLoader()->policyChecker().cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();

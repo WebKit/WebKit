@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -273,7 +274,9 @@ TEST(WKNavigation, NavigationActionHasNavigation)
 
 TEST(WKNavigation, WebViewWillPerformClientRedirect)
 {
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._allowTopNavigationToDataURLs = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     auto delegate = adoptNS([[ClientRedirectNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -302,7 +305,9 @@ TEST(WKNavigation, WebViewWillPerformClientRedirect)
 
 TEST(WKNavigation, WebViewDidCancelClientRedirect)
 {
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._allowTopNavigationToDataURLs = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     auto delegate = adoptNS([[ClientRedirectNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -450,6 +450,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [preferences setUserStyleSheetEnabled:NO];
     [preferences setAllowFileAccessFromFileURLs:YES];
     [preferences setAllowUniversalAccessFromFileURLs:YES];
+    [preferences setAllowTopNavigationToDataURLs:YES];
     [preferences setStorageBlockingPolicy:WebAllowAllStorage];
 
     _frontendWebView = [[WebView alloc] init];

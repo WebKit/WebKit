@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences final : public IWebPreferences, public IWebPreferencesPrivate7 {
+class WebPreferences final : public IWebPreferences, public IWebPreferencesPrivate8 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -305,6 +305,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setWebSQLEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE renderingUpdateThrottlingEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setRenderingUpdateThrottlingEnabled(BOOL);
+
+    // IWebPreferencesPrivate8
+    virtual HRESULT STDMETHODCALLTYPE allowTopNavigationToDataURLs(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAllowTopNavigationToDataURLs(BOOL);
 
     // WebPreferences
 

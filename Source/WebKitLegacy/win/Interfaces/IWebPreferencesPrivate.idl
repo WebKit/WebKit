@@ -261,3 +261,10 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setRenderingUpdateThrottlingEnabled([in] BOOL enabled);
     HRESULT renderingUpdateThrottlingEnabled([out, retval] BOOL* enabled);
 }
+
+[uuid(04D4AAE1-5D01-4CCD-B46E-C022F10A6826)]
+interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
+{
+    HRESULT allowTopNavigationToDataURLs([out, retval] BOOL* enabled);
+    HRESULT setAllowTopNavigationToDataURLs([in] BOOL enabled);
+}
