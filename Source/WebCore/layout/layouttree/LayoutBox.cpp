@@ -124,11 +124,6 @@ bool Box::establishesInlineFormattingContext() const
     return downcast<Container>(*this).firstInFlowChild()->isInlineLevelBox();
 }
 
-bool Box::establishesInlineFormattingContextOnly() const
-{
-    return establishesInlineFormattingContext() && !establishesBlockFormattingContext();
-}
-
 bool Box::establishesTableFormattingContext() const
 {
     return isTableBox();
@@ -138,11 +133,6 @@ bool Box::establishesIndependentFormattingContext() const
 {
     // FIXME: This is where we would check for 'contain' property.
     return isAbsolutelyPositioned();
-}
-
-bool Box::establishesBlockFormattingContextOnly() const
-{
-    return establishesBlockFormattingContext() && !establishesInlineFormattingContext();
 }
 
 bool Box::isRelativelyPositioned() const

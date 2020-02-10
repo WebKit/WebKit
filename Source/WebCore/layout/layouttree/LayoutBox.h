@@ -79,9 +79,6 @@ public:
     bool establishesTableFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
-    bool establishesBlockFormattingContextOnly() const;
-    bool establishesInlineFormattingContextOnly() const;
-
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
     bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }

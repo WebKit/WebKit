@@ -303,10 +303,8 @@ void BlockFormattingContext::computeEstimatedVerticalPositionForFormattingRoot(c
     computeEstimatedVerticalPosition(layoutBox, horizontalConstraints.containingBlock, verticalConstraints.containingBlock);
     computeEstimatedVerticalPositionForAncestors(layoutBox, horizontalConstraints, verticalConstraints);
 
-    // If the inline formatting root is also the root for the floats (happens when the root box also establishes a block formatting context)
-    // the floats are in the coordinate system of this root. No need to find the final vertical position.
-    auto inlineContextInheritsFloats = layoutBox.establishesInlineFormattingContextOnly();
-    if (inlineContextInheritsFloats) {
+    // We only need the final vertical position if the formatting context does let intrusive floats in (aka not a float avoider).
+    if (!layoutBox.isFloatAvoider()) {
         computeEstimatedVerticalPosition(layoutBox, horizontalConstraints.containingBlock, verticalConstraints.containingBlock);
         computeEstimatedVerticalPositionForAncestors(layoutBox, horizontalConstraints, verticalConstraints);
     }
