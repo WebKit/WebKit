@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
-import hashlib
 import io
 import json
 import time
@@ -33,6 +32,8 @@ from collections import OrderedDict
 from datetime import datetime
 from resultsdbpy.controller.commit import Commit
 from resultsdbpy.controller.configuration import Configuration
+from resultsdbpy.model.archiver import Archiver
+from resultsdbpy.model.cassandra_archiver import CassandraArchiver
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.upload_context import UploadContext
@@ -48,7 +49,6 @@ def _get_time(input_time):
 
 class ArchiveContext(object):
     DEFAULT_LIMIT = 10
-    CHUNK_SIZE = 10 * 1024 * 1024  # Cassandra doesn't do well with data blobs of more than 10 MB
     MEMORY_LIMIT = 2 * 1024 * 1024 * 1024  # Don't allow more than 2 gigs of archives in memory at one time
 
     class ArchiveMetaDataByCommit(ClusteredByConfiguration):
@@ -69,14 +69,6 @@ class ArchiveContext(object):
                 size=self.size,
             )
 
-    # According to https://cwiki.apache.org/confluence/display/CASSANDRA2/CassandraLimitations, we should shard
-    # large data blobs.
-    class ArchiveChunks(Model):
-        __table_name__ = 'archive_chunks_02'
-        digest = columns.Text(partition_key=True, required=True)
-        index = columns.Integer(primary_key=True, required=True)
-        chunk = columns.Blob(required=True)
-
     @classmethod
     def assert_zipfile(cls, archive):
         if not isinstance(archive, io.BytesIO):
@@ -93,20 +85,22 @@ class ArchiveContext(object):
         self.configuration_context = configuration_context
         self.commit_context = commit_context
         self.cassandra = self.configuration_context.cassandra
+        self.archiver = CassandraArchiver(self.cassandra)
         self.ttl_seconds = ttl_seconds
 
         with self:
             self.cassandra.create_table(self.ArchiveMetaDataByCommit)
-            self.cassandra.create_table(self.ArchiveChunks)
             self.cassandra.create_table(UploadContext.SuitesByConfiguration)
 
     def __enter__(self):
         self.configuration_context.__enter__()
         self.commit_context.__enter__()
+        self.archiver.__enter__()
 
     def __exit__(self, *args, **kwargs):
         self.commit_context.__exit__(*args, **kwargs)
         self.configuration_context.__exit__(*args, **kwargs)
+        self.archiver.__exit__(*args, **kwargs)
 
     def register(self, archive, configuration, commits, suite, timestamp=None):
         self.assert_zipfile(archive)
@@ -122,27 +116,14 @@ class ArchiveContext(object):
                 self.configuration_context.insert_row_with_configuration(
                     UploadContext.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch, ttl=ttl,
                 )
-
-                # Breaking up the archive into chunks
-                index = 0
-                size = len(archive.getvalue())
-                digest = hashlib.md5(archive.getvalue()).hexdigest()
-                archive.seek(0)
-                while size > index * self.CHUNK_SIZE:
-                    self.cassandra.insert_row(
-                        self.ArchiveChunks.__table_name__,
-                        digest=digest, index=index,
-                        chunk=archive.read(self.CHUNK_SIZE),
-                        ttl=ttl,
-                    )
-                    index += 1
+                digest = self.archiver.save(archive, retain_for=ttl)
 
                 self.configuration_context.insert_row_with_configuration(
                     self.ArchiveMetaDataByCommit.__table_name__, configuration=configuration, suite=suite,
                     branch=branch, uuid=uuid, ttl=ttl,
                     sdk=configuration.sdk or '?', start_time=timestamp,
                     digest=digest,
-                    size=size,
+                    size=Archiver.archive_size(archive),
                 )
 
     def find_archive(
@@ -186,32 +167,16 @@ class ArchiveContext(object):
                         continue
 
                     if not archive_by_digest.get(value.get('digest')):
-                        rows = self.cassandra.select_from_table(
-                            self.ArchiveChunks.__table_name__,
-                            digest=value.get('digest'),
-                            limit=1 + int(value.get('size', 0) / self.CHUNK_SIZE),
-                        )
-                        if len(rows) == 0:
+                        archive = self.archiver.retrieve(value.get('digest'), value.get('size', None))
+                        if not archive:
                             continue
-
-                        digest = hashlib.md5()
-                        archive = io.BytesIO()
-                        archive_size = 0
-                        for row in rows:
-                            archive_size += len(row.chunk)
-                            digest.update(row.chunk)
-                            archive.write(row.chunk)
-
-                        if archive_size != value.get('size', 0) or value.get('digest', '') != digest.hexdigest():
-                            raise RuntimeError('Failed to reconstruct archive from chunks')
-
                         archive_by_digest[value.get('digest')] = archive
 
                     archive_by_digest.get(value.get('digest')).seek(0)
                     result.setdefault(config, [])
                     result[config].append(dict(
                         archive=archive_by_digest.get(value.get('digest')),
-                        digest=digest.hexdigest(),
+                        digest=value.get('digest'),
                         uuid=value['uuid'],
                         start_time=value['start_time'],
                     ))
