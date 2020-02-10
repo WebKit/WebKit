@@ -1,5 +1,16 @@
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Regression (~r252261): [ Mac wk2 ] inspector/heap/getPreview.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207209
+
+        Correcting test expectations.
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS ] imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207461
 
