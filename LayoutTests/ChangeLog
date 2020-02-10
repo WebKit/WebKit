@@ -1,3 +1,22 @@
+2020-02-10  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Fix animations/stop-animation-on-suspend.html
+        https://bugs.webkit.org/show_bug.cgi?id=184580
+        <rdar://problem/39406014>
+
+        Reviewed by Simon Fraser.
+
+        The expectations of this test were incorrect. The test animates a transform from 0 to 400px across 400ms with a linear timing function. The test suspends
+        animations from 100ms to 300ms with timers, and polls animations at 200ms and 400ms. At 200ms, it expects a value of 100px, which is correct since the animation
+        is suspended and so the value at 100ms (when it was suspended) is expected.
+
+        However, the test expected the value at 400ms to be 200px, which leads me to think this test assumes that animations, when resumed, account for the time suspended
+        and subtracts it from the page time. This is incorrect: when animations resume, they resume at the current time, no matter how long they were suspended. So the expected
+        value should be 400px.
+
+        * animations/stop-animation-on-suspend-expected.txt:
+        * animations/stop-animation-on-suspend.html:
+
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS iOS wk2 ] storage/indexeddb/intversion-long-queue.html is a flaky failure.
