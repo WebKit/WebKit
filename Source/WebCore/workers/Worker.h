@@ -61,6 +61,7 @@ public:
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
 
     void terminate();
+    bool wasTerminated() const { return m_wasTerminated; }
 
     bool hasPendingActivity() const final;
 
