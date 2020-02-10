@@ -113,7 +113,7 @@ public:
     Rect contentBox() const;
 
 #if ASSERT_ENABLED
-    void setHasEstimatedMarginBefore() { m_hasEstimatedMarginBefore = true; }
+    void setHasPrecomputedMarginBefore() { m_hasPrecomputedMarginBefore = true; }
 #endif
 
     void setTopLeft(const LayoutPoint&);
@@ -140,7 +140,7 @@ private:
     void invalidateMargin();
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
-    void invalidateEstimatedMarginBefore() { m_hasEstimatedMarginBefore = false; }
+    void invalidatePrecomputedMarginBefore() { m_hasPrecomputedMarginBefore = false; }
 
     void setHasValidTop() { m_hasValidTop = true; }
     void setHasValidLeft() { m_hasValidLeft = true; }
@@ -179,7 +179,7 @@ private:
     bool m_hasValidPadding { false };
     bool m_hasValidContentHeight { false };
     bool m_hasValidContentWidth { false };
-    bool m_hasEstimatedMarginBefore { false };
+    bool m_hasPrecomputedMarginBefore { false };
 #endif // ASSERT_ENABLED
 };
 
@@ -193,7 +193,7 @@ inline void Box::invalidateMargin()
 
 inline LayoutUnit Box::top() const
 {
-    ASSERT(m_hasValidTop && (m_hasEstimatedMarginBefore || m_hasValidVerticalMargin));
+    ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     return m_topLeft.y();
 }
 
@@ -205,7 +205,7 @@ inline LayoutUnit Box::left() const
 
 inline LayoutPoint Box::topLeft() const
 {
-    ASSERT(m_hasValidTop && (m_hasEstimatedMarginBefore || m_hasValidVerticalMargin));
+    ASSERT(m_hasValidTop && (m_hasPrecomputedMarginBefore || m_hasValidVerticalMargin));
     ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
     return m_topLeft;
 }
@@ -276,7 +276,7 @@ inline void Box::setVerticalMargin(Layout::UsedVerticalMargin margin)
 #if ASSERT_ENABLED
     setHasValidVerticalMargin();
     setHasValidVerticalNonCollapsedMargin();
-    invalidateEstimatedMarginBefore();
+    invalidatePrecomputedMarginBefore();
 #endif
     m_verticalMargin = margin;
 }

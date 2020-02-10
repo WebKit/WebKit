@@ -75,7 +75,7 @@ struct UsedHorizontalMargin {
     LayoutUnit end;
 };
 
-struct EstimatedMarginBefore {
+struct PrecomputedMarginBefore {
     LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
     LayoutUnit nonCollapsedValue;
     Optional<LayoutUnit> collapsedValue;

@@ -67,8 +67,8 @@ private:
     void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
 
-    void computeEstimatedVerticalPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
-    void computeEstimatedVerticalPositionForAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void precomputeVerticalPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void precomputeVerticalPositionForAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void precomputeVerticalPositionForFormattingRoot(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -104,7 +104,7 @@ private:
     public:
         UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
-        EstimatedMarginBefore estimatedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
         LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
         static void updateMarginAfterForPreviousSibling(BlockFormattingContext&, const MarginCollapse&, const Box&);
         static void updatePositiveNegativeMarginValues(BlockFormattingContext&, const MarginCollapse&, const Box&);
@@ -158,20 +158,19 @@ private:
     };
     BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
-    void setEstimatedMarginBefore(const Box&, const EstimatedMarginBefore&);
-    void removeEstimatedMarginBefore(const Box& layoutBox) { m_estimatedMarginBeforeList.remove(&layoutBox); }
-    bool hasEstimatedMarginBefore(const Box&) const;
+    void setPrecomputedMarginBefore(const Box&, const PrecomputedMarginBefore&);
+    void removePrecomputedMarginBefore(const Box& layoutBox) { m_precomputedMarginBeforeList.remove(&layoutBox); }
+    bool hasPrecomputedMarginBefore(const Box&) const;
     Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&) const;
 #if ASSERT_ENABLED
-    EstimatedMarginBefore estimatedMarginBefore(const Box& layoutBox) const { return m_estimatedMarginBeforeList.get(&layoutBox); }
-    bool hasPrecomputedMarginBefore(const Box&) const;
+    PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
 #endif
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
 private:
-    HashMap<const Box*, EstimatedMarginBefore> m_estimatedMarginBeforeList;
+    HashMap<const Box*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 };
 
 inline BlockFormattingContext::Geometry::Geometry(const BlockFormattingContext& blockFormattingContext)
