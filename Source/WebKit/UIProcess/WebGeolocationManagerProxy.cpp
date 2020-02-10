@@ -31,6 +31,7 @@
 #include "WebGeolocationManagerMessages.h"
 #include "WebGeolocationManagerProxyMessages.h"
 #include "WebGeolocationPosition.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection))
