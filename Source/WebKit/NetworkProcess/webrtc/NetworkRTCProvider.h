@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCResolverIdentifier.h"
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
@@ -104,8 +105,8 @@ private:
     void createServerTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void wrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier);
 
-    void createResolver(uint64_t, const String&);
-    void stopResolver(uint64_t);
+    void createResolver(LibWebRTCResolverIdentifier, const String&);
+    void stopResolver(LibWebRTCResolverIdentifier);
 
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 
@@ -115,7 +116,7 @@ private:
 
     static rtc::ProxyInfo proxyInfoFromSession(const RTCNetwork::SocketAddress&, NetworkSession&);
 
-    HashMap<uint64_t, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
+    HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
     HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>> m_sockets;
     NetworkConnectionToWebProcess* m_connection;
     bool m_isStarted { true };

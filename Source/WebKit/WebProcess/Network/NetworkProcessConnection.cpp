@@ -118,7 +118,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
-        WebProcess::singleton().libWebRTCNetwork().resolver(decoder.destinationID()).didReceiveMessage(connection, decoder);
+        WebProcess::singleton().libWebRTCNetwork().resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         return;
     }
 #endif

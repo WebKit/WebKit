@@ -38,8 +38,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-uint64_t LibWebRTCSocketFactory::s_uniqueResolverIdentifier = 0;
-
 static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& address, bool disableNonLocalhostConnections)
 {
     auto result = RTCNetwork::isolatedCopy(address);
@@ -126,7 +124,7 @@ void LibWebRTCSocketFactory::forSocketInGroup(const void* socketGroup, const Fun
 
 rtc::AsyncResolverInterface* LibWebRTCSocketFactory::createAsyncResolver()
 {
-    auto resolver = makeUnique<LibWebRTCResolver>(++s_uniqueResolverIdentifier);
+    auto resolver = makeUnique<LibWebRTCResolver>();
     auto* resolverPointer = resolver.get();
     m_resolvers.set(resolverPointer->identifier(), WTFMove(resolver));
     return resolverPointer;

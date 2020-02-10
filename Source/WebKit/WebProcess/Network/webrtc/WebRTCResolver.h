@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCResolverIdentifier.h"
 #include "RTCNetwork.h"
 #include <wtf/Forward.h>
 
@@ -42,7 +43,7 @@ class LibWebRTCSocketFactory;
 class WebRTCResolver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebRTCResolver(LibWebRTCSocketFactory&, uint64_t);
+    WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -51,7 +52,7 @@ private:
     void resolvedAddressError(int);
 
     LibWebRTCSocketFactory& m_socketFactory;
-    uint64_t m_identifier { 0 };
+    LibWebRTCResolverIdentifier m_identifier;
 };
 
 } // namespace WebKit

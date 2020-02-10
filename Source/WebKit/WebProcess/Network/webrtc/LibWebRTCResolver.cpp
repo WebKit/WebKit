@@ -48,8 +48,8 @@ void LibWebRTCResolver::Start(const rtc::SocketAddress& address)
     m_isResolving = true;
     m_addressToResolve = address;
     m_port = address.port();
-    auto identifier = m_identifier;
-    sendOnMainThread([identifier, address](IPC::Connection& connection) {
+
+    sendOnMainThread([identifier = m_identifier, address](IPC::Connection& connection) {
         auto addressString = address.HostAsURIString();
         connection.send(Messages::NetworkRTCProvider::CreateResolver(identifier, String(addressString.data(), addressString.length())), 0);
     });
@@ -82,8 +82,7 @@ void LibWebRTCResolver::Destroy(bool)
         return;
     }
 
-    auto identifier = m_identifier;
-    sendOnMainThread([identifier](IPC::Connection& connection) {
+    sendOnMainThread([identifier = m_identifier](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCProvider::StopResolver(identifier), 0);
     });
 

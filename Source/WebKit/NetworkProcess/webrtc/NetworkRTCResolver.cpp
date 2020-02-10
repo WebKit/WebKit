@@ -34,13 +34,13 @@ namespace WebKit {
 
 // FIXME: Use the function after removing the NetworkRTCResolverCocoa.
 #if !PLATFORM(COCOA)
-std::unique_ptr<NetworkRTCResolver> NetworkRTCResolver::create(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
+std::unique_ptr<NetworkRTCResolver> NetworkRTCResolver::create(LibWebRTCResolverIdentifier identifier, WebCore::DNSCompletionHandler&& completionHandler)
 {
     return std::unique_ptr<NetworkRTCResolver>(new NetworkRTCResolver(identifier, WTFMove(completionHandler)));
 }
 #endif
 
-NetworkRTCResolver::NetworkRTCResolver(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
+NetworkRTCResolver::NetworkRTCResolver(LibWebRTCResolverIdentifier identifier, WebCore::DNSCompletionHandler&& completionHandler)
     : m_identifier(identifier)
     , m_completionHandler(WTFMove(completionHandler))
 {
@@ -54,12 +54,12 @@ NetworkRTCResolver::~NetworkRTCResolver()
 
 void NetworkRTCResolver::start(const String& address)
 {
-    WebCore::resolveDNS(address, m_identifier, WTFMove(m_completionHandler));
+    WebCore::resolveDNS(address, m_identifier.toUInt64(), WTFMove(m_completionHandler));
 }
 
 void NetworkRTCResolver::stop()
 {
-    WebCore::stopResolveDNS(m_identifier);
+    WebCore::stopResolveDNS(m_identifier.toUInt64());
 }
 
 } // namespace WebKit

@@ -1,3 +1,50 @@
+2020-02-10  youenn fablet  <youenn@apple.com>
+
+        Use ObjectIdentifier for WebRTC resolvers
+        https://bugs.webkit.org/show_bug.cgi?id=207381
+
+        Reviewed by Eric Carlson.
+
+        Use ObjectIdentifier instead of uint64_t which gives type safety and ensures we do not receive wrong identifiers from IPC.
+        No change of behavior.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::createResolver):
+        Remove empty string check case since DNS resolver should be robust to null/empty strings.
+        (WebKit::NetworkRTCProvider::stopResolver):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCResolver.cpp:
+        (WebKit::NetworkRTCResolver::create):
+        (WebKit::NetworkRTCResolver::NetworkRTCResolver):
+        (WebKit::NetworkRTCResolver::start):
+        (WebKit::NetworkRTCResolver::stop):
+        * NetworkProcess/webrtc/NetworkRTCResolver.h:
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp:
+        (WebKit::NetworkRTCResolver::create):
+        (WebKit::NetworkRTCResolverCocoa::NetworkRTCResolverCocoa):
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.h:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::resolver):
+        * WebProcess/Network/webrtc/LibWebRTCResolver.cpp:
+        (WebKit::LibWebRTCResolver::Start):
+        (WebKit::LibWebRTCResolver::Destroy):
+        * WebProcess/Network/webrtc/LibWebRTCResolver.h:
+        * WebProcess/Network/webrtc/LibWebRTCResolverIdentifier.h: Copied from Source/WebKit/WebProcess/Network/webrtc/WebRTCResolver.h.
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createAsyncResolver):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+        (WebKit::LibWebRTCSocketFactory::resolver):
+        (WebKit::LibWebRTCSocketFactory::takeResolver):
+        * WebProcess/Network/webrtc/WebRTCResolver.cpp:
+        (WebKit::WebRTCResolver::WebRTCResolver):
+        * WebProcess/Network/webrtc/WebRTCResolver.h:
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256091.

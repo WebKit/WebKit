@@ -3422,6 +3422,7 @@
 		41E0A7C723B6397900561060 /* LibWebRTCCodecsProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibWebRTCCodecsProxy.messages.in; sourceTree = "<group>"; };
 		41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecsProxy.mm; sourceTree = "<group>"; };
 		41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketChannelMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSocketChannelMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		41F9FD1823ED8A810099B579 /* LibWebRTCResolverIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolverIdentifier.h; path = Network/webrtc/LibWebRTCResolverIdentifier.h; sourceTree = "<group>"; };
 		41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCache.h; sourceTree = "<group>"; };
 		41FAF5F31E3BFE7F001AE678 /* WebRTCSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebRTCSocket.h; path = Network/webrtc/WebRTCSocket.h; sourceTree = "<group>"; };
 		41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebRTCResolver.h; path = Network/webrtc/WebRTCResolver.h; sourceTree = "<group>"; };
@@ -7206,6 +7207,7 @@
 				413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */,
 				41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */,
 				41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */,
+				41F9FD1823ED8A810099B579 /* LibWebRTCResolverIdentifier.h */,
 				413075A11DE85EE70039EC69 /* LibWebRTCSocket.cpp */,
 				413075A01DE85EE70039EC69 /* LibWebRTCSocket.h */,
 				413075A51DE85EE70039EC69 /* LibWebRTCSocketFactory.cpp */,

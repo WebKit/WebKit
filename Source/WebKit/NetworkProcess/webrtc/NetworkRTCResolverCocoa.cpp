@@ -67,12 +67,12 @@ static void resolvedName(CFHostRef hostRef, CFHostInfoType typeInfo, const CFStr
     resolver->completed(WTFMove(addresses));
 }
 
-std::unique_ptr<NetworkRTCResolver> NetworkRTCResolver::create(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
+std::unique_ptr<NetworkRTCResolver> NetworkRTCResolver::create(LibWebRTCResolverIdentifier identifier, WebCore::DNSCompletionHandler&& completionHandler)
 {
     return std::unique_ptr<NetworkRTCResolver>(new NetworkRTCResolverCocoa(identifier, WTFMove(completionHandler)));
 }
 
-NetworkRTCResolverCocoa::NetworkRTCResolverCocoa(uint64_t identifier, WebCore::DNSCompletionHandler&& completionHandler)
+NetworkRTCResolverCocoa::NetworkRTCResolverCocoa(LibWebRTCResolverIdentifier identifier, WebCore::DNSCompletionHandler&& completionHandler)
     : NetworkRTCResolver(identifier, WTFMove(completionHandler))
 {
 }

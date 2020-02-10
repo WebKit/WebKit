@@ -222,6 +222,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::AudioMediaStreamTrackRendererIdentifier',
         'WebKit::ContentWorldIdentifier',
         'WebKit::LayerHostingContextID',
+        'WebKit::LibWebRTCResolverIdentifier',
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::MediaRecorderIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',

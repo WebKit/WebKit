@@ -203,13 +203,8 @@ void NetworkRTCProvider::didReceiveNetworkRTCSocketMessage(IPC::Connection& conn
 
 #if PLATFORM(COCOA)
 
-void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
+void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, const String& address)
 {
-    ASSERT(m_resolvers.isValidKey(identifier));
-    ASSERT(!address.isEmpty());
-    if (!m_resolvers.isValidKey(identifier) || address.isEmpty())
-        return;
-
     auto resolver = NetworkRTCResolver::create(identifier, [this, identifier](WebCore::DNSAddressesOrError&& result) mutable {
         if (!result.has_value()) {
             if (result.error() != WebCore::DNSError::Cancelled)
@@ -227,7 +222,7 @@ void NetworkRTCProvider::createResolver(uint64_t identifier, const String& addre
     m_resolvers.add(identifier, WTFMove(resolver));
 }
 
-void NetworkRTCProvider::stopResolver(uint64_t identifier)
+void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 {
     if (auto resolver = m_resolvers.take(identifier))
         resolver->stop();
@@ -235,7 +230,7 @@ void NetworkRTCProvider::stopResolver(uint64_t identifier)
 
 #else
 
-void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
+void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, const String& address)
 {
     auto completionHandler = [this, identifier](WebCore::DNSAddressesOrError&& result) mutable {
         if (!result.has_value()) {
@@ -251,12 +246,12 @@ void NetworkRTCProvider::createResolver(uint64_t identifier, const String& addre
         m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(addresses), identifier);
     };
 
-    WebCore::resolveDNS(address, identifier, WTFMove(completionHandler));
+    WebCore::resolveDNS(address, identifier.toUInt64(), WTFMove(completionHandler));
 }
 
-void NetworkRTCProvider::stopResolver(uint64_t identifier)
+void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 {
-    WebCore::stopResolveDNS(identifier);
+    WebCore::stopResolveDNS(identifier.toUInt64());
 }
 
 #endif

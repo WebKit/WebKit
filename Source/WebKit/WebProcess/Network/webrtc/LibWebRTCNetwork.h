@@ -51,7 +51,7 @@ public:
     void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
 
     WebRTCSocket socket(WebCore::LibWebRTCSocketIdentifier identifier) { return WebRTCSocket(socketFactory(), identifier); }
-    WebRTCResolver resolver(uint64_t identifier) { return WebRTCResolver(socketFactory(), identifier); }
+    WebRTCResolver resolver(LibWebRTCResolverIdentifier identifier) { return WebRTCResolver(socketFactory(), identifier); }
 #endif
 
 #if ENABLE(WEB_RTC)

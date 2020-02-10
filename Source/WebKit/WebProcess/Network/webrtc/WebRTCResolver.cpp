@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-WebRTCResolver::WebRTCResolver(LibWebRTCSocketFactory& socketFactory, uint64_t identifier)
+WebRTCResolver::WebRTCResolver(LibWebRTCSocketFactory& socketFactory, LibWebRTCResolverIdentifier identifier)
     : m_socketFactory(socketFactory)
     , m_identifier(identifier)
 {

@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/net_helpers.h>
 #include <webrtc/p2p/base/packet_socket_factory.h>
@@ -42,10 +43,10 @@ class LibWebRTCSocketFactory;
 class LibWebRTCResolver final : public rtc::AsyncResolverInterface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCResolver(uint64_t identifier) : m_identifier(identifier) { }
+    LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generate()) { }
 
     bool isResolving() const { return m_isResolving; }
-    uint64_t identifier() const { return m_identifier; }
+    LibWebRTCResolverIdentifier identifier() const { return m_identifier; }
 
 private:
     friend class WebRTCResolver;
@@ -62,7 +63,7 @@ private:
 
     static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
 
-    uint64_t m_identifier;
+    LibWebRTCResolverIdentifier m_identifier;
     Vector<rtc::IPAddress> m_addresses;
     rtc::SocketAddress m_addressToResolve;
     int m_error { 0 };
