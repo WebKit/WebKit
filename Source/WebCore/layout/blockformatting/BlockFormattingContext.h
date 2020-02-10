@@ -63,15 +63,13 @@ private:
     void computeHeightAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
 
     void computeStaticHorizontalPosition(const Box&, const ConstraintsPair<HorizontalConstraints>&);
-    void computeStaticVerticalPosition(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void computeStaticPosition(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void computeFloatingPosition(const FloatingContext&, const Box&);
-    void computePositionToAvoidFloats(const FloatingContext&, const Box&);
+    void computeStaticVerticalPosition(const Box&, const ConstraintsPair<VerticalConstraints>&);
+    void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
 
     void computeEstimatedVerticalPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
     void computeEstimatedVerticalPositionForAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void computeEstimatedVerticalPositionForFormattingRoot(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void computeEstimatedVerticalPositionForFloatClear(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void precomputeVerticalPositionForFormattingRoot(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, const VerticalConstraints&) const;
