@@ -126,6 +126,8 @@ clipboardAccessPolicy:
   initial: ClipboardAccessPolicy::RequiresUserGesture
 asyncClipboardAPIEnabled:
   initial: false
+shouldRestrictBaseURLSchemes:
+  initial: true
 
 textAreasAreResizable:
   initial: false

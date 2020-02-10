@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 19: Blocked setting data:, as the base URL because it does not have an allowed scheme.
 
 PASS Loading data… 
 PASS Parsing origin: <http://example	.
@@ -221,7 +222,7 @@ PASS Parsing origin: <http://0..0x300/> against <about:blank>
 PASS Parsing origin: <http://foo:💩@example.com/bar> against <http://other.com/> 
 FAIL Parsing origin: <#> against <test:test> assert_equals: origin expected "null" but got "test://"
 FAIL Parsing origin: <#x> against <mailto:x@x.com> assert_equals: origin expected "null" but got "mailto://"
-PASS Parsing origin: <#x> against <data:,> 
+FAIL Parsing origin: <#x> against <data:,> assert_equals: origin expected "null" but got "mailto://"
 PASS Parsing origin: <#x> against <about:blank> 
 FAIL Parsing origin: <#> against <test:test?test> assert_equals: origin expected "null" but got "test://"
 PASS Parsing origin: <https://@test@test@example:800/> against <http://doesnotmatter/> 

@@ -1,3 +1,17 @@
+2020-02-10  Daniel Bates  <dabates@apple.com>
+
+        Disallow setting base URL to a data or JavaScript URL
+        https://bugs.webkit.org/show_bug.cgi?id=207136
+
+        Reviewed by Brent Fulgham.
+
+        Apply base URL restrictions to apps linked to a future WebKit to avoid breaking existing apps.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (shouldRestrictBaseURLSchemes): Added.
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Update settings.
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256091.

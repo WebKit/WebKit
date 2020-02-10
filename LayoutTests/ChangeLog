@@ -1,3 +1,39 @@
+2020-02-10  Daniel Bates  <dabates@apple.com>
+
+        Disallow setting base URL to a data or JavaScript URL
+        https://bugs.webkit.org/show_bug.cgi?id=207136
+
+        RReviewed by Brent Fulgham.
+
+        Add some tests. Update others to toggle the setting to apply or unapply the new behavior.
+
+        The test denied-base-url-javascript-url.html is derived from the test base-url-javascript.html,
+        included in <https://chromium.googlesource.com/chromium/src.git/+/c133efa0b915430701930b76a7cfe35608b9a403>.
+
+        * fast/url/relative-expected.txt:
+        * fast/url/relative.html:
+        * fast/url/relative2-expected.txt: Copied from LayoutTests/fast/url/relative-expected.txt.
+        * fast/url/relative2.html: Copied from LayoutTests/fast/url/relative.html.
+        * fast/url/resources/utilities.js:
+        (setShouldEllipsizeFileURLPaths): Added. Toggles ellipsizing the path portion of a file URL to simplify matching.
+        Otherwise, file URLs could be machine-specific.
+        (canonicalizedPathname): Added.
+        (segments): Modified to optionally call canonicalizedPathname.
+        (canonicalize): Ditto.
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/segments-from-data-url.html:
+        * fast/url/segments-from-data-url2-expected.txt: Copied from LayoutTests/fast/url/segments-from-data-url-expected.txt.
+        * fast/url/segments-from-data-url2.html: Copied from LayoutTests/fast/url/segments-from-data-url.html.
+        * fetch/fetch-url-serialization-expected.txt:
+        * http/tests/plugins/navigation-during-load-embed.html:
+        * http/tests/plugins/navigation-during-load.html:
+        * http/tests/security/allowed-base-url-data-url-via-setting-expected.txt: Added.
+        * http/tests/security/allowed-base-url-data-url-via-setting.html: Added.
+        * http/tests/security/denied-base-url-data-url-expected.txt: Added.
+        * http/tests/security/denied-base-url-data-url.html: Added.
+        * http/tests/security/denied-base-url-javascript-url-expected.txt: Added.
+        * http/tests/security/denied-base-url-javascript-url.html: Added.
+
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/store-to-property-updates-properly.html is flaky failing
