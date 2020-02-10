@@ -50,7 +50,7 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 http/wpt/fetch/response-opaque-clone.html [ Slow ]
-http/wpt/cache-storage/cache-put-keys.https.any.html [ Slow ]
+http/wpt/cache-storage/cache-put-keys.https.any.html [ Skip ]
 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
 http/wpt/cache-storage/cache-quota.any.html [ Slow ]
 http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Slow ]
