@@ -531,6 +531,7 @@ static void testWebViewAllowModalDialogs(ModalDialogsTest* test, gconstpointer)
 {
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
     webkit_settings_set_allow_modal_dialogs(settings, TRUE);
+    webkit_settings_set_allow_top_navigation_to_data_urls(settings, TRUE);
 
     test->loadHtml("<html><body onload=\"window.showModalDialog('data:text/html,<html><body/><script>window.close();</script></html>')\"></body></html>", 0);
     test->waitUntilMainLoopFinishes();

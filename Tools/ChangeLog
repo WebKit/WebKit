@@ -1,3 +1,18 @@
+2020-02-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Expose allowTopNavigationToDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=207384
+
+        Reviewed by Adrian Perez de Castro.
+
+        Updates with new "allow-top-navigation-to-data-urls" property.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewAllowModalDialogs): This test requires this property to be
+        set.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings): Added tests for getter/setter.
+
 2020-02-08  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h
