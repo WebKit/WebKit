@@ -1,3 +1,19 @@
+2020-02-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Search: selecting a DOM node search result switches to the Elements Tab
+        https://bugs.webkit.org/show_bug.cgi?id=207322
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype._tabBarItemSelected):
+        The Search Tab is marked such that it isn't saved to `WI._openTabsSetting`, as otherwise
+        more than one Search Tab could be added to the tab bar (one from the setting and one from
+        the default pinned tab). It is also marked as being pinned, however, meaning that we know it
+        will always be in the tab bar, even if we also know it won't be in `WI._openTabsSetting`. As
+        such, we should update it's position in the `_recentTabContentViews` list so that we can use
+        it when showing represented objects (if able) via `bestTabContentViewForRepresentedObject`.
+
 2020-02-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: the height of the undocked title area shouldn't change when zoomed
