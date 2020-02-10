@@ -129,7 +129,12 @@ public:
         WEBCORE_EXPORT const char* data() const;
         WEBCORE_EXPORT size_t size() const;
 
-        static Ref<DataSegment> create(Vector<char>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+        static Ref<DataSegment> create(Vector<char>&& data)
+        {
+            data.shrinkToFit();
+            return adoptRef(*new DataSegment(WTFMove(data)));
+        }
+
 #if USE(CF)
         static Ref<DataSegment> create(RetainPtr<CFDataRef>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
