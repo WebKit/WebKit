@@ -1,3 +1,33 @@
+2020-02-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WebInspector] Do not make Web Inspector windows transient
+        https://bugs.webkit.org/show_bug.cgi?id=207455
+
+        Reviewed by Carlos Garcia Campos.
+
+        Stop setting Web Inspector windows as transient for the window
+        containing the web view being inspected, to allow changing their
+        relative stacking order. No changes are needed for inspector windows
+        to continue being destroyed correctly when the corresponding web view
+        is destroyed because code for handling that was already present in
+        WebInspectorProxyGtk.cpp.
+
+        No new tests needed.
+
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        Do not pass a parent window parameter to webkitInspectorWindowNew().
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow): Remove code
+        to obtain the top level window of the WebKitWebView, which no longer
+        needs being passed to webkitInspectorWindowNew().
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:
+        (webkitInspectorWindowNew): Do not set the GtkWindow.transient-for
+        property for the Web Inspector window. Remove the parent window
+        parameter.
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.h: Remove the parent
+        window parameter for webkitInspectorWindowNew().
+
 2020-02-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Mouse pointer no longer hidden during fullscreen video playback

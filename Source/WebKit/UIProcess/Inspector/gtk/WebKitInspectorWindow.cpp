@@ -57,9 +57,9 @@ static void webkit_inspector_window_init(WebKitInspectorWindow* window)
     gtk_widget_show(window->headerBar);
 }
 
-GtkWidget* webkitInspectorWindowNew(GtkWindow* parent)
+GtkWidget* webkitInspectorWindowNew()
 {
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_INSPECTOR_WINDOW, "type", GTK_WINDOW_TOPLEVEL, "transient-for", parent,
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_INSPECTOR_WINDOW, "type", GTK_WINDOW_TOPLEVEL,
         "default-width", WebInspectorProxy::initialWindowWidth, "default-height", WebInspectorProxy::initialWindowHeight, nullptr));
 }
 

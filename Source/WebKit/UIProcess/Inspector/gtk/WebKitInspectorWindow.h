@@ -41,7 +41,7 @@ typedef struct _WebKitInspectorWindowClass WebKitInspectorWindowClass;
 
 GType webkit_inspector_window_get_type(void);
 
-GtkWidget* webkitInspectorWindowNew(GtkWindow* parent);
+GtkWidget* webkitInspectorWindowNew();
 void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow*, const char* subtitle);
 
 G_END_DECLS

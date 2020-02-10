@@ -71,7 +71,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     g_signal_connect_swapped(m_webView, "destroy", G_CALLBACK(remoteInspectorViewDestroyed), this);
     g_object_add_weak_pointer(G_OBJECT(m_webView), reinterpret_cast<void**>(&m_webView));
 
-    m_window = webkitInspectorWindowNew(nullptr);
+    m_window = webkitInspectorWindowNew();
     gtk_container_add(GTK_CONTAINER(m_window), m_webView);
     gtk_widget_show(m_webView);
 
