@@ -200,6 +200,7 @@ UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
+UIProcess/Launcher/glib/FlatpakLauncher.cpp
 
 UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
 UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
