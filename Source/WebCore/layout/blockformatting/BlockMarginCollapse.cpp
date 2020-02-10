@@ -593,19 +593,17 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsin
     return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
 }
 
-void BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues(BlockFormattingContext& blockFormattingContext, const MarginCollapse& marginCollapse, const Box& layoutBox)
+PositiveAndNegativeVerticalMargin BlockFormattingContext::MarginCollapse::resolvedPositiveNegativeMarginValues(const Box& layoutBox, const UsedVerticalMargin::NonCollapsedValues& nonCollapsedValues)
 {
     ASSERT(layoutBox.isBlockLevelBox());
-    auto nonCollapsedValues = blockFormattingContext.geometryForBox(layoutBox).verticalMargin().nonCollapsedValues();
+    auto positiveNegativeMarginBefore = this->positiveNegativeMarginBefore(layoutBox, nonCollapsedValues);
+    auto positiveNegativeMarginAfter = this->positiveNegativeMarginAfter(layoutBox, nonCollapsedValues);
 
-    auto positiveNegativeMarginBefore = marginCollapse.positiveNegativeMarginBefore(layoutBox, nonCollapsedValues);
-    auto positiveNegativeMarginAfter = marginCollapse.positiveNegativeMarginAfter(layoutBox, nonCollapsedValues);
-
-    if (marginCollapse.marginsCollapseThrough(layoutBox)) {
+    if (marginsCollapseThrough(layoutBox)) {
         positiveNegativeMarginBefore = computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, positiveNegativeMarginAfter);
         positiveNegativeMarginAfter = positiveNegativeMarginBefore;
     }
-    blockFormattingContext.formattingState().setPositiveAndNegativeVerticalMargin(layoutBox, { positiveNegativeMarginBefore, positiveNegativeMarginAfter });
+    return { positiveNegativeMarginBefore, positiveNegativeMarginAfter };
 }
 
 UsedVerticalMargin::CollapsedValues BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)

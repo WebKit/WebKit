@@ -432,7 +432,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     displayBox.setVerticalMargin(verticalMargin);
 
     auto marginCollapse = this->marginCollapse();
-    MarginCollapse::updatePositiveNegativeMarginValues(*this, marginCollapse, layoutBox);
+    formattingState().setPositiveAndNegativeVerticalMargin(layoutBox, marginCollapse.resolvedPositiveNegativeMarginValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin));
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, layoutBox);
 }
