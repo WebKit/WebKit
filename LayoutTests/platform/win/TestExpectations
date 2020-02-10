@@ -4539,3 +4539,5 @@ webkit.org/b/207477 animations/stacking-context-not-fill-forwards.html [ Pass Fa
 webkit.org/b/207480 css1/box_properties/padding_left.html [ Pass Failure ]
 
 webkit.org/b/207495 webanimations/width-and-opacity-separate-animation-yields-compositing.html [ Pass Failure ]
+
+webkit.org/b/207499 webanimations/transform-accelerated-animation-finishes-before-removal.html [ Pass Failure ]
