@@ -42,8 +42,7 @@ WI.Sidebar = class Sidebar extends WI.View
         if (hasNavigationBar) {
             this.element.classList.add("has-navigation-bar");
 
-            const navigationBarElement = null;
-            this._navigationBar = new WI.NavigationBar(navigationBarElement, {role: "tablist"});
+            this._navigationBar = new WI.NavigationBar(null, null, "tablist");
             this._navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
             this.addSubview(this._navigationBar);
         }

@@ -1,3 +1,16 @@
+2020-02-07  Jon Lee  <jonlee@apple.com>
+
+        Web Inspector: Revert slim toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=207422
+
+        Reviewed by Timothy Hatcher.
+
+        The slim toolbar needs a little more work before landing.
+
+        This patch reverts r255547, r255557, r255890, r255892, r255893, r255901, r255980.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+
 2020-02-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: move the items in the toolbar into the tab bar to save vertical space

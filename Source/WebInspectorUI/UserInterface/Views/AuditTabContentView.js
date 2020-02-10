@@ -27,9 +27,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
 {
     constructor()
     {
-        super(AuditTabContentView.tabInfo(), {
-            navigationSidebarPanelConstructor: WI.AuditNavigationSidebarPanel,
-        });
+        super("audit", ["audit"], WI.GeneralTabBarItem.fromTabInfo(WI.AuditTabContentView.tabInfo()), WI.AuditNavigationSidebarPanel);
 
         this._startStopShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
         this._startStopShortcut.implicitlyPreventsDefault = false;
@@ -41,7 +39,6 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
     static tabInfo()
     {
         return {
-            identifier: AuditTabContentView.Type,
             image: "Images/Audit.svg",
             title: WI.UIString("Audit"),
         };

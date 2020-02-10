@@ -116,6 +116,8 @@ public:
 
     void frontendLoaded() override;
 
+    void startWindowDrag() override;
+
     String localizedStringsURL() const override;
     Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::Page; };
     String targetPlatformName() const final { return "macOS"_s; };

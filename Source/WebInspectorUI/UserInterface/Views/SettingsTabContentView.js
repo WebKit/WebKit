@@ -26,9 +26,14 @@
 
 WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentView
 {
-    constructor()
+    constructor(identifier)
     {
-        super(SettingsTabContentView.tabInfo());
+        let tabBarItem = WI.PinnedTabBarItem.fromTabInfo(WI.SettingsTabContentView.tabInfo());
+
+        super(identifier || "settings", "settings", tabBarItem);
+
+        // Ensures that the Settings tab is displayable from a pinned tab bar item.
+        tabBarItem.representedObject = this;
 
         this._selectedSettingsView = null;
         this._settingsViews = [];
@@ -37,15 +42,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     static tabInfo()
     {
         return {
-            identifier: SettingsTabContentView.Type,
             image: "Images/Gear.svg",
             title: WI.UIString("Settings"),
+            isEphemeral: true,
         };
-    }
-
-    static shouldPinTab()
-    {
-        return true;
     }
 
     static shouldSaveTab()
@@ -360,6 +360,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
+        experimentalSettingsView.addSeparator();
+
         if (InspectorBackend.hasDomain("CSS")) {
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show Jump to Effective Property Button"));
@@ -383,6 +386,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         listenForChange(WI.settings.experimentalEnablePreviewFeatures);
+        listenForChange(WI.settings.experimentalEnableNewTabBar);
 
         if (InspectorBackend.hasDomain("CSS"))
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);

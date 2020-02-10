@@ -34,11 +34,11 @@
 /* Text track contains forced subtitles */
 "%@ Forced" = "%@ Forced";
 
-/* visible name of the network process. The argument is the application name. */
-"%@ Networking" = "%@ Networking";
-
 /* visible name of the GPU process. The argument is the application name. */
 "%@ Graphics and Media" = "%@ Graphics and Media";
+
+/* visible name of the network process. The argument is the application name. */
+"%@ Networking" = "%@ Networking";
 
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
@@ -90,6 +90,9 @@
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
+
+/* Name of application's single WebCrypto master key in Keychain */
+"<application> WebCrypto Master Key" = "<application> WebCrypto Master Key";
 
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
@@ -375,9 +378,6 @@
 
 /* Hide Media Controls context menu item */
 "Hide Controls" = "Hide Controls";
-
-/* Title for Hide Link Previews action button */
-"Hide Link Previews" = "Hide Link Previews";
 
 /* menu item title */
 "Hide Spelling and Grammar" = "Hide Spelling and Grammar";
@@ -703,9 +703,6 @@
 /* Show fonts context menu item */
 "Show Fonts" = "Show Fonts";
 
-/* Title for Show Link Previews action button */
-"Show Link Previews" = "Show Link Previews";
-
 /* menu item title */
 "Show Spelling and Grammar" = "Show Spelling and Grammar";
 
@@ -759,6 +756,9 @@
 
 /* Stop speaking context menu item */
 "Stop Speaking" = "Stop Speaking";
+
+/* Undo action name */
+"StrikeThrough (Undo action name)" = "StrikeThrough";
 
 /* Label for strong password. */
 "Strong Password" = "Strong Password";

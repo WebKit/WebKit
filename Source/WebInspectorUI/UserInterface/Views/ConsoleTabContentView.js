@@ -25,15 +25,16 @@
 
 WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor()
+    constructor(identifier)
     {
-        super(ConsoleTabContentView.tabInfo(), {disableBackForward: true});
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ConsoleTabContentView.tabInfo());
+
+        super(identifier || "console", "console", tabBarItem, null, null, true);
     }
 
     static tabInfo()
     {
         return {
-            identifier: ConsoleTabContentView.Type,
             image: "Images/Console.svg",
             title: WI.UIString("Console"),
         };
