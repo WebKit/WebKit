@@ -548,8 +548,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         if (!wrapper) {
             // No wrapper under the mouse, so look at the selection to try and find one.
-            if (!selection.isCollapsed)
-                wrapper = selection.focusNode.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
+            if (!selection.isCollapsed) {
+                let focusElement = selection.focusNode;
+                if (!(focusElement instanceof Element))
+                    focusElement = focusElement.parentElement;
+                wrapper = focusElement.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
+            }
 
             if (!wrapper) {
                 selection.removeAllRanges();

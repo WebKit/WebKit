@@ -1,3 +1,18 @@
+2020-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Web Inspector][WinCairo] Selecting an error message in Console causes "TypeError:​ selection.focusNode.closest is not a function."
+        https://bugs.webkit.org/show_bug.cgi?id=207248
+
+        Reviewed by Devin Rousso.
+
+        r242174 replaced Node.enclosingNodeOrSelfWithClass with
+        Element.closest. However, selection.focusNode isn't necessarily an
+        Element, but can be a Text node.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._mousemove): Use selection.focusNode.parentElement.closest
+        if selection.focusNode is not a instance of Element.
+
 2020-02-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r249831): Sources: endless spinner when trying to view a resource
