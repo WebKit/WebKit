@@ -1382,3 +1382,5 @@ webkit.org/b/207077 [ Debug ] imported/w3c/web-platform-tests/mathml/presentatio
 webkit.org/b/207038 [ Release ] fast/hidpi/image-srcset-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html [ Pass Failure ]
+
+webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
