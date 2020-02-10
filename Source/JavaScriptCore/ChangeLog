@@ -1,3 +1,16 @@
+2020-02-10  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r256103.
+
+        This patch is blocking the rollout of r256091
+
+        Reverted changeset:
+
+        "Move JavaScriptCore related feature defines from
+        FeatureDefines.xcconfig to PlatformEnableCocoa.h"
+        https://bugs.webkit.org/show_bug.cgi?id=207436
+        https://trac.webkit.org/changeset/256103
+
 2020-02-09  Keith Rollin  <krollin@apple.com>
 
         Re-enable LTO for ARM builds

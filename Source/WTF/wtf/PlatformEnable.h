@@ -682,14 +682,6 @@
 #define ENABLE_DATA_DETECTION 0
 #endif
 
-#if !defined(ENABLE_FAST_JIT_PERMISSIONS)
-#define ENABLE_FAST_JIT_PERMISSIONS 0
-#endif
-
-#if !defined(ENABLE_SEPARATED_WX_HEAP)
-#define ENABLE_SEPARATED_WX_HEAP 0
-#endif
-
 /*
  * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
@@ -741,6 +733,13 @@
 /* FIXME: This should be turned into an #error invariant */
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* FIXME: This should be turned into an #error invariant */
+/* The FTL is disabled on the iOS simulator, mostly for simplicity. */
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
 #undef ENABLE_FTL_JIT
 #define ENABLE_FTL_JIT 0
 #endif
@@ -858,6 +857,10 @@
    Turned on for debug builds. */
 #if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT) && !defined(NDEBUG)
 #define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 1
+#endif
+
+#if !defined(ENABLE_SEPARATED_WX_HEAP) && PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
+#define ENABLE_SEPARATED_WX_HEAP 1
 #endif
 
 /* Determine if we need to enable Computed Goto Opcodes or not: */
