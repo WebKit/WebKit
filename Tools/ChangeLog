@@ -1,5 +1,17 @@
 2020-02-10  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Display flaky layout test names in build summary
+        https://bugs.webkit.org/show_bug.cgi?id=207504
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ReRunWebKitTests.evaluateCommand): Drive-by fix to correct the pluralization.
+        (AnalyzeLayoutTestsResults.report_pre_existing_failures): Append the flaky failure information.
+        (AnalyzeLayoutTestsResults.start):
+
+2020-02-10  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Use SetBuildSummary instead of buildFinished in Layout tests
         https://bugs.webkit.org/show_bug.cgi?id=207492
 

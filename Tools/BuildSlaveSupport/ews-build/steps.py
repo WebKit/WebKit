@@ -1474,7 +1474,8 @@ class ReRunWebKitTests(RunWebKitTests):
             self.descriptionDone = message
             self.build.results = SUCCESS
             if not first_results_did_exceed_test_failure_limit:
-                message = 'Found flaky tests: {}'.format(flaky_failures_string)
+                pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+                message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
             self.setProperty('build_summary', message)
         else:
             self.setProperty('patchFailedTests', True)
@@ -1538,13 +1539,19 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         self.build.buildFinished([message], FAILURE)
         return defer.succeed(None)
 
-    def report_pre_existing_failures(self, clean_tree_failures):
+    def report_pre_existing_failures(self, clean_tree_failures, flaky_failures):
         self.finished(SUCCESS)
         self.build.results = SUCCESS
         self.descriptionDone = 'Passed layout tests'
-        pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
-        clean_tree_failures_string = ', '.join([failure_name for failure_name in clean_tree_failures])
-        message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+        message = ''
+        if clean_tree_failures:
+            clean_tree_failures_string = ', '.join([failure_name for failure_name in clean_tree_failures])
+            pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
+            message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+        if flaky_failures:
+            flaky_failures_string = ', '.join(flaky_failures)
+            pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+            message += ' Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
         self.setProperty('build_summary', message)
         return defer.succeed(None)
 
@@ -1569,6 +1576,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         second_results_failing_tests = set(self.getProperty('second_run_failures', []))
         clean_tree_results_did_exceed_test_failure_limit = self.getProperty('clean_tree_results_exceed_failure_limit')
         clean_tree_results_failing_tests = set(self.getProperty('clean_tree_run_failures', []))
+        flaky_failures = first_results_failing_tests.union(second_results_failing_tests) - first_results_failing_tests.intersection(second_results_failing_tests)
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:
             if (len(first_results_failing_tests) - len(clean_tree_results_failing_tests)) <= 5:
@@ -1612,7 +1620,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             # At this point we know that at least one test flaked, but no consistent failures
             # were introduced. This is a bit of a grey-zone. It's possible that the patch introduced some flakiness.
             # We still mark the build as SUCCESS.
-            return self.report_pre_existing_failures(clean_tree_results_failing_tests)
+            return self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures)
 
         if clean_tree_results_did_exceed_test_failure_limit:
             return self.retry_build()
@@ -1623,7 +1631,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         # At this point, we know that the first and second runs had the exact same failures,
         # and that those failures are all present on the clean tree, so we can say with certainty
         # that the patch is good.
-        return self.report_pre_existing_failures(clean_tree_results_failing_tests)
+        return self.report_pre_existing_failures(clean_tree_results_failing_tests, flaky_failures)
 
 
 class RunWebKit1Tests(RunWebKitTests):
