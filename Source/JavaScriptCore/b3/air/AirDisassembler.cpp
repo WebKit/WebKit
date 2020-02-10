@@ -32,6 +32,7 @@
 #include "AirCode.h"
 #include "AirInst.h"
 #include "B3Value.h"
+#include "CCallHelpers.h"
 #include "Disassembler.h"
 #include "LinkBuffer.h"
 
@@ -63,7 +64,7 @@ void Disassembler::startBlock(BasicBlock* block, CCallHelpers& jit)
     m_blocks.append(block);
 }
 
-void Disassembler::addInst(Inst* inst, CCallHelpers::Label start, CCallHelpers::Label end)
+void Disassembler::addInst(Inst* inst, MacroAssembler::Label start, MacroAssembler::Label end)
 {
     auto addResult = m_instToRange.add(inst, std::make_pair(start, end));
     RELEASE_ASSERT(addResult.isNewEntry);

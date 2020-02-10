@@ -27,7 +27,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArg.h"
 #include "B3Bank.h"
 #include "B3HeapRange.h"
 #include "B3Value.h"

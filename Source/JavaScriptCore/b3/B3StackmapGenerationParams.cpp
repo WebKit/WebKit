@@ -59,12 +59,12 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
     return result;
 }
 
-Vector<Box<CCallHelpers::Label>> StackmapGenerationParams::successorLabels() const
+Vector<Box<MacroAssembler::Label>> StackmapGenerationParams::successorLabels() const
 {
     RELEASE_ASSERT(m_context.indexInBlock == m_context.currentBlock->size() - 1);
     RELEASE_ASSERT(m_value->effects().terminal);
     
-    Vector<Box<CCallHelpers::Label>> result(m_context.currentBlock->numSuccessors());
+    Vector<Box<MacroAssembler::Label>> result(m_context.currentBlock->numSuccessors());
     for (unsigned i = m_context.currentBlock->numSuccessors(); i--;)
         result[i] = m_context.blockLabels[m_context.currentBlock->successorBlock(i)];
     return result;

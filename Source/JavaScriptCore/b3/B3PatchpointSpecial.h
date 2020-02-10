@@ -55,7 +55,7 @@ protected:
     // NOTE: the generate method will generate the hidden branch and then register a LatePath that
     // generates the stackmap. Super crazy dude!
 
-    CCallHelpers::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
+    MacroAssembler::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
     
     bool isTerminal(Air::Inst&) final;
 

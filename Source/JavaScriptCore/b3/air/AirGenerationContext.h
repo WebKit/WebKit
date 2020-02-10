@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
-#include "CCallHelpers.h"
+#include "MacroAssembler.h"
 #include <wtf/Box.h>
 #include <wtf/IndexMap.h>
 #include <wtf/SharedTask.h>
@@ -48,7 +48,7 @@ public:
     typedef SharedTask<LatePathFunction> LatePath;
 
     Vector<RefPtr<LatePath>> latePaths;
-    IndexMap<BasicBlock*, Box<CCallHelpers::Label>> blockLabels;
+    IndexMap<BasicBlock*, Box<MacroAssembler::Label>> blockLabels;
     BasicBlock* currentBlock { nullptr };
     unsigned indexInBlock { UINT_MAX };
     Code* code { nullptr };

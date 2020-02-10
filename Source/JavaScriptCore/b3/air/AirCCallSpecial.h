@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirSpecial.h"
+#include "RegisterSet.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -57,7 +58,7 @@ protected:
     bool admitsStack(Inst&, unsigned argIndex) final;
     bool admitsExtendedOffsetAddr(Inst&, unsigned) final;
     void reportUsedRegisters(Inst&, const RegisterSet&) final;
-    CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
+    MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
     RegisterSet extraEarlyClobberedRegs(Inst&) final;
     RegisterSet extraClobberedRegs(Inst&) final;
 

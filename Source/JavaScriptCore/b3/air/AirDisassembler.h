@@ -27,10 +27,11 @@
 
 #if ENABLE(B3_JIT)
 
-#include "CCallHelpers.h"
+#include "MacroAssembler.h"
 
 namespace JSC { 
 
+class CCallHelpers;
 class LinkBuffer;
 
 namespace B3 { namespace Air {
@@ -49,17 +50,17 @@ public:
     void startLatePath(CCallHelpers&);
     void endLatePath(CCallHelpers&);
     void startBlock(BasicBlock*, CCallHelpers&);
-    void addInst(Inst*, CCallHelpers::Label, CCallHelpers::Label);
+    void addInst(Inst*, MacroAssembler::Label, MacroAssembler::Label);
 
-    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, const ScopedLambda<void(Inst&)>& doToEachInst);
+    void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, const WTF::ScopedLambda<void(Inst&)>& doToEachInst);
 
 private:
-    HashMap<Inst*, std::pair<CCallHelpers::Label, CCallHelpers::Label>> m_instToRange;
+    HashMap<Inst*, std::pair<MacroAssembler::Label, MacroAssembler::Label>> m_instToRange;
     Vector<BasicBlock*> m_blocks;
-    CCallHelpers::Label m_entrypointStart;
-    CCallHelpers::Label m_entrypointEnd;
-    CCallHelpers::Label m_latePathStart;
-    CCallHelpers::Label m_latePathEnd;
+    MacroAssembler::Label m_entrypointStart;
+    MacroAssembler::Label m_entrypointEnd;
+    MacroAssembler::Label m_latePathStart;
+    MacroAssembler::Label m_latePathEnd;
 };
 
 } } } // namespace JSC::B3::Air

@@ -33,6 +33,7 @@
 #include "AirSpecial.h"
 #include "B3ValueInlines.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "MacroAssembler.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -108,7 +109,7 @@ struct PatchCustom {
         return inst.args[0].special()->hasNonArgNonControlEffects(inst);
     }
 
-    static CCallHelpers::Jump generate(
+    static MacroAssembler::Jump generate(
         Inst& inst, CCallHelpers& jit, GenerationContext& context)
     {
         return inst.args[0].special()->generate(inst, jit, context);
@@ -181,7 +182,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
     }
 
     // This just crashes, since we expect C calls to be lowered before generation.
-    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
+    static MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
 };
 
 struct ColdCCallCustom : CCallCustom {
@@ -248,7 +249,7 @@ struct ShuffleCustom : public CommonCustomBase<ShuffleCustom> {
         return false;
     }
 
-    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
+    static MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
 };
 
 struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
@@ -288,12 +289,12 @@ struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
         return false;
     }
 
-    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&)
+    static MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&)
     {
         // This should never be reached because we should have lowered EntrySwitch before
         // generation.
         UNREACHABLE_FOR_PLATFORM();
-        return CCallHelpers::Jump();
+        return MacroAssembler::Jump();
     }
 };
 
@@ -333,28 +334,7 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
         return true;
     }
 
-    static CCallHelpers::Jump generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)
-    {
-        WasmBoundsCheckValue* value = inst.origin->as<WasmBoundsCheckValue>();
-        CCallHelpers::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(CCallHelpers::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
-
-        context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
-            [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
-                outOfBounds.link(&jit);
-                switch (value->boundsType()) {
-                case WasmBoundsCheckValue::Type::Pinned:
-                    context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinnedSize);
-                    break;
-
-                case WasmBoundsCheckValue::Type::Maximum:
-                    context.code->wasmBoundsCheckGenerator()->run(jit, InvalidGPRReg);
-                    break;
-                }
-            }));
-
-        // We said we were not a terminal.
-        return CCallHelpers::Jump();
-    }
+    static MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
 };
 
 } } } // namespace JSC::B3::Air

@@ -28,6 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "CCallHelpers.h"
+
 namespace JSC { namespace B3 { namespace Air {
 
 CCallSpecial::CCallSpecial()

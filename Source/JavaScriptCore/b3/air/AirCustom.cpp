@@ -31,6 +31,7 @@
 #include "AirInstInlines.h"
 #include "B3CCallValue.h"
 #include "B3ValueInlines.h"
+#include "CCallHelpers.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -96,11 +97,11 @@ bool CCallCustom::isValidForm(Inst& inst)
     return true;
 }
 
-CCallHelpers::Jump CCallCustom::generate(Inst& inst, CCallHelpers&, GenerationContext&)
+MacroAssembler::Jump CCallCustom::generate(Inst& inst, CCallHelpers&, GenerationContext&)
 {
     dataLog("FATAL: Unlowered C call: ", inst, "\n");
     UNREACHABLE_FOR_PLATFORM();
-    return CCallHelpers::Jump();
+    return MacroAssembler::Jump();
 }
 
 bool ShuffleCustom::isValidForm(Inst& inst)
@@ -171,11 +172,11 @@ bool ShuffleCustom::isValidForm(Inst& inst)
     return true;
 }
 
-CCallHelpers::Jump ShuffleCustom::generate(Inst& inst, CCallHelpers&, GenerationContext&)
+MacroAssembler::Jump ShuffleCustom::generate(Inst& inst, CCallHelpers&, GenerationContext&)
 {
     dataLog("FATAL: Unlowered shuffle: ", inst, "\n");
     UNREACHABLE_FOR_PLATFORM();
-    return CCallHelpers::Jump();
+    return MacroAssembler::Jump();
 }
 
 bool WasmBoundsCheckCustom::isValidForm(Inst& inst)
@@ -188,6 +189,28 @@ bool WasmBoundsCheckCustom::isValidForm(Inst& inst)
     return inst.args[1].isReg() || inst.args[1].isTmp() || inst.args[1].isSomeImm();
 }
 
+MacroAssembler::Jump WasmBoundsCheckCustom::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)
+{
+    WasmBoundsCheckValue* value = inst.origin->as<WasmBoundsCheckValue>();
+    MacroAssembler::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(MacroAssembler::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
+
+    context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
+        [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
+            outOfBounds.link(&jit);
+            switch (value->boundsType()) {
+            case WasmBoundsCheckValue::Type::Pinned:
+                context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinnedSize);
+                break;
+
+            case WasmBoundsCheckValue::Type::Maximum:
+                context.code->wasmBoundsCheckGenerator()->run(jit, InvalidGPRReg);
+                break;
+            }
+        }));
+
+    // We said we were not a terminal.
+    return MacroAssembler::Jump();
+}
 
 } } } // namespace JSC::B3::Air
 

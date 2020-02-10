@@ -27,7 +27,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArg.h"
 #include "AirKind.h"
 #include "B3StackmapSpecial.h"
 #include <wtf/HashMap.h>
@@ -129,7 +128,7 @@ protected:
     // NOTE: the generate method will generate the hidden branch and then register a LatePath that
     // generates the stackmap. Super crazy dude!
 
-    CCallHelpers::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
+    MacroAssembler::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
 
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;
