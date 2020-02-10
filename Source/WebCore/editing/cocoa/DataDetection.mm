@@ -612,7 +612,6 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
             anchorElement->setDir("ltr");
-            anchorElement->setInlineStyleProperty(CSSPropertyColor, CSSValueCurrentcolor);
 
             if (shouldUseLightLinks) {
                 document.updateStyleIfNeeded();
@@ -630,6 +629,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                         double overrideAlphaMultiplier = 0.38;
                         auto underlineColor = Color(makeRGBAFromHSLA(hue, saturation, overrideLightness, overrideAlphaMultiplier * textColor.alphaAsFloat()));
 
+                        anchorElement->setInlineStyleProperty(CSSPropertyColor, CSSValueCurrentcolor);
                         anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, underlineColor.cssText());
                     }
                 }
