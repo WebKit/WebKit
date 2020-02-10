@@ -985,6 +985,17 @@ String normalizeHTTPMethod(const String& method)
     return method;
 }
 
+// Defined by https://tools.ietf.org/html/rfc7231#section-4.2.1
+bool isSafeMethod(const String& method)
+{
+    const ASCIILiteral safeMethods[] = { "GET"_s, "HEAD"_s, "OPTIONS"_s, "TRACE"_s };
+    for (auto value : safeMethods) {
+        if (equalIgnoringASCIICase(method, value.characters()))
+            return true;
+    }
+    return false;
+}
+
 CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header)
 {
     auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);

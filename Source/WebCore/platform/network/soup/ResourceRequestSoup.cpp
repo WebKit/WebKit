@@ -110,6 +110,15 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
     if (firstParty)
         soup_message_set_first_party(soupMessage, firstParty.get());
 
+#if SOUP_CHECK_VERSION(2, 69, 90)
+    if (m_sameSiteDisposition == ResourceRequest::SameSiteDisposition::SameSite) {
+        GUniquePtr<SoupURI> siteForCookies = urlToSoupURI(m_url);
+        soup_message_set_site_for_cookies(soupMessage, siteForCookies.get());
+    }
+
+    soup_message_set_is_top_level_navigation(soupMessage, isTopSite());
+#endif
+
     soup_message_set_flags(soupMessage, m_soupFlags);
 
     if (!acceptEncoding())
@@ -169,6 +178,17 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 
     if (SoupURI* firstParty = soup_message_get_first_party(soupMessage))
         m_firstPartyForCookies = soupURIToURL(firstParty);
+
+#if SOUP_CHECK_VERSION(2, 69, 90)
+    setIsTopSite(soup_message_get_is_top_level_navigation(soupMessage));
+
+    if (SoupURI* siteForCookies = soup_message_get_site_for_cookies(soupMessage))
+        setIsSameSite(areRegistrableDomainsEqual(soupURIToURL(siteForCookies), m_url));
+    else
+        m_sameSiteDisposition = SameSiteDisposition::Unspecified;
+#else
+    m_sameSiteDisposition = SameSiteDisposition::Unspecified;
+#endif
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 

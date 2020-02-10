@@ -1,3 +1,15 @@
+2020-02-07  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Add same-site cookie support
+        https://bugs.webkit.org/show_bug.cgi?id=204137
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update libsoup to 2.69.90 in JHBuild.
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2020-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, revert 75% load-factor because of JetStream2/string-unpack-code-SP regression

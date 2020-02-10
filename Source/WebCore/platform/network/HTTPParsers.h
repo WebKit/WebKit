@@ -108,6 +108,7 @@ bool isCrossOriginSafeHeader(const String&, const HTTPHeaderSet&);
 bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 
 String normalizeHTTPMethod(const String&);
+bool isSafeMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
 

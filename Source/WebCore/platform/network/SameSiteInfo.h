@@ -34,6 +34,7 @@ struct SameSiteInfo {
 
     bool isSameSite { false };
     bool isTopSite { false };
+    bool isSafeHTTPMethod { false };
 
     template <class Encoder> void encode(Encoder&) const;
     template <class Decoder> static bool decode(Decoder&, SameSiteInfo&);
@@ -44,6 +45,7 @@ void SameSiteInfo::encode(Encoder& encoder) const
 {
     encoder << isSameSite;
     encoder << isTopSite;
+    encoder << isSafeHTTPMethod;
 }
 
 template <class Decoder>
@@ -52,6 +54,8 @@ bool SameSiteInfo::decode(Decoder& decoder, SameSiteInfo& info)
     if (!decoder.decode(info.isSameSite))
         return false;
     if (!decoder.decode(info.isTopSite))
+        return false;
+    if (!decoder.decode(info.isSafeHTTPMethod))
         return false;
     return true;
 }
