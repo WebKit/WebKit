@@ -279,7 +279,10 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     // in the CodeBlock. This is a good time to perform an early shrink, which is more
     // powerful than a late one. It's safe to do so because we haven't generated any code
     // that references any of the tables directly, yet.
-    m_codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
+    {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::EarlyShrink);
+    }
 
     if (validationEnabled())
         validate(dfg);
@@ -617,6 +620,7 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         {
             ConcurrentJSLocker locker(m_codeBlock->m_lock);
             m_codeBlock->jitCode()->shrinkToFit(locker);
+            m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
         }
 
         if (validationEnabled()) {

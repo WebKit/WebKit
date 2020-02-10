@@ -1,3 +1,35 @@
+2020-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] CodeBlock::shrinkToFit should shrink m_constantRegisters and m_constantsSourceCodeRepresentation in 64bit architectures
+        https://bugs.webkit.org/show_bug.cgi?id=207356
+
+        Reviewed by Mark Lam.
+
+        Only 32bit architectures are using m_constantRegisters's address. 64bit architectures are not relying on m_constantRegisters's address.
+        This patches fixes the thing so that CodeBlock::shrinkToFit will shrink m_constantRegisters and m_constantsSourceCodeRepresentation
+        regardless of whether this is EarlyShrink or not. We also move DFG/FTL's LateShrink call to the place after calling DFGCommon reallyAdd
+        since they can add more constant registers.
+
+        Relanding it by fixing dead-lock.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble): Deleted.
+
 2020-02-06  Robin Morisset  <rmorisset@apple.com>
 
         Most of B3 and Air does not need to include CCallHelpers.h
