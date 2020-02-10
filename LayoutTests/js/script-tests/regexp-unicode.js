@@ -104,22 +104,21 @@ shouldBeFalse('re2.test("\uffff")');
 shouldBeTrue('re2.test("\u{12345}")');
 
 // Make sure we properly handle dangling surrogates and combined surrogates
-// FIXME: These tests are disabled until https://bugs.webkit.org/show_bug.cgi?id=154863 is fixed
-// shouldBe('/[\u{10c01}\uD803#\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBe('/[\uD803\u{10c01}\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBe('/[\uD803#\uDC01\u{10c01}]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBe('/[\uD803\uD803\uDC01\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBeNull('/[\u{10c01}\uD803#\uDC01]{2}/u.exec("\u{10c01}")');
-// shouldBeNull('/[\uD803\u{10c01}\uDC01]{2}/u.exec("\u{10c01}")');
-// shouldBeNull('/[\uD803#\uDC01\u{10c01}]{2}/u.exec("\u{10c01}")');
-// shouldBeNull('/[\uD803\uD803\uDC01\uDC01]{2}/u.exec("\u{10c01}")');
-// shouldBe('/\uD803|\uDC01|\u{10c01}/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBe('/\uD803|\uD803\uDC01|\uDC01/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
-// shouldBe('/\uD803|\uDC01|\u{10c01}/u.exec("\u{D803}").toString()', '"\u{D803}"');
-// shouldBe('/\uD803|\uD803\uDC01|\uDC01/u.exec("\u{DC01}").toString()', '"\u{DC01}"');
-// shouldBeNull('/\uD803\u{10c01}/u.exec("\u{10c01}")');
-// shouldBeNull('/\uD803\u{10c01}/u.exec("\uD803")');
-// shouldBe('"\uD803\u{10c01}".match(/\uD803\u{10c01}/u)[0].length', '3');
+shouldBe('/[\u{10c01}\uD803#\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBe('/[\uD803\u{10c01}\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBe('/[\uD803#\uDC01\u{10c01}]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBe('/[\uD803\uD803\uDC01\uDC01]/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBeNull('/[\u{10c01}\uD803#\uDC01]{2}/u.exec("\u{10c01}")');
+shouldBeNull('/[\uD803\u{10c01}\uDC01]{2}/u.exec("\u{10c01}")');
+shouldBeNull('/[\uD803#\uDC01\u{10c01}]{2}/u.exec("\u{10c01}")');
+shouldBeNull('/[\uD803\uD803\uDC01\uDC01]{2}/u.exec("\u{10c01}")');
+shouldBe('/\uD803|\uDC01|\u{10c01}/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBe('/\uD803|\uD803\uDC01|\uDC01/u.exec("\u{10c01}").toString()', '"\u{10c01}"');
+shouldBe('/\uD803|\uDC01|\u{10c01}/u.exec("\u{D803}").toString()', '"\u{D803}"');
+shouldBe('/\uD803|\uD803\uDC01|\uDC01/u.exec("\u{DC01}").toString()', '"\u{DC01}"');
+shouldBeNull('/\uD803\u{10c01}/u.exec("\u{10c01}")');
+shouldBeNull('/\uD803\u{10c01}/u.exec("\uD803")');
+shouldBe('"\uD803\u{10c01}".match(/\uD803\u{10c01}/u)[0].length', '3');
 
 // Check quantified matches
 shouldBeTrue('/\u{1d306}{2}/u.test("\u{1d306}\u{1d306}")');
