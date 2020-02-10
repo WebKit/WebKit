@@ -1002,3 +1002,5 @@ webkit.org/b/207385 http/tests/paymentrequest/page-cache-completed-payment-respo
 webkit.org/b/207460 webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
+
+webkit.org/b/207466 [ Debug ] http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
