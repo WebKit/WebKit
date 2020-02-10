@@ -411,6 +411,12 @@ struct FeaturesGL : FeatureSetBase
         "rewrite_row_major_matrices", FeatureCategory::OpenGLWorkarounds,
         "Rewrite row major matrices in shaders as column major as a driver bug workaround",
         &members, "http://anglebug.com/2273"};
+
+    // Flush before glBindFramebuffer as a driver bug workaround if necessary.
+    Feature flushBeforeBindFramebuffer = {
+        "flush_before_bindframebuffer", FeatureCategory::OpenGLWorkarounds,
+        "Flush before glBindFramebuffer as a driver bug workaround",
+        &members, "https://bugs.webkit.org/show_bug.cgi?id=206625"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

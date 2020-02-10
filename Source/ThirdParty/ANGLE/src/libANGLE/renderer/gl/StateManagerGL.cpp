@@ -586,6 +586,9 @@ void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
 
 void StateManagerGL::bindFramebuffer(GLenum type, GLuint framebuffer)
 {
+    if (mFeatures.flushBeforeBindFramebuffer.enabled)
+        mFunctions->flush();
+
     switch (type)
     {
         case GL_FRAMEBUFFER:
