@@ -1,3 +1,16 @@
+2020-02-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WebInspector] Always allow data:// URIs for inspector views
+        https://bugs.webkit.org/show_bug.cgi?id=207454
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage): The Web
+        Inspector may use navigation to data:// URLs, so always allow it.
+
 2020-02-09  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Expose allowTopNavigationToDataURL
