@@ -65,8 +65,9 @@ public:
     int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     void clearWatch(int watchID);
 
-    WEBCORE_EXPORT void setIsAllowed(bool);
-    void resetIsAllowed() { m_allowGeolocation = Unknown; }
+    WEBCORE_EXPORT void setIsAllowed(bool, const String& authorizationToken);
+    const String& authorizationToken() const { return m_authorizationToken; }
+    WEBCORE_EXPORT void resetIsAllowed();
     bool isAllowed() const { return m_allowGeolocation == Yes; }
 
     void positionChanged();
@@ -132,6 +133,7 @@ private:
     void handleError(GeolocationPositionError&);
 
     void requestPermission();
+    void revokeAuthorizationTokenIfNecessary();
 
     bool startUpdating(GeoNotifier*);
     void stopUpdating();
@@ -155,6 +157,7 @@ private:
     RefPtr<GeolocationPosition> m_lastPosition;
 
     enum { Unknown, InProgress, Yes, No } m_allowGeolocation { Unknown };
+    String m_authorizationToken;
     bool m_isSuspended { false };
     bool m_resetOnResume { false };
     bool m_hasChangedPosition { false };

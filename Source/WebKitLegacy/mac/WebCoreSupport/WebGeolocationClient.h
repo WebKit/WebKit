@@ -39,7 +39,7 @@ public:
     WebView *webView() { return m_webView; }
 
     void geolocationDestroyed() override;
-    void startUpdating() override;
+    void startUpdating(const String& authorizationToken) override;
     void stopUpdating() override;
 #if PLATFORM(IOS_FAMILY)
     // FIXME: unify this with Mac on OpenSource.

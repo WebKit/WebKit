@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -37,8 +38,10 @@ class GeolocationClient {
 public:
     virtual void geolocationDestroyed() = 0;
 
-    virtual void startUpdating() = 0;
+    virtual void startUpdating(const String& authorizationToken) = 0;
     virtual void stopUpdating() = 0;
+    virtual void revokeAuthorizationToken(const String&) { }
+
     // FIXME: The V2 Geolocation specification proposes that this property is
     // renamed. See http://www.w3.org/2008/geolocation/track/issues/6
     // We should update WebKit to reflect this if and when the V2 specification

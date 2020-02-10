@@ -358,7 +358,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(GEOLOCATION)
     # Geolocation
-    DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+    DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, String authorizationToken)
 #endif
 
 #if ENABLE(MEDIA_STREAM)
