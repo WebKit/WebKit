@@ -4532,3 +4532,4 @@ webkit.org/b/206995 webanimations/seeking-by-changing-delay-accelerated.html [ F
 
 webkit.org/b/207327 webanimations/accelerated-animation-canceled-before-commit.html [ Skip ]
 
+webkit.org/b/207373 fast/loader/data-url-load-denied.html [ Pass Timeout ]

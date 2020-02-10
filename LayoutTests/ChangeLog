@@ -1,3 +1,12 @@
+2020-02-10  Truitt Savell  <tsavell@apple.com>
+
+        Regression (r255961): fast/loader/data-url-load-denied.html is consistently timing out on windows
+        https://bugs.webkit.org/show_bug.cgi?id=207373
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-02-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky failing
