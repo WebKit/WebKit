@@ -2907,7 +2907,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
     auto layoutStyle = AttachmentLayoutStyle::NonSelected;
-    if (attachment.selectionState() != RenderObject::SelectionNone && paintInfo.phase != PaintPhase::Selection)
+    if (attachment.selectionState() != RenderObject::HighlightState::None && paintInfo.phase != PaintPhase::Selection)
         layoutStyle = AttachmentLayoutStyle::Selected;
 
     AttachmentLayout layout(attachment, layoutStyle);

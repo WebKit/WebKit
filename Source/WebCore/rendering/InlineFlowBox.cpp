@@ -1505,9 +1505,9 @@ InlineBox* InlineFlowBox::lastLeafDescendant() const
     return leaf;
 }
 
-RenderObject::SelectionState InlineFlowBox::selectionState()
+RenderObject::HighlightState InlineFlowBox::selectionState()
 {
-    return RenderObject::SelectionNone;
+    return RenderObject::HighlightState::None;
 }
 
 bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const

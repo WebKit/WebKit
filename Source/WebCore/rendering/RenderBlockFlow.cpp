@@ -3178,9 +3178,9 @@ Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirecti
     return style().overflowY() == Overflow::Visible ? lastBaseline : std::min(boxHeight, lastBaseline);
 }
 
-void RenderBlockFlow::setSelectionState(SelectionState state)
+void RenderBlockFlow::setSelectionState(HighlightState state)
 {
-    if (state != SelectionNone)
+    if (state != HighlightState::None)
         ensureLineBoxes();
     RenderBoxModelObject::setSelectionState(state);
 }
@@ -3192,7 +3192,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     GapRects result;
 
-    bool containsStart = selectionState() == SelectionStart || selectionState() == SelectionBoth;
+    bool containsStart = selectionState() == HighlightState::Start || selectionState() == HighlightState::Both;
 
     if (!hasLines()) {
         if (containsStart) {
@@ -3214,7 +3214,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         LayoutUnit selHeight = curr->selectionHeightAdjustedForPrecedingBlock();
 
         if (!containsStart && !lastSelectedLine &&
-            selectionState() != SelectionStart && selectionState() != SelectionBoth && !isRubyBase())
+            selectionState() != HighlightState::Start && selectionState() != HighlightState::Both && !isRubyBase())
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, selTop, cache, paintInfo));
         
         LayoutRect logicalRect { LayoutUnit(curr->logicalLeft()), selTop, LayoutUnit(curr->logicalWidth()), selTop + selHeight };
@@ -3231,7 +3231,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         // VisibleSelection must start just after our last line.
         lastSelectedLine = lastRootBox();
 
-    if (lastSelectedLine && selectionState() != SelectionEnd && selectionState() != SelectionBoth) {
+    if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastSelectedLine->selectionBottom();
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom(), cache);

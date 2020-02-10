@@ -215,7 +215,7 @@ public:
 
     void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
 
-    void setSelectionState(SelectionState) override;
+    void setSelectionState(HighlightState) override;
 
     bool canHaveBoxInfoInFragment() const { return !isFloating() && !isReplaced() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 

@@ -1400,7 +1400,7 @@ bool RenderBlock::shouldPaintSelectionGaps() const
     if (settings().selectionPaintingWithoutSelectionGapsEnabled())
         return false;
 
-    return selectionState() != SelectionNone && style().visibility() == Visibility::Visible && isSelectionRoot();
+    return selectionState() != HighlightState::None && style().visibility() == Visibility::Visible && isSelectionRoot();
 }
 
 bool RenderBlock::isSelectionRoot() const
@@ -1550,7 +1550,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         result = blockSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
 
     // Fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
-    if (&rootBlock == this && (selectionState() != SelectionBoth && selectionState() != SelectionEnd) && !isRubyBase() && !isRubyText()) {
+    if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End) && !isRubyBase() && !isRubyText()) {
         result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
             lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalHeight(), cache, paintInfo));
     }
@@ -1571,7 +1571,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
 
     // Jump right to the first block child that contains some selected objects.
     RenderBox* curr;
-    for (curr = firstChildBox(); curr && curr->selectionState() == SelectionNone; curr = curr->nextSiblingBox()) { }
+    for (curr = firstChildBox(); curr && curr->selectionState() == HighlightState::None; curr = curr->nextSiblingBox()) { }
     
     if (!curr)
         return result;
@@ -1579,8 +1579,8 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
     LogicalSelectionOffsetCaches childCache(*this, cache);
 
     for (bool sawSelectionEnd = false; curr && !sawSelectionEnd; curr = curr->nextSiblingBox()) {
-        SelectionState childState = curr->selectionState();
-        if (childState == SelectionBoth || childState == SelectionEnd)
+        HighlightState childState = curr->selectionState();
+        if (childState == HighlightState::Both || childState == HighlightState::End)
             sawSelectionEnd = true;
 
         if (curr->isFloatingOrOutOfFlowPositioned())
@@ -1595,10 +1595,10 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
         }
 
         bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isTable(); // FIXME: Eventually we won't special-case table like this.
-        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != SelectionNone)) && !isRubyBase() && !isRubyText();
+        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None)) && !isRubyBase() && !isRubyText();
         if (fillBlockGaps) {
             // We need to fill the vertical gap above this object.
-            if (childState == SelectionEnd || childState == SelectionInside) {
+            if (childState == HighlightState::End || childState == HighlightState::Inside) {
                 // Fill the gap above the object.
                 result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
                     lastLogicalTop, lastLogicalLeft, lastLogicalRight, curr->logicalTop(), cache, paintInfo));
@@ -1606,8 +1606,8 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
 
             // Only fill side gaps for objects that paint their own selection if we know for sure the selection is going to extend all the way *past*
             // our object.  We know this if the selection did not end inside our object.
-            if (paintsOwnSelection && (childState == SelectionStart || sawSelectionEnd))
-                childState = SelectionNone;
+            if (paintsOwnSelection && (childState == HighlightState::Start || sawSelectionEnd))
+                childState = HighlightState::None;
 
             // Fill side gaps on this object based off its state.
             bool leftGap, rightGap;
@@ -1624,7 +1624,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
             lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + curr->logicalBottom();
             lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, curr->logicalBottom(), cache);
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, curr->logicalBottom(), cache);
-        } else if (childState != SelectionNone && is<RenderBlock>(*curr)) {
+        } else if (childState != HighlightState::None && is<RenderBlock>(*curr)) {
             // We must be a block that has some selected object inside it, so recur.
             result.unite(downcast<RenderBlock>(*curr).selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()),
                 lastLogicalTop, lastLogicalLeft, lastLogicalRight, childCache, paintInfo));
@@ -1688,15 +1688,11 @@ LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock& rootBlock, const L
     return gapRect;
 }
 
-void RenderBlock::getSelectionGapInfo(SelectionState state, bool& leftGap, bool& rightGap)
+void RenderBlock::getSelectionGapInfo(HighlightState state, bool& leftGap, bool& rightGap)
 {
     bool ltr = style().isLeftToRightDirection();
-    leftGap = (state == RenderObject::SelectionInside) ||
-              (state == RenderObject::SelectionEnd && ltr) ||
-              (state == RenderObject::SelectionStart && !ltr);
-    rightGap = (state == RenderObject::SelectionInside) ||
-               (state == RenderObject::SelectionStart && ltr) ||
-               (state == RenderObject::SelectionEnd && !ltr);
+    leftGap = (state == RenderObject::HighlightState::Inside) || (state == RenderObject::HighlightState::End && ltr) || (state == RenderObject::HighlightState::Start && !ltr);
+    rightGap = (state == RenderObject::HighlightState::Inside) || (state == RenderObject::HighlightState::Start && ltr) || (state == RenderObject::HighlightState::End && !ltr);
 }
 
 LayoutUnit RenderBlock::logicalLeftSelectionOffset(RenderBlock& rootBlock, LayoutUnit position, const LogicalSelectionOffsetCaches& cache)

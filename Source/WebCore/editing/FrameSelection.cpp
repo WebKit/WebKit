@@ -436,7 +436,7 @@ void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMo
         m_selectionRevealMode = SelectionRevealMode::Reveal;
     m_pendingSelectionUpdate = true;
     if (RenderView* view = m_frame->contentRenderer())
-        view->selection().clear();
+        view->selection().clearSelection();
 }
 
 void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent)
@@ -492,7 +492,7 @@ void DragCaretController::nodeWillBeRemoved(Node& node)
         return;
 
     if (RenderView* view = node.document().renderView())
-        view->selection().clear();
+        view->selection().clearSelection();
 
     clear();
 }
@@ -557,7 +557,7 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
 
     if (clearRenderTreeSelection) {
         if (auto* renderView = node.document().renderView()) {
-            renderView->selection().clear();
+            renderView->selection().clearSelection();
 
             // Trigger a selection update so the selection will be set again.
             m_selectionRevealIntent = AXTextStateChangeIntent();
@@ -1570,7 +1570,7 @@ void FrameSelection::prepareForDestruction()
 #endif
 
     if (auto* view = m_frame->contentRenderer())
-        view->selection().clear();
+        view->selection().clearSelection();
 
     setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, CharacterGranularity);
     m_previousCaretNode = nullptr;
@@ -2154,7 +2154,7 @@ void FrameSelection::updateAppearance()
 #endif
 
     if (!selection.isRange()) {
-        view->selection().clear();
+        view->selection().clearSelection();
         return;
     }
 
@@ -2179,7 +2179,7 @@ void FrameSelection::updateAppearance()
         RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
         int endOffset = endPos.deprecatedEditingOffset();
         ASSERT(startOffset >= 0 && endOffset >= 0);
-        view->selection().set({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) });
+        view->selection().setSelection({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) });
     }
 }
 

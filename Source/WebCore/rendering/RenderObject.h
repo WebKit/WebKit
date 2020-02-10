@@ -64,7 +64,7 @@ class RenderLayerModelObject;
 class RenderFragmentContainer;
 class RenderTheme;
 class RenderTreeBuilder;
-class SelectionRangeData;
+class HighlightData;
 class TransformState;
 class VisiblePosition;
 
@@ -693,19 +693,19 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
-    enum SelectionState {
-        SelectionNone, // The object is not selected.
-        SelectionStart, // The object either contains the start of a selection run or is the start of a run
-        SelectionInside, // The object is fully encompassed by a selection run
-        SelectionEnd, // The object either contains the end of a selection run or is the end of a run
-        SelectionBoth // The object contains an entire run or is the sole selected object in that run
+    enum HighlightState {
+        None, // The object is not selected.
+        Start, // The object either contains the start of a selection run or is the start of a run
+        Inside, // The object is fully encompassed by a selection run
+        End, // The object either contains the end of a selection run or is the end of a run
+        Both // The object contains an entire run or is the sole selected object in that run
     };
 
     // The current selection state for an object.  For blocks, the state refers to the state of the leaf
-    // descendants (as described above in the SelectionState enum declaration).
-    SelectionState selectionState() const { return m_bitfields.selectionState(); }
-    virtual void setSelectionState(SelectionState state) { m_bitfields.setSelectionState(state); }
-    inline void setSelectionStateIfNeeded(SelectionState);
+    // descendants (as described above in the HighlightState enum declaration).
+    HighlightState selectionState() const { return m_bitfields.selectionState(); }
+    virtual void setSelectionState(HighlightState state) { m_bitfields.setSelectionState(state); }
+    inline void setSelectionStateIfNeeded(HighlightState);
     bool canUpdateSelectionOnRootLineBoxes();
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
@@ -895,7 +895,7 @@ private:
             , m_childrenInline(false)
             , m_isExcludedFromNormalLayout(false)
             , m_positionedState(IsStaticallyPositioned)
-            , m_selectionState(SelectionNone)
+            , m_selectionState(HighlightState::None)
             , m_fragmentedFlowState(NotInsideFragmentedFlow)
             , m_boxDecorationState(NoBoxDecorations)
         {
@@ -951,8 +951,8 @@ private:
         }
         void clearPositionedState() { m_positionedState = static_cast<unsigned>(PositionType::Static); }
 
-        ALWAYS_INLINE SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
-        ALWAYS_INLINE void setSelectionState(SelectionState selectionState) { m_selectionState = selectionState; }
+        ALWAYS_INLINE HighlightState selectionState() const { return static_cast<HighlightState>(m_selectionState); }
+        ALWAYS_INLINE void setSelectionState(HighlightState selectionState) { m_selectionState = selectionState; }
         
         ALWAYS_INLINE FragmentedFlowState fragmentedFlowState() const { return static_cast<FragmentedFlowState>(m_fragmentedFlowState); }
         ALWAYS_INLINE void setFragmentedFlowState(FragmentedFlowState fragmentedFlowState) { m_fragmentedFlowState = fragmentedFlowState; }
@@ -1067,7 +1067,7 @@ inline bool RenderObject::preservesNewline() const
     return style().preserveNewline();
 }
 
-inline void RenderObject::setSelectionStateIfNeeded(SelectionState state)
+inline void RenderObject::setSelectionStateIfNeeded(HighlightState state)
 {
     if (selectionState() == state)
         return;

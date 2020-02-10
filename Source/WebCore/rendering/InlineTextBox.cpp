@@ -34,6 +34,7 @@
 #include "EventRegion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "HighlightData.h"
 #include "HighlightMap.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
@@ -50,7 +51,6 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SelectionRangeData.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
@@ -155,54 +155,54 @@ bool InlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) con
     return clampedOffset(startPosition) < clampedOffset(endPosition);
 }
 
-RenderObject::SelectionState InlineTextBox::selectionState()
+RenderObject::HighlightState InlineTextBox::selectionState()
 {
     auto state = verifySelectionState(renderer().selectionState(), renderer().view().selection());
     
     // FIXME: this code mutates selection state, but it's used at a simple getter elsewhere
-    // in this file. This code should likely live in SelectionRangeData, or somewhere else.
+    // in this file. This code should likely live in HighlightData, or somewhere else.
     // <rdar://problem/58125978>
     // https://bugs.webkit.org/show_bug.cgi?id=205528
     // If there are ellipsis following, make sure their selection is updated.
     if (m_truncation != cNoTruncation && root().ellipsisBox()) {
         EllipsisBox* ellipsis = root().ellipsisBox();
-        if (state != RenderObject::SelectionNone) {
+        if (state != RenderObject::HighlightState::None) {
             auto [selectionStart, selectionEnd] = selectionStartEnd();
             // The ellipsis should be considered to be selected if the end of
             // the selection is past the beginning of the truncation and the
             // beginning of the selection is before or at the beginning of the
             // truncation.
             ellipsis->setSelectionState(selectionEnd >= m_truncation && selectionStart <= m_truncation ?
-                RenderObject::SelectionInside : RenderObject::SelectionNone);
+                RenderObject::HighlightState::Inside : RenderObject::HighlightState::None);
         } else
-            ellipsis->setSelectionState(RenderObject::SelectionNone);
+            ellipsis->setSelectionState(RenderObject::HighlightState::None);
     }
     
     return state;
 }
 
-RenderObject::SelectionState InlineTextBox::verifySelectionState(RenderObject::SelectionState state, SelectionRangeData& selection) const
+RenderObject::HighlightState InlineTextBox::verifySelectionState(RenderObject::HighlightState state, HighlightData& selection) const
 {
-    if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd || state == RenderObject::SelectionBoth) {
+    if (state == RenderObject::HighlightState::Start || state == RenderObject::HighlightState::End || state == RenderObject::HighlightState::Both) {
         auto startOffset = selection.startOffset();
         auto endOffset = selection.endOffset();
         // The position after a hard line break is considered to be past its end.
         ASSERT(start() + len() >= (isLineBreak() ? 1 : 0));
         unsigned lastSelectable = start() + len() - (isLineBreak() ? 1 : 0);
 
-        bool start = (state != RenderObject::SelectionEnd && startOffset >= m_start && startOffset < m_start + m_len);
-        bool end = (state != RenderObject::SelectionStart && endOffset > m_start && endOffset <= lastSelectable);
+        bool start = (state != RenderObject::HighlightState::End && startOffset >= m_start && startOffset < m_start + m_len);
+        bool end = (state != RenderObject::HighlightState::Start && endOffset > m_start && endOffset <= lastSelectable);
         if (start && end)
-            state = RenderObject::SelectionBoth;
+            state = RenderObject::HighlightState::Both;
         else if (start)
-            state = RenderObject::SelectionStart;
+            state = RenderObject::HighlightState::Start;
         else if (end)
-            state = RenderObject::SelectionEnd;
-        else if ((state == RenderObject::SelectionEnd || startOffset < m_start)
-            && (state == RenderObject::SelectionStart || endOffset > lastSelectable))
-            state = RenderObject::SelectionInside;
-        else if (state == RenderObject::SelectionBoth)
-            state = RenderObject::SelectionNone;
+            state = RenderObject::HighlightState::End;
+        else if ((state == RenderObject::HighlightState::End || startOffset < m_start)
+            && (state == RenderObject::HighlightState::Start || endOffset > lastSelectable))
+            state = RenderObject::HighlightState::Inside;
+        else if (state == RenderObject::HighlightState::Both)
+            state = RenderObject::HighlightState::None;
     }
 
     return state;
@@ -493,7 +493,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     bool isPrinting = renderer().document().printing();
     
     // Determine whether or not we're selected.
-    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhase::TextClip && selectionState() != RenderObject::SelectionNone;
+    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhase::TextClip && selectionState() != RenderObject::HighlightState::None;
     if (!haveSelection && paintInfo.phase == PaintPhase::Selection) {
         // When only painting the selection, don't bother to paint if there is none.
         return;
@@ -685,14 +685,14 @@ unsigned InlineTextBox::clampedOffset(unsigned x) const
     return offset;
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::SelectionState selectionState) const
+std::pair<unsigned, unsigned> InlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::HighlightState selectionState) const
 {
-    if (selectionState == RenderObject::SelectionInside)
+    if (selectionState == RenderObject::HighlightState::Inside)
         return { 0, clampedOffset(m_start + m_len) };
     
-    if (selectionState == RenderObject::SelectionStart)
+    if (selectionState == RenderObject::HighlightState::Start)
         end = renderer().text().length();
-    else if (selectionState == RenderObject::SelectionEnd)
+    else if (selectionState == RenderObject::HighlightState::End)
         start = 0;
     return { clampedOffset(start), clampedOffset(end) };
 }
@@ -704,12 +704,12 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     return clampedStartEndForState(renderer().view().selection().startOffset(), renderer().view().selection().endOffset(), selectionState);
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::highlightStartEnd(SelectionRangeData &rangeData) const
+std::pair<unsigned, unsigned> InlineTextBox::highlightStartEnd(HighlightData &rangeData) const
 {
-    auto state = rangeData.selectionStateForRenderer(renderer());
+    auto state = rangeData.highlightStateForRenderer(renderer());
     state = verifySelectionState(state, rangeData);
     
-    if (state == RenderObject::SelectionNone)
+    if (state == RenderObject::HighlightState::None)
         return {0, 0};
     
     return clampedStartEndForState(rangeData.startOffset(), rangeData.endOffset(), state);
@@ -1055,8 +1055,8 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
                 ASSERT(startOffset >= 0 && endOffset >= 0);
                 if (!startRenderer || !endRenderer)
                     continue;
-                auto highlightData = SelectionRangeData(renderer().view());
-                highlightData.setContext({startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset)});
+                auto highlightData = HighlightData(renderer().view());
+                highlightData.setRenderRange({startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset)});
                 auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
                 if (highlightStart < highlightEnd)
                     markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });

@@ -147,14 +147,14 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const Rend
     return createVisiblePosition(0, DOWNSTREAM);
 }
 
-void RenderLineBreak::setSelectionState(SelectionState state)
+void RenderLineBreak::setSelectionState(HighlightState state)
 {
-    if (state != SelectionNone)
+    if (state != HighlightState::None)
         ensureLineBoxes();
     RenderBoxModelObject::setSelectionState(state);
     if (!m_inlineBoxWrapper)
         return;
-    m_inlineBoxWrapper->root().setHasSelectedChildren(state != SelectionNone);
+    m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
 }
 
 LayoutRect RenderLineBreak::localCaretRect(InlineBox* inlineBox, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine)

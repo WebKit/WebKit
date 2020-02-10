@@ -1290,6 +1290,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
+    rendering/HighlightData.h
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
@@ -1345,7 +1346,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderWidget.h
     rendering/RootInlineBox.h
     rendering/ScrollAlignment.h
-    rendering/SelectionRangeData.h
     rendering/SimpleLineLayout.h
     rendering/SimpleLineLayoutCoverage.h
     rendering/SimpleLineLayoutFlowContents.h

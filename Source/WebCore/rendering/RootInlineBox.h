@@ -126,7 +126,7 @@ public:
     using InlineBox::hasSelectedChildren;
     using InlineBox::setHasSelectedChildren;
 
-    RenderObject::SelectionState selectionState() final;
+    RenderObject::HighlightState selectionState() final;
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 

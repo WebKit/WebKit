@@ -342,22 +342,22 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
     return renderer.createVisiblePosition(0, DOWNSTREAM);
 }
 
-void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::SelectionState state)
+void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::HighlightState state)
 {
-    if (state == RenderObject::SelectionInside || state == RenderObject::SelectionNone) {
+    if (state == RenderObject::HighlightState::Inside || state == RenderObject::HighlightState::None) {
         for (auto* box = m_first; box; box = box->nextTextBox())
-            box->root().setHasSelectedChildren(state == RenderObject::SelectionInside);
+            box->root().setHasSelectedChildren(state == RenderObject::HighlightState::Inside);
         return;
     }
 
     auto start = renderer.view().selection().startOffset();
     auto end = renderer.view().selection().endOffset();
-    if (state == RenderObject::SelectionStart) {
+    if (state == RenderObject::HighlightState::Start) {
         end = renderer.text().length();
         // to handle selection from end of text to end of line
         if (start && start == end)
             start = end - 1;
-    } else if (state == RenderObject::SelectionEnd)
+    } else if (state == RenderObject::HighlightState::End)
         start = 0;
 
     for (auto* box = m_first; box; box = box->nextTextBox()) {

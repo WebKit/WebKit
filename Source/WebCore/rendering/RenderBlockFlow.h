@@ -559,7 +559,7 @@ private:
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;
 #endif
-    void setSelectionState(SelectionState) final;
+    void setSelectionState(HighlightState) final;
 
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.

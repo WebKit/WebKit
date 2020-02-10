@@ -307,7 +307,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto* child = flow.firstChild(); child;) {
-        if (child->selectionState() != RenderObject::SelectionNone)
+        if (child->selectionState() != RenderObject::HighlightState::None)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
         if (is<RenderText>(*child)) {
             const auto& renderText = downcast<RenderText>(*child);

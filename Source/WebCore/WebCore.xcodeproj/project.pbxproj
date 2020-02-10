@@ -4176,7 +4176,7 @@
 		CDCC9BCF22387E9A00FFB51C /* MediaCapabilitiesDecodingInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCC9BCE22387E9A00FFB51C /* MediaCapabilitiesDecodingInfo.h */; };
 		CDCC9BD122387EAA00FFB51C /* MediaCapabilitiesEncodingInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCC9BD022387EAA00FFB51C /* MediaCapabilitiesEncodingInfo.h */; };
 		CDCD41E81C3DDB0A00965D99 /* ParsedContentRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCD41E61C3DDB0900965D99 /* ParsedContentRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDCFABBD18C0AF78006F8450 /* SelectionRangeData.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCFABBB18C0AE31006F8450 /* SelectionRangeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDCFABBD18C0AF78006F8450 /* HighlightData.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCFABBB18C0AE31006F8450 /* HighlightData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDD7089718359F6F002B3DC6 /* SampleMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD7089518359F6F002B3DC6 /* SampleMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */; };
 		CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */; };
@@ -14025,8 +14025,8 @@
 		CDCD41E51C3DDB0900965D99 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
 		CDCD41E61C3DDB0900965D99 /* ParsedContentRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsedContentRange.h; sourceTree = "<group>"; };
 		CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventTargetFactory.in; sourceTree = "<group>"; };
-		CDCFABBB18C0AE31006F8450 /* SelectionRangeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionRangeData.h; sourceTree = "<group>"; };
-		CDCFABBC18C0AF19006F8450 /* SelectionRangeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionRangeData.cpp; sourceTree = "<group>"; };
+		CDCFABBB18C0AE31006F8450 /* HighlightData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighlightData.h; sourceTree = "<group>"; };
+		CDCFABBC18C0AF19006F8450 /* HighlightData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighlightData.cpp; sourceTree = "<group>"; };
 		CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentation.h; sourceTree = "<group>"; };
 		CDD7089418359F6E002B3DC6 /* SampleMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleMap.cpp; sourceTree = "<group>"; };
 		CDD7089518359F6F002B3DC6 /* SampleMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleMap.h; sourceTree = "<group>"; };
@@ -27672,6 +27672,8 @@
 				E112F46F1E3A85D800D6CDFD /* Grid.h */,
 				E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */,
 				E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */,
+				CDCFABBC18C0AF19006F8450 /* HighlightData.cpp */,
+				CDCFABBB18C0AE31006F8450 /* HighlightData.h */,
 				4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */,
 				4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */,
 				2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */,
@@ -27894,8 +27896,6 @@
 				A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */,
 				5D925B650F64D4DD00B847F0 /* ScrollAlignment.cpp */,
 				5D925B660F64D4DD00B847F0 /* ScrollAlignment.h */,
-				CDCFABBC18C0AF19006F8450 /* SelectionRangeData.cpp */,
-				CDCFABBB18C0AE31006F8450 /* SelectionRangeData.h */,
 				E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */,
 				E48944A1180B57D800F165D8 /* SimpleLineLayout.h */,
 				11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */,
@@ -30059,6 +30059,7 @@
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
 				515BE19C1D54F6C100DD7C68 /* HIDGamepad.h in Headers */,
 				515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */,
+				CDCFABBD18C0AF78006F8450 /* HighlightData.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
@@ -32246,7 +32247,6 @@
 				974D2DA5146A535D00D51F8B /* SecurityPolicy.h in Headers */,
 				2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
-				CDCFABBD18C0AF78006F8450 /* SelectionRangeData.h in Headers */,
 				BEA807C90F714A0300524199 /* SelectionRect.h in Headers */,
 				51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */,
 				E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */,

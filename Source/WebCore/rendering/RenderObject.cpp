@@ -1450,10 +1450,10 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
 
 bool RenderObject::isSelectionBorder() const
 {
-    SelectionState st = selectionState();
-    return st == SelectionStart
-        || st == SelectionEnd
-        || st == SelectionBoth
+    HighlightState st = selectionState();
+    return st == HighlightState::Start
+        || st == HighlightState::End
+        || st == HighlightState::Both
         || view().selection().start() == this
         || view().selection().end() == this;
 }

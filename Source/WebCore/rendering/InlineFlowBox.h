@@ -201,7 +201,7 @@ public:
     
     void removeChild(InlineBox* child);
 
-    RenderObject::SelectionState selectionState() override;
+    RenderObject::HighlightState selectionState() override;
 
     bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const final;
     float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;

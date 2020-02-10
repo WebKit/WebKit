@@ -58,7 +58,7 @@ public:
 
     VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
 
-    void setSelectionState(RenderText&, RenderObject::SelectionState);
+    void setSelectionState(RenderText&, RenderObject::HighlightState);
     LayoutRect selectionRectForRange(unsigned start, unsigned end);
     void collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects);
 

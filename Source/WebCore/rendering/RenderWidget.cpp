@@ -346,7 +346,7 @@ IntRect RenderWidget::windowClipRect() const
     return intersection(view().frameView().contentsToWindow(m_clipRect), view().frameView().windowClipRect());
 }
 
-void RenderWidget::setSelectionState(SelectionState state)
+void RenderWidget::setSelectionState(HighlightState state)
 {
     // The selection state for our containing block hierarchy is updated by the base class call.
     RenderReplaced::setSelectionState(state);

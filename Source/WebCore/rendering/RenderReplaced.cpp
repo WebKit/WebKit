@@ -136,7 +136,7 @@ void RenderReplaced::intrinsicSizeChanged()
 
 bool RenderReplaced::shouldDrawSelectionTint() const
 {
-    return selectionState() != SelectionNone && !document().printing();
+    return selectionState() != HighlightState::None && !document().printing();
 }
 
 inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDocumentMarker*>& markers, const Element& element)
@@ -206,7 +206,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
     bool drawSelectionTint = shouldDrawSelectionTint();
     if (paintInfo.phase == PaintPhase::Selection) {
-        if (selectionState() == SelectionNone)
+        if (selectionState() == HighlightState::None)
             return;
         drawSelectionTint = false;
     }
@@ -672,7 +672,7 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
 }
 
-void RenderReplaced::setSelectionState(SelectionState state)
+void RenderReplaced::setSelectionState(HighlightState state)
 {
     // The selection state for our containing block hierarchy is updated by the base class call.
     RenderBox::setSelectionState(state);
@@ -683,21 +683,21 @@ void RenderReplaced::setSelectionState(SelectionState state)
 
 bool RenderReplaced::isSelected() const
 {
-    SelectionState state = selectionState();
-    if (state == SelectionNone)
+    HighlightState state = selectionState();
+    if (state == HighlightState::None)
         return false;
-    if (state == SelectionInside)
+    if (state == HighlightState::Inside)
         return true;
 
     auto selectionStart = view().selection().startOffset();
     auto selectionEnd = view().selection().endOffset();
-    if (state == SelectionStart)
+    if (state == HighlightState::Start)
         return !selectionStart;
 
     unsigned end = element()->hasChildNodes() ? element()->countChildNodes() : 1;
-    if (state == SelectionEnd)
+    if (state == HighlightState::End)
         return selectionEnd == end;
-    if (state == SelectionBoth)
+    if (state == HighlightState::Both)
         return !selectionStart && selectionEnd == end;
     ASSERT_NOT_REACHED();
     return false;

@@ -189,7 +189,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     // Determine whether or not we're selected.
     bool paintSelectedTextOnly = paintInfo.phase == PaintPhase::Selection;
-    bool hasSelection = selectionState() != RenderObject::SelectionNone;
+    bool hasSelection = selectionState() != RenderObject::HighlightState::None;
     if (!hasSelection || paintSelectedTextOnly)
         return;
 
@@ -247,7 +247,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     bool paintSelectedTextOnly = paintInfo.phase == PaintPhase::Selection;
     bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
-    bool hasSelection = !parentRenderer.document().printing() && selectionState() != RenderObject::SelectionNone;
+    bool hasSelection = !parentRenderer.document().printing() && selectionState() != RenderObject::HighlightState::None;
     if (!hasSelection && paintSelectedTextOnly)
         return;
 

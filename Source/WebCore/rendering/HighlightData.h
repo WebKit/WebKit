@@ -40,14 +40,14 @@ namespace WebCore {
 
 struct OldSelectionData;
     
-class SelectionRangeData {
+class HighlightData {
 public:
-    SelectionRangeData(RenderView&);
+    HighlightData(RenderView&);
     
-    class Context {
+    class RenderRange {
     public:
-        Context() = default;
-        Context(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
+        RenderRange() = default;
+        RenderRange(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
             : m_start(makeWeakPtr(start))
             , m_end(makeWeakPtr(end))
             , m_startOffset(startOffset)
@@ -60,7 +60,7 @@ public:
         Optional<unsigned> startOffset() const { return m_startOffset; }
         Optional<unsigned> endOffset() const { return m_endOffset; }
 
-        bool operator==(const Context& other) const
+        bool operator==(const RenderRange& other) const
         {
             return m_start == other.m_start && m_end == other.m_end && m_startOffset == other.m_startOffset && m_endOffset == other.m_endOffset;
         }
@@ -72,35 +72,35 @@ public:
         Optional<unsigned> m_endOffset;
     };
     
-    void setContext(const Context&);
+    void setRenderRange(const RenderRange&);
     
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };
-    void set(const Context&, RepaintMode = RepaintMode::NewXOROld);
-    const Context& get() const { return m_selectionContext; }
+    void setSelection(const RenderRange&, RepaintMode = RepaintMode::NewXOROld);
+    const RenderRange& get() const { return m_renderRange; }
 
-    RenderObject* start() const { return m_selectionContext.start(); }
-    RenderObject* end() const { return m_selectionContext.end(); }
+    RenderObject* start() const { return m_renderRange.start(); }
+    RenderObject* end() const { return m_renderRange.end(); }
 
-    unsigned startOffset() const { ASSERT(m_selectionContext.startOffset()); return m_selectionContext.startOffset().valueOr(0); }
-    unsigned endOffset() const { ASSERT(m_selectionContext.endOffset()); return m_selectionContext.endOffset().valueOr(0); }
+    unsigned startOffset() const { ASSERT(m_renderRange.startOffset()); return m_renderRange.startOffset().valueOr(0); }
+    unsigned endOffset() const { ASSERT(m_renderRange.endOffset()); return m_renderRange.endOffset().valueOr(0); }
 
-    void clear();
+    void clearSelection();
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }
     IntRect boundsClippedToVisibleContent() const { return collectBounds(ClipToVisibleContent::Yes); }
     void repaint() const;
     
-    RenderObject::SelectionState selectionStateForRenderer(RenderObject&);
+    RenderObject::HighlightState highlightStateForRenderer(RenderObject&);
 
 private:
     enum class ClipToVisibleContent { Yes, No };
     IntRect collectBounds(ClipToVisibleContent) const;
-    void apply(const Context&, RepaintMode);
+    void applySelection(const RenderRange&, RepaintMode);
 
     const RenderView& m_renderView;
 #if ENABLE(SERVICE_CONTROLS)
     SelectionRectGatherer m_selectionRectGatherer;
 #endif
-    Context m_selectionContext;
+    RenderRange m_renderRange;
     bool m_selectionWasCaret { false };
 };
 

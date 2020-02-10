@@ -257,7 +257,7 @@ InlineBox* InlineBox::previousLeafOnLineIgnoringLineBreak() const
     return leaf;
 }
 
-RenderObject::SelectionState InlineBox::selectionState()
+RenderObject::HighlightState InlineBox::selectionState()
 {
     return m_renderer.selectionState();
 }

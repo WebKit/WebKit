@@ -35,7 +35,7 @@ class RenderSelectionInfoBase {
 public:
     explicit RenderSelectionInfoBase(RenderObject& renderer);
     RenderLayerModelObject* repaintContainer() const { return m_repaintContainer; }
-    RenderObject::SelectionState state() const { return m_state; }
+    RenderObject::HighlightState state() const { return m_state; }
 
 protected:
     void repaintRectangle(const LayoutRect& repaintRect);
@@ -44,7 +44,7 @@ protected:
     RenderLayerModelObject* m_repaintContainer;
 
 private:
-    RenderObject::SelectionState m_state;
+    RenderObject::HighlightState m_state;
 };
 
 // This struct is used when the selection changes to cache the old and new state of the selection for each RenderObject.

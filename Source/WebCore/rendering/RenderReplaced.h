@@ -55,7 +55,7 @@ protected:
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
-    void setSelectionState(SelectionState) override;
+    void setSelectionState(HighlightState) override;
 
     bool isSelected() const;
 

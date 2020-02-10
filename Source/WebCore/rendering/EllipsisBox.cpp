@@ -60,7 +60,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     }
 
     const FontCascade& font = lineStyle.fontCascade();
-    if (selectionState() != RenderObject::SelectionNone) {
+    if (selectionState() != RenderObject::HighlightState::None) {
         paintSelection(context, paintOffset, lineStyle, font);
 
         // Select the correct color for painting the text.

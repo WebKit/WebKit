@@ -1147,7 +1147,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (isImage()) {
         if (RefPtr<Image> markerImage = m_image->image(this, markerRect.size()))
             context.drawImage(*markerImage, markerRect);
-        if (selectionState() != SelectionNone) {
+        if (selectionState() != HighlightState::None) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
             context.fillRect(snappedIntRect(selRect), m_listItem->selectionBackgroundColor());
@@ -1155,7 +1155,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         return;
     }
 
-    if (selectionState() != SelectionNone) {
+    if (selectionState() != HighlightState::None) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
         context.fillRect(snappedIntRect(selRect), m_listItem->selectionBackgroundColor());
@@ -1833,20 +1833,20 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
     return relativeRect;
 }
 
-void RenderListMarker::setSelectionState(SelectionState state)
+void RenderListMarker::setSelectionState(HighlightState state)
 {
     // The selection state for our containing block hierarchy is updated by the base class call.
     RenderBox::setSelectionState(state);
 
     if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
-        m_inlineBoxWrapper->root().setHasSelectedChildren(state != SelectionNone);
+        m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
 }
 
 LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
-    if (selectionState() == SelectionNone || !inlineBoxWrapper())
+    if (selectionState() == HighlightState::None || !inlineBoxWrapper())
         return LayoutRect();
 
     RootInlineBox& rootBox = inlineBoxWrapper()->root();

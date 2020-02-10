@@ -129,14 +129,14 @@ static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
     return map;
 }
 
-void RenderBoxModelObject::setSelectionState(SelectionState state)
+void RenderBoxModelObject::setSelectionState(HighlightState state)
 {
-    if (state == SelectionInside && selectionState() != SelectionNone)
+    if (state == HighlightState::Inside && selectionState() != HighlightState::None)
         return;
 
-    if ((state == SelectionStart && selectionState() == SelectionEnd)
-        || (state == SelectionEnd && selectionState() == SelectionStart))
-        RenderLayerModelObject::setSelectionState(SelectionBoth);
+    if ((state == HighlightState::Start && selectionState() == HighlightState::End)
+        || (state == HighlightState::End && selectionState() == HighlightState::Start))
+        RenderLayerModelObject::setSelectionState(HighlightState::Both);
     else
         RenderLayerModelObject::setSelectionState(state);
 

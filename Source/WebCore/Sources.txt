@@ -2185,7 +2185,7 @@ rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 rendering/RootInlineBox.cpp
 rendering/ScrollAlignment.cpp
-rendering/SelectionRangeData.cpp
+rendering/HighlightData.cpp
 rendering/SimpleLineLayout.cpp
 rendering/SimpleLineLayoutCoverage.cpp
 rendering/SimpleLineLayoutFlowContents.cpp

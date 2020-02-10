@@ -93,7 +93,7 @@ private:
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
 
-    void setSelectionState(SelectionState) final;
+    void setSelectionState(HighlightState) final;
     void setOverlapTestResult(bool) final;
 
     bool setWidgetGeometry(const LayoutRect&);

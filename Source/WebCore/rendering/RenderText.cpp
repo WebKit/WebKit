@@ -1092,9 +1092,9 @@ IntPoint RenderText::firstRunLocation() const
     return IntPoint(first->rect().location());
 }
 
-void RenderText::setSelectionState(SelectionState state)
+void RenderText::setSelectionState(HighlightState state)
 {
-    if (state != SelectionNone)
+    if (state != HighlightState::None)
         ensureLineBoxes();
 
     RenderObject::setSelectionState(state);
@@ -1446,7 +1446,7 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
     ASSERT(!needsLayout());
     ASSERT(!simpleLineLayout());
 
-    if (selectionState() == SelectionNone)
+    if (selectionState() == HighlightState::None)
         return LayoutRect();
     if (!containingBlock())
         return LayoutRect();
@@ -1455,16 +1455,16 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
     // We include a selection while endPos > 0
     unsigned startOffset;
     unsigned endOffset;
-    if (selectionState() == SelectionInside) {
+    if (selectionState() == HighlightState::Inside) {
         // We are fully selected.
         startOffset = 0;
         endOffset = text().length();
     } else {
         startOffset = view().selection().startOffset();
         endOffset = view().selection().endOffset();
-        if (selectionState() == SelectionStart)
+        if (selectionState() == HighlightState::Start)
             endOffset = text().length();
-        else if (selectionState() == SelectionEnd)
+        else if (selectionState() == HighlightState::End)
             startOffset = 0;
     }
 

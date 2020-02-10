@@ -121,7 +121,7 @@ public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
     bool isSelected(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
-    std::pair<unsigned, unsigned> highlightStartEnd(SelectionRangeData&) const;
+    std::pair<unsigned, unsigned> highlightStartEnd(HighlightData&) const;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
@@ -134,11 +134,11 @@ private:
     void extractLine() final;
     void attachLine() final;
     
-    RenderObject::SelectionState verifySelectionState(RenderObject::SelectionState, SelectionRangeData&) const;
-    std::pair<unsigned, unsigned> clampedStartEndForState(unsigned, unsigned, RenderObject::SelectionState) const;
+    RenderObject::HighlightState verifySelectionState(RenderObject::HighlightState, HighlightData&) const;
+    std::pair<unsigned, unsigned> clampedStartEndForState(unsigned, unsigned, RenderObject::HighlightState) const;
 
 public:
-    RenderObject::SelectionState selectionState() final;
+    RenderObject::HighlightState selectionState() final;
 
 private:
     void clearTruncation() final { m_truncation = cNoTruncation; }
