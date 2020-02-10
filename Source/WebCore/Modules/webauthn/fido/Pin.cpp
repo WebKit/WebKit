@@ -102,7 +102,6 @@ static Vector<uint8_t> encodePinCommand(Subcommand subcommand, Function<void(CBO
     if (addAdditional)
         addAdditional(&map);
 
-    // FIXME(205375)
     auto serializedParam = CBORWriter::write(CBORValue(WTFMove(map)));
     ASSERT(serializedParam);
 
@@ -115,16 +114,10 @@ RetriesResponse::RetriesResponse() = default;
 
 Optional<RetriesResponse> RetriesResponse::parse(const Vector<uint8_t>& inBuffer)
 {
-    // FIXME(205375)
-    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+    auto decodedMap = decodeResponseMap(inBuffer);
+    if (!decodedMap)
         return WTF::nullopt;
-
-    Vector<uint8_t> buffer;
-    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
-    Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
-    if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
-    const auto& responseMap = decodedResponse->getMap();
+    const auto& responseMap = decodedMap->getMap();
 
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kRetries)));
     if (it == responseMap.end() || !it->second.isUnsigned())
@@ -142,16 +135,10 @@ KeyAgreementResponse::KeyAgreementResponse(Ref<CryptoKeyEC>&& peerKey)
 
 Optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>& inBuffer)
 {
-    // FIXME(205375)
-    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+    auto decodedMap = decodeResponseMap(inBuffer);
+    if (!decodedMap)
         return WTF::nullopt;
-
-    Vector<uint8_t> buffer;
-    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
-    auto decodedResponse = cbor::CBORReader::read(buffer);
-    if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
-    const auto& responseMap = decodedResponse->getMap();
+    const auto& responseMap = decodedMap->getMap();
 
     // The ephemeral key is encoded as a COSE structure.
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kKeyAgreement)));
@@ -216,16 +203,10 @@ TokenResponse::TokenResponse(Ref<WebCore::CryptoKeyHMAC>&& token)
 
 Optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer)
 {
-    // FIXME(205375)
-    if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
+    auto decodedMap = decodeResponseMap(inBuffer);
+    if (!decodedMap)
         return WTF::nullopt;
-
-    Vector<uint8_t> buffer;
-    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
-    auto decodedResponse = cbor::CBORReader::read(buffer);
-    if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
-    const auto& responseMap = decodedResponse->getMap();
+    const auto& responseMap = decodedMap->getMap();
 
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kPinToken)));
     if (it == responseMap.end() || !it->second.isByteString())
