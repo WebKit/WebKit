@@ -1,3 +1,13 @@
+2020-02-10  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: [ Win ] ( r254044 ) css1/box_properties/padding_left.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=207480
+        <rdar://problem/59316463>
+
+        Unreviewed test gardening.
+
+        * platform/win/css1/box_properties/padding_left-expected.txt:
+
 2020-02-10  James Howard  <jameshoward@mac.com>
 
         Standard gamepad mapping for GameControllerGamepads
