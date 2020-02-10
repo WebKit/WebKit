@@ -822,12 +822,12 @@ void GraphicsContextGLOpenGL::compileShader(PlatformGLObject shader)
 {
     ASSERT(shader);
     makeContextCurrent();
-    // We need this extension to support IOSurface backbuffers, but we
-    // don't want it exposed to WebGL user shaders. Temporarily disable
-    // it during shader compilation.
-    gl::DisableExtensionANGLE("GL_ANGLE_texture_rectangle");
+    // We need the ANGLE_texture_rectangle extension to support IOSurface
+    // backbuffers, but we don't want it exposed to WebGL user shaders.
+    // Temporarily disable it during shader compilation.
+    gl::Disable(GL_TEXTURE_RECTANGLE_ANGLE);
     gl::CompileShader(shader);
-    gl::RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
+    gl::Enable(GL_TEXTURE_RECTANGLE_ANGLE);
 }
 
 void GraphicsContextGLOpenGL::compileShaderDirect(PlatformGLObject shader)
