@@ -117,20 +117,20 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     // Calculate starting point, ending point and control points of Bezier curve.
     double f = 4 * tan((angleEnd - angleStart) / 4) / 3;
     point_t p0 = {
-        x: cx + (r * cos(angleStart)),
-        y: cy + (r * sin(angleStart))
+        .x = cx + (r * cos(angleStart)),
+        .y = cy + (r * sin(angleStart)),
     };
     point_t p1 = {
-        x: cx + (r * cos(angleStart)) - f * (r * sin(angleStart)),
-        y: cy + (r * sin(angleStart)) + f * (r * cos(angleStart))
+        .x = cx + (r * cos(angleStart)) - f * (r * sin(angleStart)),
+        .y = cy + (r * sin(angleStart)) + f * (r * cos(angleStart)),
     };
     point_t p2 = {
-        x: cx + (r * cos(angleEnd)) + f * (r * sin(angleEnd)),
-        y: cy + (r * sin(angleEnd)) - f * (r * cos(angleEnd))
+        .x = cx + (r * cos(angleEnd)) + f * (r * sin(angleEnd)),
+        .y = cy + (r * sin(angleEnd)) - f * (r * cos(angleEnd)),
     };
     point_t p3 = {
-        x: cx + (r * cos(angleEnd)),
-        y: cy + (r * sin(angleEnd))
+        .x = cx + (r * cos(angleEnd)),
+        .y = cy + (r * sin(angleEnd)),
     };
 
     // Add patch with shape of the sector and gradient colors.
