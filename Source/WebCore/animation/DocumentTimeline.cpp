@@ -75,11 +75,13 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
 
 DocumentTimeline::~DocumentTimeline()
 {
-    detachFromDocument();
+    if (m_document)
+        m_document->removeTimeline(*this);
 }
 
 void DocumentTimeline::detachFromDocument()
 {
+    Ref<DocumentTimeline> protectedThis(*this);
     if (m_document)
         m_document->removeTimeline(*this);
 
