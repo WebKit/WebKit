@@ -1,5 +1,14 @@
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
+        Folloup to r256193 to set the proper ImageOnlyFailure expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=207477
+
+        unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2020-02-10  Truitt Savell  <tsavell@apple.com>
+
         [ Win ] (r255593) webanimations/transform-accelerated-animation-finishes-before-removal.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=207499
 
