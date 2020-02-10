@@ -363,7 +363,7 @@ HTMLParser = class HTMLParser {
                 return;
             }
 
-            let attributeValue = this._consumeRegex(/[^\s=/>]+/);
+            let attributeValue = this._consumeRegex(/[^\s=>]+/);
             this._pushAttribute({name: attributeName, value: attributeValue, quote: HTMLParser.AttrQuoteType.None, namePos: attributeNameStartPos, valuePos: attributeValueStartPos});
             return;
         }
