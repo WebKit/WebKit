@@ -1,4 +1,4 @@
-//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ skip if $model =~ /^Apple Watch/
 function assert(b) {
     if (!b)
         throw new Error;
