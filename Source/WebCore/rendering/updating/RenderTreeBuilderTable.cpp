@@ -107,7 +107,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
     // If beforeChild is inside an anonymous cell/row, insert into the cell or into
     // the anonymous row containing it, if there is one.
     auto* parentCandidate = lastChild;
-    while (parentCandidate && parentCandidate->parent()->isAnonymous() && !is<RenderTableRow>(*parentCandidate))
+    while (parentCandidate && parentCandidate->parent() && parentCandidate->parent()->isAnonymous() && !is<RenderTableRow>(*parentCandidate))
         parentCandidate = parentCandidate->parent();
     if (is<RenderTableRow>(parentCandidate) && parentCandidate->isAnonymous() && !parentCandidate->isBeforeOrAfterContent())
         return downcast<RenderElement>(*parentCandidate);
