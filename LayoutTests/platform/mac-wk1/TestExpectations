@@ -907,3 +907,5 @@ webkit.org/b/207278 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass ImageOnlyFailure 
 
 webkit.org/b/207469 [ Debug ] imported/w3c/web-platform-tests/svg/animations/slider-switch.html [ Pass Failure ]
+
+webkit.org/b/207470 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Pass Failure ]
