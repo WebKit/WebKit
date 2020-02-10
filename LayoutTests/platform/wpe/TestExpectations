@@ -62,7 +62,7 @@ webkit.org/b/206055 imported/w3c/web-platform-tests/offscreen-canvas/drawing-ima
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # The webrtc implementation is not fully completed yet
-webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
+webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
 webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
 webkit.org/b/187064 webrtc/video-remote-mute.html
@@ -525,6 +525,7 @@ webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
+                    fast/text/variations/optical-sizing-trak-2.html [ Skip ]
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 
@@ -612,6 +613,8 @@ webkit.org/b/186141 svg/dom/SVGGeometry-line.xhtml [ Failure ]
 
 webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
 
+webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]
@@ -619,6 +622,10 @@ webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/border-i
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-border-collapsed-gradient.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
+
+webkit.org/b/206874 imported/w3c/web-platform-tests/cors/origin.htm [ Failure ]
+
+webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure ]
 
 # WPT css-fonts failures/passes shared with GTK
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ Pass ]
@@ -679,6 +686,12 @@ webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-default-0
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-02.html [ ImageOnlyFailure ]
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-01.html [ ImageOnlyFailure ]
 webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.html [ Pass ]
+
+webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html  [ Failure ]
+
+webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ ImageOnlyFailure ]
+
+webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -968,9 +981,9 @@ webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html
 
 webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
 
-webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Crash ]
-webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Crash ]
-webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Crash ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
+webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-read-text-from-platform.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-writing.html [ Crash ]
 
@@ -1003,6 +1016,7 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/multiple-prop
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/pipe-through.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/transform-streams.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
 
 Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
@@ -1323,6 +1337,8 @@ webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
+
+webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1856,9 +1872,7 @@ webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.h
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
-webkit.org/b/180134 webanimations/left-and-opacity-animation-yields-no-compositing.html [ Failure ]
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
-webkit.org/b/180134 webanimations/width-and-opacity-separate-animation-yields-no-compositing.html [ Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
@@ -2149,6 +2163,11 @@ webkit.org/b/201982 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyF
 webkit.org/b/201982 fast/images/image-orientation-dynamic-from-image.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-dynamic-none.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-none.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-background-image-no-repeat.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-background-image-repeat.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFailure ]
+
+                    imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
 
