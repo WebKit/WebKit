@@ -1,3 +1,15 @@
+2020-02-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [CMake] Prepend -Wno-noexcept-type only to global CXX flags
+        https://bugs.webkit.org/show_bug.cgi?id=207468
+
+        Reviewed by Adrian Perez de Castro.
+
+        -Wno-noexcept-type is a C++-specific flag that should not be passed to the C compiler. This
+        causes a warning spam in GCC 10.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2020-02-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Mouse pointer no longer hidden during fullscreen video playback
