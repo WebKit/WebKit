@@ -194,7 +194,7 @@ bool Box::hasFloatClear() const
 
 bool Box::isFloatAvoider() const
 {
-    return establishesBlockFormattingContext() || establishesTableFormattingContext() || isFloatingPositioned() || hasFloatClear();
+    return establishesBlockFormattingContext() || establishesTableFormattingContext() || hasFloatClear();
 }
 
 const Container* Box::containingBlock() const
