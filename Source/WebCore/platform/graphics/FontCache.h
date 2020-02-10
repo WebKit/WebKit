@@ -86,12 +86,13 @@ struct FontDescriptionKey {
     { }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
-        : m_size(cHashTableDeletedSize)
+        : m_isDeletedValue(true)
     { }
 
     bool operator==(const FontDescriptionKey& other) const
     {
-        return m_size == other.m_size
+        return m_isDeletedValue == other.m_isDeletedValue
+            && m_size == other.m_size
             && m_fontSelectionRequest == other.m_fontSelectionRequest
             && m_flags == other.m_flags
             && m_locale == other.m_locale
@@ -106,7 +107,7 @@ struct FontDescriptionKey {
         return !(*this == other);
     }
 
-    bool isHashTableDeletedValue() const { return m_size == cHashTableDeletedSize; }
+    bool isHashTableDeletedValue() const { return m_isDeletedValue; }
 
     inline unsigned computeHash() const
     {
@@ -156,9 +157,8 @@ private:
         return {{ first, second }};
     }
 
-    static const unsigned cHashTableDeletedSize = 0xFFFFFFFFU;
-
     // FontCascade::locale() is explicitly not included in this struct.
+    bool m_isDeletedValue { false };
     unsigned m_size { 0 };
     FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
