@@ -1,3 +1,17 @@
+2020-02-09  Keith Rollin  <krollin@apple.com>
+
+        Re-enable LTO for ARM builds
+        https://bugs.webkit.org/show_bug.cgi?id=207402
+        <rdar://problem/49190767>
+
+        Reviewed by Sam Weinig.
+
+        Bug 190758 re-enabled LTO for Production builds for x86-family CPUs.
+        Enabling it for ARM was left out due to a compiler issue. That issue
+        has been fixed, and so now we can re-enable LTO for ARM.
+
+        * Configurations/Base.xcconfig:
+
 2020-02-07  Jon Lee  <jonlee@apple.com>
 
         Web Inspector: Revert slim toolbar
