@@ -41,6 +41,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, Display::Box absoluteDisplayBox)
     : m_layoutBox(makeWeakPtr(layoutBox))
+    , m_position(layoutBox.isLeftFloatingPositioned() ? Position::Left : Position::Right)
+    , m_absoluteDisplayBox(absoluteDisplayBox)
+{
+}
+
+FloatingState::FloatItem::FloatItem(Position position, Display::Box absoluteDisplayBox)
+    : m_position(position)
     , m_absoluteDisplayBox(absoluteDisplayBox)
 {
 }
@@ -49,17 +56,6 @@ FloatingState::FloatingState(LayoutState& layoutState, const Container& formatti
     : m_layoutState(layoutState)
     , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
 {
-}
-
-void FloatingState::remove(const Box& layoutBox)
-{
-    for (size_t index = 0; index < m_floats.size(); ++index) {
-        if (m_floats[index] == layoutBox) {
-            m_floats.remove(index);
-            return;
-        }
-    }
-    ASSERT_NOT_REACHED();
 }
 
 void FloatingState::append(FloatItem floatItem)
