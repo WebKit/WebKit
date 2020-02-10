@@ -4535,3 +4535,5 @@ webkit.org/b/207327 webanimations/accelerated-animation-canceled-before-commit.h
 webkit.org/b/207373 fast/loader/data-url-load-denied.html [ Pass Timeout ]
 
 webkit.org/b/207477 animations/stacking-context-not-fill-forwards.html [ Pass Failure ]
+
+webkit.org/b/207480 css1/box_properties/padding_left.html [ Pass Failure ]
