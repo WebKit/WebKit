@@ -1008,3 +1008,5 @@ webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.htm
 webkit.org/b/207476 webgpu/whlsl/store-to-property-updates-properly.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207508 webgpu/whlsl/textures-load.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207509 [ Debug ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Crash ]
