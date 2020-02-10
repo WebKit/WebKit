@@ -333,11 +333,6 @@ void FloatingContext::append(const Box& floatBox)
     floatingState().append(FloatingState::FloatItem { floatBox, mapToFloatingStateRoot(floatBox) });
 }
 
-void FloatingContext::remove(const Box& floatBox)
-{
-    floatingState().remove(floatBox);
-}
-
 static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const FloatingState::FloatList& floats)
 {
     Optional<PositionInContextRoot> bottomMost;

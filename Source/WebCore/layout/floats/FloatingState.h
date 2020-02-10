@@ -62,9 +62,10 @@ public:
     public:
         FloatItem(const Box&, Display::Box absoluteDisplayBox);
 
-        bool operator==(const Box& layoutBox) const { return m_layoutBox.get() == &layoutBox; }
+        enum class Position { Left, Right };
+        FloatItem(Position, Display::Box absoluteDisplayBox);
 
-        bool isLeftPositioned() const { return m_layoutBox->isLeftFloatingPositioned(); }
+        bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isDescendantOfFormattingRoot(const Container&) const;
 
         Display::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
@@ -73,18 +74,19 @@ public:
 
     private:
         WeakPtr<const Box> m_layoutBox;
+        Position m_position;
         Display::Box m_absoluteDisplayBox;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }
     const FloatItem* last() const { return floats().isEmpty() ? nullptr : &m_floats.last(); }
 
+    void append(FloatItem);
+    void clear() { m_floats.clear(); }
+
 private:
     friend class FloatingContext;
     FloatingState(LayoutState&, const Container& formattingContextRoot);
-
-    void append(FloatItem);
-    void remove(const Box& layoutBox);
 
     LayoutState& layoutState() const { return m_layoutState; }
 

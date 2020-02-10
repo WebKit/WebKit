@@ -77,9 +77,6 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow, Optional<bool> couldUseS
     if (!passesSimpleLineLayoutTest)
         return false;
 
-    if (flow.containsFloats())
-        return false;
-
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow)
         return false;
 
@@ -101,15 +98,50 @@ void LineLayout::updateStyle()
 
 void LineLayout::layout()
 {
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
+    prepareLayoutState();
+    prepareFloatingState();
 
-    m_layoutState.setViewportSize(m_flow.frame().view()->size());
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
 
     auto invalidationState = Layout::InvalidationState { };
     auto horizontalConstraints = Layout::HorizontalConstraints { m_flow.borderAndPaddingStart(), m_flow.contentSize().width() };
     auto verticalConstraints = Layout::VerticalConstraints { m_flow.borderAndPaddingBefore(), { } };
 
     inlineFormattingContext.layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
+}
+
+void LineLayout::prepareLayoutState()
+{
+    m_layoutState.setViewportSize(m_flow.frame().view()->size());
+}
+
+void LineLayout::prepareFloatingState()
+{
+    auto& floatingState = m_inlineFormattingState.floatingState();
+    floatingState.clear();
+
+    if (!m_flow.containsFloats())
+        return;
+
+    for (auto& floatingObject : *m_flow.floatingObjectSet()) {
+        auto& rect = floatingObject->frameRect();
+        auto position = floatingObject->type() == FloatingObject::FloatRight
+            ? Layout::FloatingState::FloatItem::Position::Right
+            : Layout::FloatingState::FloatItem::Position::Left;
+        auto box = Display::Box { };
+        // FIXME: We are flooring here for legacy compatibility.
+        //        See FloatingObjects::intervalForFloatingObject.
+        auto y = rect.y().floor();
+        auto maxY = rect.maxY().floor();
+        box.setTopLeft({ rect.x(), y });
+        box.setContentBoxWidth(rect.width());
+        box.setContentBoxHeight(maxY - y);
+        box.setBorder({ });
+        box.setPadding({ });
+        box.setHorizontalMargin({ });
+        box.setVerticalMargin({ });
+        floatingState.append({ position, box });
+    }
 }
 
 LayoutUnit LineLayout::contentLogicalHeight() const
