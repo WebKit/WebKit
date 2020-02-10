@@ -155,9 +155,15 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
         gdk_window_set_cursor(window, newCursor);
 }
 
-void PageClientImpl::setCursorHiddenUntilMouseMoves(bool /* hiddenUntilMouseMoves */)
+void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
-    notImplemented();
+    if (!hiddenUntilMouseMoves)
+        return;
+
+    setCursor(WebCore::noneCursor());
+
+    // There's no need to set a timer to restore the cursor by hand. It will
+    // be automatically restored when the mouse moves.
 }
 
 void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)

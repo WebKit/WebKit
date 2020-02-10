@@ -1,3 +1,15 @@
+2020-02-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Mouse pointer no longer hidden during fullscreen video playback
+        https://bugs.webkit.org/show_bug.cgi?id=197346
+
+        Reviewed by Adrian Perez de Castro.
+
+        Covered by existing tests.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves): Added implementation.
+
 2020-02-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WebInspector] Always allow data:// URIs for inspector views
