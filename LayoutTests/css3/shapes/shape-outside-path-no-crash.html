@@ -1,0 +1,13 @@
+<style>
+    .box { 
+        shape-outside: path("M 0 0 L 200 200 0 200 z");
+        float: left;
+    }
+</style>
+<body>
+    <div class="box">Pass if there is no crash or assert.</div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>

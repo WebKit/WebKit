@@ -1,3 +1,13 @@
+2020-02-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreachable code hit in WebCore::Shape::createShape
+        https://bugs.webkit.org/show_bug.cgi?id=207399
+
+        Reviewed by Darin Adler.
+
+        * css3/shapes/shape-outside-path-no-crash-expected.txt: Added.
+        * css3/shapes/shape-outside-path-no-crash.html: Added.
+
 2020-02-10  Daniel Bates  <dabates@apple.com>
 
         Disallow setting base URL to a data or JavaScript URL

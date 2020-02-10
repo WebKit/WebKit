@@ -2544,9 +2544,8 @@ static RefPtr<CSSBasicShapeInset> consumeBasicShapeInset(CSSParserTokenRange& ar
     return shape;
 }
 
-static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSPrimitiveValue> consumeBasicShape(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    RefPtr<CSSValue> result;
     if (range.peek().type() != FunctionToken)
         return nullptr;
     CSSValueID id = range.peek().functionId();
@@ -2616,7 +2615,9 @@ static RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CS
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (RefPtr<CSSValue> boxValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueMarginBox>(range))
         list->append(boxValue.releaseNonNull());
-    if (RefPtr<CSSValue> shapeValue = consumeBasicShape(range, context)) {
+    if (RefPtr<CSSPrimitiveValue> shapeValue = consumeBasicShape(range, context)) {
+        if (shapeValue->shapeValue()->type() == CSSBasicShapeCircle::CSSBasicShapePathType)
+            return nullptr;
         list->append(shapeValue.releaseNonNull());
         if (list->length() < 2) {
             if (RefPtr<CSSValue> boxValue = consumeIdent<CSSValueContentBox, CSSValuePaddingBox, CSSValueBorderBox, CSSValueMarginBox>(range))
