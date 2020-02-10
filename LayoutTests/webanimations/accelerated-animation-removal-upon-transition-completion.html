@@ -35,7 +35,7 @@ async_test(t => {
         const target = document.getElementById("target");
         target.style.transform = "translate3d(100px, 0, 0)";
         target.getAnimations()[0].finished.then(() => {
-            waitNFrames(3, () => {
+            waitNFrames(2, () => {
                 assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after the animation completed.");
                 t.done();
             });
