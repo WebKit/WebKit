@@ -1006,3 +1006,5 @@ webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pas
 webkit.org/b/207466 [ Debug ] http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 
 webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
+
+webkit.org/b/207476 webgpu/whlsl/store-to-property-updates-properly.html [ Pass ImageOnlyFailure ]
