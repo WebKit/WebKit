@@ -85,6 +85,20 @@
 
         * platform/win/TestExpectations:
 
+2020-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        WebContent jetsams on Sony lens webpage due to spike of IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=207493
+        rdar://problem/59020443
+
+        Reviewed by Zalan Bujtas.
+        
+        Test with an out-of-view transitioning element which should not get backing store.
+
+        * compositing/backing/transition-extent-expected.txt: Added.
+        * compositing/backing/transition-extent.html: Added.
+        * platform/ios-wk2/compositing/backing/transition-extent-expected.txt: Added.
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: [ Win ] animations/stacking-context-not-fill-forwards.html is failing
