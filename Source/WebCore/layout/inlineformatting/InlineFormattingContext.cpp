@@ -159,7 +159,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutCon
         ASSERT(lineBuilder.hasIntrusiveFloat());
         // Move the next line below the intrusive float.
         auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-        auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
+        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineContent.lineBox.logicalBottom()) );
         ASSERT(floatConstraints.left || floatConstraints.right);
         static auto inifitePoint = PointInContextRoot::max();
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
@@ -357,12 +357,14 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
 {
     auto lineLogicalLeft = horizontalConstraints.logicalLeft;
     auto lineLogicalRight = lineLogicalLeft + horizontalConstraints.logicalWidth;
+    auto lineHeightAndBaseline = quirks().lineHeightConstraints(root());
     auto lineIsConstrainedByFloat = false;
 
     auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     if (!floatingContext.isEmpty()) {
-        auto floatConstraints = floatingContext.constraints({ toLayoutUnit(lineLogicalTop) });
+        // FIXME: Add support for variable line height, where the intrusive floats should be probed as the line height grows.
+        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + lineHeightAndBaseline.height));
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && floatConstraints.left->x <= lineLogicalLeft)
             floatConstraints.left = { };
@@ -418,7 +420,7 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
         return geometry().computedTextIndent(root, horizontalConstraints).valueOr(InlineLayoutUnit { });
     };
     lineLogicalLeft += computedTextIndent();
-    return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
+    return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, lineIsConstrainedByFloat, lineHeightAndBaseline };
 }
 
 void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
