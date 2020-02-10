@@ -443,6 +443,13 @@ webkit_settings_set_allow_universal_access_from_file_urls      (WebKitSettings *
                                                                 gboolean        allowed);
 
 WEBKIT_API gboolean
+webkit_settings_get_allow_top_navigation_to_data_urls          (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_allow_top_navigation_to_data_urls          (WebKitSettings *settings,
+                                                                gboolean        allowed);
+
+WEBKIT_API gboolean
 webkit_settings_get_enable_javascript_markup                   (WebKitSettings *settings);
 
 WEBKIT_API void
