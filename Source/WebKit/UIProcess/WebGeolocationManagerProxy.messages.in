@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebGeolocationManagerProxy {
-    StartUpdating() WantsConnection
+    StartUpdating(WebKit::WebPageProxyIdentifier pageProxyID, String authorizationToken) WantsConnection
     StopUpdating() WantsConnection
     SetEnableHighAccuracy(bool enabled) WantsConnection
 }

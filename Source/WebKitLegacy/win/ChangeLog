@@ -1,3 +1,111 @@
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r256075. rdar://problem/59298173
+
+    [Hardening] Validate Geolocation access permission on UIProcess side
+    https://bugs.webkit.org/show_bug.cgi?id=207393
+    <rdar://problem/56816051>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Validate Geolocation access permission on UIProcess side, instead of only relying solely on the WebProcess for this.
+    
+    The workflow is as follows:
+    - The Geolocation objects request for permission to access location data
+    - The UIProcess shows a prompt
+    - If the user accepts, the UIProcess sends an authorization token (a UUID
+      string) to the Geolocation object.
+    - When the Geolocation object later asks for location updates from the UIProcess, the UIProcess validates
+      that this is a valid authorization token (one that it previously issued for this page)
+    - When the Geolocation objects gets destroyed (or resets its permission), the authorization token gets
+      revoked so that it is no longer valid.
+    
+    No new tests, no Web-facing behavior change, merely hardening.
+    
+    * Modules/geolocation/Geolocation.cpp:
+    (WebCore::Geolocation::~Geolocation):
+    (WebCore::Geolocation::resumeTimerFired):
+    (WebCore::Geolocation::resetAllGeolocationPermission):
+    (WebCore::Geolocation::stop):
+    (WebCore::Geolocation::setIsAllowed):
+    (WebCore::Geolocation::revokeAuthorizationTokenIfNecessary):
+    (WebCore::Geolocation::resetIsAllowed):
+    * Modules/geolocation/Geolocation.h:
+    * Modules/geolocation/GeolocationClient.h:
+    (WebCore::GeolocationClient::revokeAuthorizationToken):
+    * Modules/geolocation/GeolocationController.cpp:
+    (WebCore::GeolocationController::addObserver):
+    (WebCore::GeolocationController::revokeAuthorizationToken):
+    (WebCore::GeolocationController::activityStateDidChange):
+    * Modules/geolocation/GeolocationController.h:
+    * platform/mock/GeolocationClientMock.cpp:
+    (WebCore::GeolocationClientMock::permissionTimerFired):
+    (WebCore::GeolocationClientMock::startUpdating):
+    * platform/mock/GeolocationClientMock.h:
+    
+    Source/WebKit:
+    
+    * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+    (WebKit::GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision):
+    (WebKit::GeolocationPermissionRequestManagerProxy::isValidAuthorizationToken const):
+    (WebKit::GeolocationPermissionRequestManagerProxy::revokeAuthorizationToken):
+    * UIProcess/GeolocationPermissionRequestManagerProxy.h:
+    * UIProcess/WebGeolocationManagerProxy.cpp:
+    (WebKit::WebGeolocationManagerProxy::startUpdating):
+    * UIProcess/WebGeolocationManagerProxy.h:
+    * UIProcess/WebGeolocationManagerProxy.messages.in:
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::geolocationPermissionRequestManager):
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+    (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+    (WebKit::GeolocationPermissionRequestManager::revokeAuthorizationToken):
+    (WebKit::GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision):
+    * WebProcess/Geolocation/GeolocationPermissionRequestManager.h:
+    * WebProcess/Geolocation/WebGeolocationManager.cpp:
+    (WebKit::WebGeolocationManager::registerWebPage):
+    * WebProcess/Geolocation/WebGeolocationManager.h:
+    * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+    (WebKit::WebGeolocationClient::startUpdating):
+    (WebKit::WebGeolocationClient::revokeAuthorizationToken):
+    * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didReceiveGeolocationPermissionDecision):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebGeolocationClient.h:
+    * WebCoreSupport/WebGeolocationClient.mm:
+    (WebGeolocationClient::startUpdating):
+    (WebGeolocationClient::requestPermission):
+    (-[WebGeolocationPolicyListener allow]):
+    (-[WebGeolocationPolicyListener deny]):
+    
+    Source/WebKitLegacy/win:
+    
+    * WebCoreSupport/WebGeolocationClient.cpp:
+    (WebGeolocationClient::startUpdating):
+    * WebCoreSupport/WebGeolocationClient.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256075 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  Chris Dumez  <cdumez@apple.com>
+
+            [Hardening] Validate Geolocation access permission on UIProcess side
+            https://bugs.webkit.org/show_bug.cgi?id=207393
+            <rdar://problem/56816051>
+
+            Reviewed by Brent Fulgham.
+
+            * WebCoreSupport/WebGeolocationClient.cpp:
+            (WebGeolocationClient::startUpdating):
+            * WebCoreSupport/WebGeolocationClient.h:
+
 2020-02-04  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255234. rdar://problem/59098321

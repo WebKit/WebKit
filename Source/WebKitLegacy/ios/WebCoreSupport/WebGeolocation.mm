@@ -50,7 +50,7 @@ using namespace WebCore;
 
 - (void)setIsAllowed:(BOOL)allowed
 {
-    reinterpret_cast<Geolocation*>(_private)->setIsAllowed(allowed);
+    reinterpret_cast<Geolocation*>(_private)->setIsAllowed(allowed, { });
 }
 
 - (void)dealloc

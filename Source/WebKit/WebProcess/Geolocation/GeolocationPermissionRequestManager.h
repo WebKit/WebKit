@@ -43,8 +43,9 @@ public:
 
     void startRequestForGeolocation(WebCore::Geolocation&);
     void cancelRequestForGeolocation(WebCore::Geolocation&);
+    void revokeAuthorizationToken(const String&);
 
-    void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
+    void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, const String& authorizationToken);
 
 private:
     typedef HashMap<uint64_t, WebCore::Geolocation*> IDToGeolocationMap;

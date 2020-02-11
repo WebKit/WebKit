@@ -44,8 +44,9 @@ public:
 private:
     void geolocationDestroyed() override;
 
-    void startUpdating() override;
+    void startUpdating(const String& authorizationToken) override;
     void stopUpdating() override;
+    void revokeAuthorizationToken(const String&) override;
     void setEnableHighAccuracy(bool) override;
 
     Optional<WebCore::GeolocationPositionData> lastPosition() override;
