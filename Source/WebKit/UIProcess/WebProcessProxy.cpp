@@ -858,7 +858,26 @@ void WebProcessProxy::didChangeIsResponsive()
 
 bool WebProcessProxy::mayBecomeUnresponsive()
 {
-    return !platformIsBeingDebugged();
+#if !defined(NDEBUG) || ASAN_ENABLED
+    // Disable responsiveness checks in slow builds to avoid false positives.
+    return false;
+#else
+    if (platformIsBeingDebugged())
+        return false;
+
+    static bool isLibgmallocEnabled = [] {
+        char* variable = getenv("DYLD_INSERT_LIBRARIES");
+        if (!variable)
+            return false;
+        if (!strstr(variable, "libgmalloc"))
+            return false;
+        return true;
+    }();
+    if (isLibgmallocEnabled)
+        return false;
+
+    return true;
+#endif
 }
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
@@ -887,6 +906,11 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     unblockAccessibilityServerIfNeeded();
 #endif
+
+    if (m_shouldStartResponsivenessTimerWhenLaunched) {
+        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, WTF::nullopt);
+        startResponsivenessTimer(useLazyStop);
+    }
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
@@ -1117,6 +1141,19 @@ void WebProcessProxy::stopResponsivenessTimer()
     responsivenessTimer().stop();
 }
 
+void WebProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
+{
+    if (isLaunching()) {
+        m_shouldStartResponsivenessTimerWhenLaunched = useLazyStop;
+        return;
+    }
+
+    if (useLazyStop == UseLazyStop::Yes)
+        responsivenessTimer().startWithLazyStop();
+    else
+        responsivenessTimer().start();
+}
+
 void WebProcessProxy::enableSuddenTermination()
 {
     if (state() != State::Running)
@@ -1337,7 +1374,7 @@ void WebProcessProxy::isResponsive(CompletionHandler<void(bool isWebProcessRespo
     if (callback)
         m_isResponsiveCallbacks.append(WTFMove(callback));
 
-    responsivenessTimer().start();
+    startResponsivenessTimer();
     send(Messages::WebProcess::MainThreadPing(), 0);
 }
 
