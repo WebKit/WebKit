@@ -1010,8 +1010,6 @@ webkit.org/b/207508 webgpu/whlsl/textures-load.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207509 [ Debug ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Crash ]
 
-webkit.org/b/207515 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure ]
-
 webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
 
 webkit.rog/b/207571 http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Failure ]
