@@ -6,6 +6,7 @@
     var iframe = document.documentElement.appendChild(document.createElement('iframe'));
     iframe.setAttribute('allowfullscreen', 'true');
     var iframe2 = document.documentElement.appendChild(document.createElement('iframe'));
+    iframe2.setAttribute('allow', "fullscreen 'none'");
     testExpected('iframe.contentDocument.webkitFullscreenEnabled', true);
     testExpected('iframe2.contentDocument.webkitFullscreenEnabled', false);
     endTest();

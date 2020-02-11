@@ -102,7 +102,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
         setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
-    } else if (name == allowAttr)
+    } else if (name == allowAttr || name == allowfullscreenAttr || name == webkitallowfullscreenAttr)
         m_featurePolicy = WTF::nullopt;
     else
         HTMLFrameElementBase::parseAttribute(name, value);
@@ -138,7 +138,7 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
 const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
 {
     if (!m_featurePolicy)
-        m_featurePolicy = FeaturePolicy::parse(document(), attributeWithoutSynchronization(allowAttr));
+        m_featurePolicy = FeaturePolicy::parse(document(), *this, attributeWithoutSynchronization(allowAttr));
     return *m_featurePolicy;
 }
 

@@ -1,5 +1,79 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255162. rdar://problem/59299120
+
+    Support 'allow="fullscreen"' feature policy
+    https://bugs.webkit.org/show_bug.cgi?id=206806
+    <rdar://problem/55640448>
+    
+    Patch by Jer Noble <jer.noble@apple.com> on 2020-01-27
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    Test: http/tests/fullscreen/fullscreen-feature-policy.html
+    
+    The unprefixed version of the Fullscreen API has deprecated the 'allowfullscreen' iframe
+    attribute in favor of the 'allow="fullscreen"' style attribute used by Feature Policy.
+    Add support for such, including the specified handling for the legacy 'allowfullscreen'
+    attribute.
+    
+    Note: this patch will (intentionally) change the default behavior of <iframe>s. Previously
+    any <iframe> without the "allowfullscreen" attribute would not be allowed to enter fullscreen
+    mode. After this patch, <iframes> without the legacy attribute or an explicit fullscreen
+    Feature Policy will be allowed to enter fullscreen so long as their origin is the same as
+    the top document (and that all parent iframes are also allowed to enter fullscreen).
+    
+    * dom/FullscreenManager.cpp:
+    (WebCore::FullscreenManager::requestFullscreenForElement):
+    (WebCore::FullscreenManager::isFullscreenEnabled const):
+    (WebCore::isAttributeOnAllOwners): Deleted.
+    (WebCore::FullscreenManager::fullscreenIsAllowedForElement const): Deleted.
+    * dom/FullscreenManager.h:
+    * html/FeaturePolicy.cpp:
+    (WebCore::isFeaturePolicyAllowedByDocumentAndAllOwners):
+    (WebCore::FeaturePolicy::parse):
+    (WebCore::FeaturePolicy::allows const):
+    * html/FeaturePolicy.h:
+    * html/HTMLIFrameElement.cpp:
+    (WebCore::HTMLIFrameElement::parseAttribute):
+    (WebCore::HTMLIFrameElement::featurePolicy const):
+    * xml/XMLHttpRequest.cpp:
+    (WebCore::XMLHttpRequest::createRequest):
+    (WebCore::isSyncXHRAllowedByFeaturePolicy): Deleted.
+    
+    LayoutTests:
+    
+    * fullscreen/full-screen-enabled-prefixed.html:
+    * fullscreen/full-screen-enabled.html:
+    * fullscreen/full-screen-frameset-expected.txt: Removed.
+    * fullscreen/full-screen-frameset.html: Removed.
+    * fullscreen/full-screen-iframe-not-allowed.html:
+    * fullscreen/full-screen-restrictions.html:
+    * http/tests/fullscreen/fullscreen-feature-policy-expected.txt: Added.
+    * http/tests/fullscreen/fullscreen-feature-policy.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255162 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-27  Jer Noble  <jer.noble@apple.com>
+
+            Support 'allow="fullscreen"' feature policy
+            https://bugs.webkit.org/show_bug.cgi?id=206806
+            <rdar://problem/55640448>
+
+            Reviewed by Youenn Fablet.
+
+            * fullscreen/full-screen-enabled-prefixed.html:
+            * fullscreen/full-screen-enabled.html:
+            * fullscreen/full-screen-frameset-expected.txt: Removed.
+            * fullscreen/full-screen-frameset.html: Removed.
+            * fullscreen/full-screen-iframe-not-allowed.html:
+            * fullscreen/full-screen-restrictions.html:
+            * http/tests/fullscreen/fullscreen-feature-policy-expected.txt: Added.
+            * http/tests/fullscreen/fullscreen-feature-policy.html: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255672. rdar://problem/59299127
 
     Regression: (252234?) [ iOS wk2 ] fast/scrolling/ios/scroll-events-back-forward.html is flaky failing.
