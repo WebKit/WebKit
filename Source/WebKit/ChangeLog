@@ -1,3 +1,15 @@
+2020-02-10  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::WebProcessPool::initializeClassesForParameterCoding() should keep a copy of CString
+        <https://webkit.org/b/207519>
+        <rdar://problem/59043436>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::initializeClassesForParameterCoding):
+        - Change `className` to keep a copy of the CString object.
+
 2020-02-10  Per Arne Vollan  <pvollan@apple.com>
 
         [watchOS] Notification listener is never unregistered
