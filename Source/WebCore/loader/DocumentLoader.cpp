@@ -1057,11 +1057,10 @@ void DocumentLoader::stopLoadingForPolicyChange()
 }
 
 #if ENABLE(SERVICE_WORKER)
-static inline bool isLocalURL(const URL& url)
+// https://w3c.github.io/ServiceWorker/#control-and-use-window-client
+static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    // https://fetch.spec.whatwg.org/#is-local
-    auto protocol = url.protocol().toStringWithoutCopying();
-    return equalLettersIgnoringASCIICase(protocol, "data") || equalLettersIgnoringASCIICase(protocol, "blob") || equalLettersIgnoringASCIICase(protocol, "about");
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isUnique() && parent.securityOrigin().canAccess(document.securityOrigin());
 }
 #endif
 
@@ -1092,8 +1091,8 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                 m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
-            } else if (isLocalURL(m_frame->document()->url())) {
-                if (auto* parent = m_frame->document()->parentDocument())
+            } else if (auto* parent = m_frame->document()->parentDocument()) {
+                if (shouldUseActiveServiceWorkerFromParent(*m_frame->document(), *parent))
                     m_frame->document()->setActiveServiceWorker(parent->activeServiceWorker());
             }
 
