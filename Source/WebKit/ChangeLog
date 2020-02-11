@@ -1,5 +1,121 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255518. rdar://problem/59298166
+
+    [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
+    https://bugs.webkit.org/show_bug.cgi?id=206934
+    <rdar://problem/58991581>
+    
+    Source/WebKit:
+    
+    Reviewed by Brady Eidson.
+    
+    Flakiness would happen when the service worker would take too long to launch and the responsiveness timer would fire and
+    report the process as unresponsive while still launching or very shortly after. When a service worker is reported as
+    unresponsive, we would kill it.
+    
+    To address the issue, several changes were made:
+    - Responsiveness checks are now disabled for slow builds (Debug, ASAN, GuardMalloc)
+    - We only start the ResponsivenessTimer after the process has finished launching since the responsiveness
+      check relies on IPC to the process and we cannot send the IPC until after the process has launched.
+    
+    * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+    (WebKit::DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState):
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::launchProcessForReload):
+    (WebKit::WebPageProxy::launchProcessWithItem):
+    (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+    (WebKit::WebPageProxy::loadFile):
+    (WebKit::WebPageProxy::loadDataWithNavigationShared):
+    (WebKit::WebPageProxy::loadAlternateHTML):
+    (WebKit::WebPageProxy::loadWebArchiveData):
+    (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+    (WebKit::WebPageProxy::stopLoading):
+    (WebKit::WebPageProxy::reload):
+    (WebKit::WebPageProxy::goToBackForwardItem):
+    (WebKit::WebPageProxy::dispatchActivityStateChange):
+    (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+    (WebKit::WebPageProxy::handleKeyboardEvent):
+    (WebKit::WebPageProxy::handleGestureEvent):
+    (WebKit::WebPageProxy::handlePreventableTouchEvent):
+    (WebKit::WebPageProxy::handleTouchEvent):
+    (WebKit::WebPageProxy::runJavaScriptAlert):
+    (WebKit::WebPageProxy::runJavaScriptConfirm):
+    (WebKit::WebPageProxy::runJavaScriptPrompt):
+    (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+    (WebKit::WebPageProxy::runOpenPanel):
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::mayBecomeUnresponsive):
+    (WebKit::WebProcessProxy::didFinishLaunching):
+    (WebKit::WebProcessProxy::startResponsivenessTimer):
+    (WebKit::WebProcessProxy::isResponsive):
+    * UIProcess/WebProcessProxy.h:
+    (WebKit::WebProcessProxy::responsivenessTimer):
+    
+    LayoutTests:
+    
+    Unskip test which should no longer be flaky.
+    
+    * platform/ios-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255518 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Chris Dumez  <cdumez@apple.com>
+
+            [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
+            https://bugs.webkit.org/show_bug.cgi?id=206934
+            <rdar://problem/58991581>
+
+            Reviewed by Brady Eidson.
+
+            Flakiness would happen when the service worker would take too long to launch and the responsiveness timer would fire and
+            report the process as unresponsive while still launching or very shortly after. When a service worker is reported as
+            unresponsive, we would kill it.
+
+            To address the issue, several changes were made:
+            - Responsiveness checks are now disabled for slow builds (Debug, ASAN, GuardMalloc)
+            - We only start the ResponsivenessTimer after the process has finished launching since the responsiveness
+              check relies on IPC to the process and we cannot send the IPC until after the process has launched.
+
+            * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+            (WebKit::DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState):
+            * UIProcess/ProvisionalPageProxy.cpp:
+            (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::launchProcessForReload):
+            (WebKit::WebPageProxy::launchProcessWithItem):
+            (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+            (WebKit::WebPageProxy::loadFile):
+            (WebKit::WebPageProxy::loadDataWithNavigationShared):
+            (WebKit::WebPageProxy::loadAlternateHTML):
+            (WebKit::WebPageProxy::loadWebArchiveData):
+            (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+            (WebKit::WebPageProxy::stopLoading):
+            (WebKit::WebPageProxy::reload):
+            (WebKit::WebPageProxy::goToBackForwardItem):
+            (WebKit::WebPageProxy::dispatchActivityStateChange):
+            (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+            (WebKit::WebPageProxy::handleKeyboardEvent):
+            (WebKit::WebPageProxy::handleGestureEvent):
+            (WebKit::WebPageProxy::handlePreventableTouchEvent):
+            (WebKit::WebPageProxy::handleTouchEvent):
+            (WebKit::WebPageProxy::runJavaScriptAlert):
+            (WebKit::WebPageProxy::runJavaScriptConfirm):
+            (WebKit::WebPageProxy::runJavaScriptPrompt):
+            (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+            (WebKit::WebPageProxy::runOpenPanel):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::mayBecomeUnresponsive):
+            (WebKit::WebProcessProxy::didFinishLaunching):
+            (WebKit::WebProcessProxy::startResponsivenessTimer):
+            (WebKit::WebProcessProxy::isResponsive):
+            * UIProcess/WebProcessProxy.h:
+            (WebKit::WebProcessProxy::responsivenessTimer):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255158. rdar://problem/59298137
 
     Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler

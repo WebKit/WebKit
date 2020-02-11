@@ -962,7 +962,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
     send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 
     return navigation;
 }
@@ -985,7 +985,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessWithItem(WebBackForwardListIt
     auto navigation = m_navigationState->createBackForwardNavigation(item, m_backForwardList->currentItem(), FrameLoadType::IndexedBackForward);
 
     send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item.itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 
     return navigation;
 }
@@ -1275,7 +1275,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 #else
     process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
 #endif
-    process->responsivenessTimer().start();
+    process->startResponsivenessTimer();
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
@@ -1330,7 +1330,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 #else
     send(Messages::WebPage::LoadRequest(loadParameters));
 #endif
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 
     return navigation;
 }
@@ -1376,7 +1376,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
 
     process->assumeReadAccessToBaseURL(*this, baseURL);
     process->send(Messages::WebPage::LoadData(loadParameters), webPageID);
-    process->responsivenessTimer().start();
+    process->startResponsivenessTimer();
 }
 
 void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const String& encoding, const URL& baseURL, const URL& unreachableURL, API::Object* userData)
@@ -1419,7 +1419,7 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     m_process->assumeReadAccessToBaseURL(*this, baseURL);
     m_process->assumeReadAccessToBaseURL(*this, unreachableURL);
     send(Messages::WebPage::LoadAlternateHTML(loadParameters));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 }
 
 void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
@@ -1446,7 +1446,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     addPlatformLoadParameters(loadParameters);
 
     send(Messages::WebPage::LoadData(loadParameters));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 }
 
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
@@ -1465,7 +1465,7 @@ void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, 
         launchProcess(RegistrableDomain { URL(URL(), urlString) }, ProcessLaunchReason::InitialProcess);
 
     send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(urlString, documentPoint, screenPoint));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 }
 
 void WebPageProxy::stopLoading()
@@ -1482,7 +1482,7 @@ void WebPageProxy::stopLoading()
         m_provisionalPage->cancel();
         m_provisionalPage = nullptr;
     }
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 }
 
 RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> options)
@@ -1513,7 +1513,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         navigation->setUserContentExtensionsEnabled(false);
 
     send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 
 #if ENABLE(SPEECH_SYNTHESIS)
     resetSpeechSynthesizer();
@@ -1582,7 +1582,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation ? navigation->navigationID() : 0, item.url() });
 
     send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
 
     return navigation;
 }
@@ -1936,7 +1936,7 @@ void WebPageProxy::dispatchActivityStateChange()
             // If we've started the responsiveness timer as part of telling the web process to update the backing store
             // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
             // stop the unresponsiveness timer here.
-            m_process->responsivenessTimer().stop();
+            m_process->stopResponsivenessTimer();
         }
     }
 
@@ -2466,10 +2466,10 @@ void WebPageProxy::processNextQueuedMouseEvent()
 
     WebEvent::Type eventType = event.type();
     if (eventType == WebEvent::MouseDown || eventType == WebEvent::MouseForceChanged || eventType == WebEvent::MouseForceDown)
-        m_process->responsivenessTimer().startWithLazyStop();
+        m_process->startResponsivenessTimer(WebProcessProxy::UseLazyStop::Yes);
     else if (eventType != WebEvent::MouseMove) {
         // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
-        m_process->responsivenessTimer().start();
+        m_process->startResponsivenessTimer();
     }
 
     LOG(MouseHandling, "UIProcess: sent mouse event %s (queue size %zu)", webMouseEventTypeString(eventType), m_mouseEventQueue.size());
@@ -2648,11 +2648,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     m_keyEventQueue.append(event);
 
-    ResponsivenessTimer& responsivenessTimer = m_process->responsivenessTimer();
-    if (event.type() == WebEvent::KeyDown)
-        responsivenessTimer.startWithLazyStop();
-    else
-        responsivenessTimer.start();
+    m_process->startResponsivenessTimer(event.type() == WebEvent::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
     if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
@@ -2823,11 +2819,7 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
     m_gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
 
-    ResponsivenessTimer& responsivenessTimer = m_process->responsivenessTimer();
-    if (event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange)
-        responsivenessTimer.startWithLazyStop();
-    else
-        responsivenessTimer.start();
+    m_process->startResponsivenessTimer((event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange) ? WebProcessProxy::UseLazyStop::Yes ? WebProcessProxy::UseLazyStop::No);
 
     send(Messages::EventDispatcher::GestureEvent(m_webPageID, event), 0);
 }
@@ -2898,7 +2890,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         return;
     }
 
-    m_process->responsivenessTimer().start();
+    m_process->startResponsivenessTimer();
     bool handled = false;
     bool replyReceived = sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
     // If the sync request has timed out, we should consider the event handled. The Web Process is too busy to answer any questions, so the default action is also likely to have issues.
@@ -2910,7 +2902,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         pageClient().doneDeferringNativeGestures(handled);
     else if (handled)
         m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = true;
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 }
 
 void WebPageProxy::resetPotentialTapSecurityOrigin()
@@ -2954,7 +2946,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // we do not send any of the events to the page even if is has listeners.
     if (!m_isPageSuspended) {
         m_touchEventQueue.append(event);
-        m_process->responsivenessTimer().start();
+        m_process->startResponsivenessTimer();
         send(Messages::WebPage::TouchEvent(event));
     } else {
         if (m_touchEventQueue.isEmpty()) {
@@ -5431,7 +5423,7 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, SecurityOriginDat
 #endif
 
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5450,7 +5442,7 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, SecurityOriginD
 #endif
 
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5469,7 +5461,7 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, SecurityOriginDa
     exitFullscreenImmediately();
 #endif
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5636,7 +5628,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(FrameIdentifier frameID, Security
     }
 
     // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer and the tryClose timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
     m_tryCloseTimeoutTimer.stop();
     m_uiClient->runBeforeUnloadConfirmPanel(*this, message, frame, WTFMove(securityOrigin),
         [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(reply)](bool shouldClose) mutable {
@@ -5688,7 +5680,7 @@ void WebPageProxy::runOpenPanel(FrameIdentifier frameID, SecurityOriginData&& fr
     }
 
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     if (!m_uiClient->runOpenPanel(*this, frame, WTFMove(frameSecurityOrigin), parameters.ptr(), m_openPanelResultListener.get())) {
         if (!pageClient().handleRunOpenPanel(this, frame, parameters.ptr(), m_openPanelResultListener.get()))
@@ -6247,7 +6239,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
         return;
 
     // Since showPopupMenu() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     // Showing a popup menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref<WebPageProxy> protect(*this);
@@ -6290,7 +6282,7 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
 
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     // m_activeContextMenu might get cleared if WebPageProxy code is re-entered from the menu runloop or delegates.
     Ref<WebContextMenuProxy> protector(*m_activeContextMenu);
@@ -6637,7 +6629,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::GestureChange:
     case WebEvent::GestureEnd:
 #endif
-        m_process->responsivenessTimer().stop();
+        m_process->stopResponsivenessTimer();
         break;
     }
 
@@ -7877,7 +7869,7 @@ void WebPageProxy::drawFooter(WebFrameProxy& frame, FloatRect&& rect)
 void WebPageProxy::runModal()
 {
     // Since runModal() can (and probably will) spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer().stop();
+    m_process->stopResponsivenessTimer();
 
     // Our Connection's run loop might have more messages waiting to be handled after this RunModal message.
     // To make sure they are handled inside of the nested modal run loop we must first signal the Connection's
