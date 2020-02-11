@@ -405,6 +405,7 @@ fast/viewport/ [ Skip ]
 
 # highlight API
 highlight/ [ Skip ]
+http/wpt/css/css-highlight-api/ [ Skip ]
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
@@ -4518,11 +4519,6 @@ webkit.org/b/205273 imported/blink/fast/sub-pixel/negative-composited-offset.htm
 
 webkit.org/b/205487 fast/text/selection-in-initial-advance-region.html [ Failure ]
 webkit.org/b/206282 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
-
-webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-across-elements.html [ ImageOnlyFailure ]
-webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
-webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text-replace.html [ ImageOnlyFailure ]
-webkit.org/b/205855 http/wpt/css/css-highlight-api/highlight-text.html [ ImageOnlyFailure ]
 
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 

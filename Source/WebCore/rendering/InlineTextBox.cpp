@@ -622,7 +622,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     // Paint decorations
     auto textDecorations = lineStyle.textDecorationsInEffect();
-    if (!textDecorations.isEmpty() && paintInfo.phase != PaintPhase::Selection) {
+    bool highlightDecorations = !collectMarkedTextsForHighlights(TextPaintPhase::Decoration).isEmpty();
+    bool lineDecorations = !textDecorations.isEmpty();
+    if ((lineDecorations || highlightDecorations) && paintInfo.phase != PaintPhase::Selection) {
         TextRun textRun = createTextRun();
         unsigned length = textRun.length();
         if (m_truncation != cNoTruncation)
@@ -1044,6 +1046,8 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
         auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &parentStyle);
         if (!renderStyle)
             continue;
+        if (renderStyle->textDecorationsInEffect().isEmpty() && phase == TextPaintPhase::Decoration)
+            continue;
         for (auto& rangeData : highlight.value->rangesData()) {
             if (rangeData->startPosition && rangeData->endPosition) {
                 Position startPos = rangeData->startPosition.value();
@@ -1196,7 +1200,9 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
     }
 
     // 2. Paint
-    TextDecorationPainter decorationPainter { context, lineStyle().textDecorationsInEffect(), renderer(), isFirstLine(), lineFont(), markedText.style.textDecorationStyles };
+    auto textDecorations = lineStyle().textDecorationsInEffect();
+    textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
+    TextDecorationPainter decorationPainter { context, textDecorations, renderer(), isFirstLine(), lineFont(), markedText.style.textDecorationStyles };
     decorationPainter.setInlineTextBox(this);
     decorationPainter.setWidth(snappedSelectionRect.width());
     decorationPainter.setIsHorizontal(isHorizontal());

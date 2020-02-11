@@ -387,6 +387,18 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         extractDecorations(styleForRenderer(*current), remainingDecorations);
 }
 
+OptionSet<TextDecoration> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)
+{
+    OptionSet<TextDecoration> decorations;
+    if (style.underlineColor.isValid())
+        decorations.add(TextDecoration::Underline);
+    if (style.overlineColor.isValid())
+        decorations.add(TextDecoration::Overline);
+    if (style.linethroughColor.isValid())
+        decorations.add(TextDecoration::LineThrough);
+    return decorations;
+};
+
 auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecoration> requestedDecorations, bool firstLineStyle, PseudoId pseudoId) -> Styles
 {
     Styles result;
