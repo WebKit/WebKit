@@ -1,5 +1,80 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256095. rdar://problem/59349202
+
+    Extent of a composited animation should not include the untransformed position
+    https://bugs.webkit.org/show_bug.cgi?id=207434
+    
+    Reviewed by Sam Weinig.
+    Source/WebCore:
+    
+    To determine whether to create ("attach") backing store for layers with transform animations,
+    we compute the union of all the states of the animation as an "extent", and ask whether it intersects
+    the coverage rect in GraphicsLayerCA.
+    
+    The non-Web Animations transition code did this correctly, just unioning the bounds transformed by
+    the start and end state.
+    
+    The non-Web Animations keyframe code, and the Web Animations KeyframeEffect code (used for both CSS transitions
+    and animations) also unioned with the unanimated bounds, which could create overly large extents in some
+    cases, contributing to jetsams on iOS (rdar://problem/59020443).
+    
+    Fix KeyframeAnimation and KeyframeEffect to not union with the untransformed bounds.
+    
+    Tests: compositing/backing/backing-store-attachment-animating-outside-viewport.html
+           legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::computeExtentOfTransformAnimation const):
+    * page/animation/KeyframeAnimation.cpp:
+    (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation const):
+    
+    LayoutTests:
+    
+    New test that checks backing store attachment and overlap for an element which is positioned in-view,
+    but is move offscreen by the animation.
+    
+    New baselines for overlap tests, since overlap no longer considers the unanimated position.
+    
+    * compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+    * compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+    * compositing/layer-creation/translate-animation-overlap-expected.txt:
+    * compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+    * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+    * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+    * legacy-animation-engine/compositing/layer-creation/translate-animation-overlap-expected.txt:
+    * legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+    * platform/ios-wk2/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+    * platform/ios-wk2/legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256095 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-08  Simon Fraser  <simon.fraser@apple.com>
+
+            Extent of a composited animation should not include the untransformed position
+            https://bugs.webkit.org/show_bug.cgi?id=207434
+
+            Reviewed by Sam Weinig.
+
+            New test that checks backing store attachment and overlap for an element which is positioned in-view,
+            but is move offscreen by the animation.
+
+            New baselines for overlap tests, since overlap no longer considers the unanimated position.
+
+            * compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+            * compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+            * compositing/layer-creation/translate-animation-overlap-expected.txt:
+            * compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+            * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+            * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
+            * legacy-animation-engine/compositing/layer-creation/translate-animation-overlap-expected.txt:
+            * legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+            * platform/ios-wk2/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+            * platform/ios-wk2/legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255810. rdar://problem/59349189
 
     [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
