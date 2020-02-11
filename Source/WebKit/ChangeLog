@@ -1,5 +1,23 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r256022. rdar://problem/59298187
+
+    Address post-landing review comments from Darin on r255989.
+    
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256022 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  Chris Dumez  <cdumez@apple.com>
+
+            Address post-landing review comments from Darin on r255989.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r256016. rdar://problem/59298146
 
     Mandate UUID version 4 for mDNS ICE candidates
