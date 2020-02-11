@@ -39,54 +39,35 @@ template<typename T>
 class AudioArray {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AudioArray() : m_allocation(0), m_alignedData(0), m_size(0) { }
-    explicit AudioArray(size_t n) : m_allocation(0), m_alignedData(0), m_size(0)
+    AudioArray() = default;
+    explicit AudioArray(size_t n)
     {
         allocate(n);
     }
 
     ~AudioArray()
     {
-        fastFree(m_allocation);
+        fastAlignedFree(m_allocation);
     }
 
     // It's OK to call allocate() multiple times, but data will *not* be copied from an initial allocation
     // if re-allocated. Allocations are zero-initialized.
     void allocate(Checked<size_t> n)
     {
-        Checked<unsigned> initialSize = sizeof(T) * n;
+        Checked<size_t> initialSize = sizeof(T) * n;
         const size_t alignment = 16;
 
-        if (m_allocation)
-            fastFree(m_allocation);
-        
-        bool isAllocationGood = false;
-        
-        while (!isAllocationGood) {
-            // Initially we try to allocate the exact size, but if it's not aligned
-            // then we'll have to reallocate and from then on allocate extra.
-            static size_t extraAllocationBytes = 0;
+        fastAlignedFree(m_allocation);
 
-            T* allocation = static_cast<T*>(fastMalloc((initialSize + extraAllocationBytes).unsafeGet()));
-            if (!allocation)
-                CRASH();
-            T* alignedData = alignedAddress(allocation, alignment);
-
-            if (alignedData == allocation || extraAllocationBytes == alignment) {
-                m_allocation = allocation;
-                m_alignedData = alignedData;
-                m_size = n.unsafeGet();
-                isAllocationGood = true;
-                zero();
-            } else {
-                extraAllocationBytes = alignment; // always allocate extra after the first alignment failure.
-                fastFree(allocation);
-            }
-        }
+        m_allocation = static_cast<T*>(fastAlignedMalloc(alignment, initialSize.unsafeGet()));
+        if (!m_allocation)
+            CRASH();
+        m_size = n.unsafeGet();
+        zero();
     }
 
-    T* data() { return m_alignedData; }
-    const T* data() const { return m_alignedData; }
+    T* data() { return m_allocation; }
+    const T* data() const { return m_allocation; }
     size_t size() const { return m_size; }
 
     T& at(size_t i)
@@ -130,15 +111,8 @@ public:
     }
 
 private:
-    static T* alignedAddress(T* address, intptr_t alignment)
-    {
-        intptr_t value = reinterpret_cast<intptr_t>(address);
-        return reinterpret_cast<T*>((value + alignment - 1) & ~(alignment - 1));
-    }
-
-    T* m_allocation;
-    T* m_alignedData;
-    size_t m_size;
+    T* m_allocation { nullptr };
+    size_t m_size { 0 };
 };
 
 typedef AudioArray<float> AudioFloatArray;
