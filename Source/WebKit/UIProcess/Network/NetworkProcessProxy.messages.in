@@ -62,7 +62,7 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID)
+    EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
     WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
     RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
