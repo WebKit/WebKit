@@ -1084,8 +1084,6 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
     auto computedTiming = getComputedTiming();
     m_phaseAtLastApplication = computedTiming.phase;
 
-    updateAcceleratedActions(computedTiming);
-
     InspectorInstrumentation::willApplyKeyframeEffect(*m_target, *this, computedTiming);
 
     if (!computedTiming.progress)
@@ -1331,10 +1329,12 @@ TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index)
     return nullptr;
 }
 
-void KeyframeEffect::updateAcceleratedActions(ComputedEffectTiming computedTiming)
+void KeyframeEffect::updateAcceleratedActions()
 {
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
         return;
+
+    auto computedTiming = getComputedTiming();
 
     // If we're not already running accelerated, the only thing we're interested in is whether we need to start the animation
     // which we need to do once we're in the active phase. Otherwise, there's no change in accelerated state to consider.
@@ -1376,6 +1376,18 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
     if (action != AcceleratedAction::Seek)
         m_lastRecordedAcceleratedAction = action;
     animation()->acceleratedStateDidChange();
+}
+
+void KeyframeEffect::animationDidTick()
+{
+    invalidate();
+    updateAcceleratedActions();
+}
+
+void KeyframeEffect::animationDidPlay()
+{
+    if (m_acceleratedPropertiesState != AcceleratedProperties::None)
+        addPendingAcceleratedAction(AcceleratedAction::Play);
 }
 
 void KeyframeEffect::animationDidSeek()
