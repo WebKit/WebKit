@@ -867,6 +867,8 @@ imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ P
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ Pass ]

@@ -4246,6 +4246,8 @@ imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-contents.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ Pass ]
 
 fast/text/emoji-gender-2-3.html [ Pass ]
 fast/text/emoji-gender-2-4.html [ Pass ]
