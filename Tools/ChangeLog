@@ -1,3 +1,16 @@
+2020-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Regression: RTCRtpSender.getCapabilities("video") returns null on iOS 13.4 (17E5223h)
+        https://bugs.webkit.org/show_bug.cgi?id=207325
+        <rdar://problem/59224810>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        Add a test validating that RTCRtpSender.getCapabilities does not return null.
+        * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2020-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         KeyboardInputTests.SupportsImagePaste fails on recent versions of UIKit

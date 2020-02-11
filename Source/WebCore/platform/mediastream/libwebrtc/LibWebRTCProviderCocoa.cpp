@@ -73,7 +73,11 @@ void LibWebRTCProviderCocoa::setActive(bool value)
 
 bool LibWebRTCProvider::webRTCAvailable()
 {
+#if PLATFORM(IOS)
+    return true;
+#else
     return !isNullFunctionPointer(rtc::LogMessage::LogToDebug);
+#endif
 }
 
 } // namespace WebCore
