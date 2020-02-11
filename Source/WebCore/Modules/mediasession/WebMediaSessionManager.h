@@ -39,6 +39,7 @@ namespace WebCore {
 
 struct ClientState;
 class IntRect;
+class WebMediaSessionLogger;
 class WebMediaSessionManagerClient;
 
 class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client {
@@ -56,6 +57,8 @@ public:
     WEBCORE_EXPORT void removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient&);
     WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, uint64_t, const IntRect&, bool, bool);
     WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, uint64_t, WebCore::MediaProducer::MediaStateFlags);
+
+    bool alwaysOnLoggingAllowed() const;
 
 protected:
     WebMediaSessionManager();
@@ -96,6 +99,8 @@ private:
 
     void watchdogTimerFired();
 
+    WebMediaSessionLogger& logger();
+
     RunLoop::Timer<WebMediaSessionManager> m_taskTimer;
     RunLoop::Timer<WebMediaSessionManager> m_watchdogTimer;
 
@@ -103,6 +108,7 @@ private:
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     std::unique_ptr<WebCore::MediaPlaybackTargetPickerMock> m_pickerOverride;
     ConfigurationTasks m_taskFlags { NoTask };
+    std::unique_ptr<WebMediaSessionLogger> m_logger;
     Seconds m_currentWatchdogInterval;
     bool m_externalOutputDeviceAvailable { false };
     bool m_targetChanged { false };
@@ -110,6 +116,18 @@ private:
     bool m_mockPickerEnabled { false };
 };
 
+String mediaProducerStateString(WebCore::MediaProducer::MediaStateFlags);
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename> struct LogArgument;
+
+template<> struct LogArgument<WebCore::MediaProducer::MediaStateFlags> {
+    static String toString(WebCore::MediaProducer::MediaStateFlags flags) { return WebCore::mediaProducerStateString(flags); }
+};
+
+} // namespace WTF
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
