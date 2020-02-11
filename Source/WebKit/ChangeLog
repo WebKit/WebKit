@@ -1,5 +1,121 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255681. rdar://problem/59298166
+
+    NetworkProcess should be notified by UIProcess when its service worker process connection should be on
+    https://bugs.webkit.org/show_bug.cgi?id=207122
+    <rdar://problem/59089780>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Add a completion handler to the create context connection callback.
+    This is called when the context connection should have been created.
+    In case there is a context connection, completion handler does nothing.
+    Otherwise, SWServer will retry creating a context connection if needed.
+    
+    The pending connection map entry is now removed in the completion handler instead of addContextConnection.
+    This ensures that only one connection request is sent by network process at a time.
+    
+    Add extra logging to monitor creation of a context connection.
+    
+    * workers/service/context/SWContextManager.h:
+    * workers/service/server/SWServer.cpp:
+    (WebCore::SWServer::addContextConnection):
+    (WebCore::SWServer::removeContextConnection):
+    (WebCore::SWServer::createContextConnectionFinished):
+    * workers/service/server/SWServer.h:
+    
+    Source/WebKit:
+    
+    Add completion handlers to the messaging from NetworkProcess -> UIProcess -> WebProcess -> NetworkProcess
+    used to create a service worker context connection.
+    
+    This allows NetworkProcess to ask again for a connection if the connection is still needed but NetworkProcess did not find the context connection.
+    
+    This is difficult to test since we would need for the process selected to host service workers to exit between the
+    time it is selected and the time it sends the message to Networking process.
+    
+    To ensure that the context connection is created by WebProcess, WebProcessProxy takes a background assertion until WebProcess finishes
+    creating the context connection to Network process.
+    
+    * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+    (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+    * NetworkProcess/NetworkConnectionToWebProcess.h:
+    * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::swServerForSession):
+    * NetworkProcess/NetworkProcess.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/Network/NetworkProcessProxy.messages.in:
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+    * UIProcess/WebProcessPool.h:
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::establishServiceWorkerContext):
+    * UIProcess/WebProcessProxy.h:
+    * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+    (WebKit::m_userAgent):
+    (WebKit::WebSWContextManagerConnection::establishConnection):
+    * WebProcess/Storage/WebSWContextManagerConnection.h:
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+    * WebProcess/WebProcess.h:
+    * WebProcess/WebProcess.messages.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255681 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-04  youenn fablet  <youenn@apple.com>
+
+            NetworkProcess should be notified by UIProcess when its service worker process connection should be on
+            https://bugs.webkit.org/show_bug.cgi?id=207122
+            <rdar://problem/59089780>
+
+            Reviewed by Chris Dumez.
+
+            Add completion handlers to the messaging from NetworkProcess -> UIProcess -> WebProcess -> NetworkProcess
+            used to create a service worker context connection.
+
+            This allows NetworkProcess to ask again for a connection if the connection is still needed but NetworkProcess did not find the context connection.
+
+            This is difficult to test since we would need for the process selected to host service workers to exit between the
+            time it is selected and the time it sends the message to Networking process.
+
+            To ensure that the context connection is created by WebProcess, WebProcessProxy takes a background assertion until WebProcess finishes
+            creating the context connection to Network process.
+
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+            * NetworkProcess/NetworkConnectionToWebProcess.h:
+            * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::swServerForSession):
+            * NetworkProcess/NetworkProcess.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/Network/NetworkProcessProxy.messages.in:
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+            * UIProcess/WebProcessPool.h:
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::establishServiceWorkerContext):
+            * UIProcess/WebProcessProxy.h:
+            * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+            (WebKit::m_userAgent):
+            (WebKit::WebSWContextManagerConnection::establishConnection):
+            * WebProcess/Storage/WebSWContextManagerConnection.h:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255679. rdar://problem/59298180
 
     Unreviewed, follow-up assertion fix after r255662.

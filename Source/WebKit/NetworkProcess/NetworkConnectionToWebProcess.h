@@ -222,7 +222,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
-    void establishSWContextConnection(WebCore::RegistrableDomain&&);
+    void establishSWContextConnection(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
 #endif

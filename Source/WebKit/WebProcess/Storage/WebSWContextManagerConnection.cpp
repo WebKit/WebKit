@@ -106,11 +106,15 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     }
 
     updatePreferencesStore(store);
-    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain }, 0);
     WebProcess::singleton().disableTermination();
 }
 
 WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;
+
+void WebSWContextManagerConnection::establishConnection(CompletionHandler<void()>&& completionHandler)
+{
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain }, WTFMove(completionHandler), 0);
+}
 
 void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesStore& store)
 {
