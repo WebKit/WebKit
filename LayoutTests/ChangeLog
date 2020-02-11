@@ -1,3 +1,76 @@
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r255875. rdar://problem/59298172
+
+    Regression(r248734) StorageAreaMap objects are getting leaked
+    https://bugs.webkit.org/show_bug.cgi?id=207073
+    <rdar://problem/59168065>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Add test infrastructure for testing this change.
+    
+    Test: http/tests/storage/storage-map-leaking.html
+    
+    * storage/StorageNamespace.h:
+    (WebCore::StorageNamespace::storageAreaMapCountForTesting const):
+    * storage/StorageNamespaceProvider.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::storageAreaMapCount const):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Source/WebKit:
+    
+    Make sure that StorageAreaMap objects are getting removed from the HashMap
+    in StorageNamespaceImpl, once they no longer have any users.
+    
+    * WebProcess/WebStorage/StorageAreaImpl.cpp:
+    (WebKit::StorageAreaImpl::StorageAreaImpl):
+    (WebKit::StorageAreaImpl::~StorageAreaImpl):
+    * WebProcess/WebStorage/StorageAreaMap.cpp:
+    (WebKit::StorageAreaMap::incrementUseCount):
+    (WebKit::StorageAreaMap::decrementUseCount):
+    * WebProcess/WebStorage/StorageAreaMap.h:
+    * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+    (WebKit::StorageNamespaceImpl::destroyStorageAreaMap):
+    (WebKit::StorageNamespaceImpl::didDestroyStorageAreaMap): Deleted.
+    * WebProcess/WebStorage/StorageNamespaceImpl.h:
+    (WebKit::StorageNamespaceImpl::storageType const): Deleted.
+    (WebKit::StorageNamespaceImpl::storageNamespaceID const): Deleted.
+    (WebKit::StorageNamespaceImpl::topLevelOrigin const): Deleted.
+    (WebKit::StorageNamespaceImpl::quotaInBytes const): Deleted.
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * TestExpectations:
+    * http/tests/storage/resources/storage-map-leaking-iframe.html: Added.
+    * http/tests/storage/storage-map-leaking-expected.txt: Added.
+    * http/tests/storage/storage-map-leaking.html: Added.
+    * platform/wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r248734) StorageAreaMap objects are getting leaked
+            https://bugs.webkit.org/show_bug.cgi?id=207073
+            <rdar://problem/59168065>
+
+            Reviewed by Darin Adler.
+
+            Add layout test coverage.
+
+            * TestExpectations:
+            * http/tests/storage/resources/storage-map-leaking-iframe.html: Added.
+            * http/tests/storage/storage-map-leaking-expected.txt: Added.
+            * http/tests/storage/storage-map-leaking.html: Added.
+            * platform/wk2/TestExpectations:
+
 2020-02-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255396. rdar://problem/59097789

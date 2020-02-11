@@ -95,7 +95,7 @@ PAL::SessionID StorageNamespaceImpl::sessionID() const
     return WebProcess::singleton().sessionID();
 }
 
-void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
+void StorageNamespaceImpl::destroyStorageAreaMap(StorageAreaMap& map)
 {
     m_storageAreaMaps.remove(map.securityOrigin().data());
 }

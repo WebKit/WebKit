@@ -58,7 +58,8 @@ protected:
     StorageNamespace* optionalLocalStorageNamespace() { return m_localStorageNamespace.get(); }
 
 private:
-    StorageNamespace& localStorageNamespace(PAL::SessionID);
+    friend class Internals;
+    WEBCORE_TESTSUPPORT_EXPORT StorageNamespace& localStorageNamespace(PAL::SessionID);
     StorageNamespace& transientLocalStorageNamespace(SecurityOrigin&, PAL::SessionID);
 
     virtual Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID) = 0;

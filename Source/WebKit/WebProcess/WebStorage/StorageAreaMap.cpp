@@ -392,4 +392,15 @@ void StorageAreaMap::disconnect()
     m_storageMapID = { };
 }
 
+void StorageAreaMap::incrementUseCount()
+{
+    ++m_useCount;
+}
+
+void StorageAreaMap::decrementUseCount()
+{
+    if (!--m_useCount)
+        m_namespace.destroyStorageAreaMap(*this);
+}
+
 } // namespace WebKit
