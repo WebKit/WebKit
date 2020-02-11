@@ -2015,3 +2015,5 @@ webkit.org/b/184617 legacy-animation-engine/animations/suspend-resume-animation-
 webkit.org/b/207461 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Pass Failure ]
 
 webkit.org/b/207463 [ Debug ] inspector/runtime/getCollectionEntries.html [ Pass Failure ]
+
+webkit.org/b/207517 [ Debug ] inspector/animation/lifecycle-css-transition.html [ Pass Failure ]
