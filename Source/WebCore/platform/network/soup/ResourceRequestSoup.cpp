@@ -27,6 +27,7 @@
 #include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
+#include "RegistrableDomain.h"
 #include "SharedBuffer.h"
 #include "URLSoup.h"
 #include <wtf/text/CString.h>
