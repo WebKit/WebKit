@@ -1,5 +1,25 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255527. rdar://problem/59299116
+
+    Unreviewed build fix after r255522.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+    Switched to a C-style cast.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255527 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Andy Estes  <aestes@apple.com>
+
+            Unreviewed build fix after r255522.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+            Switched to a C-style cast.
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255522. rdar://problem/59299116
 
     Add KVO SPI WKWebView._negotiatedLegacyTLS
