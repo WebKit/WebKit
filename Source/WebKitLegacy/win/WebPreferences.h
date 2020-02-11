@@ -297,6 +297,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webAnimationsMutableTimelinesEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsMutableTimelinesEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE renderingUpdateThrottlingEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setRenderingUpdateThrottlingEnabled(BOOL);
 
     // WebPreferences
 

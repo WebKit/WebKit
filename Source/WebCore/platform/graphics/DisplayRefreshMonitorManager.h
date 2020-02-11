@@ -27,6 +27,7 @@
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
+#include "AnimationFrameRate.h"
 #include "DisplayRefreshMonitor.h"
 #include "PlatformScreen.h"
 #include <wtf/NeverDestroyed.h>
@@ -37,28 +38,27 @@ namespace WebCore {
 
 class DisplayRefreshMonitorManager {
     friend class NeverDestroyed<DisplayRefreshMonitorManager>;
+    friend class DisplayRefreshMonitor;
 public:
     WEBCORE_EXPORT static DisplayRefreshMonitorManager& sharedManager();
-    
-    void registerClient(DisplayRefreshMonitorClient&);
+
     void unregisterClient(DisplayRefreshMonitorClient&);
 
+    void setPreferredFramesPerSecond(DisplayRefreshMonitorClient&, FramesPerSecond);
     bool scheduleAnimation(DisplayRefreshMonitorClient&);
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
 
     WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID);
-    
+
 private:
-    friend class DisplayRefreshMonitor;
-    void displayDidRefresh(DisplayRefreshMonitor&);
-    
-    DisplayRefreshMonitorManager() { }
+    DisplayRefreshMonitorManager() = default;
     virtual ~DisplayRefreshMonitorManager();
+
+    void displayDidRefresh(DisplayRefreshMonitor&);
 
     size_t findMonitorForDisplayID(PlatformDisplayID) const;
     DisplayRefreshMonitor* monitorForDisplayID(PlatformDisplayID) const;
-
-    DisplayRefreshMonitor* createMonitorForClient(DisplayRefreshMonitorClient&);
+    DisplayRefreshMonitor* monitorForClient(DisplayRefreshMonitorClient&);
 
     struct DisplayRefreshMonitorWrapper {
         DisplayRefreshMonitorWrapper(DisplayRefreshMonitorWrapper&&) = default;
