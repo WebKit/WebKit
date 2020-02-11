@@ -34,6 +34,8 @@
 
 namespace WTF {
 
+class StringView;
+
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
 // The canonical form is displayed in 5 groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters.
 // The hexadecimal values "a" through "f" are output as lower case characters.
@@ -46,6 +48,7 @@ namespace WTF {
 WTF_EXPORT_PRIVATE String createCanonicalUUIDString();
 
 WTF_EXPORT_PRIVATE String bootSessionUUIDString();
+WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 
 }
 

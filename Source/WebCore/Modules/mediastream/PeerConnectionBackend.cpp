@@ -46,6 +46,7 @@
 #include "RTCRtpCapabilities.h"
 #include "RTCTrackEvent.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -302,15 +303,27 @@ void PeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& event)
     m_pendingTrackEvents.append(WTFMove(event));
 }
 
-static String extractIPAddres(const String& sdp)
+static String extractIPAddress(const String& sdp)
 {
-    ASSERT(sdp.contains(" host "));
     unsigned counter = 0;
     for (auto item : StringView { sdp }.split(' ')) {
         if (++counter == 5)
             return item.toString();
     }
     return { };
+}
+
+static inline bool shouldIgnoreIceCandidate(const RTCIceCandidate& iceCandidate)
+{
+    auto address = extractIPAddress(iceCandidate.candidate());
+    if (!address.endsWithIgnoringASCIICase(".local"_s))
+        return false;
+
+    if (!WTF::isVersion4UUID(StringView { address }.substring(0, address.length() - 6))) {
+        RELEASE_LOG_ERROR(WebRTC, "mDNS candidate is not a Version 4 UUID");
+        return true;
+    }
+    return false;
 }
 
 void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPromiseDeferred<void>&& promise)
@@ -327,6 +340,12 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
         promise.reject(Exception { TypeError, "Trying to add a candidate that is missing both sdpMid and sdpMLineIndex"_s });
         return;
     }
+
+    if (shouldIgnoreIceCandidate(*iceCandidate)) {
+        promise.resolve();
+        return;
+    }
+
     m_addIceCandidatePromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doAddIceCandidate(*iceCandidate);
 }
@@ -450,7 +469,7 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
             // FIXME: We might need to clear all pending candidates when setting again local description.
             m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
             if (RuntimeEnabledFeatures::sharedFeatures().webRTCMDNSICECandidatesEnabled()) {
-                auto ipAddress = extractIPAddres(sdp);
+                auto ipAddress = extractIPAddress(sdp);
                 // We restrict to IPv4 candidates for now.
                 if (ipAddress.contains('.'))
                     registerMDNSName(ipAddress);
