@@ -230,6 +230,9 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
         return;
 
     auto& frame = *this->frame();
+    if (!frame.view())
+        return;
+
     // FIXME: Not correct for vertical text.
     IntRect pageRect = m_pageRects[pageNumber];
     float scale = width / pageRect.width();
@@ -249,6 +252,9 @@ void PrintContext::spoolRect(GraphicsContext& ctx, const IntRect& rect)
         return;
 
     auto& frame = *this->frame();
+    if (!frame.view())
+        return;
+
     // FIXME: Not correct for vertical text.
     ctx.save();
     ctx.translate(-rect.x(), -rect.y());
