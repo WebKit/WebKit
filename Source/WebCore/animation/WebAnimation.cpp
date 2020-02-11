@@ -667,12 +667,6 @@ void WebAnimation::cancel(Silently silently)
         m_effect->animationWasCanceled();
 }
 
-void WebAnimation::willChangeRenderer()
-{
-    if (is<KeyframeEffect>(m_effect))
-        downcast<KeyframeEffect>(*m_effect).willChangeRenderer();
-}
-
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
@@ -974,9 +968,6 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
     invalidateEffect();
 
-    if (m_effect)
-        m_effect->animationDidPlay();
-
     return { };
 }
 
@@ -1192,8 +1183,7 @@ void WebAnimation::tick()
     if (hasPendingPlayTask())
         runPendingPlayTask();
 
-    if (!isEffectInvalidationSuspended() && m_effect)
-        m_effect->animationDidTick();
+    invalidateEffect();
 }
 
 void WebAnimation::resolve(RenderStyle& targetStyle)

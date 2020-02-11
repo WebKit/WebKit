@@ -115,16 +115,12 @@ public:
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
     void invalidate() override;
-    void animationDidTick() final;
-    void animationDidPlay() final;
     void animationDidSeek() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
     void animationTimingDidChange();
     void applyPendingAcceleratedActions();
-
-    void willChangeRenderer();
 
     void setAnimation(WebAnimation*) final;
 
@@ -152,7 +148,6 @@ public:
 
     enum class Accelerated : uint8_t { Yes, No };
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
-    bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
 
 private:
     KeyframeEffect(Element*);
@@ -165,7 +160,7 @@ private:
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
-    void updateAcceleratedActions();
+    void updateAcceleratedActions(ComputedEffectTiming);
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
     Ref<const Animation> backingAnimationForCompositedRenderer() const;

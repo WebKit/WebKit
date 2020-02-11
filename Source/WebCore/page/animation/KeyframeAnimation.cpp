@@ -253,7 +253,7 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
     auto& box = downcast<RenderBox>(*renderer());
     auto rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
 
-    LayoutRect cumulativeBounds;
+    auto cumulativeBounds = bounds;
 
     for (auto& keyframe : m_keyframes.keyframes()) {
         const RenderStyle* keyframeStyle = keyframe.style();

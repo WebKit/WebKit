@@ -63,7 +63,7 @@ void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
 bool KeyframeEffectStack::isCurrentlyAffectingProperty(CSSPropertyID property) const
 {
     for (auto& effect : m_effects) {
-        if (effect->isCurrentlyAffectingProperty(property) || effect->isRunningAcceleratedAnimationForProperty(property))
+        if (effect->isCurrentlyAffectingProperty(property))
             return true;
     }
     return false;

@@ -1084,6 +1084,8 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
     auto computedTiming = getComputedTiming();
     m_phaseAtLastApplication = computedTiming.phase;
 
+    updateAcceleratedActions(computedTiming);
+
     InspectorInstrumentation::willApplyKeyframeEffect(*m_target, *this, computedTiming);
 
     if (!computedTiming.progress)
@@ -1101,11 +1103,6 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
         return false;
 
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;
-}
-
-bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID property) const
-{
-    return m_isRunningAccelerated && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property) && m_blendingKeyframes.properties().contains(property);
 }
 
 void KeyframeEffect::invalidate()
@@ -1329,12 +1326,10 @@ TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index)
     return nullptr;
 }
 
-void KeyframeEffect::updateAcceleratedActions()
+void KeyframeEffect::updateAcceleratedActions(ComputedEffectTiming computedTiming)
 {
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
         return;
-
-    auto computedTiming = getComputedTiming();
 
     // If we're not already running accelerated, the only thing we're interested in is whether we need to start the animation
     // which we need to do once we're in the active phase. Otherwise, there's no change in accelerated state to consider.
@@ -1378,41 +1373,23 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
     animation()->acceleratedStateDidChange();
 }
 
-void KeyframeEffect::animationDidTick()
-{
-    invalidate();
-    updateAcceleratedActions();
-}
-
-void KeyframeEffect::animationDidPlay()
-{
-    if (m_acceleratedPropertiesState != AcceleratedProperties::None)
-        addPendingAcceleratedAction(AcceleratedAction::Play);
-}
-
 void KeyframeEffect::animationDidSeek()
 {
     // There is no need to seek if we're not playing an animation already. If seeking
     // means we're moving into an active lexicalGlobalObject, we'll pick this up in apply().
-    if (m_isRunningAccelerated || isAboutToRunAccelerated())
+    if (m_isRunningAccelerated)
         addPendingAcceleratedAction(AcceleratedAction::Seek);
 }
 
 void KeyframeEffect::animationWasCanceled()
 {
-    if (m_isRunningAccelerated || isAboutToRunAccelerated())
-        addPendingAcceleratedAction(AcceleratedAction::Stop);
-}
-
-void KeyframeEffect::willChangeRenderer()
-{
-    if (m_isRunningAccelerated || isAboutToRunAccelerated())
+    if (m_isRunningAccelerated)
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
 void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended)
 {
-    if (m_isRunningAccelerated || isAboutToRunAccelerated())
+    if (m_isRunningAccelerated)
         addPendingAcceleratedAction(animationIsSuspended ? AcceleratedAction::Pause : AcceleratedAction::Play);
 }
 
@@ -1538,7 +1515,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
     auto& box = downcast<RenderBox>(*renderer());
     auto rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
 
-    LayoutRect cumulativeBounds;
+    auto cumulativeBounds = bounds;
 
     for (const auto& keyframe : m_blendingKeyframes.keyframes()) {
         const auto* keyframeStyle = keyframe.style();

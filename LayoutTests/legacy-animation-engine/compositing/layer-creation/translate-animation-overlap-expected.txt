@@ -5,12 +5,17 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 417
+      (children 430
         (GraphicsLayer
           (offsetFromRenderer width=-14 height=-14)
           (position 24.00 38.00)
           (bounds 228.00 128.00)
           (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 30.00 40.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
         )
         (GraphicsLayer
           (position 40.00 40.00)
@@ -169,6 +174,11 @@
         )
         (GraphicsLayer
           (position 350.00 40.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 50.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -333,6 +343,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 60.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 60.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -489,6 +504,11 @@
         )
         (GraphicsLayer
           (position 350.00 60.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 70.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -653,6 +673,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 80.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 80.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -809,6 +834,11 @@
         )
         (GraphicsLayer
           (position 350.00 80.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 90.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -973,6 +1003,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 100.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 100.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -1129,6 +1164,11 @@
         )
         (GraphicsLayer
           (position 350.00 100.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 110.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1293,6 +1333,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 120.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 120.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -1449,6 +1494,11 @@
         )
         (GraphicsLayer
           (position 350.00 120.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 130.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1613,6 +1663,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 140.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 140.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -1773,6 +1828,11 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 30.00 150.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
           (position 40.00 150.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
@@ -1929,6 +1989,11 @@
         )
         (GraphicsLayer
           (position 350.00 150.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 30.00 160.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )

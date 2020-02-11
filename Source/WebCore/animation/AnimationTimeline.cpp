@@ -241,12 +241,6 @@ void AnimationTimeline::removeAnimationsForElement(Element& element)
         animation->remove();
 }
 
-void AnimationTimeline::willChangeRendererForElement(Element& element)
-{
-    for (auto& animation : animationsForElement(element))
-        animation->willChangeRenderer();
-}
-
 void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
 {
     for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
@@ -421,7 +415,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
                 auto shorthand = shorthandForProperty(property);
                 for (size_t j = 0; j < shorthand.length(); ++j)
                     transitionProperties.add(shorthand.properties()[j]);
-            } else if (property != CSSPropertyInvalid)
+            } else
                 transitionProperties.add(property);
         } else if (mode == Animation::AnimateAll) {
             transitionPropertiesContainAll = true;

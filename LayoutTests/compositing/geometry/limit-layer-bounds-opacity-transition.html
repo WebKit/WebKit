@@ -40,10 +40,8 @@
     function fadeDone()
     {
       if (window.testRunner) {
-          requestAnimationFrame(() => {
-              document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
-              testRunner.notifyDone();
-          })
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        testRunner.notifyDone();
       }
     }
   </script>
