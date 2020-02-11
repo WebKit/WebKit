@@ -36,6 +36,7 @@
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
+#include "LayoutInlineTextBox.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
@@ -338,8 +339,8 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
             else if (layoutBox.isAtomicInlineLevelBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });
             else if (layoutBox.isAnonymous()) {
-                ASSERT(layoutBox.hasTextContent());
-                InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), layoutBox);
+                ASSERT(layoutBox.isInlineTextBox());
+                InlineTextItem::createAndAppendTextItems(formattingState.inlineItems(), downcast<InlineTextBox>(layoutBox));
             } else if (layoutBox.isInlineBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerEnd });
             else

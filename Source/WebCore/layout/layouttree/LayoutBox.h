@@ -29,7 +29,6 @@
 
 #include "LayoutReplaced.h"
 #include "RenderStyle.h"
-#include "TextContext.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,14 +63,14 @@ public:
     };
 
     enum BaseTypeFlag {
-        BoxFlag               = 1 << 0,
-        ContainerFlag         = 1 << 1
+        BoxFlag                = 1 << 0,
+        InlineTextBox          = 1 << 1,
+        ContainerFlag          = 1 << 2
     };
     typedef unsigned BaseTypeFlags;
 
     Box(Optional<ElementAttributes>, RenderStyle&&);
-    Box(TextContext&&, RenderStyle&&);
-    ~Box();
+    virtual ~Box();
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
@@ -142,6 +141,7 @@ public:
     Box* nextSibling() { return m_nextSibling; }
 
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
+    bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBox; }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
@@ -152,8 +152,6 @@ public:
     const Replaced* replaced() const;
     // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
     Replaced* replaced();
-    bool hasTextContent() const { return !!m_textContext; }
-    const Optional<TextContext>& textContext() const { return m_textContext; }
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
@@ -176,7 +174,7 @@ public:
     void setCachedDisplayBoxForLayoutState(LayoutState&, std::unique_ptr<Display::Box>) const;
 
 protected:
-    Box(Optional<ElementAttributes>, Optional<TextContext>, RenderStyle&&, BaseTypeFlags);
+    Box(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags);
 
 private:
     class BoxRareData {
@@ -207,8 +205,6 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
     
-    const Optional<TextContext> m_textContext;
-
     // First LayoutState gets a direct cache.
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<Display::Box> m_cachedDisplayBoxForLayoutState;

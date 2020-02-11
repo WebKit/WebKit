@@ -750,7 +750,7 @@ LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLa
     : m_type(softLineBreakItem.type())
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_logicalRect({ 0, logicalLeft, 0, 0 })
-    , m_textContext({ softLineBreakItem.position(), 1, softLineBreakItem.layoutBox().textContext()->content })
+    , m_textContext({ softLineBreakItem.position(), 1, softLineBreakItem.inlineTextBox().content() })
 {
 }
 
@@ -759,7 +759,7 @@ LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit log
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalRect({ 0, logicalLeft, logicalWidth, 0 })
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
-    , m_textContext({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.layoutBox().textContext()->content })
+    , m_textContext({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = logicalWidth;

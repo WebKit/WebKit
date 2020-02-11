@@ -37,18 +37,19 @@ class RenderStyle;
 
 namespace Layout {
 
+class InlineTextBox;
 class InlineTextItem;
 
 class TextUtil {
 public:
     static InlineLayoutUnit width(const InlineTextItem&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft = 0);
-    static InlineLayoutUnit width(const Box&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft = 0);
+    static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft = 0);
     struct SplitData {
         unsigned start { 0 };
         unsigned length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
     };
-    static SplitData split(const Box&, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static SplitData split(const InlineTextBox&, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
     static bool shouldPreserveTrailingWhitespace(const RenderStyle&);
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
 

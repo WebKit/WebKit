@@ -125,7 +125,7 @@ static bool checkForMatchingNonTextRuns(const Display::Run& inlineRun, const Web
 }
 
 
-static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const InlineTextBox& inlineTextBox)
+static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const WebCore::InlineTextBox& inlineTextBox)
 {
     return areEssentiallyEqual(inlineTextBox.left(), inlineRun.left())
         && areEssentiallyEqual(inlineTextBox.right(), inlineRun.right())

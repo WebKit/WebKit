@@ -43,13 +43,13 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
         return true;
     // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
     // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
-    if (&currentTextItem.layoutBox() == &nextInlineTextItem.layoutBox())
+    if (&currentTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox())
         return true;
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
-    auto previousContent = currentTextItem.layoutBox().textContext()->content;
-    auto lineBreakIterator = LazyLineBreakIterator { nextInlineTextItem.layoutBox().textContext()->content };
+    auto previousContent = currentTextItem.inlineTextBox().content();
+    auto lineBreakIterator = LazyLineBreakIterator { nextInlineTextItem.inlineTextBox().content() };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
     UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;

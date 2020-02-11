@@ -91,7 +91,7 @@ private:
     Box* createLayoutBox(const Container& parentContainer, const RenderObject& childRenderer);
 
     Box& createBox(Optional<Box::ElementAttributes>, RenderStyle&&);
-    Box& createTextBox(TextContext&&, RenderStyle&&);
+    Box& createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&&);
     Container& createContainer(Optional<Box::ElementAttributes>, RenderStyle&&);
 
     LayoutTreeContent& m_layoutTreeContent;

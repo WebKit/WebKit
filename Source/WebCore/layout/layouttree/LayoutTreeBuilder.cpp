@@ -42,6 +42,7 @@
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutInlineTextBox.h"
 #include "LayoutPhase.h"
 #include "LayoutSize.h"
 #include "LayoutState.h"
@@ -150,9 +151,9 @@ Box& TreeBuilder::createBox(Optional<Box::ElementAttributes> elementAttributes, 
     return box;
 }
 
-Box& TreeBuilder::createTextBox(TextContext&& textContent, RenderStyle&& style)
+Box& TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&& style)
 {
-    auto newBox = makeUnique<Box>(WTFMove(textContent), WTFMove(style));
+    auto newBox = makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, WTFMove(style));
     auto& box = *newBox;
     m_layoutTreeContent.addBox(WTFMove(newBox));
     return box;
@@ -191,12 +192,11 @@ Box* TreeBuilder::createLayoutBox(const Container& parentContainer, const Render
         auto& textRenderer = downcast<RenderText>(childRenderer);
         // RenderText::text() has already applied text-transform and text-security properties.
         String text = textRenderer.text();
-        auto textContent = TextContext { text, canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace()) };
+        auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = &createTextBox(WTFMove(textContent), RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = &createTextBox(text, useSimplifiedTextMeasuring, RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = &createTextBox(WTFMove(textContent), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
-        childLayoutBox->setIsAnonymous();
+            childLayoutBox = &createTextBox(text, useSimplifiedTextMeasuring, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
@@ -406,8 +406,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     if (displayBox)
         stream << " at (" << displayBox->left() << "," << displayBox->top() << ") size " << displayBox->width() << "x" << displayBox->height();
     stream << " layout box->(" << &layoutBox << ")";
-    if (layoutBox.isInlineLevelBox() && layoutBox.isAnonymous())
-        stream << " text content [\"" << layoutBox.textContext()->content.utf8().data() << "\"]";
+    if (is<InlineTextBox>(layoutBox))
+        stream << " text content [\"" << downcast<InlineTextBox>(layoutBox).content().utf8().data() << "\"]";
 
     stream.nextLine();
 }

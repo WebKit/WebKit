@@ -65,22 +65,21 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
     return textLength - startPosition;
 }
 
-void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const Box& inlineBox)
+void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const InlineTextBox& inlineTextBox)
 {
-    auto& textContext = *inlineBox.textContext();
-    auto text = textContext.content;
+    auto text = inlineTextBox.content();
     if (!text.length())
-        return inlineContent.append(InlineTextItem::createEmptyItem(inlineBox));
+        return inlineContent.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
-    auto& style = inlineBox.style();
+    auto& style = inlineTextBox.style();
     auto& font = style.fontCascade();
     LazyLineBreakIterator lineBreakIterator(text);
     unsigned currentPosition = 0;
 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<InlineLayoutUnit> {
-        if (!textContext.canUseSimplifiedContentMeasuring)
+        if (!inlineTextBox.canUseSimplifiedContentMeasuring())
             return { };
-        return TextUtil::width(inlineBox, startPosition, startPosition + length);
+        return TextUtil::width(inlineTextBox, startPosition, startPosition + length);
     };
 
     while (currentPosition < text.length()) {
@@ -90,16 +89,16 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 
         // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
         if (isSegmentBreakCandidate(text[currentPosition]) && style.preserveNewline()) {
-            inlineContent.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineBox, currentPosition));
+            inlineContent.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
             ++currentPosition;
             continue;
         }
 
         if (isWhitespaceCharacter(text[currentPosition], style.preserveNewline())) {
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
-                auto simpleSingleWhitespaceContent = textContext.canUseSimplifiedContentMeasuring && (itemLength == 1 || style.collapseWhiteSpace());
+                auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || style.collapseWhiteSpace());
                 auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineBox, startPosition, itemLength, width));
+                inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, width));
             };
 
             auto length = moveToNextNonWhitespacePosition(text, currentPosition, style.preserveNewline());
@@ -116,7 +115,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         }
 
         auto length = moveToNextBreakablePosition(currentPosition, lineBreakIterator, style);
-        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
+        inlineContent.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, currentPosition, length, inlineItemWidth(currentPosition, length)));
         currentPosition += length;
     }
 }
@@ -124,7 +123,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 bool InlineTextItem::isEmptyContent() const
 {
     // FIXME: We should check for more zero width content and not just U+200B.
-    return !m_length || (m_length == 1 && layoutBox().textContext()->content[start()] == zeroWidthSpace); 
+    return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 
 }
 
 }

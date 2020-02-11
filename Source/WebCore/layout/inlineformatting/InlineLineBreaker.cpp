@@ -313,7 +313,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             return PartialRun { inlineTextItem.length(), overflowRun.logicalWidth, false };
         }
         // FIXME: Pass in the content logical left to be able to measure tabs.
-        auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
+        auto splitData = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
         return PartialRun { splitData.length, splitData.logicalWidth, false };
     }
 
@@ -336,14 +336,13 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
             if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                 return { };
-            leftSideLength = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { }).length;
+            leftSideLength = TextUtil::split(inlineTextItem.inlineTextBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { }).length;
         }
         if (leftSideLength < limitBefore)
             return { };
-        auto textContent = inlineTextItem.layoutBox().textContext()->content;
         // Adjust before index to accommodate the limit-after value (it's the last potential hyphen location in this run).
         auto hyphenBefore = std::min(leftSideLength, runLength - limitAfter) + 1;
-        unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
+        unsigned hyphenLocation = lastHyphenLocation(StringView(inlineTextItem.inlineTextBox().content()).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
         if (!hyphenLocation || hyphenLocation < limitBefore)
             return { };
         // hyphenLocation is relative to the start of this InlineItemText.
