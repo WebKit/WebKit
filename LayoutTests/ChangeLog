@@ -1,58 +1,101 @@
 2020-02-11  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r256181. rdar://problem/59349184
+        Cherry-pick r256214. rdar://problem/59349205
 
-    There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
-    https://bugs.webkit.org/show_bug.cgi?id=207361
-    <rdar://problem/59280370>
+    WebContent jetsams on Sony lens webpage due to spike of IOSurfaces
+    https://bugs.webkit.org/show_bug.cgi?id=207493
+    rdar://problem/59020443
     
-    Reviewed by Simon Fraser.
-    
+    Reviewed by Zalan Bujtas.
     Source/WebCore:
     
-    Animations should be removed from GraphicsLayersCAs in the same rendering update that changes the playState of the
-    animation to "finished", to avoid layer flush where a GraphicsLayersCAs has no extent set, but thinks there is
-    an active transform animation.
+    There were three issues that contributed to massive backing store allocation on
+    <https://www.sony.com/electronics/lenses/t/camera-lenses>.
     
-    To do this, instead of enqueuing accelerated actions when resolving animations during style resolution, in
-    KeyframeAnimation::apply(), we enqueue them as soon as an animation's current time may have changed: in
-    WebAnimation::tick() and WebAnimation::play() with supporting functions newly exposed on AnimationEffect.
+    The first, fixed in r256095, was that the Web Animations code unioned the untransitioning
+    bounds with the transitioning bounds, causing the computation of large extent rects.
     
-    Now, accelerated animations are enqueued and applied during the "update animations and send events" procedure.
+    The second, fixed in r256181, was that GraphicsLayerCA would keep hold of a transform
+    animation for an extra frame, causing a rendering update where
+    RenderLayerBacking::updateGeometry() would have cleared the extent, but GraphicsLayerCA
+    still thought transform was animating, causing GraphicsLayerCA::updateCoverage() to keep
+    backing store attached.
     
-    * animation/AnimationEffect.h:
-    * animation/KeyframeEffect.cpp:
-    (WebCore::KeyframeEffect::apply):
-    (WebCore::KeyframeEffect::updateAcceleratedActions):
-    (WebCore::KeyframeEffect::animationDidTick):
-    (WebCore::KeyframeEffect::animationDidPlay):
-    * animation/KeyframeEffect.h:
-    * animation/WebAnimation.cpp:
-    (WebCore::WebAnimation::play):
-    (WebCore::WebAnimation::tick):
+    This patch is the final fix; when animations start and end, we need to ensure that
+    RenderLayerBacking::updateGeometry() is called so that we compute the animation extent in
+    the same frame that adds the animation.
+    
+    Test: compositing/backing/transition-extent.html
+    
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::startAnimation):
+    (WebCore::RenderLayerBacking::animationFinished):
     
     LayoutTests:
     
-    Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
-    to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+    Test with an out-of-view transitioning element which should not get backing store.
     
-    * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+    * compositing/backing/transition-extent-expected.txt: Added.
+    * compositing/backing/transition-extent.html: Added.
+    * platform/ios-wk2/compositing/backing/transition-extent-expected.txt: Added.
     
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256181 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256214 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2020-02-10  Antoine Quint  <graouts@webkit.org>
+    2020-02-11  Russell Epstein  <repstein@apple.com>
 
-            There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
-            https://bugs.webkit.org/show_bug.cgi?id=207361
-            <rdar://problem/59280370>
+            Cherry-pick r256181. rdar://problem/59349184
 
-            Reviewed by Simon Fraser.
+        There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=207361
+        <rdar://problem/59280370>
 
-            Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
-            to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+        Reviewed by Simon Fraser.
 
-            * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+        Source/WebCore:
+
+        Animations should be removed from GraphicsLayersCAs in the same rendering update that changes the playState of the
+        animation to "finished", to avoid layer flush where a GraphicsLayersCAs has no extent set, but thinks there is
+        an active transform animation.
+
+        To do this, instead of enqueuing accelerated actions when resolving animations during style resolution, in
+        KeyframeAnimation::apply(), we enqueue them as soon as an animation's current time may have changed: in
+        WebAnimation::tick() and WebAnimation::play() with supporting functions newly exposed on AnimationEffect.
+
+        Now, accelerated animations are enqueued and applied during the "update animations and send events" procedure.
+
+        * animation/AnimationEffect.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::updateAcceleratedActions):
+        (WebCore::KeyframeEffect::animationDidTick):
+        (WebCore::KeyframeEffect::animationDidPlay):
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::play):
+        (WebCore::WebAnimation::tick):
+
+        LayoutTests:
+
+        Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
+        to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+
+        * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256181 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2020-02-10  Antoine Quint  <graouts@webkit.org>
+
+                There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
+                https://bugs.webkit.org/show_bug.cgi?id=207361
+                <rdar://problem/59280370>
+
+                Reviewed by Simon Fraser.
+
+                Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
+                to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+
+                * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
 
 2020-02-11  Russell Epstein  <repstein@apple.com>
 
@@ -85,6 +128,20 @@
     * page/animation/KeyframeAnimation.cpp:
     (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation const):
     
+2020-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        WebContent jetsams on Sony lens webpage due to spike of IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=207493
+        rdar://problem/59020443
+
+        Reviewed by Zalan Bujtas.
+        
+        Test with an out-of-view transitioning element which should not get backing store.
+
+        * compositing/backing/transition-extent-expected.txt: Added.
+        * compositing/backing/transition-extent.html: Added.
+        * platform/ios-wk2/compositing/backing/transition-extent-expected.txt: Added.
+
     LayoutTests:
     
     New test that checks backing store attachment and overlap for an element which is positioned in-view,
