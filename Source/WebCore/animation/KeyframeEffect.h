@@ -115,6 +115,8 @@ public:
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
     void invalidate() override;
+    void animationDidTick() final;
+    void animationDidPlay() final;
     void animationDidSeek() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
@@ -163,7 +165,7 @@ private:
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
-    void updateAcceleratedActions(ComputedEffectTiming);
+    void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
