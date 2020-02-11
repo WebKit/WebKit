@@ -1,5 +1,55 @@
 2020-02-11  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255810. rdar://problem/59335797
+
+    [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
+    https://bugs.webkit.org/show_bug.cgi?id=207253
+    <rdar://problem/59143624>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Test: webanimations/accelerated-animation-canceled-before-commit.html
+    
+    Merely checking whether an accelerated animation is running prior to enqueuing an action to cancel it is not sufficient
+    since there could be an uncommitted change to start it upon the next animation frame. The same logic would need to apply
+    in other situations where the playback state changes for a potentially in-flight animation.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::animationDidSeek):
+    (WebCore::KeyframeEffect::animationWasCanceled):
+    (WebCore::KeyframeEffect::willChangeRenderer):
+    (WebCore::KeyframeEffect::animationSuspensionStateDidChange):
+    
+    LayoutTests:
+    
+    Add a new test that checks that an accelerated animation that has been enqueued to start but has
+    not yet been committed is correctly canceled when the cancel() method is called. This test fails
+    prior to this source change.
+    
+    * webanimations/accelerated-animation-canceled-before-commit-expected.html: Added.
+    * webanimations/accelerated-animation-canceled-before-commit.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255810 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
+            https://bugs.webkit.org/show_bug.cgi?id=207253
+            <rdar://problem/59143624>
+
+            Reviewed by Antti Koivisto.
+
+            Add a new test that checks that an accelerated animation that has been enqueued to start but has
+            not yet been committed is correctly canceled when the cancel() method is called. This test fails
+            prior to this source change.
+
+            * webanimations/accelerated-animation-canceled-before-commit-expected.html: Added.
+            * webanimations/accelerated-animation-canceled-before-commit.html: Added.
+
+2020-02-11  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255663. rdar://problem/59335773
 
     Accelerated animations freeze on render tree rebuild

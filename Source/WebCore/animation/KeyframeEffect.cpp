@@ -1382,25 +1382,25 @@ void KeyframeEffect::animationDidSeek()
 {
     // There is no need to seek if we're not playing an animation already. If seeking
     // means we're moving into an active lexicalGlobalObject, we'll pick this up in apply().
-    if (m_isRunningAccelerated)
+    if (m_isRunningAccelerated || isAboutToRunAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Seek);
 }
 
 void KeyframeEffect::animationWasCanceled()
 {
-    if (m_isRunningAccelerated)
+    if (m_isRunningAccelerated || isAboutToRunAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
 void KeyframeEffect::willChangeRenderer()
 {
-    if (m_isRunningAccelerated)
+    if (m_isRunningAccelerated || isAboutToRunAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
 void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended)
 {
-    if (m_isRunningAccelerated)
+    if (m_isRunningAccelerated || isAboutToRunAccelerated())
         addPendingAcceleratedAction(animationIsSuspended ? AcceleratedAction::Pause : AcceleratedAction::Play);
 }
 
