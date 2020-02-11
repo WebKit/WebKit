@@ -34,6 +34,15 @@ public:
     ScrollbarThemeWPE() = default;
     virtual ~ScrollbarThemeWPE() = default;
 
+private:
+    bool usesOverlayScrollbars() const override { return true; }
+
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect&) override;
+    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
+
+    int scrollbarThickness(ScrollbarControlSize, ScrollbarExpansionState) override;
+    int minimumThumbLength(Scrollbar&) override;
+
     bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;
 
