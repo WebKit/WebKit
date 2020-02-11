@@ -1,3 +1,17 @@
+2020-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Cherry-pick r254989. rdar://problem/59354409
+
+    [iOS] Camera is lost during WebRTC demo
+    https://bugs.webkit.org/show_bug.cgi?id=206613
+    <rdar://problem/58764572>
+
+    Reviewed by Brent Fulgham.
+
+    Fix observed sandbox violations in the Networking process.
+
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r256105. rdar://problem/59302221

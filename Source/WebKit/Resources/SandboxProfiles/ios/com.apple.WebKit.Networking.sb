@@ -587,8 +587,9 @@
 ;; enough access to make it possible.
 
 ;; IOKit user clients
-(allow iokit-open (with report) (with telemetry)
-       (iokit-user-client-class "RootDomainUserClient"))
+(allow iokit-open
+       (iokit-user-client-class "RootDomainUserClient") ;; Needed by PowerObserver
+)
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
@@ -647,3 +648,21 @@
 ;; Various shared memory accesses required by system frameworks
 (allow ipc-posix-shm-read-data
     (ipc-posix-name "/com.apple.AppSSO.version"))
+
+;; Access to ContainerManager
+(allow mach-lookup
+    (global-name "com.apple.containermanagerd"))
+(allow ipc-posix-sem-open
+    (ipc-posix-name "containermanagerd.fb_check"))
+
+(allow file-read*
+    (literal "/dev/random")
+    (literal "/dev/urandom"))
+
+;; Access to MobileGestalt
+(allow mach-lookup
+    (global-name "com.apple.mobilegestalt.xpc"))
+(allow file-read*
+    (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+(allow iokit-get-properties
+    (iokit-property "IORegistryEntryPropertyKeys"))
