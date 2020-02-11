@@ -1,5 +1,14 @@
 2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk1 ] media/airplay-target-availability.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207560
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS iOS ] fast/parser/parser-yield-timing.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=207559
 

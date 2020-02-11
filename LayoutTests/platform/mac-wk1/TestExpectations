@@ -911,3 +911,5 @@ webkit.org/b/207469 [ Debug ] imported/w3c/web-platform-tests/svg/animations/sli
 webkit.org/b/207470 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Pass Failure ]
 
 webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
+
+webkit.org/207560 media/airplay-target-availability.html [ Pass Failure ]
