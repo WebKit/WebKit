@@ -1,3 +1,30 @@
+2020-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Move the async code from WebAuthenticationPanelClient to AuthenticatorManager
+        https://bugs.webkit.org/show_bug.cgi?id=206248
+
+        Reviewed by Alex Christensen.
+
+        No change of behaviors.
+
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::selectAssertionResponse const):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::serviceStatusUpdated):
+        (WebKit::AuthenticatorManager::authenticatorStatusUpdated):
+        (WebKit::AuthenticatorManager::requestPin):
+        (WebKit::AuthenticatorManager::selectAssertionResponse):
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        (WebKit::AuthenticatorManager::dispatchPanelClientCall const):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::updatePanel const):
+        (WebKit::WebAuthenticationPanelClient::dismissPanel const):
+        (WebKit::WebAuthenticationPanelClient::requestPin const):
+        (WebKit::WebAuthenticationPanelClient::selectAssertionResponse const):
+
 2020-02-10  Alan Sien Wei Hshieh  <hshieh@apple.com>
 
         Add a variant of -[WKWebViewPrivate _getContentsAsStringWithCompletionHandler:] that includes contents from subframes

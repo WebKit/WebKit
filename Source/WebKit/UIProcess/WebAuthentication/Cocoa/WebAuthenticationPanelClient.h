@@ -32,7 +32,6 @@
 #import "APIWebAuthenticationPanelClient.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
-#import <wtf/WeakPtr.h>
 
 @class _WKWebAuthenticationPanel;
 @protocol _WKWebAuthenticationPanelDelegate;
@@ -50,7 +49,7 @@ private:
     void updatePanel(WebAuthenticationStatus) const final;
     void dismissPanel(WebAuthenticationResult) const final;
     void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&&) const final;
-    void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&&) const final;
+    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&&) const final;
 
     _WKWebAuthenticationPanel *m_panel;
     WeakObjCPtr<id <_WKWebAuthenticationPanelDelegate> > m_delegate;

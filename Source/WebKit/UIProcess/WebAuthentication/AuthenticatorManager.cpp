@@ -35,6 +35,7 @@
 #include "NfcService.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
+#include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
@@ -232,8 +233,9 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 
 void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 {
-    if (auto *panel = m_pendingRequestData.panel.get())
-        panel->client().updatePanel(status);
+    dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
+        panel.client().updatePanel(status);
+    });
 }
 
 void AuthenticatorManager::respondReceived(Respond&& respond)
@@ -269,20 +271,28 @@ void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& dow
 
 void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus status)
 {
-    if (auto* panel = m_pendingRequestData.panel.get())
-        panel->client().updatePanel(status);
+    dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
+        panel.client().updatePanel(status);
+    });
 }
 
 void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&& completionHandler)
 {
-    if (auto* panel = m_pendingRequestData.panel.get())
-        panel->client().requestPin(retries, WTFMove(completionHandler));
+    dispatchPanelClientCall([retries, completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().requestPin(retries, WTFMove(completionHandler));
+    });
 }
 
-void AuthenticatorManager::selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler)
+void AuthenticatorManager::selectAssertionResponse(const HashSet<Ref<AuthenticatorAssertionResponse>>& responses, CompletionHandler<void(const AuthenticatorAssertionResponse&)>&& completionHandler)
 {
-    if (auto* panel = m_pendingRequestData.panel.get())
-        panel->client().selectAssertionResponse(responses, WTFMove(completionHandler));
+    Vector<Ref<AuthenticatorAssertionResponse>> responseVector;
+    responseVector.reserveInitialCapacity(responses.size());
+    for (auto& response : responses)
+        responseVector.uncheckedAppend(response.copyRef());
+
+    dispatchPanelClientCall([responses = WTFMove(responseVector), completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().selectAssertionResponse(WTFMove(responses), WTFMove(completionHandler));
+    });
 }
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
@@ -347,7 +357,7 @@ void AuthenticatorManager::runPanel()
     auto transports = getTransports();
     m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options));
     auto& panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, WebCore::SecurityOriginData { m_pendingRequestData.origin }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, SecurityOriginData { m_pendingRequestData.origin }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         if (!weakThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)
@@ -360,13 +370,9 @@ void AuthenticatorManager::runPanel()
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
 {
-    if (auto *panel = m_pendingRequestData.panel.get()) {
-        WTF::switchOn(respond, [&](const Ref<AuthenticatorResponse>&) {
-            panel->client().dismissPanel(WebAuthenticationResult::Succeeded);
-        }, [&](const ExceptionData&) {
-            panel->client().dismissPanel(WebAuthenticationResult::Failed);
-        });
-    }
+    dispatchPanelClientCall([result = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed] (const API::WebAuthenticationPanel& panel) {
+        panel.client().dismissPanel(result);
+    });
     m_pendingCompletionHandler(WTFMove(respond));
 }
 
@@ -389,6 +395,19 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
         transports.remove(AuthenticatorTransport::Internal);
     filterTransports(transports);
     return transports;
+}
+
+void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&& call) const
+{
+    if (auto* panel = m_pendingRequestData.panel.get()) {
+        // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
+        // of the current run loop in unexpected ways.
+        RunLoop::main().dispatch([weakPanel = makeWeakPtr(*panel), call = WTFMove(call)] () {
+            if (!weakPanel)
+                return;
+            call(*weakPanel);
+        });
+    }
 }
 
 } // namespace WebKit

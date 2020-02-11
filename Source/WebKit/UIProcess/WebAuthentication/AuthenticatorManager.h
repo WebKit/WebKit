@@ -96,6 +96,7 @@ private:
     void runPanel();
     void restartDiscovery();
     TransportSet getTransports() const;
+    void dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&&) const;
 
     // Request: We only allow one request per time. A new request will cancel any pending ones.
     WebAuthenticationRequestData m_pendingRequestData;
