@@ -1,3 +1,17 @@
+2020-02-11  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][WebDriver] MiniBrowser should react to close session commands
+        https://bugs.webkit.org/show_bug.cgi?id=207529
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebDriver delete session command asks to close the WebView associated to the
+        current automation session. We must react to it to avoid lots of
+        timeouts and errors.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main): Listen to "close" signal on the main WebView.
+
 2020-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Non-internal API test runners frequently crash due to Objective-C exceptions

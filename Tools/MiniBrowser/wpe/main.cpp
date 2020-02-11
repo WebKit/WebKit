@@ -300,6 +300,7 @@ int main(int argc, char *argv[])
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), nullptr);
+    g_signal_connect(webView, "close", G_CALLBACK(webViewClose), nullptr);
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
