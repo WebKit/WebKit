@@ -1,5 +1,61 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256181. rdar://problem/59349184
+
+    There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
+    https://bugs.webkit.org/show_bug.cgi?id=207361
+    <rdar://problem/59280370>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Animations should be removed from GraphicsLayersCAs in the same rendering update that changes the playState of the
+    animation to "finished", to avoid layer flush where a GraphicsLayersCAs has no extent set, but thinks there is
+    an active transform animation.
+    
+    To do this, instead of enqueuing accelerated actions when resolving animations during style resolution, in
+    KeyframeAnimation::apply(), we enqueue them as soon as an animation's current time may have changed: in
+    WebAnimation::tick() and WebAnimation::play() with supporting functions newly exposed on AnimationEffect.
+    
+    Now, accelerated animations are enqueued and applied during the "update animations and send events" procedure.
+    
+    * animation/AnimationEffect.h:
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::apply):
+    (WebCore::KeyframeEffect::updateAcceleratedActions):
+    (WebCore::KeyframeEffect::animationDidTick):
+    (WebCore::KeyframeEffect::animationDidPlay):
+    * animation/KeyframeEffect.h:
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::play):
+    (WebCore::WebAnimation::tick):
+    
+    LayoutTests:
+    
+    Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
+    to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+    
+    * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256181 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Antoine Quint  <graouts@webkit.org>
+
+            There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
+            https://bugs.webkit.org/show_bug.cgi?id=207361
+            <rdar://problem/59280370>
+
+            Reviewed by Simon Fraser.
+
+            Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
+            to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+
+            * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256095. rdar://problem/59349202
 
     Extent of a composited animation should not include the untransformed position
