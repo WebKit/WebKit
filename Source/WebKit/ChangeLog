@@ -1,5 +1,23 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255705. rdar://problem/59298180
+
+    Unreviewed, follow-up assertion fix after r255662.
+    
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255705 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-04  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, follow-up assertion fix after r255662.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::initializeNewWebProcess):
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255691. rdar://problem/59299315
 
     [macCatalyst] Missing custom cursors in subframes that are offset from the origin of the root view
