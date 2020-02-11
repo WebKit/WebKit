@@ -1399,3 +1399,5 @@ webkit.org/b/207553 imported/w3c/IndexedDB-private-browsing/abort-in-initial-upg
 webkit.org/b/207555 imported/w3c/IndexedDB-private-browsing/idbcursor_update_objectstore8.html [ Pass Timeout ]
 
 webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
+
+webkit.org/b/207583 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Pass Failure ]
