@@ -126,7 +126,7 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, WebCore::
     } else
         service = iterator->value;
 
-    String name = makeString(createCanonicalUUIDString(), pendingRegistrationRequestCount, ".local");
+    String name = makeString(createCanonicalUUIDString(), ".local");
 
     auto ip = inet_addr(ipAddress.utf8().data());
 
