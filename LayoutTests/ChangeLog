@@ -1,5 +1,41 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255982. rdar://problem/59298167
+
+    Web Inspector: REGRESSION(r249831): Sources: endless spinner when trying to view a resource
+    https://bugs.webkit.org/show_bug.cgi?id=207346
+    <rdar://problem/59209016>
+    
+    Reviewed by Timothy Hatcher.
+    
+    Source/WebInspectorUI:
+    
+    * UserInterface/Workers/Formatter/HTMLParser.js:
+    (HTMLParser.prototype._parseAttr):
+    Attributes are allowed to contain "/".
+    https://html.spec.whatwg.org/multipage/parsing.html#before-attribute-value-state
+    
+    LayoutTests:
+    
+    * inspector/formatting/resources/html-tests/attributes.html:
+    * inspector/formatting/resources/html-tests/attributes-expected.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255982 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-06  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: REGRESSION(r249831): Sources: endless spinner when trying to view a resource
+            https://bugs.webkit.org/show_bug.cgi?id=207346
+            <rdar://problem/59209016>
+
+            Reviewed by Timothy Hatcher.
+
+            * inspector/formatting/resources/html-tests/attributes.html:
+            * inspector/formatting/resources/html-tests/attributes-expected.html:
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255810. rdar://problem/59298154
 
     [Web Animations] Canceling an accelerated animation before it was committed does not prevent it from playing
