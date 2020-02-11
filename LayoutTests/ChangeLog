@@ -1,5 +1,14 @@
 2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk1 ] legacy-animation-engine/animations/3d/transform-origin-vs-functions.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207569
+
+        Unreviewed test gardening
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS wk1 ] inspector/page/overrideUserAgent.html  is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=207568
 

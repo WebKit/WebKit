@@ -919,3 +919,5 @@ webkit.org/b/207153 [ Debug ] animations/animation-callback-timestamp.html [ Pas
 webkit.org/b/207566 imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html [ Pass Failure ]
 
 webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
+
+webkit.org/b/207569 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
