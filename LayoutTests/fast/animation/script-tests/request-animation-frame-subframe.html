@@ -7,17 +7,24 @@
 <script>
     window.requestAnimationFrame(function() {
         parent.callbackInvoked = true;
+        doWork();
     });
 
-    parent.doDisplay();
-    
-    setTimeout(function() {
-        parent.doCheckResult();
-    }, 100);
+    function timeoutPromise(interval) {
+        return new Promise((resolve, reject) => {
+            setTimeout(function(){
+                resolve("done");
+            }, interval);
+        });
+    }
 
-    setTimeout(function() {
+    async function doWork() {
+        parent.doDisplay();
+        await timeoutPromise(100);
+        parent.doCheckResult();
+        await timeoutPromise(100);
         parent.doTestDone();
-    }, 200);    
+    }   
 </script>
 </body>
 </html>

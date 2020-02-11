@@ -1,3 +1,14 @@
+2020-02-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION: [ Mac ] legacy-animation-engine/fast/animation/request-animation-frame-iframe2.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206624
+
+        Reviewed by Antoine Quint.
+
+        Rewrite test to have a reliable asynchronous execution order.
+
+        * fast/animation/script-tests/request-animation-frame-subframe.html:
+
 2020-02-11  Chris Lord  <clord@igalia.com>
 
         [GTK][WPE] imported/w3c/web-platform-tests/css/css-lists/counter-* tests consistently pass
