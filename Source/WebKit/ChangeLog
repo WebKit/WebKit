@@ -1,5 +1,44 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255989. rdar://problem/59298187
+
+    REGRESSION (r254706): Crash under WebProcessPool::terminateServiceWorkerProcess()
+    https://bugs.webkit.org/show_bug.cgi?id=207354
+    <rdar://problem/59184818>
+    
+    Reviewed by Geoffrey Garen.
+    
+    No new tests, not easily testable AFAIK since this happens on failure to send sync IPC to
+    the service worker when terminating it.
+    
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+    'auto' resolved to 'WeakPtr<WebProcessProxy>' in this method and the call to
+    disableServiceWorkers() could cause the process to get destroyed. We would then
+    do a null dereference on the next line.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255989 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-06  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r254706): Crash under WebProcessPool::terminateServiceWorkerProcess()
+            https://bugs.webkit.org/show_bug.cgi?id=207354
+            <rdar://problem/59184818>
+
+            Reviewed by Geoffrey Garen.
+
+            No new tests, not easily testable AFAIK since this happens on failure to send sync IPC to
+            the service worker when terminating it.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+            'auto' resolved to 'WeakPtr<WebProcessProxy>' in this method and the call to
+            disableServiceWorkers() could cause the process to get destroyed. We would then
+            do a null dereference on the next line.
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255879. rdar://problem/59299329
 
     [macCatalyst] Incorrect IBeam cursor when selecting text on Wikipedia
