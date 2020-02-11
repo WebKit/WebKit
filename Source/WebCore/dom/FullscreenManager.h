@@ -83,7 +83,6 @@ public:
     RenderFullScreen* fullscreenRenderer() const;
 
     void dispatchFullscreenChangeEvents();
-    bool fullscreenIsAllowedForElement(Element&) const;
     void fullscreenElementRemoved();
 
     void adjustFullscreenElementOnNodeRemoval(Node&, Document::NodeRemoval = Document::NodeRemoval::Node);

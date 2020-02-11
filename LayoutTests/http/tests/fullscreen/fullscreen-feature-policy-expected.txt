@@ -1,0 +1,25 @@
+PASS iframe with src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen", src="http://loc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen", src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen *", src="http://loc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen *", src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen 'none'", src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'none'", src="../resourc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen http://localhost:8000", src="http://loc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen http://localhost:8000", src="../resourc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen 'none'", allowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'none'", allowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", allowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", allowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with webkitallowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with webkitallowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === true.
+PASS iframe with allow="fullscreen 'none'", webkitallowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'none'", webkitallowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", webkitallowfullscreen, src="http://loc..." should have document.webkitFullscreenEnabled === false.
+PASS iframe with allow="fullscreen 'self'", webkitallowfullscreen, src="../resourc..." should have document.webkitFullscreenEnabled === true.
+
