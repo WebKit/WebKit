@@ -2795,7 +2795,11 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     if (!view)
         return;
 
-    auto* renderer = hitTestResult.innerNode()->renderer();
+    auto node = hitTestResult.innerNode();
+    if (!node)
+        return;
+
+    auto* renderer = node->renderer();
     if (!renderer)
         return;
 
@@ -2822,9 +2826,10 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
 
     if (!lineContainsRequestPoint && info.cursor->type() == Cursor::IBeam) {
         auto approximateLineRectInContentCoordinates = renderer->absoluteBoundingBoxRect();
-        approximateLineRectInContentCoordinates.setHeight(position.absoluteCaretBounds().height());
+        approximateLineRectInContentCoordinates.setHeight(renderer->style().computedLineHeight());
         info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);
-        info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
+        if (!info.lineCaretExtent.contains(request.point) || !node->hasEditableStyle())
+            info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
         info.caretHeight = info.lineCaretExtent.height();
     }
 }
