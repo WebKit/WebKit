@@ -1,5 +1,23 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255814. rdar://problem/59298180
+
+    Unreviewed, follow-up assertion fix after r255662.
+    
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255814 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, follow-up assertion fix after r255662.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::initializeNewWebProcess):
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255786. rdar://problem/59298135
 
     REGRESSION (r251320): Can't double tap to select word in Notes on iCloud.com
