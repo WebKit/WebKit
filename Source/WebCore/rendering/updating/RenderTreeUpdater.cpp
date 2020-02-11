@@ -560,7 +560,9 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
 
-            if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
+            switch (teardownType) {
+            case TeardownType::Full:
+            case TeardownType::RendererUpdateCancelingAnimations:
                 if (timeline) {
                     if (document.renderTreeBeingDestroyed())
                         timeline->elementWasRemoved(element);
@@ -568,6 +570,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                         timeline->cancelDeclarativeAnimationsForElement(element);
                 }
                 animationController.cancelAnimations(element);
+                break;
+            case TeardownType::RendererUpdate:
+                if (timeline)
+                    timeline->willChangeRendererForElement(element);
+                break;
             }
 
             if (teardownType == TeardownType::Full)
