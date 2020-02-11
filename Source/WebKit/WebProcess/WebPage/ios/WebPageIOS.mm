@@ -2050,6 +2050,9 @@ RefPtr<Range> WebPage::rangeForGranularityAtPoint(Frame& frame, const WebCore::I
 
     RefPtr<Range> range;
     switch (static_cast<WebCore::TextGranularity>(granularity)) {
+    case CharacterGranularity:
+        range = makeRange(position, position);
+        break;
     case WordGranularity:
         range = wordRangeFromPosition(position);
         break;
@@ -2060,6 +2063,7 @@ RefPtr<Range> WebPage::rangeForGranularityAtPoint(Frame& frame, const WebCore::I
         range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
         break;
     case DocumentGranularity:
+        // FIXME: It's not clear why this mutates the current selection and returns null.
         frame.selection().selectAll();
         break;
     default:
