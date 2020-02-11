@@ -1,3 +1,12 @@
+2020-02-11  Truitt Savell  <tsavell@apple.com>
+
+        [ iOS ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207563
+
+        Unreviewed test gardening
+
+        * platform/ios/TestExpectations:
+
 2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS iOS ] animations/animation-callback-timestamp.html is flaky failing.

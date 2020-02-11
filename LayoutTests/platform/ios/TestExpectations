@@ -3485,3 +3485,5 @@ webkit.org/b/207278 imported/w3c/web-platform-tests/web-animations/timing-model/
 # Locale-specific shaping is only enabled on certain OSes.
 webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+
+webkit.org/b/207563 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Pass Failure ]
