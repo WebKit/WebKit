@@ -1908,8 +1908,6 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     [WebCache clearCachedCredentials];
 
-    resetWebPreferencesToConsistentValues();
-    setWebPreferencesForTestOptions(options);
 #if PLATFORM(MAC)
     [webView setWantsLayer:options.layerBackedWebView];
 #endif
@@ -1924,7 +1922,11 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     // In the case that a test using the chrome input field failed, be sure to clean up for the next test.
     gTestRunner->removeChromeInputField();
 
+    // We need to call this first to reset internal settings.
     WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
+    // And then we need to reset DRT preferences since they take precedence over internal settings.
+    resetWebPreferencesToConsistentValues();
+    setWebPreferencesForTestOptions(options);
 
 #if !PLATFORM(IOS_FAMILY)
     if (WebCore::Frame* frame = [webView _mainCoreFrame])

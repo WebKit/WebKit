@@ -1,3 +1,20 @@
+2020-02-10  Chris Dumez  <cdumez@apple.com>
+
+        [DRT] InternalSettingsGenerated::resetToConsistentState() may override TestOptions
+        https://bugs.webkit.org/show_bug.cgi?id=207481
+
+        Reviewed by Alexey Proskuryakov.
+
+        InternalSettingsGenerated::resetToConsistentState() may override TestOptions such as enableBackForwardCache.
+        This is causing issues such as the back/forward cache sometimes getting enabled on tests where
+        TestOptions::enableBackForwardCache() is false, because a previous test has enabled the back/forward cache.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        Make sure we reset preferences after we call WebCoreTestSupport::resetInternalsObject(), since
+        resetInternalsObject() updates settings and TestOptions / DRT preferences should have priority
+        over internal settings.
+
 2020-02-10  Per Arne Vollan  <pvollan@apple.com>
 
         [watchOS] Notification listener is never unregistered
