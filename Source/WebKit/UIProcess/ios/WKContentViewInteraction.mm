@@ -1422,7 +1422,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
 inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
 {
-    return [recognizer respondsToSelector:@selector(_modifierFlags)] ? recognizer.modifierFlags : 0;
+    return [recognizer respondsToSelector:@selector(_modifierFlags)] ? [recognizer _modifierFlags] : 0;
 }
 
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
