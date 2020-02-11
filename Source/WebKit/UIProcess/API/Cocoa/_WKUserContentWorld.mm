@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKUserContentWorldInternal.h"
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation _WKUserContentWorld
 
 + (_WKUserContentWorld *)worldWithName:(NSString *)name
@@ -60,3 +61,4 @@
 }
 
 @end
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END

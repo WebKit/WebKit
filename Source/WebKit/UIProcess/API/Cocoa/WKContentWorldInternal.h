@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKContentWorld.h"
+#import "WKContentWorldPrivate.h"
 
 #import "APIContentWorld.h"
 #import "WKObject.h"

@@ -78,6 +78,7 @@
 
 @implementation WKUserScript (WKPrivate)
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
@@ -102,5 +103,6 @@
 {
     return wrapper(_userScript->userContentWorld());
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end

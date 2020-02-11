@@ -47,6 +47,7 @@
     return self;
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     if (!(self = [super init]))
@@ -72,6 +73,7 @@
 
     return self;
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {

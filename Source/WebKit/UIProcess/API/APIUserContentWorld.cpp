@@ -35,6 +35,11 @@ Ref<UserContentWorld> UserContentWorld::worldWithName(const WTF::String& name)
     return adoptRef(*new UserContentWorld(name));
 }
 
+Ref<UserContentWorld> UserContentWorld::fromContentWorld(const ContentWorld& contentWorld)
+{
+    return adoptRef(*new UserContentWorld(contentWorld));
+}
+
 UserContentWorld& UserContentWorld::normalWorld()
 {
     static UserContentWorld* world = new UserContentWorld(ForNormalWorldOnly::NormalWorld);
@@ -48,6 +53,11 @@ UserContentWorld::UserContentWorld(const WTF::String& name)
 
 UserContentWorld::UserContentWorld(ForNormalWorldOnly)
     : ContentWorldBase(WebKit::pageContentWorldIdentifier())
+{
+}
+
+UserContentWorld::UserContentWorld(const ContentWorld& contentWorld)
+    : ContentWorldBase(contentWorld.identifier(), contentWorld.name())
 {
 }
 

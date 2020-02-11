@@ -34,6 +34,7 @@ class UserContentWorld final : public API::ObjectImpl<API::Object::Type::UserCon
 public:
     static Ref<UserContentWorld> worldWithName(const WTF::String&);
     static UserContentWorld& normalWorld();
+    static Ref<UserContentWorld> fromContentWorld(const ContentWorld&);
 
     virtual ~UserContentWorld();
 
@@ -42,6 +43,7 @@ public:
 
 private:
     explicit UserContentWorld(const WTF::String&);
+    explicit UserContentWorld(const ContentWorld&);
 
     enum class ForNormalWorldOnly { NormalWorld };
     explicit UserContentWorld(ForNormalWorldOnly);

@@ -352,7 +352,9 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::UserContentWorld:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         wrapper = [_WKUserContentWorld alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 
     case Type::UserInitiatedAction:

@@ -172,10 +172,12 @@ private:
     _userContentControllerProxy->removeUserScript(*userScript->_userScript);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)_removeAllUserScriptsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     _userContentControllerProxy->removeAllUserScripts(*userContentWorld->_userContentWorld);
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_addUserScriptImmediately:(WKUserScript *)userScript
 {
@@ -223,6 +225,7 @@ private:
     _userContentControllerProxy->removeAllUserStyleSheets();
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)_removeAllUserStyleSheetsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     _userContentControllerProxy->removeAllUserStyleSheets(*userContentWorld->_userContentWorld);
@@ -244,5 +247,6 @@ private:
 {
     _userContentControllerProxy->removeAllUserMessageHandlers(*userContentWorld->_userContentWorld);
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end

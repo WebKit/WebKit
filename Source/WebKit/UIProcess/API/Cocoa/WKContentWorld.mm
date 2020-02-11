@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKContentWorldInternal.h"
 
+#import "_WKUserContentWorldInternal.h"
+
 @implementation WKContentWorld
 
 + (WKContentWorld *)pageWorld
@@ -64,5 +66,16 @@
 {
     return *_contentWorld;
 }
+
+@end
+
+@implementation WKContentWorld (WKPrivate)
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+- (_WKUserContentWorld *)_userContentWorld
+{
+    return wrapper(API::UserContentWorld::fromContentWorld(*_contentWorld));
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end

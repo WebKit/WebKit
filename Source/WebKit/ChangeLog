@@ -1,3 +1,36 @@
+2020-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKUserContentWorld replaced by WKContentWorld
+        https://bugs.webkit.org/show_bug.cgi?id=207514
+
+        Reviewed by Brady Eidson.
+
+        I also add SPI to convert between the two to aid a smooth transition.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::fromUserContentWorld):
+        (API::ContentWorld::ContentWorld):
+        * UIProcess/API/APIContentWorld.h:
+        (API::ContentWorldBase::ContentWorldBase):
+        * UIProcess/API/APIUserContentWorld.cpp:
+        (API::UserContentWorld::fromContentWorld):
+        (API::UserContentWorld::UserContentWorld):
+        * UIProcess/API/APIUserContentWorld.h:
+        * UIProcess/API/Cocoa/WKContentWorld.mm:
+        (-[WKContentWorld _userContentWorld]):
+        * UIProcess/API/Cocoa/WKContentWorldInternal.h:
+        * UIProcess/API/Cocoa/WKContentWorldPrivate.h: Added.
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm:
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-02-11  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r256009): [ Mojave wk2 Debug ] ASSERTION FAILED: Completion handler should always be called under WebKit::WebMDNSRegister::PendingRegistration

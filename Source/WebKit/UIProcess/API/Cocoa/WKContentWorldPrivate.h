@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKUserContentWorld.h"
+#import <WebKit/WKContentWorld.h>
 
-#import "APIUserContentWorld.h"
-#import "WKObject.h"
-#import <wtf/Vector.h>
-#import <wtf/text/WTFString.h>
+@class _WKUserContentWorld;
 
-namespace WebKit {
+@interface WKContentWorld (WKPrivate)
 
-template<> struct WrapperTraits<API::UserContentWorld> {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    using WrapperClass = _WKUserContentWorld;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-};
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+@property (nonatomic, copy, readonly) _WKUserContentWorld *_userContentWorld;
+#pragma clang diagnostic pop
 
-}
-
-namespace API {
-
-inline Vector<WTF::String> toStringVector(NSArray *input)
-{
-    Vector<WTF::String> vector;
-
-    NSUInteger size = input.count;
-    if (!size)
-        return vector;
-
-    vector.reserveInitialCapacity(size);
-    for (id string : input) {
-        if ([string isKindOfClass:[NSString class]])
-            vector.uncheckedAppend(string);
-    }
-    return vector;
-}
-
-}
-
-@interface _WKUserContentWorld () <WKObject> {
-@package
-    API::ObjectStorage<API::UserContentWorld> _userContentWorld;
-}
 @end
