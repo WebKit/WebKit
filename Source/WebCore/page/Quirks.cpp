@@ -342,8 +342,9 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
             // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
             if (host == "m.naver.com")
                 return false;
+            return true;
         }
-        return true;
+        return false;
     };
 
     if (!m_shouldDispatchSimulatedMouseEventsQuirk)
