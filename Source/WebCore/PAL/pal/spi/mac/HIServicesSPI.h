@@ -126,4 +126,26 @@ const UInt8* AXTextMarkerGetBytePtr(AXTextMarkerRef);
 bool _AXUIElementRequestServicedBySecondaryAXThread(void);
 OSStatus SetApplicationIsDaemon(Boolean);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+AXError _AXUIElementUseSecondaryAXThread(bool enabled);
+#endif
+
+#if HAVE(AX_CLIENT_TYPE)
+typedef CF_ENUM(int32_t, AXClientType)
+{
+    kAXClientTypeNoActiveRequestFound  = 0,
+    kAXClientTypeUnknown,
+    kAXClientTypeRaft,
+    kAXClientTypeXCUITest,
+    kAXClientTypeXCTest,
+    kAXClientTypeScripter2,
+    kAXClientTypeSystemEvents,
+    kAXClientTypeVoiceOver,
+    kAXClientTypeAssistiveControl,
+    kAXClientTypeFullKeyboardAccess,
+    kAXClientTypeDictation,
+};
+AXClientType _AXGetClientForCurrentRequestUntrusted(void);
+#endif // HAVE(AX_CLIENT_TYPE)
+
 WTF_EXTERN_C_END

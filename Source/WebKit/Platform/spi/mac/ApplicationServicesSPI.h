@@ -33,34 +33,11 @@
 
 #else
 
-#if HAVE(AX_CLIENT_TYPE)
-
-typedef CF_ENUM(int32_t, AXClientType)
-{
-    kAXClientTypeNoActiveRequestFound  = 0,
-    kAXClientTypeUnknown,
-    kAXClientTypeRaft,
-    kAXClientTypeXCUITest,
-    kAXClientTypeXCTest,
-    kAXClientTypeScripter2,
-    kAXClientTypeSystemEvents,
-    kAXClientTypeVoiceOver,
-    kAXClientTypeAssistiveControl,
-    kAXClientTypeFullKeyboardAccess,
-    kAXClientTypeDictation,
-};
-
-#endif // HAVE(AX_CLIENT_TYPE)
-
 typedef enum {
     AXSuspendStatusRunning = 0,
     AXSuspendStatusSuspended,
 } AXSuspendStatus;
 
 #endif
-
-#if HAVE(AX_CLIENT_TYPE)
-extern AXClientType _AXGetClientForCurrentRequestUntrusted(void);
-#endif // HAVE(AX_CLIENT_TYPE)
 
 #endif // PLATFORM(MAC)

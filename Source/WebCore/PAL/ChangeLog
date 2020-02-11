@@ -1,3 +1,13 @@
+2020-02-11  chris fleizach  <cfleizach@apple.com>
+
+        AX: Unable to build webkit open source - build errors related to AXClientType
+        https://bugs.webkit.org/show_bug.cgi?id=207524
+        <rdar://problem/59279722>
+
+        Reviewed by Mark Lam.
+
+        * pal/spi/mac/HIServicesSPI.h:
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256091.
