@@ -1,5 +1,44 @@
 2020-02-11  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255552. rdar://problem/59349213
+
+    ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) on animations/keyframe-autoclose-brace.html
+    https://bugs.webkit.org/show_bug.cgi?id=207071
+    <rdar://problem/59076249>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2020-02-02
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    We cannot add CSSPropertyInvalid to a HashSet<CSSPropertyID>, because it triggers an ASSERT, and also we shouldn't
+    because we wouldn't know how to animate that CSS property.
+    
+    * animation/AnimationTimeline.cpp:
+    (WebCore::compileTransitionPropertiesInStyle):
+    
+    LayoutTests:
+    
+    The crash is fixed, we can start running the test as expected again.
+    
+    * platform/ipad/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255552 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-02  Antoine Quint  <graouts@apple.com>
+
+            ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) on animations/keyframe-autoclose-brace.html
+            https://bugs.webkit.org/show_bug.cgi?id=207071
+            <rdar://problem/59076249>
+
+            Reviewed by Dean Jackson.
+
+            The crash is fixed, we can start running the test as expected again.
+
+            * platform/ipad/TestExpectations:
+
+2020-02-11  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255525. rdar://problem/59349213
 
     [ iOS Debug wk2 ] animations/keyframe-autoclose-brace.html is flaky crashing.
