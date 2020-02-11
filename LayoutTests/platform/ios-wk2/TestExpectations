@@ -1389,3 +1389,5 @@ webkit.org/b/207466 [ Debug ] http/wpt/service-workers/service-worker-networkpro
 webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ PAss Failure ]
 
 webkit.org/b/207551 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Pass Timeout ]
+
+webkit.org/b/207552 http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html [ Pass Timeout ]
