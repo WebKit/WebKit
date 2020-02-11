@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKUserContentWorldInternal.h"
 
-#import "WKContentWorldInternal.h"
-
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation _WKUserContentWorld
 
@@ -53,11 +51,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if (_userContentWorld.get() == &API::UserContentWorld::normalWorld())
         return nil;
     return _userContentWorld->name();
-}
-
-- (WKContentWorld *)contentWorld
-{
-    return wrapper(API::ContentWorld::fromUserContentWorld(*_userContentWorld));
 }
 
 #pragma mark WKObject protocol implementation
