@@ -1,3 +1,18 @@
+2020-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        KeyboardInputTests.SupportsImagePaste fails on recent versions of UIKit
+        https://bugs.webkit.org/show_bug.cgi?id=207557
+
+        Reviewed by Jonathan Bedard.
+
+        The exception occurs because UIKit attempts to create a QoS interval upon setting the initially selected row in
+        a UITableView when we focus a date picker. This fails because TestWebKitAPI isn't actually an app, so the call
+        to `work_interval_create` with `WORK_INTERVAL_TYPE_CA_CLIENT` as the option flag fails. For the time being, work
+        around this by focusing an empty select element instead (for which we won't attempt to create and select any
+        table view cells).
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+
 2020-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Add WKHTTPCookieStore._getCookiesForURL SPI
