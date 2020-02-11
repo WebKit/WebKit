@@ -123,6 +123,7 @@ public:
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();
     void applyPendingAcceleratedActions();
+    void willChangeRenderer();
 
     bool isRunningAccelerated() const;
     bool isCompletelyAccelerated() const;
