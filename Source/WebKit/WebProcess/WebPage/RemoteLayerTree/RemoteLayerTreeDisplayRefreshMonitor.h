@@ -28,6 +28,7 @@
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
 #include "RemoteLayerTreeDrawingArea.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
 
 namespace WebKit {
@@ -41,6 +42,7 @@ public:
     
     virtual ~RemoteLayerTreeDisplayRefreshMonitor();
 
+    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
     bool requestRefreshCallback() override;
 
     void didUpdateLayers();

@@ -25,6 +25,9 @@
 description("Tests that CSS animations are throttled in low power mode.");
 jsTestIsAsync = true;
 
+if (window.internals)
+  internals.settings.setRenderingUpdateThrottlingEnabled(true);
+
 const element = document.getElementById("testElement");
 element.onanimationstart = function() {
     element.onanimationstart = null;

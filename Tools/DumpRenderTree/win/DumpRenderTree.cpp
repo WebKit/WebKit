@@ -800,6 +800,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsMutableTimelinesEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
+    prefsPrivate->setRenderingUpdateThrottlingEnabled(FALSE);
     // FIXME: WebGL2
     // FIXME: WebRTC
 }

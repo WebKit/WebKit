@@ -42,8 +42,11 @@ DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
     return manager.get();
 }
 
-DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(DisplayRefreshMonitorClient& client)
+DisplayRefreshMonitor* DisplayRefreshMonitorManager::monitorForClient(DisplayRefreshMonitorClient& client)
 {
+    if (!client.hasDisplayID())
+        return nullptr;
+
     PlatformDisplayID clientDisplayID = client.displayID();
     if (auto* existingMonitor = monitorForDisplayID(clientDisplayID)) {
         existingMonitor->addClient(client);
@@ -54,19 +57,11 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::createMonitorForClient(Disp
     if (!monitor)
         return nullptr;
 
-    LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::createMonitorForClient() - created monitor %p", monitor.get());
+    LOG(RequestAnimationFrame, "DisplayRefreshMonitorManager::monitorForClient() - created monitor %p", monitor.get());
     monitor->addClient(client);
     DisplayRefreshMonitor* result = monitor.get();
     m_monitors.append({ WTFMove(monitor) });
     return result;
-}
-
-void DisplayRefreshMonitorManager::registerClient(DisplayRefreshMonitorClient& client)
-{
-    if (!client.hasDisplayID())
-        return;
-
-    createMonitorForClient(client);
 }
 
 void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient& client)
@@ -85,17 +80,19 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient&
     }
 }
 
+void DisplayRefreshMonitorManager::setPreferredFramesPerSecond(DisplayRefreshMonitorClient& client, FramesPerSecond preferredFramesPerSecond)
+{
+    if (auto* monitor = monitorForClient(client))
+        monitor->setPreferredFramesPerSecond(preferredFramesPerSecond);
+}
+
 bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient& client)
 {
-    if (!client.hasDisplayID())
-        return false;
-
-    DisplayRefreshMonitor* monitor = createMonitorForClient(client);
-    if (!monitor)
-        return false;
-
-    client.setIsScheduled(true);
-    return monitor->requestRefreshCallback();
+    if (auto* monitor = monitorForClient(client)) {
+        client.setIsScheduled(true);
+        return monitor->requestRefreshCallback();
+    }
+    return false;
 }
 
 void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor& monitor)
@@ -116,7 +113,6 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
     
     unregisterClient(client);
     client.setDisplayID(displayID);
-    registerClient(client);
     if (client.isScheduled())
         scheduleAnimation(client);
 }

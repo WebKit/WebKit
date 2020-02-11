@@ -347,6 +347,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitRenderingUpdateThrottlingEnabledPreferenceKey), kCFBooleanTrue);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2418,3 +2420,18 @@ HRESULT WebPreferences::setResizeObserverEnabled(BOOL enabled)
     setBoolValue(WebKitResizeObserverEnabledPreferenceKey, enabled);
     return S_OK;
 }
+
+HRESULT WebPreferences::renderingUpdateThrottlingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitRenderingUpdateThrottlingEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setRenderingUpdateThrottlingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitRenderingUpdateThrottlingEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+

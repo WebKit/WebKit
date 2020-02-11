@@ -488,6 +488,10 @@ HiddenPageCSSAnimationSuspensionEnabled:
   type: bool
   defaultValue: DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED
 
+RenderingUpdateThrottlingEnabled:
+  type: bool
+  defaultValue: true
+
 LowPowerVideoAudioBufferSizeEnabled:
   type: bool
   defaultValue: true

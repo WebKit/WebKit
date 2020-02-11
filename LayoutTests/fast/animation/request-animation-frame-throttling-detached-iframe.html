@@ -6,6 +6,9 @@
 description("Test that requestAnimationFrame gets the right throttling in an iframe when inserted into a document.");
 jsTestIsAsync = true;
 
+if (window.internals)
+    internals.settings.setRenderingUpdateThrottlingEnabled(true);
+
 let i = 0;
 function doWork()
 {

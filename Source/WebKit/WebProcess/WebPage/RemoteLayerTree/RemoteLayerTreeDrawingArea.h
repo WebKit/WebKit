@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
 #include "RemoteLayerTreeTransaction.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Timer.h>
 #include <atomic>
@@ -73,6 +74,7 @@ private:
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
+    void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
 
