@@ -1207,6 +1207,20 @@ template<typename T, typename U> inline T retrieveValueFromMainThread(U&& lambda
     return value;
 }
 
+#if PLATFORM(COCOA)
+template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThread(U&& lambda)
+{
+    if (isMainThread())
+        return lambda().autorelease();
+
+    RetainPtr<T> value;
+    callOnMainThreadAndWait([&value, &lambda] {
+        value = lambda();
+    });
+    return value.autorelease();
+}
+#endif
+
 } // namespace Accessibility
 
 } // namespace WebCore
