@@ -1,5 +1,36 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r256105. rdar://problem/59302221
+
+    Fix the watchOS build after <rdar://problem/56134081>
+    https://bugs.webkit.org/show_bug.cgi?id=207443
+    <rdar://problem/59295173>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    Use the version of the SPI that's guaranteed to be available across all platforms.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (gestureRecognizerModifierFlags):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256105 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Fix the watchOS build after <rdar://problem/56134081>
+            https://bugs.webkit.org/show_bug.cgi?id=207443
+            <rdar://problem/59295173>
+
+            Reviewed by Maciej Stachowiak.
+
+            Use the version of the SPI that's guaranteed to be available across all platforms.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (gestureRecognizerModifierFlags):
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r256090. rdar://problem/59298156
 
     Resource Load Statistics: Hold off non-cookie website data deletion until an hour after user interaction
