@@ -1,3 +1,16 @@
+==================
+WPE WebKit 2.27.90
+==================
+
+What's new in WPE WebKit 2.27.90?
+
+  - Add support for same-site cookies.
+  - Add Flatpak sandbox support.
+  - Enable WebAudio and WebGL by default in WebKitSettings.
+  - Add a setting to disallow top level navigation to a data URI.
+  - Add support for the -webkit-font-smoothing CSS property.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.27.4
 =================
