@@ -605,8 +605,7 @@
     (global-name "com.apple.cfprefsd.daemon"))
 
 (allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.distributed_notifications@1v3")
-    (global-name "com.apple.tccd"))
+    (global-name "com.apple.distributed_notifications@1v3"))
 
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))

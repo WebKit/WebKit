@@ -1,3 +1,13 @@
+2020-02-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to the tccd service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=207488
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2020-02-11  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html is flaky failing.

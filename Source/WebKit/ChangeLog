@@ -1,3 +1,16 @@
+2020-02-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to the tccd service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=207488
+
+        Reviewed by Darin Adler.
+
+        As part of sandbox hardening, deny mach lookup access to the tccd service.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-02-11  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band VTT captions when loading media in the GPU Process
