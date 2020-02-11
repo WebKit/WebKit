@@ -54,7 +54,6 @@ public:
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
         Image,
         IFrame,
-        HardLineBreak,
         GenericElement
     };
 
@@ -65,7 +64,8 @@ public:
     enum BaseTypeFlag {
         BoxFlag                = 1 << 0,
         InlineTextBox          = 1 << 1,
-        ContainerFlag          = 1 << 2
+        LineBreakBox           = 1 << 2,
+        ContainerFlag          = 1 << 3
     };
     typedef unsigned BaseTypeFlags;
 
@@ -127,7 +127,6 @@ public:
     bool isReplaced() const { return isImage() || isIFrame(); }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
-    bool isLineBreakBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::HardLineBreak; }
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
@@ -142,6 +141,7 @@ public:
 
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
     bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBox; }
+    bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBox; }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;

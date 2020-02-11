@@ -332,9 +332,10 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
 
         while (!layoutQueue.isEmpty()) {
             auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isLineBreakBox())
+            if (layoutBox.isLineBreakBox()) {
+                // FIXME: Treat <wbr> as a word break opportunity instead.
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::HardLineBreak });
-            else if (layoutBox.isFloatingPositioned())
+            } else if (layoutBox.isFloatingPositioned())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::Float });
             else if (layoutBox.isAtomicInlineLevelBox())
                 formattingState.addInlineItem({ layoutBox, InlineItem::Type::Box });

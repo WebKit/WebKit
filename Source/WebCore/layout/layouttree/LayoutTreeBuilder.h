@@ -92,6 +92,7 @@ private:
 
     Box& createBox(Optional<Box::ElementAttributes>, RenderStyle&&);
     Box& createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&&);
+    Box& createLineBreakBox(bool isOptional, RenderStyle&&);
     Container& createContainer(Optional<Box::ElementAttributes>, RenderStyle&&);
 
     LayoutTreeContent& m_layoutTreeContent;

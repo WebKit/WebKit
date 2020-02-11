@@ -28,8 +28,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutLineBreakBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderLineBreak.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -63,7 +65,7 @@ void BoxTree::buildTree(const RenderBlockFlow& flow)
             auto clonedStyle = RenderStyle::clone(childRenderer.style());
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::No);
-            childBox = makeUnique<Layout::Box>(Layout::Box::ElementAttributes { Layout::Box::ElementType::HardLineBreak }, WTFMove(clonedStyle));
+            childBox = makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
         }
         ASSERT(childBox);
 

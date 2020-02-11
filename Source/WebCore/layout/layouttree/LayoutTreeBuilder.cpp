@@ -43,6 +43,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInlineTextBox.h"
+#include "LayoutLineBreakBox.h"
 #include "LayoutPhase.h"
 #include "LayoutSize.h"
 #include "LayoutState.h"
@@ -159,6 +160,14 @@ Box& TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring,
     return box;
 }
 
+Box& TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)
+{
+    auto newBox = makeUnique<Layout::LineBreakBox>(isOptional, WTFMove(style));
+    auto& box = *newBox;
+    m_layoutTreeContent.addBox(WTFMove(newBox));
+    return box;
+}
+
 Container& TreeBuilder::createContainer(Optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
 {
     auto newContainer = makeUnique<Container>(elementAttributes, WTFMove(style));
@@ -179,9 +188,6 @@ Box* TreeBuilder::createLayoutBox(const Container& parentContainer, const Render
                 return Box::ElementAttributes { Box::ElementType::Image };
             if (element->hasTagName(HTMLNames::iframeTag))
                 return Box::ElementAttributes { Box::ElementType::IFrame };
-            // FIXME wbr should not be considered as hard linebreak.
-            if (element->hasTagName(HTMLNames::brTag) || element->hasTagName(HTMLNames::wbrTag))
-                return Box::ElementAttributes { Box::ElementType::HardLineBreak };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
         return WTF::nullopt;
@@ -206,7 +212,7 @@ Box* TreeBuilder::createLayoutBox(const Container& parentContainer, const Render
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::No);
-            childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
+            createLineBreakBox(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
             childLayoutBox = &createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(clonedStyle));
