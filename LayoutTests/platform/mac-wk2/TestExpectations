@@ -1015,3 +1015,5 @@ webkit.org/b/207515 http/wpt/service-workers/service-worker-spinning-fetch.https
 webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
 
 webkit.rog/b/207571 http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Failure ]
+
+webkit.org/b/207577 http/tests/ssl/applepay/ApplePayBillingAddress.html [ Pass Failure ]
