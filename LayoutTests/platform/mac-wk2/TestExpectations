@@ -1014,5 +1014,3 @@ webkit.org/b/207509 [ Debug ] imported/w3c/web-platform-tests/fetch/api/request/
 webkit.org/b/207515 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure ]
 
 webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
-
-webkit.org/b/207521 [ Mojave Debug ] webrtc/peerconnection-page-cache-long.html [ Pass Crash ]

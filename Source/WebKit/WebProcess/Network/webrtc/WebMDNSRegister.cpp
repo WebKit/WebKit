@@ -44,8 +44,10 @@ void WebMDNSRegister::finishedRegisteringMDNSName(uint64_t identifier, LibWebRTC
 
     if (result.has_value()) {
         auto iterator = m_registeringDocuments.find(pendingRegistration.documentIdentifier);
-        if (iterator == m_registeringDocuments.end())
+        if (iterator == m_registeringDocuments.end()) {
+            pendingRegistration.callback(makeUnexpected(WebCore::MDNSRegisterError::DNSSD));
             return;
+        }
         iterator->value.add(pendingRegistration.ipAddress, result.value());
     }
 
