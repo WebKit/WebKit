@@ -1114,6 +1114,10 @@ bool WebPageProxy::tryClose()
         if (!weakThis)
             return;
 
+        // If we timed out, don't ask the client to close again.
+        if (!m_tryCloseTimeoutTimer.isActive())
+            return;
+
         m_tryCloseTimeoutTimer.stop();
         if (shouldClose)
             closePage();
