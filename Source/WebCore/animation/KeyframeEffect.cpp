@@ -1105,6 +1105,11 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;
 }
 
+bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID property) const
+{
+    return m_isRunningAccelerated && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property) && m_blendingKeyframes.properties().contains(property);
+}
+
 void KeyframeEffect::invalidate()
 {
     invalidateElement(m_target.get());
