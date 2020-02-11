@@ -192,7 +192,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RestoreSelectionInFocusedEditableElement()
 
     # Callbacks.
-    GetContentsAsString(WebKit::CallbackID callbackID)
+    GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames, WebKit::CallbackID callbackID)
 #if PLATFORM(COCOA)
     GetContentsAsAttributedString() -> (struct WebKit::AttributedString result) Async
 #endif

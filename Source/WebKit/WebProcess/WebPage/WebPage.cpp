@@ -3446,10 +3446,31 @@ void WebPage::runJavaScriptInFrame(FrameIdentifier frameID, const String& script
     runJavaScript(frame, { script, false, WTF::nullopt, forceUserGesture }, pageContentWorldIdentifier(), callbackID);
 }
 
-void WebPage::getContentsAsString(CallbackID callbackID)
+void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CallbackID callbackID)
 {
-    String resultString = m_mainFrame->contentsAsString();
-    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+    switch (includeChildFrames) {
+    case ContentAsStringIncludesChildFrames::No: {
+        String resultString = m_mainFrame->contentsAsString();
+        send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+        break;
+    }
+    case ContentAsStringIncludesChildFrames::Yes: {
+        StringBuilder builder;
+        for (RefPtr<Frame> frame = &corePage()->mainFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+            if (auto* webFrame = WebFrame::fromCoreFrame(*frame)) {
+                if (!builder.isEmpty()) {
+                    builder.append('\n');
+                    builder.append('\n');
+                }
+
+                builder.append(webFrame->contentsAsString());
+            }
+        }
+
+        send(Messages::WebPageProxy::StringCallback(builder.toString(), callbackID));
+        break;
+    }
+    }
 }
 
 #if ENABLE(MHTML)

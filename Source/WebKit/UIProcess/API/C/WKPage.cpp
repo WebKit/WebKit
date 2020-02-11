@@ -52,6 +52,7 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "ContentAsStringIncludesChildFrames.h"
 #include "LegacySessionStateCoding.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
@@ -2510,7 +2511,7 @@ void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* conte
 
 void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
-    toImpl(pageRef)->getContentsAsString(toGenericCallbackFunction(context, callback));
+    toImpl(pageRef)->getContentsAsString(ContentAsStringIncludesChildFrames::No, toGenericCallbackFunction(context, callback));
 }
 
 void WKPageGetBytecodeProfile(WKPageRef pageRef, void* context, WKPageGetBytecodeProfileFunction callback)

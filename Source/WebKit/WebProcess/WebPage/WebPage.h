@@ -33,6 +33,7 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "CallbackID.h"
+#include "ContentAsStringIncludesChildFrames.h"
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
 #include "FocusedElementInformation.h"
@@ -1451,7 +1452,7 @@ private:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void getContentsAsString(CallbackID);
+    void getContentsAsString(ContentAsStringIncludesChildFrames, CallbackID);
 #if PLATFORM(COCOA)
     void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
 #endif

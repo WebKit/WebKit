@@ -1,3 +1,41 @@
+2020-02-10  Alan Sien Wei Hshieh  <hshieh@apple.com>
+
+        Add a variant of -[WKWebViewPrivate _getContentsAsStringWithCompletionHandler:] that includes contents from subframes
+        https://bugs.webkit.org/show_bug.cgi?id=207352
+        <rdar://problem/59115798>
+
+        Reviewed by Alex Christensen.
+
+        A number of intelligence features like Spotlight rely on -_getContentsAsStringWithCompletionHandler:. However, this
+        method does not return content strings for subframes. This means that Spotlight and others are not able to get
+        text for things like AMP pages, that live in subframes. -_getContentsAsStringWithCompletionHandler: has clients outside
+        of just intelligence features, and we don't want to wholesale change their behavior. As a result, introduce a new
+        -_getContentsAsStringInAllFrames:withCompletionHandler: which clients can adopt as necessary. Providing NO for the first
+        parameter allows clients to get the same contents as -_getContentsAsStringWithCompletionHandler:. Otherwise, we enumerate
+        all subframes and extract text from there. Finally, append a test for getting stuff out of frames.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]): 
+        (-[WKWebView _getContentsOfAllFramesAsStringWithCompletionHandler:]): Call the new function to extract contents from all
+        frames.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Expose a new SPI for clients.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getContentsAsStringInAllFrames): Piping. This emulates what getContentsAsString() does.
+
+        * UIProcess/WebPageProxy.h: Expose new method.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsString): Augment to take a flag saying whether or not we want to extract
+        from all frames. If we do, iterate over all the frames and get their content strings, appending two
+        new lines in the middle.
+ 
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Piping.
+
+        * Shared/ContentAsStringIncludesChildFrames.h: Add a new header to expose an enum.
+
 2020-02-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Crash when granting access to asset services

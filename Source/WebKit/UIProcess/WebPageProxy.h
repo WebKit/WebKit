@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "ContentAsStringIncludesChildFrames.h"
 #include "ContextMenuContextData.h"
 #include "DownloadID.h"
 #include "DragControllerAction.h"
@@ -1078,7 +1079,7 @@ public:
     void didFailToFindString(const String&);
     void didFindStringMatches(const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection);
 
-    void getContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getContentsAsString(ContentAsStringIncludesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&&);
 #if PLATFORM(COCOA)
     void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
 #endif

@@ -1,3 +1,17 @@
+2020-02-10  Alan Sien Wei Hshieh  <hshieh@apple.com>
+
+        Add a variant of -[WKWebViewPrivate _getContentsAsStringWithCompletionHandler:] that includes contents from subframes
+        https://bugs.webkit.org/show_bug.cgi?id=207352
+        <rdar://problem/59115798>
+
+        Reviewed by Alex Christensen.
+
+        Add a test to exercise the new SPI.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewGetContents.mm: Add a test for getting text from all frames with
+        a webpage that contains text in subframes.
+
+
 2020-02-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Crash when granting access to asset services

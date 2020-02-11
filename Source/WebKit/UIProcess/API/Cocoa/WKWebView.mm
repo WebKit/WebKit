@@ -31,6 +31,7 @@
 #import "APISerializedScriptValue.h"
 #import "AttributedString.h"
 #import "CompletionHandlerCallChecker.h"
+#import "ContentAsStringIncludesChildFrames.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
 #import "FullscreenClient.h"
@@ -2286,12 +2287,23 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     auto handler = makeBlockPtr(completionHandler);
 
-    _page->getContentsAsString([handler](String string, WebKit::CallbackBase::Error error) {
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler](String string, WebKit::CallbackBase::Error error) {
         if (error != WebKit::CallbackBase::Error::None) {
             // FIXME: Pipe a proper error in from the WebPageProxy.
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
         } else
             handler(string, nil);
+    });
+}
+
+- (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler
+{
+    auto handler = makeBlockPtr(completionHandler);
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler](String string, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None)
+            handler(nil);
+        else
+            handler(string);
     });
 }
 

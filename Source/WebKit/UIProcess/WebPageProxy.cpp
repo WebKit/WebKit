@@ -3962,16 +3962,16 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, WTF::Function<void (c
     send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID));
 }
 
-void WebPageProxy::getContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
-    
+
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getContentsAsString"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
-    send(Messages::WebPage::GetContentsAsString(callbackID));
+    send(Messages::WebPage::GetContentsAsString(includesChildFrames, callbackID));
 }
 
 #if PLATFORM(COCOA)

@@ -49,6 +49,22 @@ TEST(WKWebView, GetContentsShouldReturnString)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WKWebView, GetContentsOfAllFramesShouldReturnString)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<body>beep<iframe srcdoc=\"meep\">herp</iframe><iframe srcdoc=\"moop\">derp</iframe></body>"];
+
+    __block bool finished = false;
+
+    [webView _getContentsOfAllFramesAsStringWithCompletionHandler:^(NSString *string) {
+        EXPECT_WK_STREQ(@"beep\n\nmeep\n\nmoop", string);
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WKWebView, GetContentsShouldReturnAttributedString)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
