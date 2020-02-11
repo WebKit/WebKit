@@ -69,7 +69,6 @@ public:
     };
     typedef unsigned BaseTypeFlags;
 
-    Box(Optional<ElementAttributes>, RenderStyle&&);
     virtual ~Box();
 
     bool establishesFormattingContext() const;

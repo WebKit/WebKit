@@ -49,11 +49,6 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
 {
 }
 
-Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
-    : Box(attributes, WTFMove(style), BaseTypeFlag::BoxFlag)
-{
-}
-
 Box::~Box()
 {
     if (UNLIKELY(m_hasRareData))
