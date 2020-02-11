@@ -974,6 +974,9 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
     invalidateEffect();
 
+    if (m_effect)
+        m_effect->animationDidPlay();
+
     return { };
 }
 
@@ -1189,7 +1192,8 @@ void WebAnimation::tick()
     if (hasPendingPlayTask())
         runPendingPlayTask();
 
-    invalidateEffect();
+    if (!isEffectInvalidationSuspended() && m_effect)
+        m_effect->animationDidTick();
 }
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
