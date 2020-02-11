@@ -70,6 +70,9 @@ public:
     void disconnect();
     const Optional<StorageAreaIdentifier>& identifier() const { return m_storageMapID; }
 
+    void incrementUseCount();
+    void decrementUseCount();
+
 private:
     StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
 
@@ -102,6 +105,8 @@ private:
     uint64_t m_currentSeed;
     bool m_hasPendingClear;
     HashCountedSet<String> m_pendingValueChanges;
+    
+    uint64_t m_useCount { 0 };
 };
 
 } // namespace WebKit

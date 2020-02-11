@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Make sure that StorageAreaMap objects do no leak.");
+jsTestIsAsync = true;
+localStorage.setItem("foo", "bar");
+
+onload = function() {
+    initialStorageAreaMapCount = internals.storageAreaMapCount;
+
+    document.getElementById("testFrame").remove();
+
+    handle = setInterval(() => {
+        gc()
+        if (internals.storageAreaMapCount < initialStorageAreaMapCount) {
+            testPassed("StorageAreaMap objects are not leaking");
+            clearInterval(handle);
+            finishJSTest();
+        }
+    }, 10);
+}
+</script>
+<iframe id="testFrame" src="http://localhost:8000/storage/resources/storage-map-leaking-iframe.html"></iframe>
+</body>
+</html>

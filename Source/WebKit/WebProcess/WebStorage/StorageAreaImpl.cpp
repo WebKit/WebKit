@@ -46,10 +46,13 @@ StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
     : m_identifier(Identifier::generate())
     , m_storageAreaMap(makeWeakPtr(storageAreaMap.get()))
 {
+    storageAreaMap.incrementUseCount();
 }
 
 StorageAreaImpl::~StorageAreaImpl()
 {
+    if (m_storageAreaMap)
+        m_storageAreaMap->decrementUseCount();
 }
 
 unsigned StorageAreaImpl::length()

@@ -48,6 +48,8 @@ public:
 
     virtual PAL::SessionID sessionID() const = 0;
     virtual void setSessionIDForTesting(PAL::SessionID) = 0;
+
+    virtual uint64_t storageAreaMapCountForTesting() const { return 0; }
 };
 
 } // namespace WebCore
