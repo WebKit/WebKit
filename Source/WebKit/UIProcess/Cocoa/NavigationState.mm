@@ -1321,6 +1321,16 @@ void NavigationState::didChangeHasOnlySecureContent()
     [m_webView didChangeValueForKey:@"hasOnlySecureContent"];
 }
 
+void NavigationState::willChangeNegotiatedLegacyTLS()
+{
+    [m_webView willChangeValueForKey:@"_negotiatedLegacyTLS"];
+}
+
+void NavigationState::didChangeNegotiatedLegacyTLS()
+{
+    [m_webView didChangeValueForKey:@"_negotiatedLegacyTLS"];
+}
+
 void NavigationState::willChangeEstimatedProgress()
 {
     [m_webView willChangeValueForKey:@"estimatedProgress"];

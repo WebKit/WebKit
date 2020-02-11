@@ -170,6 +170,8 @@ private:
     void didChangeActiveURL() override;
     void willChangeHasOnlySecureContent() override;
     void didChangeHasOnlySecureContent() override;
+    void willChangeNegotiatedLegacyTLS() override;
+    void didChangeNegotiatedLegacyTLS() override;
     void willChangeEstimatedProgress() override;
     void didChangeEstimatedProgress() override;
     void willChangeCanGoBack() override;
