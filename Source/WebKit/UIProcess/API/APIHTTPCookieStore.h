@@ -58,6 +58,7 @@ public:
     virtual ~HTTPCookieStore();
 
     void cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
+    void cookiesForURL(WTF::URL&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void setCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
     

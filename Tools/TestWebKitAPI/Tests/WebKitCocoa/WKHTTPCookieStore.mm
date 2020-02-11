@@ -27,8 +27,9 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/WKHTTPCookieStore.h>
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -189,12 +190,12 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     [globalCookieStore removeObserver:observer2.get()];
 }
 
-TEST(WebKit, WKHTTPCookieStore)
+TEST(WKHTTPCookieStore, Basic)
 {
     runTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 }
 
-TEST(WebKit, WKHTTPCookieStoreProcessPrivilege)
+TEST(WKHTTPCookieStore, ProcessPrivilege)
 {
     // Make sure UI process has no privilege at the beginning.
     WTF::setProcessPrivileges({ });
@@ -229,7 +230,7 @@ TEST(WebKit, WKHTTPCookieStoreProcessPrivilege)
     gotFlag = false;
 }
 
-TEST(WebKit, WKHTTPCookieStoreHttpOnly) 
+TEST(WKHTTPCookieStore, HttpOnly)
 {
     WKWebsiteDataStore* dataStore = [WKWebsiteDataStore defaultDataStore];
 
@@ -348,7 +349,7 @@ TEST(WebKit, WKHTTPCookieStoreHttpOnly)
 }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-TEST(WebKit, WKHTTPCookieStoreCreationTime) 
+TEST(WKHTTPCookieStore, CreationTime)
 {   
     auto dataStore = [WKWebsiteDataStore defaultDataStore];
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -405,7 +406,7 @@ TEST(WebKit, WKHTTPCookieStoreCreationTime)
 
 // FIXME: This #if should be removed once <rdar://problem/35344202> is resolved and bots are updated.
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301
-TEST(WebKit, WKHTTPCookieStoreNonPersistent)
+TEST(WKHTTPCookieStore, NonPersistent)
 {
     RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
     @autoreleasepool {
@@ -415,7 +416,7 @@ TEST(WebKit, WKHTTPCookieStoreNonPersistent)
     runTestWithWebsiteDataStore(nonPersistentDataStore.get());
 }
 
-TEST(WebKit, WKHTTPCookieStoreCustom)
+TEST(WKHTTPCookieStore, Custom)
 {
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
     NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
@@ -575,12 +576,12 @@ void runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming should
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithoutPrewarming)
+TEST(WKHTTPCookieStore, WithoutProcessPoolWithoutPrewarming)
 {
     runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming::No);
 }
 
-TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithPrewarming)
+TEST(WKHTTPCookieStore, WithoutProcessPoolWithPrewarming)
 {
     runWKHTTPCookieStoreWithoutProcessPool(ShouldEnableProcessPrewarming::Yes);
 }
@@ -599,7 +600,7 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithPrewarming)
 }
 @end
 
-TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolEphemeralSession)
+TEST(WKHTTPCookieStore, WithoutProcessPoolEphemeralSession)
 {
     RetainPtr<WKWebsiteDataStore> ephemeralStoreWithCookies = [WKWebsiteDataStore nonPersistentDataStore];
     
@@ -633,7 +634,7 @@ static bool areCookiesEqual(NSHTTPCookie *first, NSHTTPCookie *second)
     return [first.name isEqual:second.name] && [first.domain isEqual:second.domain] && [first.path isEqual:second.path] && [first.value isEqual:second.value];
 }
 
-TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolDuplicates)
+TEST(WKHTTPCookieStore, WithoutProcessPoolDuplicates)
 {
     RetainPtr<WKHTTPCookieStore> httpCookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
     RetainPtr<NSHTTPCookie> sessionCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -681,4 +682,39 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolDuplicates)
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WKHTTPCookieStore, CookiesForURL)
+{
+    WKHTTPCookieStore *cookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
+    NSHTTPCookie *webKitCookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"webKitName",
+        NSHTTPCookieValue: @"webKitValue",
+        NSHTTPCookieDomain: @"webkit.org",
+    }];
+    NSHTTPCookie *albuquerque = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"appleName",
+        NSHTTPCookieValue: @"appleValue",
+        NSHTTPCookieDomain: @"apple.org",
+    }];
+
+    __block bool done = false;
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"start network process"];
+    [cookieStore setCookie:webKitCookie completionHandler:^{
+        [cookieStore setCookie:albuquerque completionHandler:^{
+            [cookieStore _getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
+                EXPECT_EQ(cookies.count, 1ull);
+                EXPECT_WK_STREQ(cookies[0].name, "webKitName");
+                [cookieStore deleteCookie:webKitCookie completionHandler:^{
+                    [cookieStore deleteCookie:albuquerque completionHandler:^{
+                        done = true;
+                    }];
+                }];
+            }];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
 }

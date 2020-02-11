@@ -29,6 +29,7 @@
 #import <WebCore/Cookie.h>
 #import <WebCore/HTTPCookieAcceptPolicy.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
@@ -126,6 +127,17 @@ private:
 - (API::Object&)_apiObject
 {
     return *_cookieStore;
+}
+
+@end
+
+@implementation WKHTTPCookieStore (WKPrivate)
+
+- (void)_getCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+{
+    _cookieStore->cookiesForURL(url, [handler = makeBlockPtr(completionHandler)] (const Vector<WebCore::Cookie>& cookies) {
+        handler.get()(coreCookiesToNSCookies(cookies));
+    });
 }
 
 @end

@@ -75,6 +75,18 @@ void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cooki
     });
 }
 
+void HTTPCookieStore::cookiesForURL(WTF::URL&& url, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
+    if (!pool)
+        return completionHandler({ });
+
+    auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
+    cookieManager->getCookies(m_owningDataStore->sessionID(), url, [completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
+        completionHandler(WTFMove(cookies));
+    });
+}
+
 void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, CompletionHandler<void()>&& completionHandler)
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
