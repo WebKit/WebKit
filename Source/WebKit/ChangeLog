@@ -1,5 +1,82 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255581. rdar://problem/59298169
+
+    [macOS] AirPlay sometimes stops after 60 minutes of playback
+    https://bugs.webkit.org/show_bug.cgi?id=207056
+    Source/WebCore:
+    
+    <rdar://problem/53649508>
+    
+    Reviewed by Jer Noble.
+    
+    No new tests, this only reproduces when playing to an AirPlay device.
+    
+    AVPlayerItem.tracks is empty during AirPlay. If AirPlay is activated immediately
+    after the item is created, as is typically the case when switching from an MSE to
+    a url based player, MediaPlayerPrivateAVFoundationObjC doesn't know if the AVPlayerItem
+    has audio or video so the state reported to the WebMediaSessionManager is incorrect.
+    AirPlay can't actually be active if an item doesn't have audio or video, so always claim
+    to have both during AirPlay.
+    
+    Converted WebMediaSessionManager logging from debug-only to runtime to make it easier
+    to diagnose problems in the future.
+    
+    * Modules/mediasession/WebMediaSessionManager.cpp:
+    (WebCore::mediaProducerStateString):
+    (WebCore::WebMediaSessionLogger::create):
+    (WebCore::WebMediaSessionLogger::WebMediaSessionLogger):
+    (WebCore::WebMediaSessionLogger::log const):
+    (WebCore::WebMediaSessionManager::logger):
+    (WebCore::WebMediaSessionManager::alwaysOnLoggingAllowed const):
+    (WebCore::WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled):
+    (WebCore::WebMediaSessionManager::setMockMediaPlaybackTargetPickerState):
+    (WebCore::WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup):
+    (WebCore::WebMediaSessionManager::addPlaybackTargetPickerClient):
+    (WebCore::WebMediaSessionManager::removePlaybackTargetPickerClient):
+    (WebCore::WebMediaSessionManager::removeAllPlaybackTargetPickerClients):
+    (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+    (WebCore::WebMediaSessionManager::clientStateDidChange):
+    (WebCore::WebMediaSessionManager::setPlaybackTarget):
+    (WebCore::WebMediaSessionManager::externalOutputDeviceAvailableDidChange):
+    (WebCore::WebMediaSessionManager::playbackTargetPickerWasDismissed):
+    (WebCore::WebMediaSessionManager::configurePlaybackTargetClients):
+    (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring):
+    (WebCore::WebMediaSessionManager::configureWatchdogTimer):
+    (WebCore::WebMediaSessionManager::watchdogTimerFired):
+    (WebCore::ClientState::logAlways const): Deleted.
+    * Modules/mediasession/WebMediaSessionManager.h:
+    * Modules/mediasession/WebMediaSessionManagerClient.h:
+    (WebCore::WebMediaSessionManagerClient::alwaysOnLoggingAllowed):
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::mediaState const):
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::hasVideo const):
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAudio const):
+    
+    Source/WebKit:
+    
+    Reviewed by Jer Noble.
+    
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/WebPageProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255581 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Eric Carlson  <eric.carlson@apple.com>
+
+            [macOS] AirPlay sometimes stops after 60 minutes of playback
+            https://bugs.webkit.org/show_bug.cgi?id=207056
+
+            Reviewed by Jer Noble.
+
+            * UIProcess/WebPageProxy.cpp:
+            * UIProcess/WebPageProxy.h:
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255527. rdar://problem/59299116
 
     Unreviewed build fix after r255522.
