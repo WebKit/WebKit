@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebSocketIdentifier.h"
 #include <WebCore/SocketStreamHandleClient.h>
 #include <WebCore/SocketStreamHandleImpl.h>
 #include <pal/SessionID.h>
@@ -43,7 +44,7 @@ class NetworkProcess;
 
 class NetworkSocketStream : public RefCounted<NetworkSocketStream>, public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandleClient {
 public:
-    static Ref<NetworkSocketStream> create(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    static Ref<NetworkSocketStream> create(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
     ~NetworkSocketStream();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -64,9 +65,9 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    NetworkSocketStream(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    NetworkSocketStream(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, WebSocketIdentifier, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
 
-    uint64_t m_identifier;
+    WebSocketIdentifier m_identifier;
     IPC::Connection& m_connection;
     Ref<WebCore::SocketStreamHandleImpl> m_impl;
 };

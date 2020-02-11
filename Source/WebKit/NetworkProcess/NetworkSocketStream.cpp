@@ -35,12 +35,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkSocketStream> NetworkSocketStream::create(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
+Ref<NetworkSocketStream> NetworkSocketStream::create(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
 {
     return adoptRef(*new NetworkSocketStream(networkProcess, WTFMove(url), sessionID, credentialPartition, identifier, connection, WTFMove(auditData)));
 }
 
-NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
+NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
     : m_identifier(identifier)
     , m_connection(connection)
     , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr()))
@@ -114,7 +114,7 @@ IPC::Connection* NetworkSocketStream::messageSenderConnection() const
 
 uint64_t NetworkSocketStream::messageSenderDestinationID() const
 {
-    return m_identifier;
+    return m_identifier.toUInt64();
 }
 
 } // namespace WebKit

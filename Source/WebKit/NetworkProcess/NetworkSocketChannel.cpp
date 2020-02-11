@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, uint64_t identifier)
+std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier)
 {
     auto result = makeUnique<NetworkSocketChannel>(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier);
     if (!result->m_socket) {
@@ -46,7 +46,7 @@ std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnec
     return result;
 }
 
-NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, uint64_t identifier)
+NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_session(makeWeakPtr(session))

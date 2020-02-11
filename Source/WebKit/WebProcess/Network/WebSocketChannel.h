@@ -27,9 +27,9 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebSocketIdentifier.h"
 #include <WebCore/NetworkSendQueue.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
-#include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -40,10 +40,12 @@ class DataReference;
 
 namespace WebKit {
 
-class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel>, public Identified<WebSocketChannel> {
+class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel> {
 public:
     static Ref<WebSocketChannel> create(WebCore::Document&, WebCore::WebSocketChannelClient&);
     ~WebSocketChannel();
+
+    WebSocketIdentifier identifier() const { return m_identifier; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -90,6 +92,7 @@ private:
     void enqueueTask(Function<void()>&&);
 
     WeakPtr<WebCore::Document> m_document;
+    WebSocketIdentifier m_identifier;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
     String m_subprotocol;
     String m_extensions;

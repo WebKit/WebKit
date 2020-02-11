@@ -61,6 +61,7 @@
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
 #include "WebSWServerToContextConnectionMessages.h"
+#include "WebSocketIdentifier.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
@@ -175,16 +176,16 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketStream::messageReceiverName()) {
-        if (auto* socketStream = m_networkSocketStreams.get(decoder.destinationID())) {
+        if (auto* socketStream = m_networkSocketStreams.get(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID()))) {
             socketStream->didReceiveMessage(connection, decoder);
             if (decoder.messageName() == Messages::NetworkSocketStream::Close::name())
-                m_networkSocketStreams.remove(decoder.destinationID());
+                m_networkSocketStreams.remove(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID()));
         }
         return;
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
-        if (auto* channel = m_networkSocketChannels.get(decoder.destinationID()))
+        if (auto* channel = m_networkSocketChannels.get(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             channel->didReceiveMessage(connection, decoder);
         return;
     }
@@ -335,24 +336,24 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
 {
 }
 
-void NetworkConnectionToWebProcess::createSocketStream(URL&& url, String cachePartition, uint64_t identifier)
+void NetworkConnectionToWebProcess::createSocketStream(URL&& url, String cachePartition, WebSocketIdentifier identifier)
 {
     ASSERT(!m_networkSocketStreams.contains(identifier));
     WebCore::SourceApplicationAuditToken token = { };
 #if PLATFORM(COCOA)
     token = { m_networkProcess->sourceApplicationAuditData() };
 #endif
-    m_networkSocketStreams.set(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), m_sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
+    m_networkSocketStreams.add(identifier, NetworkSocketStream::create(m_networkProcess.get(), WTFMove(url), m_sessionID, cachePartition, identifier, m_connection, WTFMove(token)));
 }
 
-void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, uint64_t identifier)
+void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier)
 {
     ASSERT(!m_networkSocketChannels.contains(identifier));
     if (auto channel = NetworkSocketChannel::create(*this, m_sessionID, request, protocol, identifier))
         m_networkSocketChannels.add(identifier, WTFMove(channel));
 }
 
-void NetworkConnectionToWebProcess::removeSocketChannel(uint64_t identifier)
+void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier identifier)
 {
     ASSERT(m_networkSocketChannels.contains(identifier));
     m_networkSocketChannels.remove(identifier);

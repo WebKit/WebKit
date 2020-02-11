@@ -1,3 +1,52 @@
+2020-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Use ObjectIdentifier for WebSocketStream/WebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=207507
+
+        Reviewed by Alex Christensen.
+
+        Replace uint64_t by ObjectIdentifier.
+        This adds type safety and ensures we get valid identifiers from IPC.
+        We still need to check for destinationID being not null in a few places.
+        No observable change of behavior.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::createSocketStream):
+        (WebKit::NetworkConnectionToWebProcess::createSocketChannel):
+        (WebKit::NetworkConnectionToWebProcess::removeSocketChannel):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::create):
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::create):
+        (WebKit::NetworkSocketStream::NetworkSocketStream):
+        (WebKit::NetworkSocketStream::messageSenderDestinationID const):
+        * NetworkProcess/NetworkSocketStream.h:
+        * Scripts/webkit/messages.py:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        (WebKit::WebSocketChannel::messageSenderDestinationID const):
+        (WebKit::WebSocketChannel::connect):
+        * WebProcess/Network/WebSocketChannel.h:
+        (WebKit::WebSocketChannel::identifier const):
+        * WebProcess/Network/WebSocketChannelManager.cpp:
+        (WebKit::WebSocketChannelManager::didReceiveMessage):
+        * WebProcess/Network/WebSocketChannelManager.h:
+        * WebProcess/Network/WebSocketIdentifier.h: Added.
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::streamWithIdentifier):
+        (WebKit::WebSocketStream::WebSocketStream):
+        (WebKit::WebSocketStream::~WebSocketStream):
+        (WebKit::WebSocketStream::messageSenderDestinationID const):
+        * WebProcess/Network/WebSocketStream.h:
+
 2020-02-11  chris fleizach  <cfleizach@apple.com>
 
         AX: Unable to build webkit open source - build errors related to AXClientType

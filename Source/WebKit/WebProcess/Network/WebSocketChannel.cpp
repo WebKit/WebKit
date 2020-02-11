@@ -62,6 +62,7 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client)
     : m_document(makeWeakPtr(document))
+    ,  m_identifier(WebSocketIdentifier::generate())
     , m_client(makeWeakPtr(client))
     , m_messageQueue(createMessageQueue(document, *this))
 {
@@ -78,7 +79,7 @@ IPC::Connection* WebSocketChannel::messageSenderConnection() const
 
 uint64_t WebSocketChannel::messageSenderDestinationID() const
 {
-    return identifier();
+    return m_identifier.toUInt64();
 }
 
 String WebSocketChannel::subprotocol()
@@ -103,7 +104,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (request->url() != url && m_client)
         m_client->didUpgradeURL();
 
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier() });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier });
     return ConnectStatus::OK;
 }
 

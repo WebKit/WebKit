@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebSocketIdentifier.h"
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
@@ -51,9 +52,9 @@ class NetworkSession;
 class NetworkSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
+    static std::unique_ptr<NetworkSocketChannel> create(NetworkConnectionToWebProcess&, PAL::SessionID, const WebCore::ResourceRequest&, const String& protocol, WebSocketIdentifier);
 
-    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
+    NetworkSocketChannel(NetworkConnectionToWebProcess&, NetworkSession*, const WebCore::ResourceRequest&, const String& protocol, WebSocketIdentifier);
     ~NetworkSocketChannel();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -72,12 +73,12 @@ private:
     void close(int32_t code, const String& reason);
 
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final { return m_identifier; }
+    uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     void finishClosingIfPossible();
 
     NetworkConnectionToWebProcess& m_connectionToWebProcess;
-    uint64_t m_identifier;
+    WebSocketIdentifier m_identifier;
     WeakPtr<NetworkSession> m_session;
     std::unique_ptr<WebSocketTask> m_socket;
 

@@ -44,7 +44,7 @@ void WebSocketChannelManager::networkProcessCrashed()
 
 void WebSocketChannelManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto iterator = m_channels.find(decoder.destinationID());
+    auto iterator = m_channels.find(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID()));
     if (iterator != m_channels.end())
         iterator->value->didReceiveMessage(connection, decoder);
 }

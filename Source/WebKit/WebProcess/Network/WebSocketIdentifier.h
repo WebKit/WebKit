@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice , this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
@@ -25,30 +25,11 @@
 
 #pragma once
 
-#include "WebSocketChannel.h"
-
-namespace IPC {
-class Connection;
-class Decoder;
-}
-
-namespace WebCore {
-class Document;
-class ThreadableWebSocketChannel;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class WebSocketChannelManager {
-public:
-    WebSocketChannelManager() = default;
-    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&);
-
-    void networkProcessCrashed();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
-private:
-    HashMap<WebSocketIdentifier, Ref<WebSocketChannel>> m_channels;
-};
+enum WebSocketIdentifierType { };
+using WebSocketIdentifier = ObjectIdentifier<WebSocketIdentifierType>;
 
 } // namespace WebKit

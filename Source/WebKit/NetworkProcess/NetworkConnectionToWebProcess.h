@@ -37,6 +37,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
+#include "WebSocketIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
@@ -155,7 +156,7 @@ public:
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
 
-    void removeSocketChannel(uint64_t identifier);
+    void removeSocketChannel(WebSocketIdentifier);
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
@@ -218,9 +219,9 @@ private:
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
-    void createSocketStream(URL&&, String cachePartition, uint64_t);
+    void createSocketStream(URL&&, String cachePartition, WebSocketIdentifier);
 
-    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
+    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebSocketIdentifier);
     void updateQuotaBasedOnSpaceUsageForTesting(const WebCore::ClientOrigin&);
 
 #if ENABLE(SERVICE_WORKER)
@@ -313,8 +314,8 @@ private:
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
 
-    HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
-    HashMap<uint64_t, std::unique_ptr<NetworkSocketChannel>> m_networkSocketChannels;
+    HashMap<WebSocketIdentifier, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
+    HashMap<WebSocketIdentifier, std::unique_ptr<NetworkSocketChannel>> m_networkSocketChannels;
     NetworkResourceLoadMap m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;

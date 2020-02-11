@@ -236,6 +236,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
         'WebKit::WebPageProxyIdentifier',
+        'WebKit::WebSocketIdentifier',
     ])
 
 

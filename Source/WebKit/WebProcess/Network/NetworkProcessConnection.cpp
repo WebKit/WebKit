@@ -89,7 +89,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebSocketStream::messageReceiverName()) {
-        if (auto* stream = WebSocketStream::streamWithIdentifier(decoder.destinationID()))
+        if (auto* stream = WebSocketStream::streamWithIdentifier(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             stream->didReceiveMessage(connection, decoder);
         return;
     }
