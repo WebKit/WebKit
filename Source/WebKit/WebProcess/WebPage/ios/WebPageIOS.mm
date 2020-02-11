@@ -121,6 +121,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <WebCore/ShadowRoot.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
@@ -2707,7 +2708,6 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 
     RenderObject* renderer = hitNode->renderer();
     info.bounds = renderer->absoluteBoundingBoxRect(true);
-    // We don't want to select blocks that are larger than 97% of the visible area of the document.
     if (is<HTMLAttachmentElement>(*hitNode)) {
         info.isAttachment = true;
         HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
@@ -2717,10 +2717,22 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
     } else {
         info.isSelectable = renderer->style().userSelect() != UserSelect::None;
+        // We don't want to select blocks that are larger than 97% of the visible area of the document.
+        // FIXME: Is this heuristic still needed, now that block selection has been removed?
         if (info.isSelectable && !hitNode->isTextNode())
             info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
     }
+    for (auto currentNode = makeRefPtr(hitNode); currentNode; currentNode = currentNode->parentOrShadowHostNode()) {
+        auto* renderer = currentNode->renderer();
+        if (!renderer)
+            continue;
 
+        auto& style = renderer->style();
+        if (style.userSelect() == UserSelect::None && style.userDrag() == UserDrag::Element) {
+            info.prefersDraggingOverTextSelection = true;
+            break;
+        }
+    }
 #if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     VisiblePosition caretPosition(renderer->positionForPoint(request.point, nullptr));
