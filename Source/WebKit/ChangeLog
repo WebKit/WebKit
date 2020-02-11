@@ -1,3 +1,48 @@
+2020-02-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256234. rdar://problem/59336307
+
+    [iOS] Crash when granting access to asset services
+    https://bugs.webkit.org/show_bug.cgi?id=207520
+    Source/WebKit:
+    
+    <rdar://problem/59321848>
+    
+    Reviewed by Brent Fulgham.
+    
+    Pass correct handle when calling SandboxExtension::createHandleForMachLookup.
+    
+    API test: WebKit.GrantAccessToMobileAssetsCrash
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::grantAccessToAssetServices):
+    
+    Tools:
+    
+    Reviewed by Brent Fulgham.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/GrantAccessToMobileAssets.mm: Added.
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256234 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Crash when granting access to asset services
+            https://bugs.webkit.org/show_bug.cgi?id=207520
+            <rdar://problem/59321848>
+
+            Reviewed by Brent Fulgham.
+
+            Pass correct handle when calling SandboxExtension::createHandleForMachLookup.
+
+            API test: WebKit.GrantAccessToMobileAssetsCrash
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::grantAccessToAssetServices):
+
 2020-02-07  Jon Lee  <jonlee@apple.com>
 
         Web Inspector: Revert slim toolbar
