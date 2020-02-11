@@ -2513,6 +2513,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (self.isFocusingElement)
         return _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext);
 
+    if (_positionInformation.prefersDraggingOverTextSelection)
+        return NO;
+
     // If we're selecting something, don't activate highlight.
     if (gesture == UIWKGestureLoupe && [self hasSelectablePositionAtPoint:point])
         [self _cancelLongPressGestureRecognizer];
