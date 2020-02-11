@@ -1,5 +1,21 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255863. rdar://problem/59299151
+
+    Unreviewed build fix after r255846.
+    
+    * TestWebKitAPI/cocoa/HTTPServer.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255863 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r255846.
+
+            * TestWebKitAPI/cocoa/HTTPServer.h:
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255522. rdar://problem/59299116
 
     Add KVO SPI WKWebView._negotiatedLegacyTLS
