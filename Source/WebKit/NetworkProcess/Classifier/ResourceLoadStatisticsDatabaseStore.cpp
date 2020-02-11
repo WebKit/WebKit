@@ -2250,12 +2250,15 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
         clearEndOfGrandfatheringTimeStamp();
 
     clearExpiredUserInteractions();
-    
+
+    auto now = WallTime::now();
+    auto oldestUserInteraction = now;
     Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
 
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : domains) {
+        oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
             domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
         else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
@@ -2264,6 +2267,13 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
         }
         if (shouldClearGrandfathering && statistic.grandfathered)
             domainIDsToClearGrandfathering.append(statistic.domainID);
+    }
+
+    // Give the user enough time to interact with websites until we remove non-cookie website data.
+    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval) {
+        domainsToRemoveWebsiteDataFor.removeAllMatching([&] (auto& pair) {
+            return pair.second == WebsiteDataToRemove::AllButCookies;
+        });
     }
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
