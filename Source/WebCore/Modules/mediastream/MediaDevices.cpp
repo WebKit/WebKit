@@ -109,8 +109,8 @@ static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackCon
 bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestType)
 {
     auto* currentGestureToken = UserGestureIndicator::currentUserGesture().get();
-    if (m_currentGestureToken != currentGestureToken) {
-        m_currentGestureToken = currentGestureToken;
+    if (m_currentGestureToken.get() != currentGestureToken) {
+        m_currentGestureToken = makeWeakPtr(currentGestureToken);
         m_requestTypesForCurrentGesture = { };
     }
 

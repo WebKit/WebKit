@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ enum ProcessingUserGestureState {
 
 enum class UserGestureType { EscapeKey, Other };
 
-class UserGestureToken : public RefCounted<UserGestureToken> {
+class UserGestureToken : public RefCounted<UserGestureToken>, public CanMakeWeakPtr<UserGestureToken> {
 public:
     static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType)
     {
