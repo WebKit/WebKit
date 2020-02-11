@@ -1,3 +1,20 @@
+2020-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector RTL: Elements closing tag is reversed
+        https://bugs.webkit.org/show_bug.cgi?id=207214
+
+        Reviewed by Timothy Hatcher.
+
+        Wrap text nodes in `unicode-bidi: isolate-override`. From MDN:
+
+        isolate-override:
+            This keyword applies the isolation behavior of the isolate
+            keyword to the surrounding content and the override behavior
+            of the bidi-override keyword to the inner content.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li > span > .html-text-node):
+
 2020-02-09  Keith Rollin  <krollin@apple.com>
 
         Re-enable LTO for ARM builds

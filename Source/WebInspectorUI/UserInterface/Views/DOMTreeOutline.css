@@ -131,6 +131,10 @@
     margin-right: var(--item-padding-end);
 }
 
+.tree-outline.dom li > span > .html-text-node {
+    unicode-bidi: isolate-override;
+}
+
 .tree-outline.dom li .pseudo-class-indicator {
     display: inline-block;
     position: absolute;
