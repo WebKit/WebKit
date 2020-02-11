@@ -1,5 +1,58 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255663. rdar://problem/59349185
+
+    Accelerated animations freeze on render tree rebuild
+    https://bugs.webkit.org/show_bug.cgi?id=201048
+    <rdar://problem/54612621>
+    
+    Reviewed by Antoine Quint.
+    
+    Source/WebCore:
+    
+    If there is an accelerated animation in progress for a renderer and the render tree is rebuild the animation
+    does not continue with the new renderer.
+    
+    To fix, make sure that the animation leaves the accelerated state when the renderer is removed. The new renderer
+    will then become accelerated automatically.
+    
+    Original test case by Tim Guan-tin Chien.
+    
+    Test: webanimations/accelerated-animation-renderer-change.html
+    
+    * animation/AnimationTimeline.cpp:
+    (WebCore::AnimationTimeline::willChangeRendererForElement):
+    * animation/AnimationTimeline.h:
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::willChangeRenderer):
+    * animation/KeyframeEffect.h:
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::willChangeRenderer):
+    * animation/WebAnimation.h:
+    * rendering/updating/RenderTreeUpdater.cpp:
+    (WebCore::RenderTreeUpdater::tearDownRenderers):
+    
+    LayoutTests:
+    
+    * webanimations/accelerated-animation-renderer-change-expected.html: Added.
+    * webanimations/accelerated-animation-renderer-change.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255663 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Antti Koivisto  <antti@apple.com>
+
+            Accelerated animations freeze on render tree rebuild
+            https://bugs.webkit.org/show_bug.cgi?id=201048
+            <rdar://problem/54612621>
+
+            Reviewed by Antoine Quint.
+
+            * webanimations/accelerated-animation-renderer-change-expected.html: Added.
+            * webanimations/accelerated-animation-renderer-change.html: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255593. rdar://problem/59349198
 
     [Web Animations] Accelerated animations don't run until their natural completion

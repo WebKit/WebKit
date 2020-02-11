@@ -667,6 +667,12 @@ void WebAnimation::cancel(Silently silently)
         m_effect->animationWasCanceled();
 }
 
+void WebAnimation::willChangeRenderer()
+{
+    if (is<KeyframeEffect>(m_effect))
+        downcast<KeyframeEffect>(*m_effect).willChangeRenderer();
+}
+
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
