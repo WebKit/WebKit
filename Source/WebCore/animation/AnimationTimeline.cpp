@@ -241,6 +241,12 @@ void AnimationTimeline::removeAnimationsForElement(Element& element)
         animation->remove();
 }
 
+void AnimationTimeline::willChangeRendererForElement(Element& element)
+{
+    for (auto& animation : animationsForElement(element))
+        animation->willChangeRenderer();
+}
+
 void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
 {
     for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
