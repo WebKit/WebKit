@@ -996,6 +996,7 @@
 		E38A0D351FD50CC300E98C8B /* Threading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38A0D341FD50CBC00E98C8B /* Threading.cpp */; };
 		E38D65CA23A45FAA0063D69A /* PackedRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D65C823A45FA90063D69A /* PackedRef.cpp */; };
 		E38D65CB23A45FAA0063D69A /* PackedRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D65C923A45FA90063D69A /* PackedRefPtr.cpp */; };
+		E394AE6F23F2303E005B4936 /* GrantAccessToMobileAssets.mm in Sources */ = {isa = PBXBuildFile; fileRef = E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */; };
 		E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */; };
 		E3A1E78221B25B7A008C6007 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78021B25B79008C6007 /* URL.cpp */; };
 		E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78421B25B91008C6007 /* URLParser.cpp */; };
@@ -2569,6 +2570,7 @@
 		E38A0D341FD50CBC00E98C8B /* Threading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Threading.cpp; sourceTree = "<group>"; };
 		E38D65C823A45FA90063D69A /* PackedRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PackedRef.cpp; sourceTree = "<group>"; };
 		E38D65C923A45FA90063D69A /* PackedRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PackedRefPtr.cpp; sourceTree = "<group>"; };
+		E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GrantAccessToMobileAssets.mm; sourceTree = "<group>"; };
 		E3953F951F2CF32100A76A2E /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
 		E398BC0F2041C76300387136 /* UniqueArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueArray.cpp; sourceTree = "<group>"; };
 		E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParserTextEncoding.cpp; sourceTree = "<group>"; };
@@ -2867,6 +2869,7 @@
 			children = (
 				C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */,
 				C1692DC923D10DAE006E88F7 /* Battery.mm */,
+				E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */,
 				C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
 			);
@@ -4787,6 +4790,7 @@
 				41157237234B240C0050A1D1 /* GetUserMedia.mm in Sources */,
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
 				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
+				E394AE6F23F2303E005B4936 /* GrantAccessToMobileAssets.mm in Sources */,
 				8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */,
 				7CCE7EFA1A411AE600447C4C /* HitTestResultNodeHandle.cpp in Sources */,
 				7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */,

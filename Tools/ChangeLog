@@ -1,3 +1,14 @@
+2020-02-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Crash when granting access to asset services
+        https://bugs.webkit.org/show_bug.cgi?id=207520
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GrantAccessToMobileAssets.mm: Added.
+        (TEST):
+
 2020-02-10  Chris Dumez  <cdumez@apple.com>
 
         [DRT] InternalSettingsGenerated::resetToConsistentState() may override TestOptions

@@ -1,3 +1,18 @@
+2020-02-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Crash when granting access to asset services
+        https://bugs.webkit.org/show_bug.cgi?id=207520
+        <rdar://problem/59321848>
+
+        Reviewed by Brent Fulgham.
+
+        Pass correct handle when calling SandboxExtension::createHandleForMachLookup.
+
+        API test: WebKit.GrantAccessToMobileAssetsCrash
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+
 2020-02-10  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::WebProcessPool::initializeClassesForParameterCoding() should keep a copy of CString
