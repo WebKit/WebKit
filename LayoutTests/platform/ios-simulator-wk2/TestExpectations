@@ -93,3 +93,5 @@ webkit.org/b/207002 imported/w3c/web-platform-tests/FileAPI/historical.https.htm
 webkit.org/b/206952 imported/w3c/IndexedDB-private-browsing/idbindex_getKey6.html [ Pass Timeout ]
 
 webkit.org/b/207055 media/track/texttrackcue/texttrackcue-displaycue.html [ Pass Failure ]
+
+webkit.org/b/206934 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html [ Pass Failure ]
