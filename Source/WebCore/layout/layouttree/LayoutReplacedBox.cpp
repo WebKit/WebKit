@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,41 @@
  */
 
 #include "config.h"
-#include "LayoutReplaced.h"
+#include "LayoutReplacedBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Replaced);
+WTF_MAKE_ISO_ALLOCATED_IMPL(ReplacedBox);
 
-Replaced::Replaced(const Box& layoutBox)
-    : m_layoutBox(makeWeakPtr(layoutBox))
+ReplacedBox::ReplacedBox(RenderStyle&& style)
+    : Box({ }, WTFMove(style), Box::ReplacedBox)
 {
 }
 
-bool Replaced::hasIntrinsicWidth() const
+bool ReplacedBox::hasIntrinsicWidth() const
 {
     return m_intrinsicSize || m_layoutBox->style().logicalWidth().isIntrinsic();
 }
 
-bool Replaced::hasIntrinsicHeight() const
+bool ReplacedBox::hasIntrinsicHeight() const
 {
     return m_intrinsicSize || m_layoutBox->style().logicalHeight().isIntrinsic();
 }
 
-bool Replaced::hasIntrinsicRatio() const
+bool ReplacedBox::hasIntrinsicRatio() const
 {
     if (!hasAspectRatio())
         return false;
     return m_intrinsicSize || m_intrinsicRatio;
 }
 
-LayoutUnit Replaced::intrinsicWidth() const
+LayoutUnit ReplacedBox::intrinsicWidth() const
 {
     ASSERT(hasIntrinsicWidth());
     if (m_intrinsicSize)
@@ -67,7 +66,7 @@ LayoutUnit Replaced::intrinsicWidth() const
     return LayoutUnit(m_layoutBox->style().logicalWidth().value());
 }
 
-LayoutUnit Replaced::intrinsicHeight() const
+LayoutUnit ReplacedBox::intrinsicHeight() const
 {
     ASSERT(hasIntrinsicHeight());
     if (m_intrinsicSize)
@@ -75,7 +74,7 @@ LayoutUnit Replaced::intrinsicHeight() const
     return LayoutUnit(m_layoutBox->style().logicalHeight().value());
 }
 
-LayoutUnit Replaced::intrinsicRatio() const
+LayoutUnit ReplacedBox::intrinsicRatio() const
 {
     ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
     if (m_intrinsicRatio)
@@ -85,7 +84,7 @@ LayoutUnit Replaced::intrinsicRatio() const
     return 1;
 }
 
-bool Replaced::hasAspectRatio() const
+bool ReplacedBox::hasAspectRatio() const
 {
     return m_layoutBox->isImage() || m_layoutBox->style().aspectRatioType() == AspectRatioType::FromIntrinsic;
 }

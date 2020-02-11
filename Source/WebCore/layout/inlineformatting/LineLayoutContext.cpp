@@ -227,7 +227,7 @@ InlineLayoutUnit LineLayoutContext::inlineItemWidth(const InlineItem& inlineItem
     if (layoutBox.isFloatingPositioned())
         return boxGeometry.marginBoxWidth();
 
-    if (layoutBox.replaced())
+    if (layoutBox.isReplacedBox())
         return boxGeometry.width();
 
     if (inlineItem.isContainerStart())

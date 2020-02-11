@@ -37,6 +37,7 @@
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutInlineTextBox.h"
+#include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
@@ -189,7 +190,7 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
             layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
             continue;
         }
-        if (layoutBox->isReplaced()) {
+        if (layoutBox->isReplacedBox()) {
             computeBorderAndPadding(*layoutBox, horizontalConstraints);
             computeWidthAndMargin(*layoutBox, horizontalConstraints);
         } else if (layoutBox->isFloatingPositioned() || layoutBox->isAtomicInlineLevelBox()) {
@@ -276,8 +277,8 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
         contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else if (layoutBox.isInlineBlockBox())
         contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
-    else if (layoutBox.replaced())
-        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
+    else if (layoutBox.isReplacedBox())
+        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, usedWidth);
     else
         ASSERT_NOT_REACHED();
 
@@ -296,8 +297,8 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
         contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
     else if (layoutBox.isInlineBlockBox())
         contentHeightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
-    else if (layoutBox.replaced())
-        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, horizontalConstraints, { }, usedHeight);
+    else if (layoutBox.isReplacedBox())
+        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, usedHeight);
     else
         ASSERT_NOT_REACHED();
 

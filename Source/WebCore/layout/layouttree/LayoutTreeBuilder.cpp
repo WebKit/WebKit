@@ -45,6 +45,7 @@
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
 #include "LayoutPhase.h"
+#include "LayoutReplacedBox.h"
 #include "LayoutSize.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
@@ -144,9 +145,9 @@ void TreeBuilder::buildTree()
     buildSubTree(m_layoutTreeContent.rootRenderer(), m_layoutTreeContent.rootLayoutBox());
 }
 
-Box& TreeBuilder::createBox(Optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
+Box& TreeBuilder::createReplacedBox(RenderStyle&& style)
 {
-    auto newBox = makeUnique<Box>(elementAttributes, WTFMove(style));
+    auto newBox = makeUnique<ReplacedBox>(WTFMove(style));
     auto& box = *newBox;
     m_layoutTreeContent.addBox(WTFMove(newBox));
     return box;
@@ -218,19 +219,15 @@ Box* TreeBuilder::createLayoutBox(const Container& parentContainer, const Render
             childLayoutBox = &createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(clonedStyle));
             childLayoutBox->setIsAnonymous();
         } else if (is<RenderReplaced>(renderer)) {
-            if (displayType == DisplayType::Block)
-                childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
-            else
-                childLayoutBox = &createBox(elementAttributes(renderer), WTFMove(clonedStyle));
+            childLayoutBox = &createReplacedBox(WTFMove(clonedStyle));
             // FIXME: We don't yet support all replaced elements and this is temporary anyway.
-            if (childLayoutBox->replaced())
-                childLayoutBox->replaced()->setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
+            downcast<ReplacedBox>(*childLayoutBox).setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
             if (is<RenderImage>(renderer)) {
                 auto& imageRenderer = downcast<RenderImage>(renderer);
                 if (imageRenderer.shouldDisplayBrokenImageIcon())
-                    childLayoutBox->replaced()->setIntrinsicRatio(1);
+                    downcast<ReplacedBox>(*childLayoutBox).setIntrinsicRatio(1);
                 if (imageRenderer.cachedImage())
-                    childLayoutBox->replaced()->setCachedImage(*imageRenderer.cachedImage());
+                    downcast<ReplacedBox>(*childLayoutBox).setCachedImage(*imageRenderer.cachedImage());
             }
         } else {
             if (displayType == DisplayType::Block) {
@@ -395,7 +392,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     else if (layoutBox.isInlineLevelBox()) {
         if (layoutBox.isInlineBox())
             stream << "SPAN inline box";
-        else if (layoutBox.replaced())
+        else if (layoutBox.isReplacedBox())
             stream << "IMG replaced inline box";
         else if (layoutBox.isAnonymous())
             stream << "anonymous inline box";

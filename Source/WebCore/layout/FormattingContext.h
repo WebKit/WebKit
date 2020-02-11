@@ -44,6 +44,7 @@ struct Length;
 namespace Layout {
 
 class Box;
+class ReplacedBox;
 struct ComputedHorizontalMargin;
 struct ComputedVerticalMargin;
 class Container;
@@ -118,8 +119,8 @@ protected:
         ContentHeightAndMargin floatingHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
         ContentWidthAndMargin floatingWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
-        ContentHeightAndMargin inlineReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverrideVerticalValues&) const;
-        ContentWidthAndMargin inlineReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
+        ContentHeightAndMargin inlineReplacedHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverrideVerticalValues&) const;
+        ContentWidthAndMargin inlineReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
 
         LayoutSize inFlowPositionedPositionOffset(const Box&, const HorizontalConstraints&) const;
 
@@ -164,14 +165,14 @@ protected:
         const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     private:
-        VerticalGeometry outOfFlowReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideVerticalValues&) const;
-        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
+        VerticalGeometry outOfFlowReplacedVerticalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideVerticalValues&) const;
+        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
 
         VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideVerticalValues&) const;
         HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
-        ContentHeightAndMargin floatingReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
-        ContentWidthAndMargin floatingReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
+        ContentHeightAndMargin floatingReplacedHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
+        ContentWidthAndMargin floatingReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
 
         ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 

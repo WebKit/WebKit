@@ -27,7 +27,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutReplaced.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -65,7 +64,8 @@ public:
         BoxFlag                = 1 << 0,
         InlineTextBox          = 1 << 1,
         LineBreakBox           = 1 << 2,
-        ContainerFlag          = 1 << 3
+        ReplacedBox            = 1 << 3,
+        ContainerFlag          = 1 << 4
     };
     typedef unsigned BaseTypeFlags;
 
@@ -124,7 +124,6 @@ public:
     bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableCell() const { return style().display() == DisplayType::TableCell; }
-    bool isReplaced() const { return isImage() || isIFrame(); }
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
 
@@ -142,16 +141,13 @@ public:
     bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
     bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBox; }
     bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBox; }
+    bool isReplacedBox() const { return m_baseTypeFlags & ReplacedBox; }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
 
     void updateStyle(const RenderStyle& newStyle);
     const RenderStyle& style() const { return m_style; }
-
-    const Replaced* replaced() const;
-    // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
-    Replaced* replaced();
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
@@ -182,7 +178,6 @@ private:
     public:
         BoxRareData() = default;
 
-        std::unique_ptr<Replaced> replaced;
         unsigned rowSpan { 1 };
         unsigned columnSpan { 1 };
         Optional<LayoutUnit> columnWidth;

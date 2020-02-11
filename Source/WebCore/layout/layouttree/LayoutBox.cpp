@@ -47,8 +47,6 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
     , m_hasRareData(false)
     , m_isAnonymous(false)
 {
-    if (isReplaced())
-        ensureRareData().replaced = makeUnique<Replaced>(*this);
 }
 
 Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
@@ -301,7 +299,7 @@ bool Box::isInlineBox() const
 {
     // An inline box is one that is both inline-level and whose contents participate in its containing inline formatting context.
     // A non-replaced element with a 'display' value of 'inline' generates an inline box.
-    return m_style.display() == DisplayType::Inline && !isReplaced();
+    return m_style.display() == DisplayType::Inline && !isReplacedBox();
 }
 
 bool Box::isAtomicInlineLevelBox() const
@@ -397,21 +395,6 @@ bool Box::isPaddingApplicable() const
         && !isTableRow()
         && !isTableColumnGroup()
         && !isTableColumn();
-}
-
-const Replaced* Box::replaced() const
-{
-    return const_cast<Box*>(this)->replaced();
-}
-
-Replaced* Box::replaced()
-{
-    if (!isReplaced()) {
-        ASSERT(!hasRareData() || !rareData().replaced.get());
-        return nullptr;
-    }
-    ASSERT(hasRareData() && rareData().replaced.get());
-    return rareData().replaced.get();
 }
 
 void Box::setRowSpan(unsigned rowSpan)

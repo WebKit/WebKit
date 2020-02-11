@@ -1453,7 +1453,7 @@ layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainer.cpp
 layout/layouttree/LayoutInlineTextBox.cpp
 layout/layouttree/LayoutLineBreakBox.cpp
-layout/layouttree/LayoutReplaced.cpp
+layout/layouttree/LayoutReplacedBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 layout/tableformatting/TableFormattingContext.cpp
 layout/tableformatting/TableFormattingContextGeometry.cpp

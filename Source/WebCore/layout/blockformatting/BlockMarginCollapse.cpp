@@ -377,7 +377,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
         return false;
 
     // FIXME: Block replaced boxes clearly don't collapse through their margins, but I couldn't find it in the spec yet (and no, it's not a quirk).
-    if (layoutBox.replaced())
+    if (layoutBox.isReplacedBox())
         return false;
 
     if (!is<Container>(layoutBox))
@@ -576,7 +576,7 @@ PrecomputedMarginBefore BlockFormattingContext::MarginCollapse::precomputedMargi
     ASSERT(layoutBox.isBlockLevelBox());
     // Don't pre-compute vertical margins for out of flow boxes.
     ASSERT(layoutBox.isInFlow() || layoutBox.isFloatingPositioned());
-    ASSERT(!layoutBox.replaced());
+    ASSERT(!layoutBox.isReplacedBox());
 
     auto marginsCollapseThrough = this->marginsCollapseThrough(layoutBox);
     auto positiveNegativeMarginBefore = this->positiveNegativeMarginBefore(layoutBox, usedNonCollapsedMargin);

@@ -685,7 +685,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/displaytree/DisplayRun.h
 
     layout/layouttree/LayoutBox.h
-    layout/layouttree/LayoutReplaced.h
 
     loader/AdClickAttribution.h
     loader/CanvasActivityRecord.h

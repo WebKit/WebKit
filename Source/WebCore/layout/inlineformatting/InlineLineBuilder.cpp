@@ -401,7 +401,7 @@ void LineBuilder::append(const InlineItem& inlineItem, InlineLayoutUnit logicalW
         appendInlineContainerStart(inlineItem, logicalWidth);
     else if (inlineItem.isContainerEnd())
         appendInlineContainerEnd(inlineItem, logicalWidth);
-    else if (inlineItem.layoutBox().replaced())
+    else if (inlineItem.layoutBox().isReplacedBox())
         appendReplacedInlineBox(inlineItem, logicalWidth);
     else if (inlineItem.isBox())
         appendNonReplacedInlineBox(inlineItem, logicalWidth);
@@ -504,7 +504,7 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Inlin
 
 void LineBuilder::appendReplacedInlineBox(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.layoutBox().isReplaced());
+    ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
 }
@@ -617,7 +617,7 @@ InlineLayoutUnit LineBuilder::runContentHeight(const Run& run) const
 
     auto& layoutBox = run.layoutBox();
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-    if (layoutBox.replaced() || layoutBox.isFloatingPositioned())
+    if (layoutBox.isReplacedBox() || layoutBox.isFloatingPositioned())
         return boxGeometry.contentBoxHeight();
 
     // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
@@ -644,7 +644,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     }
 
     if (run.isBox()) {
-        if (run.layoutBox().isReplaced())
+        if (run.layoutBox().isReplacedBox())
             return true;
         ASSERT(run.layoutBox().isInlineBlockBox() || run.layoutBox().isInlineTableBox());
         if (!run.logicalWidth())

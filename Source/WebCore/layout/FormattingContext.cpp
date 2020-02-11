@@ -35,6 +35,7 @@
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
@@ -324,14 +325,14 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
 
         // 10.3.3 Block-level, non-replaced elements in normal flow
         // 10.3.7 Absolutely positioned, non-replaced elements
-        if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
+        if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.isReplacedBox()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
             auto containingBlockWidth = containingBlockGeometry.contentBoxWidth();
             ASSERT(boxGeometry.horizontalMarginBorderAndPadding() + boxGeometry.contentBoxWidth() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements
-        if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
+        if (layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplacedBox()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockGeometry.contentBoxHeight();
             ASSERT(boxGeometry.top() + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + boxGeometry.contentBoxHeight()
