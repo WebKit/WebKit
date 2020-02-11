@@ -1395,3 +1395,5 @@ webkit.org/b/207552 http/tests/storageAccess/has-storage-access-false-by-default
 webkit.org/b/190852 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
 
 webkit.org/b/207553 imported/w3c/IndexedDB-private-browsing/abort-in-initial-upgradeneeded.html [ Pass Timeout ]
+
+webkit.org/b/207555 imported/w3c/IndexedDB-private-browsing/idbcursor_update_objectstore8.html [ Pass Timeout ]
