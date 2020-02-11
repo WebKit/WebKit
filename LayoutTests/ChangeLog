@@ -1,3 +1,13 @@
+2020-02-11  Eric Carlson  <eric.carlson@apple.com>
+
+        video.currentTime is not being updated in iOS 13.4 Beta
+        https://bugs.webkit.org/show_bug.cgi?id=207489
+        <rdar://problem/59322640>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/media-element-current-time.html: Added.
+
 2020-02-11  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] http/tests/ssl/applepay/ApplePayBillingAddress.html is flaky failing.
