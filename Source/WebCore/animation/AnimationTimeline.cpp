@@ -415,7 +415,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
                 auto shorthand = shorthandForProperty(property);
                 for (size_t j = 0; j < shorthand.length(); ++j)
                     transitionProperties.add(shorthand.properties()[j]);
-            } else
+            } else if (property != CSSPropertyInvalid)
                 transitionProperties.add(property);
         } else if (mode == Animation::AnimateAll) {
             transitionPropertiesContainAll = true;
