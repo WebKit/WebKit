@@ -1,5 +1,65 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255593. rdar://problem/59349198
+
+    [Web Animations] Accelerated animations don't run until their natural completion
+    https://bugs.webkit.org/show_bug.cgi?id=207130
+    <rdar://problem/59106047>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Tests: webanimations/transform-accelerated-animation-finishes-before-removal.html
+           webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html
+    
+    Ensure we don't tear down a composited renderer until all of its runnning accelerated animations are completed.
+    The accelerated animations will be queued for removal in the next animation frame.
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::isRunningAcceleratedAnimationForProperty const):
+    * animation/KeyframeEffect.h:
+    * animation/KeyframeEffectStack.cpp:
+    (WebCore::KeyframeEffectStack::isCurrentlyAffectingProperty const):
+    
+    LayoutTests:
+    
+    Add two new tests that ensures that an accelerated animation still yields compositing on an element when
+    its finished promise is resolved, but that it's no longer the case on the next frame.
+    
+    This required an existing test to be updated to wait until the next frame before checking the composited
+    status of an element on which an animation had just completed.
+    
+    * compositing/geometry/limit-layer-bounds-opacity-transition.html:
+    * webanimations/transform-accelerated-animation-finishes-before-removal-expected.txt: Added.
+    * webanimations/transform-accelerated-animation-finishes-before-removal.html: Added.
+    * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise-expected.txt: Added.
+    * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255593 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Accelerated animations don't run until their natural completion
+            https://bugs.webkit.org/show_bug.cgi?id=207130
+            <rdar://problem/59106047>
+
+            Reviewed by Dean Jackson.
+
+            Add two new tests that ensures that an accelerated animation still yields compositing on an element when
+            its finished promise is resolved, but that it's no longer the case on the next frame.
+
+            This required an existing test to be updated to wait until the next frame before checking the composited
+            status of an element on which an animation had just completed.
+
+            * compositing/geometry/limit-layer-bounds-opacity-transition.html:
+            * webanimations/transform-accelerated-animation-finishes-before-removal-expected.txt: Added.
+            * webanimations/transform-accelerated-animation-finishes-before-removal.html: Added.
+            * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise-expected.txt: Added.
+            * webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255552. rdar://problem/59349213
 
     ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) on animations/keyframe-autoclose-brace.html
