@@ -1,5 +1,29 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255360. rdar://problem/59298166
+
+    [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
+    https://bugs.webkit.org/show_bug.cgi?id=206934
+    
+    Unreviewed test gardening.
+    
+    Patch by Jason Lawrence <lawrence.j@apple.com> on 2020-01-29
+    
+    * platform/ios-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255360 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-29  Jason Lawrence  <lawrence.j@apple.com>
+
+            [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
+            https://bugs.webkit.org/show_bug.cgi?id=206934
+
+            Unreviewed test gardening.
+
+            * platform/ios-wk2/TestExpectations:
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255158. rdar://problem/59298137
 
     Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
