@@ -322,7 +322,7 @@ void InProcessIDBServer::clearObjectStore(const WebCore::IDBRequestData& request
 
 void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData, const IDBIndexInfo& info)
 {
-    dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), info] {
+    dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] {
         LockHolder locker(m_server->lock());
         m_server->createIndex(requestData, info);
     });

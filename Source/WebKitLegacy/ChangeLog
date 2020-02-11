@@ -1,3 +1,38 @@
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r255615. rdar://problem/59298181
+
+    Crash in WebCore::IDBServer::IDBServer::createIndex
+    https://bugs.webkit.org/show_bug.cgi?id=207137
+    <rdar://problem/59096231>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Export IDBIndexInfo::isolatedCopy so it can be used in WebKitLegacy framework code.
+    
+    * Modules/indexeddb/shared/IDBIndexInfo.h:
+    
+    Source/WebKitLegacy:
+    
+    * Storage/InProcessIDBServer.cpp:
+    (InProcessIDBServer::createIndex): Create an isolated copy of IDBIndexInfo before passing it to IDB thread.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255615 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Sihui Liu  <sihui_liu@apple.com>
+
+            Crash in WebCore::IDBServer::IDBServer::createIndex
+            https://bugs.webkit.org/show_bug.cgi?id=207137
+            <rdar://problem/59096231>
+
+            Reviewed by Darin Adler.
+
+            * Storage/InProcessIDBServer.cpp:
+            (InProcessIDBServer::createIndex): Create an isolated copy of IDBIndexInfo before passing it to IDB thread.
+
 2020-01-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r255094. rdar://problem/58921473
