@@ -1,5 +1,63 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r255874. rdar://problem/59298178
+
+    [iOS] Do not create sandbox reports when the UI process cannot issue extensions to diagnostics service
+    https://bugs.webkit.org/show_bug.cgi?id=207279
+    <rdar://problem/59030957>
+    Source/WebKit:
+    
+    Reviewed by Brent Fulgham.
+    
+    Do not create sandbox reports when the UI process cannot issue mach extensions to the diagnostics service.
+    The majority of clients are capable of doing this.
+    
+    No new tests, since it is not trivial to test if no sandbox reports are generated for a violation.
+    
+    * Shared/Cocoa/SandboxExtensionCocoa.mm:
+    (WebKit::SandboxExtensionImpl::create):
+    (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+    (WebKit::SandboxExtensionImpl::SandboxExtensionImpl):
+    (WebKit::SandboxExtension::createHandleForMachLookup):
+    * Shared/SandboxExtension.h:
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    
+    Source/WTF:
+    
+    Reviewed by Brent Fulgham.
+    
+    Add flag which avoids generating sandbox reports.
+    
+    * wtf/spi/darwin/SandboxSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255874 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Do not create sandbox reports when the UI process cannot issue extensions to diagnostics service
+            https://bugs.webkit.org/show_bug.cgi?id=207279
+            <rdar://problem/59030957>
+
+            Reviewed by Brent Fulgham.
+
+            Do not create sandbox reports when the UI process cannot issue mach extensions to the diagnostics service.
+            The majority of clients are capable of doing this.
+
+            No new tests, since it is not trivial to test if no sandbox reports are generated for a violation.
+
+            * Shared/Cocoa/SandboxExtensionCocoa.mm:
+            (WebKit::SandboxExtensionImpl::create):
+            (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+            (WebKit::SandboxExtensionImpl::SandboxExtensionImpl):
+            (WebKit::SandboxExtension::createHandleForMachLookup):
+            * Shared/SandboxExtension.h:
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeWebProcess):
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255848. rdar://problem/59298190
 
     [IPC Hardening] Protect against bad RegistrableDomain under WebProcessProxy::didCollectPrewarmInformation()
