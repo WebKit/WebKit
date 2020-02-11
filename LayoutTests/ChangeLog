@@ -1,5 +1,16 @@
 2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=190852
+
+        Updating expectations to include ios 
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ iOS ] http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html is flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=207552
 
