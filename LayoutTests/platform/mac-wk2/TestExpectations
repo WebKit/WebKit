@@ -928,3 +928,4 @@ webkit.org/b/205301 [ Mojave+ ] inspector/canvas/requestShaderSource-webgpu.html
 
 webkit.org/b/205886 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure ]
 
+webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Failure Timeout ]
