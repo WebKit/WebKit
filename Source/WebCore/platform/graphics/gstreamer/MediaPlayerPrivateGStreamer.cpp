@@ -2404,7 +2404,7 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
             if (stream->stream_type == 0x05 || stream->stream_type >= 0x80) {
                 AtomString pid = String::number(stream->pid);
                 auto track = InbandMetadataTextTrackPrivateGStreamer::create(
-                    InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data, pid);
+                    InbandTextTrackPrivate::Kind::Metadata, InbandTextTrackPrivate::CueFormat::Data, pid);
 
                 // 4.7.10.12.2 Sourcing in-band text tracks
                 // If the new text track's kind is metadata, then set the text track in-band metadata track dispatch
@@ -2450,7 +2450,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
     if (m_chaptersTrack)
         m_player->removeTextTrack(*m_chaptersTrack);
 
-    m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Chapters, InbandTextTrackPrivate::Generic);
+    m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Kind::Chapters, InbandTextTrackPrivate::CueFormat::Generic);
     m_player->addTextTrack(*m_chaptersTrack);
 
     GRefPtr<GstToc> toc;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,9 +178,9 @@ WebVTTParser& InbandGenericTextTrack::parser()
     return *m_webVTTParser;
 }
 
-void InbandGenericTextTrack::parseWebVTTCueData(const ISOWebVTTCue& cueData)
+void InbandGenericTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 {
-    parser().parseCueData(cueData);
+    parser().parseCueData(WTFMove(cueData));
 }
 
 void InbandGenericTextTrack::parseWebVTTFileHeader(String&& header)

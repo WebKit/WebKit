@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -4068,11 +4068,18 @@ void HTMLMediaElement::closeCaptionTracksChanged()
 
 void HTMLMediaElement::addAudioTrack(Ref<AudioTrack>&& track)
 {
+#if !RELEASE_LOG_DISABLED
+    track->setLogger(logger(), logIdentifier());
+#endif
     ensureAudioTracks().append(WTFMove(track));
 }
 
 void HTMLMediaElement::addTextTrack(Ref<TextTrack>&& track)
 {
+#if !RELEASE_LOG_DISABLED
+    track->setLogger(logger(), logIdentifier());
+#endif
+
     if (!m_requireCaptionPreferencesChangedCallbacks) {
         m_requireCaptionPreferencesChangedCallbacks = true;
         Document& document = this->document();
@@ -4088,6 +4095,9 @@ void HTMLMediaElement::addTextTrack(Ref<TextTrack>&& track)
 
 void HTMLMediaElement::addVideoTrack(Ref<VideoTrack>&& track)
 {
+#if !RELEASE_LOG_DISABLED
+    track->setLogger(logger(), logIdentifier());
+#endif
     ensureVideoTracks().append(WTFMove(track));
 }
 
@@ -4150,6 +4160,9 @@ ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const String& kind, const
     // track label to label, its text track language to language...
     auto track = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, emptyString(), label, language);
     auto& trackReference = track.get();
+#if !RELEASE_LOG_DISABLED
+    trackReference.setLogger(logger(), logIdentifier());
+#endif
 
     // Note, due to side effects when changing track parameters, we have to
     // first append the track to the text track list.

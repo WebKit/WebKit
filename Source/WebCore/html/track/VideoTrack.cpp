@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -86,9 +86,6 @@ VideoTrack::VideoTrack(VideoTrackClient& client, VideoTrackPrivate& trackPrivate
     , m_private(trackPrivate)
     , m_selected(trackPrivate.selected())
 {
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
     m_private->setClient(this);
     updateKindFromPrivate();
 }
@@ -247,10 +244,15 @@ void VideoTrack::updateKindFromPrivate()
 void VideoTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     TrackBase::setMediaElement(element);
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
 }
+
+#if !RELEASE_LOG_DISABLED
+void VideoTrack::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    TrackBase::setLogger(logger, logIdentifier);
+    m_private->setLogger(logger, this->logIdentifier());
+}
+#endif
 
 } // namespace WebCore
 

@@ -1,5 +1,81 @@
 2020-02-11  Eric Carlson  <eric.carlson@apple.com>
 
+        Support in-band VTT captions when loading media in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=207467
+        <rdar://problem/59312749>
+
+        Reviewed by Jer Noble.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDidRemoveTextTrack):
+        (WebKit::RemoteMediaPlayerProxy::textTrackRepresentationBoundsChanged):
+        (WebKit::RemoteMediaPlayerProxy::textTrackSetMode):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp: Added.
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::configuration):
+        (WebKit::RemoteTextTrackProxy::configurationChanged):
+        (WebKit::RemoteTextTrackProxy::willRemove):
+        (WebKit::RemoteTextTrackProxy::idChanged):
+        (WebKit::RemoteTextTrackProxy::labelChanged):
+        (WebKit::RemoteTextTrackProxy::languageChanged):
+        (WebKit::RemoteTextTrackProxy::addDataCue):
+        (WebKit::RemoteTextTrackProxy::updateDataCue):
+        (WebKit::RemoteTextTrackProxy::removeDataCue):
+        (WebKit::RemoteTextTrackProxy::addGenericCue):
+        (WebKit::RemoteTextTrackProxy::updateGenericCue):
+        (WebKit::RemoteTextTrackProxy::removeGenericCue):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTFileHeader):
+        (WebKit::RemoteTextTrackProxy::parseWebVTTCueData):
+        * GPUProcess/media/RemoteTextTrackProxy.h: Copied from Source/WebKit/GPUProcess/media/RemoteVideoTrackProxy.h.
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+        * GPUProcess/media/TextTrackPrivateRemoteConfiguration.h: Added.
+        (WebKit::TextTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TextTrackPrivateRemoteConfiguration::decode):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged):
+        (WebKit::MediaPlayerPrivateRemote::parseWebVTTFileHeader):
+        (WebKit::MediaPlayerPrivateRemote::parseWebVTTCueData):
+        (WebKit::MediaPlayerPrivateRemote::parseWebVTTCueDataStruct):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp: Added.
+        (WebKit::TextTrackPrivateRemote::TextTrackPrivateRemote):
+        (WebKit::TextTrackPrivateRemote::setMode):
+        (WebKit::TextTrackPrivateRemote::updateConfiguration):
+        (WebKit::TextTrackPrivateRemote::addDataCue):
+        (WebKit::TextTrackPrivateRemote::updateDataCue):
+        (WebKit::TextTrackPrivateRemote::removeDataCue):
+        (WebKit::TextTrackPrivateRemote::addGenericCue):
+        (WebKit::TextTrackPrivateRemote::updateGenericCue):
+        (WebKit::TextTrackPrivateRemote::removeGenericCue):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTFileHeader):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTCueData):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTCueDataStruct):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h: Added.
+        * WebProcess/GPU/media/TextTrackPrivateRemote.messages.in: Added.
+
+2020-02-11  Eric Carlson  <eric.carlson@apple.com>
+
         video.currentTime is not being updated in iOS 13.4 Beta
         https://bugs.webkit.org/show_bug.cgi?id=207489
         <rdar://problem/59322640>

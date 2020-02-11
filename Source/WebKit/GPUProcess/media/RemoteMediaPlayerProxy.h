@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "SandboxExtension.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/Cookie.h>
+#include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <wtf/LoggerHelper.h>
@@ -56,6 +57,7 @@ using LayerHostingContextID = uint32_t;
 class LayerHostingContext;
 class RemoteAudioTrackProxy;
 class RemoteMediaPlayerManagerProxy;
+class RemoteTextTrackProxy;
 class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
@@ -105,6 +107,7 @@ public:
 
     void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
     void videoTrackSetSelected(TrackPrivateRemoteIdentifier, bool);
+    void textTrackSetMode(TrackPrivateRemoteIdentifier, WebCore::InbandTextTrackPrivate::Mode);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessVideoPlaybackDisabled(bool);
@@ -223,6 +226,8 @@ private:
 
     HashMap<WebCore::AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
     HashMap<WebCore::VideoTrackPrivate*, Ref<RemoteVideoTrackProxy>> m_videoTracks;
+    HashMap<WebCore::InbandTextTrackPrivate*, Ref<RemoteTextTrackProxy>> m_textTracks;
+
     MediaPlayerPrivateRemoteIdentifier m_id;
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;

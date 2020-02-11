@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ public:
 
 protected:
     MockTextTrackPrivate(const MockTrackBox& box)
-        : InbandTextTrackPrivate(InbandTextTrackPrivate::Generic)
+        : InbandTextTrackPrivate(InbandTextTrackPrivate::CueFormat::Generic)
         , m_box(box)
         , m_id(AtomString::number(box.trackID()))
     {

@@ -1,3 +1,14 @@
+2020-02-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Support in-band VTT captions when loading media in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=207467
+        <rdar://problem/59312749>
+
+        Reviewed by Jer Noble.
+
+        * wtf/LoggerHelper.h:
+        (WTF::LoggerHelper::childLogIdentifier const):
+
 2020-02-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative build fix on watchOS simulator

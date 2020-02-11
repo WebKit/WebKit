@@ -42,6 +42,23 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
     RemoteAudioTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
 
+    AddRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
+    RemoteTextTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+
+    ParseWebVTTFileHeader(WebKit::TrackPrivateRemoteIdentifier trackID, String header)
+    ParseWebVTTCueData(WebKit::TrackPrivateRemoteIdentifier trackID, IPC::DataReference data)
+    ParseWebVTTCueDataStruct(WebKit::TrackPrivateRemoteIdentifier trackID, WebCore::ISOWebVTTCue cueData)
+
+    ## AddDataCue(MediaTime start, MediaTime end, IPC::DataReference data)
+    ## AddDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformRepresentation data, String type)
+    ## UpdateDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformRepresentation data)
+    ## RemoveDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformRepresentation data)
+
+    ## AddGenericCue(WebCore::GenericCueData cue)
+    ## UpdateGenericCue(WebCore::GenericCueData cue)
+    ## RemoveGenericCue(WebCore::GenericCueData cue)
+
     AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
     RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
     RemoteVideoTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)

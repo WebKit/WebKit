@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -82,9 +82,6 @@ AudioTrack::AudioTrack(AudioTrackClient& client, AudioTrackPrivate& trackPrivate
     , m_enabled(trackPrivate.enabled())
 {
     m_private->setClient(this);
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
     updateKindFromPrivate();
 }
 
@@ -163,6 +160,7 @@ void AudioTrack::willRemove()
     auto element = makeRefPtr(mediaElement().get());
     if (!element)
         return;
+
     element->removeAudioTrack(*this);
 }
 
@@ -199,10 +197,15 @@ void AudioTrack::updateKindFromPrivate()
 void AudioTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     TrackBase::setMediaElement(element);
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
 }
+
+#if !RELEASE_LOG_DISABLED
+void AudioTrack::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    TrackBase::setLogger(logger, logIdentifier);
+    m_private->setLogger(logger, this->logIdentifier());
+}
+#endif
 
 } // namespace WebCore
 

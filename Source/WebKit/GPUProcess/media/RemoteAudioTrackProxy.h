@@ -37,7 +37,7 @@ namespace WebKit {
 struct TrackPrivateRemoteConfiguration;
 
 class RemoteAudioTrackProxy final
-    : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::AudioTrackPrivateClient {
 public:
     static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, AudioTrackPrivate& trackPrivate)
@@ -51,7 +51,6 @@ public:
 
 private:
     RemoteAudioTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, AudioTrackPrivate&);
-    ~RemoteAudioTrackProxy() = default;
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;

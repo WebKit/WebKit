@@ -38,6 +38,10 @@ class Connection;
 class Decoder;
 }
 
+namespace WebCore {
+class IntSize;
+}
+
 namespace WebKit {
 
 class RemoteSampleBufferDisplayLayer;

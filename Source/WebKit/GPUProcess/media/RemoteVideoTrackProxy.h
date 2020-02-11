@@ -37,7 +37,7 @@ namespace WebKit {
 struct TrackPrivateRemoteConfiguration;
 
 class RemoteVideoTrackProxy final
-    : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::VideoTrackPrivateClient {
 public:
     static Ref<RemoteVideoTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
@@ -51,7 +51,6 @@ public:
 
 private:
     RemoteVideoTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, VideoTrackPrivate&);
-    ~RemoteVideoTrackProxy() = default;
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;

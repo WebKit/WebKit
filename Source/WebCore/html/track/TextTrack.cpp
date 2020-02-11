@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -195,8 +195,11 @@ void TextTrack::setKind(Kind newKind)
         mediaElement()->ensureTextTracks().scheduleChangeEvent();
 #endif
 
-    if (m_client && oldKind != m_kind)
-        m_client->textTrackKindChanged(*this);
+    if (oldKind != m_kind) {
+        ALWAYS_LOG(LOGIDENTIFIER, m_kind);
+        if (m_client)
+            m_client->textTrackKindChanged(*this);
+    }
 }
 
 void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
@@ -231,6 +234,8 @@ void TextTrack::setMode(Mode mode)
     if (m_mode == mode)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, mode);
+
     // If mode changes to disabled, remove this track's cues from the client
     // because they will no longer be accessible from the cues() function.
     if (mode == Mode::Disabled && m_client && m_cues)
@@ -264,6 +269,8 @@ void TextTrack::removeAllCues()
     if (!m_cues)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     if (m_client)
         m_client->textTrackRemoveCues(*this, *m_cues);
     
@@ -296,6 +303,8 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
     // of the TextTrack.
     if (cue->cueType() == TextTrackCue::Data && m_kind != Kind::Metadata)
         return Exception { InvalidNodeTypeError };
+
+    INFO_LOG(LOGIDENTIFIER, cue.get());
 
     // TODO(93143): Add spec-compliant behavior for negative time values.
     if (!cue->startMediaTime().isValid() || !cue->endMediaTime().isValid() || cue->startMediaTime() < MediaTime::zeroTime() || cue->endMediaTime() < MediaTime::zeroTime())

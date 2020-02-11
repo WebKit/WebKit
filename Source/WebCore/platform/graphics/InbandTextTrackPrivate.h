@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandTextTrackPrivate_h
-#define InbandTextTrackPrivate_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -34,7 +33,7 @@ namespace WebCore {
 
 class InbandTextTrackPrivate : public TrackPrivateBase {
 public:
-    enum CueFormat {
+    enum class CueFormat : uint8_t {
         Data,
         Generic,
         WebVTT
@@ -45,7 +44,7 @@ public:
     InbandTextTrackPrivateClient* client() const override { return m_client; }
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
 
-    enum Mode {
+    enum class Mode : uint8_t {
         Disabled,
         Hidden,
         Showing
@@ -53,7 +52,7 @@ public:
     virtual void setMode(Mode mode) { m_mode = mode; };
     virtual InbandTextTrackPrivate::Mode mode() const { return m_mode; }
 
-    enum Kind {
+    enum class Kind : uint8_t {
         Subtitles,
         Captions,
         Descriptions,
@@ -62,7 +61,8 @@ public:
         Forced,
         None
     };
-    virtual Kind kind() const { return Subtitles; }
+    virtual Kind kind() const { return Kind::Subtitles; }
+
     virtual bool isClosedCaptions() const { return false; }
     virtual bool isSDH() const { return false; }
     virtual bool containsOnlyForcedSubtitles() const { return false; }
@@ -76,7 +76,7 @@ public:
 
     virtual int textTrackIndex() const { return 0; }
 
-    CueFormat cueFormat() const { return m_format; }
+    virtual CueFormat cueFormat() const { return m_format; }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "InbandTextTrackPrivate"; }
@@ -85,18 +85,51 @@ public:
 protected:
     InbandTextTrackPrivate(CueFormat format)
         : m_format(format)
-        , m_client(0)
-        , m_mode(Disabled)
     {
     }
 
 private:
     CueFormat m_format;
-    InbandTextTrackPrivateClient* m_client;
-    Mode m_mode;
+    InbandTextTrackPrivateClient* m_client { nullptr };
+    Mode m_mode { Mode::Disabled };
 };
 
 } // namespace WebCore
 
-#endif
-#endif
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::CueFormat> {
+    using values = EnumValues<
+        WebCore::InbandTextTrackPrivate::CueFormat,
+        WebCore::InbandTextTrackPrivate::CueFormat::Data,
+        WebCore::InbandTextTrackPrivate::CueFormat::Generic,
+        WebCore::InbandTextTrackPrivate::CueFormat::WebVTT
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::Mode> {
+    using values = EnumValues<
+        WebCore::InbandTextTrackPrivate::Mode,
+        WebCore::InbandTextTrackPrivate::Mode::Disabled,
+        WebCore::InbandTextTrackPrivate::Mode::Hidden,
+        WebCore::InbandTextTrackPrivate::Mode::Showing
+    >;
+};
+
+template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::Kind> {
+    using values = EnumValues<
+        WebCore::InbandTextTrackPrivate::Kind,
+        WebCore::InbandTextTrackPrivate::Kind::Subtitles,
+        WebCore::InbandTextTrackPrivate::Kind::Captions,
+        WebCore::InbandTextTrackPrivate::Kind::Descriptions,
+        WebCore::InbandTextTrackPrivate::Kind::Chapters,
+        WebCore::InbandTextTrackPrivate::Kind::Metadata,
+        WebCore::InbandTextTrackPrivate::Kind::Forced,
+        WebCore::InbandTextTrackPrivate::Kind::None
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(VIDEO_TRACK)
+

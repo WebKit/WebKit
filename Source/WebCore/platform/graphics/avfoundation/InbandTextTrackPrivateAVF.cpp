@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -541,7 +541,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
             cueData.read(view);
             INFO_LOG(LOGIDENTIFIER, "VTT cue data ", cueData);
-            client()->parseWebVTTCueData(cueData);
+            client()->parseWebVTTCueData(WTFMove(cueData));
         }
 
         m_sampleInputBuffer.remove(0, (size_t)boxLength);

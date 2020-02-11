@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -712,13 +712,13 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
             if (![[currentOption.get() outOfBandIdentifier] isEqual:(__bridge NSString *)uniqueID.get()])
                 continue;
             
-            InbandTextTrackPrivate::Mode mode = InbandTextTrackPrivate::Hidden;
+            InbandTextTrackPrivate::Mode mode = InbandTextTrackPrivate::Mode::Hidden;
             if (track->mode() == PlatformTextTrack::Hidden)
-                mode = InbandTextTrackPrivate::Hidden;
+                mode = InbandTextTrackPrivate::Mode::Hidden;
             else if (track->mode() == PlatformTextTrack::Disabled)
-                mode = InbandTextTrackPrivate::Disabled;
+                mode = InbandTextTrackPrivate::Mode::Disabled;
             else if (track->mode() == PlatformTextTrack::Showing)
-                mode = InbandTextTrackPrivate::Showing;
+                mode = InbandTextTrackPrivate::Mode::Showing;
             
             textTrack->setMode(mode);
             break;
@@ -2503,7 +2503,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
         }
 #endif
 
-        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option, InbandTextTrackPrivate::Generic));
+        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option, InbandTextTrackPrivate::CueFormat::Generic));
     }
 
     processNewAndRemovedTextTracks(removedTextTracks);
@@ -2514,7 +2514,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
     if (m_metadataTrack)
         return;
 
-    m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Metadata, InbandTextTrackPrivate::Data);
+    m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind::Metadata, InbandTextTrackPrivate::CueFormat::Data);
     m_metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming");
     player()->addTextTrack(*m_metadataTrack);
 }

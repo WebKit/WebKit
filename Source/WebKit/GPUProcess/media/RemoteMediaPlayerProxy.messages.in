@@ -55,6 +55,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
+    TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier trackID, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
     # Paint
     # PaintCurrentFrameInContext

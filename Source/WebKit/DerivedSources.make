@@ -165,6 +165,7 @@ MESSAGE_RECEIVERS = \
     StorageAreaMap \
     StorageManagerSet \
     TextCheckingControllerProxy \
+    TextTrackPrivateRemote \
     UserMediaCaptureManager \
     UserMediaCaptureManagerProxy \
     VideoFullscreenManager \

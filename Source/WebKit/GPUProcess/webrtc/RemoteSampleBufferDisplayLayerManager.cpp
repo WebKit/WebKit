@@ -30,6 +30,7 @@
 
 #include "Decoder.h"
 #include "RemoteSampleBufferDisplayLayer.h"
+#include <WebCore/IntSize.h>
 
 namespace WebKit {
 
@@ -47,7 +48,7 @@ void RemoteSampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connecti
 }
 
 // FIXME: We should refactor code to use an asynchronous IPC.
-void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, IntSize size, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayerDelayedReply&& reply)
+void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayerDelayedReply&& reply)
 {
     ASSERT(!m_layers.contains(identifier));
     auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef(), hideRootLayer, size);

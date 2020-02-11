@@ -58,9 +58,9 @@ void InbandTextTrackPrivateLegacyAVCF::disconnect()
 InbandTextTrackPrivate::Kind InbandTextTrackPrivateLegacyAVCF::kind() const
 {
     if (!m_playerItemTrack)
-        return InbandTextTrackPrivate::None;
+        return InbandTextTrackPrivate::Kind::None;
 
-    return InbandTextTrackPrivate::Captions;
+    return InbandTextTrackPrivate::Kind::Captions;
 }
 
 bool InbandTextTrackPrivateLegacyAVCF::isClosedCaptions() const

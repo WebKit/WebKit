@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,11 +42,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InbandTextTrack);
 Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
     switch (trackPrivate.cueFormat()) {
-    case InbandTextTrackPrivate::Data:
+    case InbandTextTrackPrivate::CueFormat::Data:
         return InbandDataTextTrack::create(context, client, trackPrivate);
-    case InbandTextTrackPrivate::Generic:
+    case InbandTextTrackPrivate::CueFormat::Generic:
         return InbandGenericTextTrack::create(context, client, trackPrivate);
-    case InbandTextTrackPrivate::WebVTT:
+    case InbandTextTrackPrivate::CueFormat::WebVTT:
         return InbandWebVTTTextTrack::create(context, client, trackPrivate);
     }
     ASSERT_NOT_REACHED();
@@ -57,9 +57,6 @@ InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, TextTrackClien
     : TextTrack(&context, &client, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
     m_private->setClient(this);
     updateKindFromPrivate();
 }
@@ -92,14 +89,14 @@ static inline InbandTextTrackPrivate::Mode toPrivate(TextTrack::Mode mode)
 {
     switch (mode) {
     case TextTrack::Mode::Disabled:
-        return InbandTextTrackPrivate::Disabled;
+        return InbandTextTrackPrivate::Mode::Disabled;
     case TextTrack::Mode::Hidden:
-        return InbandTextTrackPrivate::Hidden;
+        return InbandTextTrackPrivate::Mode::Hidden;
     case TextTrack::Mode::Showing:
-        return InbandTextTrackPrivate::Showing;
+        return InbandTextTrackPrivate::Mode::Showing;
     }
     ASSERT_NOT_REACHED();
-    return InbandTextTrackPrivate::Disabled;
+    return InbandTextTrackPrivate::Mode::Disabled;
 }
 
 void InbandTextTrack::setModeInternal(Mode mode)
@@ -168,25 +165,25 @@ void InbandTextTrack::willRemove()
 void InbandTextTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
-    case InbandTextTrackPrivate::Subtitles:
+    case InbandTextTrackPrivate::Kind::Subtitles:
         setKind(Kind::Subtitles);
         return;
-    case InbandTextTrackPrivate::Captions:
+    case InbandTextTrackPrivate::Kind::Captions:
         setKind(Kind::Captions);
         return;
-    case InbandTextTrackPrivate::Descriptions:
+    case InbandTextTrackPrivate::Kind::Descriptions:
         setKind(Kind::Descriptions);
         return;
-    case InbandTextTrackPrivate::Chapters:
+    case InbandTextTrackPrivate::Kind::Chapters:
         setKind(Kind::Chapters);
         return;
-    case InbandTextTrackPrivate::Metadata:
+    case InbandTextTrackPrivate::Kind::Metadata:
         setKind(Kind::Metadata);
         return;
-    case InbandTextTrackPrivate::Forced:
+    case InbandTextTrackPrivate::Kind::Forced:
         setKind(Kind::Forced);
         return;
-    case InbandTextTrackPrivate::None:
+    case InbandTextTrackPrivate::Kind::None:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -205,6 +202,13 @@ void InbandTextTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
 #endif
 }
 
+#if !RELEASE_LOG_DISABLED
+void InbandTextTrack::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    TextTrack::setLogger(logger, logIdentifier);
+    m_private->setLogger(logger, this->logIdentifier());
+}
+#endif
 
 } // namespace WebCore
 

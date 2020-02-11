@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceLoader.h"
 #include "RemoteMediaResourceManager.h"
+#include "RemoteTextTrackProxy.h"
 #include "RemoteVideoTrackProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LayoutRect.h>
@@ -365,8 +366,12 @@ bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
     return m_renderingCanBeAccelerated;
 }
 
+#if ENABLE(VIDEO_TRACK)
 void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate& track)
 {
+#if !RELEASE_LOG_DISABLED
+    track.setLogger(mediaPlayerLogger(), mediaPlayerLogIdentifier());
+#endif
     m_audioTracks.set(&track, RemoteAudioTrackProxy::create(*this, TrackPrivateRemoteIdentifier::generate(), m_webProcessConnection.copyRef(), track));
 }
 
@@ -390,6 +395,9 @@ void RemoteMediaPlayerProxy::audioTrackSetEnabled(TrackPrivateRemoteIdentifier t
 
 void RemoteMediaPlayerProxy::mediaPlayerDidAddVideoTrack(WebCore::VideoTrackPrivate& track)
 {
+#if !RELEASE_LOG_DISABLED
+    track.setLogger(mediaPlayerLogger(), mediaPlayerLogIdentifier());
+#endif
     m_videoTracks.set(&track, RemoteVideoTrackProxy::create(*this, TrackPrivateRemoteIdentifier::generate(), m_webProcessConnection.copyRef(), track));
 }
 
@@ -411,7 +419,38 @@ void RemoteMediaPlayerProxy::videoTrackSetSelected(TrackPrivateRemoteIdentifier 
     ASSERT_NOT_REACHED();
 }
 
-// FIXME: Unimplemented
+void RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate& track)
+{
+#if !RELEASE_LOG_DISABLED
+    track.setLogger(mediaPlayerLogger(), mediaPlayerLogIdentifier());
+#endif
+    m_textTracks.set(&track, RemoteTextTrackProxy::create(*this, TrackPrivateRemoteIdentifier::generate(), m_webProcessConnection.copyRef(), track));
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate& track)
+{
+    ASSERT(m_textTracks.contains(&track));
+    m_textTracks.remove(&track);
+}
+
+void RemoteMediaPlayerProxy::textTrackRepresentationBoundsChanged(const IntRect&)
+{
+    notImplemented();
+}
+
+void RemoteMediaPlayerProxy::textTrackSetMode(TrackPrivateRemoteIdentifier trackID, WebCore::InbandTextTrackPrivate::Mode mode)
+{
+    for (auto& track : m_textTracks.values()) {
+        if (track->identifier() == trackID) {
+            track->setMode(mode);
+            return;
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+}
+#endif
+
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ResourceNotSupported(), m_id);
@@ -549,24 +588,6 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
     notImplemented();
     return false;
 }
-
-#if ENABLE(VIDEO_TRACK)
-void RemoteMediaPlayerProxy::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&)
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerDidRemoveTextTrack(InbandTextTrackPrivate&)
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::textTrackRepresentationBoundsChanged(const IntRect&)
-{
-    notImplemented();
-}
-
-#endif
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
 Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources()

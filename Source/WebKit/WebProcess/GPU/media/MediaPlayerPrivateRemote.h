@@ -38,10 +38,16 @@
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class ISOWebVTTCue;
+}
+
 namespace WebKit {
 
 class AudioTrackPrivateRemote;
+class TextTrackPrivateRemote;
 class VideoTrackPrivateRemote;
+struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
 
 class MediaPlayerPrivateRemote final
@@ -89,6 +95,14 @@ public:
     void addRemoteVideoTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteVideoTrack(TrackPrivateRemoteIdentifier);
     void remoteVideoTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+
+    void addRemoteTextTrack(TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+    void removeRemoteTextTrack(TrackPrivateRemoteIdentifier);
+    void remoteTextTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+
+    void parseWebVTTFileHeader(TrackPrivateRemoteIdentifier, String&&);
+    void parseWebVTTCueData(TrackPrivateRemoteIdentifier, IPC::DataReference&&);
+    void parseWebVTTCueDataStruct(TrackPrivateRemoteIdentifier, WebCore::ISOWebVTTCue&&);
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(RemoteMediaResourceIdentifier);
@@ -346,6 +360,7 @@ private:
     HashMap<RemoteMediaResourceIdentifier, RefPtr<WebCore::PlatformMediaResource>> m_mediaResources;
     HashMap<TrackPrivateRemoteIdentifier, Ref<AudioTrackPrivateRemote>> m_audioTracks;
     HashMap<TrackPrivateRemoteIdentifier, Ref<VideoTrackPrivateRemote>> m_videoTracks;
+    HashMap<TrackPrivateRemoteIdentifier, Ref<TextTrackPrivateRemote>> m_textTracks;
 
     double m_volume { 1 };
     double m_rate { 1 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,11 +56,11 @@ public:
 #define INFO_LOG_IF(condition, ...)       if (condition) logger().info(logChannel(), __VA_ARGS__)
 #define DEBUG_LOG_IF(condition, ...)      if (condition) logger().debug(logChannel(), __VA_ARGS__)
 
-    const void* childLogIdentifier(uint64_t identifier) const
+    const void* childLogIdentifier(const void* parentIdentifier, uint64_t childIdentifier) const
     {
         static constexpr uint64_t parentMask = 0xffffffffffff0000ull;
         static constexpr uint64_t maskLowerWord = 0xffffull;
-        return reinterpret_cast<const void*>((reinterpret_cast<uint64_t>(logIdentifier()) & parentMask) | (identifier & maskLowerWord));
+        return reinterpret_cast<const void*>((reinterpret_cast<uint64_t>(parentIdentifier) & parentMask) | (childIdentifier & maskLowerWord));
     }
 
     static const void* uniqueLogIdentifier()

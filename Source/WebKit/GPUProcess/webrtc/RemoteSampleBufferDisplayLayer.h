@@ -32,6 +32,7 @@
 #include "MessageSender.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 class ImageTransferSessionVT;

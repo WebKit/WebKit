@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,17 @@ static FourCC vttCueSourceIDBoxType() { return "vsid"; }
 ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration)
     : m_presentationTime(presentationTime)
     , m_duration(duration)
+{
+}
+
+ISOWebVTTCue::ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& sourceID, String&& id, String&& originalStartTime, String&& settings, String&& cueText)
+    : m_presentationTime(WTFMove(presentationTime))
+    , m_duration(WTFMove(duration))
+    , m_sourceID(WTFMove(sourceID))
+    , m_identifier(WTFMove(id))
+    , m_originalStartTime(WTFMove(originalStartTime))
+    , m_settings(WTFMove(settings))
+    , m_cueText(WTFMove(cueText))
 {
 }
 

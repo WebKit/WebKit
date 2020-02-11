@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,12 +39,6 @@ namespace WebCore {
 static int s_uniqueId = 0;
 
 #if !RELEASE_LOG_DISABLED
-static const void* nextLogIdentifier()
-{
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
-    return reinterpret_cast<const void*>(++logIdentifier);
-}
-
 static RefPtr<Logger>& nullLogger()
 {
     static NeverDestroyed<RefPtr<Logger>> logger;
@@ -69,7 +63,6 @@ TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, c
     }
 
     m_logger = nullLogger().get();
-    m_logIdentifier = nextLogIdentifier();
 #endif
 }
 
@@ -81,13 +74,6 @@ Element* TrackBase::element()
 void TrackBase::setMediaElement(WeakPtr<HTMLMediaElement> element)
 {
     m_mediaElement = element;
-
-#if !RELEASE_LOG_DISABLED
-    if (element) {
-        m_logger = &element->logger();
-        m_logIdentifier = element->logIdentifier();
-    }
-#endif
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
@@ -168,6 +154,12 @@ AtomString TrackBase::validBCP47Language() const
 }
 
 #if !RELEASE_LOG_DISABLED
+void TrackBase::setLogger(const Logger& logger, const void* logIdentifier)
+{
+    m_logger = &logger;
+    m_logIdentifier = childLogIdentifier(logIdentifier, m_uniqueId);
+}
+
 WTFLogChannel& TrackBase::logChannel() const
 {
     return LogMedia;

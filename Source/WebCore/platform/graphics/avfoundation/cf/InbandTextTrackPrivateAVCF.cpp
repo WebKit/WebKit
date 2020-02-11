@@ -63,27 +63,27 @@ void InbandTextTrackPrivateAVCF::disconnect()
 InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVCF::kind() const
 {
     if (!m_mediaSelectionOption)
-        return InbandTextTrackPrivate::None;
+        return InbandTextTrackPrivate::Kind::None;
 
     CFStringRef mediaType = AVCFMediaSelectionOptionGetMediaType(mediaSelectionOption());
     
     if (CFStringCompare(mediaType, AVCFMediaTypeClosedCaption, kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        return InbandTextTrackPrivate::Captions;
+        return InbandTextTrackPrivate::Kind::Captions;
     if (CFStringCompare(mediaType, AVCFMediaTypeSubtitle, kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
         if (AVCFMediaSelectionOptionHasMediaCharacteristic(mediaSelectionOption(), AVCFMediaCharacteristicContainsOnlyForcedSubtitles))
-            return InbandTextTrackPrivate::Forced;
+            return InbandTextTrackPrivate::Kind::Forced;
 
         // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
         // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
         if (AVCFMediaSelectionOptionHasMediaCharacteristic(mediaSelectionOption(), AVCFMediaCharacteristicTranscribesSpokenDialogForAccessibility))
-            return InbandTextTrackPrivate::Captions;
+            return InbandTextTrackPrivate::Kind::Captions;
         if (AVCFMediaSelectionOptionHasMediaCharacteristic(mediaSelectionOption(), AVCFMediaCharacteristicDescribesMusicAndSoundForAccessibility))
-            return InbandTextTrackPrivate::Captions;
+            return InbandTextTrackPrivate::Kind::Captions;
         
-        return InbandTextTrackPrivate::Subtitles;
+        return InbandTextTrackPrivate::Kind::Subtitles;
     }
 
-    return InbandTextTrackPrivate::Captions;
+    return InbandTextTrackPrivate::Kind::Captions;
 }
 
 bool InbandTextTrackPrivateAVCF::isClosedCaptions() const

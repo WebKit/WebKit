@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,8 +211,33 @@ inline void TextTrack::setKindForBindings(Kind kind)
 
 #endif
 
+String convertEnumerationToString(TextTrack::Mode); // Defined in JSTextTrack.cpp
+String convertEnumerationToString(TextTrack::Kind);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::TextTrack::Kind> {
+    static String toString(const WebCore::TextTrack::Kind kind)
+    {
+        return convertEnumerationToString(kind);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::TextTrack::Mode> {
+    static String toString(const WebCore::TextTrack::Mode mode)
+    {
+        return convertEnumerationToString(mode);
+    }
+};
+
+};
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrack)
     static bool isType(const WebCore::TrackBase& track) { return track.type() == WebCore::TrackBase::TextTrack; }

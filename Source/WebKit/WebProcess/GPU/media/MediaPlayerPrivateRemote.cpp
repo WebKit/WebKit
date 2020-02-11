@@ -33,6 +33,7 @@
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 #include "SandboxExtension.h"
+#include "TextTrackPrivateRemote.h"
 #include "VideoTrackPrivateRemote.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -410,22 +411,77 @@ void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier 
     m_player->addAudioTrack(addResult.iterator->value);
 }
 
-void MediaPlayerPrivateRemote::removeRemoteAudioTrack(TrackPrivateRemoteIdentifier id)
+void MediaPlayerPrivateRemote::removeRemoteAudioTrack(TrackPrivateRemoteIdentifier identifier)
 {
-    ASSERT(m_audioTracks.contains(id));
+    ASSERT(m_audioTracks.contains(identifier));
 
-    if (auto* track = m_audioTracks.get(id)) {
+    if (auto* track = m_audioTracks.get(identifier)) {
         m_player->removeAudioTrack(*track);
-        m_audioTracks.remove(id);
+        m_audioTracks.remove(identifier);
     }
 }
 
-void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier id, TrackPrivateRemoteConfiguration&& configuration)
+void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
-    ASSERT(m_audioTracks.contains(id));
+    ASSERT(m_audioTracks.contains(identifier));
 
-    if (const auto& track = m_audioTracks.get(id))
+    if (const auto& track = m_audioTracks.get(identifier))
         track->updateConfiguration(WTFMove(configuration));
+}
+
+void MediaPlayerPrivateRemote::addRemoteTextTrack(TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
+{
+    auto addResult = m_textTracks.ensure(identifier, [&] {
+        return TextTrackPrivateRemote::create(*this, identifier, WTFMove(configuration));
+    });
+    ASSERT(addResult.isNewEntry);
+
+    if (!addResult.isNewEntry)
+        return;
+
+    m_player->addTextTrack(addResult.iterator->value);
+}
+
+void MediaPlayerPrivateRemote::removeRemoteTextTrack(TrackPrivateRemoteIdentifier identifier)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (auto* track = m_textTracks.get(identifier)) {
+        m_player->removeTextTrack(*track);
+        m_textTracks.remove(identifier);
+    }
+}
+
+void MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged(TrackPrivateRemoteIdentifier id, TextTrackPrivateRemoteConfiguration&& configuration)
+{
+    ASSERT(m_textTracks.contains(id));
+
+    if (const auto& track = m_textTracks.get(id))
+        track->updateConfiguration(WTFMove(configuration));
+}
+
+void MediaPlayerPrivateRemote::parseWebVTTFileHeader(TrackPrivateRemoteIdentifier identifier, String&& header)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->parseWebVTTFileHeader(WTFMove(header));
+}
+
+void MediaPlayerPrivateRemote::parseWebVTTCueData(TrackPrivateRemoteIdentifier identifier, IPC::DataReference&& data)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->parseWebVTTCueData(WTFMove(data));
+}
+
+void MediaPlayerPrivateRemote::parseWebVTTCueDataStruct(TrackPrivateRemoteIdentifier identifier, ISOWebVTTCue&& data)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->parseWebVTTCueDataStruct(WTFMove(data));
 }
 
 void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)

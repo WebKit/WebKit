@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,28 +59,28 @@ void InbandTextTrackPrivateAVFObjC::disconnect()
 InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
 {
     if (!m_mediaSelectionOption)
-        return InbandTextTrackPrivate::None;
+        return Kind::None;
 
     NSString *mediaType = [m_mediaSelectionOption mediaType];
     
     if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
-        return InbandTextTrackPrivate::Captions;
+        return Kind::Captions;
     if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
 
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
-            return InbandTextTrackPrivate::Forced;
+            return Kind::Forced;
 
         // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
         // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return InbandTextTrackPrivate::Captions;
+            return Kind::Captions;
         if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
-            return InbandTextTrackPrivate::Captions;
+            return Kind::Captions;
         
-        return InbandTextTrackPrivate::Subtitles;
+        return Kind::Subtitles;
     }
 
-    return InbandTextTrackPrivate::Captions;
+    return Kind::Captions;
 }
 
 bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
