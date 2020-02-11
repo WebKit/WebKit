@@ -3,6 +3,17 @@
         Deprecate _WKUserContentWorld replaced by WKContentWorld
         https://bugs.webkit.org/show_bug.cgi?id=207514
 
+        Add the rest of the SPI to convert between the two.
+
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm:
+        (-[_WKUserContentWorld contentWorld]):
+
+2020-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKUserContentWorld replaced by WKContentWorld
+        https://bugs.webkit.org/show_bug.cgi?id=207514
+
         Reviewed by Brady Eidson.
 
         I also add SPI to convert between the two to aid a smooth transition.
