@@ -1,5 +1,55 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255595. rdar://problem/59298183
+
+    Regression(r253224) WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView
+    https://bugs.webkit.org/show_bug.cgi?id=207121
+    <rdar://problem/58880177>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView, in case we time out
+    while waiting for an answer from the WebProcess but the WebProcess eventually responds.
+    
+    Change is covered by new API test.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::tryClose):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/beforeunload-slow.html: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+    (-[SlowBeforeUnloadHandlerUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+    (-[SlowBeforeUnloadHandlerUIDelegate webViewDidClose:]):
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255595 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r253224) WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView
+            https://bugs.webkit.org/show_bug.cgi?id=207121
+            <rdar://problem/58880177>
+
+            Reviewed by Alex Christensen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/beforeunload-slow.html: Added.
+            * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+            (-[SlowBeforeUnloadHandlerUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+            (-[SlowBeforeUnloadHandlerUIDelegate webViewDidClose:]):
+            (TEST):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255158. rdar://problem/59298137
 
     Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
