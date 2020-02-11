@@ -1,3 +1,12 @@
+2020-02-11  Brady Eidson  <beidson@apple.com>
+
+        Add WKContentWorld.h to WebKit.h
+        https://bugs.webkit.org/show_bug.cgi?id=207351
+
+        Suggested by Alex Christensen.
+
+        * Shared/API/Cocoa/WebKit.h:
+
 2020-02-11  Youenn Fablet  <youenn@apple.com>
 
         Use ObjectIdentifier for WebSocketStream/WebSocketChannel
