@@ -915,3 +915,5 @@ webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
 webkit.org/207560 media/airplay-target-availability.html [ Pass Failure ]
 
 webkit.org/207153 [ Debug ] animations/animation-callback-timestamp.html [ Pass Failure ]
+
+webkit.org/b/207566 imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html [ Pass Failure ]
