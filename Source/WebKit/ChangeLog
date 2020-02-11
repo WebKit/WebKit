@@ -1,5 +1,23 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255519. rdar://problem/59298166
+
+    Unreviewed macOS build fix after r255518
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::handleGestureEvent):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255519 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed macOS build fix after r255518
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::handleGestureEvent):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255518. rdar://problem/59298166
 
     [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
