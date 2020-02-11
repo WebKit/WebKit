@@ -148,6 +148,7 @@ public:
 
     enum class Accelerated : uint8_t { Yes, No };
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
+    bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
 
 private:
     KeyframeEffect(Element*);
