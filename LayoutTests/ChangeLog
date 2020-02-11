@@ -1,5 +1,56 @@
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r256009. rdar://problem/59298150
+
+    Do not process newly gathered ICE candidates if document is suspended
+    https://bugs.webkit.org/show_bug.cgi?id=207326
+    <rdar://problem/57336453>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    We should not register MDNS candidates for suspended documents.
+    For that reason, enqueue a task when receiving a new candidate.
+    If document is not suspended, it will be executed immediately.
+    Otherwise, we will wait until document gets unsuspended.
+    
+    Add a mock endpoint that delays gathering of candidates until document is suspended.
+    
+    Test: webrtc/peerconnection-new-candidate-page-cache.html
+    
+    * Modules/mediastream/PeerConnectionBackend.cpp:
+    (WebCore::PeerConnectionBackend::newICECandidate):
+    * testing/MockLibWebRTCPeerConnection.cpp:
+    (WebCore::MockLibWebRTCPeerConnection::GetTransceivers const):
+    (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::MockLibWebRTCPeerConnectionForIceCandidates):
+    (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::gotLocalDescription):
+    (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates):
+    (WebCore::MockLibWebRTCPeerConnectionFactory::CreatePeerConnection):
+    
+    LayoutTests:
+    
+    * fast/history/resources/page-cache-helper-100ms.html: Added.
+    * webrtc/peerconnection-new-candidate-page-cache-expected.txt: Added.
+    * webrtc/peerconnection-new-candidate-page-cache.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256009 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  youenn fablet  <youenn@apple.com>
+
+            Do not process newly gathered ICE candidates if document is suspended
+            https://bugs.webkit.org/show_bug.cgi?id=207326
+            <rdar://problem/57336453>
+
+            Reviewed by Alex Christensen.
+
+            * fast/history/resources/page-cache-helper-100ms.html: Added.
+            * webrtc/peerconnection-new-candidate-page-cache-expected.txt: Added.
+            * webrtc/peerconnection-new-candidate-page-cache.html: Added.
+
+2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r255982. rdar://problem/59298167
 
     Web Inspector: REGRESSION(r249831): Sources: endless spinner when trying to view a resource

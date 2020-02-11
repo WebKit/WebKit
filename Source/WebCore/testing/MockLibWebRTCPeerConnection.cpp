@@ -86,30 +86,60 @@ std::vector<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> MockLibWebRTCPe
 
 class MockLibWebRTCPeerConnectionForIceCandidates : public MockLibWebRTCPeerConnection {
 public:
-    explicit MockLibWebRTCPeerConnectionForIceCandidates(webrtc::PeerConnectionObserver& observer) : MockLibWebRTCPeerConnection(observer) { }
+    explicit MockLibWebRTCPeerConnectionForIceCandidates(webrtc::PeerConnectionObserver&, unsigned delayCount = 0);
     virtual ~MockLibWebRTCPeerConnectionForIceCandidates() = default;
 private:
     void gotLocalDescription() final;
+    void sendCandidates();
+
+    unsigned m_delayCount { 0 };
 };
+
+MockLibWebRTCPeerConnectionForIceCandidates::MockLibWebRTCPeerConnectionForIceCandidates(webrtc::PeerConnectionObserver& observer, unsigned delayCount)
+    : MockLibWebRTCPeerConnection(observer)
+    , m_delayCount(delayCount)
+{
+}
 
 void MockLibWebRTCPeerConnectionForIceCandidates::gotLocalDescription()
 {
+    AddRef();
+    sendCandidates();
+}
+
+void MockLibWebRTCPeerConnectionForIceCandidates::sendCandidates()
+{
+    if (m_delayCount > 0) {
+        m_delayCount--;
+        callOnMainThread([this] {
+            LibWebRTCProvider::callOnWebRTCNetworkThread([this] {
+                sendCandidates();
+            });
+        });
+        return;
+    }
+
     // Let's gather candidates
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
         MockLibWebRTCIceCandidate candidate("2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
+
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
         MockLibWebRTCIceCandidate candidate("1019216383 1 tcp 1019216384 192.168.0.100 9 typ host tcptype passive generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
+
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
         MockLibWebRTCIceCandidate candidate("1677722111 1 tcp 1677722112 172.18.0.1 47989 typ srflx raddr 192.168.0.100 rport 47989 generation 0", "1");
         m_observer.OnIceCandidate(&candidate);
     });
+
     LibWebRTCProvider::callOnWebRTCSignalingThread([this]() {
         m_observer.OnIceGatheringChange(webrtc::PeerConnectionInterface::kIceGatheringComplete);
     });
+
+    Release();
 }
 
 class MockLibWebRTCPeerConnectionForIceConnectionState : public MockLibWebRTCPeerConnection {
@@ -189,6 +219,9 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionF
 {
     if (m_testCase == "ICECandidates")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(*dependencies.observer);
+
+    if (m_testCase == "ICECandidatesWithDelay")
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(*dependencies.observer, 1000);
 
     if (m_testCase == "ICEConnectionState")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(*dependencies.observer);
