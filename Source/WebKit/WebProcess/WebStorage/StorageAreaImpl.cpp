@@ -46,7 +46,7 @@ StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
     : m_identifier(Identifier::generate())
     , m_storageAreaMap(makeWeakPtr(storageAreaMap.get()))
 {
-    storageAreaMap.incrementUseCount();
+    storageAreaMap->incrementUseCount();
 }
 
 StorageAreaImpl::~StorageAreaImpl()
