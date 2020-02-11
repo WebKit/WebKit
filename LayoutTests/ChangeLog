@@ -1,5 +1,15 @@
 2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS iOS ] fast/parser/parser-yield-timing.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207559
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-11  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ iOS ] imported/w3c/IndexedDB-private-browsing/idbcursor_update_objectstore8.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=207555
 

@@ -909,3 +909,5 @@ webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass 
 webkit.org/b/207469 [ Debug ] imported/w3c/web-platform-tests/svg/animations/slider-switch.html [ Pass Failure ]
 
 webkit.org/b/207470 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Pass Failure ]
+
+webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]

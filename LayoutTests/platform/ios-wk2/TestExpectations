@@ -1397,3 +1397,5 @@ webkit.org/b/190852 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/207553 imported/w3c/IndexedDB-private-browsing/abort-in-initial-upgradeneeded.html [ Pass Timeout ]
 
 webkit.org/b/207555 imported/w3c/IndexedDB-private-browsing/idbcursor_update_objectstore8.html [ Pass Timeout ]
+
+webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
