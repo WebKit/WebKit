@@ -69,5 +69,3 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-002.html [ Pass ]
 webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-004.html [ Pass ]
 
 media/picture-in-picture [ Pass ]
-
-webkit.org/b/207071 [ Debug ] animations/keyframe-autoclose-brace.html [ Pass Crash ]
