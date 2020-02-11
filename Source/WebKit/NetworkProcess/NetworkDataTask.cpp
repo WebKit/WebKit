@@ -116,6 +116,12 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
         completionHandler(PolicyAction::Ignore);
 }
 
+void NetworkDataTask::negotiatedLegacyTLS() const
+{
+    if (m_client)
+        m_client->negotiatedLegacyTLS();
+}
+
 bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const
 {
     return m_client ? m_client->shouldCaptureExtraNetworkLoadMetrics() : false;

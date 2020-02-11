@@ -75,6 +75,8 @@ public:
 
     void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);
 
+    void negotiatedLegacyTLS(WebPageProxyIdentifier) const;
+
 private:
     struct Challenge {
         WebPageProxyIdentifier pageID;

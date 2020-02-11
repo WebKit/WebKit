@@ -149,4 +149,9 @@ void AuthenticationManager::completeAuthenticationChallenge(uint64_t challengeID
     }
 }
 
+void AuthenticationManager::negotiatedLegacyTLS(WebPageProxyIdentifier pageID) const
+{
+    m_process.send(Messages::NetworkProcessProxy::NegotiatedLegacyTLS(pageID));
+}
+
 } // namespace WebKit
