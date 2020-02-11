@@ -7733,6 +7733,11 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
         completionHandler(false);
 }
 
+void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizationToken)
+{
+    m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
+}
+
 #if ENABLE(MEDIA_STREAM)
 UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequestManager()
 {

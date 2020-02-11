@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/GeolocationPositionData.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -75,7 +76,7 @@ private:
     bool isUpdating() const { return !m_updateRequesters.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyRequesters.isEmpty(); }
 
-    void startUpdating(IPC::Connection&);
+    void startUpdating(IPC::Connection&, WebPageProxyIdentifier, const String& authorizationToken);
     void stopUpdating(IPC::Connection&);
     void removeRequester(const IPC::Connection::Client*);
     void setEnableHighAccuracy(IPC::Connection&, bool);

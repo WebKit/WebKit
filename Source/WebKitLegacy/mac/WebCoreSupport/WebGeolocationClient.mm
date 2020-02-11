@@ -81,8 +81,9 @@ void WebGeolocationClient::geolocationDestroyed()
     delete this;
 }
 
-void WebGeolocationClient::startUpdating()
+void WebGeolocationClient::startUpdating(const String& authorizationToken)
 {
+    UNUSED_PARAM(authorizationToken);
     [[m_webView _geolocationProvider] registerWebView:m_webView];
 }
 
@@ -106,7 +107,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector]) {
-        geolocation.setIsAllowed(false);
+        geolocation.setIsAllowed(false, { });
         return;
     }
 
@@ -114,7 +115,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
     Frame *frame = geolocation.frame();
 
     if (!frame) {
-        geolocation.setIsAllowed(false);
+        geolocation.setIsAllowed(false, { });
         return;
     }
 
@@ -150,12 +151,12 @@ Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 
 - (void)allow
 {
-    _geolocation->setIsAllowed(true);
+    _geolocation->setIsAllowed(true, { });
 }
 
 - (void)deny
 {
-    _geolocation->setIsAllowed(false);
+    _geolocation->setIsAllowed(false, { });
 }
 
 @end
@@ -175,14 +176,14 @@ Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 - (void)allow
 {
     WebThreadRun(^{
-        _geolocation->setIsAllowed(true);
+        _geolocation->setIsAllowed(true, { });
     });
 }
 
 - (void)deny
 {
     WebThreadRun(^{
-        _geolocation->setIsAllowed(false);
+        _geolocation->setIsAllowed(false, { });
     });
 }
 
@@ -233,7 +234,7 @@ Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 
 - (void)initializationDeniedWebView:(WebView *)webView
 {
-    m_geolocation->setIsAllowed(false);
+    m_geolocation->setIsAllowed(false, { });
 }
 @end
 #endif // PLATFORM(IOS_FAMILY)

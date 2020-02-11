@@ -64,7 +64,7 @@ void GeolocationController::addObserver(Geolocation& observer, bool enableHighAc
     if (enableHighAccuracy)
         m_client.setEnableHighAccuracy(true);
     if (wasEmpty && m_page.isVisible())
-        m_client.startUpdating();
+        m_client.startUpdating(observer.authorizationToken());
 }
 
 void GeolocationController::removeObserver(Geolocation& observer)
@@ -79,6 +79,11 @@ void GeolocationController::removeObserver(Geolocation& observer)
         m_client.stopUpdating();
     else if (m_highAccuracyObservers.isEmpty())
         m_client.setEnableHighAccuracy(false);
+}
+
+void GeolocationController::revokeAuthorizationToken(const String& authorizationToken)
+{
+    m_client.revokeAuthorizationToken(authorizationToken);
 }
 
 void GeolocationController::requestPermission(Geolocation& geolocation)
@@ -134,7 +139,7 @@ void GeolocationController::activityStateDidChange(OptionSet<ActivityState::Flag
     auto changed = oldActivityState ^ newActivityState;
     if (changed & ActivityState::IsVisible && !m_observers.isEmpty()) {
         if (newActivityState & ActivityState::IsVisible)
-            m_client.startUpdating();
+            m_client.startUpdating((*m_observers.random())->authorizationToken());
         else
             m_client.stopUpdating();
     }

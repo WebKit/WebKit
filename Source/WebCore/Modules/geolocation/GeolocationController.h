@@ -63,6 +63,8 @@ public:
     WEBCORE_EXPORT static const char* supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
+    void revokeAuthorizationToken(const String&);
+
 private:
     Page& m_page;
     GeolocationClient& m_client;

@@ -120,7 +120,7 @@ void GeolocationClientMock::permissionTimerFired()
     // which fire synchronously from Geolocation::setIsAllowed() cannot reentrantly modify
     // m_pendingPermission.
     for (GeolocationSet::iterator it = m_pendingPermission.begin(); it != end; ++it)
-        (*it)->setIsAllowed(allowed);
+        (*it)->setIsAllowed(allowed, { });
     m_pendingPermission.clear();
 }
 
@@ -136,9 +136,10 @@ void GeolocationClientMock::geolocationDestroyed()
     ASSERT(!m_isActive);
 }
 
-void GeolocationClientMock::startUpdating()
+void GeolocationClientMock::startUpdating(const String& authorizationToken)
 {
     ASSERT(!m_isActive);
+    UNUSED_PARAM(authorizationToken);
     m_isActive = true;
     asyncUpdateController();
 }
