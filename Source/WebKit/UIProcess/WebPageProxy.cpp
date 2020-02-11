@@ -2819,7 +2819,7 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
     m_gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
 
-    m_process->startResponsivenessTimer((event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange) ? WebProcessProxy::UseLazyStop::Yes ? WebProcessProxy::UseLazyStop::No);
+    m_process->startResponsivenessTimer((event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
     send(Messages::EventDispatcher::GestureEvent(m_webPageID, event), 0);
 }
