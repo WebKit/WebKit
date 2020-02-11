@@ -469,6 +469,7 @@ const documentation = {
         'Configuration': [
             `Configurations are the key which defines a specific row within the results database. Uploads which share a configuration, but not a UUID, will appear in the same row on a timeline. Configurations are represented within the results database as an object:`,
             codeBlock('{\n' +
+                '    "architecture": <string representing architecture, e.g. x86_64, arm64>,\n' +
                 '    "platform": <string representing platform family, e.g. mac, ios>,\n' +
                 '    "is_simulator": <boolean which is true if the configuration was simulating an embedded device>,\n' +
                 '    "version": <string of the form x.x.x representing the OS version>,\n' +
