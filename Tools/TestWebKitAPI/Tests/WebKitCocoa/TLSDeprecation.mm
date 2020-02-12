@@ -312,7 +312,8 @@ TEST(TLSVersion, Subresource)
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernTLSServer({
-        { "/", { makeString("<script>fetch('https://127.0.0.1:", static_cast<unsigned>(legacyTLSServer.port()), "/',{mode:'no-cors'})</script>") } }
+        { "/", { makeString("<script>fetch('https://127.0.0.1:", static_cast<unsigned>(legacyTLSServer.port()), "/',{mode:'no-cors'})</script>") } },
+        { "/pageWithoutSubresource", { "hello" }}
     }, HTTPServer::Protocol::Https);
     
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -323,6 +324,15 @@ TEST(TLSVersion, Subresource)
     [webView loadRequest:modernTLSServer.request()];
     while (![webView _negotiatedLegacyTLS])
         [observer waitUntilNegotiatedLegacyTLSChanged];
+    
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/pageWithoutSubresource", modernTLSServer.port()]]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
 
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
 }

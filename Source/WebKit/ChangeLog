@@ -1,5 +1,83 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256073. rdar://problem/59299148
+
+    Remember if we used legacy TLS in the back/forward cache like we remember if we have only secure content
+    https://bugs.webkit.org/show_bug.cgi?id=207409
+    rdar://problem/59275641
+    
+    Patch by Alex Christensen <achristensen@apple.com> on 2020-02-07
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Covered by an API test.
+    
+    * history/CachedFrame.cpp:
+    (WebCore::CachedFrame::setHasInsecureContent):
+    * history/CachedFrame.h:
+    (WebCore::CachedFrame::usedLegacyTLS const):
+    * loader/EmptyFrameLoaderClient.h:
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::receivedFirstData):
+    (WebCore::FrameLoader::commitProvisionalLoad):
+    (WebCore::FrameLoader::dispatchDidCommitLoad):
+    * loader/FrameLoader.h:
+    * loader/FrameLoaderClient.h:
+    
+    Source/WebKit:
+    
+    * Scripts/webkit/messages.py:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::hasInsecureContent):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+    (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame):
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebFrameLoaderClient.h:
+    * WebCoreSupport/WebFrameLoaderClient.mm:
+    (WebFrameLoaderClient::dispatchDidCommitLoad):
+    
+    Source/WebKitLegacy/win:
+    
+    * WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebFrameLoaderClient::dispatchDidCommitLoad):
+    * WebCoreSupport/WebFrameLoaderClient.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256073 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  Alex Christensen  <achristensen@apple.com>
+
+            Remember if we used legacy TLS in the back/forward cache like we remember if we have only secure content
+            https://bugs.webkit.org/show_bug.cgi?id=207409
+            rdar://problem/59275641
+
+            Reviewed by Chris Dumez.
+
+            * Scripts/webkit/messages.py:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::hasInsecureContent):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+            (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255992. rdar://problem/59298165
 
     [WK2][iOS] Add WKWebviewConfiguration SPI to run client navigations at foreground priority, even if the view is background
