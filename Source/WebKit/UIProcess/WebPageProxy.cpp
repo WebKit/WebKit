@@ -1241,6 +1241,10 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
         launchProcess(RegistrableDomain { request.url() }, ProcessLaunchReason::InitialProcess);
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
+
+    if (shouldUseForegroundPriorityForClientNavigation())
+        navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
+
     loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
     return navigation;
 }
@@ -1313,6 +1317,9 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(fileURL), m_backForwardList->currentItem());
 
+    if (shouldUseForegroundPriorityForClientNavigation())
+        navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
+
     auto transaction = m_pageLoadState.transaction();
 
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), fileURLString }, resourceDirectoryURL);
@@ -1352,6 +1359,10 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
+
+    if (shouldUseForegroundPriorityForClientNavigation())
+        navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
+
     loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, WTF::nullopt, shouldOpenExternalURLsPolicy);
     return navigation;
 }
@@ -4403,6 +4414,8 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         reportPageLoadResult(error);
         m_pageLoadState.didFailProvisionalLoad(transaction);
         pageClient().didFailProvisionalLoadForMainFrame();
+        if (navigation)
+            navigation->setForegroundActivity(nullptr);
     }
 
     frame->didFailProvisionalLoad();
@@ -4635,6 +4648,9 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, uint64_t navig
         reportPageLoadResult();
         pageClient().didFinishLoadForMainFrame();
 
+        if (navigation)
+            navigation->setForegroundActivity(nullptr);
+
         resetRecentCrashCountSoon();
 
         notifyProcessPoolToPrewarm();
@@ -4682,6 +4698,8 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, uint64_t navigat
     if (isMainFrame) {
         reportPageLoadResult(error);
         pageClient().didFailLoadForMainFrame();
+        if (navigation)
+            navigation->setForegroundActivity(nullptr);
     }
 }
 
@@ -9707,6 +9725,13 @@ void WebPageProxy::setOverriddenMediaType(const String& mediaType)
     m_overriddenMediaType = mediaType;
     send(Messages::WebPage::SetOverriddenMediaType(mediaType));
 }
+
+#if !PLATFORM(IOS_FAMILY)
+bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
+{
+    return false;
+}
+#endif
 
 void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 {

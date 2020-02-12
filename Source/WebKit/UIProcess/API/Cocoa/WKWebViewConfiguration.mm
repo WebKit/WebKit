@@ -703,6 +703,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if PLATFORM(IOS_FAMILY)
+- (BOOL)_clientNavigationsRunAtForegroundPriority
+{
+    return _pageConfiguration->clientNavigationsRunAtForegroundPriority();
+}
+
+- (void)_setClientNavigationsRunAtForegroundPriority:(BOOL)clientNavigationsRunAtForegroundPriority
+{
+    _pageConfiguration->setClientNavigationsRunAtForegroundPriority(clientNavigationsRunAtForegroundPriority);
+}
+
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
     return _pageConfiguration->alwaysRunsAtForegroundPriority();

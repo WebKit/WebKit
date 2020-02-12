@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APINavigationAction.h"
+#import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "APIWebsitePolicies.h"
 #import "Connection.h"
@@ -1480,6 +1481,19 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
     }
 
     return WebContentMode::Desktop;
+}
+
+bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
+{
+    // The client may request that we do client navigations at foreground priority, even if the
+    // view is not visible, as long as the application is foreground.
+    if (!configuration().clientNavigationsRunAtForegroundPriority())
+        return false;
+
+    if (isViewVisible())
+        return false;
+
+    return pageClient().isApplicationVisible();
 }
 
 } // namespace WebKit

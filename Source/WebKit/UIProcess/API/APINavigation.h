@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
+#include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebContentMode.h"
 #include <WebCore/AdClickAttribution.h>
@@ -153,6 +154,8 @@ public:
 
     const Optional<WebCore::AdClickAttribution>& adClickAttribution() const { return m_lastNavigationAction.adClickAttribution; }
 
+    void setForegroundActivity(std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity>&& activity) { m_foregroundActivity = WTFMove(activity); }
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
@@ -174,6 +177,7 @@ private:
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     bool m_userContentExtensionsEnabled { true };
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
+    std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity> m_foregroundActivity;
 };
 
 } // namespace API

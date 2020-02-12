@@ -1,5 +1,97 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255992. rdar://problem/59298165
+
+    [WK2][iOS] Add WKWebviewConfiguration SPI to run client navigations at foreground priority, even if the view is background
+    https://bugs.webkit.org/show_bug.cgi?id=207341
+    <rdar://problem/59227077>
+    
+    Reviewed by Geoff Garen.
+    
+    Add WKWebviewConfiguration SPI to run client navigations at foreground priority, even if the view is background,
+    as long as the application itself is foreground. The new SPI is:
+    WKWebViewConfiguration._clientNavigationsRunAtForegroundPriority
+    
+    The use case is that the client may choose to load something in an offscreen view and only show the view once the
+    load is complete (to avoid flashing for e.g.). In such cases, it makes sense to use foreground priority for the
+    load since it needs to complete as fast as possible, even though the view is technically background.
+    
+    * UIProcess/API/APINavigation.h:
+    (API::Navigation::setForegroundActivity):
+    * UIProcess/API/APIPageConfiguration.cpp:
+    (API::PageConfiguration::copy const):
+    * UIProcess/API/APIPageConfiguration.h:
+    (API::PageConfiguration::clientNavigationsRunAtForegroundPriority const):
+    (API::PageConfiguration::setClientNavigationsRunAtForegroundPriority):
+    (API::PageConfiguration::alwaysRunsAtForegroundPriority const):
+    (API::PageConfiguration::alwaysRunsAtForegroundPriority): Deleted.
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration _clientNavigationsRunAtForegroundPriority]):
+    (-[WKWebViewConfiguration _setClientNavigationsRunAtForegroundPriority:]):
+    * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::loadRequest):
+    (WebKit::WebPageProxy::loadFile):
+    (WebKit::WebPageProxy::loadData):
+    (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+    (WebKit::WebPageProxy::didFinishLoadForFrame):
+    (WebKit::WebPageProxy::didFailLoadForFrame):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::isApplicationVisible):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::shouldUseForegroundPriorityForClientNavigation const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255992 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-06  Chris Dumez  <cdumez@apple.com>
+
+            [WK2][iOS] Add WKWebviewConfiguration SPI to run client navigations at foreground priority, even if the view is background
+            https://bugs.webkit.org/show_bug.cgi?id=207341
+            <rdar://problem/59227077>
+
+            Reviewed by Geoff Garen.
+
+            Add WKWebviewConfiguration SPI to run client navigations at foreground priority, even if the view is background,
+            as long as the application itself is foreground. The new SPI is:
+            WKWebViewConfiguration._clientNavigationsRunAtForegroundPriority
+
+            The use case is that the client may choose to load something in an offscreen view and only show the view once the
+            load is complete (to avoid flashing for e.g.). In such cases, it makes sense to use foreground priority for the
+            load since it needs to complete as fast as possible, even though the view is technically background.
+
+            * UIProcess/API/APINavigation.h:
+            (API::Navigation::setForegroundActivity):
+            * UIProcess/API/APIPageConfiguration.cpp:
+            (API::PageConfiguration::copy const):
+            * UIProcess/API/APIPageConfiguration.h:
+            (API::PageConfiguration::clientNavigationsRunAtForegroundPriority const):
+            (API::PageConfiguration::setClientNavigationsRunAtForegroundPriority):
+            (API::PageConfiguration::alwaysRunsAtForegroundPriority const):
+            (API::PageConfiguration::alwaysRunsAtForegroundPriority): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration _clientNavigationsRunAtForegroundPriority]):
+            (-[WKWebViewConfiguration _setClientNavigationsRunAtForegroundPriority:]):
+            * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::loadRequest):
+            (WebKit::WebPageProxy::loadFile):
+            (WebKit::WebPageProxy::loadData):
+            (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+            (WebKit::WebPageProxy::didFinishLoadForFrame):
+            (WebKit::WebPageProxy::didFailLoadForFrame):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::isApplicationVisible):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::shouldUseForegroundPriorityForClientNavigation const):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255881. rdar://problem/59299143
 
     Adopt MTOverrideShouldPlayHDRVideo()
