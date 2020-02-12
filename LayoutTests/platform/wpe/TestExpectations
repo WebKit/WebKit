@@ -989,6 +989,14 @@ webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.ht
 webkit.org/b/204112 editing/async-clipboard/clipboard-read-text-from-platform.html [ Crash ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-writing.html [ Crash ]
 
+webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Crash ]
+webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Crash ]
+webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Crash ]
+webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
+
+webkit.org/b/207605 [ Debug ] http/wpt/cache-storage/quota-third-party.https.html [ Crash ]
+webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redundant-worker.html [ Crash Pass ]
+webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-terminate.https.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS

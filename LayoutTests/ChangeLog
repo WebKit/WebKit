@@ -1,3 +1,13 @@
+2020-02-11  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some tests crashing in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=207607
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-02-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: iteration of cursors skip records if deleted
