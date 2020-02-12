@@ -1027,3 +1027,5 @@ webkit.org/b/207635 fast/events/before-input-prevent-insert-replacement.html [ P
 webkit.org/b/207636 webgpu/whlsl/textures-sample-bias.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207638 webgpu/whlsl/whlsl.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207688 fast/dom/attr_dead_doc.html [ Pass Failure ]
