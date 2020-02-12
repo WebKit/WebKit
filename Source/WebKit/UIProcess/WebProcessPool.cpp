@@ -1341,7 +1341,7 @@ bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) 
 
 DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
-    auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage);
+    auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage, { });
     PAL::SessionID sessionID = dataStore.sessionID();
 
     if (initiatingPage)
@@ -1373,7 +1373,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
 
 DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path)
 {
-    auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage);
+    auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage, { });
     PAL::SessionID sessionID = dataStore.sessionID();
 
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -1623,11 +1623,9 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage)
+DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
 {
-    auto& downloadProxy = ensureNetworkProcess().createDownloadProxy(dataStore, request);
-    downloadProxy.setOriginatingPage(originatingPage);
-    return downloadProxy;
+    return ensureNetworkProcess().createDownloadProxy(dataStore, request, frameInfo, originatingPage);
 }
 
 void WebProcessPool::synthesizeAppIsBackground(bool background)

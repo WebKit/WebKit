@@ -28,6 +28,7 @@
 
 #if HAVE(NETWORK_FRAMEWORK)
 
+#import "Utilities.h"
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -49,7 +50,14 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
         nw_connection_start(connection);
         respondToRequests(connection);
     });
+    __block bool ready = false;
+    nw_listener_set_state_changed_handler(m_listener.get(), ^(nw_listener_state_t state, nw_error_t error) {
+        ASSERT_UNUSED(error, !error);
+        if (state == nw_listener_state_ready)
+            ready = true;
+    });
     nw_listener_start(m_listener.get());
+    Util::run(&ready);
 }
 
 void HTTPServer::respondToRequests(nw_connection_t connection)

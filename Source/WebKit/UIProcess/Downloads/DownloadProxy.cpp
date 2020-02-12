@@ -28,9 +28,11 @@
 
 #include "APIData.h"
 #include "APIDownloadClient.h"
+#include "APIFrameInfo.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
+#include "FrameInfoData.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageProxy.h"
@@ -50,18 +52,15 @@ static uint64_t generateDownloadID()
     static uint64_t uniqueDownloadID = 0;
     return ++uniqueDownloadID;
 }
-    
-Ref<DownloadProxy> DownloadProxy::create(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest)
-{
-    return adoptRef(*new DownloadProxy(downloadProxyMap, dataStore, processPool, resourceRequest));
-}
 
-DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest)
+DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfoData, WebPageProxy* originatingPage)
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
     , m_processPool(&processPool)
     , m_downloadID(generateDownloadID())
     , m_request(resourceRequest)
+    , m_originatingPage(makeWeakPtr(originatingPage))
+    , m_frameInfo(API::FrameInfo::create(FrameInfoData { frameInfoData }, originatingPage))
 {
 }
 
@@ -98,11 +97,6 @@ void DownloadProxy::processDidClose()
 WebPageProxy* DownloadProxy::originatingPage() const
 {
     return m_originatingPage.get();
-}
-
-void DownloadProxy::setOriginatingPage(WebPageProxy* page)
-{
-    m_originatingPage = makeWeakPtr(page);
 }
 
 #if PLATFORM(COCOA)

@@ -44,6 +44,7 @@ namespace WebKit {
 class DownloadProxy;
 class NetworkProcessProxy;
 class ProcessAssertion;
+class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
 
@@ -55,7 +56,7 @@ public:
     explicit DownloadProxyMap(NetworkProcessProxy&);
     ~DownloadProxyMap();
 
-    DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&);
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
     void downloadFinished(DownloadProxy&);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }
