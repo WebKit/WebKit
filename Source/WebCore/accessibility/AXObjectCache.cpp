@@ -1118,6 +1118,10 @@ void AXObjectCache::postNotification(AXCoreObject* object, Document* document, A
     if (!object)
         return;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(object, notification);
+#endif
+
     if (postType == PostAsynchronously) {
         m_notificationsToPost.append(std::make_pair(object, notification));
         if (!m_notificationPostTimer.isActive())
@@ -3068,21 +3072,19 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedObject> AXObjectCache::createIsolatedTreeHierarchy(AXCoreObject& object, AXID parentID, AXObjectCache* axObjectCache, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges, bool isRoot)
+static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID, bool attachWrapper, Vector<AXIsolatedTree::NodeChange>& nodeChanges)
 {
-    auto isolatedTreeNode = AXIsolatedObject::create(object, isRoot);
-    nodeChanges.append(isolatedTreeNode.copyRef());
-
-    isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
-    isolatedTreeNode->setParent(parentID);
-    axObjectCache->attachWrapper(&isolatedTreeNode.get(), object.wrapper());
+    auto isolatedObject = AXIsolatedObject::create(object, treeID, parentID);
+    nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, object.wrapper()));
+    if (attachWrapper)
+        isolatedObject->attachPlatformWrapper(object.wrapper());
 
     for (const auto& child : object.children()) {
-        auto staticChild = createIsolatedTreeHierarchy(*child, isolatedTreeNode->objectID(), axObjectCache, tree, nodeChanges, false);
-        isolatedTreeNode->appendChild(staticChild->objectID());
+        auto staticChild = createIsolatedTreeHierarchy(*child, treeID, isolatedObject->objectID(), attachWrapper, nodeChanges);
+        isolatedObject->appendChild(staticChild->objectID());
     }
 
-    return isolatedTreeNode;
+    return isolatedObject;
 }
 
 Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, Document& document)
@@ -3100,8 +3102,8 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 
     auto* axRoot = axObjectCache->getOrCreate(document.view());
     if (axRoot) {
-        Vector<Ref<AXIsolatedObject>> nodeChanges;
-        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, InvalidAXID, axObjectCache, *tree, nodeChanges, true);
+        Vector<AXIsolatedTree::NodeChange> nodeChanges;
+        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, tree->treeIdentifier(), InvalidAXID, true, nodeChanges);
         tree->setRootNode(isolatedRoot);
         tree->appendNodeChanges(nodeChanges);
     }
@@ -3111,6 +3113,32 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
         tree->setFocusedNodeID(axFocus->objectID());
 
     return makeRef(*tree);
+}
+
+void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
+{
+    if (!m_pageID)
+        return;
+
+    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    if (!tree)
+        return;
+
+    switch (notification) {
+    case AXCheckedStateChanged:
+    case AXChildrenChanged:
+    case AXValueChanged: {
+        tree->removeNode(object->objectID());
+        auto* parent = object->parentObject();
+        AXID parentID = parent ? parent->objectID() : InvalidAXID;
+        Vector<AXIsolatedTree::NodeChange> nodeChanges;
+        auto isolatedObject = createIsolatedTreeHierarchy(*object, tree->treeIdentifier(), parentID, false, nodeChanges);
+        tree->appendNodeChanges(nodeChanges);
+        break;
+    }
+    default:
+        break;
+    }
 }
 #endif
     

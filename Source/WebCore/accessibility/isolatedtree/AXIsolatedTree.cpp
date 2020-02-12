@@ -42,6 +42,18 @@ static unsigned newTreeID()
     return ++s_currentTreeID;
 }
 
+AXIsolatedTree::NodeChange::NodeChange(const Ref<AXIsolatedObject>& isolatedObject, AccessibilityObjectWrapper* wrapper)
+    : m_isolatedObject(isolatedObject.copyRef())
+    , m_wrapper(wrapper)
+{
+}
+
+AXIsolatedTree::NodeChange::NodeChange(const NodeChange& other)
+    : m_isolatedObject(other.m_isolatedObject.copyRef())
+    , m_wrapper(other.m_wrapper)
+{
+}
+
 HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 {
     static NeverDestroyed<HashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
@@ -155,11 +167,11 @@ void AXIsolatedTree::removeNode(AXID axID)
     m_pendingRemovals.append(axID);
 }
 
-void AXIsolatedTree::appendNodeChanges(Vector<Ref<AXIsolatedObject>>& log)
+void AXIsolatedTree::appendNodeChanges(const Vector<NodeChange>& log)
 {
     LockHolder locker { m_changeLogLock };
-    for (auto& node : log)
-        m_pendingAppends.append(node.copyRef());
+    for (const auto& node : log)
+        m_pendingAppends.append(node);
 }
 
 void AXIsolatedTree::applyPendingChanges()
@@ -167,22 +179,23 @@ void AXIsolatedTree::applyPendingChanges()
     RELEASE_ASSERT(!isMainThread());
     LockHolder locker { m_changeLogLock };
 
-    // We don't clear the pending IDs beacause if the next round of updates does not modify them, then they stay the same
-    // value without extra bookkeeping.
     m_focusedNodeID = m_pendingFocusedNodeID;
 
-    for (auto& item : m_pendingAppends)
-        m_readerThreadNodeMap.add(item->objectID(), WTFMove(item));
-    m_pendingAppends.clear();
-
-    for (auto& item : m_pendingRemovals) {
+    for (const auto& item : m_pendingRemovals) {
         if (auto object = nodeForID(item))
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
         m_readerThreadNodeMap.remove(item);
     }
     m_pendingRemovals.clear();
+
+    for (auto& item : m_pendingAppends) {
+        ASSERT(item.m_wrapper);
+        item.m_isolatedObject->attachPlatformWrapper(item.m_wrapper);
+        m_readerThreadNodeMap.add(item.m_isolatedObject->objectID(), item.m_isolatedObject.copyRef());
+    }
+    m_pendingAppends.clear();
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

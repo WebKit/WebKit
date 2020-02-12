@@ -70,7 +70,6 @@ struct ScrollRectToVisibleOptions;
 
 typedef unsigned AXID;
 extern const AXID InvalidAXID;
-typedef unsigned AXIsolatedTreeID;    
 
 enum class AccessibilityRole {
     Annotation = 1,

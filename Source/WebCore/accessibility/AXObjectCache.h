@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AXIsolatedTree.h"
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "Range.h"
@@ -43,10 +44,6 @@
 
 namespace WebCore {
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-class AXIsolatedObject;
-class AXIsolatedTree;
-#endif
 class Document;
 class HTMLAreaElement;
 class HTMLTextFormControlElement;
@@ -178,9 +175,6 @@ private:
     using DOMObjectVariant = Variant<std::nullptr_t, RenderObject*, Node*, Widget*>;
     void cacheAndInitializeWrapper(AccessibilityObject*, DOMObjectVariant = nullptr);
     void attachWrapper(AXCoreObject*);
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void attachWrapper(AXIsolatedObject*, WebAccessibilityObjectWrapper*);
-#endif
 
 public:
     void childrenChanged(Node*, Node* newChild = nullptr);
@@ -199,17 +193,6 @@ public:
     void deferAttributeChangeIfNeeded(const QualifiedName&, Element*);
     void recomputeIsIgnored(RenderObject* renderer);
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WEBCORE_EXPORT static bool clientSupportsIsolatedTree();
-private:
-    AXCoreObject* isolatedTreeRootObject();
-    static AXCoreObject* isolatedTreeFocusedObject(Document&);
-    void setIsolatedTreeFocusedObject(Node*);
-    static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
-    static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject&, AXID, AXObjectCache*, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&, bool isRoot);
-#endif
-
-public:
     WEBCORE_EXPORT bool canUseSecondaryAXThread();
 
 #if ENABLE(ACCESSIBILITY)
@@ -367,7 +350,16 @@ public:
     void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& previousValue);
 
     RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
-    
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WEBCORE_EXPORT static bool clientSupportsIsolatedTree();
+private:
+    AXCoreObject* isolatedTreeRootObject();
+    static AXCoreObject* isolatedTreeFocusedObject(Document&);
+    void setIsolatedTreeFocusedObject(Node*);
+    static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
+    void updateIsolatedTree(AXCoreObject*, AXNotification);
+#endif
 
 protected:
     void postPlatformNotification(AXCoreObject*, AXNotification);

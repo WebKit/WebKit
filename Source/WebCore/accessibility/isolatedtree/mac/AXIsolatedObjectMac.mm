@@ -32,6 +32,12 @@
 
 namespace WebCore {
 
+void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
+{
+    [wrapper attachIsolatedObject:this];
+    setWrapper(wrapper);
+}
+
 void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType)
 {
     [wrapper() detach];

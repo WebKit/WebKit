@@ -32,17 +32,20 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, bool isRoot)
-    : m_id(object.objectID())
+AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
+    : m_treeID(treeID)
+    , m_parentID(parentID)
+    , m_id(object.objectID())
 {
     ASSERT(isMainThread());
-    initializeAttributeData(object, isRoot);
-    m_initialized = true;
+    if (auto tree = AXIsolatedTree::treeForID(m_treeID))
+        m_cachedTree = tree;
+    initializeAttributeData(object, parentID == InvalidAXID);
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, bool isRoot)
+Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
 {
-    return adoptRef(*new AXIsolatedObject(object, isRoot));
+    return adoptRef(*new AXIsolatedObject(object, treeID, parentID));
 }
 
 AXIsolatedObject::~AXIsolatedObject() = default;
@@ -386,7 +389,6 @@ void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, Acce
 
 void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
 {
-    ASSERT(!m_initialized);
     ASSERT(isMainThread());
 
     if (shouldRemove)
@@ -404,7 +406,7 @@ void AXIsolatedObject::appendChild(AXID axID)
 void AXIsolatedObject::setParent(AXID parent)
 {
     ASSERT(isMainThread());
-    m_parent = parent;
+    m_parentID = parent;
 }
 
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
@@ -425,14 +427,7 @@ bool AXIsolatedObject::isDetached() const
 
 void AXIsolatedObject::detachFromParent()
 {
-    m_parent = InvalidAXID;
-}
-
-void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
-{
-    m_treeIdentifier = treeIdentifier;
-    if (auto tree = AXIsolatedTree::treeForID(m_treeIdentifier))
-        m_cachedTree = tree;
+    m_parentID = InvalidAXID;
 }
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)

@@ -27,6 +27,7 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+#include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -34,7 +35,11 @@
 
 namespace WebCore {
 
+class AXIsolatedObject;
+class AXObjectCache;
 class Page;
+
+typedef unsigned AXIsolatedTreeID;
 
 class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
@@ -56,8 +61,15 @@ public:
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
 
+    struct NodeChange {
+        Ref<AXIsolatedObject> m_isolatedObject;
+        AccessibilityObjectWrapper* m_wrapper;
+        NodeChange(const Ref<AXIsolatedObject>&, AccessibilityObjectWrapper*);
+        NodeChange(const NodeChange&);
+    };
+
     // Call on main thread
-    void appendNodeChanges(Vector<Ref<AXIsolatedObject>>&);
+    void appendNodeChanges(const Vector<NodeChange>&);
     void removeNode(AXID);
 
     void setRootNode(Ref<AXIsolatedObject>&);
@@ -80,7 +92,7 @@ private:
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
-    Vector<Ref<AXIsolatedObject>> m_pendingAppends;
+    Vector<NodeChange> m_pendingAppends;
     Vector<AXID> m_pendingRemovals;
     AXID m_pendingFocusedNodeID;
     Lock m_changeLogLock;
