@@ -1657,6 +1657,8 @@ private:
     void notifyProcessPoolToPrewarm();
     bool shouldUseBackForwardCache() const;
 
+    bool shouldUseForegroundPriorityForClientNavigation() const;
+
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
 
     void updateActivityState(OptionSet<WebCore::ActivityState::Flag> flagsToUpdate = WebCore::ActivityState::allFlags());

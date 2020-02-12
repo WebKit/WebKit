@@ -64,6 +64,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_websiteDataStore = this->m_websiteDataStore;
     copy->m_treatsSHA1SignedCertificatesAsInsecure = this->m_treatsSHA1SignedCertificatesAsInsecure;
 #if PLATFORM(IOS_FAMILY)
+    copy->m_clientNavigationsRunAtForegroundPriority = this->m_clientNavigationsRunAtForegroundPriority;
     copy->m_alwaysRunsAtForegroundPriority = this->m_alwaysRunsAtForegroundPriority;
     copy->m_canShowWhileLocked = this->m_canShowWhileLocked;
     copy->m_clickInteractionDriverForTesting = this->m_clickInteractionDriverForTesting;

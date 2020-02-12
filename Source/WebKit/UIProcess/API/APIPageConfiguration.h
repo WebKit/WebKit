@@ -94,7 +94,9 @@ public:
     void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
 
 #if PLATFORM(IOS_FAMILY)
-    bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
+    bool clientNavigationsRunAtForegroundPriority() const { return m_clientNavigationsRunAtForegroundPriority; }
+    void setClientNavigationsRunAtForegroundPriority(bool value) { m_clientNavigationsRunAtForegroundPriority = value; }
+    bool alwaysRunsAtForegroundPriority() const { return m_alwaysRunsAtForegroundPriority; }
     void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; }
     
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
@@ -153,6 +155,7 @@ private:
 
     bool m_treatsSHA1SignedCertificatesAsInsecure { true };
 #if PLATFORM(IOS_FAMILY)
+    bool m_clientNavigationsRunAtForegroundPriority { false };
     bool m_alwaysRunsAtForegroundPriority { false };
     bool m_canShowWhileLocked { false };
     RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;

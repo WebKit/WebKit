@@ -29,6 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIData.h"
+#import "ApplicationStateTracker.h"
+#import "AssertionServicesSPI.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
@@ -69,8 +71,13 @@
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/Entitlements.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView.get()->_page->process().connection())
+
+@interface UIWindow ()
+- (BOOL)_isHostedInAnotherProcess;
+@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -140,6 +147,34 @@ bool PageClientImpl::isViewVisible()
         return true;
     
     return false;
+}
+
+bool PageClientImpl::isApplicationVisible()
+{
+    switch (applicationType([m_webView window])) {
+    case ApplicationType::Application:
+        return [[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground;
+    case ApplicationType::ViewService:
+    case ApplicationType::Extension:
+        break;
+    }
+
+    UIViewController *serviceViewController = nil;
+    for (UIView *view = m_webView.get().get(); view; view = view.superview) {
+        UIViewController *viewController = [UIViewController viewControllerForView:view];
+        if (viewController._hostProcessIdentifier) {
+            serviceViewController = viewController;
+            break;
+        }
+    }
+    ASSERT(serviceViewController);
+    pid_t applicationPID = serviceViewController._hostProcessIdentifier;
+    ASSERT(applicationPID);
+
+    auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
+    auto applicationState = [applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID];
+    [applicationStateMonitor invalidate];
+    return applicationState != BKSApplicationStateBackgroundRunning && applicationState != BKSApplicationStateBackgroundTaskSuspended;
 }
 
 bool PageClientImpl::isViewInWindow()
