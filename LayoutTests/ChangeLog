@@ -1,3 +1,13 @@
+2020-02-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to view service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=207487
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/tests/security/cross-frame-access-private-browsing.html is a flay timeout

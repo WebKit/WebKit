@@ -422,10 +422,6 @@
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
-    (allow mach-lookup (with report) (with telemetry)
-        (global-name-regex #"^com\.apple\.uikit\.viewservice\..+")
-    )
-
     ; UIKit-required IOKit nodes.
     (allow iokit-open  (with report) (with telemetry)
         (iokit-user-client-class "AppleJPEGDriverUserClient")
