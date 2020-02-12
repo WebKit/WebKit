@@ -632,6 +632,10 @@
     (local tcp)
     (remote tcp))
 
+;;; <rdar://problem/9876970>
+(deny network-outbound
+      (remote tcp "localhost:62078"))
+
 ;; Various services required by system frameworks
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.lsd.mapdb")

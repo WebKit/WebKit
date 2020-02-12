@@ -1,3 +1,13 @@
+2020-02-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Deny access to unused tcp service from NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=207590
+        <rdar://problem/57895351>
+
+        Reviewed by Darin Adler.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-02-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert r255662 as it seems to cause blank views in SVC.
