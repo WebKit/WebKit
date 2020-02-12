@@ -1,3 +1,12 @@
+2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] inspector/runtime/getCollectionEntries.html is flaky failing
+        [ macOS ] inspector/runtime/getCollectionEntries.html is flaky failing
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-02-12  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Move grid-item-auto-margins-alignment tests to WPT folder
