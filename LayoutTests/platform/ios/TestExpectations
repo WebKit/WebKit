@@ -3495,3 +3495,5 @@ webkit.org/b/207645 http/tests/security/cross-frame-access-private-browsing.html
 webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass Timeout ]
 
 webkit.org/b/207649 imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Pass Timeout ]
+
+webkit.org/b/207650 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore3.html [ Pass Timeout ]
