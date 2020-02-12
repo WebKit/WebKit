@@ -1,5 +1,37 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255825. rdar://problem/59299127
+
+    REGRESSION: [ iOS wk2 ] fast/scrolling/ios/scroll-events-back-forward.html is flaky failing
+    https://bugs.webkit.org/show_bug.cgi?id=207194
+    <rdar://problem/59148073>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Test was flaky because it relied on a 10ms timer.
+    
+    * fast/scrolling/ios/scroll-events-back-forward-expected.txt:
+    * fast/scrolling/ios/scroll-events-back-forward.html:
+    * platform/ios-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255825 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION: [ iOS wk2 ] fast/scrolling/ios/scroll-events-back-forward.html is flaky failing
+            https://bugs.webkit.org/show_bug.cgi?id=207194
+            <rdar://problem/59148073>
+
+            Reviewed by Wenson Hsieh.
+
+            Test was flaky because it relied on a 10ms timer.
+
+            * fast/scrolling/ios/scroll-events-back-forward-expected.txt:
+            * fast/scrolling/ios/scroll-events-back-forward.html:
+            * platform/ios-wk2/TestExpectations:
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255162. rdar://problem/59299120
 
     Support 'allow="fullscreen"' feature policy

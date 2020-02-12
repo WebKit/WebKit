@@ -1351,4 +1351,3 @@ webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFail
 
 webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 
-webkit.org/b/207194 fast/scrolling/ios/scroll-events-back-forward.html [ Pass Failure ]
