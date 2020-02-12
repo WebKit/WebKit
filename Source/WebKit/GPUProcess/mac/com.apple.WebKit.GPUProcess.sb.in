@@ -615,7 +615,6 @@
        (global-name "com.apple.audio.SystemSoundServer-OSX")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.cfprefsd.daemon")
-       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
        (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.fonts")
        (global-name "com.apple.mediaremoted.xpc")

@@ -1,5 +1,18 @@
 2020-02-12  Brent Fulgham  <bfulgham@apple.com>
 
+        [macOS] Remove irrelevant global-name rule in WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=207659
+        <rdar://problem/52289544>
+
+        Reviewed by Per Arne Vollan.
+
+        We have been allowing access to a non-existance global-name. We should remove this rule.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-02-12  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Remove access to AppleKeyStoreUserClient from the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=207654
         <rdar://problem/58804060>
