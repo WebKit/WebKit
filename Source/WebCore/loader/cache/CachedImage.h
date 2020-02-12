@@ -184,10 +184,11 @@ private:
 
     MonotonicTime m_lastUpdateImageDataTime;
 
-    unsigned m_updateImageDataCount { 0 };
-    bool m_isManuallyCached { false };
-    bool m_shouldPaintBrokenImage { true };
-    bool m_forceUpdateImageDataEnabledForTesting { false };
+    static constexpr unsigned maxUpdateImageDataCount = 4;
+    unsigned m_updateImageDataCount : 3;
+    bool m_isManuallyCached : 1;
+    bool m_shouldPaintBrokenImage : 1;
+    bool m_forceUpdateImageDataEnabledForTesting : 1;
 };
 
 } // namespace WebCore
