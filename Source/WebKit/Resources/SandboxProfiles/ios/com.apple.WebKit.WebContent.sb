@@ -119,11 +119,6 @@
                (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
         (mobile-preferences-read "com.apple.MobileAsset")))
 
-(define-once (mobile-keybag-access)
-    (allow iokit-open (with telemetry)
-        (iokit-user-client-class "AppleKeyStoreUserClient")  ;; Needed by NSURLCache
-))
-
 (define-once (play-audio)
     (allow mach-lookup
            (global-name "com.apple.audio.AURemoteIOServer"))
@@ -762,9 +757,6 @@
     (with no-log))
 
 (framebuffer-access)
-
-;; <rdar://problem/7822790>
-(mobile-keybag-access)
 
 ; <rdar://problem/7595408> , <rdar://problem/7643881>
 (opengl)
