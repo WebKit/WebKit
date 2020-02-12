@@ -257,8 +257,16 @@ private:
     PlaybackState m_playbackState { PlaybackState::None };
     MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
     CGAffineTransform m_videoTransform;
+    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
 
+    // SampleBufferDisplayLayer::Client
+    void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) final;
+
+    RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
     bool m_videoMirrored { false };
     bool m_playing { false };
