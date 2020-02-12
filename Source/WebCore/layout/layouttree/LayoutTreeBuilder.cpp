@@ -341,13 +341,13 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
         while (++printedCharacters <= depth * 2)
             stream << " ";
         stream << "  ";
-        if (displayRun.textContext())
+        if (displayRun.textContent())
             stream << "inline text box";
         else
             stream << "inline box";
         stream << " at (" << displayRun.left() << "," << displayRun.top() << ") size " << displayRun.width() << "x" << displayRun.height();
-        if (displayRun.textContext())
-            stream << " run(" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
+        if (displayRun.textContent())
+            stream << " run(" << displayRun.textContent()->start() << ", " << displayRun.textContent()->end() << ")";
         stream.nextLine();
     }
 }

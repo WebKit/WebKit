@@ -40,11 +40,10 @@ namespace Display {
 
 struct Run {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    struct TextContext {
+    struct TextContent {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        struct ExpansionContext;
-        TextContext(unsigned position, unsigned length, const String&);
+        TextContent(unsigned position, unsigned length, const String&);
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
@@ -64,7 +63,7 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, Optional<TextContext> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -88,9 +87,9 @@ struct Run {
     void expandVertically(InlineLayoutUnit delta) { m_rect.expandVertically(delta); }
     void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
 
-    void setTextContext(const TextContext&& textContext) { m_textContext.emplace(textContext); }
-    const Optional<TextContext>& textContext() const { return m_textContext; }
-    Optional<TextContext>& textContext() { return m_textContext; }
+    void setTextContent(const TextContent&& textContent) { m_textContent.emplace(textContent); }
+    const Optional<TextContent>& textContent() const { return m_textContent; }
+    Optional<TextContent>& textContent() { return m_textContent; }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
@@ -102,7 +101,8 @@ struct Run {
     void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
 
-    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContext() && textContext()->content() == "\n" && style().preserveNewline()); }
+    // FIXME: This information should be preserved at Run construction time.
+    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->content() == "\n" && style().preserveNewline()); }
 
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox->style(); }
@@ -115,20 +115,20 @@ private:
     InlineRect m_rect;
     InlineRect m_inkOverflow;
     Expansion m_expansion;
-    Optional<TextContext> m_textContext;
+    Optional<TextContent> m_textContent;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& rect, const InlineRect& inkOverflow, Expansion expansion, Optional<TextContext> textContext)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& rect, const InlineRect& inkOverflow, Expansion expansion, Optional<TextContent> textContent)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_rect(rect)
     , m_inkOverflow(inkOverflow)
     , m_expansion(expansion)
-    , m_textContext(textContext)
+    , m_textContent(textContent)
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length, const String& contentString)
+inline Run::TextContent::TextContent(unsigned start, unsigned length, const String& contentString)
     : m_start(start)
     , m_length(length)
     , m_contentString(contentString)

@@ -485,7 +485,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             };
             auto inkOverflow = computedInkOverflow();
             lineInkOverflow.expandToContain(inkOverflow);
-            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContext() });
+            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
         }
 
         if (lineRun.isLineBreak()) {
@@ -543,7 +543,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     }
     // Make sure the trailing text run gets a hyphen when it needs one.
     if (lineContent.partialContent && lineContent.partialContent->trailingContentNeedsHyphen)
-        inlineContent.runs[*lastTextItemIndex].textContext()->setNeedsHyphen();
+        inlineContent.runs[*lastTextItemIndex].textContent()->setNeedsHyphen();
     // FIXME: This is where the logical to physical translate should happen.
     auto& baseline = lineBox.baseline();
     inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, { baseline.ascent(), baseline.descent() }, lineBox.baselineOffset(), lineBox.isConsideredEmpty() });

@@ -750,7 +750,7 @@ LineBuilder::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLa
     : m_type(softLineBreakItem.type())
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_logicalRect({ 0, logicalLeft, 0, 0 })
-    , m_textContext({ softLineBreakItem.position(), 1, softLineBreakItem.inlineTextBox().content() })
+    , m_textContent({ softLineBreakItem.position(), 1, softLineBreakItem.inlineTextBox().content() })
 {
 }
 
@@ -759,7 +759,7 @@ LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit log
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalRect({ 0, logicalLeft, logicalWidth, 0 })
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
-    , m_textContext({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
+    , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = logicalWidth;
@@ -781,14 +781,14 @@ void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayout
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = { };
         setExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
-        m_textContext->expand(inlineTextItem.length());
+        m_textContent->expand(inlineTextItem.length());
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
     if (!isWhitespacePreserved(inlineTextItem.style()))
         ++m_expansionOpportunityCount;
     setExpansionBehavior(DefaultExpansion);
-    m_textContext->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
+    m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
 }
 
 bool LineBuilder::Run::hasTrailingLetterSpacing() const
@@ -817,8 +817,8 @@ void LineBuilder::Run::removeTrailingWhitespace()
 {
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsable so the length of the trailing trimmable whitespace is always 1 (or non-existent).
-    ASSERT(m_textContext->length());
-    m_textContext->expand(-1);
+    ASSERT(m_textContent->length());
+    m_textContent->expand(-1);
     visuallyCollapseTrailingWhitespace();
 }
 

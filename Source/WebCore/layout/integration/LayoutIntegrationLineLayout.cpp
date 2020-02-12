@@ -267,11 +267,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintRect.moveBy(-paintOffset);
 
     for (auto& run : inlineContent.runsForRect(paintRect)) {
-        if (!run.textContext())
+        if (!run.textContent())
             continue;
 
-        auto& textContext = *run.textContext();
-        if (!textContext.length())
+        auto& textContent = *run.textContent();
+        if (!textContent.length())
             continue;
 
         auto& style = run.style();
@@ -294,9 +294,9 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         auto expansion = run.expansion();
 
         String textWithHyphen;
-        if (textContext.needsHyphen())
-            textWithHyphen = makeString(textContext.content(), style.hyphenString());
-        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContext.content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
+        if (textContent.needsHyphen())
+            textWithHyphen = makeString(textContent.content(), style.hyphenString());
+        TextRun textRun { !textWithHyphen.isEmpty() ? textWithHyphen : textContent.content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baselineOffset, deviceScaleFactor) };
 

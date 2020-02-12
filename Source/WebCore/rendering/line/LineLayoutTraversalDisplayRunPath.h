@@ -67,11 +67,11 @@ public:
         return previous.lineIndex() == run().lineIndex();
     }
 
-    bool hasHyphen() const { return run().textContext()->needsHyphen(); }
-    StringView text() const { return run().textContext()->content(); }
-    unsigned localStartOffset() const { return run().textContext()->start(); }
-    unsigned localEndOffset() const { return run().textContext()->end(); }
-    unsigned length() const { return run().textContext()->length(); }
+    bool hasHyphen() const { return run().textContent()->needsHyphen(); }
+    StringView text() const { return run().textContent()->content(); }
+    unsigned localStartOffset() const { return run().textContent()->start(); }
+    unsigned localEndOffset() const { return run().textContent()->end(); }
+    unsigned length() const { return run().textContent()->length(); }
 
     bool isLastOnLine() const
     {

@@ -96,19 +96,19 @@ static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, c
         auto& displayRun = displayRuns[i];
 
         auto matchingRuns = areEssentiallyEqual(simpleRun.logicalLeft, displayRun.left()) && areEssentiallyEqual(simpleRun.logicalRight, displayRun.right());
-        if (matchingRuns && displayRun.textContext()) {
-            matchingRuns = simpleRun.start == displayRun.textContext()->start() && simpleRun.end == displayRun.textContext()->end();
+        if (matchingRuns && displayRun.textContent()) {
+            matchingRuns = simpleRun.start == displayRun.textContent()->start() && simpleRun.end == displayRun.textContent()->end();
             // SLL handles strings in a more concatenated format <div>foo<br>bar</div> -> foo -> 0,3 bar -> 3,6 vs. 0,3 and 0,3
             if (!matchingRuns)
-                matchingRuns = (simpleRun.end - simpleRun.start) == (displayRun.textContext()->end() - displayRun.textContext()->start());
+                matchingRuns = (simpleRun.end - simpleRun.start) == (displayRun.textContent()->end() - displayRun.textContent()->start());
         }
         if (matchingRuns)
             continue;
 
         stream << "Mismatching: simple run(" << simpleRun.start << ", " << simpleRun.end << ") (" << simpleRun.logicalLeft << ", " << simpleRun.logicalRight << ")";
         stream << " inline run";
-        if (displayRun.textContext())
-            stream << " (" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
+        if (displayRun.textContent())
+            stream << " (" << displayRun.textContent()->start() << ", " << displayRun.textContent()->end() << ")";
         stream << " (" << displayRun.left() << ", " << displayRun.top() << ") (" << displayRun.width() << "x" << displayRun.height() << ")";
         stream.nextLine();
         mismatched = true;
@@ -131,7 +131,7 @@ static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const WebCor
         && areEssentiallyEqual(inlineTextBox.right(), inlineRun.right())
         && areEssentiallyEqual(inlineTextBox.top(), inlineRun.top())
         && areEssentiallyEqual(inlineTextBox.bottom(), inlineRun.bottom())
-        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == inlineRun.textContext()->start() && inlineTextBox.end() == inlineRun.textContext()->end()));
+        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == inlineRun.textContent()->start() && inlineTextBox.end() == inlineRun.textContent()->end()));
 }
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
@@ -204,8 +204,8 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
             stream << " inline run";
-            if (displayRun.textContext())
-                stream << " (" << displayRun.textContext()->start() << ", " << displayRun.textContext()->end() << ")";
+            if (displayRun.textContent())
+                stream << " (" << displayRun.textContent()->start() << ", " << displayRun.textContent()->end() << ")";
             stream << " (" << displayRun.left() << ", " << displayRun.top() << ") (" << displayRun.width() << "x" << displayRun.height() << ")";
             stream.nextLine();
             mismatched = true;

@@ -85,7 +85,7 @@ public:
         const RenderStyle& style() const { return m_layoutBox->style(); }
         const Display::InlineRect& logicalRect() const { return m_logicalRect; }
         Display::Run::Expansion expansion() const { return m_expansion; }
-        const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
+        const Optional<Display::Run::TextContent>& textContent() const { return m_textContent; }
 
         Run(Run&&) = default;
         Run& operator=(Run&& other) = default;
@@ -137,7 +137,7 @@ public:
         Display::InlineRect m_logicalRect;
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
-        Optional<Display::Run::TextContext> m_textContext;
+        Optional<Display::Run::TextContent> m_textContent;
         Display::Run::Expansion m_expansion;
         unsigned m_expansionOpportunityCount { 0 };
     };

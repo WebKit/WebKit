@@ -121,7 +121,7 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
         return;
 
     for (auto& run : displayRuns) {
-        if (auto& textContext = run.textContext()) {
+        if (auto& textContent = run.textContent()) {
             auto& style = run.style();
             context.setStrokeColor(style.color());
             context.setFillColor(style.color());
@@ -131,7 +131,7 @@ static void paintInlineContent(GraphicsContext& context, LayoutPoint absoluteOff
             auto& lineBox = displayInlineContent->lineBoxForRun(run);
             auto baselineOffset = absoluteOffset.y() + lineBox.top() + lineBox.baselineOffset();
             auto expansion = run.expansion();
-            auto textRun = TextRun { textContext->content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
+            auto textRun = TextRun { textContent->content(), run.left() - lineBox.left(), expansion.horizontalExpansion, expansion.behavior };
             textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
             context.drawText(style.fontCascade(), textRun, { absoluteLeft, baselineOffset });
         } else if (auto* cachedImage = run.image()) {
