@@ -92,7 +92,7 @@ using namespace WebCore;
     });
 #else
     if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
-        _parent->client().textTrackRepresentationBoundsChanged(_parent->bounds());
+        _parent->boundsChanged();
 #endif
 }
 
@@ -137,9 +137,21 @@ void TextTrackRepresentationCocoa::setContentScale(float scale)
     [m_layer.get() setContentsScale:scale];
 }
 
+void TextTrackRepresentationCocoa::setHidden(bool hidden) const
+{
+    [m_layer.get() setHidden:hidden];
+}
+
 IntRect TextTrackRepresentationCocoa::bounds() const
 {
     return enclosingIntRect(FloatRect([m_layer.get() bounds]));
+}
+
+void TextTrackRepresentationCocoa::boundsChanged()
+{
+    m_taskQueue.enqueueTask([this] () {
+        client().textTrackRepresentationBoundsChanged(bounds());
+    });
 }
 
 #endif // (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
