@@ -62,11 +62,6 @@ inline MediaDevices::MediaDevices(Document& document)
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Window) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window), "MediaDevices::DisplayCaptureSurfaceType::Window is not RealtimeMediaSourceSettings::DisplaySurfaceType::Window as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Application) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Application), "MediaDevices::DisplayCaptureSurfaceType::Application is not RealtimeMediaSourceSettings::DisplaySurfaceType::Application as expected");
     static_assert(static_cast<size_t>(MediaDevices::DisplayCaptureSurfaceType::Browser) == static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Browser), "MediaDevices::DisplayCaptureSurfaceType::Browser is not RealtimeMediaSourceSettings::DisplaySurfaceType::Browser as expected");
-
-    if (auto* controller = UserMediaController::from(document.page())) {
-        m_canAccessCamera = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Camera }) == UserMediaController::GetUserMediaAccess::CanCall;
-        m_canAccessMicrophone = controller->canCallGetUserMedia(document, { UserMediaController::CaptureType::Microphone }) == UserMediaController::GetUserMediaAccess::CanCall;
-    }
 }
 
 MediaDevices::~MediaDevices() = default;
@@ -160,13 +155,30 @@ void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise
     request->start();
 }
 
+static inline bool checkCameraAccess(const Document& document)
+{
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::No);
+}
+
+static inline bool checkMicrophoneAccess(const Document& document)
+{
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
+}
+
 void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
 {
+    auto* document = this->document();
+    if (!document)
+        return;
+
+    bool canAccessCamera = checkCameraAccess(*document);
+    bool canAccessMicrophone = checkMicrophoneAccess(*document);
+
     Vector<Ref<MediaDeviceInfo>> devices;
     for (auto& newDevice : newDevices) {
-        if (!m_canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
+        if (!canAccessMicrophone && newDevice.type() == CaptureDevice::DeviceType::Microphone)
             continue;
-        if (!m_canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
+        if (!canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
             continue;
 
         auto index = m_devices.findMatching([&newDevice](auto& oldDevice) {
@@ -194,8 +206,9 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
         promise.resolve({ });
         return;
     }
-    if (!m_canAccessCamera && !m_canAccessMicrophone) {
-        controller->logGetUserMediaDenial(*document, UserMediaController::GetUserMediaAccess::BlockedByFeaturePolicy, UserMediaController::BlockedCaller::EnumerateDevices);
+
+    if (!checkCameraAccess(*document) && !checkMicrophoneAccess(*document)) {
+        controller->logEnumerateDevicesDenial(*document);
         promise.resolve({ });
         return;
     }
@@ -247,15 +260,18 @@ const char* MediaDevices::activeDOMObjectName() const
 
 void MediaDevices::listenForDeviceChanges()
 {
-    if (m_listeningForDeviceChanges || (!m_canAccessCamera && !m_canAccessMicrophone))
-        return;
-
-    m_listeningForDeviceChanges = true;
-
     auto* document = this->document();
     auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
     if (!controller)
         return;
+
+    bool canAccessCamera = isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, *document, LogFeaturePolicyFailure::No);
+    bool canAccessMicrophone = isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No);
+
+    if (m_listeningForDeviceChanges || (!canAccessCamera && !canAccessMicrophone))
+        return;
+
+    m_listeningForDeviceChanges = true;
 
     m_deviceChangeToken = controller->addDeviceChangeObserver([weakThis = makeWeakPtr(*this), this]() {
         if (!weakThis || isContextStopped() || m_scheduledEventTimer.isActive())

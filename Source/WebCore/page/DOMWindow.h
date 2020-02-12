@@ -257,7 +257,7 @@ public:
 
     PageConsoleClient* console() const;
 
-    void printErrorMessage(const String&);
+    void printErrorMessage(const String&) const;
 
     String crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin);
 

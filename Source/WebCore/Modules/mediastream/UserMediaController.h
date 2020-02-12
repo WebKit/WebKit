@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "FeaturePolicy.h"
 #include "Page.h"
 #include "UserMediaClient.h"
 #include <wtf/CompletionHandler.h>
@@ -51,24 +52,9 @@ public:
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
 
-    enum class GetUserMediaAccess {
-        CanCall,
-        BlockedByParent,
-        BlockedByFeaturePolicy,
-    };
-    enum class CaptureType {
-        Microphone = 1 << 0,
-        Camera = 1 << 1,
-        Display = 1 << 3
-    };
-    GetUserMediaAccess canCallGetUserMedia(const Document&, OptionSet<CaptureType>) const;
-
-    enum class BlockedCaller {
-        GetUserMedia,
-        GetDisplayMedia,
-        EnumerateDevices,
-    };
-    void logGetUserMediaDenial(Document&, GetUserMediaAccess, BlockedCaller);
+    void logGetUserMediaDenial(Document&);
+    void logGetDisplayMediaDenial(Document&);
+    void logEnumerateDevicesDenial(Document&);
 
     WEBCORE_EXPORT static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }

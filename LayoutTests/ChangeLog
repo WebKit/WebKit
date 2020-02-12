@@ -1,5 +1,91 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255668. rdar://problem/59299120
+
+    MediaDevices should handle changes of iframe allow attribute value
+    https://bugs.webkit.org/show_bug.cgi?id=207112
+    
+    Reviewed by Eric Carlson.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https-expected.txt:
+    * web-platform-tests/mediacapture-streams/MediaStream-feature-policy-none.https-expected.txt:
+    
+    Source/WebCore:
+    
+    MediaDevices was computing whether it could access camera or microphone at creation time.
+    Since the iframe allow attribute can be modified, we cannot do that.
+    Instead, we get the feature policy everytime this is needed.
+    
+    Refactor code to use the newly added routine to check for feature policy.
+    Update logging to give origin and allow attribute value of the frame that fail the feature policy check.
+    
+    Test: http/tests/webrtc/enumerateDevicesInFrames.html
+    
+    * Modules/mediastream/MediaDevices.cpp:
+    (WebCore::MediaDevices::MediaDevices):
+    (WebCore::MediaDevices::refreshDevices):
+    (WebCore::MediaDevices::enumerateDevices):
+    (WebCore::MediaDevices::listenForDeviceChanges):
+    * Modules/mediastream/MediaDevices.h:
+    * Modules/mediastream/UserMediaController.cpp:
+    (WebCore::UserMediaController::logGetUserMediaDenial):
+    (WebCore::UserMediaController::logGetDisplayMediaDenial):
+    (WebCore::UserMediaController::logEnumerateDevicesDenial):
+    * Modules/mediastream/UserMediaController.h:
+    * Modules/mediastream/UserMediaRequest.cpp:
+    (WebCore::UserMediaRequest::start):
+    * html/FeaturePolicy.cpp:
+    (WebCore::policyTypeName):
+    (WebCore::isFeaturePolicyAllowedByDocumentAndAllOwners):
+    * html/FeaturePolicy.h:
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::printErrorMessage const):
+    * page/DOMWindow.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * fullscreen/full-screen-enabled-expected.txt:
+    * fullscreen/full-screen-enabled-prefixed-expected.txt:
+    * fullscreen/full-screen-iframe-not-allowed-expected.txt:
+    * fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent-expected.txt:
+    * fullscreen/full-screen-restrictions-expected.txt:
+    * http/tests/fullscreen/fullscreen-feature-policy-expected.txt:
+    * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute-expected.txt:
+    * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt:
+    * http/tests/ssl/media-stream/get-user-media-different-host-expected.txt:
+    * http/tests/ssl/media-stream/get-user-media-nested-expected.txt:
+    * http/tests/webrtc/enumerateDevicesInFrames-expected.txt: Added.
+    * http/tests/webrtc/enumerateDevicesInFrames.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255668 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-04  youenn fablet  <youenn@apple.com>
+
+            MediaDevices should handle changes of iframe allow attribute value
+            https://bugs.webkit.org/show_bug.cgi?id=207112
+
+            Reviewed by Eric Carlson.
+
+            * TestExpectations:
+            * fullscreen/full-screen-enabled-expected.txt:
+            * fullscreen/full-screen-enabled-prefixed-expected.txt:
+            * fullscreen/full-screen-iframe-not-allowed-expected.txt:
+            * fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent-expected.txt:
+            * fullscreen/full-screen-restrictions-expected.txt:
+            * http/tests/fullscreen/fullscreen-feature-policy-expected.txt:
+            * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute-expected.txt:
+            * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt:
+            * http/tests/ssl/media-stream/get-user-media-different-host-expected.txt:
+            * http/tests/ssl/media-stream/get-user-media-nested-expected.txt:
+            * http/tests/webrtc/enumerateDevicesInFrames-expected.txt: Added.
+            * http/tests/webrtc/enumerateDevicesInFrames.html: Added.
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255825. rdar://problem/59299127
 
     REGRESSION: [ iOS wk2 ] fast/scrolling/ios/scroll-events-back-forward.html is flaky failing
