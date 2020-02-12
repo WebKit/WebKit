@@ -55,7 +55,7 @@ class MediaSourcePrivateAVFObjC;
 class PixelBufferConformerCV;
 class PlatformClockCM;
 class TextureCacheCV;
-class VideoFullscreenLayerManagerObjC;
+class VideoLayerManagerObjC;
 class VideoTextureCopierCV;
 class WebCoreDecompressionSession;
 
@@ -325,8 +325,7 @@ private:
 #endif
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
-
+    std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
     Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
 };
 

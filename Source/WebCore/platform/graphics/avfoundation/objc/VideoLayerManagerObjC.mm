@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "VideoFullscreenLayerManagerObjC.h"
+#import "VideoLayerManagerObjC.h"
 
 #import "Color.h"
 #import "Logging.h"
@@ -40,25 +40,25 @@
 
 namespace WebCore {
 
-VideoFullscreenLayerManagerObjC::VideoFullscreenLayerManagerObjC(const Logger& logger, const void* logIdentifier)
-    : VideoFullscreenLayerManager()
+VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* logIdentifier)
+    : VideoLayerManager()
     , m_logger(logger)
     , m_logIdentifier(logIdentifier)
 {
 }
 
-void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
+void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
 {
     ALWAYS_LOG(LOGIDENTIFIER, contentSize.width(), ", ", contentSize.height());
 
     m_videoLayer = videoLayer;
-    m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
-
     [m_videoLayer web_disableAllActions];
+
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
 #ifndef NDEBUG
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
 #endif
+    m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
     [m_videoInlineLayer setFrame:m_videoInlineFrame];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];
     if ([videoLayer isKindOfClass:PAL::getAVPlayerLayerClass()])
@@ -73,13 +73,13 @@ void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, I
     }
 }
 
-void VideoFullscreenLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
+void VideoLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
 {
     if (m_videoInlineLayer)
         [m_videoInlineLayer setContents:(__bridge id)image.get()];
 }
 
-void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, NativeImagePtr currentImage)
+void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, NativeImagePtr currentImage)
 {
     if (m_videoFullscreenLayer == videoFullscreenLayer) {
         completionHandler();
@@ -126,7 +126,7 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *vid
     [CATransaction commit];
 }
 
-void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
+void VideoLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
 {
     ALWAYS_LOG(LOGIDENTIFIER, videoFullscreenFrame.x(), ", ", videoFullscreenFrame.y(), ", ", videoFullscreenFrame.width(), ", ", videoFullscreenFrame.height());
 
@@ -138,7 +138,7 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFul
     syncTextTrackBounds();
 }
 
-void VideoFullscreenLayerManagerObjC::didDestroyVideoLayer()
+void VideoLayerManagerObjC::didDestroyVideoLayer()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -148,12 +148,12 @@ void VideoFullscreenLayerManagerObjC::didDestroyVideoLayer()
     m_videoLayer = nil;
 }
 
-bool VideoFullscreenLayerManagerObjC::requiresTextTrackRepresentation() const
+bool VideoLayerManagerObjC::requiresTextTrackRepresentation() const
 {
     return m_videoFullscreenLayer;
 }
 
-void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
+void VideoLayerManagerObjC::syncTextTrackBounds()
 {
     if (!m_videoFullscreenLayer || !m_textTrackRepresentationLayer)
         return;
@@ -169,7 +169,7 @@ void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
     [CATransaction commit];
 }
 
-void VideoFullscreenLayerManagerObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+void VideoLayerManagerObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -193,13 +193,11 @@ void VideoFullscreenLayerManagerObjC::setTextTrackRepresentation(TextTrackRepres
     }
 
     [CATransaction commit];
-
 }
 
-WTFLogChannel& VideoFullscreenLayerManagerObjC::logChannel() const
+WTFLogChannel& VideoLayerManagerObjC::logChannel() const
 {
     return LogMedia;
 }
 
 }
-

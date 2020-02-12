@@ -28,7 +28,7 @@
 #include "FloatRect.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
-#include "VideoFullscreenLayerManager.h"
+#include "VideoLayerManager.h"
 #include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
@@ -39,14 +39,15 @@ OBJC_CLASS AVPlayerLayer;
 
 namespace WebCore {
 
-class VideoFullscreenLayerManagerObjC final : public VideoFullscreenLayerManager , public LoggerHelper {
+class VideoLayerManagerObjC final : public VideoLayerManager , public LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    VideoFullscreenLayerManagerObjC(const Logger&, const void*);
+    VideoLayerManagerObjC(const Logger&, const void*);
 
     PlatformLayer *videoInlineLayer() const final { return m_videoInlineLayer.get(); }
     PlatformLayer *videoFullscreenLayer() const final { return m_videoFullscreenLayer.get(); }
     FloatRect videoFullscreenFrame() const final { return m_videoFullscreenFrame; }
+
     void setVideoLayer(PlatformLayer *, IntSize contentSize) final;
     void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr) final;
     void updateVideoFullscreenInlineImage(NativeImagePtr) final;
@@ -60,7 +61,7 @@ public:
 private:
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "VideoFullscreenLayerManagerObjC"; }
+    const char* logClassName() const final { return "VideoLayerManagerObjC"; }
     WTFLogChannel& logChannel() const final;
 
     Ref<const Logger> m_logger;
@@ -75,4 +76,3 @@ private:
 };
 
 }
-

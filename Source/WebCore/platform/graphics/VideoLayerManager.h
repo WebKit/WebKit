@@ -36,20 +36,22 @@ class FloatRect;
 class IntSize;
 class TextTrackRepresentation;
 
-class VideoFullscreenLayerManager {
-    WTF_MAKE_NONCOPYABLE(VideoFullscreenLayerManager);
+class VideoLayerManager {
+    WTF_MAKE_NONCOPYABLE(VideoLayerManager);
 public:
-    VideoFullscreenLayerManager() = default;
-    virtual ~VideoFullscreenLayerManager() { }
+    VideoLayerManager() = default;
+    virtual ~VideoLayerManager() { }
 
     virtual PlatformLayer *videoInlineLayer() const = 0;
     virtual PlatformLayer *videoFullscreenLayer() const = 0;
     virtual FloatRect videoFullscreenFrame() const = 0;
+
     virtual void setVideoLayer(PlatformLayer*, IntSize) = 0;
+    virtual void didDestroyVideoLayer() = 0;
+
     virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) = 0;
     virtual void updateVideoFullscreenInlineImage(NativeImagePtr) = 0;
     virtual void setVideoFullscreenFrame(FloatRect) = 0;
-    virtual void didDestroyVideoLayer() = 0;
 
     virtual bool requiresTextTrackRepresentation() const = 0;
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) = 0;
@@ -57,4 +59,3 @@ public:
 };
 
 }
-

@@ -48,7 +48,7 @@ class AudioTrackPrivateMediaStream;
 class AVVideoCaptureSource;
 class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
-class VideoFullscreenLayerManagerObjC;
+class VideoLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
 class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
@@ -242,7 +242,7 @@ private:
 
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+    std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
 
     // SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) final;

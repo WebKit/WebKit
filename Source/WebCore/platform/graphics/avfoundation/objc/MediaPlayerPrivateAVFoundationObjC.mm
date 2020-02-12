@@ -60,7 +60,7 @@
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "TextureCacheCV.h"
-#import "VideoFullscreenLayerManagerObjC.h"
+#import "VideoLayerManagerObjC.h"
 #import "VideoTextureCopierCV.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
@@ -404,7 +404,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
-    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(logger(), logIdentifier()))
+    , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(logger(), logIdentifier()))
     , m_videoFullscreenGravity(MediaPlayer::VideoGravity::ResizeAspect)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
@@ -619,7 +619,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     IntSize defaultSize = snappedIntRect(player()->playerContentBoxRect()).size();
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
+    m_videoLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
@@ -636,7 +636,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
     [m_videoLayer removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
     [m_videoLayer setPlayer:nil];
-    m_videoFullscreenLayerManager->didDestroyVideoLayer();
+    m_videoLayerManager->didDestroyVideoLayer();
 
     m_videoLayer = nil;
 }
@@ -1073,26 +1073,26 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
-    return m_videoFullscreenLayerManager->videoInlineLayer();
+    return m_videoLayerManager->videoInlineLayer();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
     updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoFullscreenLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
+    m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
     updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
     updateDisableExternalPlayback();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "width = ", frame.size().width(), ", height = ", frame.size().height());
-    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+    m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
@@ -1764,7 +1764,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
 
     // Do not attempt to change the video gravity while in full screen mode.
     // See setVideoFullscreenGravity().
-    if (m_videoFullscreenLayerManager->videoFullscreenLayer())
+    if (m_videoLayerManager->videoFullscreenLayer())
         return;
 
     [CATransaction begin];
@@ -2053,17 +2053,17 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 
 bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
 {
-    return m_videoFullscreenLayerManager->requiresTextTrackRepresentation();
+    return m_videoLayerManager->requiresTextTrackRepresentation();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
 {
-    m_videoFullscreenLayerManager->syncTextTrackBounds();
+    m_videoLayerManager->syncTextTrackBounds();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
-    m_videoFullscreenLayerManager->setTextTrackRepresentation(representation);
+    m_videoLayerManager->setTextTrackRepresentation(representation);
 }
 
 #endif // ENABLE(VIDEO_TRACK)

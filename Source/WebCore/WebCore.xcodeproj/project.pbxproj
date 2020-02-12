@@ -131,7 +131,6 @@
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
 		0754A5EA215EA3B8002D3A99 /* RealtimeMediaSourceFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0754A5E8215EA3B7002D3A99 /* RealtimeMediaSourceFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0757B13E214AE79900794B0D /* VideoPreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0757B13C214AE79700794B0D /* VideoPreset.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		075BA84920618AA500FCB4AD /* VideoFullscreenLayerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */; };
 		07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07638A971884487200E15A1B /* MediaSessionManagerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
@@ -634,6 +633,7 @@
 		1D2F8E042344751600993B68 /* EnterPictureInPictureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CA233C3D0B00EE228D /* EnterPictureInPictureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2F8E052344751D00993B68 /* HTMLVideoElementPictureInPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CC233C3D2000EE228D /* HTMLVideoElementPictureInPicture.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2F8E062344752300993B68 /* PictureInPictureWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CD233C3D2A00EE228D /* PictureInPictureWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1D392F2D23F20A7000E04B2D /* VideoLayerManagerObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D392F2823F209B400E04B2D /* VideoLayerManagerObjC.mm */; };
 		1D9F0FC12122029B005D8FD4 /* ShareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DC55400211BA8C8004B780E /* ShareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1DBC1B562347B3D200B901AF /* PictureInPictureObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DBC1B552347B3D200B901AF /* PictureInPictureObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1587,7 +1587,6 @@
 		52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */; };
 		52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52E2CAFC19FF0207001EEB4F /* MediaProducer.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E2CAFB19FF0207001EEB4F /* MediaProducer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5472,7 +5471,6 @@
 		0754A5E8215EA3B7002D3A99 /* RealtimeMediaSourceFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSourceFactory.h; sourceTree = "<group>"; };
 		0754A5EB215EADF3002D3A99 /* RealtimeMediaSourceFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeMediaSourceFactory.cpp; sourceTree = "<group>"; };
 		0757B13C214AE79700794B0D /* VideoPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreset.h; sourceTree = "<group>"; };
-		075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManager.h; sourceTree = "<group>"; };
 		07638A971884487200E15A1B /* MediaSessionManagerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSessionManagerIOS.h; sourceTree = "<group>"; };
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
@@ -6514,6 +6512,9 @@
 		1D0026A82374F9D900CA6CDF /* JSEnterPictureInPictureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEnterPictureInPictureEvent.h; sourceTree = "<group>"; };
 		1D0026A92374F9D900CA6CDF /* JSEnterPictureInPictureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEnterPictureInPictureEvent.cpp; sourceTree = "<group>"; };
 		1D2C82B6236A3F6A0055D6C5 /* PictureInPictureSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureSupport.h; sourceTree = "<group>"; };
+		1D392F2823F209B400E04B2D /* VideoLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoLayerManagerObjC.mm; sourceTree = "<group>"; };
+		1D392F2A23F209B500E04B2D /* VideoLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerManagerObjC.h; sourceTree = "<group>"; };
+		1D392F2B23F209D800E04B2D /* VideoLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerManager.h; sourceTree = "<group>"; };
 		1DBC1B552347B3D200B901AF /* PictureInPictureObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureObserver.h; sourceTree = "<group>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
 		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
@@ -8457,8 +8458,6 @@
 		52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
 		52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
 		52CB11DB22FDDB2E009F0A64 /* WHLSLDefaultDelete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLDefaultDelete.h; sourceTree = "<group>"; };
-		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManagerObjC.mm; sourceTree = "<group>"; };
-		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManagerObjC.h; sourceTree = "<group>"; };
 		52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModel.h; sourceTree = "<group>"; };
 		52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModelVideoElement.h; sourceTree = "<group>"; };
 		52D5A1A61C57488900DE34A3 /* VideoFullscreenModelVideoElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenModelVideoElement.mm; sourceTree = "<group>"; };
@@ -15529,7 +15528,7 @@
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5973DDE15CFB2030027F804 /* LocaleCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleCocoa.h; sourceTree = "<group>"; };
-		F5973DDF15CFB2030027F804 /* LocaleCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LocaleCocoa.mm; path = "../cocoa/LocaleCocoa.mm"; sourceTree = "<group>"; };
+		F5973DDF15CFB2030027F804 /* LocaleCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LocaleCocoa.mm; path = ../cocoa/LocaleCocoa.mm; sourceTree = "<group>"; };
 		F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDateAndTimeInputType.h; sourceTree = "<group>"; };
 		F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidationMessage.cpp; sourceTree = "<group>"; };
@@ -25129,7 +25128,7 @@
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				0F5A57CA229B18AE0025EDA9 /* VelocityData.cpp */,
 				0F1A0C36229A481800D37ADB /* VelocityData.h */,
-				075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */,
+				1D392F2B23F209D800E04B2D /* VideoLayerManager.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
 				1411DCB0164C39A800D49BC1 /* WidthCache.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
@@ -25830,7 +25829,6 @@
 				656B84D70AEA1CE900A095B4 /* network */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
-				E188235F2031F50F00B42DF3 /* vr */,
 				DFDB912CF8E88A6DA1AD264F /* AbortableTaskQueue.h */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
@@ -26734,8 +26732,8 @@
 				7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */,
 				CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */,
 				CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */,
-				52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */,
-				52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */,
+				1D392F2A23F209B500E04B2D /* VideoLayerManagerObjC.h */,
+				1D392F2823F209B400E04B2D /* VideoLayerManagerObjC.mm */,
 				CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */,
 				CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */,
 				CD8B5A41180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.h */,
@@ -32835,7 +32833,6 @@
 				52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */,
 				3FBC4AF4189881560046EE38 /* VideoFullscreenInterfaceAVKit.h in Headers */,
 				52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */,
-				075BA84920618AA500FCB4AD /* VideoFullscreenLayerManager.h in Headers */,
 				52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */,
 				52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
@@ -34267,7 +34264,7 @@
 				7CE68344192143A800F4D928 /* UserMessageHandlerDescriptor.cpp in Sources */,
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
-				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */,
+				1D392F2D23F20A7000E04B2D /* VideoLayerManagerObjC.mm in Sources */,
 				41CD6F8C23D6E82100B16421 /* VideoSampleBufferCompressor.mm in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,

@@ -39,7 +39,7 @@
 #import "PixelBufferConformerCV.h"
 #import "TextTrackRepresentation.h"
 #import "TextureCacheCV.h"
-#import "VideoFullscreenLayerManagerObjC.h"
+#import "VideoLayerManagerObjC.h"
 #import "VideoTextureCopierCV.h"
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAsset.h>
@@ -139,7 +139,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_loadingProgressed(false)
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
-    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(m_logger, m_logIdentifier))
+    , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
     , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
@@ -310,7 +310,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::prepareToPlay()
 
 PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 {
-    return m_videoFullscreenLayerManager->videoInlineLayer();
+    return m_videoLayerManager->videoInlineLayer();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
@@ -761,7 +761,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
-    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
+    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
     m_player->renderingModeChanged();
 }
 
@@ -777,7 +777,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(nullptr);
-    m_videoFullscreenLayerManager->didDestroyVideoLayer();
+    m_videoLayerManager->didDestroyVideoLayer();
     m_sampleBufferDisplayLayer = nullptr;
     setHasAvailableVideoFrame(false);
     m_player->renderingModeChanged();
@@ -1154,27 +1154,27 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     updateLastImage();
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)
 {
-    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+    m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation() const
 {
-    return m_videoFullscreenLayerManager->videoFullscreenLayer();
+    return m_videoLayerManager->videoFullscreenLayer();
 }
     
 void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
 {
-    m_videoFullscreenLayerManager->syncTextTrackBounds();
+    m_videoLayerManager->syncTextTrackBounds();
 }
     
 void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
-    m_videoFullscreenLayerManager->setTextTrackRepresentation(representation);
+    m_videoLayerManager->setTextTrackRepresentation(representation);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

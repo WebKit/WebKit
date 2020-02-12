@@ -65,7 +65,7 @@ class InbandMetadataTextTrackPrivateAVF;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
 class SharedBuffer;
-class VideoFullscreenLayerManagerObjC;
+class VideoLayerManagerObjC;
 class VideoTextureCopierCV;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -340,7 +340,7 @@ private:
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
     RetainPtr<AVPlayerLayer> m_videoLayer;
-    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+    std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
     MediaPlayer::VideoGravity m_videoFullscreenGravity;
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<id> m_timeObserver;

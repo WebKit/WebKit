@@ -34,7 +34,7 @@
 #import "LocalSampleBufferDisplayLayer.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
-#import "VideoFullscreenLayerManagerObjC.h"
+#import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <CoreGraphics/CGAffineTransform.h>
 #import <objc_runtime.h>
@@ -146,7 +146,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_clock(PAL::Clock::create())
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
-    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(m_logger, m_logIdentifier))
+    , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
     , m_boundsChangeListener(adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithParent:this]))
 {
     INFO_LOG(LOGIDENTIFIER);
@@ -380,7 +380,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     updateRenderingMode();
     updateDisplayLayer();
 
-    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
+    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
 
     [m_boundsChangeListener begin];
 }
@@ -392,7 +392,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 
     updateRenderingMode();
     
-    m_videoFullscreenLayerManager->didDestroyVideoLayer();
+    m_videoLayerManager->didDestroyVideoLayer();
 }
 
 #pragma mark -
@@ -463,7 +463,7 @@ PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
     if (!m_sampleBufferDisplayLayer || !m_sampleBufferDisplayLayer->rootLayer() || m_displayMode == None)
         return nullptr;
 
-    return m_videoFullscreenLayerManager->videoInlineLayer();
+    return m_videoLayerManager->videoInlineLayer();
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
@@ -776,12 +776,12 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     updateCurrentFrameImage();
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_imagePainter.cgImage);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_imagePainter.cgImage);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect frame)
 {
-    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+    m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
 typedef enum {
