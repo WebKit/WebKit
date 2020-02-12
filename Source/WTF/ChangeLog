@@ -1,3 +1,27 @@
+2020-02-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Fix declarations marked by wrong export macros (WEBCORE_EXPORT and WTF_EXPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=207453
+
+        Reviewed by Ross Kirsling.
+
+        Export macros are prone to be misused because thier definitions
+        are identical for POSIX ports. They can be used interchangeably on
+        such ports.
+
+        WTF should use WTF_EXPORT_PRIVATE instead of WTF_EXPORT.
+
+        * wtf/HexNumber.h:
+        * wtf/Language.h:
+        * wtf/Logger.h:
+        * wtf/ProcessPrivilege.h:
+        * wtf/cocoa/CrashReporter.h:
+        * wtf/cocoa/Entitlements.h:
+        * wtf/text/LineEnding.h:
+        * wtf/text/TextBreakIterator.h:
+        * wtf/text/icu/UTextProviderLatin1.h:
+        Replaced WTF_EXPORT with WTF_EXPORT_PRIVATE.
+
 2020-02-11  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band VTT captions when loading media in the GPU Process

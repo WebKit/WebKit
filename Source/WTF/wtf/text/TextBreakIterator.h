@@ -82,7 +82,7 @@ private:
     friend class TextBreakIteratorCache;
 
     // Use CachedTextBreakIterator instead of constructing one of these directly.
-    WTF_EXPORT TextBreakIterator(StringView, Mode, const AtomString& locale);
+    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, Mode, const AtomString& locale);
 
     void setText(StringView string)
     {

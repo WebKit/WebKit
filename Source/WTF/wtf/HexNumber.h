@@ -37,7 +37,7 @@ inline const LChar* hexDigitsForMode(HexConversionMode mode)
     return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
 }
 
-WTF_EXPORT std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
+WTF_EXPORT_PRIVATE std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
 
 template<size_t arraySize, typename NumberType>
 inline std::pair<LChar*, unsigned> appendHex(std::array<LChar, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)

@@ -210,7 +210,7 @@ public:
         {
         }
 
-        WTF_EXPORT String toString() const;
+        WTF_EXPORT_PRIVATE String toString() const;
 
         const char* className { nullptr };
         const char* methodName { nullptr };
@@ -281,7 +281,7 @@ template<> struct LogArgument<Logger::LogSiteIdentifier> {
     static String toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
 };
 template<> struct LogArgument<const void*> {
-    WTF_EXPORT static String toString(const void*);
+    WTF_EXPORT_PRIVATE static String toString(const void*);
 };
 
 } // namespace WTF

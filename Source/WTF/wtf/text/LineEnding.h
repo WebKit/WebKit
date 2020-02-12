@@ -36,11 +36,11 @@
 namespace WTF {
 
 // Normalize all line-endings in the given string.
-WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&&);
-WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&&);
+WTF_EXPORT_PRIVATE Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&&);
+WTF_EXPORT_PRIVATE Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&&);
 
 // Normalize all line-endings to CRLF on Windows, to LF on all other platforms.
-WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&&);
+WTF_EXPORT_PRIVATE Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&&);
 
 } // namespace WTF
 

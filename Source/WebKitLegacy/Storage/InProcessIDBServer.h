@@ -55,10 +55,10 @@ class IDBServer;
 class InProcessIDBServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public WebCore::IDBServer::IDBConnectionToClientDelegate, public ThreadSafeRefCounted<InProcessIDBServer> {
 public:
 
-    WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID);
-    WEBCORE_EXPORT static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
+    static Ref<InProcessIDBServer> create(PAL::SessionID);
+    static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
 
-    WEBCORE_EXPORT virtual ~InProcessIDBServer();
+    virtual ~InProcessIDBServer();
 
     WebCore::IDBClient::IDBConnectionToServer& connectionToServer() const;
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient() const;

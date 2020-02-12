@@ -35,20 +35,20 @@
 
 namespace WTF {
 
-WTF_EXPORT String defaultLanguage(); // Thread-safe.
-WTF_EXPORT Vector<String> userPreferredLanguages(); // Thread-safe, returns BCP 47 language tags.
-WTF_EXPORT Vector<String> userPreferredLanguagesOverride();
-WTF_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
-WTF_EXPORT size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
-WTF_EXPORT Vector<String> platformUserPreferredLanguages();
+WTF_EXPORT_PRIVATE String defaultLanguage(); // Thread-safe.
+WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguages(); // Thread-safe, returns BCP 47 language tags.
+WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguagesOverride();
+WTF_EXPORT_PRIVATE void overrideUserPreferredLanguages(const Vector<String>&);
+WTF_EXPORT_PRIVATE size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
+WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
 // Called from platform specific code when the user's preferred language(s) change.
 void languageDidChange();
 
 // The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);
-WTF_EXPORT void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
-WTF_EXPORT void removeLanguageChangeObserver(void* context);
-WTF_EXPORT String displayNameForLanguageLocale(const String&);
+WTF_EXPORT_PRIVATE void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
+WTF_EXPORT_PRIVATE void removeLanguageChangeObserver(void* context);
+WTF_EXPORT_PRIVATE String displayNameForLanguageLocale(const String&);
 
 #if PLATFORM(COCOA)
 bool canMinimizeLanguages();

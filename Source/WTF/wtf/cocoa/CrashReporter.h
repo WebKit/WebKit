@@ -27,6 +27,6 @@
 
 namespace WTF {
 
-WTF_EXPORT void setCrashLogMessage(const char*);
+WTF_EXPORT_PRIVATE void setCrashLogMessage(const char*);
 
 } // namespace WTF

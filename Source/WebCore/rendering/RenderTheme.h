@@ -160,7 +160,7 @@ public:
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    WTF_EXPORT Color focusRingColor(OptionSet<StyleColor::Options>) const;
+    WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColor::Options>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColor::Options>) const { return Color(0, 0, 0); }
     static void setCustomFocusRingColor(const Color&);
     static float platformFocusRingWidth() { return 3; }
