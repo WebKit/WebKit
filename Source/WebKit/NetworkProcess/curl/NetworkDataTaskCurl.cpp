@@ -223,7 +223,7 @@ bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bo
 
 void NetworkDataTaskCurl::invokeDidReceiveResponse()
 {
-    didReceiveResponse(ResourceResponse(m_response), [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
+    didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 

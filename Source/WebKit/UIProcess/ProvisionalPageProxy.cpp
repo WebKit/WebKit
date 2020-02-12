@@ -264,7 +264,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, WTFMove(frameSecurityOrigin), navigationID, provisionalURL, error, willContinueLoading, userData); // May delete |this|.
 }
 
-void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
+void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
 {
     if (!validateInput(frameID, navigationID))
         return;
@@ -274,7 +274,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, uint64
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
     m_wasCommitted = true;
-    m_page.commitProvisionalPage(frameID, navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, containsPluginDocument, forcedHasInsecureContent, userData); // Will delete |this|.
+    m_page.commitProvisionalPage(frameID, navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, containsPluginDocument, forcedHasInsecureContent, userData); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, FrameIdentifier frameID)

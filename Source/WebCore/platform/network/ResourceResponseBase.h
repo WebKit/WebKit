@@ -41,6 +41,8 @@ class ResourceResponse;
 
 bool isScriptAllowedByNosniff(const ResourceResponse&);
 
+enum class UsedLegacyTLS : bool { No, Yes };
+
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
@@ -127,8 +129,9 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
-    WEBCORE_EXPORT void includeCertificateInfo() const;
+    WEBCORE_EXPORT void includeCertificateInfo(UsedLegacyTLS = UsedLegacyTLS::No) const;
     const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
+    bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
     
     // These functions return parsed values of the corresponding response headers.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
@@ -246,7 +249,8 @@ private:
     bool m_isRangeRequested { false };
 
 protected:
-    int m_httpStatusCode { 0 };
+    short m_httpStatusCode { 0 };
+    mutable UsedLegacyTLS m_usedLegacyTLS { UsedLegacyTLS::No };
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
@@ -279,6 +283,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_tainting);
     encoder << m_isRedirected;
+    encoder << m_usedLegacyTLS;
     encoder << m_isRangeRequested;
 }
 
@@ -327,7 +332,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(isRedirected))
         return false;
     response.m_isRedirected = isRedirected;
-
+    if (!decoder.decode(response.m_usedLegacyTLS))
+        return false;
     bool isRangeRequested = false;
     if (!decoder.decode(isRangeRequested))
         return false;

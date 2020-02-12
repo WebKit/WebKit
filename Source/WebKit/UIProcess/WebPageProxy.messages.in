@@ -126,7 +126,7 @@ messages -> WebPageProxy {
     DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
     DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, URL url)
     DidFailProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData)
-    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, uint32_t loadType, WebCore::CertificateInfo certificateInfo, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebKit::UserData userData)
+    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, uint32_t loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebKit::UserData userData)
     DidFailLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
     DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebKit::UserData userData)
     DidFinishLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebKit::UserData userData)
