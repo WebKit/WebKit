@@ -47,13 +47,13 @@ public:
 
     void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     {
-        ASSERT(cueFormat() == Data);
+        ASSERT(cueFormat() == CueFormat::Data);
         client()->addDataCue(start, end, data, length);
     }
 
     void addGenericCue(GenericCueData& data)
     {
-        ASSERT(cueFormat() == Generic);
+        ASSERT(cueFormat() == CueFormat::Generic);
         client()->addGenericCue(data);
     }
 
