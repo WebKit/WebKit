@@ -195,7 +195,6 @@ class _ToolTip {
                 height: Math.min(windowHeight, rect.height),
             };
         }
-        console.log(viewport);
         this.ref.setState({content: content, points: points, viewport: viewport});
     }
     setByElement(content, element, options, viewport = null) {

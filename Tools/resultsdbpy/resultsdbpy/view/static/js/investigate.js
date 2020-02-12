@@ -63,7 +63,6 @@ function elapsed(data)
         return `Took ${data.time / 1000} seconds`;
     if (data.stats && data.stats.start_time && data.stats.end_time) {
         const time = new Date((data.stats.end_time - data.stats.start_time) * 1000);
-        console.log(data.stats.end_time - data.stats.start_time);
         let result = 'Suite took ';
         if (time.getMinutes())
             result += `${time.getMinutes()}:`;

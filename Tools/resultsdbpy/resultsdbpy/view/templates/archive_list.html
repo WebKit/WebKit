@@ -91,9 +91,6 @@ function listContentForPaths(root, paths) {
 }
 
 const paths = [{% for val in values %}'{{ val }}', {% endfor %}];
-paths.forEach(pth => {
-    console.log(pth);
-})
 DOM.inject(document.getElementById('paths'), listContentForPaths('', paths));
 
 </script>

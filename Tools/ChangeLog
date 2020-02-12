@@ -1,3 +1,18 @@
+2020-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Remove debug JS logging
+        https://bugs.webkit.org/show_bug.cgi?id=207663
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/investigate.js:
+        (elapsed):
+        * resultsdbpy/resultsdbpy/view/static/js/tooltip.js:
+        (_ToolTip.prototype.toString):
+        * resultsdbpy/resultsdbpy/view/static/library/js/Ref.js:
+        (prototype.addWithDelay):
+        * resultsdbpy/resultsdbpy/view/templates/archive_list.html:
+
 2020-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Remove CSS_DEVICE_ADAPTATION

@@ -134,7 +134,6 @@ class EventStream {
     }
     addWithDelay(delay, ...args) {
         setTimeout(() => {
-            console.log(args);
             this.add(...args);
         }, delay);
         return this;
