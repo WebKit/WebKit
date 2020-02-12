@@ -3491,3 +3491,5 @@ webkit.org/b/207563 imported/w3c/web-platform-tests/content-security-policy/fram
 webkit.org/b/207643 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Pass Failure ]
 
 webkit.org/b/207645 http/tests/security/cross-frame-access-private-browsing.html [ Pass Timeout ]
+
+webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass Timeout ]

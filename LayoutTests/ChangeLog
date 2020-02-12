@@ -1,3 +1,12 @@
+2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207647
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-02-12  Megan Gardner  <megan_gardner@apple.com>
 
         Fix highlight text decorations to work with all decoration types and colors
