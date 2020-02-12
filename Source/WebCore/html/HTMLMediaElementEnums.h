@@ -47,7 +47,6 @@ public:
 
 String convertEnumerationToString(HTMLMediaElementEnums::ReadyState);
 String convertEnumerationToString(HTMLMediaElementEnums::NetworkState);
-String convertEnumerationToString(HTMLMediaElementEnums::TextTrackVisibilityCheckType);
 
 } // namespace WebCore
 
@@ -69,14 +68,6 @@ struct LogArgument<WebCore::HTMLMediaElementEnums::NetworkState> {
     static String toString(const WebCore::HTMLMediaElementEnums::NetworkState state)
     {
         return convertEnumerationToString(state);
-    }
-};
-
-template <>
-struct LogArgument<WebCore::HTMLMediaElementEnums::TextTrackVisibilityCheckType> {
-    static String toString(const WebCore::HTMLMediaElementEnums::TextTrackVisibilityCheckType type)
-    {
-        return convertEnumerationToString(type);
     }
 };
 

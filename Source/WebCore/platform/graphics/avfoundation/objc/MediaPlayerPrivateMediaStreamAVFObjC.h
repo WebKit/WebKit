@@ -59,7 +59,9 @@ class VideoFullscreenLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
 class MediaPlayerPrivateMediaStreamAVFObjC final : public CanMakeWeakPtr<MediaPlayerPrivateMediaStreamAVFObjC>, public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
+#if !RELEASE_LOG_DISABLED
     , private LoggerHelper
+#endif
 {
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
@@ -87,10 +89,12 @@ public:
     PlatformLayer* displayLayer();
     PlatformLayer* backgroundLayer();
 
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
+#endif
 
 private:
     // MediaPlayerPrivateInterface
@@ -259,6 +263,10 @@ private:
     CGAffineTransform m_videoTransform;
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
 
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 
     bool m_videoMirrored { false };
     bool m_playing { false };
