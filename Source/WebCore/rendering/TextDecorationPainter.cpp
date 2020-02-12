@@ -316,26 +316,10 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         m_context.clearShadow();
 }
 
-static Color decorationColor(const RenderStyle& style)
-{
-    // Check for text decoration color first.
-    Color result = style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
-    if (result.isValid())
-        return result;
-    if (style.hasPositiveStrokeWidth()) {
-        // Prefer stroke color if possible but not if it's fully transparent.
-        result = style.computedStrokeColor();
-        if (result.isVisible())
-            return result;
-    }
-    
-    return style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
-}
-
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecoration> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)
 {
     auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecoration> decorations) {
-        auto color = decorationColor(style);
+        auto color = TextDecorationPainter::decorationColor(style);
         auto decorationStyle = style.textDecorationStyle();
 
         if (decorations.contains(TextDecoration::Underline)) {
@@ -385,6 +369,22 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (!remainingDecorations.isEmpty() && current)
         extractDecorations(styleForRenderer(*current), remainingDecorations);
+}
+
+Color TextDecorationPainter::decorationColor(const RenderStyle& style)
+{
+    // Check for text decoration color first.
+    auto result = style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
+    if (result.isValid())
+        return result;
+    if (style.hasPositiveStrokeWidth()) {
+        // Prefer stroke color if possible but not if it's fully transparent.
+        result = style.computedStrokeColor();
+        if (result.isVisible())
+            return result;
+    }
+    
+    return style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
 }
 
 OptionSet<TextDecoration> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)

@@ -826,13 +826,21 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
             style.textStyles.fillColor = renderStyle->computedStrokeColor();
             style.textStyles.strokeColor = renderStyle->computedStrokeColor();
             
-            auto color = renderStyle->visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+            auto color = TextDecorationPainter::decorationColor(*renderStyle.get());
             auto decorationStyle = renderStyle->textDecorationStyle();
             auto decorations = renderStyle->textDecorationsInEffect();
 
-            if (decorations.containsAny({ TextDecoration::Underline, TextDecoration::Overline, TextDecoration::LineThrough })) {
+            if (decorations.contains(TextDecoration::Underline)) {
                 style.textDecorationStyles.underlineColor = color;
                 style.textDecorationStyles.underlineStyle = decorationStyle;
+            }
+            if (decorations.contains(TextDecoration::Overline)) {
+                style.textDecorationStyles.overlineColor = color;
+                style.textDecorationStyles.overlineStyle = decorationStyle;
+            }
+            if (decorations.contains(TextDecoration::LineThrough)) {
+                style.textDecorationStyles.linethroughColor = color;
+                style.textDecorationStyles.linethroughStyle = decorationStyle;
             }
         }
         break;

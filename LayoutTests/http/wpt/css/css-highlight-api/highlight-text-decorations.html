@@ -12,12 +12,24 @@
         }
         ::highlight(example-highlight1) {
             text-decoration: underline;
+            text-decoration-color: red;
+            color: blue;
+        }
+        ::highlight(example-highlight2) {
+            text-decoration: line-through;
+            text-decoration-color: violet;
+            text-decoration-style: double;
+        }
+        ::highlight(example-highlight3) {
+            text-decoration: overline;
+            text-decoration-color: orange;
+            text-decoration-style: dotted;
         }
         /* FIXME: There is a discrepency for how the underlines are displayed at the end of the line, leading to a pixel different in this text. Find a real fix, but in the meantime, obscure the offending pixel https://bugs.webkit.org/show_bug.cgi?id=207512 <rdar://problem/59327965> */
         .obscurer1 {
           position: absolute;
-          top: 35px;
-          left: 100px;
+          top: 25px;
+          left: 95px;
           width: 10px;
           height: 10px;
           background: grey;
@@ -36,13 +48,16 @@
     <span id="text1">One two three</span>
     <div class='obscurer1'></div>
     <div class='obscurer2'></div>
+
     <script>
         let textElement = document.getElementById('text1');
         let highlightRangeGroup1 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 1, endContainer: textElement.childNodes[0], endOffset: 2}));
-        highlightRangeGroup1.add(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 5, endContainer: textElement.childNodes[0], endOffset: 6}));
-        highlightRangeGroup1.add(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 10, endContainer: textElement.childNodes[0], endOffset: 13}));
+        let highlightRangeGroup2 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 5, endContainer: textElement.childNodes[0], endOffset: 6}));
+        let highlightRangeGroup3 = new HighlightRangeGroup(new StaticRange({startContainer: textElement.childNodes[0], startOffset: 10, endContainer: textElement.childNodes[0], endOffset: 13}));
 
         CSS.highlights.set("example-highlight1", highlightRangeGroup1);
+        CSS.highlights.set("example-highlight2", highlightRangeGroup2);
+        CSS.highlights.set("example-highlight3", highlightRangeGroup3);
     </script>
 </body>
 </html>
