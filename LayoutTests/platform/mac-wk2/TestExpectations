@@ -1021,3 +1021,5 @@ webkit.org/b/207599 webgpu/whlsl/do-while-loop.html [ Pass ImageOnlyFailure ]
 webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207635 fast/events/before-input-prevent-insert-replacement.html [ Pass Failure ]

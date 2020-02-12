@@ -1,5 +1,14 @@
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS wk2 ] fast/events/before-input-prevent-insert-replacement.html is a flay failure
+        https://bugs.webkit.org/show_bug.cgi?id=207635
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         REGRESSION: (256400) tiled-drawing/scrolling/fixed/fixed-during-rubberband.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=207631
 
