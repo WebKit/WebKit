@@ -1,5 +1,21 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255880. rdar://problem/59299151
+
+    Unreviewed, another build fix after r255846
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255880 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, another build fix after r255846
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255846. rdar://problem/59299151
 
     Make WKWebView._negotiatedLegacyTLS accurate when loading main resouorce from network or cache
