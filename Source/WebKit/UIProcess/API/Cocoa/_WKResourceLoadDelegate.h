@@ -25,6 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
+@class WKWebView;
 @class _WKResourceLoadInfo;
 
 NS_ASSUME_NONNULL_BEGIN

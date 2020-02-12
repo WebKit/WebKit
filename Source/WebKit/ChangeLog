@@ -1,3 +1,11 @@
+2020-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        Make _WKResourceLoadDelegate.h able to be included before other headers
+        https://bugs.webkit.org/show_bug.cgi?id=206037
+
+        * UIProcess/API/Cocoa/_WKResourceLoadDelegate.h:
+        Add missing "@class WKWebView;"
+
 2020-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         Expand WebContent process sandbox with additional syscall
