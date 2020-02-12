@@ -105,7 +105,6 @@ async function runTests() {
                     shouldBe("event.methodDetails.billingContact.countryCode", "expectedCountryCode");
                     shouldBe("event.methodDetails.network","'visa'");
                     shouldBe("event.methodDetails.type","'credit'");
-                    paymentRequest.abort();
                     resolve();
                 };
 

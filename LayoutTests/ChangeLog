@@ -1,3 +1,14 @@
+2020-02-12  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        [ Mac wk2 ] http/tests/ssl/applepay/ApplePayBillingAddress.html a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207577
+
+        Reviewed by Wenson Hsieh
+
+        Fix for race condition when aborting paymentrequest.
+
+        * http/tests/ssl/applepay/ApplePayBillingAddress.html:
+
 2020-02-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to analytics service in the WebContent process
