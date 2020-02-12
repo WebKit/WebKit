@@ -1,3 +1,24 @@
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/59299139
+
+    2020-02-11  Saam Barati  <sbarati@apple.com>
+
+            safe to execute should return false when we know code won't be moved
+            https://bugs.webkit.org/show_bug.cgi?id=207074
+
+            Reviewed by Yusuke Suzuki.
+
+            We use safeToExecute to determine inside LICM whether it's safe to execute
+            a node somewhere else in the program. We were returning true for nodes
+            we knew would never be moved, because they were effectful. Things like Call
+            and GetById. This patch makes those nodes return false now, since we want
+            to make it easier to audit the nodes that return true. This makes that audit
+            easier, since it gets rid of the obvious things that will never be hoisted.
+
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r255539. rdar://problem/59299142
