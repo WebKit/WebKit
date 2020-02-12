@@ -648,6 +648,7 @@ void CurlHandle::setDebugCallbackFunction(curl_debug_callback callbackFunc, void
 void CurlHandle::enableConnectionOnly()
 {
     curl_easy_setopt(m_handle, CURLOPT_CONNECT_ONLY, 1L);
+    curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 }
 
 Optional<String> CurlHandle::getProxyUrl()
