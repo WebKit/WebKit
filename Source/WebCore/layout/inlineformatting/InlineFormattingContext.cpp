@@ -461,7 +461,6 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         auto& lineRun = lineRuns.at(index);
         auto& logicalRect = lineRun.logicalRect();
         auto& layoutBox = lineRun.layoutBox();
-        auto& displayBox = formattingState.displayBox(layoutBox);
 
         // Add final display runs to state first.
         // Inline level containers (<span>) don't generate display runs and neither do completely collapsed runs.
@@ -489,9 +488,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
 
         if (lineRun.isLineBreak()) {
-            displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
-            displayBox.setContentBoxWidth(toLayoutUnit(logicalRect.width()));
-            displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
+            // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
             continue;
         }
 
@@ -500,18 +497,21 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto topLeft = logicalRect.topLeft();
             if (layoutBox.isInFlowPositioned())
                 topLeft += geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
+            auto& displayBox = formattingState.displayBox(layoutBox);
             displayBox.setTopLeft(toLayoutPoint(topLeft));
             continue;
         }
 
         // Inline level container start (<span>)
         if (lineRun.isContainerStart()) {
+            auto& displayBox = formattingState.displayBox(layoutBox);
             displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
             continue;
         }
 
         // Inline level container end (</span>)
         if (lineRun.isContainerEnd()) {
+            auto& displayBox = formattingState.displayBox(layoutBox);
             if (layoutBox.isInFlowPositioned()) {
                 auto inflowOffset = geometry().inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
                 displayBox.moveHorizontally(inflowOffset.width());
@@ -526,17 +526,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         }
 
         if (lineRun.isText()) {
+            // Anonymous inline text boxes do not create display boxes.
             lastTextItemIndex = inlineContent.runs.size() - 1;
-            auto firstRunForLayoutBox = !index || &lineRuns[index - 1].layoutBox() != &layoutBox; 
-            if (firstRunForLayoutBox) {
-                // Setup display box for the associated layout box.
-                displayBox.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
-                displayBox.setContentBoxWidth(toLayoutUnit(logicalRect.width()));
-                displayBox.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
-            } else {
-                // FIXME fix it for multirun/multiline.
-                displayBox.setContentBoxWidth(toLayoutUnit(displayBox.contentBoxWidth() + logicalRect.width()));
-            }
             continue;
         }
         ASSERT_NOT_REACHED();
