@@ -558,11 +558,6 @@ public:
     // distinguish between the two.
     const Pagination& pagination() const;
     void setPagination(const Pagination&);
-    
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    IntSize initialViewportSize() const { return m_initialViewportSize; }
-    void setInitialViewportSize(const IntSize& size) { m_initialViewportSize = size; }
-#endif
 
     bool isActive() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
@@ -894,12 +889,6 @@ private:
 
     static const unsigned visualCharacterThreshold = 200;
     static const unsigned visualPixelThreshold = 32 * 32;
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    // Size of viewport before any UA or author styles have overridden
-    // the viewport given by the window or viewing area of the UA.
-    IntSize m_initialViewportSize;
-#endif
 
     Pagination m_pagination;
 

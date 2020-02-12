@@ -79,9 +79,6 @@ Class kitClass(WebCore::CSSRule* impl)
     case WebCore::CSSRule::NAMESPACE_RULE:
     case WebCore::CSSRule::KEYFRAME_RULE:
     case WebCore::CSSRule::SUPPORTS_RULE:
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case WebCore::CSSRule::WEBKIT_VIEWPORT_RULE:
-#endif
         return [DOMCSSRule class];
     }
     ASSERT_NOT_REACHED();

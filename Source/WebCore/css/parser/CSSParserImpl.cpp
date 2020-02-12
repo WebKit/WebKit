@@ -430,10 +430,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeMediaRule(prelude, block);
     case CSSAtRuleSupports:
         return consumeSupportsRule(prelude, block);
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case CSSAtRuleViewport:
-        return consumeViewportRule(prelude, block);
-#endif
     case CSSAtRuleFontFace:
         return consumeFontFaceRule(prelude, block);
     case CSSAtRuleWebkitKeyframes:
@@ -574,25 +570,6 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
 
     return StyleRuleSupports::create(prelude.serialize().stripWhiteSpace(), supported, rules);
 }
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-RefPtr<StyleRuleViewport> CSSParserImpl::consumeViewportRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
-{
-    if (!prelude.atEnd())
-        return nullptr; // Parser error; @viewport prelude should be empty
-
-    if (m_observerWrapper) {
-        unsigned endOffset = m_observerWrapper->endOffset(prelude);
-        m_observerWrapper->observer().startRuleHeader(StyleRuleType::Viewport, m_observerWrapper->startOffset(prelude));
-        m_observerWrapper->observer().endRuleHeader(endOffset);
-        m_observerWrapper->observer().startRuleBody(endOffset);
-        m_observerWrapper->observer().endRuleBody(endOffset);
-    }
-
-    consumeDeclarationList(block, StyleRule::Viewport);
-    return StyleRuleViewport::create(createStyleProperties(m_parsedProperties, CSSViewportRuleMode));
-}
-#endif
 
 RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {

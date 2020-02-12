@@ -6809,17 +6809,6 @@ DocumentLoader* Document::loader() const
     return loader;
 }
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-
-IntSize Document::initialViewportSize() const
-{
-    if (!view())
-        return IntSize();
-    return view()->initialViewportSize();
-}
-
-#endif
-
 Element* eventTargetElementForDocument(Document* document)
 {
     if (!document)

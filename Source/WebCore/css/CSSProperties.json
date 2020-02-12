@@ -6853,46 +6853,6 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
-        "max-zoom": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
-            },
-            "specification": {
-                "category": "css-device-adapt",
-                "url": "https://www.w3.org/TR/css-device-adapt-1/#descdef-viewport-max-zoom"
-            }
-        },
-        "min-zoom": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
-            },
-            "specification": {
-                "category": "css-device-adapt",
-                "url": "https://www.w3.org/TR/css-device-adapt-1/#descdef-viewport-min-zoom"
-            }
-        },
-        "orientation": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
-            },
-            "specification": {
-                "category": "css-device-adapt",
-                "url": "https://www.w3.org/TR/css-device-adapt-1/#descdef-viewport-orientation"
-            }
-        },
-        "user-zoom": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "enable-if": "ENABLE_CSS_DEVICE_ADAPTATION"
-            },
-            "specification": {
-                "category": "css-device-adapt",
-                "url": "https://www.w3.org/TR/css-device-adapt-1/#descdef-viewport-user-zoom"
-            }
-        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {

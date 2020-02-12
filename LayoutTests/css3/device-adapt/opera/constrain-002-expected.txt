@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - max-width 10000px 
-

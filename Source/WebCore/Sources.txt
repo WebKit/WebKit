@@ -779,9 +779,7 @@ css/StyleSheet.cpp
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
 css/TransformFunctions.cpp
-css/ViewportStyleResolver.cpp
 css/WebKitCSSMatrix.cpp
-css/WebKitCSSViewportRule.cpp
 
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSDeferredParser.cpp
@@ -3481,7 +3479,6 @@ JSWebGPUTexture.cpp
 JSWebGPUTextureView.cpp
 JSWebKitAnimationEvent.cpp
 JSWebKitCSSMatrix.cpp
-JSWebKitCSSViewportRule.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
 JSWebKitTransitionEvent.cpp

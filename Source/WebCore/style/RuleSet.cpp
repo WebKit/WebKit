@@ -42,7 +42,6 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "ViewportStyleResolver.h"
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrackCue.h"
@@ -312,14 +311,6 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, MediaQue
             addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), mediaQueryCollector, resolver, mode);
             continue;
         }
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        if (is<StyleRuleViewport>(*rule)) {
-            if (resolver)
-                resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
-            mediaQueryCollector.didMutateResolver();
-            continue;
-        }
-#endif
     }
 }
 

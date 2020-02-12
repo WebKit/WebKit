@@ -1,3 +1,17 @@
+2020-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove CSS_DEVICE_ADAPTATION
+        https://bugs.webkit.org/show_bug.cgi?id=203479
+
+        Reviewed by Tim Horton.
+
+        CSS Working Group resolved to remove @viewport <https://github.com/w3c/csswg-drafts/issues/4766>,
+        so remove the code.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2020-02-12  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove irrelevant global-name rule in WebContent sandbox

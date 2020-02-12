@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - extended width and height for non-auto zoom. 
-

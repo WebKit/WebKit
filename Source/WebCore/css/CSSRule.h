@@ -51,9 +51,6 @@ public:
         KEYFRAME_RULE,
         NAMESPACE_RULE = 10, // Matches other browsers.
         SUPPORTS_RULE = 12,
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        WEBKIT_VIEWPORT_RULE = 15,
-#endif
     };
 
     enum DeprecatedType {

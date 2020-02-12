@@ -1785,12 +1785,6 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
     // Use FloatSize to avoid truncated values during scale.
     FloatSize contentFixedSize = m_viewSize;
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    // CSS viewport descriptors might be applied to already affected viewport size
-    // if the page enables/disables stylesheets, so need to keep initial viewport size.
-    view->setInitialViewportSize(roundedIntSize(contentFixedSize));
-#endif
-
     contentFixedSize.scale(1 / attr.initialScale);
     view->setFixedVisibleContentRect(IntRect(contentFixedOrigin, roundedIntSize(contentFixedSize)));
 

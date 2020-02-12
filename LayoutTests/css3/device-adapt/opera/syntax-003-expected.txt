@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport syntax - descriptor recovery 
-

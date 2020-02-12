@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - min-width greater than max-width. 
-

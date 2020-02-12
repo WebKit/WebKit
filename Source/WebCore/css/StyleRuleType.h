@@ -39,9 +39,6 @@ enum class StyleRuleType : uint8_t {
     Keyframe, // Not used. These are internally non-rule StyleRuleKeyframe objects.
     Namespace = 10,
     Supports = 12,
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    Viewport = 15,
-#endif
 };
 
 } // namespace WebCore

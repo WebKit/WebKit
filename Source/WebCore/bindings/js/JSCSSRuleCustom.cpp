@@ -46,8 +46,6 @@
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
-#include "JSWebKitCSSViewportRule.h"
-#include "WebKitCSSViewportRule.h"
 
 
 namespace WebCore {
@@ -79,10 +77,6 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSKeyframesRule>(globalObject, WTFMove(rule));
     case CSSRule::SUPPORTS_RULE:
         return createWrapper<CSSSupportsRule>(globalObject, WTFMove(rule));
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case CSSRule::WEBKIT_VIEWPORT_RULE:
-        return createWrapper<WebKitCSSViewportRule>(globalObject, WTFMove(rule));
-#endif
     default:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }

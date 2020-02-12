@@ -3813,14 +3813,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransformOriginZ:
             break;
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        case CSSPropertyMaxZoom:
-        case CSSPropertyMinZoom:
-        case CSSPropertyOrientation:
-        case CSSPropertyUserZoom:
-            break;
-#endif
-
         case CSSPropertyBufferedRendering:
         case CSSPropertyClipRule:
         case CSSPropertyMask:

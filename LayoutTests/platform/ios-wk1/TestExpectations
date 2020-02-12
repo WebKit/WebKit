@@ -1752,7 +1752,6 @@ legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Failure Pa
 [ Release ] editing/undo/undo-delete.html [ Failure ]
 
 # Flaky as of 08/30/2016
-css3/device-adapt/viewport-width-not-affecting-next-page.html [ Pass Failure ]
 editing/execCommand/4641880-1.html [ Pass Failure ]
 editing/execCommand/insertHTML.html [ Pass Failure ]
 editing/input/composition-underline-rtl.html [ Pass ImageOnlyFailure ]

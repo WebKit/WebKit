@@ -661,7 +661,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/typedom/TypedOMCSSUnparsedValue.idl
 
     css/WebKitCSSMatrix.idl
-    css/WebKitCSSViewportRule.idl
 
     dom/AbortController.idl
     dom/AbortSignal.idl

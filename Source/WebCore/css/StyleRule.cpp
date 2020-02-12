@@ -35,7 +35,6 @@
 #include "MediaList.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"
-#include "WebKitCSSViewportRule.h"
 
 namespace WebCore {
 
@@ -82,11 +81,6 @@ void StyleRuleBase::destroy()
     case StyleRuleType::Keyframes:
         delete downcast<StyleRuleKeyframes>(this);
         return;
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case StyleRuleType::Viewport:
-        delete downcast<StyleRuleViewport>(this);
-        return;
-#endif
     case StyleRuleType::Namespace:
         delete downcast<StyleRuleNamespace>(this);
         return;
@@ -118,10 +112,6 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
         return downcast<StyleRuleSupports>(*this).copy();
     case StyleRuleType::Keyframes:
         return downcast<StyleRuleKeyframes>(*this).copy();
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case StyleRuleType::Viewport:
-        return downcast<StyleRuleViewport>(*this).copy();
-#endif
     case StyleRuleType::Import:
     case StyleRuleType::Namespace:
         // FIXME: Copy import and namespace rules.
@@ -160,11 +150,6 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
     case StyleRuleType::Keyframes:
         rule = CSSKeyframesRule::create(downcast<StyleRuleKeyframes>(self), parentSheet);
         break;
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case StyleRuleType::Viewport:
-        rule = WebKitCSSViewportRule::create(downcast<StyleRuleViewport>(self), parentSheet);
-        break;
-#endif
     case StyleRuleType::Namespace:
         rule = CSSNamespaceRule::create(downcast<StyleRuleNamespace>(self), parentSheet);
         break;
@@ -401,29 +386,6 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
     , m_conditionIsSupported(o.m_conditionIsSupported)
 {
 }
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-StyleRuleViewport::StyleRuleViewport(Ref<StyleProperties>&& properties)
-    : StyleRuleBase(StyleRuleType::Viewport)
-    , m_properties(WTFMove(properties))
-{
-}
-
-StyleRuleViewport::StyleRuleViewport(const StyleRuleViewport& o)
-    : StyleRuleBase(o)
-    , m_properties(o.m_properties->mutableCopy())
-{
-}
-
-StyleRuleViewport::~StyleRuleViewport() = default;
-
-MutableStyleProperties& StyleRuleViewport::mutableProperties()
-{
-    if (!m_properties->isMutable())
-        m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStyleProperties&>(m_properties.get());
-}
-#endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
 StyleRuleCharset::StyleRuleCharset()
     : StyleRuleBase(StyleRuleType::Charset)

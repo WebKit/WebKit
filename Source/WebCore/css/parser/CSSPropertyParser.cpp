@@ -266,11 +266,6 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     CSSPropertyParser parser(range, context, &parsedProperties);
     bool parseSuccess;
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (ruleType == StyleRuleType::Viewport)
-        parseSuccess = parser.parseViewportDescriptor(propertyID, important);
-    else
-#endif
     if (ruleType == StyleRuleType::FontFace)
         parseSuccess = parser.parseFontFaceDescriptor(propertyID);
     else
@@ -4665,93 +4660,6 @@ bool CSSPropertyParser::consumeBorderSpacing(bool important)
     addProperty(CSSPropertyWebkitBorderVerticalSpacing, CSSPropertyBorderSpacing, verticalSpacing.releaseNonNull(), important);
     return true;
 }
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-
-static RefPtr<CSSValue> consumeSingleViewportDescriptor(CSSParserTokenRange& range, CSSPropertyID propId, CSSParserMode cssParserMode)
-{
-    CSSValueID id = range.peek().id();
-    switch (propId) {
-    case CSSPropertyMinWidth:
-    case CSSPropertyMaxWidth:
-    case CSSPropertyMinHeight:
-    case CSSPropertyMaxHeight:
-        if (id == CSSValueAuto)
-            return consumeIdent(range);
-        return consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative);
-    case CSSPropertyMinZoom:
-    case CSSPropertyMaxZoom:
-    case CSSPropertyZoom: {
-        if (id == CSSValueAuto)
-            return consumeIdent(range);
-        RefPtr<CSSValue> parsedValue = consumeNumber(range, ValueRangeNonNegative);
-        if (parsedValue)
-            return parsedValue;
-        return consumePercent(range, ValueRangeNonNegative);
-    }
-    case CSSPropertyUserZoom:
-        return consumeIdent<CSSValueZoom, CSSValueFixed>(range);
-    case CSSPropertyOrientation:
-        return consumeIdent<CSSValueAuto, CSSValuePortrait, CSSValueLandscape>(range);
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-bool CSSPropertyParser::parseViewportDescriptor(CSSPropertyID propId, bool important)
-{
-    switch (propId) {
-    case CSSPropertyWidth: {
-        RefPtr<CSSValue> minWidth = consumeSingleViewportDescriptor(m_range, CSSPropertyMinWidth, m_context.mode);
-        if (!minWidth)
-            return false;
-        RefPtr<CSSValue> maxWidth = minWidth;
-        if (!m_range.atEnd())
-            maxWidth = consumeSingleViewportDescriptor(m_range, CSSPropertyMaxWidth, m_context.mode);
-        if (!maxWidth || !m_range.atEnd())
-            return false;
-        addProperty(CSSPropertyMinWidth, CSSPropertyInvalid, *minWidth, important);
-        addProperty(CSSPropertyMaxWidth, CSSPropertyInvalid, *maxWidth, important);
-        return true;
-    }
-    case CSSPropertyHeight: {
-        RefPtr<CSSValue> minHeight = consumeSingleViewportDescriptor(m_range, CSSPropertyMinHeight, m_context.mode);
-        if (!minHeight)
-            return false;
-        RefPtr<CSSValue> maxHeight = minHeight;
-        if (!m_range.atEnd())
-            maxHeight = consumeSingleViewportDescriptor(m_range, CSSPropertyMaxHeight, m_context.mode);
-        if (!maxHeight || !m_range.atEnd())
-            return false;
-        addProperty(CSSPropertyMinHeight, CSSPropertyInvalid, *minHeight, important);
-        addProperty(CSSPropertyMaxHeight, CSSPropertyInvalid, *maxHeight, important);
-        return true;
-    }
-    case CSSPropertyMinWidth:
-    case CSSPropertyMaxWidth:
-    case CSSPropertyMinHeight:
-    case CSSPropertyMaxHeight:
-    case CSSPropertyMinZoom:
-    case CSSPropertyMaxZoom:
-    case CSSPropertyZoom:
-    case CSSPropertyUserZoom:
-    case CSSPropertyOrientation: {
-        RefPtr<CSSValue> parsedValue = consumeSingleViewportDescriptor(m_range, propId, m_context.mode);
-        if (!parsedValue || !m_range.atEnd())
-            return false;
-        addProperty(propId, CSSPropertyInvalid, parsedValue.releaseNonNull(), important);
-        return true;
-    }
-    default:
-        return false;
-    }
-}
-
-#endif
 
 bool CSSPropertyParser::consumeColumns(bool important)
 {

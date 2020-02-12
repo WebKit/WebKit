@@ -1,3 +1,96 @@
+2020-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove CSS_DEVICE_ADAPTATION
+        https://bugs.webkit.org/show_bug.cgi?id=203479
+
+        Reviewed by Tim Horton.
+
+        * css3/device-adapt/opera/cascading-001-expected.txt: Removed.
+        * css3/device-adapt/opera/cascading-001.xhtml: Removed.
+        * css3/device-adapt/opera/cascading-002-expected.txt: Removed.
+        * css3/device-adapt/opera/cascading-002.xhtml: Removed.
+        * css3/device-adapt/opera/cascading-003-expected.txt: Removed.
+        * css3/device-adapt/opera/cascading-003.xhtml: Removed.
+        * css3/device-adapt/opera/cascading-004-expected.txt: Removed.
+        * css3/device-adapt/opera/cascading-004.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-001-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-001.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-002-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-002.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-003-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-003.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-004-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-004.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-005-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-005.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-006-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-006.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-007-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-007.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-008-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-008.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-009-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-009.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-010-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-010.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-011-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-011.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-012-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-012.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-013-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-013.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-014-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-014.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-015-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-015.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-016-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-016.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-017-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-017.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-018-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-018.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-019-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-019.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-020-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-020.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-021-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-021.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-022-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-022.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-023-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-023.xhtml: Removed.
+        * css3/device-adapt/opera/constrain-024-expected.txt: Removed.
+        * css3/device-adapt/opera/constrain-024.xhtml: Removed.
+        * css3/device-adapt/opera/cssom-001-expected.txt: Removed.
+        * css3/device-adapt/opera/cssom-001.xhtml: Removed.
+        * css3/device-adapt/opera/orientation-001-expected.txt: Removed.
+        * css3/device-adapt/opera/orientation-001.xhtml: Removed.
+        * css3/device-adapt/opera/orientation-002-expected.txt: Removed.
+        * css3/device-adapt/opera/orientation-002.xhtml: Removed.
+        * css3/device-adapt/opera/syntax-001-expected.txt: Removed.
+        * css3/device-adapt/opera/syntax-001.xhtml: Removed.
+        * css3/device-adapt/opera/syntax-002-expected.txt: Removed.
+        * css3/device-adapt/opera/syntax-002.xhtml: Removed.
+        * css3/device-adapt/opera/syntax-003-expected.txt: Removed.
+        * css3/device-adapt/opera/syntax-003.xhtml: Removed.
+        * css3/device-adapt/resources/check-contents-width.html: Removed.
+        * css3/device-adapt/resources/viewport-width-check-inner-width.html: Removed.
+        * css3/device-adapt/viewport-at-rule-parsing-expected.txt: Removed.
+        * css3/device-adapt/viewport-at-rule-parsing.html: Removed.
+        * css3/device-adapt/viewport-properties-validation-expected.txt: Removed.
+        * css3/device-adapt/viewport-properties-validation.html: Removed.
+        * css3/device-adapt/viewport-width-check-window-innerwidth-correct-expected.txt: Removed.
+        * css3/device-adapt/viewport-width-check-window-innerwidth-correct.html: Removed.
+        * css3/device-adapt/viewport-width-not-affecting-next-page-expected.txt: Removed.
+        * css3/device-adapt/viewport-width-not-affecting-next-page.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-02-12  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] crypto/subtle/rsa-indexeddb-non-exportable-private.html is flaky timing out.

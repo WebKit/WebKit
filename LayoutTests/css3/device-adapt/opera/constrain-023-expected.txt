@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - used width is positive. 
-

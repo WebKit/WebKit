@@ -127,10 +127,6 @@ public:
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
 
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    ViewportStyleResolver* viewportStyleResolver() { return m_viewportStyleResolver.get(); }
-#endif
-
     bool hasViewportDependentMediaQueries() const;
     Optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
@@ -192,10 +188,6 @@ private:
     Document& m_document;
 
     RenderStyle* m_overrideDocumentElementStyle { nullptr };
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
-#endif
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 

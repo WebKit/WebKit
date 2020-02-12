@@ -72,7 +72,6 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyle.h"
-#include "ViewportStyleResolver.h"
 #include "VisitedLinkState.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/Seconds.h>
@@ -88,9 +87,6 @@ using namespace HTMLNames;
 Resolver::Resolver(Document& document)
     : m_ruleSets(*this)
     , m_document(document)
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
-#endif
     , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
 {
     Element* root = m_document.documentElement();
@@ -142,10 +138,6 @@ void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styl
 
     if (auto renderView = document().renderView())
         renderView->style().fontCascade().update(&document().fontSelector());
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    viewportStyleResolver()->resolve();
-#endif
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -160,10 +152,6 @@ Resolver::~Resolver()
     RELEASE_ASSERT(!m_document.isResolvingTreeStyle());
     RELEASE_ASSERT(!m_isDeleted);
     m_isDeleted = true;
-
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    m_viewportStyleResolver->clearDocument();
-#endif
 }
 
 Resolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle)

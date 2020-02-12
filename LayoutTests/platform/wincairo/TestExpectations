@@ -37,9 +37,6 @@ inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
 legacy-animation-engine/transitions/blendmode-transitions.html [ Skip ]
 
-# CSS_DEVICE_ADAPTATION is disabled
-webkit.org/b/95959 css3/device-adapt [ Skip ]
-
 # CSS_IMAGE_ORIENTATION is disabled
 fast/css/image-orientation [ Skip ]
 imported/blink/fast/css/image-orientation [ Skip ]

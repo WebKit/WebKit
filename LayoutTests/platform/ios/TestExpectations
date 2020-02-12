@@ -248,9 +248,6 @@ inspector/ [ Skip ]
 http/tests/inspector/ [ Skip ]
 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
-# CSS Device Adaptation is not enabled.
-webkit.org/b/95959 css3/device-adapt [ Skip ]
-
 # Unsupported on certain OS versions
 webkit.org/b/152491 fast/text/woff2.html [ Skip ]
 

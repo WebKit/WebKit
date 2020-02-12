@@ -445,9 +445,6 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         case StyleRuleType::Charset:
         case StyleRuleType::Keyframe:
         case StyleRuleType::Supports:
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        case StyleRuleType::Viewport:
-#endif
             break;
         }
     }
@@ -488,9 +485,6 @@ bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const Ca
         case StyleRuleType::Charset:
         case StyleRuleType::Keyframe:
         case StyleRuleType::Supports:
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        case StyleRuleType::Viewport:
-#endif
             return false;
         };
         ASSERT_NOT_REACHED();

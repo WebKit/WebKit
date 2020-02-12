@@ -239,9 +239,6 @@ svg/webarchive [ Skip ]
 svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 http/tests/webarchive [ Skip ]
 
-# TODO CSS Device Adaptation is not enabled.
-webkit.org/b/95959 css3/device-adapt/ [ Skip ]
-
 # Neither this port nor the mac port support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ Skip ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]

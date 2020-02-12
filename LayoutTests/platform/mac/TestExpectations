@@ -499,9 +499,6 @@ webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
-# CSS Device Adaptation is not enabled.
-webkit.org/b/95959 css3/device-adapt [ Skip ]
-
 # Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 

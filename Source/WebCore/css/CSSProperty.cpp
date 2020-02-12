@@ -164,12 +164,6 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
 bool CSSProperty::isDescriptorOnly(CSSPropertyID propertyID)
 {
     switch (propertyID) {
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    case CSSPropertyMinZoom:
-    case CSSPropertyMaxZoom:
-    case CSSPropertyOrientation:
-    case CSSPropertyUserZoom:
-#endif
     case CSSPropertySrc:
     case CSSPropertyUnicodeRange:
     case CSSPropertyFontDisplay:
