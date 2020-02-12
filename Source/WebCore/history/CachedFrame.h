@@ -39,6 +39,7 @@ class DocumentLoader;
 class FrameView;
 class Node;
 enum class HasInsecureContent : bool;
+enum class UsedLegacyTLS : bool;
 
 class CachedFrameBase {
 public:
@@ -63,6 +64,7 @@ protected:
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
     Optional<HasInsecureContent> m_hasInsecureContent;
+    Optional<UsedLegacyTLS> m_usedLegacyTLS;
 
     Vector<std::unique_ptr<CachedFrame>> m_childFrames;
 };
@@ -79,8 +81,9 @@ public:
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
     WEBCORE_EXPORT CachedFramePlatformData* cachedFramePlatformData();
 
-    WEBCORE_EXPORT void setHasInsecureContent(HasInsecureContent);
+    WEBCORE_EXPORT void setHasInsecureContent(HasInsecureContent, UsedLegacyTLS);
     Optional<HasInsecureContent> hasInsecureContent() const { return m_hasInsecureContent; }
+    Optional<UsedLegacyTLS> usedLegacyTLS() const { return m_usedLegacyTLS; }
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;

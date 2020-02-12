@@ -4198,9 +4198,12 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
-void WebPageProxy::hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent)>&& completionHandler)
+void WebPageProxy::hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent, WebCore::UsedLegacyTLS)>&& completionHandler)
 {
-    completionHandler(m_pageLoadState.committedHasInsecureContent() ? HasInsecureContent::Yes : HasInsecureContent::No);
+    completionHandler(
+        m_pageLoadState.committedHasInsecureContent() ? HasInsecureContent::Yes : HasInsecureContent::No,
+        m_pageLoadState.hasNegotiatedLegacyTLS() ? UsedLegacyTLS::Yes : UsedLegacyTLS::No
+    );
 }
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)

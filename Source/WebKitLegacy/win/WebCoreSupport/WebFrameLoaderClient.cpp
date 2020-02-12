@@ -438,7 +438,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
         frameLoadDelegate->didReceiveTitle(webView, BString(title.string), m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent>)
+void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent>, Optional<UsedLegacyTLS>)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;

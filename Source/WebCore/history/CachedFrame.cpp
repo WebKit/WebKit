@@ -302,9 +302,10 @@ CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
     return m_cachedFramePlatformData.get();
 }
 
-void CachedFrame::setHasInsecureContent(HasInsecureContent hasInsecureContent)
+void CachedFrame::setHasInsecureContent(HasInsecureContent hasInsecureContent, UsedLegacyTLS usedLegacyTLS)
 {
     m_hasInsecureContent = hasInsecureContent;
+    m_usedLegacyTLS = usedLegacyTLS;
 }
 
 int CachedFrame::descendantFrameCount() const

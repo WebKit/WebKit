@@ -705,7 +705,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
 
 void FrameLoader::receivedFirstData()
 {
-    dispatchDidCommitLoad(WTF::nullopt);
+    dispatchDidCommitLoad(WTF::nullopt, WTF::nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -2070,8 +2070,9 @@ void FrameLoader::commitProvisionalLoad()
         notifier().dispatchDidReceiveResponse(cachedPage->documentLoader(), mainResourceIdentifier, cachedPage->documentLoader()->response());
 
         Optional<HasInsecureContent> hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
+        Optional<UsedLegacyTLS> usedLegacyTLS = cachedPage->cachedMainFrame()->usedLegacyTLS();
 
-        dispatchDidCommitLoad(hasInsecureContent);
+        dispatchDidCommitLoad(hasInsecureContent, usedLegacyTLS);
 
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         cachedPage->restore(*m_frame.page());
@@ -4005,12 +4006,12 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 #endif
 }
 
-void FrameLoader::dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasInsecureContent)
+void FrameLoader::dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasInsecureContent, Optional<UsedLegacyTLS> initialUsedLegacyTLS)
 {
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
-    m_client.dispatchDidCommitLoad(initialHasInsecureContent);
+    m_client.dispatchDidCommitLoad(initialHasInsecureContent, initialUsedLegacyTLS);
 
     if (m_frame.isMainFrame()) {
         m_frame.page()->resetSeenPlugins();
