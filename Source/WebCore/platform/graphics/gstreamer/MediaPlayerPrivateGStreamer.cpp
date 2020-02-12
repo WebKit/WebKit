@@ -1789,50 +1789,6 @@ void MediaPlayerPrivateGStreamer::setPipeline(GstElement* pipeline)
     }, this, nullptr);
 }
 
-InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMessage* message)
-{
-    ASSERT(!isMainThread());
-
-    InitData initData;
-    {
-        LockHolder lock(m_protectionMutex);
-        ProtectionSystemEvents protectionSystemEvents(message);
-        GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
-
-        for (auto& event : protectionSystemEvents.events()) {
-            const char* eventKeySystemId = nullptr;
-            GstBuffer* data = nullptr;
-            gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
-
-            initData.append({eventKeySystemId, data});
-            m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
-        }
-    }
-
-    return initData;
-}
-
-bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
-{
-    if (isMainThread()) {
-        GST_ERROR_OBJECT(pipeline(), "can't block the main thread waiting for a CDM instance");
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
-
-    bool didCDMAttach = false;
-    {
-        auto cdmAttachmentLocker = holdLock(m_cdmAttachmentMutex);
-        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentMutex, 4_s, [this]() {
-            return isCDMAttached();
-        });
-    }
-
-    return didCDMAttach;
-}
-
 bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION && !m_isLegacyPlaybin) {
@@ -3702,6 +3658,50 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlayback
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
+InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMessage* message)
+{
+    ASSERT(!isMainThread());
+
+    InitData initData;
+    {
+        LockHolder lock(m_protectionMutex);
+        ProtectionSystemEvents protectionSystemEvents(message);
+        GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
+
+        for (auto& event : protectionSystemEvents.events()) {
+            const char* eventKeySystemId = nullptr;
+            GstBuffer* data = nullptr;
+            gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
+
+            initData.append({eventKeySystemId, data});
+            m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
+        }
+    }
+
+    return initData;
+}
+
+bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
+{
+    if (isMainThread()) {
+        GST_ERROR_OBJECT(pipeline(), "can't block the main thread waiting for a CDM instance");
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
+
+    bool didCDMAttach = false;
+    {
+        auto cdmAttachmentLocker = holdLock(m_cdmAttachmentMutex);
+        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentMutex, 4_s, [this]() {
+            return isCDMAttached();
+        });
+    }
+
+    return didCDMAttach;
+}
+
 void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initData)
 {
     ASSERT(!isMainThread());
