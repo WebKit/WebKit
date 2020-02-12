@@ -274,18 +274,6 @@ String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState e
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(HTMLMediaElement::TextTrackVisibilityCheckType enumerationValue)
-{
-    static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("CheckTextTrackVisibility"),
-        MAKE_STATIC_STRING_IMPL("AssumeTextTrackVisibilityChanged"),
-    };
-    static_assert(static_cast<size_t>(HTMLMediaElement::TextTrackVisibilityCheckType::CheckTextTrackVisibility) == 0, "TextTrackVisibilityCheckType::CheckTextTrackVisibility is not 0 as expected");
-    static_assert(static_cast<size_t>(HTMLMediaElement::TextTrackVisibilityCheckType::AssumeTextTrackVisibilityChanged) == 1, "TextTrackVisibilityCheckType::AssumeTextTrackVisibilityChanged is not 1 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return values[static_cast<size_t>(enumerationValue)];
-}
-
 #if ENABLE(VIDEO_TRACK)
 
 class TrackDisplayUpdateScope {
@@ -6547,7 +6535,7 @@ void HTMLMediaElement::configureMediaControls()
 #if ENABLE(VIDEO_TRACK)
 void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType checkType)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, checkType);
+    ALWAYS_LOG(LOGIDENTIFIER);
     ASSERT(m_textTracks);
 
     if (m_processingPreferenceChange)

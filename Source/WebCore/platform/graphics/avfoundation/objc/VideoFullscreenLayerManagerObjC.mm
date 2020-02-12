@@ -27,7 +27,6 @@
 #import "VideoFullscreenLayerManagerObjC.h"
 
 #import "Color.h"
-#import "Logging.h"
 #import "TextTrackRepresentation.h"
 #import "WebCoreCALayerExtras.h"
 #import <mach/mach_init.h>
@@ -40,17 +39,13 @@
 
 namespace WebCore {
 
-VideoFullscreenLayerManagerObjC::VideoFullscreenLayerManagerObjC(const Logger& logger, const void* logIdentifier)
+VideoFullscreenLayerManagerObjC::VideoFullscreenLayerManagerObjC()
     : VideoFullscreenLayerManager()
-    , m_logger(logger)
-    , m_logIdentifier(logIdentifier)
 {
 }
 
 void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, contentSize.width(), ", ", contentSize.height());
-
     m_videoLayer = videoLayer;
     m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
 
@@ -85,8 +80,6 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *vid
         completionHandler();
         return;
     }
-
-    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_videoFullscreenLayer = videoFullscreenLayer;
 
@@ -128,8 +121,6 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *vid
 
 void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, videoFullscreenFrame.x(), ", ", videoFullscreenFrame.y(), ", ", videoFullscreenFrame.width(), ", ", videoFullscreenFrame.height());
-
     m_videoFullscreenFrame = videoFullscreenFrame;
     if (!m_videoFullscreenLayer)
         return;
@@ -140,8 +131,6 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFul
 
 void VideoFullscreenLayerManagerObjC::didDestroyVideoLayer()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
-
     [m_videoLayer removeFromSuperlayer];
 
     m_videoInlineLayer = nil;
@@ -158,9 +147,6 @@ void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
     if (!m_videoFullscreenLayer || !m_textTrackRepresentationLayer)
         return;
 
-    if (m_textTrackRepresentationLayer.get().bounds == m_videoFullscreenFrame)
-        return;
-
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -171,8 +157,6 @@ void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
 
 void VideoFullscreenLayerManagerObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
-
     PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
     if (representationLayer == m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
@@ -194,11 +178,6 @@ void VideoFullscreenLayerManagerObjC::setTextTrackRepresentation(TextTrackRepres
 
     [CATransaction commit];
 
-}
-
-WTFLogChannel& VideoFullscreenLayerManagerObjC::logChannel() const
-{
-    return LogMedia;
 }
 
 }

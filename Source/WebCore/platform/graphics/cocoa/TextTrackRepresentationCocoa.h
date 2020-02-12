@@ -28,10 +28,9 @@
 
 #if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
 
-#include "GenericTaskQueue.h"
-#include "TextTrackRepresentation.h"
-#include <QuartzCore/CALayer.h>
-#include <wtf/RetainPtr.h>
+#import "TextTrackRepresentation.h"
+#import <QuartzCore/CALayer.h>
+#import <wtf/RetainPtr.h>
 
 @class WebCoreTextTrackRepresentationCocoaHelper;
 
@@ -44,17 +43,13 @@ public:
 
     TextTrackRepresentationClient& client() const { return m_client; }
 
-    PlatformLayer* platformLayer() final { return m_layer.get(); }
-
-    IntRect bounds() const final;
-    void boundsChanged();
+    PlatformLayer* platformLayer() override { return m_layer.get(); }
+    IntRect bounds() const override;
 
 private:
-    void update() final;
-    void setContentScale(float) final;
-    void setHidden(bool) const final;
+    void update() override;
+    void setContentScale(float) override;
 
-    GenericTaskQueue<Timer> m_taskQueue;
     TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;
     RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;

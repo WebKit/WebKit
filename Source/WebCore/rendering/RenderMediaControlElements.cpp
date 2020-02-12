@@ -104,7 +104,7 @@ void RenderTextTrackContainerElement::layout()
     ASSERT(mediaControlElementType(element()) == MediaTextTrackDisplayContainer);
 
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
-    static_cast<MediaControlTextTrackContainerElement*>(element())->layoutIfNecessary();
+    static_cast<MediaControlTextTrackContainerElement*>(element())->updateSizes();
 }
 
 #endif // ENABLE(VIDEO_TRACK)
