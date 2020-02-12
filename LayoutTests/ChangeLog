@@ -1,3 +1,12 @@
+2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION: (356400) tiled-drawing/scrolling/sticky/sticky-during-rubberband.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=207632
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-12  Sunny He  <sunny_he@apple.com>
 
         Fix crash due to uninitialized currentStyle in CSSTransition
