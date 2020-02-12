@@ -313,6 +313,10 @@ public:
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
 #endif
 
+#if PLATFORM(MAC)
+    void updatePageScreenProperties();
+#endif
+
 private:
     WebProcess();
     ~WebProcess();

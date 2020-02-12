@@ -1963,6 +1963,10 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
 void WebPage::windowScreenDidChange(uint32_t displayID)
 {
     m_page->chrome().windowScreenDidChange(static_cast<PlatformDisplayID>(displayID));
+
+#if PLATFORM(MAC)
+    WebProcess::singleton().updatePageScreenProperties();
+#endif
 }
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
