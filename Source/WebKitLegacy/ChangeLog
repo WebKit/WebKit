@@ -1,3 +1,25 @@
+2020-02-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][CMake][WK1] WebKitLegacyGUID doesn't get recompiled by updating IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=207456
+
+        Reviewed by Don Olmstead.
+
+        In GENERATE_INTERFACE macro, only *.h files were specified to
+        OUTPUT of add_custom_command. Generated *_i.c files were just
+        marked GENERATED source file property. So, WebKitLegacyGUID didn't
+        know which command generates *_i.c files.
+
+        Added a new option HEADER_ONLY to GENERATE_INTERFACE. If
+        HEADER_ONLY is not specified, append ${_filewe}_i.c to the OUTPUT.
+        Only AccessibleStates.idl and IA2CommonTypes.idl are marked with
+        HEADER_ONLY.
+
+        Removed _defines and _depends options to simplify
+        GENERATE_INTERFACE.
+
+        * PlatformWin.cmake:
+
 2020-02-10  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256091.

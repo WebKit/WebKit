@@ -274,19 +274,6 @@ source_group(Includes FILES ${WebKitLegacy_INCLUDES})
 source_group(Classes FILES ${WebKitLegacy_SOURCES_Classes})
 source_group(WebCoreSupport FILES ${WebKitLegacy_SOURCES_WebCoreSupport})
 
-# Build the COM interface:
-macro(GENERATE_INTERFACE _infile _defines _depends)
-    get_filename_component(_filewe ${_infile} NAME_WE)
-    add_custom_command(
-        OUTPUT  ${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}.h
-        MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${_depends}
-        COMMAND midl.exe /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces" /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces/Accessible2" /I "${WebKitLegacy_DERIVED_SOURCES_DIR}/include" /I "${CMAKE_CURRENT_SOURCE_DIR}/win" /WX /char signed /env win32 /tlb "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_filewe}.tlb" /out "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces" /h "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}.h" /iid "${_filewe}_i.c" ${_defines} "${CMAKE_CURRENT_SOURCE_DIR}/${_infile}"
-        USES_TERMINAL VERBATIM)
-    set_source_files_properties(${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}.h PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}_i.c PROPERTIES GENERATED TRUE)
-endmacro()
-
 set(MIDL_DEFINES /D\ \"__PRODUCTION__=01\")
 
 set(WEBKITLEGACY_IDL_DEPENDENCIES
@@ -384,22 +371,38 @@ set(WEBKITLEGACY_IDL_DEPENDENCIES
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h"
 )
 
+# Build the COM interface:
+function(GENERATE_INTERFACE _infile)
+    cmake_parse_arguments(opt "HEADER_ONLY" "" "" ${ARGN})
+    get_filename_component(_filewe ${_infile} NAME_WE)
+    set(output ${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}.h)
+    if (NOT ${opt_HEADER_ONLY})
+        list(APPEND output ${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}_i.c)
+    endif ()
+    add_custom_command(
+        OUTPUT ${output}
+        MAIN_DEPENDENCY ${_infile}
+        DEPENDS ${WEBKITLEGACY_IDL_DEPENDENCIES}
+        COMMAND midl.exe /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces" /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces/Accessible2" /I "${WebKitLegacy_DERIVED_SOURCES_DIR}/include" /I "${CMAKE_CURRENT_SOURCE_DIR}/win" /WX /char signed /env win32 /tlb "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_filewe}.tlb" /out "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces" /h "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/${_filewe}.h" /iid "${_filewe}_i.c" ${MIDL_DEFINES} "${CMAKE_CURRENT_SOURCE_DIR}/${_infile}"
+        USES_TERMINAL VERBATIM)
+endfunction()
+
 add_custom_command(
     OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
     VERBATIM)
 
-GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2_2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleRelation.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleStates.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/IA2CommonTypes.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleEditableText.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/WebKit.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2_2.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleRelation.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleStates.idl HEADER_ONLY)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/IA2CommonTypes.idl HEADER_ONLY)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleEditableText.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText.idl)
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText2.idl)
 
 add_library(WebKitLegacyGUID STATIC
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/WebKit.h"
@@ -435,7 +438,7 @@ list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     Shlwapi
     Usp10
     Version
-    WebKitGUID${DEBUG_SUFFIX}
+    WebKitLegacyGUID
     WindowsCodecs
     Winmm
     dxguid
