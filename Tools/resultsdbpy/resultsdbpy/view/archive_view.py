@@ -26,7 +26,7 @@ from flask import abort, jsonify, request, Response
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration_controller import configuration_for_query
 from resultsdbpy.controller.suite_controller import time_range_for_query
-from resultsdbpy.flask_support.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query, query_as_string
+from resultsdbpy.flask_support.util import AssertRequest, boolean_query, cache_for, limit_for_query, query_as_kwargs, query_as_string
 from resultsdbpy.view.site_menu import SiteMenu
 
 
@@ -62,6 +62,7 @@ class ArchiveView(HasCommitContext):
     @limit_for_query(DEFAULT_LIMIT)
     @configuration_for_query()
     @time_range_for_query()
+    @cache_for(hours=12)
     def extract(
         self, path=None, format=None,
         suite=None, configurations=None, recent=None,

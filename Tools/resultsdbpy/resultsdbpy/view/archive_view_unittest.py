@@ -73,3 +73,4 @@ class ArchiveViewUnittest(WebSiteTestCase):
         response = client.get(self.URL + '/archive/file.txt')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, 'data')
+        self.assertEqual(response.headers.get('Cache-Control'), 'public,max-age=43200')

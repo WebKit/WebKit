@@ -114,3 +114,18 @@ def limit_for_query(default_limit=100):
         real_method.__name__ = method.__name__
         return real_method
     return decorator
+
+
+def cache_for(hours=12):
+    def decorator(method):
+        def real_method(self=None, method=method, **kwargs):
+            if self:
+                response = method(self=self, **kwargs)
+            else:
+                response = method(**kwargs)
+            response.headers.add('Cache-Control', f'public,max-age={hours * 60 * 60}')
+            return response
+
+        real_method.__name__ = method.__name__
+        return real_method
+    return decorator

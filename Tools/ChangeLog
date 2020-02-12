@@ -1,3 +1,17 @@
+2020-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Cache archive content
+        https://bugs.webkit.org/show_bug.cgi?id=207589
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/flask_support/util.py:
+        (cache_for): Add decorator function which sets the cache values on the returned response.
+        * resultsdbpy/resultsdbpy/view/archive_view.py:
+        (ArchiveView): Cache archive content client-side for 12 hours.
+        * resultsdbpy/resultsdbpy/view/archive_view_unittest.py:
+        (ArchiveViewUnittest.test_file): Verify that archived content is cached.
+
 2020-02-12  Youenn Fablet  <youenn@apple.com>
 
         WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
