@@ -31,13 +31,27 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDMFactory.h"
-#include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include "CDMPrivate.h"
+#include "CDMProxy.h"
 #include "SharedBuffer.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+namespace ClearKey {
+
+// ClearKey CENC SystemID.
+// https://www.w3.org/TR/eme-initdata-cenc/#common-system
+const uint8_t cencSystemId[] = { 0x10, 0x77, 0xef, 0xec, 0xc0, 0xb2, 0x4d, 0x02, 0xac, 0xe3, 0x3c, 0x1e, 0x52, 0xe2, 0xfb, 0x4b };
+const unsigned cencSystemIdSize = sizeof(cencSystemId);
+enum {
+    AES128CTRBlockSizeInBytes = 16,
+    KeyIDSizeInBytes = 16,
+    IVSizeInBytes = 16,
+};
+
+} // namespace ClearKey
 
 class CDMFactoryClearKey final : public CDMFactory {
     WTF_MAKE_FAST_ALLOCATED;
@@ -77,27 +91,12 @@ public:
     Optional<String> sanitizeSessionId(const String&) const final;
 };
 
-class ProxyCDMClearKey final : public ProxyCDM {
+class CDMInstanceClearKey final : public CDMInstanceProxy, public CanMakeWeakPtr<CDMInstanceClearKey> {
 public:
-    struct Key {
-        CDMInstanceSession::KeyStatus status;
-        String keyIDData;
-        String keyValueData;
-    };
-
-    virtual ~ProxyCDMClearKey() = default;
-    const Vector<Key> isolatedKeys() const;
-private:
-    mutable Lock m_keysMutex;
-};
-
-class CDMInstanceClearKey final : public CDMInstance, public CanMakeWeakPtr<CDMInstanceClearKey> {
-public:
-    CDMInstanceClearKey();
     virtual ~CDMInstanceClearKey();
 
+    // CDMInstance
     ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
-
     SuccessValue initializeWithConfiguration(const CDMKeySystemConfiguration&) final;
     SuccessValue setDistinctiveIdentifiersAllowed(bool) final;
     SuccessValue setPersistentStateAllowed(bool) final;
@@ -105,47 +104,22 @@ public:
     SuccessValue setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
-
-    struct Key {
-        CDMInstanceSession::KeyStatus status;
-        RefPtr<SharedBuffer> keyIDData;
-        RefPtr<SharedBuffer> keyValueData;
-
-        String keyIDAsString() const;
-        String keyValueAsString() const;
-
-        bool hasSameKeyValue(const Key &other)
-        {
-            ASSERT(keyValueData);
-            ASSERT(other.keyValueData);
-            return *keyValueData == *other.keyValueData;
-        }
-
-        // Two keys are equal if they have the same ID, ignoring key value and status.
-        friend bool operator==(const Key &k1, const Key &k2);
-        // Key's are ordered by their IDs, first by size, then by contents.
-        friend bool operator<(const Key &k1, const Key &k2);
-
-        friend bool operator!=(const Key &k1, const Key &k2) { return !(operator==(k1, k2)); }
-        friend bool operator>(const Key &k1, const Key &k2) { return !operator==(k1, k2) && !operator<(k1, k2); }
-        friend bool operator<=(const Key &k1, const Key &k2) { return !operator>(k1, k2); }
-        friend bool operator>=(const Key &k1, const Key &k2) { return !operator<(k1, k2); }
-    };
-
-    RefPtr<ProxyCDM> proxyCDM() const final { return m_proxyCDM; }
-
-private:
-    RefPtr<ProxyCDM> m_proxyCDM;
 };
 
 class CDMInstanceSessionClearKey final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionClearKey> {
 public:
+    CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
+        : m_parentInstance(parent) { }
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String&) final;
+private:
+    String m_sessionID;
+    CDMInstanceClearKey& m_parentInstance;
+    KeyStore m_keyStore;
 };
 
 } // namespace WebCore

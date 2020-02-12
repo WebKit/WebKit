@@ -36,40 +36,14 @@
 #include "CDMSessionType.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
+#include <algorithm>
+#include <iterator>
 #include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
-
-// ClearKey CENC SystemID.
-// https://www.w3.org/TR/eme-initdata-cenc/#common-system
-const uint8_t clearKeyCencSystemId[] = { 0x10, 0x77, 0xef, 0xec, 0xc0, 0xb2, 0x4d, 0x02, 0xac, 0xe3, 0x3c, 0x1e, 0x52, 0xe2, 0xfb, 0x4b };
-const unsigned clearKeyCencSystemIdSize = sizeof(clearKeyCencSystemId);
-const unsigned keyIdSize = 16;
-
-class ClearKeyState {
-    using KeyStore = HashMap<String, Vector<CDMInstanceClearKey::Key>>;
-
-public:
-    static ClearKeyState& singleton();
-
-    KeyStore& keys() { return m_keys; }
-
-private:
-    friend class NeverDestroyed<ClearKeyState>;
-    ClearKeyState();
-    KeyStore m_keys;
-};
-
-ClearKeyState& ClearKeyState::singleton()
-{
-    static NeverDestroyed<ClearKeyState> s_state;
-    return s_state;
-}
-
-ClearKeyState::ClearKeyState() = default;
 
 static RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 {
@@ -88,7 +62,7 @@ static RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
     return object;
 }
 
-static Optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON::Object& root)
+static Optional<Vector<RefPtr<Key>>> parseLicenseFormat(const JSON::Object& root)
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
@@ -101,7 +75,7 @@ static Optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON:
     if (!it->value->asArray(keysArray))
         return WTF::nullopt;
 
-    Vector<CDMInstanceClearKey::Key> decodedKeys;
+    Vector<RefPtr<Key>> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
         [&decodedKeys] (const auto& value) {
             RefPtr<JSON::Object> keyObject;
@@ -116,11 +90,11 @@ static Optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON:
             if (!keyObject->getString("kid", keyID) || !keyObject->getString("k", keyValue))
                 return false;
 
-            Vector<char> keyIDData, keyValueData;
+            Vector<uint8_t> keyIDData, keyValueData;
             if (!WTF::base64URLDecode(keyID, { keyIDData }) || !WTF::base64URLDecode(keyValue, { keyValueData }))
                 return false;
 
-            decodedKeys.append({ CDMInstanceSession::KeyStatus::Usable, SharedBuffer::create(WTFMove(keyIDData)), SharedBuffer::create(WTFMove(keyValueData)) });
+            decodedKeys.append(Key::create(CDMInstanceSession::KeyStatus::Usable, WTFMove(keyIDData), WTFMove(keyValueData)));
             return true;
         });
     if (!validFormat)
@@ -181,7 +155,7 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     while (true) {
 
         // Check the overflow InitData.
-        if (index + 12 + clearKeyCencSystemIdSize >= initDataSize)
+        if (index + 12 + ClearKey::cencSystemIdSize >= initDataSize)
             return keyIdsMap;
 
         psshSize = data[index + 2] * 256 + data[index + 3];
@@ -191,7 +165,7 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
             return keyIdsMap;
 
         // 12 = BMFF box header + Full box header.
-        if (!memcmp(&data[index + 12], clearKeyCencSystemId, clearKeyCencSystemIdSize)) {
+        if (!memcmp(&data[index + 12], ClearKey::cencSystemId, ClearKey::cencSystemIdSize)) {
             foundPssh = true;
             break;
         }
@@ -202,7 +176,7 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     if (!foundPssh)
         return keyIdsMap;
 
-    index += (12 + clearKeyCencSystemIdSize); // 12 (BMFF box header + Full box header) + SystemID size.
+    index += (12 + ClearKey::cencSystemIdSize); // 12 (BMFF box header + Full box header) + SystemID size.
 
     // Check the overflow.
     if (index + 3 >= initDataSize)
@@ -212,7 +186,7 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     index += 4; // KeyIdsCount size.
 
     // Check the overflow.
-    if ((index + (keyIdsMap.first * keyIdSize)) >= initDataSize)
+    if ((index + (keyIdsMap.first * ClearKey::KeyIDSizeInBytes)) >= initDataSize)
         return keyIdsMap;
 
     keyIdsMap.second = index; // The location of the first KeyId in initData.
@@ -251,9 +225,9 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
     for (unsigned i = 0; i < keyIdCount; i++) {
-        String keyId = WTF::base64URLEncode(&data[index], keyIdSize);
+        String keyId = WTF::base64URLEncode(&data[index], ClearKey::KeyIDSizeInBytes);
         keyIdsArray->pushString(keyId);
-        index += keyIdSize;
+        index += ClearKey::KeyIDSizeInBytes;
     }
 
     object->setArray("kids", WTFMove(keyIdsArray));
@@ -456,44 +430,6 @@ Optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) 
     return sessionId;
 }
 
-// This is for thread-safety during an architectural situation that is
-// less than ideal. The GStreamer decryptors currently need to iterate
-// all known session keys to find the key data for priming
-// GCrypt. Ideally, all decryption would be the responsibility of
-// ProxyCDM object like this one. What the background GStreamer
-// thread was doing was getting copies (i.e. ref()'s) of SharedBuffers
-// created on the main-thread. With the new safety assertions in
-// WebKit, we can no longer do this. Instead, convert the refcounted
-// SharedBuffers into Strings which can be safely copied across
-// threads.
-static ProxyCDMClearKey::Key isolatedKey(const CDMInstanceClearKey::Key& key)
-{
-    return { key.status, String(key.keyIDData->data(), key.keyIDData->size()), String(key.keyValueData->data(), key.keyValueData->size()) };
-}
-
-const Vector<ProxyCDMClearKey::Key> ProxyCDMClearKey::isolatedKeys() const
-{
-    // Return the keys of all sessions, may be copied to background threads.
-    Vector<ProxyCDMClearKey::Key> allKeys { };
-    auto locker = holdLock(m_keysMutex);
-    size_t initialCapacity = 0;
-    for (auto& keyVector : ClearKeyState::singleton().keys().values())
-        initialCapacity += keyVector.size();
-    allKeys.reserveInitialCapacity(initialCapacity);
-
-    for (auto& keyVector : ClearKeyState::singleton().keys().values()) {
-        for (auto& key : keyVector)
-            allKeys.uncheckedAppend(isolatedKey(key));
-    }
-
-    return allKeys;
-}
-
-CDMInstanceClearKey::CDMInstanceClearKey()
-    : m_proxyCDM(adoptRef(*new ProxyCDMClearKey()))
-{
-}
-
 CDMInstanceClearKey::~CDMInstanceClearKey() = default;
 
 CDMInstance::SuccessValue CDMInstanceClearKey::initializeWithConfiguration(const CDMKeySystemConfiguration&)
@@ -535,42 +471,17 @@ const String& CDMInstanceClearKey::keySystem() const
 
 RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
 {
-    return adoptRef(new CDMInstanceSessionClearKey());
-}
-
-String CDMInstanceClearKey::Key::keyIDAsString() const
-{
-    return makeString("[", keyIDData->toHexString(), "]");
-}
-
-String CDMInstanceClearKey::Key::keyValueAsString() const
-{
-    return makeString("[", keyValueData->toHexString(), "]");
-}
-
-bool operator==(const CDMInstanceClearKey::Key& k1, const CDMInstanceClearKey::Key& k2)
-{
-    ASSERT(k1.keyIDData);
-    ASSERT(k2.keyIDData);
-
-    return *k1.keyIDData == *k2.keyIDData;
-}
-
-bool operator<(const CDMInstanceClearKey::Key& k1, const CDMInstanceClearKey::Key& k2)
-{
-    ASSERT(k1.keyIDData);
-    ASSERT(k2.keyIDData);
-
-    if (k1.keyIDData->size() != k2.keyIDData->size())
-        return k1.keyIDData->size() < k2.keyIDData->size();
-
-    return memcmp(k1.keyIDData->data(), k2.keyIDData->data(), k1.keyIDData->size());
+    RefPtr<CDMInstanceSession> newSession = adoptRef(new CDMInstanceSessionClearKey(*this));
+    trackSession(newSession);
+    return newSession;
 }
 
 void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     static uint32_t s_sessionIdValue = 0;
     ++s_sessionIdValue;
+
+    m_sessionID = String::number(s_sessionIdValue);
 
     if (equalLettersIgnoringASCIICase(initDataType, "cenc"))
         initData = extractKeyidsFromCencInitData(initData.get());
@@ -579,18 +490,21 @@ void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& i
         initData = extractKeyIdFromWebMInitData(initData.get());
 
     callOnMainThread(
-        [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), initData = WTFMove(initData), sessionIdValue = s_sessionIdValue]() mutable {
+        [weakThis = makeWeakPtr(*this), this, callback = WTFMove(callback), initData = WTFMove(initData)]() mutable {
             if (!weakThis)
                 return;
 
-            callback(WTFMove(initData), String::number(sessionIdValue), false, Succeeded);
+            callback(WTFMove(initData), m_sessionID, false, Succeeded);
         });
 }
 
 void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback&& callback)
 {
-    // Use a helper functor that schedules the callback dispatch, avoiding
-    // duplicated callOnMainThread() calls.
+#if LOG_DISABLED
+    // We only use the sesion ID for debug logging. The verbose preprocessor checks are because
+    // the Mac port has -Werror -Wunused-parameter.
+    UNUSED_PARAM(sessionId);
+#endif
     auto dispatchCallback =
         [this, &callback](bool sessionWasClosed, Optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
             callOnMainThread(
@@ -604,52 +518,23 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
 
     RefPtr<JSON::Object> root = parseJSONObject(response);
     if (!root) {
+        LOG(EME, "EME - ClearKey - session %s update payload was not valid JSON", sessionId.utf8().data());
         dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
         return;
     }
 
-    LOG(EME, "EME - ClearKey - updating license for session %s", sessionId.utf8().data());
+    LOG(EME, "EME - ClearKey - updating license for session %s which currently contains %u keys", sessionId.utf8().data(), m_keyStore.numKeys());
 
     if (auto decodedKeys = parseLicenseFormat(*root)) {
-        // Retrieve the target Vector of Key objects for this session.
-        // FIXME: Refactor this state management code.
-        Vector<CDMInstanceClearKey::Key>& keyVector = ClearKeyState::singleton().keys().ensure(sessionId, [] { return Vector<CDMInstanceClearKey::Key> { }; }).iterator->value;
+        bool keysChanged = m_keyStore.addKeys(WTFMove(*decodedKeys));
 
-        bool keysChanged = false;
-        for (auto& decodedKey : *decodedKeys) {
-            LOG(EME, "EME - ClearKey - Decoded a key with ID %s and key data %s", decodedKey.keyIDAsString().utf8().data(), decodedKey.keyValueAsString().utf8().data());
-            auto keyWithMatchingKeyID = std::find_if(keyVector.begin(), keyVector.end(),
-                [&decodedKey] (const CDMInstanceClearKey::Key& containedKey) {
-                    return containedKey == decodedKey;
-                });
-            if (keyWithMatchingKeyID != keyVector.end()) {
-                LOG(EME, "EME - ClearKey - Existing key found with data %s", keyWithMatchingKeyID->keyValueAsString().utf8().data());
-
-                if (!keyWithMatchingKeyID->hasSameKeyValue(decodedKey)) {
-                    LOG(EME, "EME - ClearKey - Updating key since the data are different");
-                    *keyWithMatchingKeyID = WTFMove(decodedKey);
-                    keysChanged = true;
-                }
-            } else {
-                LOG(EME, "EME - ClearKey - This is a new key");
-                keyVector.append(WTFMove(decodedKey));
-                keysChanged = true;
-            }
-        }
-
-        LOG(EME, "EME - ClearKey - Update has provided %zu keys", keyVector.size());
+        LOG(EME, "EME - ClearKey - session %s has %u keys after update()", sessionId.utf8().data(), m_keyStore.numKeys());
 
         Optional<KeyStatusVector> changedKeys;
         if (keysChanged) {
-            // Sort by key IDs.
-            std::sort(keyVector.begin(), keyVector.end());
-
-            KeyStatusVector keyStatusVector;
-            keyStatusVector.reserveInitialCapacity(keyVector.size());
-            for (auto& key : keyVector)
-                keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *key.keyIDData, key.status });
-
-            changedKeys = WTFMove(keyStatusVector);
+            LOG(EME, "EME - ClearKey - session %s has changed keys", sessionId.utf8().data());
+            m_parentInstance.mergeKeysFrom(m_keyStore);
+            changedKeys = m_keyStore.convertToJSKeyStatusVector();
         }
 
         dispatchCallback(false, WTFMove(changedKeys), SuccessValue::Succeeded);
@@ -657,47 +542,31 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
     }
 
     if (parseLicenseReleaseAcknowledgementFormat(*root)) {
-        // FIXME: Retrieve the key ID information and use it to validate the keys for this sessionId.
-        ClearKeyState::singleton().keys().remove(sessionId);
+        LOG(EME, "EME - ClearKey - session %s release acknowledged, clearing all known keys", sessionId.utf8().data());
+        m_parentInstance.removeAllKeysFrom(m_keyStore);
+        m_keyStore.removeAllKeys();
         dispatchCallback(true, WTF::nullopt, SuccessValue::Succeeded);
         return;
     }
 
-    // Bail in case no format was recognized.
+    LOG(EME, "EME - ClearKey - session %s update payload was an unrecognized format", sessionId.utf8().data());
     dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
 }
 
 void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
 {
-    // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
-    auto dispatchCallback =
-        [this, &callback](Optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
-            callOnMainThread(
-                [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), existingKeys = WTFMove(existingKeys), success, loadFailure]() mutable {
-                    if (!weakThis)
-                        return;
+#ifdef NDEBUG
+    UNUSED_PARAM(sessionId);
+#endif
 
-                    callback(WTFMove(existingKeys), WTF::nullopt, WTF::nullopt, success, loadFailure);
-                });
-        };
-
-    // Construct the KeyStatusVector object, representing all the known keys for this session.
-    KeyStatusVector keyStatusVector;
-    {
-        auto& keys = ClearKeyState::singleton().keys();
-        auto it = keys.find(sessionId);
-        if (it == keys.end()) {
-            dispatchCallback(WTF::nullopt, Failed, SessionLoadFailure::NoSessionData);
+    ASSERT(sessionId == m_sessionID);
+    KeyStatusVector keyStatusVector = m_keyStore.convertToJSKeyStatusVector();
+    callOnMainThread([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), &keyStatusVector]() mutable {
+        if (!weakThis)
             return;
-        }
 
-        auto& keyVector = it->value;
-        keyStatusVector.reserveInitialCapacity(keyVector.size());
-        for (auto& key : keyVector)
-            keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *key.keyIDData, key.status });
-    }
-
-    dispatchCallback(WTFMove(keyStatusVector), Succeeded, SessionLoadFailure::None);
+        callback(WTFMove(keyStatusVector), WTF::nullopt, WTF::nullopt, Succeeded, SessionLoadFailure::None);
+    });
 }
 
 void CDMInstanceSessionClearKey::closeSession(const String&, CloseSessionCallback&& callback)
@@ -713,7 +582,12 @@ void CDMInstanceSessionClearKey::closeSession(const String&, CloseSessionCallbac
 
 void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&& callback)
 {
-    // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
+#ifdef NDEBUG
+    UNUSED_PARAM(sessionId);
+#endif
+
+    ASSERT(sessionId == m_sessionID);
+
     auto dispatchCallback =
         [this, &callback](KeyStatusVector&& keyStatusVector, Optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
             callOnMainThread(
@@ -727,35 +601,17 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
 
     // Construct the KeyStatusVector object, representing released keys, and the message in the
     // 'license release' format.
-    KeyStatusVector keyStatusVector;
+    KeyStatusVector keyStatusVector = m_keyStore.allKeysAsReleased();
     RefPtr<SharedBuffer> message;
     {
-        // Retrieve information for the given session ID, bailing if none is found.
-        auto& keys = ClearKeyState::singleton().keys();
-        auto it = keys.find(sessionId);
-        if (it == keys.end()) {
-            dispatchCallback(KeyStatusVector { }, WTF::nullopt, SuccessValue::Failed);
-            return;
-        }
-
-        // Retrieve the Key vector, containing all the keys for this session, and
-        // then remove the key map entry for this session.
-        auto keyVector = WTFMove(it->value);
-        keys.remove(it);
-
-        // Construct the KeyStatusVector object, pairing key IDs with the 'released' status.
-        keyStatusVector.reserveInitialCapacity(keyVector.size());
-        for (auto& key : keyVector)
-            keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *key.keyIDData, KeyStatus::Released });
-
         // Construct JSON that represents the 'license release' format, creating a 'kids' array
         // of base64URL-encoded key IDs for all keys that were associated with this session.
         auto rootObject = JSON::Object::create();
         {
             auto array = JSON::Array::create();
-            for (auto& key : keyVector) {
-                ASSERT(key.keyIDData->size() <= std::numeric_limits<unsigned>::max());
-                array->pushString(WTF::base64URLEncode(key.keyIDData->data(), static_cast<unsigned>(key.keyIDData->size())));
+            for (const auto& key : m_keyStore) {
+                ASSERT(key->id().size() <= std::numeric_limits<unsigned>::max());
+                array->pushString(WTF::base64URLEncode(key->id().data(), key->id().size()));
             }
             rootObject->setArray("kids", WTFMove(array));
         }
@@ -766,6 +622,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
         message = SharedBuffer::create(messageCString.data(), messageCString.length());
     }
 
+    m_keyStore.removeAllKeys();
     dispatchCallback(WTFMove(keyStatusVector), Ref<SharedBuffer>(*message), SuccessValue::Succeeded);
 }
 

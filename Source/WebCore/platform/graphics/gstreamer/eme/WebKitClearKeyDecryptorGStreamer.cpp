@@ -25,6 +25,7 @@
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
 #include "CDMClearKey.h"
+#include "CDMProxyClearKey.h"
 #include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
 #include <gcrypt.h>
@@ -37,12 +38,11 @@ using namespace WebCore;
 
 #define WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CK_DECRYPT, WebKitMediaClearKeyDecryptPrivate))
 struct _WebKitMediaClearKeyDecryptPrivate {
-    RefPtr<ProxyCDMClearKey> proxyCDM;
-    gcry_cipher_hd_t handle;
+    RefPtr<CDMProxyClearKey> cdmProxy;
 };
 
 static void finalize(GObject*);
-static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<ProxyCDM>);
+static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMProxy>);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount, GstBuffer* subSamples);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_clear_key_decrypt_debug_category);
@@ -84,7 +84,7 @@ static void webkit_media_clear_key_decrypt_class_init(WebKitMediaClearKeyDecrypt
 
     WebKitMediaCommonEncryptionDecryptClass* cencClass = WEBKIT_MEDIA_CENC_DECRYPT_CLASS(klass);
     cencClass->protectionSystemId = GStreamerEMEUtilities::s_ClearKeyUUID;
-    cencClass->handleKeyResponse = GST_DEBUG_FUNCPTR(handleKeyResponse);
+    cencClass->cdmProxyAttached = GST_DEBUG_FUNCPTR(cdmProxyAttached);
     cencClass->decrypt = GST_DEBUG_FUNCPTR(decrypt);
 
     g_type_class_add_private(klass, sizeof(WebKitMediaClearKeyDecryptPrivate));
@@ -93,88 +93,38 @@ static void webkit_media_clear_key_decrypt_class_init(WebKitMediaClearKeyDecrypt
 static void webkit_media_clear_key_decrypt_init(WebKitMediaClearKeyDecrypt* self)
 {
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(self);
-
     self->priv = priv;
     new (priv) WebKitMediaClearKeyDecryptPrivate();
-    if (gcry_error_t error = gcry_cipher_open(&(priv->handle), GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CTR, GCRY_CIPHER_SECURE)) {
-        GST_ERROR_OBJECT(self, "Failed to create AES 128 CTR cipher handle: %s", gpg_strerror(error));
-        ASSERT(!error);
-    }
 }
 
 static void finalize(GObject* object)
 {
     WebKitMediaClearKeyDecrypt* self = WEBKIT_MEDIA_CK_DECRYPT(object);
     WebKitMediaClearKeyDecryptPrivate* priv = self->priv;
-    gcry_cipher_close(priv->handle);
     priv->~WebKitMediaClearKeyDecryptPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-static bool handleKeyResponse(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<ProxyCDM> proxyCDM)
+static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMProxy> cdmProxy)
 {
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
-    priv->proxyCDM = reinterpret_cast<ProxyCDMClearKey*>(proxyCDM.get());
-    return priv->proxyCDM;
+    priv->cdmProxy = reinterpret_cast<CDMProxyClearKey*>(cdmProxy.get());
+    return priv->cdmProxy;
 }
 
-static bool findAndSetKey(WebKitMediaClearKeyDecryptPrivate* priv, const String&& keyID)
+static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subsampleCount, GstBuffer* subsamplesBuffer)
 {
-    String keyValue;
+    WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
 
-    for (const auto& key : priv->proxyCDM->isolatedKeys()) {
-        if (key.keyIDData == keyID) {
-            keyValue = key.keyValueData;
-            break;
-        }
-    }
-
-    if (keyValue.isEmpty()) {
-        GST_ERROR_OBJECT(priv, "failed to find a decryption key");
-        return false;
-    }
-
-    ASSERT(keyValue.sizeInBytes() == CLEARKEY_SIZE);
-    if (gcry_error_t error = gcry_cipher_setkey(priv->handle, keyValue.characters8(), keyValue.sizeInBytes())) {
-        GST_ERROR_OBJECT(priv, "gcry_cipher_setkey failed: %s", gpg_strerror(error));
-        return false;
-    }
-
-    return true;
-}
-
-static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffer, GstBuffer* keyIDBuffer, GstBuffer* buffer, unsigned subSampleCount, GstBuffer* subSamplesBuffer)
-{
-    if (!ivBuffer) {
-        GST_ERROR_OBJECT(self, "no IV buffer");
+    if (!ivBuffer || !keyIDBuffer || !buffer) {
+        GST_ERROR_OBJECT(self, "invalid decrypt() parameter");
         return false;
     }
 
     auto mappedIVBuffer = WebCore::GstMappedBuffer::create(ivBuffer, GST_MAP_READ);
     if (!mappedIVBuffer) {
         GST_ERROR_OBJECT(self, "failed to map IV buffer");
-        return false;
-    }
-
-    uint8_t ctr[CLEARKEY_SIZE];
-    if (mappedIVBuffer->size() == 8) {
-        memset(ctr + 8, 0, 8);
-        memcpy(ctr, mappedIVBuffer->data(), 8);
-    } else {
-        ASSERT(mappedIVBuffer->size() == CLEARKEY_SIZE);
-        memcpy(ctr, mappedIVBuffer->data(), CLEARKEY_SIZE);
-    }
-
-    WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
-    gcry_error_t cipherError = gcry_cipher_setctr(priv->handle, ctr, CLEARKEY_SIZE);
-    if (cipherError) {
-        GST_ERROR_OBJECT(self, "gcry_cipher_setctr failed: %s", gpg_strerror(cipherError));
-        return false;
-    }
-
-    if (!buffer) {
-        GST_ERROR_OBJECT(self, "No buffer to decrypt");
         return false;
     }
 
@@ -190,72 +140,29 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffe
         return false;
     }
 
-    findAndSetKey(priv, String(mappedKeyIdBuffer->data(), mappedKeyIdBuffer->size()));
-
-    unsigned position = 0;
-    unsigned sampleIndex = 0;
-
-    if (!subSampleCount) {
-        // Full sample encryption.
-        GST_TRACE_OBJECT(self, "full sample encryption: %zu encrypted bytes", mappedBuffer->size());
-
-        // Check if the buffer is empty.
-        if (mappedBuffer->size()) {
-            cipherError = gcry_cipher_decrypt(priv->handle, mappedBuffer->data(), mappedBuffer->size(), 0, 0);
-            if (cipherError) {
-                GST_ERROR_OBJECT(self, "full sample decryption failed: %s", gpg_strerror(cipherError));
-                return false;
-            }
+    RefPtr<GstMappedBuffer> mappedSubsamplesBuffer;
+    CDMProxyClearKey::cencDecryptContext context;
+    context.keyID = mappedKeyIdBuffer->data();
+    context.keyIDSizeInBytes = mappedKeyIdBuffer->size();
+    context.iv = mappedIVBuffer->data();
+    context.ivSizeInBytes = mappedIVBuffer->size();
+    context.encryptedBuffer = mappedBuffer->data();
+    context.encryptedBufferSizeInBytes = mappedBuffer->size();
+    context.numSubsamples = subsampleCount;
+    if (!subsampleCount)
+        context.subsamplesBuffer = nullptr;
+    else {
+        ASSERT(subsamplesBuffer);
+        mappedSubsamplesBuffer = WebCore::GstMappedBuffer::create(subsamplesBuffer, GST_MAP_READ);
+        if (!mappedSubsamplesBuffer) {
+            GST_ERROR_OBJECT(self, "Failed to map subsample buffer");
+            return false;
         }
-        return true;
+        context.subsamplesBuffer = mappedSubsamplesBuffer->data();
+        context.subsamplesBufferSizeInBytes = mappedSubsamplesBuffer->size();
     }
 
-    // Check subSamplesBuffer isn't null.
-    if (!subSamplesBuffer) {
-        GST_ERROR_OBJECT(self, "Error, the subSampleBuffer is null");
-        return false;
-    }
-
-    // Subsample encryption.
-    auto mappedSubSamplesBuffer = WebCore::GstMappedBuffer::create(subSamplesBuffer, GST_MAP_READ);
-    if (!mappedSubSamplesBuffer) {
-        GST_ERROR_OBJECT(self, "Failed to map subsample buffer");
-        return false;
-    }
-
-    GUniquePtr<GstByteReader> reader(gst_byte_reader_new(mappedSubSamplesBuffer->data(), mappedSubSamplesBuffer->size()));
-    GST_DEBUG_OBJECT(self, "position: %d, size: %zu", position, mappedBuffer->size());
-
-    while (position < mappedBuffer->size()) {
-        guint16 nBytesClear = 0;
-        guint32 nBytesEncrypted = 0;
-
-        if (sampleIndex < subSampleCount) {
-            if (!gst_byte_reader_get_uint16_be(reader.get(), &nBytesClear)
-                || !gst_byte_reader_get_uint32_be(reader.get(), &nBytesEncrypted)) {
-                GST_DEBUG_OBJECT(self, "unsupported");
-                return false;
-            }
-            sampleIndex++;
-        } else {
-            nBytesClear = 0;
-            nBytesEncrypted = mappedBuffer->size() - position;
-        }
-
-        GST_TRACE_OBJECT(self, "subsample index %u - %hu bytes clear (todo=%zu)", sampleIndex, nBytesClear, mappedBuffer->size() - position);
-        position += nBytesClear;
-        if (nBytesEncrypted) {
-            GST_TRACE_OBJECT(self, "subsample index %u - %u bytes encrypted (todo=%zu)", sampleIndex, nBytesEncrypted, mappedBuffer->size() - position);
-            cipherError = gcry_cipher_decrypt(priv->handle, mappedBuffer->data() + position, nBytesEncrypted, 0, 0);
-            if (cipherError) {
-                GST_ERROR_OBJECT(self, "sub sample index %u decryption failed: %s", sampleIndex, gpg_strerror(cipherError));
-                return false;
-            }
-            position += nBytesEncrypted;
-        }
-    }
-
-    return true;
+    return priv->cdmProxy->cencDecrypt(context);
 }
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)

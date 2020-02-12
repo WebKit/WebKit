@@ -76,6 +76,10 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 #endif
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "CDMProxy.h"
+#endif
+
 typedef struct _GstStreamVolume GstStreamVolume;
 typedef struct _GstVideoInfo GstVideoInfo;
 typedef struct _GstGLContext GstGLContext;
@@ -371,7 +375,7 @@ protected:
 #if ENABLE(ENCRYPTED_MEDIA)
     Lock m_cdmAttachmentMutex;
     Condition m_cdmAttachmentCondition;
-    RefPtr<const CDMInstance> m_cdmInstance;
+    RefPtr<CDMInstanceProxy> m_cdmInstance;
 
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
     HashSet<uint32_t> m_handledProtectionEvents;
@@ -450,7 +454,8 @@ private:
     bool isCDMAttached() const { return m_cdmInstance; }
     void attemptToDecryptWithLocalInstance();
     void initializationDataEncountered(InitData&&);
-    void setWaitingForKey(bool);
+    InitData parseInitDataFromProtectionMessage(GstMessage*);
+    bool waitForCDMAttachment();
 #endif
 
     Atomic<bool> m_isPlayerShuttingDown;

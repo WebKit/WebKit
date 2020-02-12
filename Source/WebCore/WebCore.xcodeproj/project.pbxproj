@@ -13883,6 +13883,8 @@
 		CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMRestrictions.h; sourceTree = "<group>"; };
 		CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMFactory.cpp; sourceTree = "<group>"; };
 		CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMFactory.h; sourceTree = "<group>"; };
+		CD94A5CF1F71CB6100F525D5 /* CDMProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMProxy.cpp; sourceTree = "<group>"; };
+		CD94A5CF1F71CB6100F525C5 /* CDMProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMProxy.h; sourceTree = "<group>"; };
 		CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMMediaCapability.h; sourceTree = "<group>"; };
 		CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMKeyStatus.h; sourceTree = "<group>"; };
 		CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMSessionType.h; sourceTree = "<group>"; };
@@ -26260,6 +26262,8 @@
 				CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */,
 				CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */,
 				CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */,
+				CD94A5CF1F71CB6100F525D5 /* CDMProxy.cpp */,
+				CD94A5CF1F71CB6100F525C5 /* CDMProxy.h */,
 				CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */,
 				CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */,
 				CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */,
