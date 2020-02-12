@@ -194,7 +194,6 @@ protected:
     void scrollingPerformanceLoggingEnabledChanged();
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
-    void renderingUpdateThrottlingEnabledChanged();
     void resourceUsageOverlayVisibleChanged();
     void iceCandidateFilteringEnabledChanged();
 #if ENABLE(TEXT_AUTOSIZING)

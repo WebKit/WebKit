@@ -6,10 +6,8 @@
         description("Test that requestAnimationFrame gets throttled in low power mode.");
         window.jsTestIsAsync = true;
 
-        if (window.internals) {
-            internals.settings.setRenderingUpdateThrottlingEnabled(true);
+        if (window.internals)
             internals.setLowPowerModeEnabled(true);
-        }
 
         var start = null;
         var farmesPerSecond = 0;

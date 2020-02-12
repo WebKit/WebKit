@@ -3129,7 +3129,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
     settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
-    settings.setRenderingUpdateThrottlingEnabled([preferences renderingUpdateThrottlingEnabled]);
 
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
 

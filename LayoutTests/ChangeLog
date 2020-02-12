@@ -1,3 +1,20 @@
+2020-02-12  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION (r255158): http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206839
+
+        Reviewed by Simon Fraser.
+
+        Remove the setting 'RenderingUpdateThrottling'.
+
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+        * fast/animation/request-animation-frame-throttle-subframe.html:
+        * fast/animation/request-animation-frame-throttling-detached-iframe.html:
+        * fast/animation/request-animation-frame-throttling-lowPowerMode.html:
+        * fast/animation/request-animation-frame-throttling-outside-viewport.html:
+        * http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore3.html is flaky timing out

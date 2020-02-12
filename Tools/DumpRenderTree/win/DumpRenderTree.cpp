@@ -801,7 +801,6 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsMutableTimelinesEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     prefsPrivate->setAspectRatioOfImgFromWidthAndHeightEnabled(TRUE);
-    prefsPrivate->setRenderingUpdateThrottlingEnabled(FALSE);
     // FIXME: WebGL2
     // FIXME: WebRTC
 }
