@@ -190,25 +190,25 @@ public:
     bool isEmpty() const { return !propertyCount(); }
     PropertyReference propertyAt(unsigned index) const;
 
-    const CSSValue** valueArray() const;
-    const StylePropertyMetadata* metadataArray() const;
     int findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(const String& propertyName) const;
     
     void* m_storage;
 
 private:
+    PackedPtr<const CSSValue>* valueArray() const;
+    const StylePropertyMetadata* metadataArray() const;
     ImmutableStyleProperties(const CSSProperty*, unsigned count, CSSParserMode);
 };
 
-inline const CSSValue** ImmutableStyleProperties::valueArray() const
+inline PackedPtr<const CSSValue>* ImmutableStyleProperties::valueArray() const
 {
-    return reinterpret_cast<const CSSValue**>(const_cast<const void**>((&(this->m_storage))));
+    return bitwise_cast<PackedPtr<const CSSValue>*>(bitwise_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
 }
 
 inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() const
 {
-    return reinterpret_cast_ptr<const StylePropertyMetadata*>(&reinterpret_cast_ptr<const char*>(&(this->m_storage))[m_arraySize * sizeof(CSSValue*)]);
+    return reinterpret_cast<const StylePropertyMetadata*>(const_cast<const void**>((&(this->m_storage))));
 }
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
@@ -289,7 +289,7 @@ private:
 
 inline ImmutableStyleProperties::PropertyReference ImmutableStyleProperties::propertyAt(unsigned index) const
 {
-    return PropertyReference(metadataArray()[index], valueArray()[index]);
+    return PropertyReference(metadataArray()[index], valueArray()[index].get());
 }
 
 inline MutableStyleProperties::PropertyReference MutableStyleProperties::propertyAt(unsigned index) const
