@@ -1,3 +1,17 @@
+2020-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Composition highlight rects should be rounded and inset
+        https://bugs.webkit.org/show_bug.cgi?id=207655
+        <rdar://problem/59362474>
+
+        Reviewed by Tim Horton.
+
+        Stitch adjacent highlight rects together if they have the same highlight color; this minimizes the number of
+        composition highlight rects we hand to the web process when changing the marked text.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (compositionHighlights):
+
 2020-02-12  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256463.
