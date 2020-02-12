@@ -1,3 +1,39 @@
+2020-02-12  Dean Jackson  <dino@apple.com>
+
+        ANGLE has unused bison and glmark2 code
+        https://bugs.webkit.org/show_bug.cgi?id=207597
+        rdar://59361460
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove some unused files.
+
+        * changes.diff:
+        * src/tests/perf_tests/glmark2Benchmark.cpp: Removed.
+        * third_party/glmark2/BUILD.gn: Removed.
+        * third_party/glmark2/README.angle: Removed.
+        * tools/flex-bison/README.md: Removed.
+        * tools/flex-bison/linux/bison.sha1: Removed.
+        * tools/flex-bison/linux/flex.sha1: Removed.
+        * tools/flex-bison/third_party/.gitattributes: Removed.
+        * tools/flex-bison/third_party/m4sugar/LICENSE: Removed.
+        * tools/flex-bison/third_party/m4sugar/README.chromium: Removed.
+        * tools/flex-bison/third_party/m4sugar/foreach.m4: Removed.
+        * tools/flex-bison/third_party/m4sugar/m4sugar.m4: Removed.
+        * tools/flex-bison/third_party/skeletons/LICENSE: Removed.
+        * tools/flex-bison/third_party/skeletons/README.chromium: Removed.
+        * tools/flex-bison/third_party/skeletons/bison.m4: Removed.
+        * tools/flex-bison/third_party/skeletons/c-like.m4: Removed.
+        * tools/flex-bison/third_party/skeletons/c.m4: Removed.
+        * tools/flex-bison/third_party/skeletons/yacc.c: Removed.
+        * tools/flex-bison/update_flex_bison_binaries.py: Removed.
+        * tools/flex-bison/windows/bison.exe.sha1: Removed.
+        * tools/flex-bison/windows/flex.exe.sha1: Removed.
+        * tools/flex-bison/windows/m4.exe.sha1: Removed.
+        * tools/flex-bison/windows/msys-2.0.dll.sha1: Removed.
+        * tools/flex-bison/windows/msys-iconv-2.dll.sha1: Removed.
+        * tools/flex-bison/windows/msys-intl-8.dll.sha1: Removed.
+
 2020-02-09  Keith Rollin  <krollin@apple.com>
 
         Re-enable LTO for ARM builds
