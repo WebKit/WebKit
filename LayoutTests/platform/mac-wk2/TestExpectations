@@ -1019,3 +1019,5 @@ webkit.org/b/207577 http/tests/ssl/applepay/ApplePayBillingAddress.html [ Pass F
 webkit.org/b/207599 webgpu/whlsl/do-while-loop.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]
