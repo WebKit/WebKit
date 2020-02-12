@@ -1,3 +1,20 @@
+2020-02-12  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-item-auto-margins-alignment tests to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=207534
+
+        Reviewed by Javier Fernandez.
+
+        Remove grid-item-auto-margins-alignment tests and their expected.txt files. These tests
+        are being replaced by adapted tests in the corresponding WPT test folder.
+
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-lr-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-rl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment.html: Removed.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-lr.html: Removed.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-rl.html: Removed.
+
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/whlsl.html

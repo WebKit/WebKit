@@ -1,3 +1,20 @@
+2020-02-12  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-item-auto-margins-alignment tests to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=207534
+
+        Reviewed by Javier Fernandez.
+
+        Add grid-item-auto-margins-alignment tests, checked and adapted to WPT, with their expected.txt files.
+        Imported to WPT with this PR: https://github.com/web-platform-tests/wpt/pull/21509
+
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment-vertical-lr-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment-vertical-lr.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment-vertical-rl-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment-vertical-rl.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-alignment.html:
+
 2020-02-11  Youenn Fablet  <youenn@apple.com>
 
         Parent service worker controller should be used for child iframe as per https://w3c.github.io/ServiceWorker/#control-and-use-window-client
