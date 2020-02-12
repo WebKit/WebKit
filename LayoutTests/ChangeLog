@@ -1,3 +1,16 @@
+2020-02-12  Sunny He  <sunny_he@apple.com>
+
+        Fix crash due to uninitialized currentStyle in CSSTransition
+        https://bugs.webkit.org/show_bug.cgi?id=205959
+        <rdar://57073673>
+
+        Reviewed by Antoine Quint.
+
+        Fix crash due to uninitialized currentStyle in CSSTransition
+
+        * legacy-animation-engine/transitions/svg-bad-scale-crash-expected.txt: Added.
+        * legacy-animation-engine/transitions/svg-bad-scale-crash.html: Added.
+
 2020-02-11  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Add WebCrypto LayoutTests to check if PKCS#7 padding is correctly implemented in AES-CBC
