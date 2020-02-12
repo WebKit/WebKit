@@ -354,6 +354,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSQLEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitRenderingUpdateThrottlingEnabledPreferenceKey), kCFBooleanTrue);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2467,6 +2469,20 @@ HRESULT WebPreferences::webSQLEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setWebSQLEnabled(BOOL enabled)
 {
     setBoolValue(WebKitWebSQLEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::renderingUpdateThrottlingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitRenderingUpdateThrottlingEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setRenderingUpdateThrottlingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitRenderingUpdateThrottlingEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

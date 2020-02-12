@@ -908,6 +908,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
+    WKPreferencesSetRenderingUpdateThrottlingEnabled(preferences, false);
 
     WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing || options.useAcceleratedDrawing);
     // FIXME: We should be testing the default.

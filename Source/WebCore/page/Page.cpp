@@ -1384,7 +1384,12 @@ void Page::resumeScriptedAnimations()
 
 bool Page::renderingUpdateThrottlingEnabled() const
 {
-    return !requestedLayoutMilestones().isEmpty();
+    return m_settings->renderingUpdateThrottlingEnabled();
+}
+
+void Page::renderingUpdateThrottlingEnabledChanged()
+{
+    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 }
 
 bool Page::isRenderingUpdateThrottled() const
@@ -2139,11 +2144,8 @@ void Page::remoteInspectorInformationDidChange() const
 
 void Page::addLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 {
-    bool oldRenderingUpdateThrottlingEnabled = renderingUpdateThrottlingEnabled();
     // In the future, we may want a function that replaces m_layoutMilestones instead of just adding to it.
     m_requestedLayoutMilestones.add(milestones);
-    if (!oldRenderingUpdateThrottlingEnabled && renderingUpdateThrottlingEnabled())
-        renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 }
 
 void Page::removeLayoutMilestones(OptionSet<LayoutMilestone> milestones)

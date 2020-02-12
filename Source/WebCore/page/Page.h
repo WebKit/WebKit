@@ -702,6 +702,7 @@ public:
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
     bool renderingUpdateThrottlingEnabled() const;
+    void renderingUpdateThrottlingEnabledChanged();
     bool isRenderingUpdateThrottled() const;
     Seconds preferredRenderingUpdateInterval() const;
     bool canUpdateThrottlingReason(ThrottlingReason reason) const { return !m_throttlingReasonsOverridenForTesting.contains(reason); }

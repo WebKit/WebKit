@@ -227,3 +227,7 @@
 #define WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey "WebKitAspectRatioOfImgFromWidthAndHeightEnabled"
 
 #define WebKitWebSQLEnabledPreferenceKey "WebKitWebSQLEnabled"
+
+#define WebKitRenderingUpdateThrottlingEnabledPreferenceKey "WebKitRenderingUpdateThrottlingEnabled"
+
+#define WebKitRenderingUpdateThrottlingEnabledPreferenceKey "WebKitRenderingUpdateThrottlingEnabled"

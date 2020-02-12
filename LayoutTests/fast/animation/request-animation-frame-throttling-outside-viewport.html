@@ -7,6 +7,9 @@
         description("Test that requestAnimationFrame gets the right throttling in an iframe when when it's outside the viewport.");
         jsTestIsAsync = true;
 
+        if (window.internals)
+            internals.settings.setRenderingUpdateThrottlingEnabled(true);
+
         var framesPerSecond = 0;
         var iframeFramesPerSecond = 0;
 
