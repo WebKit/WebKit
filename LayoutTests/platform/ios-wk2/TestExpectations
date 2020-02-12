@@ -1403,3 +1403,5 @@ webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
 webkit.org/b/207583 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Pass Failure ]
 
 webkit.org/b/207596 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Pass Failure ]
+
+webkit.org/b/207660 crypto/subtle/rsa-indexeddb-non-exportable-private.html [ Slow ]

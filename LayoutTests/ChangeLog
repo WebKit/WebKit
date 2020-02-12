@@ -1,3 +1,12 @@
+2020-02-12  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS wk2 ] crypto/subtle/rsa-indexeddb-non-exportable-private.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=207660
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore5.html is flaky timing out
