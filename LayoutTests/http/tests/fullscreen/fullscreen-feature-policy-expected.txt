@@ -1,3 +1,14 @@
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'self''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'fullscreen http://localhost:8000'.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'self''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'fullscreen 'none''.
+CONSOLE MESSAGE: line 9: Feature policy 'Fullscreen' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'fullscreen 'self''.
 PASS iframe with src="http://loc..." should have document.webkitFullscreenEnabled === false.
 PASS iframe with src="../resourc..." should have document.webkitFullscreenEnabled === true.
 PASS iframe with allow="fullscreen", src="http://loc..." should have document.webkitFullscreenEnabled === true.

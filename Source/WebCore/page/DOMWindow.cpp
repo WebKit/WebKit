@@ -2283,7 +2283,7 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, const URL& completedURL, Se
         lockHistory, lockBackForwardList);
 }
 
-void DOMWindow::printErrorMessage(const String& message)
+void DOMWindow::printErrorMessage(const String& message) const
 {
     if (message.isEmpty())
         return;

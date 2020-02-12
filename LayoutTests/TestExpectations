@@ -769,6 +769,8 @@ webkit.org/b/189906 imported/w3c/web-platform-tests/resource-timing/resource_tim
 webkit.org/b/189905 imported/w3c/web-platform-tests/resource-timing/resource_initiator_types.html [ Pass Failure ]
 webkit.org/b/190523 imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html [ DumpJSConsoleLogInStdErr ]
+
 # These fetch tests are flaky or fail.
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.worker.html [ Pass Failure ]

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 56: Feature policy 'Fullscreen' check failed for iframe with origin '' and allow attribute 'fullscreen 'none''.
 This tests the fullscreenEnabled property laid out in section 4 of the W3C Full Screen API
 EXPECTED (iframe.contentDocument.webkitFullscreenEnabled == 'true') OK
 EXPECTED (iframe2.contentDocument.webkitFullscreenEnabled == 'false') OK
