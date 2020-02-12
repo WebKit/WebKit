@@ -1,5 +1,132 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255846. rdar://problem/59299151
+
+    Make WKWebView._negotiatedLegacyTLS accurate when loading main resouorce from network or cache
+    https://bugs.webkit.org/show_bug.cgi?id=207207
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    * platform/network/ResourceResponseBase.cpp:
+    (WebCore::ResourceResponseBase::includeCertificateInfo const):
+    * platform/network/ResourceResponseBase.h:
+    (WebCore::ResourceResponseBase::usedLegacyTLS const):
+    (WebCore::ResourceResponseBase::encode const):
+    (WebCore::ResourceResponseBase::decode):
+    
+    Source/WebKit:
+    
+    In PageLoadState::didCommitLoad, I was resetting the value of _negotiatedLegacyTLS to false.
+    That created a race condition when loading the main resource because the NetworkProcess would
+    message the UIProcess setting _negotiatedLegacyTLS to false, while the NetworkProcess would
+    message the WebProcess which would message the UIProcess to call PageLoadState::didCommitLoad
+    which would reset it to false.  Now it resets it to the correct value, whatever it is.
+    
+    Updating the ResourceResponseBase serialization code has the desirable side effect that the disk
+    cache will remember whether legacy TLS was used to fetch each resource.  This will make it so
+    _negotiatedLegacyTLS is true if we read content from the disk cache that was originally fetched
+    using legacy TLS.
+    
+    In order to not increase the memory footprint of ResourceResponse, I changed m_httpStatusCode from
+    an int to a short.  It just needs to be able to cover the values 0-600 or so, which really only needs 10 bits.
+    
+    Covered by new API tests.
+    
+    * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+    (WebKit::NetworkCORSPreflightChecker::didReceiveResponse):
+    * NetworkProcess/NetworkCORSPreflightChecker.h:
+    * NetworkProcess/NetworkDataTask.cpp:
+    (WebKit::NetworkDataTask::didReceiveResponse):
+    (WebKit::NetworkDataTask::negotiatedLegacyTLS const): Deleted.
+    * NetworkProcess/NetworkDataTask.h:
+    (WebKit::NetworkDataTaskClient::negotiatedLegacyTLS const): Deleted.
+    * NetworkProcess/NetworkDataTaskBlob.cpp:
+    (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+    * NetworkProcess/NetworkLoad.cpp:
+    (WebKit::NetworkLoad::didReceiveResponse):
+    (WebKit::NetworkLoad::notifyDidReceiveResponse):
+    (WebKit::NetworkLoad::throttleDelayCompleted):
+    (WebKit::NetworkLoad::negotiatedLegacyTLS const): Deleted.
+    * NetworkProcess/NetworkLoad.h:
+    * NetworkProcess/NetworkResourceLoader.h:
+    * NetworkProcess/PingLoad.cpp:
+    (WebKit::PingLoad::didReceiveResponse):
+    * NetworkProcess/PingLoad.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+    * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+    (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse):
+    * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+    (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+    * UIProcess/PageLoadState.cpp:
+    (WebKit::PageLoadState::didCommitLoad):
+    * UIProcess/PageLoadState.h:
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+    * UIProcess/ProvisionalPageProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::commitProvisionalPage):
+    (WebKit::WebPageProxy::didCommitLoadForFrame):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+    
+    Source/WTF:
+    
+    * wtf/persistence/PersistentDecoder.cpp:
+    (WTF::Persistence::Decoder::decode):
+    * wtf/persistence/PersistentDecoder.h:
+    * wtf/persistence/PersistentEncoder.cpp:
+    (WTF::Persistence::Encoder::encode):
+    * wtf/persistence/PersistentEncoder.h:
+    
+    Tools:
+    
+    HTTPServer now supports HTTPS. Tell your friends!
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+    (testCertificate):
+    (testIdentity):
+    (credentialWithIdentity):
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    (TestWebKitAPI::webViewWithNavigationDelegate):
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/cocoa/HTTPServer.h:
+    * TestWebKitAPI/cocoa/HTTPServer.mm:
+    (TestWebKitAPI::HTTPServer::HTTPServer):
+    (TestWebKitAPI::HTTPServer::request const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255846 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Alex Christensen  <achristensen@webkit.org>
+
+            Make WKWebView._negotiatedLegacyTLS accurate when loading main resouorce from network or cache
+            https://bugs.webkit.org/show_bug.cgi?id=207207
+
+            Reviewed by Chris Dumez.
+
+            HTTPServer now supports HTTPS. Tell your friends!
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+            (testCertificate):
+            (testIdentity):
+            (credentialWithIdentity):
+            * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+            (TestWebKitAPI::webViewWithNavigationDelegate):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/cocoa/HTTPServer.h:
+            * TestWebKitAPI/cocoa/HTTPServer.mm:
+            (TestWebKitAPI::HTTPServer::HTTPServer):
+            (TestWebKitAPI::HTTPServer::request const):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255845. rdar://problem/59298143
 
     _WKDownload should expose the originating FrameInfo.

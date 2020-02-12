@@ -34,15 +34,28 @@
 
 namespace TestWebKitAPI {
 
-HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses)
-    : m_requestResponseMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
+HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol)
+    : m_protocol(protocol)
+    , m_requestResponseMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
         HashMap<String, HTTPServer::HTTPResponse> map;
         for (auto& pair : list)
             map.add(pair.first, pair.second);
         return map;
     }(responses))
 {
-    auto parameters = adoptNS(nw_parameters_create_secure_tcp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    auto configureTLS = protocol == Protocol::Http ? NW_PARAMETERS_DISABLE_PROTOCOL : ^(nw_protocol_options_t protocolOptions) {
+#if HAVE(TLS_PROTOCOL_VERSION_T)
+        auto options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
+        auto identity = adoptNS(sec_identity_create(testIdentity().get()));
+        sec_protocol_options_set_local_identity(options.get(), identity.get());
+        if (protocol == Protocol::HttpsWithLegacyTLS)
+            sec_protocol_options_set_max_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
+#else
+        UNUSED_PARAM(protocolOptions);
+        ASSERT(protocol != Protocol::HttpsWithLegacyTLS);
+#endif
+    };
+    auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLS, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     m_listener = adoptNS(nw_listener_create(parameters.get()));
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
     nw_listener_set_new_connection_handler(m_listener.get(), ^(nw_connection_t connection) {
@@ -113,7 +126,17 @@ uint16_t HTTPServer::port() const
 
 NSURLRequest *HTTPServer::request() const
 {
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", port()]]];
+    NSString *format;
+    switch (m_protocol) {
+    case Protocol::Http:
+        format = @"http://127.0.0.1:%d/";
+        break;
+    case Protocol::Https:
+    case Protocol::HttpsWithLegacyTLS:
+        format = @"https://127.0.0.1:%d/";
+        break;
+    }
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port()]]];
 }
 
 } // namespace TestWebKitAPI

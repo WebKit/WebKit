@@ -819,24 +819,22 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (auto* networkDataTask = [self existingTask:dataTask]) {
         ASSERT(RunLoop::isMain());
 
-        bool negotiatedLegacyTLS = false;
+        NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
-            negotiatedLegacyTLS = true;
+            negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
         UNUSED_PARAM(metrics);
 #else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
             SSLProtocol tlsVersion = [dataTask _TLSNegotiatedProtocolVersion];
             if (tlsVersion == kTLSProtocol11 || tlsVersion == kTLSProtocol1)
-                negotiatedLegacyTLS = true;
+                negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
         }
         ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-        if (negotiatedLegacyTLS)
-            networkDataTask->negotiatedLegacyTLS();
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
@@ -855,7 +853,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         copyTimingData([dataTask _timingData], resourceResponse.deprecatedNetworkLoadMetrics());
 
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->didReceiveResponse(WTFMove(resourceResponse), [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
+        networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);
 #else

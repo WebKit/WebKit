@@ -97,7 +97,7 @@ void NetworkDataTask::scheduleFailure(FailureType type)
     m_failureTimer.startOneShot(0_s);
 }
 
-void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
 {
     if (response.isHTTP09()) {
         auto url = response.url();
@@ -111,15 +111,9 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
         }
     }
     if (m_client)
-        m_client->didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
+        m_client->didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, WTFMove(completionHandler));
     else
         completionHandler(PolicyAction::Ignore);
-}
-
-void NetworkDataTask::negotiatedLegacyTLS() const
-{
-    if (m_client)
-        m_client->negotiatedLegacyTLS();
 }
 
 bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const

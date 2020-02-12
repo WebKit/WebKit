@@ -163,7 +163,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
     void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad(const Transaction::Token&, WebCertificateInfo&, bool hasInsecureContent);
+    void didCommitLoad(const Transaction::Token&, WebCertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS);
     void didFinishLoad(const Transaction::Token&);
     void didFailLoad(const Transaction::Token&);
 

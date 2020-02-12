@@ -373,10 +373,10 @@ void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
         m_client->didReceiveData(WTFMove(data));
 }
 
-void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, WebKit::ResponseCompletionHandler&& completionHandler)
+void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, WebKit::ResponseCompletionHandler&& completionHandler)
 {
     EMIT_SIGNPOST(m_task, "received response headers");
-    NetworkDataTask::didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
+    NetworkDataTask::didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, WTFMove(completionHandler));
 }
 
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
