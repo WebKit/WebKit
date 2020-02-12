@@ -1,3 +1,20 @@
+2020-02-11  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Add WebCrypto LayoutTests to check if PKCS#7 padding is correctly implemented in AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=207174
+
+        Reviewed by Jiewen Tan.
+
+        WebCrypto AES-CBC specification requires PKCS#7 padding,
+
+        Add decrypt/encrypt test cases for 0 ~ 33 bytes data.
+        It covers the boundary values where the padding size are changed, namely, 0, 1, 15, 16, 17, 31, 32, and 33.
+
+        * crypto/subtle/aes-cbc-import-key-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-decrypt.html:
+        * crypto/subtle/aes-cbc-import-key-encrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-encrypt.html:
+
 2020-02-11  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening some tests crashing in debug builds
