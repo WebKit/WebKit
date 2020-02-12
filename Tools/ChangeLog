@@ -1,5 +1,37 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255826. rdar://problem/59299115
+
+    REGRESSION(r255595): page not closed after beforeunload handler returns true
+    https://bugs.webkit.org/show_bug.cgi?id=207189
+    <rdar://problem/59149593>
+    
+    Reviewed by Youenn Fablet.
+    
+    Add API test coverage for fix landed in r255677.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+    (-[SlowBeforeUnloadPromptUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255826 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r255595): page not closed after beforeunload handler returns true
+            https://bugs.webkit.org/show_bug.cgi?id=207189
+            <rdar://problem/59149593>
+
+            Reviewed by Youenn Fablet.
+
+            Add API test coverage for fix landed in r255677.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ModalAlerts.mm:
+            (-[SlowBeforeUnloadPromptUIDelegate _webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+            (TEST):
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255595. rdar://problem/59298183
 
     Regression(r253224) WKUIDelegate.webViewDidClose may get called twice after calling _tryClose on the WKWebView
