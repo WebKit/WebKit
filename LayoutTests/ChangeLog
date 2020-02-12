@@ -1,5 +1,14 @@
 2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ iOS ] http/tests/security/cross-frame-access-private-browsing.html is a flay timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207645
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2020-02-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ iOS ] imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html is flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=207643
 
