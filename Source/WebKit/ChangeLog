@@ -26,6 +26,19 @@
 
 2020-02-12  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Deny mach lookup access to analytics service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=207482
+
+        Reviewed by Darin Adler.
+
+        As part of sandbox hardening work, this service should be denied in the WebContent process' sandbox.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-02-12  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Deny mach lookup access to view service in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=207487
         <rdar://problem/56995704>

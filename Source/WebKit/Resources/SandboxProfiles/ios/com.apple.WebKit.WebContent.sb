@@ -897,10 +897,6 @@
 (allow mach-lookup
        (global-name "com.apple.webinspector"))
 
-;; Various services required by CFNetwork and other frameworks
-(allow mach-lookup
-    (global-name "com.apple.analyticsd"))
-
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.PowerManagement.control"))
 
