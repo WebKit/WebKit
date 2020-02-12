@@ -65,8 +65,6 @@ struct Run {
     struct Expansion;
     Run(size_t lineIndex, const Layout::Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
 
-    size_t lineIndex() const { return m_lineIndex; }
-
     const InlineRect& rect() const { return m_rect; }
     const InlineRect& inkOverflow() const { return m_inkOverflow; }
 
@@ -79,33 +77,23 @@ struct Run {
     InlineLayoutUnit width() const { return m_rect.width(); }
     InlineLayoutUnit height() const { return m_rect.height(); }
 
-    void setWidth(InlineLayoutUnit width) { m_rect.setWidth(width); }
-    void setTop(InlineLayoutUnit top) { m_rect.setTop(top); }
-    void setlLeft(InlineLayoutUnit left) { m_rect.setLeft(left); }
-    void moveVertically(InlineLayoutUnit delta) { m_rect.moveVertically(delta); }
-    void moveHorizontally(InlineLayoutUnit delta) { m_rect.moveHorizontally(delta); }
-    void expandVertically(InlineLayoutUnit delta) { m_rect.expandVertically(delta); }
-    void expandHorizontally(InlineLayoutUnit delta) { m_rect.expandHorizontally(delta); }
-
-    void setTextContent(const TextContent&& textContent) { m_textContent.emplace(textContent); }
-    const Optional<TextContent>& textContent() const { return m_textContent; }
     Optional<TextContent>& textContent() { return m_textContent; }
+    const Optional<TextContent>& textContent() const { return m_textContent; }
+    // FIXME: This information should be preserved at Run construction time.
+    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->content() == "\n" && style().preserveNewline()); }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
         InlineLayoutUnit horizontalExpansion { 0 };
     };
-    void setExpansion(Expansion expansion) { m_expansion = expansion; }
     Expansion expansion() const { return m_expansion; }
 
-    void setImage(CachedImage& image) { m_cachedImage = &image; }
     CachedImage* image() const { return m_cachedImage; }
-
-    // FIXME: This information should be preserved at Run construction time.
-    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->content() == "\n" && style().preserveNewline()); }
 
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox->style(); }
+
+    size_t lineIndex() const { return m_lineIndex; }
 
 private:
     // FIXME: Find out the Display::Run <-> paint style setup.
