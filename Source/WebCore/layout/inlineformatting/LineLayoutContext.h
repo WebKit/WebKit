@@ -37,7 +37,7 @@ struct LineCandidateContent;
 
 class LineLayoutContext {
 public:
-    LineLayoutContext(const InlineFormattingContext&, const Container& formattingContextRoot, const InlineItems&);
+    LineLayoutContext(const InlineFormattingContext&, const ContainerBox& formattingContextRoot, const InlineItems&);
 
     struct LineContent {
         struct PartialContent {
@@ -75,10 +75,10 @@ private:
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const Container& root() const { return m_formattingContextRoot; }
+    const ContainerBox& root() const { return m_formattingContextRoot; }
 
     const InlineFormattingContext& m_inlineFormattingContext;
-    const Container& m_formattingContextRoot;
+    const ContainerBox& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
     FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;

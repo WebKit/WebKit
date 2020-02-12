@@ -242,12 +242,12 @@ LineLayoutTraversal::ElementBoxIterator LineLayout::elementBoxFor(const RenderLi
     return { };
 }
 
-const Layout::Container& LineLayout::rootLayoutBox() const
+const Layout::ContainerBox& LineLayout::rootLayoutBox() const
 {
     return m_boxTree.rootLayoutBox();
 }
 
-Layout::Container& LineLayout::rootLayoutBox()
+Layout::ContainerBox& LineLayout::rootLayoutBox()
 {
     return m_boxTree.rootLayoutBox();
 }

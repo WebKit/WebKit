@@ -33,7 +33,7 @@
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TableFormattingState.h"
@@ -44,7 +44,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const Container& rootContainer)
+LayoutState::LayoutState(const Document& document, const ContainerBox& rootContainer)
     : m_rootContainer(makeWeakPtr(rootContainer))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
@@ -87,7 +87,7 @@ FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
     return establishedFormattingState(layoutBox.formattingContextRoot());
 }
 
-FormattingState& LayoutState::establishedFormattingState(const Container& formattingContextRoot) const
+FormattingState& LayoutState::establishedFormattingState(const ContainerBox& formattingContextRoot) const
 {
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
         ASSERT(&formattingContextRoot == m_rootContainer.get());
@@ -104,7 +104,7 @@ FormattingState& LayoutState::establishedFormattingState(const Container& format
     return *m_tableFormattingStates.get(&formattingContextRoot);
 }
 
-InlineFormattingState& LayoutState::establishedInlineFormattingState(const Container& formattingContextRoot) const
+InlineFormattingState& LayoutState::establishedInlineFormattingState(const ContainerBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
@@ -116,19 +116,19 @@ InlineFormattingState& LayoutState::establishedInlineFormattingState(const Conta
     return *m_inlineFormattingStates.get(&formattingContextRoot);
 }
 
-BlockFormattingState& LayoutState::establishedBlockFormattingState(const Container& formattingContextRoot) const
+BlockFormattingState& LayoutState::establishedBlockFormattingState(const ContainerBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesBlockFormattingContext());
     return *m_blockFormattingStates.get(&formattingContextRoot);
 }
 
-TableFormattingState& LayoutState::establishedTableFormattingState(const Container& formattingContextRoot) const
+TableFormattingState& LayoutState::establishedTableFormattingState(const ContainerBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesTableFormattingContext());
     return *m_tableFormattingStates.get(&formattingContextRoot);
 }
 
-FormattingState& LayoutState::ensureFormattingState(const Container& formattingContextRoot)
+FormattingState& LayoutState::ensureFormattingState(const ContainerBox& formattingContextRoot)
 {
     if (formattingContextRoot.establishesInlineFormattingContext())
         return ensureInlineFormattingState(formattingContextRoot);
@@ -139,7 +139,7 @@ FormattingState& LayoutState::ensureFormattingState(const Container& formattingC
     return ensureTableFormattingState(formattingContextRoot);
 }
 
-InlineFormattingState& LayoutState::ensureInlineFormattingState(const Container& formattingContextRoot)
+InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
@@ -168,7 +168,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const Container&
     return *m_inlineFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
-BlockFormattingState& LayoutState::ensureBlockFormattingState(const Container& formattingContextRoot)
+BlockFormattingState& LayoutState::ensureBlockFormattingState(const ContainerBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesBlockFormattingContext());
 
@@ -179,7 +179,7 @@ BlockFormattingState& LayoutState::ensureBlockFormattingState(const Container& f
     return *m_blockFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
-TableFormattingState& LayoutState::ensureTableFormattingState(const Container& formattingContextRoot)
+TableFormattingState& LayoutState::ensureTableFormattingState(const ContainerBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesTableFormattingContext());
 

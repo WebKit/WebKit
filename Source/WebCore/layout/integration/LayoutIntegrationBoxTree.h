@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -41,8 +41,8 @@ class BoxTree {
 public:
     BoxTree(const RenderBlockFlow&);
 
-    const Layout::Container& rootLayoutBox() const { return m_root; }
-    Layout::Container& rootLayoutBox() { return m_root; }
+    const Layout::ContainerBox& rootLayoutBox() const { return m_root; }
+    Layout::ContainerBox& rootLayoutBox() { return m_root; }
 
     const Layout::Box* layoutBoxForRenderer(const RenderObject&) const;
     const RenderObject* rendererForLayoutBox(const Layout::Box&) const;
@@ -50,7 +50,7 @@ public:
 private:
     void buildTree(const RenderBlockFlow&);
 
-    Layout::Container m_root;
+    Layout::ContainerBox m_root;
     struct BoxAndRenderer {
         std::unique_ptr<const Layout::Box> box;
         const RenderObject* renderer { nullptr };

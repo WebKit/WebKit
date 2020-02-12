@@ -31,13 +31,13 @@
 #include "BlockFormattingState.h"
 #include "DisplayBox.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutState.h"
 
 namespace WebCore {
 namespace Layout {
 
-static const Container& initialContainingBlock(const Box& layoutBox)
+static const ContainerBox& initialContainingBlock(const Box& layoutBox)
 {
     auto* containingBlock = layoutBox.containingBlock();
     while (containingBlock->containingBlock())

@@ -122,7 +122,7 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
     // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
     // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+    if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
         return { };
 
     auto& layoutState = this->layoutState();
@@ -131,7 +131,7 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
     auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
     auto top = borderAndPaddingTop;
     auto bottom = borderAndPaddingTop;
-    auto& formattingRootContainer = downcast<Container>(layoutBox);
+    auto& formattingRootContainer = downcast<ContainerBox>(layoutBox);
     if (formattingRootContainer.establishesInlineFormattingContext()) {
         auto& lineBoxes = layoutState.establishedInlineFormattingState(formattingRootContainer).displayInlineContent()->lineBoxes;
         // Even empty containers generate one line. 
@@ -239,11 +239,11 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     // Resolve top all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& boxGeometry = formattingContext.geometryForBox(*container, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
+    for (auto* containerBox = layoutBox.parent(); containerBox != &containingBlock; containerBox = containerBox->containingBlock()) {
+        auto& boxGeometry = formattingContext.geometryForBox(*containerBox, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
         top += boxGeometry.top();
-        ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
+        ASSERT(!containerBox->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
     return top - verticalConstraints.logicalTop;
@@ -262,11 +262,11 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     // Resolve left all the way up to the containing block.
     auto& containingBlock = *layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* container = layoutBox.parent(); container != &containingBlock; container = container->containingBlock()) {
-        auto& boxGeometry = formattingContext.geometryForBox(*container, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
+    for (auto* containerBox = layoutBox.parent(); containerBox != &containingBlock; containerBox = containerBox->containingBlock()) {
+        auto& boxGeometry = formattingContext.geometryForBox(*containerBox, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
         left += boxGeometry.left();
-        ASSERT(!container->isPositioned() || layoutBox.isFixedPositioned());
+        ASSERT(!containerBox->isPositioned() || layoutBox.isFixedPositioned());
     }
     // Move the static position relative to the padding box. This is very specific to abolutely positioned boxes.
     return left - horizontalConstraints.logicalLeft;
@@ -285,8 +285,8 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
     auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-    if (is<Container>(formattingRoot) && downcast<Container>(formattingRoot).hasInFlowOrFloatingChild()) {
-        auto& root = downcast<Container>(formattingRoot);
+    if (is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild()) {
+        auto& root = downcast<ContainerBox>(formattingRoot);
         auto& formattingStateForRoot = layoutState().ensureFormattingState(root);
         auto precomputedIntrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
         if (!precomputedIntrinsicWidthConstraints)

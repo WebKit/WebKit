@@ -59,7 +59,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
         }
         if (run.isBox()) {
             if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = layoutState.establishedInlineFormattingState(downcast<Container>(layoutBox));
+                auto& formattingState = layoutState.establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 auto inlineBlockBaseline = formattingState.displayInlineContent()->lineBoxes.last().baseline();
                 if (inlineBlockBaseline.descent())
                     return false;
@@ -71,7 +71,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
     return true;
 }
 
-LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const Container& formattingRoot) const
+LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const ContainerBox& formattingRoot) const
 {
     // computedLineHeight takes font-size into account when line-height is not set.
     // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.

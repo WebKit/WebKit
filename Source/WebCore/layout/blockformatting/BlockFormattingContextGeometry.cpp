@@ -70,11 +70,11 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         if (height)
             return { *height, nonCollapsedMargin };
 
-        if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
+        if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowChild())
             return { 0, nonCollapsedMargin };
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-        auto& layoutContainer = downcast<Container>(layoutBox);
+        auto& layoutContainer = downcast<ContainerBox>(layoutBox);
         if (layoutContainer.establishesInlineFormattingContext()) {
             auto& lineBoxes = layoutState().establishedInlineFormattingState(layoutContainer).displayInlineContent()->lineBoxes;
             // Even empty containers generate one line. 
@@ -321,15 +321,15 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
             return { };
         }
 
-        if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+        if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
             return { };
 
         if (layoutBox.establishesFormattingContext())
-            return LayoutContext::createFormattingContext(downcast<Container>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
+            return LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
 
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
         auto& formattingState = layoutState().formattingStateForBox(layoutBox);
-        for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
+        for (auto& child : childrenOfType<Box>(downcast<ContainerBox>(layoutBox))) {
             if (child.isOutOfFlowPositioned())
                 continue;
             auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraintsForBox(child);

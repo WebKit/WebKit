@@ -393,7 +393,7 @@
 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
 		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
 		119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */; };
-		1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA44208E35A3002358CC /* LayoutContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1199FA46208E35A3002358CC /* LayoutContainerBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA44208E35A3002358CC /* LayoutContainerBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1199FA5B208E3C7F002358CC /* DisplayBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1199FA59208E3C7F002358CC /* DisplayBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5931,8 +5931,8 @@
 		119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFormControls.h; sourceTree = "<group>"; };
 		119340A01FEE024000935F1E /* RenderTreeBuilderBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderBlock.cpp; sourceTree = "<group>"; };
 		119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlock.h; sourceTree = "<group>"; };
-		1199FA44208E35A3002358CC /* LayoutContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutContainer.h; sourceTree = "<group>"; };
-		1199FA45208E35A3002358CC /* LayoutContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutContainer.cpp; sourceTree = "<group>"; };
+		1199FA44208E35A3002358CC /* LayoutContainerBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutContainerBox.h; sourceTree = "<group>"; };
+		1199FA45208E35A3002358CC /* LayoutContainerBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutContainerBox.cpp; sourceTree = "<group>"; };
 		1199FA59208E3C7F002358CC /* DisplayBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayBox.h; sourceTree = "<group>"; };
 		1199FA5A208E3C7F002358CC /* DisplayBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayBox.cpp; sourceTree = "<group>"; };
 		11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutDescendantIterator.h; sourceTree = "<group>"; };
@@ -16729,8 +16729,8 @@
 				115CFA96208B952B001E6991 /* LayoutBox.cpp */,
 				115CFA95208B952B001E6991 /* LayoutBox.h */,
 				11100FC920927CBC0081AA6C /* LayoutChildIterator.h */,
-				1199FA45208E35A3002358CC /* LayoutContainer.cpp */,
-				1199FA44208E35A3002358CC /* LayoutContainer.h */,
+				1199FA45208E35A3002358CC /* LayoutContainerBox.cpp */,
+				1199FA44208E35A3002358CC /* LayoutContainerBox.h */,
 				11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */,
 				6F0B98B623F2690600EEC2F2 /* LayoutInlineTextBox.cpp */,
 				6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */,
@@ -31278,7 +31278,7 @@
 				11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
 				11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */,
-				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
+				1199FA46208E35A3002358CC /* LayoutContainerBox.h in Headers */,
 				6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
 				6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */,

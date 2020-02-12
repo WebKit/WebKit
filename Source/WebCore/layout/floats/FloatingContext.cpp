@@ -33,7 +33,7 @@
 #include "FloatBox.h"
 #include "FormattingContext.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -155,7 +155,7 @@ struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
     HorizontalEdges containingBlockContentBox;
 };
 
-FloatingContext::FloatingContext(const Container& floatingContextRoot, const FormattingContext& formattingContext, FloatingState& floatingState)
+FloatingContext::FloatingContext(const ContainerBox& floatingContextRoot, const FormattingContext& formattingContext, FloatingState& floatingState)
     : m_root(makeWeakPtr(floatingContextRoot))
     , m_formattingContext(formattingContext)
     , m_floatingState(floatingState)
@@ -446,8 +446,8 @@ LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
     auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
-    for (auto* container = floatBox.containingBlock(); container && container != &floatingStateRoot; container = container->containingBlock())
-        top += formattingContext().geometryForBox(*container, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
+    for (auto* containerBox = floatBox.containingBlock(); containerBox && containerBox != &floatingStateRoot; containerBox = containerBox->containingBlock())
+        top += formattingContext().geometryForBox(*containerBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
     return top;
 }
 
@@ -458,8 +458,8 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
     if (&from == &to)
         return position;
     auto mappedPosition = position;
-    for (auto* container = &from; container && container != &to; container = container->containingBlock())
-        mappedPosition.moveBy(formattingContext().geometryForBox(*container, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
+    for (auto* containerBox = &from; containerBox && containerBox != &to; containerBox = containerBox->containingBlock())
+        mappedPosition.moveBy(formattingContext().geometryForBox(*containerBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
     return mappedPosition;
 }
 

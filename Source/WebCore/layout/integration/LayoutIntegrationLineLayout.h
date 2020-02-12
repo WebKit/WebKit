@@ -86,8 +86,8 @@ private:
     void prepareLayoutState();
     void prepareFloatingState();
 
-    const Layout::Container& rootLayoutBox() const;
-    Layout::Container& rootLayoutBox();
+    const Layout::ContainerBox& rootLayoutBox() const;
+    Layout::ContainerBox& rootLayoutBox();
     ShadowData* debugTextShadow();
     void releaseInlineItemCache();
 

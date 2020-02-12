@@ -37,7 +37,7 @@
 #include "InvalidationContext.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutPhase.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderStyleConstants.h"
@@ -89,7 +89,7 @@ void LayoutContext::layoutWithPreparedRootGeometry(InvalidationState& invalidati
         layoutFormattingContextSubtree(formattingContextRoot, invalidationState);
 }
 
-void LayoutContext::layoutFormattingContextSubtree(const Container& formattingContextRoot, InvalidationState& invalidationState)
+void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattingContextRoot, InvalidationState& invalidationState)
 {
     RELEASE_ASSERT(formattingContextRoot.establishesFormattingContext());
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
@@ -109,7 +109,7 @@ void LayoutContext::layoutFormattingContextSubtree(const Container& formattingCo
     }
 }
 
-std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const Container& formattingContextRoot, LayoutState& layoutState)
+std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const ContainerBox& formattingContextRoot, LayoutState& layoutState)
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     if (formattingContextRoot.establishesInlineFormattingContext()) {

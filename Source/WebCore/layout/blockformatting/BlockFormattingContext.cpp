@@ -34,7 +34,7 @@
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutState.h"
 #include "Logging.h"
@@ -46,7 +46,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState& formattingState)
+BlockFormattingContext::BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
@@ -66,9 +66,9 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     enum class LayoutDirection { Child, Sibling };
     auto appendNextToLayoutQueue = [&] (const auto& layoutBox, auto direction) {
         if (direction == LayoutDirection::Child) {
-            if (!is<Container>(layoutBox))
+            if (!is<ContainerBox>(layoutBox))
                 return false;
-            for (auto* child = downcast<Container>(layoutBox).firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
+            for (auto* child = downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
                 if (!invalidationState.needsLayout(*child))
                     continue;
                 layoutQueue.append(child);
@@ -125,13 +125,13 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
             computeStaticHorizontalPosition(layoutBox, horizontalConstraints);
 
             if (layoutBox.establishesFormattingContext()) {
-                if (is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild()) {
+                if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild()) {
                     // Layout the inflow descendants of this formatting context root.
                     precomputeVerticalPositionForFormattingRoot(floatingContext, layoutBox, horizontalConstraints, verticalConstraints);
                     auto& rootDisplayBox = geometryForBox(layoutBox);
                     auto horizontalConstraintsForFormattingContext = Geometry::horizontalConstraintsForInFlow(rootDisplayBox);
                     auto verticalConstraintsForFormattingContext = Geometry::verticalConstraintsForInFlow(rootDisplayBox);
-                    LayoutContext::createFormattingContext(downcast<Container>(layoutBox), layoutState())->layoutInFlowContent(invalidationState, horizontalConstraintsForFormattingContext, verticalConstraintsForFormattingContext);
+                    LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->layoutInFlowContent(invalidationState, horizontalConstraintsForFormattingContext, verticalConstraintsForFormattingContext);
                 }
                 break;
             }
@@ -150,11 +150,11 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
             if (layoutBox.establishesFormattingContext()) {
                 // Now that we computed the root's height, we can layout the out-of-flow descendants.
-                if (is<Container>(layoutBox) && downcast<Container>(layoutBox).hasChild()) {
+                if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasChild()) {
                     auto& rootDisplayBox = geometryForBox(layoutBox);
                     auto horizontalConstraintsForOutOfFlow =  Geometry::horizontalConstraintsForOutOfFlow(rootDisplayBox);
                     auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootDisplayBox);
-                    LayoutContext::createFormattingContext(downcast<Container>(layoutBox), layoutState())->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
+                    LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
                 }
             }
             // Resolve final positions.
@@ -212,11 +212,11 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
 
 void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox, const ConstraintsPair<HorizontalConstraints>& horizontalConstraints)
 {
-    if (!is<Container>(layoutBox))
+    if (!is<ContainerBox>(layoutBox))
         return;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &layoutBox);
-    auto& container = downcast<Container>(layoutBox);
-    for (auto& childBox : childrenOfType<Box>(container)) {
+    auto& containerBox = downcast<ContainerBox>(layoutBox);
+    for (auto& childBox : childrenOfType<Box>(containerBox)) {
         if (!childBox.isInFlowPositioned())
             continue;
         auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, horizontalConstraints.containingBlock);
@@ -455,11 +455,11 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedInt
     while (!queue.isEmpty()) {
         while (true) {
             auto& layoutBox = *queue.last();
-            auto hasInFlowOrFloatingChild = is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild();
+            auto hasInFlowOrFloatingChild = is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild();
             auto skipDescendants = formattingState.intrinsicWidthConstraintsForBox(layoutBox) || !hasInFlowOrFloatingChild || layoutBox.establishesFormattingContext() || layoutBox.style().width().isFixed();
             if (skipDescendants)
                 break;
-            queue.append(downcast<Container>(layoutBox).firstInFlowOrFloatingChild());
+            queue.append(downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild());
         }
         // Compute min/max intrinsic width bottom up if needed.
         while (!queue.isEmpty()) {

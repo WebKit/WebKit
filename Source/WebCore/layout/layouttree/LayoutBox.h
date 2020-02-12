@@ -39,7 +39,7 @@ class Box;
 
 namespace Layout {
 
-class Container;
+class ContainerBox;
 class LayoutState;
 class TreeBuilder;
 
@@ -65,7 +65,7 @@ public:
         InlineTextBox          = 1 << 1,
         LineBreakBox           = 1 << 2,
         ReplacedBox            = 1 << 3,
-        ContainerFlag          = 1 << 4
+        ContainerBoxFlag       = 1 << 4
     };
     typedef unsigned BaseTypeFlags;
 
@@ -93,12 +93,12 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
-    const Container* containingBlock() const;
-    const Container& formattingContextRoot() const;
-    const Container& initialContainingBlock() const;
+    const ContainerBox* containingBlock() const;
+    const ContainerBox& formattingContextRoot() const;
+    const ContainerBox& initialContainingBlock() const;
 
-    bool isDescendantOf(const Container&) const;
-    bool isContainingBlockDescendantOf(const Container&) const;
+    bool isDescendantOf(const ContainerBox&) const;
+    bool isContainingBlockDescendantOf(const ContainerBox&) const;
 
     bool isAnonymous() const { return m_isAnonymous; }
 
@@ -126,7 +126,7 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
 
-    const Container* parent() const { return m_parent; }
+    const ContainerBox* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;
@@ -137,7 +137,7 @@ public:
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling; }
 
-    bool isContainer() const { return m_baseTypeFlags & ContainerFlag; }
+    bool isContainerBox() const { return m_baseTypeFlags & ContainerBoxFlag; }
     bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBox; }
     bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBox; }
     bool isReplacedBox() const { return m_baseTypeFlags & ReplacedBox; }
@@ -158,7 +158,7 @@ public:
     void setColumnWidth(LayoutUnit);
     Optional<LayoutUnit> columnWidth() const;
 
-    void setParent(Container& parent) { m_parent = &parent; }
+    void setParent(ContainerBox& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
     void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
 
@@ -195,7 +195,7 @@ private:
     RenderStyle m_style;
     Optional<ElementAttributes> m_elementAttributes;
 
-    Container* m_parent { nullptr };
+    ContainerBox* m_parent { nullptr };
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
     

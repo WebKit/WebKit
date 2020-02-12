@@ -35,7 +35,7 @@
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
 #include "IntRect.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
@@ -152,8 +152,8 @@ static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layo
         return layoutState.displayBoxForLayoutBox(layoutBox);
 
     auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
-    for (auto* container = layoutBox.containingBlock(); container != &layoutBox.initialContainingBlock(); container = container->containingBlock())
-        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
+    for (auto* containerBox = layoutBox.containingBlock(); containerBox != &layoutBox.initialContainingBlock(); containerBox = containerBox->containingBlock())
+        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*containerBox).topLeft());
     return absoluteBox;
 }
 
@@ -182,26 +182,26 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
         }
         // Only inline content for now.
         if (layoutBox.establishesInlineFormattingContext()) {
-            auto& container = downcast<Layout::Container>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox.topLeft(), layoutState.establishedInlineFormattingState(container));
+            auto& containerBox = downcast<Layout::ContainerBox>(layoutBox);
+            paintInlineContent(context, absoluteDisplayBox.topLeft(), layoutState.establishedInlineFormattingState(containerBox));
         }
     };
 
     paint(paintRootBox);
-    if (!is<Layout::Container>(paintRootBox) || !downcast<Layout::Container>(paintRootBox).hasChild())
+    if (!is<Layout::ContainerBox>(paintRootBox) || !downcast<Layout::ContainerBox>(paintRootBox).hasChild())
         return;
 
     LayoutBoxList layoutBoxList;
-    layoutBoxList.append(downcast<Layout::Container>(paintRootBox).firstChild());
+    layoutBoxList.append(downcast<Layout::ContainerBox>(paintRootBox).firstChild());
     while (!layoutBoxList.isEmpty()) {
         while (true) {
             auto& layoutBox = *layoutBoxList.last();
             if (isPaintRootCandidate(layoutBox))
                 break;
             paint(layoutBox);
-            if (!is<Layout::Container>(layoutBox) || !downcast<Layout::Container>(layoutBox).hasChild())
+            if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
-            layoutBoxList.append(downcast<Layout::Container>(layoutBox).firstChild());
+            layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());
         }
         while (!layoutBoxList.isEmpty()) {
             auto& layoutBox = *layoutBoxList.takeLast();
@@ -240,9 +240,9 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
             if (isPaintRootCandidate(layoutBox))
                 appendPaintRoot(layoutBox);
             contentRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
-            if (!is<Layout::Container>(layoutBox) || !downcast<Layout::Container>(layoutBox).hasChild())
+            if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
-            layoutBoxList.append(downcast<Layout::Container>(layoutBox).firstChild());
+            layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());
         }
         while (!layoutBoxList.isEmpty()) {
             auto& layoutBox = *layoutBoxList.takeLast();

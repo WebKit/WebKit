@@ -46,7 +46,7 @@ class FloatingContext;
 class BlockFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(const Container& formattingContextRoot, BlockFormattingState&);
+    BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 

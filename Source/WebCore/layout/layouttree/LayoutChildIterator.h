@@ -35,36 +35,36 @@ namespace Layout {
 template <typename T>
 class LayoutChildIterator : public LayoutIterator<T> {
 public:
-    LayoutChildIterator(const Container& parent);
-    LayoutChildIterator(const Container& parent, const T* current);
+    LayoutChildIterator(const ContainerBox& parent);
+    LayoutChildIterator(const ContainerBox& parent, const T* current);
     LayoutChildIterator& operator++();
 };
 
 template <typename T>
 class LayoutChildIteratorAdapter {
 public:
-    LayoutChildIteratorAdapter(const Container& parent);
+    LayoutChildIteratorAdapter(const ContainerBox& parent);
     LayoutChildIterator<T> begin() const;
     LayoutChildIterator<T> end() const;
     const T* first() const;
     const T* last() const;
 
 private:
-    const Container& m_parent;
+    const ContainerBox& m_parent;
 };
 
-template <typename T> LayoutChildIteratorAdapter<T> childrenOfType(const Container&);
+template <typename T> LayoutChildIteratorAdapter<T> childrenOfType(const ContainerBox&);
 
 // LayoutChildIterator
 
 template <typename T>
-inline LayoutChildIterator<T>::LayoutChildIterator(const Container& parent)
+inline LayoutChildIterator<T>::LayoutChildIterator(const ContainerBox& parent)
     : LayoutIterator<T>(&parent)
 {
 }
 
 template <typename T>
-inline LayoutChildIterator<T>::LayoutChildIterator(const Container& parent, const T* current)
+inline LayoutChildIterator<T>::LayoutChildIterator(const ContainerBox& parent, const T* current)
     : LayoutIterator<T>(&parent, current)
 {
 }
@@ -78,7 +78,7 @@ inline LayoutChildIterator<T>& LayoutChildIterator<T>::operator++()
 // LayoutChildIteratorAdapter
 
 template <typename T>
-inline LayoutChildIteratorAdapter<T>::LayoutChildIteratorAdapter(const Container& parent)
+inline LayoutChildIteratorAdapter<T>::LayoutChildIteratorAdapter(const ContainerBox& parent)
     : m_parent(parent)
 {
 }
@@ -108,7 +108,7 @@ inline const T* LayoutChildIteratorAdapter<T>::last() const
 }
 
 template <typename T>
-inline LayoutChildIteratorAdapter<T> childrenOfType(const Container& parent)
+inline LayoutChildIteratorAdapter<T> childrenOfType(const ContainerBox& parent)
 {
     return LayoutChildIteratorAdapter<T>(parent);
 }

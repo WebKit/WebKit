@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
@@ -50,21 +50,21 @@ class TableFormattingState;
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(const Document&, const Container& rootContainer);
+    LayoutState(const Document&, const ContainerBox& rootContainer);
     ~LayoutState();
 
-    FormattingState& ensureFormattingState(const Container& formattingContextRoot);
-    InlineFormattingState& ensureInlineFormattingState(const Container& formattingContextRoot);
-    BlockFormattingState& ensureBlockFormattingState(const Container& formattingContextRoot);
-    TableFormattingState& ensureTableFormattingState(const Container& formattingContextRoot);
+    FormattingState& ensureFormattingState(const ContainerBox& formattingContextRoot);
+    InlineFormattingState& ensureInlineFormattingState(const ContainerBox& formattingContextRoot);
+    BlockFormattingState& ensureBlockFormattingState(const ContainerBox& formattingContextRoot);
+    TableFormattingState& ensureTableFormattingState(const ContainerBox& formattingContextRoot);
 
-    FormattingState& establishedFormattingState(const Container& formattingRoot) const;
-    InlineFormattingState& establishedInlineFormattingState(const Container& formattingContextRoot) const;
-    BlockFormattingState& establishedBlockFormattingState(const Container& formattingContextRoot) const;
-    TableFormattingState& establishedTableFormattingState(const Container& formattingContextRoot) const;
+    FormattingState& establishedFormattingState(const ContainerBox& formattingRoot) const;
+    InlineFormattingState& establishedInlineFormattingState(const ContainerBox& formattingContextRoot) const;
+    BlockFormattingState& establishedBlockFormattingState(const ContainerBox& formattingContextRoot) const;
+    TableFormattingState& establishedTableFormattingState(const ContainerBox& formattingContextRoot) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
-    bool hasInlineFormattingState(const Container& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
+    bool hasInlineFormattingState(const ContainerBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
 
 #ifndef NDEBUG
     void registerFormattingContext(const FormattingContext&);
@@ -82,7 +82,7 @@ public:
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inNoQuirksMode() const { return m_quirksMode == QuirksMode::No; }
 
-    const Container& root() const { return *m_rootContainer; }
+    const ContainerBox& root() const { return *m_rootContainer; }
 
     // LFC integration only. Full LFC has proper ICB access.
     void setViewportSize(const LayoutSize&);
@@ -94,9 +94,9 @@ private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     Display::Box& ensureDisplayBoxForLayoutBoxSlow(const Box&);
 
-    HashMap<const Container*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
-    HashMap<const Container*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
-    HashMap<const Container*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
+    HashMap<const ContainerBox*, std::unique_ptr<InlineFormattingState>> m_inlineFormattingStates;
+    HashMap<const ContainerBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
+    HashMap<const ContainerBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
 
     std::unique_ptr<InlineFormattingState> m_rootInlineFormattingStateForIntegration;
 
@@ -106,7 +106,7 @@ private:
     HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;
     QuirksMode m_quirksMode { QuirksMode::No };
 
-    WeakPtr<const Container> m_rootContainer;
+    WeakPtr<const ContainerBox> m_rootContainer;
 
     // LFC integration only.
     LayoutSize m_viewportSize;

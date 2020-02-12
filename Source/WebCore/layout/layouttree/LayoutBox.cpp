@@ -29,7 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
@@ -99,15 +99,15 @@ bool Box::establishesInlineFormattingContext() const
     if (!isBlockContainerBox())
         return false;
 
-    if (!isContainer())
+    if (!isContainerBox())
         return false;
 
     // FIXME ???
-    if (!downcast<Container>(*this).firstInFlowChild())
+    if (!downcast<ContainerBox>(*this).firstInFlowChild())
         return false;
 
     // It's enough to check the first in-flow child since we can't have both block and inline level sibling boxes.
-    return downcast<Container>(*this).firstInFlowChild()->isInlineLevelBox();
+    return downcast<ContainerBox>(*this).firstInFlowChild()->isInlineLevelBox();
 }
 
 bool Box::establishesTableFormattingContext() const
@@ -174,7 +174,7 @@ bool Box::isFloatAvoider() const
         || establishesTableFormattingContext() || establishesIndependentFormattingContext() || hasFloatClear();
 }
 
-const Container* Box::containingBlock() const
+const ContainerBox* Box::containingBlock() const
 {
     // Finding the containing block by traversing the tree during tree construction could provide incorrect result.
     ASSERT(!Phase::isInTreeBuilding());
@@ -213,7 +213,7 @@ const Container* Box::containingBlock() const
     return nullptr;
 }
 
-const Container& Box::formattingContextRoot() const
+const ContainerBox& Box::formattingContextRoot() const
 {
     // Finding the context root by traversing the tree during tree construction could provide incorrect result.
     ASSERT(!Phase::isInTreeBuilding());
@@ -226,7 +226,7 @@ const Container& Box::formattingContextRoot() const
     // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
     // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
     // formatting context established by "inner".
-    const Container* ancestor = nullptr;
+    const ContainerBox* ancestor = nullptr;
     if (isInlineLevelBox() && isInFlowPositioned())
         ancestor = parent();
     else
@@ -237,10 +237,10 @@ const Container& Box::formattingContextRoot() const
     return ancestor->formattingContextRoot();
 }
 
-const Container& Box::initialContainingBlock() const
+const ContainerBox& Box::initialContainingBlock() const
 {
     if (isInitialContainingBlock())
-        return downcast<Container>(*this);
+        return downcast<ContainerBox>(*this);
 
     auto* parent = this->parent();
     for (; parent->parent(); parent = parent->parent()) { }
@@ -248,7 +248,7 @@ const Container& Box::initialContainingBlock() const
     return *parent;
 }
 
-bool Box::isDescendantOf(const Container& ancestorCandidate) const
+bool Box::isDescendantOf(const ContainerBox& ancestorCandidate) const
 {
     for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor == &ancestorCandidate)
@@ -257,7 +257,7 @@ bool Box::isDescendantOf(const Container& ancestorCandidate) const
     return false;
 }
 
-bool Box::isContainingBlockDescendantOf(const Container& ancestorCandidate) const
+bool Box::isContainingBlockDescendantOf(const ContainerBox& ancestorCandidate) const
 { 
     for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         if (ancestor == &ancestorCandidate)
@@ -365,10 +365,10 @@ bool Box::isOverflowVisible() const
         return true;
     }
     if (isInitialContainingBlock()) {
-        auto* documentBox = downcast<Container>(*this).firstChild();
-        if (!documentBox || !documentBox->isDocumentBox() || !is<Container>(documentBox))
+        auto* documentBox = downcast<ContainerBox>(*this).firstChild();
+        if (!documentBox || !documentBox->isDocumentBox() || !is<ContainerBox>(documentBox))
             return isOverflowVisible;
-        auto* bodyBox = downcast<Container>(documentBox)->firstChild();
+        auto* bodyBox = downcast<ContainerBox>(documentBox)->firstChild();
         if (!bodyBox || !bodyBox->isBodyBox())
             return isOverflowVisible;
         auto& bodyBoxStyle = bodyBox->style();

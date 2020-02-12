@@ -32,7 +32,7 @@
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutUnit.h"
 #include "RenderStyle.h"
 
@@ -195,10 +195,10 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlo
     if (hasPaddingBefore(layoutBox))
         return false;
 
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
+    if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowChild())
         return false;
 
-    auto& firstInFlowChild = *downcast<Container>(layoutBox).firstInFlowChild();
+    auto& firstInFlowChild = *downcast<ContainerBox>(layoutBox).firstInFlowChild();
     if (!firstInFlowChild.isBlockLevelBox())
         return false;
 
@@ -304,10 +304,10 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
     if (establishesBlockFormattingContext(layoutBox))
         return false;
 
-    if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowChild())
+    if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowChild())
         return false;
 
-    auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
+    auto& lastInFlowChild = *downcast<ContainerBox>(layoutBox).lastInFlowChild();
     if (!lastInFlowChild.isBlockLevelBox())
         return false;
 
@@ -380,10 +380,10 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
     if (layoutBox.isReplacedBox())
         return false;
 
-    if (!is<Container>(layoutBox))
+    if (!is<ContainerBox>(layoutBox))
         return true;
 
-    if (!downcast<Container>(layoutBox).hasInFlowChild())
+    if (!downcast<ContainerBox>(layoutBox).hasInFlowChild())
         return !establishesBlockFormattingContext(layoutBox);
 
     if (layoutBox.establishesFormattingContext()) {
@@ -391,12 +391,12 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
             auto& layoutState = this->layoutState();
             // If we get here through margin estimation, we don't necessarily have an actual state for this layout box since
             // we haven't started laying it out yet.
-            auto& layoutContainer = downcast<Container>(layoutBox);
-            if (!layoutState.hasInlineFormattingState(layoutContainer))
+            auto& containerBox = downcast<ContainerBox>(layoutBox);
+            if (!layoutState.hasInlineFormattingState(containerBox))
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& formattingState = layoutState.establishedInlineFormattingState(layoutContainer);
+                auto& formattingState = layoutState.establishedInlineFormattingState(containerBox);
                 if (auto* inlineContent = formattingState.displayInlineContent()) {
                     for (auto& lineBox : inlineContent->lineBoxes) {
                         if (!lineBox.isConsideredEmpty())
@@ -406,7 +406,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
                 // Any float box in this formatting context prevents collapsing through.
                 auto& floats = formattingState.floatingState().floats();
                 for (auto& floatItem : floats) {
-                    if (floatItem.isDescendantOfFormattingRoot(layoutContainer))
+                    if (floatItem.isDescendantOfFormattingRoot(containerBox))
                         return false;
                 }
                 return true;
@@ -418,7 +418,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
         return false;
     }
 
-    for (auto* inflowChild = downcast<Container>(layoutBox).firstInFlowOrFloatingChild(); inflowChild; inflowChild = inflowChild->nextInFlowOrFloatingSibling()) {
+    for (auto* inflowChild = downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild(); inflowChild; inflowChild = inflowChild->nextInFlowOrFloatingSibling()) {
         if (establishesBlockFormattingContext(*inflowChild))
             return false;
         if (!marginsCollapseThrough(*inflowChild))
@@ -527,7 +527,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     auto firstChildCollapsedMarginBefore = [&]() -> PositiveAndNegativeVerticalMargin::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
-        return positiveNegativeValues(*downcast<Container>(layoutBox).firstInFlowChild(), MarginType::Before);
+        return positiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild(), MarginType::Before);
     };
 
     auto previouSiblingCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
@@ -557,7 +557,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     auto lastChildCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
         if (!marginAfterCollapsesWithLastInFlowChildMarginAfter(layoutBox))
             return { };
-        return positiveNegativeValues(*downcast<Container>(layoutBox).lastInFlowChild(), MarginType::After);
+        return positiveNegativeValues(*downcast<ContainerBox>(layoutBox).lastInFlowChild(), MarginType::After);
     };
 
     // We don't know yet the margin before value of the next sibling. Let's just pretend it does not have one and 

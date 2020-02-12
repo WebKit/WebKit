@@ -55,7 +55,7 @@ void TableFormattingContext::initializeDisplayBoxToBlank(Display::Box& displayBo
 }
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
-TableFormattingContext::TableFormattingContext(const Container& formattingContextRoot, TableFormattingState& formattingState)
+TableFormattingContext::TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
@@ -111,8 +111,8 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
     cellDisplayBox.setContentBoxWidth(column.logicalWidth() - cellDisplayBox.horizontalMarginBorderAndPadding());
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-    if (is<Container>(cellLayoutBox) && downcast<Container>(cellLayoutBox).hasInFlowOrFloatingChild())
-        LayoutContext::createFormattingContext(downcast<Container>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox), Geometry::verticalConstraintsForInFlow(cellDisplayBox));
+    if (is<ContainerBox>(cellLayoutBox) && downcast<ContainerBox>(cellLayoutBox).hasInFlowOrFloatingChild())
+        LayoutContext::createFormattingContext(downcast<ContainerBox>(cellLayoutBox), layoutState())->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(cellDisplayBox), Geometry::verticalConstraintsForInFlow(cellDisplayBox));
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.
@@ -196,7 +196,7 @@ void TableFormattingContext::ensureTableGrid()
 
     if (colgroup) {
         auto& columnsContext = tableGrid.columnsContext();
-        for (auto* column = downcast<Container>(*colgroup).firstChild(); column; column = column->nextSibling()) {
+        for (auto* column = downcast<ContainerBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
             ASSERT(column->isTableColumn());
             auto columnSpanCount = column->columnSpan();
             ASSERT(columnSpanCount > 0);
@@ -208,9 +208,9 @@ void TableFormattingContext::ensureTableGrid()
     auto* firstSection = colgroup ? colgroup->nextSibling() : tableCaption ? tableCaption->nextSibling() : firstChild;
     for (auto* section = firstSection; section; section = section->nextSibling()) {
         ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
-        for (auto* row = downcast<Container>(*section).firstChild(); row; row = row->nextSibling()) {
+        for (auto* row = downcast<ContainerBox>(*section).firstChild(); row; row = row->nextSibling()) {
             ASSERT(row->isTableRow());
-            for (auto* cell = downcast<Container>(*row).firstChild(); cell; cell = cell->nextSibling()) {
+            for (auto* cell = downcast<ContainerBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
                 ASSERT(cell->isTableCell());
                 tableGrid.appendCell(*cell);
             }
@@ -234,8 +234,8 @@ void TableFormattingContext::computePreferredWidthForColumns()
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(tableCellBox);
         if (!intrinsicWidth) {
             intrinsicWidth = IntrinsicWidthConstraints { };
-            if (is<Container>(tableCellBox))
-                intrinsicWidth = LayoutContext::createFormattingContext(downcast<Container>(tableCellBox), layoutState())->computedIntrinsicWidthConstraints();
+            if (is<ContainerBox>(tableCellBox))
+                intrinsicWidth = LayoutContext::createFormattingContext(downcast<ContainerBox>(tableCellBox), layoutState())->computedIntrinsicWidthConstraints();
             intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
             auto border = geometry().computedBorder(tableCellBox);
             auto padding = *geometry().computedPadding(tableCellBox, { });

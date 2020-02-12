@@ -34,7 +34,7 @@
 #include "InlineTextItem.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutReplacedBox.h"
@@ -50,21 +50,21 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const Container& formattingContextRoot, InlineFormattingState& formattingState)
+InlineFormattingContext::InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
 {
 }
 
-static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const Container& stayWithin)
+static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const ContainerBox& stayWithin)
 {
     // Atomic inline-level boxes and floats are opaque boxes meaning that they are
     // responsible for their own content (do not need to descend into their subtrees).
     // Only inline boxes may have relevant descendant content.
     if (layoutBox.isInlineBox()) {
-        if (is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild()) {
+        if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild()) {
             // Anonymous inline boxes/line breaks can't have descendant content by definition.
             ASSERT(!layoutBox.isAnonymous() && !layoutBox.isLineBreakBox());
-            return downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
+            return downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild();
         }
     }
 
@@ -92,17 +92,17 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
             computeBorderAndPadding(*layoutBox, horizontalConstraints);
             computeWidthAndMargin(*layoutBox, horizontalConstraints);
             auto createsFormattingContext = layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox();
-            auto hasInFlowOrFloatingChild = is<Container>(*layoutBox) && downcast<Container>(*layoutBox).hasInFlowOrFloatingChild();
+            auto hasInFlowOrFloatingChild = is<ContainerBox>(*layoutBox) && downcast<ContainerBox>(*layoutBox).hasInFlowOrFloatingChild();
             if (createsFormattingContext && hasInFlowOrFloatingChild) {
-                auto formattingContext = LayoutContext::createFormattingContext(downcast<Container>(*layoutBox), layoutState());
+                auto formattingContext = LayoutContext::createFormattingContext(downcast<ContainerBox>(*layoutBox), layoutState());
                 formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
             }
             computeHeightAndMargin(*layoutBox, horizontalConstraints);
-            if (createsFormattingContext && is<Container>(*layoutBox) && downcast<Container>(*layoutBox).hasChild()) {
+            if (createsFormattingContext && is<ContainerBox>(*layoutBox) && downcast<ContainerBox>(*layoutBox).hasChild()) {
                 auto& displayBox = geometryForBox(*layoutBox);
                 auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(displayBox);
                 auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(displayBox);
-                auto formattingContext = LayoutContext::createFormattingContext(downcast<Container>(*layoutBox), layoutState());
+                auto formattingContext = LayoutContext::createFormattingContext(downcast<ContainerBox>(*layoutBox), layoutState());
                 formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
             }
         } else if (layoutBox->isInlineBox()) {
@@ -253,8 +253,8 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
     auto constraints = IntrinsicWidthConstraints { };
     if (auto fixedWidth = geometry().fixedValue(formattingRoot.style().logicalWidth()))
         constraints = { *fixedWidth, *fixedWidth };
-    else if (is<Container>(formattingRoot) && downcast<Container>(formattingRoot).hasInFlowOrFloatingChild())
-        constraints = LayoutContext::createFormattingContext(downcast<Container>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
+    else if (is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild())
+        constraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
     constraints = geometry().constrainByMinMaxWidth(formattingRoot, constraints);
     constraints.expand(geometryForBox(formattingRoot).horizontalMarginBorderAndPadding());
     formattingState().setIntrinsicWidthConstraintsForBox(formattingRoot, constraints);
@@ -325,7 +325,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
                 break;
             // This is the start of an inline box (e.g. <span>).
             formattingState.addInlineItem({ layoutBox, InlineItem::Type::ContainerStart });
-            auto& inlineBoxWithInlineContent = downcast<Container>(layoutBox);
+            auto& inlineBoxWithInlineContent = downcast<ContainerBox>(layoutBox);
             if (!inlineBoxWithInlineContent.hasInFlowOrFloatingChild())
                 break;
             layoutQueue.append(inlineBoxWithInlineContent.firstInFlowOrFloatingChild());

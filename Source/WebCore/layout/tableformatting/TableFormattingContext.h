@@ -41,7 +41,7 @@ class TableFormattingState;
 class TableFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
-    TableFormattingContext(const Container& formattingContextRoot, TableFormattingState&);
+    TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState&);
     void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 
 private:

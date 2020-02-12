@@ -245,7 +245,7 @@ static inline bool isLineConsideredEmpty(const LineBuilder& line)
     return line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
 }
 
-LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const Container& formattingContextRoot, const InlineItems& inlineItems)
+LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormattingContext, const ContainerBox& formattingContextRoot, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_formattingContextRoot(formattingContextRoot)
     , m_inlineItems(inlineItems)

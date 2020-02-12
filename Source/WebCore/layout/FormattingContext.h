@@ -27,7 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
@@ -47,7 +47,7 @@ class Box;
 class ReplacedBox;
 struct ComputedHorizontalMargin;
 struct ComputedVerticalMargin;
-class Container;
+class ContainerBox;
 struct ContentHeightAndMargin;
 struct ContentWidthAndMargin;
 struct Edges;
@@ -62,7 +62,7 @@ struct VerticalGeometry;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const Container& formattingContextRoot, FormattingState&);
+    FormattingContext(const ContainerBox& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
     virtual void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) = 0;
@@ -99,7 +99,7 @@ public:
 protected:
     using LayoutQueue = Vector<const Box*>;
 
-    const Container& root() const { return *m_root; }
+    const ContainerBox& root() const { return *m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }
@@ -204,7 +204,7 @@ private:
     void computeOutOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&);
 
-    WeakPtr<const Container> m_root;
+    WeakPtr<const ContainerBox> m_root;
     FormattingState& m_formattingState;
 };
 

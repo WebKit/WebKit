@@ -42,7 +42,7 @@ class InvalidationState;
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const Container& formattingContextRoot, InlineFormattingState&);
+    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
     void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
 
 private:
@@ -51,7 +51,7 @@ private:
     class Quirks : public FormattingContext::Quirks {
     public:
         bool lineDescentNeedsCollapsing(const LineBuilder::RunList&) const;
-        LineBuilder::Constraints::HeightAndBaseline lineHeightConstraints(const Container& formattingRoot) const;
+        LineBuilder::Constraints::HeightAndBaseline lineHeightConstraints(const ContainerBox& formattingRoot) const;
 
     private:
         friend class InlineFormattingContext;
@@ -66,7 +66,7 @@ private:
     public:
         ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
         ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
-        Optional<InlineLayoutUnit> computedTextIndent(const Container& formattingContextRoot, const HorizontalConstraints&) const;
+        Optional<InlineLayoutUnit> computedTextIndent(const ContainerBox& formattingContextRoot, const HorizontalConstraints&) const;
 
     private:
         friend class InlineFormattingContext;

@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakHashSet.h>
 
@@ -43,7 +43,7 @@ public:
     void markNeedsUpdate(const Box&);
     bool needsLayout(const Box&) const;
 
-    using FormattingContextRoots = WeakHashSet<const Container>;
+    using FormattingContextRoots = WeakHashSet<const ContainerBox>;
     // FIXME: We currently do full formatting context layouts (no partial layout within a formatting context).
     const FormattingContextRoots& formattingContextRoots() const { return m_formattingContextRoots; }
 

@@ -32,7 +32,7 @@
 #include "FormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
-#include "LayoutContainer.h"
+#include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutReplacedBox.h"
@@ -46,7 +46,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const Container& formattingContextRoot, FormattingState& formattingState)
+FormattingContext::FormattingContext(const ContainerBox& formattingContextRoot, FormattingState& formattingState)
     : m_root(makeWeakPtr(formattingContextRoot))
     , m_formattingState(formattingState)
 {
@@ -165,12 +165,12 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
         auto& outOfFlowRootDisplayBox = geometryForBox(*outOfFlowBox);
         computeBorderAndPadding(*outOfFlowBox, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox));
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox, horizontalConstraints);
-        if (!is<Container>(*outOfFlowBox) || !downcast<Container>(*outOfFlowBox).hasChild()) {
+        if (!is<ContainerBox>(*outOfFlowBox) || !downcast<ContainerBox>(*outOfFlowBox).hasChild()) {
             computeOutOfFlowVerticalGeometry(*outOfFlowBox, horizontalConstraints, verticalConstraints);
             continue;
         }
 
-        auto& outOfFlowRootContainer = downcast<Container>(*outOfFlowBox);
+        auto& outOfFlowRootContainer = downcast<ContainerBox>(*outOfFlowBox);
         auto formattingContext = LayoutContext::createFormattingContext(outOfFlowRootContainer, layoutState());
         if (outOfFlowRootContainer.hasInFlowOrFloatingChild())
             formattingContext->layoutInFlowContent(invalidationState, Geometry::horizontalConstraintsForInFlow(outOfFlowRootDisplayBox), Geometry::verticalConstraintsForInFlow(outOfFlowRootDisplayBox));
@@ -180,14 +180,14 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
-static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& formattingContext, LayoutUnit horizontalPosition, const Container& containingBlock, const Container& ancestor)
+static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& formattingContext, LayoutUnit horizontalPosition, const ContainerBox& containingBlock, const ContainerBox& ancestor)
 {
     // "horizontalPosition" is in the coordinate system of the "containingBlock". -> map from containingBlock to ancestor.
     if (&containingBlock == &ancestor)
         return horizontalPosition;
     ASSERT(containingBlock.isContainingBlockDescendantOf(ancestor));
-    for (auto* container = &containingBlock; container && container != &ancestor; container = container->containingBlock())
-        horizontalPosition += formattingContext.geometryForBox(*container).left();
+    for (auto* containerBox = &containingBlock; containerBox && containerBox != &ancestor; containerBox = containerBox->containingBlock())
+        horizontalPosition += formattingContext.geometryForBox(*containerBox).left();
     return horizontalPosition;
 }
 
@@ -198,8 +198,8 @@ LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox
     auto& formattingContextRoot = root();
     ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
     auto top = geometryForBox(layoutBox).top();
-    for (auto* container = layoutBox.containingBlock(); container && container != &formattingContextRoot; container = container->containingBlock())
-        top += geometryForBox(*container).top();
+    for (auto* containerBox = layoutBox.containingBlock(); containerBox && containerBox != &formattingContextRoot; containerBox = containerBox->containingBlock())
+        top += geometryForBox(*containerBox).top();
     return top;
 }
 
