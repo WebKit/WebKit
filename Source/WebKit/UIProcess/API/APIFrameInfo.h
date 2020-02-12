@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 
 namespace WebCore {
@@ -34,7 +35,6 @@ struct SecurityOriginData;
 
 namespace WebKit {
 class WebFrameProxy;
-class WebPageProxy;
 struct FrameInfoData;
 }
 

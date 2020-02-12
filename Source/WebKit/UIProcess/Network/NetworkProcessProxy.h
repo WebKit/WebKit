@@ -63,11 +63,14 @@ namespace WebKit {
 
 class DownloadProxy;
 class DownloadProxyMap;
+class WebPageProxy;
 class WebProcessPool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
+
+struct FrameInfoData;
 struct NetworkProcessCreationParameters;
 class WebUserContentControllerProxy;
 struct WebsiteData;
@@ -92,7 +95,7 @@ public:
 
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
-    DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&);
+    DownloadProxy& createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler);

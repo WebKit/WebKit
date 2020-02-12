@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "Test.h"
@@ -1147,4 +1148,70 @@ TEST(_WKDownload, ResumedDownloadCanHandleAuthenticationChallenge)
     Util::run(&isDone);
 }
 
+@interface DownloadTestSchemeDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation DownloadTestSchemeDelegate
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    if ([navigationResponse.response.URL.absoluteString hasSuffix:@"/download"])
+        decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
+    else
+        decisionHandler(WKNavigationResponsePolicyAllow);
+}
+@end
+
+@interface DownloadSecurityOriginDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation DownloadSecurityOriginDelegate {
+@public
+    uint16_t _serverPort;
+    WKWebView *_webView;
+}
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    EXPECT_TRUE([download.originatingFrame.securityOrigin.protocol isEqualToString:@"http"]);
+    EXPECT_TRUE([download.originatingFrame.securityOrigin.host isEqualToString:@"127.0.0.1"]);
+    EXPECT_EQ(download.originatingFrame.securityOrigin.port, _serverPort);
+    EXPECT_FALSE(download.originatingFrame.mainFrame);
+    EXPECT_EQ(download.originatingFrame.webView, _webView);
+    isDone = true;
+}
+
+@end
+
+static const char* documentText = R"DOCDOCDOC(
+<script>
+function loaded()
+{
+    document.getElementById("thelink").click();
+}
+</script>
+<body onload="loaded();">
+<a id="thelink" href="download">Click me</a>
+</body>
+)DOCDOCDOC";
+
+TEST(_WKDownload, SubframeSecurityOrigin)
+{
+    auto navigationDelegate = adoptNS([[DownloadTestSchemeDelegate alloc] init]);
+    auto downloadDelegate = adoptNS([[DownloadSecurityOriginDelegate alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/page", { documentText } },
+        { "/download", { documentText } },
+    });
+    downloadDelegate->_serverPort = server.port();
+    downloadDelegate->_webView = webView.get();
+
+    isDone = false;
+    [webView loadHTMLString:[NSString stringWithFormat:@"<body><iframe src='http://127.0.0.1:%d/page'></iframe></body>", server.port()] baseURL:nil];
+    TestWebKitAPI::Util::run(&isDone);
+}
 #endif // PLATFORM(MAC) || PLATFORM(IOS)

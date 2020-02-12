@@ -1,5 +1,71 @@
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255845. rdar://problem/59298143
+
+    _WKDownload should expose the originating FrameInfo.
+    <rdar://problem/58022576> and https://bugs.webkit.org/show_bug.cgi?id=207185
+    
+    Patch by Brady Eidson <beidson@apple.com> on 2020-02-05
+    Reviewed by Geoff Garen.
+    
+    Source/WebKit:
+    
+    Covered by new API test.
+    
+    For the cases where a navigation is converted into a download, include the relevant
+    WKFrameInfo on the _WKDownload object.
+    
+    * UIProcess/API/APIFrameInfo.h:
+    * UIProcess/API/Cocoa/_WKDownload.h:
+    * UIProcess/API/Cocoa/_WKDownload.mm:
+    (-[_WKDownload originatingFrameInfo]):
+    * UIProcess/Downloads/DownloadProxy.cpp:
+    (WebKit::generateDownloadID):
+    (WebKit::DownloadProxy::DownloadProxy):
+    (WebKit::DownloadProxy::create): Deleted.
+    (WebKit::DownloadProxy::setOriginatingPage): Deleted.
+    * UIProcess/Downloads/DownloadProxy.h:
+    (WebKit::DownloadProxy::create):
+    (WebKit::DownloadProxy::frameInfo):
+    * UIProcess/Downloads/DownloadProxyMap.cpp:
+    (WebKit::DownloadProxyMap::createDownloadProxy):
+    * UIProcess/Downloads/DownloadProxyMap.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::createDownloadProxy):
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::receivedPolicyDecision):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::download):
+    (WebKit::WebProcessPool::resumeDownload):
+    (WebKit::WebProcessPool::createDownloadProxy):
+    * UIProcess/WebProcessPool.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+    (-[DownloadTestSchemeDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+    (-[DownloadSecurityOriginDelegate _downloadDidStart:]):
+    (loaded):
+    * TestWebKitAPI/cocoa/HTTPServer.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255845 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Brady Eidson  <beidson@apple.com>
+
+            _WKDownload should expose the originating FrameInfo.
+            <rdar://problem/58022576> and https://bugs.webkit.org/show_bug.cgi?id=207185
+
+            Reviewed by Geoff Garen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+            (-[DownloadTestSchemeDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+            (-[DownloadSecurityOriginDelegate _downloadDidStart:]):
+            (loaded):
+            * TestWebKitAPI/cocoa/HTTPServer.mm:
+
+2020-02-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255826. rdar://problem/59299115
 
     REGRESSION(r255595): page not closed after beforeunload handler returns true

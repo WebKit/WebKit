@@ -3122,7 +3122,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
         // Create a download proxy.
-        auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this);
+        auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
         if (navigation) {
             download.setWasUserInitiated(navigation->wasUserInitiated());
             download.setRedirectChain(navigation->takeRedirectChain());
