@@ -423,7 +423,7 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
     // the value of GL_NUM_SAMPLE_COUNTS will be zero for such formats.
     numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
     GCGLint params[numValues];
-    for (size_t i = 0; i < samples.size(); ++i)
+    for (size_t i = 0; i < static_cast<size_t>(numValues); ++i)
         params[i] = samples[i];
 #endif
 
