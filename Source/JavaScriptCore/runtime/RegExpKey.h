@@ -36,7 +36,7 @@ namespace JSC {
 
 struct RegExpKey {
     OptionSet<Yarr::Flags> flagsValue;
-    RefPtr<StringImpl> pattern;
+    PackedRefPtr<StringImpl> pattern;
 
     RegExpKey()
     {
