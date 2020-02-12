@@ -3497,3 +3497,5 @@ webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party
 webkit.org/b/207649 imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Pass Timeout ]
 
 webkit.org/b/207650 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore3.html [ Pass Timeout ]
+
+webkit.org/b/207651 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore4.html [ Pass Timeout ]
