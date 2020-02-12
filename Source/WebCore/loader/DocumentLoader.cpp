@@ -1071,12 +1071,14 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         bool hasBegun = m_writer.begin(documentURL(), false);
         m_writer.setDocumentWasLoadedAsPartOfNavigation();
 
+        auto& document = *m_frame->document();
+
         if (SecurityPolicy::allowSubstituteDataAccessToLocal() && m_originalSubstituteDataWasValid) {
             // If this document was loaded with substituteData, then the document can
             // load local resources. See https://bugs.webkit.org/show_bug.cgi?id=16756
             // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
             // discussion.
-            m_frame->document()->securityOrigin().grantLoadLocalResources();
+            document.securityOrigin().grantLoadLocalResources();
         }
 
         if (frameLoader()->stateMachine().creatingInitialEmptyDocument())
@@ -1084,20 +1086,20 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         if (m_archive && m_archive->shouldOverrideBaseURL())
-            m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
+            document.setBaseURLOverride(m_archive->mainResource()->url());
 #endif
 #if ENABLE(SERVICE_WORKER)
         if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
             if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
-                m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
+                document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
-            } else if (auto* parent = m_frame->document()->parentDocument()) {
-                if (shouldUseActiveServiceWorkerFromParent(*m_frame->document(), *parent))
-                    m_frame->document()->setActiveServiceWorker(parent->activeServiceWorker());
+            } else if (auto* parent = document.parentDocument()) {
+                if (shouldUseActiveServiceWorkerFromParent(document, *parent))
+                    document.setActiveServiceWorker(parent->activeServiceWorker());
             }
 
-            if (m_frame->document()->activeServiceWorker() || LegacySchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
-                m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
+            if (m_frame->document()->activeServiceWorker() || LegacySchemeRegistry::canServiceWorkersHandleURLScheme(document.url().protocol().toStringWithoutCopying()))
+                document.setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
             // We currently unregister the temporary service worker client since we now registered the real document.
             // FIXME: We should make the real document use the temporary client identifier.
@@ -1113,7 +1115,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (!isLoading())
             return;
 
-        if (auto* window = m_frame->document()->domWindow())
+        if (auto* window = document.domWindow())
             window->prewarmLocalStorageIfNecessary();
 
         bool userChosen;
