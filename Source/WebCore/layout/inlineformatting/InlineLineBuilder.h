@@ -84,6 +84,7 @@ public:
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
         const Display::InlineRect& logicalRect() const { return m_logicalRect; }
+        Display::Run::Expansion expansion() const { return m_expansion; }
         const Optional<Display::Run::TextContext>& textContext() const { return m_textContext; }
 
         Run(Run&&) = default;
@@ -108,10 +109,10 @@ public:
         void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
 
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
-        Optional<ExpansionBehavior> expansionBehavior() const;
+        ExpansionBehavior expansionBehavior() const;
         unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
         void setComputedHorizontalExpansion(InlineLayoutUnit logicalExpansion);
-        void adjustExpansionBehavior(ExpansionBehavior);
+        void setExpansionBehavior(ExpansionBehavior);
 
         enum class TrailingWhitespace {
             None,
@@ -137,6 +138,7 @@ public:
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         Optional<Display::Run::TextContext> m_textContext;
+        Display::Run::Expansion m_expansion;
         unsigned m_expansionOpportunityCount { 0 };
     };
     using RunList = Vector<Run, 10>;

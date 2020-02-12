@@ -485,7 +485,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             };
             auto inkOverflow = computedInkOverflow();
             lineInkOverflow.expandToContain(inkOverflow);
-            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.textContext() });
+            inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContext() });
         }
 
         if (lineRun.isLineBreak()) {

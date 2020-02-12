@@ -210,8 +210,8 @@ void LineBuilder::justifyRuns(InlineLayoutUnit availableWidth)
     // Need to fix up the last run's trailing expansion.
     if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
         // Turn off the trailing bits first and add the forbid trailing expansion.
-        auto leadingExpansion = *lastRunWithContent->expansionBehavior() & LeadingExpansionMask;
-        lastRunWithContent->adjustExpansionBehavior(leadingExpansion | ForbidTrailingExpansion);
+        auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeadingExpansionMask;
+        lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidTrailingExpansion);
     }
     // Nothing to distribute?
     if (!expansionOpportunityCount)
@@ -763,7 +763,6 @@ LineBuilder::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit log
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = logicalWidth;
-        m_textContext->setExpansion({ ExpansionBehavior(DefaultExpansion), { } });
         if (!isWhitespacePreserved(inlineTextItem.style()))
             m_expansionOpportunityCount = 1;
     }
@@ -781,14 +780,14 @@ void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayout
 
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = { };
-        m_textContext->setExpansion({ ExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion), { } });
+        setExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
         m_textContext->expand(inlineTextItem.length());
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
     if (!isWhitespacePreserved(inlineTextItem.style()))
         ++m_expansionOpportunityCount;
-    m_textContext->setExpansion({ ExpansionBehavior(DefaultExpansion), { } });
+    setExpansionBehavior(DefaultExpansion);
     m_textContext->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
 }
 
@@ -834,22 +833,19 @@ void LineBuilder::Run::visuallyCollapseTrailingWhitespace()
         ASSERT(m_expansionOpportunityCount);
         m_expansionOpportunityCount--;
     }
-    m_textContext->setExpansion({ ExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion), { } });
+    setExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
 }
 
-void LineBuilder::Run::adjustExpansionBehavior(ExpansionBehavior expansionBehavior)
+void LineBuilder::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)
 {
     ASSERT(isText());
-    ASSERT(hasExpansionOpportunity());
-    m_textContext->setExpansion({ expansionBehavior, m_textContext->expansion()->horizontalExpansion });
+    m_expansion.behavior = expansionBehavior;
 }
 
-inline Optional<ExpansionBehavior> LineBuilder::Run::expansionBehavior() const
+inline ExpansionBehavior LineBuilder::Run::expansionBehavior() const
 {
     ASSERT(isText());
-    if (auto expansionContext = m_textContext->expansion())
-        return expansionContext->behavior;
-    return { };
+    return m_expansion.behavior;
 }
 
 void LineBuilder::Run::setComputedHorizontalExpansion(InlineLayoutUnit logicalExpansion)
@@ -857,7 +853,7 @@ void LineBuilder::Run::setComputedHorizontalExpansion(InlineLayoutUnit logicalEx
     ASSERT(isText());
     ASSERT(hasExpansionOpportunity());
     m_logicalRect.expandHorizontally(logicalExpansion);
-    m_textContext->setExpansion({ m_textContext->expansion()->behavior, logicalExpansion });
+    m_expansion.horizontalExpansion = logicalExpansion;
 }
 
 }
