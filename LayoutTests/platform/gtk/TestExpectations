@@ -4127,24 +4127,7 @@ webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [
 
 webkit.org/b/206264 imported/w3c/web-platform-tests/css/css-multicol/multicol-gap-percentage-001.html [ Failure ]
 
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/compositing/2d.composite.globalAlpha.canvaspattern.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.canvas.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.nocontext.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas1.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.modify.canvas2.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.orientation.canvas.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.null.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.worker.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.html [ Failure ]
-webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
+webkit.org/b/207016 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 
 webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
