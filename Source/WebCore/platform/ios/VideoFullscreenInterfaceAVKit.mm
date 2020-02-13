@@ -1503,9 +1503,18 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
 
 #endif // HAVE(AVKIT)
 
+static Optional<bool> isPictureInPictureSupported;
+
+void WebCore::setSupportsPictureInPicture(bool isSupported)
+{
+    isPictureInPictureSupported = isSupported;
+}
+
 bool WebCore::supportsPictureInPicture()
 {
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) && !PLATFORM(WATCHOS)
+    if (isPictureInPictureSupported.hasValue())
+        return *isPictureInPictureSupported;
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else
     return false;

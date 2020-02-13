@@ -138,6 +138,7 @@
 #include "Page.h"
 #include "PageOverlay.h"
 #include "PathUtilities.h"
+#include "PictureInPictureSupport.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -5464,6 +5465,11 @@ bool Internals::systemHasBattery() const
 String Internals::mediaMIMETypeForExtension(const String& extension)
 {
     return MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+}
+
+bool Internals::supportsPictureInPicture()
+{
+    return WebCore::supportsPictureInPicture();
 }
 
 String Internals::focusRingColor()

@@ -935,6 +935,8 @@ public:
 
     String mediaMIMETypeForExtension(const String& extension);
 
+    bool supportsPictureInPicture();
+
     String focusRingColor();
 
 private:

@@ -843,4 +843,6 @@ enum CompositingPolicy {
     boolean systemHasBattery();
 
     DOMString mediaMIMETypeForExtension(DOMString extension);
+    
+    boolean supportsPictureInPicture();
 };

@@ -1,3 +1,22 @@
+2020-02-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Check if PIP is supported in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=207406
+
+        Reviewed by Brent Fulgham.
+
+        When starting a new WebContent process, check if PIP is supported, and pass the results to the newly created
+        WebContent process.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-02-13  Benjamin Nham  <nham@apple.com>
 
         Allow use of proxies in MiniBrowser
