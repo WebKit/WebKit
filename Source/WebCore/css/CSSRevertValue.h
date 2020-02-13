@@ -31,16 +31,16 @@ namespace WebCore {
 
 class CSSRevertValue final : public CSSValue {
 public:
-    static Ref<CSSRevertValue> create() { return adoptRef(*new CSSRevertValue()); }
-
     String customCSSText() const;
 
     bool equals(const CSSRevertValue&) const { return true; }
 
 private:
-    CSSRevertValue()
+    friend LazyNeverDestroyed<CSSRevertValue>;
+    CSSRevertValue(StaticCSSValueTag)
         : CSSValue(RevertClass)
     {
+        makeStatic();
     }
 };
 
