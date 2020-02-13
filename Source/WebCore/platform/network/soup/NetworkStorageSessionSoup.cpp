@@ -413,8 +413,13 @@ void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
-    // FIXME: Implement for WK2 to use.
-    return { };
+    Vector<Cookie> cookies;
+    GUniquePtr<GSList> cookiesList(soup_cookie_jar_all_cookies(cookieStorage()));
+    for (GSList* item = cookiesList.get(); item; item = g_slist_next(item)) {
+        GUniquePtr<SoupCookie> soupCookie(static_cast<SoupCookie*>(item->data));
+        cookies.append(WebCore::Cookie(soupCookie.get()));
+    }
+    return cookies;
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
