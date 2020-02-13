@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +35,6 @@
 
 namespace WebCore {
 
-// It takes the last WORDSIZE/8 bytes of the bigInteger and then convert them into a size_t value
-static size_t bigIntegerToSizeT(const Vector<uint8_t>& bigInteger)
-{
-    size_t result = 0;
-    for (size_t i = bigInteger.size() - (__WORDSIZE / 8); i < bigInteger.size(); ++i) {
-        result <<= 8;
-        result += bigInteger[i];
-    }
-    return result;
-}
-
 static ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     // FIXME: We should remove the following hack once <rdar://problem/31361050> is fixed.
@@ -52,20 +42,15 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, cons
     // CommonCrypto currently can neither reset the counter nor detect overflow once the counter reaches its max value restricted
     // by the counterLength. It then increments the nonce which should stay same for the whole operation. To remedy this issue,
     // we detect the overflow ahead and divide the operation into two parts.
-    // Ignore the case: counterLength > __WORDSIZE.
     size_t numberOfBlocks = data.size() % kCCBlockSizeAES128 ? data.size() / kCCBlockSizeAES128 + 1 : data.size() / kCCBlockSizeAES128;
+
     // Detect loop
-    if (counterLength < __WORDSIZE && numberOfBlocks > (1 << counterLength))
+    if (counterLength < sizeof(size_t) * 8 && numberOfBlocks > (1 << counterLength))
         return Exception { OperationError };
+
     // Calculate capacity before overflow
-    size_t rightMost = bigIntegerToSizeT(counter); // convert right most __WORDSIZE bits into a size_t value, which is the longest counter we could possibly use.
-    size_t capacity = numberOfBlocks; // SIZE_MAX - counter
-    if (counterLength < __WORDSIZE) {
-        size_t mask = SIZE_MAX << counterLength; // Used to set nonce in rightMost(nonce + counter) to 1s
-        capacity = SIZE_MAX - (rightMost| mask) + 1;
-    }
-    if (counterLength == __WORDSIZE)
-        capacity = SIZE_MAX - rightMost + 1;
+    CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
+    size_t capacity = counterBlockHelper.countToOverflowSaturating();
 
     // Divide data into two parts if necessary.
     size_t headSize = data.size();
@@ -101,17 +86,7 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, cons
 
     // second part: compute the remaining data and append them to the head.
     // reset counter
-    Vector<uint8_t> remainingCounter(counter.size());
-    size_t counterOffset = counterLength % 8;
-    size_t nonceOffset = counter.size() - counterLength / 8 - !!counterOffset;
-    memcpy(remainingCounter.data(), counter.data(), nonceOffset); // copy the nonce
-    // set the middle byte
-    if (!!counterOffset) {
-        size_t mask = SIZE_MAX << counterOffset;
-        remainingCounter[nonceOffset] = counter[nonceOffset] & mask;
-    }
-    memset(remainingCounter.data() + nonceOffset + !!counterOffset, 0, counterLength / 8); // reset the counter
-
+    Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
     status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, remainingCounter.data(), key.data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
     if (status)
         return Exception { OperationError };

@@ -11,8 +11,24 @@ Length = 65
 PASS bytesToHexString(cipherText) is expectedCipherText
 Length = 2, overflow
 PASS bytesToHexString(cipherText) is expectedCipherText4
-Length = 8, overflow
+Length = 2, overflow
 PASS bytesToHexString(cipherText) is expectedCipherText5
+Length = 8, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText6
+Length = 8, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText7
+Length = 64, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText8
+Length = 64, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText9
+Length = 66, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText10
+Length = 66, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText11
+Length = 128, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText12
+Length = 128, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText13
 PASS successfullyParsed is true
 
 TEST COMPLETE

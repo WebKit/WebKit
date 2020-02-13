@@ -1,3 +1,15 @@
+2020-02-12  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [WebCrypto][CommonCrypto] Incorrect AES-CTR with counterLength longer than 64
+        https://bugs.webkit.org/show_bug.cgi?id=207238
+
+        Reviewed by Jiewen Tan.
+
+        Add test cases where the counter length is 66 and 128, and the counter capacity
+        to overflow is 1 and 2.
+        * crypto/subtle/aes-ctr-import-key-encrypt-expected.txt:
+        * crypto/subtle/aes-ctr-import-key-encrypt.html:
+
 2020-02-12  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] More layout tests gardening

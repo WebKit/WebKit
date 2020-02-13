@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,33 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CTR final : public CryptoAlgorithm {
 public:
+    class CounterBlockHelper {
+    public:
+        CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength);
+
+        size_t countToOverflowSaturating() const;
+        Vector<uint8_t> counterVectorAfterOverflow() const;
+
+    private:
+        // 128 bits integer with miminum required operators.
+        struct CounterBlockBits {
+            void set();
+            bool all() const;
+            bool any() const;
+
+            CounterBlockBits operator&(const CounterBlockBits&) const;
+            CounterBlockBits operator~() const;
+            CounterBlockBits& operator <<=(unsigned);
+            CounterBlockBits& operator &=(const CounterBlockBits&);
+
+            uint64_t m_hi { 0 };
+            uint64_t m_lo { 0 };
+        };
+
+        CounterBlockBits m_bits;
+        const size_t m_counterLength;
+    };
+
     static constexpr const char* s_name = "AES-CTR";
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CTR;
     static Ref<CryptoAlgorithm> create();
