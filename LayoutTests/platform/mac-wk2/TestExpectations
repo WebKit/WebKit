@@ -1031,3 +1031,5 @@ webkit.org/b/207638 webgpu/whlsl/whlsl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/207688 fast/dom/attr_dead_doc.html [ Pass Failure ]
 
 webkit.org/b/206852 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Pass Failure ]
+
+webkit.org/b/207700 webgpu/whlsl/return-local-variable.html [ Pass Failure ]
