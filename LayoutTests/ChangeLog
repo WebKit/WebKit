@@ -1,3 +1,12 @@
+2020-02-13  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac Debug ] http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207723
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-02-13  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: (256381) [ macOS ] http/tests/workers/service/serviceworkerclients-claim.https.html is flaky failing
