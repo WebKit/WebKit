@@ -1,3 +1,15 @@
+2020-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r256010.
+
+        Introduced ASan crashes
+
+        Reverted changeset:
+
+        "[Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder"
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+        https://trac.webkit.org/changeset/r256010
+
 2020-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Remove CSS_DEVICE_ADAPTATION
