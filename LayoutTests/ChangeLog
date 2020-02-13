@@ -1,3 +1,12 @@
+2020-02-13  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] svg/custom/animate-initial-pause-unpause.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207710
+
+        Unreviewed test gardening
+
+        * platform/mac/TestExpectations:
+
 2020-02-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         WebP image format is not supported
