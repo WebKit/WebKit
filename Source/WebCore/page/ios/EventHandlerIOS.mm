@@ -585,8 +585,11 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
 {
     Ref<Frame> protectedFrame(m_frame);
 
-    m_targetAutoscrollPositionInWindow = protectedFrame->view()->contentsToView(roundedIntPoint(positionInWindow));
-    
+    m_targetAutoscrollPositionInUnscrolledRootViewCoordinates = protectedFrame->view()->contentsToRootView(roundedIntPoint(positionInWindow)) - toIntSize(protectedFrame->view()->documentScrollPositionRelativeToViewOrigin());
+
+    if (!m_isAutoscrolling)
+        m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = m_targetAutoscrollPositionInUnscrolledRootViewCoordinates;
+
     m_isAutoscrolling = true;
     m_autoscrollController->startAutoscrollForSelection(renderer);
 }
@@ -594,65 +597,83 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
 void EventHandler::cancelSelectionAutoscroll()
 {
     m_isAutoscrolling = false;
+    m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = WTF::nullopt;
     m_autoscrollController->stopAutoscrollTimer();
 }
 
-static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& contentPosition, const FloatRect& unobscuredContentRect, float zoomFactor)
+static IntPoint adjustAutoscrollDestinationForInsetEdges(IntPoint autoscrollPoint, Optional<IntPoint> initialAutoscrollPoint, FloatRect unobscuredRootViewRect)
 {
-    // If the window is at the edge of the screen, and the touch position is also at that edge of the screen,
-    // we need to adjust the autoscroll amount in order for the user to be able to autoscroll in that direction.
-    // We can pretend that the touch position is slightly beyond the edge of the screen, and then autoscrolling
-    // will occur as expected. This function figures out just how much to adjust the autoscroll amount by
-    // in order to get autoscrolling to feel natural in this situation.
-    
-    IntSize adjustmentFactor;
-    
-#define EDGE_DISTANCE_THRESHOLD 100
+    IntPoint resultPoint = autoscrollPoint;
 
-    CGSize edgeDistanceThreshold = CGSizeMake(EDGE_DISTANCE_THRESHOLD / zoomFactor, EDGE_DISTANCE_THRESHOLD / zoomFactor);
-    
-    float screenLeftEdge = unobscuredContentRect.x();
-    float insetScreenLeftEdge = screenLeftEdge + edgeDistanceThreshold.width;
-    float screenRightEdge = unobscuredContentRect.maxX();
-    float insetScreenRightEdge = screenRightEdge - edgeDistanceThreshold.width;
-    if (contentPosition.x() >= screenLeftEdge && contentPosition.x() < insetScreenLeftEdge) {
-        float distanceFromEdge = contentPosition.x() - screenLeftEdge - edgeDistanceThreshold.width;
-        if (distanceFromEdge < 0)
-            adjustmentFactor.setWidth(-edgeDistanceThreshold.width);
-    } else if (contentPosition.x() >= insetScreenRightEdge && contentPosition.x() < screenRightEdge) {
-        float distanceFromEdge = edgeDistanceThreshold.width - (screenRightEdge - contentPosition.x());
-        if (distanceFromEdge > 0)
-            adjustmentFactor.setWidth(edgeDistanceThreshold.width);
+    const float edgeInset = 75;
+    const float maximumScrollingSpeed = 20;
+    const float insetDistanceThreshold = edgeInset / 2;
+
+    // FIXME: Ideally we would only inset on edges that touch the edge of the screen,
+    // like macOS, but we don't have enough information in WebCore to do that currently.
+    FloatRect insetUnobscuredRootViewRect = unobscuredRootViewRect;
+
+    if (initialAutoscrollPoint) {
+        IntSize autoscrollDelta = autoscrollPoint - *initialAutoscrollPoint;
+
+        // Inset edges in the direction of the autoscroll.
+        // Do not apply insets until you drag in the direction of the edge at least `insetDistanceThreshold`,
+        // to make it possible to select text that abuts the edge of `unobscuredRootViewRect` without causing
+        // unwanted autoscrolling.
+        if (autoscrollDelta.width() < insetDistanceThreshold)
+            insetUnobscuredRootViewRect.shiftXEdgeTo(insetUnobscuredRootViewRect.x() + std::min<float>(edgeInset, -autoscrollDelta.width() - insetDistanceThreshold));
+        else if (autoscrollDelta.width() > insetDistanceThreshold)
+            insetUnobscuredRootViewRect.shiftMaxXEdgeTo(insetUnobscuredRootViewRect.maxX() - std::min<float>(edgeInset, autoscrollDelta.width() - insetDistanceThreshold));
+
+        if (autoscrollDelta.height() < insetDistanceThreshold)
+            insetUnobscuredRootViewRect.shiftYEdgeTo(insetUnobscuredRootViewRect.y() + std::min<float>(edgeInset, -autoscrollDelta.height() - insetDistanceThreshold));
+        else if (autoscrollDelta.height() > insetDistanceThreshold)
+            insetUnobscuredRootViewRect.shiftMaxYEdgeTo(insetUnobscuredRootViewRect.maxY() - std::min<float>(edgeInset, autoscrollDelta.height() - insetDistanceThreshold));
     }
-    
-    float screenTopEdge = unobscuredContentRect.y();
-    float insetScreenTopEdge = screenTopEdge + edgeDistanceThreshold.height;
-    float screenBottomEdge = unobscuredContentRect.maxY();
-    float insetScreenBottomEdge = screenBottomEdge - edgeDistanceThreshold.height;
-    
-    if (contentPosition.y() >= screenTopEdge && contentPosition.y() < insetScreenTopEdge) {
-        float distanceFromEdge = contentPosition.y() - screenTopEdge - edgeDistanceThreshold.height;
+
+    // If the current autoscroll point is beyond the edge of the view (respecting insets), shift it outside
+    // of the view, so that autoscrolling will occur. The distance we move outside of the view is scaled from
+    // `edgeInset` to `maximumScrollingSpeed` so that the inset's contribution to the speed is independent of its size.
+    if (autoscrollPoint.x() < insetUnobscuredRootViewRect.x()) {
+        float distanceFromEdge = autoscrollPoint.x() - insetUnobscuredRootViewRect.x();
         if (distanceFromEdge < 0)
-            adjustmentFactor.setHeight(-edgeDistanceThreshold.height);
-    } else if (contentPosition.y() >= insetScreenBottomEdge && contentPosition.y() < screenBottomEdge) {
-        float distanceFromEdge = edgeDistanceThreshold.height - (screenBottomEdge - contentPosition.y());
+            resultPoint.setX(unobscuredRootViewRect.x() + ((distanceFromEdge / edgeInset) * maximumScrollingSpeed));
+    } else if (autoscrollPoint.x() >= insetUnobscuredRootViewRect.maxX()) {
+        float distanceFromEdge = autoscrollPoint.x() - insetUnobscuredRootViewRect.maxX();
         if (distanceFromEdge > 0)
-            adjustmentFactor.setHeight(edgeDistanceThreshold.height);
+            resultPoint.setX(unobscuredRootViewRect.maxX() + ((distanceFromEdge / edgeInset) * maximumScrollingSpeed));
     }
-    
-    return adjustmentFactor;
+
+    if (autoscrollPoint.y() < insetUnobscuredRootViewRect.y()) {
+        float distanceFromEdge = autoscrollPoint.y() - insetUnobscuredRootViewRect.y();
+        if (distanceFromEdge < 0)
+            resultPoint.setY(unobscuredRootViewRect.y() + ((distanceFromEdge / edgeInset) * maximumScrollingSpeed));
+    } else if (autoscrollPoint.y() >= insetUnobscuredRootViewRect.maxY()) {
+        float distanceFromEdge = autoscrollPoint.y() - insetUnobscuredRootViewRect.maxY();
+        if (distanceFromEdge > 0)
+            resultPoint.setY(unobscuredRootViewRect.maxY() + ((distanceFromEdge / edgeInset) * maximumScrollingSpeed));
+    }
+
+    return resultPoint;
 }
     
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     Ref<Frame> protectedFrame(m_frame);
+
+    if (!m_frame.view())
+        return { };
+    auto& frameView = *m_frame.view();
+
+    // All work is done in "unscrolled" root view coordinates (as if delegatesScrolling were off),
+    // so that when the autoscrolling timer fires, it uses the new scroll position, so that it
+    // can keep scrolling without the client pushing a new contents-space target position via startSelectionAutoscroll.
+    auto scrollPosition = toIntSize(frameView.documentScrollPositionRelativeToViewOrigin());
     
-    FloatRect unobscuredContentRect = protectedFrame->view()->unobscuredContentRect();
-    
-    // Manually need to convert viewToContents, as it will be skipped because delegatedScrolling is on iOS
-    IntPoint contentPosition = protectedFrame->view()->viewToContents(protectedFrame->view()->convertFromContainingWindow(m_targetAutoscrollPositionInWindow));
-    IntSize adjustPosition = autoscrollAdjustmentFactorForScreenBoundaries(contentPosition, unobscuredContentRect, protectedFrame->page()->pageScaleFactor());
-    return contentPosition + adjustPosition;
+    FloatRect unobscuredContentRectInUnscrolledRootViewCoordinates = frameView.contentsToRootView(frameView.unobscuredContentRect());
+    unobscuredContentRectInUnscrolledRootViewCoordinates.move(-scrollPosition);
+
+    return adjustAutoscrollDestinationForInsetEdges(m_targetAutoscrollPositionInUnscrolledRootViewCoordinates, m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates, unobscuredContentRectInUnscrolledRootViewCoordinates) + scrollPosition;
 }
     
 bool EventHandler::shouldUpdateAutoscroll()
