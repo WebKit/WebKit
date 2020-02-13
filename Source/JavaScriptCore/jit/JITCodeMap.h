@@ -34,47 +34,63 @@
 namespace JSC {
 
 class JITCodeMap {
-private:
-    struct Entry {
-        Entry() { }
-
-        Entry(BytecodeIndex bytecodeIndex, CodeLocationLabel<JSEntryPtrTag> codeLocation)
-            : m_bytecodeIndex(bytecodeIndex)
-            , m_codeLocation(codeLocation)
-        { }
-
-        inline BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
-        inline CodeLocationLabel<JSEntryPtrTag> codeLocation() { return m_codeLocation; }
-
-    private:
-        BytecodeIndex m_bytecodeIndex;
-        CodeLocationLabel<JSEntryPtrTag> m_codeLocation;
-    };
-
 public:
-    void append(BytecodeIndex bytecodeIndex, CodeLocationLabel<JSEntryPtrTag> codeLocation)
+    static_assert(std::is_trivially_destructible_v<BytecodeIndex>);
+    static_assert(std::is_trivially_destructible_v<CodeLocationLabel<JSEntryPtrTag>>);
+    static_assert(alignof(CodeLocationLabel<JSEntryPtrTag>) >= alignof(BytecodeIndex), "Putting CodeLocationLabel vector first since we can avoid alignment consideration of BytecodeIndex vector");
+    JITCodeMap() = default;
+    JITCodeMap(Vector<BytecodeIndex>&& indexes, Vector<CodeLocationLabel<JSEntryPtrTag>>&& codeLocations)
+        : m_size(indexes.size())
     {
-        m_entries.append({ bytecodeIndex, codeLocation });
+        ASSERT(indexes.size() == codeLocations.size());
+        m_pointer = MallocPtr<uint8_t>::malloc(sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size + sizeof(BytecodeIndex) * m_size);
+        std::copy(codeLocations.begin(), codeLocations.end(), this->codeLocations());
+        std::copy(indexes.begin(), indexes.end(), this->indexes());
     }
-
-    void finish() { m_entries.shrinkToFit(); }
 
     CodeLocationLabel<JSEntryPtrTag> find(BytecodeIndex bytecodeIndex) const
     {
-        auto* entry =
-            binarySearch<Entry, BytecodeIndex>(m_entries,
-                m_entries.size(), bytecodeIndex, [] (Entry* entry) {
-                    return entry->bytecodeIndex();
-                });
-        if (!entry)
+        auto* index = binarySearch<BytecodeIndex, BytecodeIndex>(indexes(), m_size, bytecodeIndex, [] (BytecodeIndex* index) { return *index; });
+        if (!index)
             return CodeLocationLabel<JSEntryPtrTag>();
-        return entry->codeLocation();
+        return codeLocations()[index - indexes()];
     }
 
-    explicit operator bool() const { return m_entries.size(); }
+    explicit operator bool() const { return m_size; }
 
 private:
-    Vector<Entry> m_entries;
+    CodeLocationLabel<JSEntryPtrTag>* codeLocations() const
+    {
+        return bitwise_cast<CodeLocationLabel<JSEntryPtrTag>*>(m_pointer.get());
+    }
+
+    BytecodeIndex* indexes() const
+    {
+        return bitwise_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
+    }
+
+    MallocPtr<uint8_t> m_pointer;
+    unsigned m_size { 0 };
+};
+
+class JITCodeMapBuilder {
+    WTF_MAKE_NONCOPYABLE(JITCodeMapBuilder);
+public:
+    JITCodeMapBuilder() = default;
+    void append(BytecodeIndex bytecodeIndex, CodeLocationLabel<JSEntryPtrTag> codeLocation)
+    {
+        m_indexes.append(bytecodeIndex);
+        m_codeLocations.append(codeLocation);
+    }
+
+    JITCodeMap finalize()
+    {
+        return JITCodeMap(WTFMove(m_indexes), WTFMove(m_codeLocations));
+    }
+
+private:
+    Vector<BytecodeIndex> m_indexes;
+    Vector<CodeLocationLabel<JSEntryPtrTag>> m_codeLocations;
 };
 
 } // namespace JSC
