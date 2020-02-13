@@ -9908,3 +9908,31 @@ index a73592113f1..00000000000
 @@ -1 +0,0 @@
 -212a9ef90e21a98ff57ca301a60c84cbeca7be28
 \ No newline at end of file
+diff --git a/include/platform/Platform.h b/include/platform/Platform.h
+index b603ff9bad2..f4ec4f8837c 100644
+--- a/include/platform/Platform.h
++++ b/include/platform/Platform.h
+@@ -9,6 +9,7 @@
+ #ifndef ANGLE_PLATFORM_H
+ #define ANGLE_PLATFORM_H
+ 
++#include <stdlib.h>
+ #include <stdint.h>
+ #include <array>
+ 
+diff --git a/src/common/PackedEnums.h b/src/common/PackedEnums.h
+index bd5fc340dcc..63368e25dfe 100644
+--- a/src/common/PackedEnums.h
++++ b/src/common/PackedEnums.h
+@@ -83,10 +83,7 @@ class PackedEnumMap
+         // We use a for loop instead of range-for to work around a limitation in MSVC.
+         for (const InitPair *it = init.begin(); it != init.end(); ++it)
+         {
+-            // This horrible const_cast pattern is necessary to work around a constexpr limitation.
+-            // See https://stackoverflow.com/q/34199774/ . Note that it should be fixed with C++17.
+-            const_cast<T &>(const_cast<const Storage &>(
+-                mPrivateData)[static_cast<UnderlyingType>(it->first)]) = it->second;
++            mPrivateData[static_cast<UnderlyingType>(it->first)] = it->second;
+         }
+     }
+ 

@@ -83,10 +83,7 @@ class PackedEnumMap
         // We use a for loop instead of range-for to work around a limitation in MSVC.
         for (const InitPair *it = init.begin(); it != init.end(); ++it)
         {
-            // This horrible const_cast pattern is necessary to work around a constexpr limitation.
-            // See https://stackoverflow.com/q/34199774/ . Note that it should be fixed with C++17.
-            const_cast<T &>(const_cast<const Storage &>(
-                mPrivateData)[static_cast<UnderlyingType>(it->first)]) = it->second;
+            mPrivateData[static_cast<UnderlyingType>(it->first)] = it->second;
         }
     }
 
