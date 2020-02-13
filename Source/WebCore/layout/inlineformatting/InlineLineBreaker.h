@@ -53,7 +53,7 @@ public:
             Keep, // Keep content on the current line.
             Split, // Partial content is on the current line.
             Push, // Content is pushed to the next line.
-            Revert // The current content overflows and can't get wrapped. The line needs to be reverted back to the last line wrapping opportunity.
+            RevertToLastWrapOpportunity // The current content overflows and can't get wrapped. The line needs to be reverted back to the last line wrapping opportunity.
         };
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
@@ -63,7 +63,7 @@ public:
         Action action { Action::Keep };
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
         Optional<PartialTrailingContent> partialTrailingContent { };
-        const InlineItem* revertTo { nullptr };
+        const InlineItem* lastWrapOpportunityItem { nullptr };
     };
 
     struct Run {
@@ -111,7 +111,7 @@ private:
     bool isContentWrappingAllowed(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
-    const InlineItem* m_lastWrapOpportunity { nullptr };
+    bool m_hasWrapOpportunityAtPreviousPosition { false };
 };
 
 inline LineBreaker::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)

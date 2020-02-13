@@ -139,9 +139,11 @@ LineBreaker::Result LineBreaker::shouldWrapInlineContent(const RunList& candidat
                     return true;
                 return shouldKeepBeginningOfLineWhitespace(candidateItem.style());
             };
-            auto& inlineItem = candidateRuns[*lastLineWrapOpportunityIndex].inlineItem;
-            if (isEligibleLineWrapOpportunity(inlineItem))
-                m_lastWrapOpportunity = &inlineItem;
+            auto& lastWrapOpportunityCandidateItem = candidateRuns[*lastLineWrapOpportunityIndex].inlineItem;
+            if (isEligibleLineWrapOpportunity(lastWrapOpportunityCandidateItem)) {
+                result.lastWrapOpportunityItem = &lastWrapOpportunityCandidateItem;
+                m_hasWrapOpportunityAtPreviousPosition = true;
+            }
         }
     }
     return result;
@@ -200,14 +202,14 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candida
     }
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or push it to the next line.
     if (lineStatus.lineIsEmpty) {
-        ASSERT(!m_lastWrapOpportunity);
+        ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
         return { Result::Action::Keep, IsEndOfLine::No };
     }
     // Now either wrap here or at an earlier position, or not wrap at all.
     if (isContentWrappingAllowed(candidateContent))
         return { Result::Action::Push, IsEndOfLine::Yes };
-    if (m_lastWrapOpportunity)
-        return { Result::Action::Revert, IsEndOfLine::Yes, { }, m_lastWrapOpportunity };
+    if (m_hasWrapOpportunityAtPreviousPosition)
+        return { Result::Action::RevertToLastWrapOpportunity, IsEndOfLine::Yes };
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
@@ -286,10 +288,10 @@ LineBreaker::WordBreakRule LineBreaker::wordBreakBehavior(const RenderStyle& sty
         return WordBreakRule::NoBreak;
     // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
     // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
-    if (style.wordBreak() == WordBreak::BreakWord && !m_lastWrapOpportunity)
+    if (style.wordBreak() == WordBreak::BreakWord && !m_hasWrapOpportunityAtPreviousPosition)
         return WordBreakRule::AtArbitraryPosition;
     // OverflowWrap::Break: An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
-    if (style.overflowWrap() == OverflowWrap::Break && !m_lastWrapOpportunity)
+    if (style.overflowWrap() == OverflowWrap::Break && !m_hasWrapOpportunityAtPreviousPosition)
         return WordBreakRule::AtArbitraryPosition;
 
     if (!n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
