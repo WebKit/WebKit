@@ -2019,3 +2019,5 @@ webkit.org/b/207517 [ Debug ] inspector/animation/lifecycle-css-transition.html 
 webkit.org/b/207642 inspector/runtime/getCollectionEntries.html [ Pass Failure ]
 
 webkit.org/b/194162 storage/websql/read-transactions-running-concurrently.html [ Pass Failure ]
+
+webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass ImageOnlyFailure ]
