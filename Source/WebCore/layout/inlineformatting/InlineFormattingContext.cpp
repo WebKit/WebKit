@@ -454,7 +454,6 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     auto& inlineContent = formattingState.ensureDisplayInlineContent();
     auto lineIndex = inlineContent.lineBoxes.size();
     auto lineInkOverflow = lineBox.scrollableOverflow();
-    Optional<unsigned> lastTextItemIndex;
     // Compute box final geometry.
     auto& lineRuns = lineContent.runList;
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
@@ -486,6 +485,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             lineInkOverflow.expandToContain(inkOverflow);
             inlineContent.runs.append({ lineIndex, lineRun.layoutBox(), logicalRect, inkOverflow, lineRun.expansion(), lineRun.textContent() });
         }
+
+        if (lineRun.isText())
+            continue;
 
         if (lineRun.isLineBreak()) {
             // FIXME: Since <br> and <wbr> runs have associated DOM elements, we might need to construct a display box here. 
@@ -525,16 +527,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             continue;
         }
 
-        if (lineRun.isText()) {
-            // Anonymous inline text boxes do not create display boxes.
-            lastTextItemIndex = inlineContent.runs.size() - 1;
-            continue;
-        }
         ASSERT_NOT_REACHED();
     }
-    // Make sure the trailing text run gets a hyphen when it needs one.
-    if (lineContent.partialContent && lineContent.partialContent->trailingContentNeedsHyphen)
-        inlineContent.runs[*lastTextItemIndex].textContent()->setNeedsHyphen();
     // FIXME: This is where the logical to physical translate should happen.
     auto& baseline = lineBox.baseline();
     inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, { baseline.ascent(), baseline.descent() }, lineBox.baselineOffset(), lineBox.isConsideredEmpty() });

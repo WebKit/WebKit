@@ -41,7 +41,7 @@ public:
 
     struct LineContent {
         struct PartialContent {
-            bool trailingContentNeedsHyphen { false };
+            bool trailingContentHasHyphen { false };
             unsigned overflowContentLength { 0 };
         };
         Optional<unsigned> trailingInlineItemIndex;

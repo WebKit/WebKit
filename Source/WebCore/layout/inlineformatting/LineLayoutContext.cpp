@@ -311,11 +311,10 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const
         return LineContent { { }, { }, WTFMove(m_floats), line.close(), line.lineBox() };
 
     // Adjust hyphenated line count.
-    if (partialContent && partialContent->trailingContentNeedsHyphen)
+    if (partialContent && partialContent->trailingContentHasHyphen)
         ++m_successiveHyphenatedLineCount;
     else
         m_successiveHyphenatedLineCount = 0;
-
     unsigned trailingInlineItemIndex = layoutRange.start + committedInlineItemCount - 1;
     ASSERT(trailingInlineItemIndex < layoutRange.end);
     auto isLastLineWithInlineContent = [&] {
@@ -467,7 +466,7 @@ void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreake
                 // FIXME: LineBuilder should not hold on to the InlineItem.
                 ASSERT(!m_partialTrailingTextItem);
                 m_partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
-                line.append(*m_partialTrailingTextItem, partialRun->logicalWidth);
+                line.appendPartialTrailingTextItem(*m_partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
                 return;
             }
             // The partial run is the last content to commit.

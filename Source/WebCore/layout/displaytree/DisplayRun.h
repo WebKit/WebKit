@@ -43,7 +43,7 @@ struct Run {
     struct TextContent {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContent(unsigned position, unsigned length, const String&);
+        TextContent(unsigned position, unsigned length, const String&, bool needsHyphen);
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
@@ -116,9 +116,10 @@ inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect
 {
 }
 
-inline Run::TextContent::TextContent(unsigned start, unsigned length, const String& contentString)
+inline Run::TextContent::TextContent(unsigned start, unsigned length, const String& contentString, bool needsHyphen)
     : m_start(start)
     , m_length(length)
+    , m_needsHyphen(needsHyphen)
     , m_contentString(contentString)
 {
 }
