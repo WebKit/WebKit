@@ -254,12 +254,8 @@ LineLayoutContext::LineLayoutContext(const InlineFormattingContext& inlineFormat
 
 LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, const InlineItemRange layoutRange, Optional<unsigned> partialLeadingContentLength)
 {
-    auto reset = [&] {
-        ASSERT(m_floats.isEmpty());
-        m_partialTrailingTextItem = { };
-        m_partialLeadingTextItem = { };
-    };
-    reset();
+    ASSERT(m_floats.isEmpty());
+    m_partialLeadingTextItem = { };
     auto lineBreaker = LineBreaker { };
     auto currentItemIndex = layoutRange.start;
     unsigned committedInlineItemCount = 0;
@@ -463,10 +459,8 @@ void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreake
             // Create and commit partial trailing item.
             if (auto partialRun = partialTrailingContent.partialRun) {
                 auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
-                // FIXME: LineBuilder should not hold on to the InlineItem.
-                ASSERT(!m_partialTrailingTextItem);
-                m_partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
-                line.appendPartialTrailingTextItem(*m_partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
+                auto partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
+                line.appendPartialTrailingTextItem(partialTrailingTextItem, partialRun->logicalWidth, partialRun->needsHyphen);
                 return;
             }
             // The partial run is the last content to commit.

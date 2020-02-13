@@ -82,7 +82,6 @@ private:
     const InlineItems& m_inlineItems;
     FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
-    Optional<InlineTextItem> m_partialTrailingTextItem;
     unsigned m_successiveHyphenatedLineCount { 0 };
 };
 
