@@ -1222,6 +1222,9 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                     propertyName = m_token.m_data.ident;
                     wasString = true;
                     break;
+                case BIGINT:
+                    propertyName = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
+                    break;
                 case OPENBRACKET:
                     next();
                     propertyExpression = parseAssignmentExpression(context);
@@ -2892,6 +2895,11 @@ parseMethod:
             ASSERT(ident);
             next();
             break;
+        case BIGINT:
+            ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
+            ASSERT(ident);
+            next();
+            break;
         case IDENT:
             if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
                 if (!isGeneratorMethodParseMode(parseMode) && !isAsyncMethodParseMode(parseMode)) {
@@ -2912,7 +2920,7 @@ parseMethod:
             ident = m_token.m_data.ident;
             ASSERT(ident);
             next();
-            if (parseMode == SourceParseMode::MethodMode && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(OPENBRACKET))) {
+            if (parseMode == SourceParseMode::MethodMode && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(BIGINT) || match(OPENBRACKET))) {
                 isGetter = *ident == propertyNames.get;
                 isSetter = *ident == propertyNames.set;
             }
@@ -3037,6 +3045,11 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
         case IDENT:
         namedKeyword:
             ident = m_token.m_data.ident;
+            ASSERT(ident);
+            next();
+            break;
+        case BIGINT:
+            ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
             ASSERT(ident);
             next();
             break;
@@ -4146,6 +4159,23 @@ namedProperty:
         context.setEndOffset(node, m_lexer->currentOffset());
         return context.createProperty(const_cast<VM&>(m_vm), m_parserArena, propertyName, node, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
     }
+    case BIGINT: {
+        const Identifier* ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
+        next();
+
+        if (match(OPENPAREN)) {
+            auto method = parsePropertyMethod(context, ident, parseMode);
+            propagateError();
+            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
+        }
+        failIfTrue(parseMode != SourceParseMode::MethodMode, "Expected a parenthesis for argument list");
+
+        consumeOrFail(COLON, "Expected ':' after property name");
+        TreeExpression node = parseAssignmentExpression(context);
+        failIfFalse(node, "Cannot parse expression for property declaration");
+        context.setEndOffset(node, m_lexer->currentOffset());
+        return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, InferName::Allowed, ClassElementTag::No);
+    }
     case OPENBRACKET: {
         next();
         auto propertyName = parseAssignmentExpression(context);
@@ -4213,6 +4243,9 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
         next();
     } else if (match(DOUBLE) || match(INTEGER)) {
         numericPropertyName = m_token.m_data.doubleValue;
+        next();
+    } else if (match(BIGINT)) {
+        stringPropertyName = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
         next();
     } else if (match(OPENBRACKET)) {
         next();

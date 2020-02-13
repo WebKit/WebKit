@@ -1,3 +1,12 @@
+2020-02-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] We don't support BigInt literal as PropertyName
+        https://bugs.webkit.org/show_bug.cgi?id=206888
+
+        Reviewed by Ross Kirsling.
+
+        * stress/big-int-as-property-name.js: Added.
+
 2020-02-10  Mark Lam  <mark.lam@apple.com>
 
         Placate exception check validator in GenericArguments<Type>::put().

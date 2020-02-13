@@ -1,3 +1,26 @@
+2020-02-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] We don't support BigInt literal as PropertyName
+        https://bugs.webkit.org/show_bug.cgi?id=206888
+
+        Reviewed by Ross Kirsling.
+
+        According to spec (https://tc39.es/ecma262/#prod-PropertyName),
+        BigInt literals are valid property names. Given that, we should not
+        throw a SyntaxError when using BigInt literals on destructuring
+        pattern, method declaration, object literals, etc.
+        This patch is adding BigInt literal as a valid syntax to PropertyName.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseInstanceFieldInitializerSourceElements):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makeBigIntDecimalIdentifier):
+        * parser/ParserArena.h:
+
 2020-02-12  Mark Lam  <mark.lam@apple.com>
 
         Add options for debugging WASM code.
