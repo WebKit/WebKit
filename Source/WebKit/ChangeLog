@@ -1,5 +1,52 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256005. rdar://problem/59299335
+
+    macCatalyst: Unnecessary I-beam over images in editable areas
+    https://bugs.webkit.org/show_bug.cgi?id=207370
+    <rdar://problem/59235429>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    * dom/Position.h:
+    
+    Source/WebKit:
+    
+    * Shared/ios/InteractionInformationAtPosition.h:
+    * Shared/ios/InteractionInformationAtPosition.mm:
+    (WebKit::InteractionInformationAtPosition::encode const):
+    (WebKit::InteractionInformationAtPosition::decode):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::populateCaretContext):
+    Add a bit indicating whether the forced I-beam for editable contexts
+    should be used or not, based on whether it is adjacent to (or immediately
+    over) a replaced element.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256005 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-06  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: Unnecessary I-beam over images in editable areas
+            https://bugs.webkit.org/show_bug.cgi?id=207370
+            <rdar://problem/59235429>
+
+            Reviewed by Wenson Hsieh.
+
+            * Shared/ios/InteractionInformationAtPosition.h:
+            * Shared/ios/InteractionInformationAtPosition.mm:
+            (WebKit::InteractionInformationAtPosition::encode const):
+            (WebKit::InteractionInformationAtPosition::decode):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::populateCaretContext):
+            Add a bit indicating whether the forced I-beam for editable contexts
+            should be used or not, based on whether it is adjacent to (or immediately
+            over) a replaced element.
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256000. rdar://problem/59299326
 
     WebPage::rangeForGranularityAtPoint always returns null in the case of CharacterGranularity

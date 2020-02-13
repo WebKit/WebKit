@@ -106,8 +106,8 @@ public:
     RefPtr<Node> firstNode() const;
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
-    Node* computeNodeBeforePosition() const;
-    Node* computeNodeAfterPosition() const;
+    WEBCORE_EXPORT Node* computeNodeBeforePosition() const;
+    WEBCORE_EXPORT Node* computeNodeAfterPosition() const;
 
     Node* anchorNode() const { return m_anchorNode.get(); }
 
