@@ -1,5 +1,61 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255879. rdar://problem/59299329
+
+    [macCatalyst] Incorrect IBeam cursor when selecting text on Wikipedia
+    https://bugs.webkit.org/show_bug.cgi?id=207299
+    <rdar://problem/59200545>
+    
+    Reviewed by Tim Horton.
+    
+    After r255827, if EventHandler selects an IBeam cursor at the position information request location, we will
+    always attempt to show a caret at that location, whose height is the height of the editing caret for that
+    visible position. However, this means that:
+    
+    -   It's possible for the caret to be incorrectly sized if the caret is before a large replaced element, such as
+        a table. Since the request location is also outside of any line rect, it doesn't make sense to use the caret
+        height for the height of the cursor. Instead, fall back to computed line height. This fixes an issue on
+        en.wikipedia.org where the line rect would sometimes update to an enormous size when selecting text, since
+        the caret would temporarily hover over an editing position that is before a large table.
+    
+    -   This fallback path completely negates certain cursor behaviors; partially restore this behavior by making it
+        so that in the case where the cursor is in editable content and the line caret first line from the top of
+        the hit-tested node already contains the request point, don't bother trying to recenter the line rect to be
+        right over the request point.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::populateCaretContext):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255879 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macCatalyst] Incorrect IBeam cursor when selecting text on Wikipedia
+            https://bugs.webkit.org/show_bug.cgi?id=207299
+            <rdar://problem/59200545>
+
+            Reviewed by Tim Horton.
+
+            After r255827, if EventHandler selects an IBeam cursor at the position information request location, we will
+            always attempt to show a caret at that location, whose height is the height of the editing caret for that
+            visible position. However, this means that:
+
+            -   It's possible for the caret to be incorrectly sized if the caret is before a large replaced element, such as
+                a table. Since the request location is also outside of any line rect, it doesn't make sense to use the caret
+                height for the height of the cursor. Instead, fall back to computed line height. This fixes an issue on
+                en.wikipedia.org where the line rect would sometimes update to an enormous size when selecting text, since
+                the caret would temporarily hover over an editing position that is before a large table.
+
+            -   This fallback path completely negates certain cursor behaviors; partially restore this behavior by making it
+                so that in the case where the cursor is in editable content and the line caret first line from the top of
+                the hit-tested node already contains the request point, don't bother trying to recenter the line rect to be
+                right over the request point.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::populateCaretContext):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255827. rdar://problem/59299345
 
     [macCatalyst] IBeam cursor doesn't show up when hovering over text form controls prior to editing
