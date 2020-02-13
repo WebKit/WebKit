@@ -1,3 +1,13 @@
+2020-02-12  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] More layout tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=207679
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-02-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         WebP image format is not supported

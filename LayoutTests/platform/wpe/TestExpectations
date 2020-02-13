@@ -1293,6 +1293,8 @@ webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pas
 
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
+webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2234,6 +2236,11 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscre
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
 
 webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.php [ Failure ]
+
+webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml [ Failure ]
+webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
+webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
+webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
