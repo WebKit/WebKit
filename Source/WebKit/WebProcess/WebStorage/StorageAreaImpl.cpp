@@ -37,14 +37,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<StorageAreaImpl> StorageAreaImpl::create(Ref<StorageAreaMap>&& storageAreaMap)
+Ref<StorageAreaImpl> StorageAreaImpl::create(StorageAreaMap& storageAreaMap)
 {
-    return adoptRef(*new StorageAreaImpl(WTFMove(storageAreaMap)));
+    return adoptRef(*new StorageAreaImpl(storageAreaMap));
 }
 
-StorageAreaImpl::StorageAreaImpl(Ref<StorageAreaMap>&& storageAreaMap)
+StorageAreaImpl::StorageAreaImpl(StorageAreaMap& storageAreaMap)
     : m_identifier(Identifier::generate())
-    , m_storageAreaMap(makeWeakPtr(storageAreaMap.get()))
+    , m_storageAreaMap(makeWeakPtr(storageAreaMap))
 {
     storageAreaMap->incrementUseCount();
 }
@@ -101,7 +101,7 @@ bool StorageAreaImpl::contains(const String& key)
 StorageType StorageAreaImpl::storageType() const
 {
     if (m_storageAreaMap)
-        return m_storageAreaMap->storageType();
+        return m_storageAreaMap->type();
 
     // We probably need an Invalid type.
     return StorageType::Local;

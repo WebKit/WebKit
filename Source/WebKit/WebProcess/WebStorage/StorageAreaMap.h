@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,12 +46,13 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
+class StorageAreaMap final : private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StorageAreaMap> create(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
+    StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
 
-    WebCore::StorageType storageType() const { return m_storageType; }
+    WebCore::StorageType type() const { return m_type; }
 
     unsigned length();
     String key(unsigned index);
@@ -62,29 +63,26 @@ public:
     bool contains(const String& key);
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
+    const Optional<StorageAreaIdentifier>& identifier() const { return m_mapID; }
 
-    void connect();
     void disconnect();
-    const Optional<StorageAreaIdentifier>& identifier() const { return m_storageMapID; }
 
     void incrementUseCount();
     void decrementUseCount();
 
 private:
-    StorageAreaMap(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
-
-    void didSetItem(uint64_t storageMapSeed, const String& key, bool quotaError);
-    void didRemoveItem(uint64_t storageMapSeed, const String& key);
-    void didClear(uint64_t storageMapSeed);
+    void didSetItem(uint64_t mapSeed, const String& key, bool quotaError);
+    void didRemoveItem(uint64_t mapSeed, const String& key);
+    void didClear(uint64_t mapSeed);
 
     void dispatchStorageEvent(const Optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void clearCache();
 
     void resetValues();
-    void loadValuesIfNeeded();
+    WebCore::StorageMap& ensureMap();
 
     bool shouldApplyChangeForKey(const String& key) const;
     void applyChange(const String& key, const String& newValue);
@@ -92,21 +90,18 @@ private:
     void dispatchSessionStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void dispatchLocalStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
-    StorageNamespaceImpl* m_storageNamespace;
+    void connect();
 
-    Optional<StorageAreaIdentifier> m_storageMapID;
-
-    WebCore::StorageType m_storageType;
-    unsigned m_quotaInBytes;
+    StorageNamespaceImpl& m_namespace;
     Ref<WebCore::SecurityOrigin> m_securityOrigin;
-
-    RefPtr<WebCore::StorageMap> m_storageMap;
-
-    uint64_t m_currentSeed;
-    bool m_hasPendingClear;
+    RefPtr<WebCore::StorageMap> m_map;
+    Optional<StorageAreaIdentifier> m_mapID;
     HashCountedSet<String> m_pendingValueChanges;
     
     uint64_t m_useCount { 0 };
+    uint64_t m_currentSeed { 0 };
+    WebCore::StorageType m_type;
+    bool m_hasPendingClear { false };
 };
 
 } // namespace WebKit

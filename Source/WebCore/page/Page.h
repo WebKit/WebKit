@@ -713,7 +713,7 @@ public:
     DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
 #endif
 
-    void forEachDocument(const WTF::Function<void(Document&)>&) const;
+    WEBCORE_EXPORT void forEachDocument(const WTF::Function<void(Document&)>&) const;
     void forEachMediaElement(const WTF::Function<void(HTMLMediaElement&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;

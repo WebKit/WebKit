@@ -80,7 +80,7 @@ private:
 
     const unsigned m_quotaInBytes;
 
-    HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaMap>> m_storageAreaMaps;
+    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageAreaMap>> m_storageAreaMaps;
 };
 
 } // namespace WebKit

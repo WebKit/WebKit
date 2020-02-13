@@ -1,3 +1,115 @@
+2020-02-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254859. rdar://problem/59298172
+
+    Minor improvements to StorageAreaMap
+    https://bugs.webkit.org/show_bug.cgi?id=206433
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Use inline initialization for some of StorageMap's data member.
+    Also specify uint8_t as underlying type of StorageType enum class for better packing.
+    
+    * inspector/InspectorInstrumentation.h:
+    * storage/StorageArea.h:
+    * storage/StorageMap.cpp:
+    (WebCore::StorageMap::StorageMap):
+    * storage/StorageMap.h:
+    * storage/StorageType.h:
+    
+    Source/WebKit:
+    
+    Minor improvements to StorageAreaMap:
+    1. The class does not need to be RefCounted, as it is solely owned by StorageNamespaceImpl. Having it
+       RefCounted was actually dangerous because StorageAreaMap had a raw pointer data member to its owner:
+       m_storageNamespace. This raw pointer could become stale if you extend the lifetime of the StorageAreaMap
+       object to outlive its StorageNamespaceImpl.
+    2. Make StorageAreaMap::connect() private as it is never called from outside the class
+    3. Reorder data members for better packing
+    4. Use modern loops in the implementation
+    5. Rename loadValuesIfNeeded() to ensureStorageMap() and have it return the StorageMap object. This makes
+       calls site more concise and it makes it clearer when this method needs to be called.
+    6. Mark class as final
+    7. Replace LOG_ERROR() with RELEASE_LOG_ERROR() so that we can see error logging in sysdiagnoses
+    8. Use more references instead of raw pointers to make it clear when null checks are not needed
+    
+    * WebProcess/WebStorage/StorageAreaImpl.cpp:
+    (WebKit::StorageAreaImpl::create):
+    (WebKit::StorageAreaImpl::StorageAreaImpl):
+    * WebProcess/WebStorage/StorageAreaImpl.h:
+    * WebProcess/WebStorage/StorageAreaMap.cpp:
+    (WebKit::StorageAreaMap::StorageAreaMap):
+    (WebKit::StorageAreaMap::length):
+    (WebKit::StorageAreaMap::key):
+    (WebKit::StorageAreaMap::item):
+    (WebKit::StorageAreaMap::setItem):
+    (WebKit::StorageAreaMap::removeItem):
+    (WebKit::StorageAreaMap::clear):
+    (WebKit::StorageAreaMap::contains):
+    (WebKit::StorageAreaMap::resetValues):
+    (WebKit::StorageAreaMap::ensureStorageMap):
+    (WebKit::StorageAreaMap::applyChange):
+    (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+    (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+    (WebKit::StorageAreaMap::connect):
+    (WebKit::StorageAreaMap::disconnect):
+    * WebProcess/WebStorage/StorageAreaMap.h:
+    * WebProcess/WebStorage/StorageAreaMap.messages.in:
+    * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+    (WebKit::StorageNamespaceImpl::storageArea):
+    * WebProcess/WebStorage/StorageNamespaceImpl.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254859 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-21  Chris Dumez  <cdumez@apple.com>
+
+            Minor improvements to StorageAreaMap
+            https://bugs.webkit.org/show_bug.cgi?id=206433
+
+            Reviewed by Darin Adler.
+
+            Minor improvements to StorageAreaMap:
+            1. The class does not need to be RefCounted, as it is solely owned by StorageNamespaceImpl. Having it
+               RefCounted was actually dangerous because StorageAreaMap had a raw pointer data member to its owner:
+               m_storageNamespace. This raw pointer could become stale if you extend the lifetime of the StorageAreaMap
+               object to outlive its StorageNamespaceImpl.
+            2. Make StorageAreaMap::connect() private as it is never called from outside the class
+            3. Reorder data members for better packing
+            4. Use modern loops in the implementation
+            5. Rename loadValuesIfNeeded() to ensureStorageMap() and have it return the StorageMap object. This makes
+               calls site more concise and it makes it clearer when this method needs to be called.
+            6. Mark class as final
+            7. Replace LOG_ERROR() with RELEASE_LOG_ERROR() so that we can see error logging in sysdiagnoses
+            8. Use more references instead of raw pointers to make it clear when null checks are not needed
+
+            * WebProcess/WebStorage/StorageAreaImpl.cpp:
+            (WebKit::StorageAreaImpl::create):
+            (WebKit::StorageAreaImpl::StorageAreaImpl):
+            * WebProcess/WebStorage/StorageAreaImpl.h:
+            * WebProcess/WebStorage/StorageAreaMap.cpp:
+            (WebKit::StorageAreaMap::StorageAreaMap):
+            (WebKit::StorageAreaMap::length):
+            (WebKit::StorageAreaMap::key):
+            (WebKit::StorageAreaMap::item):
+            (WebKit::StorageAreaMap::setItem):
+            (WebKit::StorageAreaMap::removeItem):
+            (WebKit::StorageAreaMap::clear):
+            (WebKit::StorageAreaMap::contains):
+            (WebKit::StorageAreaMap::resetValues):
+            (WebKit::StorageAreaMap::ensureStorageMap):
+            (WebKit::StorageAreaMap::applyChange):
+            (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+            (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+            (WebKit::StorageAreaMap::connect):
+            (WebKit::StorageAreaMap::disconnect):
+            * WebProcess/WebStorage/StorageAreaMap.h:
+            * WebProcess/WebStorage/StorageAreaMap.messages.in:
+            * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+            (WebKit::StorageNamespaceImpl::storageArea):
+            * WebProcess/WebStorage/StorageNamespaceImpl.h:
+
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256073. rdar://problem/59299148
