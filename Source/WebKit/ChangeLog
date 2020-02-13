@@ -1,5 +1,65 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256485. rdar://problem/59430261
+
+    Composition highlight rects should be rounded and inset
+    https://bugs.webkit.org/show_bug.cgi?id=207655
+    <rdar://problem/59362474>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Apply a couple of minor adjustments to the appearance of composition highlight rects that appear behind marked
+    text, in the case where the client specifies attributed marked text with background colors.
+    
+    Test: editing/input/composition-highlights.html
+    
+    * rendering/InlineTextBox.cpp:
+    (WebCore::InlineTextBox::paintMarkedTextBackground):
+    (WebCore::InlineTextBox::paintCompositionBackground):
+    
+    In the case where custom composition rects are specified, add a half-pixel inset to all sides of the background
+    rect, and add a slight corner radius around each background rect.
+    
+    * rendering/InlineTextBox.h:
+    
+    Source/WebKit:
+    
+    Stitch adjacent highlight rects together if they have the same highlight color; this minimizes the number of
+    composition highlight rects we hand to the web process when changing the marked text.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (compositionHighlights):
+    
+    LayoutTests:
+    
+    Make this existing layout test work with the new composition highlight appearance by covering up the edges of
+    the composition highlight rect with a black border. Due to subpixel insets around the composition highlight
+    rect, the reference image would be offset by a half pixel without this change (even when changing the spans to
+    have a `border-radius`).
+    
+    * editing/input/composition-highlights-expected.html:
+    * editing/input/composition-highlights.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256485 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Composition highlight rects should be rounded and inset
+            https://bugs.webkit.org/show_bug.cgi?id=207655
+            <rdar://problem/59362474>
+
+            Reviewed by Tim Horton.
+
+            Stitch adjacent highlight rects together if they have the same highlight color; this minimizes the number of
+            composition highlight rects we hand to the web process when changing the marked text.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (compositionHighlights):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256433. rdar://problem/59412971
 
     macCatalyst: Unable to grab scrollbar on editable text field

@@ -3,15 +3,59 @@
 <head>
 <style>
 div[contenteditable] {
+    top: 0;
+    left: 0;
+    position: absolute;
     font-size: 20px;
 }
+
+.container {
+    position: relative;
+}
+
+#red, #green, #blue {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    box-sizing: border-box;
+}
+
 #red { background-color: #FF000033; }
 #green { background-color: #00FF0033; }
 #blue { background-color: #0000FF33; }
+
+#overlay {
+    position: fixed;
+    font-size: 20px;
+    visibility: hidden;
+    top: 0;
+    left: 0;
+}
+
+.container {
+    position: relative;
+}
+
+.box {
+    visibility: visible;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    border: 4px solid black;
+    box-sizing: border-box;
+    left: -2px;
+    top: -2px;
+    position: absolute;
+}
+
+.description {
+    margin-top: 100px;
+}
 </style>
 </head>
 <body>
-This test verifies that highlights can be specified when setting marked text.
-<div contenteditable>Test:&nbsp;<span id="red">one</span><span id="green">two</span><span id="blue">three</span></div>
+<div contenteditable>Test&nbsp;<span class="container"><span id="red"></span>one</span><span class="container"><span id="green"></span>two</span><span class="container"><span id="blue"></span>three</span></div>
+<p class="description">This test verifies that highlights can be specified when setting marked text.</p>
+<div id="overlay">Test&nbsp;<span class="container"><span class="box"></span>one</span><span class="container"><span class="box"></span>two</span><span class="container"><span class="box"></span>three</span></div>
 </body>
 </html>

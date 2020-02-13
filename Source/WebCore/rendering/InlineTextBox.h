@@ -193,7 +193,8 @@ private:
     void paintCompositionUnderlines(PaintInfo&, const FloatPoint& boxOrigin) const;
     void paintCompositionUnderline(PaintInfo&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
 
-    void paintMarkedTextBackground(PaintInfo&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset);
+    enum class MarkedTextBackgroundStyle : bool { Default, Rounded };
+    void paintMarkedTextBackground(PaintInfo&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle = MarkedTextBackgroundStyle::Default);
     void paintMarkedTextForeground(PaintInfo&, const FloatRect& boxRect, const StyledMarkedText&);
     void paintMarkedTextDecoration(PaintInfo&, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText&);
 

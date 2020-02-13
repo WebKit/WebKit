@@ -4527,7 +4527,25 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
             highlightColor = WebCore::colorFromUIColor(uiColor);
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), highlightColor });
     }];
-    return highlights;
+
+    std::sort(highlights.begin(), highlights.end(), [](auto& a, auto& b) {
+        if (a.startOffset < b.startOffset)
+            return true;
+        if (a.startOffset > b.startOffset)
+            return false;
+        return a.endOffset < b.endOffset;
+    });
+
+    Vector<WebCore::CompositionHighlight> mergedHighlights;
+    mergedHighlights.reserveInitialCapacity(highlights.size());
+    for (auto& highlight : highlights) {
+        if (mergedHighlights.isEmpty() || mergedHighlights.last().color != highlight.color)
+            mergedHighlights.append(highlight);
+        else
+            mergedHighlights.last().endOffset = highlight.endOffset;
+    }
+
+    return mergedHighlights;
 }
 
 - (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
