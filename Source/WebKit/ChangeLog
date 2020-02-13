@@ -1,5 +1,57 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256000. rdar://problem/59299326
+
+    WebPage::rangeForGranularityAtPoint always returns null in the case of CharacterGranularity
+    https://bugs.webkit.org/show_bug.cgi?id=207350
+    <rdar://problem/59239914>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Handle the character granularity case in `WebPage::rangeForGranularityAtPoint` by just returning a collapsed
+    Range. Certain internal clients will have a need to place and update the text selection using character
+    granularity; see radar for more details.
+    
+    Test: UIWKInteractionViewProtocol.SelectTextWithCharacterGranularity
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView supportsTextSelectionWithCharacterGranularity]):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::rangeForGranularityAtPoint):
+    
+    Tools:
+    
+    Add a test to exercise the corner case in the SPI.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256000 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            WebPage::rangeForGranularityAtPoint always returns null in the case of CharacterGranularity
+            https://bugs.webkit.org/show_bug.cgi?id=207350
+            <rdar://problem/59239914>
+
+            Reviewed by Tim Horton.
+
+            Handle the character granularity case in `WebPage::rangeForGranularityAtPoint` by just returning a collapsed
+            Range. Certain internal clients will have a need to place and update the text selection using character
+            granularity; see radar for more details.
+
+            Test: UIWKInteractionViewProtocol.SelectTextWithCharacterGranularity
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView supportsTextSelectionWithCharacterGranularity]):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::rangeForGranularityAtPoint):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255879. rdar://problem/59299329
 
     [macCatalyst] Incorrect IBeam cursor when selecting text on Wikipedia

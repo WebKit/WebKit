@@ -979,6 +979,7 @@
 		E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */; };
 		E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E5036F77211BC22800BFDBE2 /* color-drop.html */; };
 		ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = ECA680CD1E68CC0900731D20 /* StringUtilities.mm */; };
+		F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */; };
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
 		F4106C6921ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4106C6821ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm */; };
 		F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F415086C1DA040C10044BE9B /* play-audio-on-click.html */; };
@@ -2519,6 +2520,7 @@
 		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		ECA680CD1E68CC0900731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIWKInteractionViewProtocol.mm; sourceTree = "<group>"; };
 		F407FE381F1D0DE60017CF25 /* enormous.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = enormous.svg; sourceTree = "<group>"; };
 		F4106C6821ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewFirstResponderTests.mm; sourceTree = "<group>"; };
 		F415086C1DA040C10044BE9B /* play-audio-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "play-audio-on-click.html"; sourceTree = "<group>"; };
@@ -3217,6 +3219,7 @@
 				F45E15752112CE6200307E82 /* TestInputDelegate.mm */,
 				F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */,
 				F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */,
+				F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */,
 				F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */,
 				514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */,
 				1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */,
@@ -4929,6 +4932,7 @@
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,
 				F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */,
+				F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */,
 				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,
 				5C9D922C22D7DE12008E9266 /* UnifiedSource1-mm.mm in Sources */,
 				5C9D922F22D7DE1F008E9266 /* UnifiedSource2.cpp in Sources */,
