@@ -1409,3 +1409,5 @@ webkit.org/b/207660 crypto/subtle/rsa-indexeddb-non-exportable-private.html [ Sl
 webkit.org/b/207665 http/tests/cache-storage/cache-representation.https.html [ Slow ]
 
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
+
+webkit.org/b/207709 imported/w3c/IndexedDB-private-browsing/close-in-upgradeneeded.html [ Pass Timeout ]

@@ -1,3 +1,12 @@
+2020-02-13  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] imported/w3c/IndexedDB-private-browsing/close-in-upgradeneeded.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207709
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-13  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Remove ApplePayBillingAddress.html from TestExpectations after fix for flaky failure
