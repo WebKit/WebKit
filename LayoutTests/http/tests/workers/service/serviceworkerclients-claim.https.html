@@ -54,18 +54,17 @@ var htmlString = '<html><script>async function doTest() { ' +
   '    var text = await response.text();' +
   '    window.parent.postMessage(text, "*");' +
   '}' +
-  'doTest();' +
+  'doTest().catch(e => {' +
+  '   window.parent.postMessage("Fetch failed", "*");'+
+  '});' +
   '</scr' + 'ipt></h' + 'tml>';
 
 promise_test(async (test) => {
-    var promise = new Promise((resolve, reject) => {
-        window.addEventListener("message", (event) => {
-            reject("Received a message from iframe:" + event.data);
-        }, false);
-        setTimeout(resolve, 100);
+    var promise = new Promise((resolve) => {
+        window.addEventListener("message", (event) => resolve(event.data));
     });
     var frame = await withFrame("data:text/html," + htmlString);
-    return promise;
+    assert_equals(await promise, "Fetch failed");
 }, "Test data URL frame");
 
 promise_test(async (test) => {

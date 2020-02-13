@@ -1,3 +1,17 @@
+2020-02-13  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: (256381) [ macOS ] http/tests/workers/service/serviceworkerclients-claim.https.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207653
+        <rdar://problem/59396225>
+
+        Reviewed by Chris Dumez.
+
+        console log message output was flaky.
+        Make sure to end the fetch and post a message so that the console log message will appear in the expected.txt reliably.
+
+        * http/tests/workers/service/serviceworkerclients-claim.https-expected.txt:
+        * http/tests/workers/service/serviceworkerclients-claim.https.html:
+
 2020-02-13  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] fast/images/webp-as-image.html is failing.
