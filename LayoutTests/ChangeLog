@@ -1,3 +1,20 @@
+2020-02-13  Said Abou-Hallawa  <said@apple.com>
+
+        Unreviewed, rolling out r255158, 255405 and r255486
+
+        Caused test flakiness and PLT regression.
+
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+        * fast/animation/request-animation-frame-throttle-subframe.html:
+        * fast/animation/request-animation-frame-throttling-detached-iframe.html:
+        * fast/animation/request-animation-frame-throttling-lowPowerMode-expected.txt:
+        * fast/animation/request-animation-frame-throttling-lowPowerMode.html:
+        * fast/animation/request-animation-frame-throttling-outside-viewport-expected.txt: Removed.
+        * fast/animation/request-animation-frame-throttling-outside-viewport.html: Removed.
+        * fast/animation/resources/frame-with-animation-2.html: Removed.
+        * http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-13  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/return-local-variable.html is flaky failing

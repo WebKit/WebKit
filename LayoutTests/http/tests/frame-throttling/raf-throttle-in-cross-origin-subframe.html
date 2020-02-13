@@ -13,10 +13,7 @@
     <script>
     description("Tests that requestAnimationFrame is throttled in subframes that are cross-origin, and not in same-origin frames");
     window.jsTestIsAsync = true;
-
-    if (window.internals)
-        internals.settings.setRenderingUpdateThrottlingEnabled(true);
-
+    
     var crossOriginFrame;
     var sameOriginFrame
 
