@@ -253,6 +253,12 @@ webkit.org/b/156717 fast/images/animated-gif-iframe-webkit-transform.html [ Time
 webkit.org/b/156717 fast/media/print-restores-previous-mediatype.html [ Timeout ]
 webkit.org/b/156717 plugins/mouse-events.html [ Timeout Crash ]
 
+webkit.org/b/207711 http/tests/inspector/network/set-resource-caching-disabled-memory-cache.html [ Pass Timeout ]
+webkit.org/b/207711 http/tests/inspector/network/x-frame-options.html [ Pass Timeout ]
+webkit.org/b/207711 http/tests/multipart/multipart-async-image.html [ Pass Timeout ]
+webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
+webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ ImageOnlyFailure ]
+
 # Fullscreen related issues
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Timeout ]
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html [ Timeout ]

@@ -1295,6 +1295,8 @@ webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Time
 
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 
+webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1350,6 +1352,14 @@ webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeou
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
 
 webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
+
+webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
+webkit.org/b/207711 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Timeout ]
+webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Timeout ]
+webkit.org/b/207711 [ Release ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Timeout ]
+webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -2221,6 +2231,8 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+
+webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
