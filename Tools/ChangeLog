@@ -1,5 +1,16 @@
 2020-02-13  Jonathan Bedard  <jbedard@apple.com>
 
+        TestWebKitAPI: Conditionalize fullscreen tests on fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=207397
+        <rdar://problem/59268128>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+
+2020-02-13  Jonathan Bedard  <jbedard@apple.com>
+
         TestWebKitAPI: Re-baseline DocumentEditingContext for Catalyst
         https://bugs.webkit.org/show_bug.cgi?id=207696
 

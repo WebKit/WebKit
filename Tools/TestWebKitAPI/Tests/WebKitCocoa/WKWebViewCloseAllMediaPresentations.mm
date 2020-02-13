@@ -57,6 +57,8 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('video').webkitPresentationMode"].UTF8String, "inline");
 }
 
+#if ENABLE(FULLSCREEN_API)
+
 TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -108,3 +110,5 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
 
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.webkitFullscreenElement"].UTF8String, "<null>");
 }
+
+#endif
