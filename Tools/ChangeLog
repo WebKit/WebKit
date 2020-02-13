@@ -1,3 +1,89 @@
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256520. rdar://problem/59430255
+
+    [iOS] -updateSelectionWithExtentPoint:completionHandler: should work without requiring floating cursor
+    https://bugs.webkit.org/show_bug.cgi?id=207680
+    <rdar://problem/59340940>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Currently, WebPage::updateSelectionWithExtentPoint consults the value of m_selectionAnchor to determine whether
+    it should attempt to modify the current selection using the hit-tested visible position. m_selectionAnchor is
+    only set under WebPage::beginSelectionInDirection, which is only invoked when the user begins a floating cursor
+    gesture. When attempting to perform an out-of-band selection update (i.e. without calling
+    beginSelectionInDirection beforehand), we will end up consulting an arbitrary value for m_selectionAnchor
+    (::Start by default; otherwise, the last value set by beginSelectionInDirection if it was previously called).
+    This means that the selection can often only be extended in one direction (typically forwards) when an API
+    client attempts to use -updateSelectionWithExtentPoint:completionHandler: to extend the current selection.
+    
+    To fix this, make it so that we only respect the selection anchor (m_selectionAnchor) in the case where the user
+    is currently using the floating cursor; otherwise, allow the SPI to expand the selection, such that it contains
+    the visible position for the given location.
+    
+    Test: UIWKInteractionViewProtocol.UpdateSelectionWithExtentPoint
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    * Scripts/webkit/messages.py:
+    * Shared/ios/GestureTypes.h:
+    
+    Add a new flag to tell the web process whether it should limit selection extent updates to the current selection
+    anchor. Also, remove an existing enum type, SelectionHandlePosition, that is unused (since we no longer support
+    block text selection).
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[UITextInteractionAssistant _wk_hasFloatingCursor]):
+    
+    Add a helper method to determine (using the text interaction assistant) whether there's an active floating
+    cursor gesture. In the case where floating cursor is active, the text interaction assistant will be in an active
+    gesture but its UITextInteraction will not, since the gesture recognizer belongs to the keyboard or input view
+    rather than the first responder (in this case, WKContentView).
+    
+    (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+    
+    Only respect the selection anchor if we're in floating cursor mode; otherwise, allow selection updates with an
+    extent point to extend the current selection to include the new position.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    
+    Plumb the RespectsSelectionAnchor flag over to the web process.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::updateSelectionWithExtentPoint):
+    
+    Tools:
+    
+    Add a new API test to verify that calling -updateSelectionWithExtentPoint:completionHandler: with a point behind
+    the current selection works.
+    
+    * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+    (-[TestWKWebView updateSelectionWithExtentPoint:]):
+    * TestWebKitAPI/ios/UIKitSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256520 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] -updateSelectionWithExtentPoint:completionHandler: should work without requiring floating cursor
+            https://bugs.webkit.org/show_bug.cgi?id=207680
+            <rdar://problem/59340940>
+
+            Reviewed by Tim Horton.
+
+            Add a new API test to verify that calling -updateSelectionWithExtentPoint:completionHandler: with a point behind
+            the current selection works.
+
+            * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+            (-[TestWKWebView updateSelectionWithExtentPoint:]):
+            * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256073. rdar://problem/59299148

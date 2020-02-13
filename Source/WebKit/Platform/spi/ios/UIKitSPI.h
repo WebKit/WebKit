@@ -453,6 +453,8 @@ typedef enum {
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOverflow;
+- (void)willStartScrollingOrZooming;
+- (void)didEndScrollingOrZooming;
 @end
 
 @interface UITextSuggestion : NSObject
@@ -1110,9 +1112,13 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
 
-@interface UITextInteractionAssistant (Staging_55645619)
-- (void)didEndScrollingOrZooming;
-- (void)willStartScrollingOrZooming;
+@interface UITextInteractionAssistant (IPI)
+@property (nonatomic, readonly) BOOL inGesture;
+@property (nonatomic, readonly) UITextInteraction *interactions;
+@end
+
+@interface UITextInteraction (IPI)
+@property (nonatomic, readonly) BOOL inGesture;
 @end
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
