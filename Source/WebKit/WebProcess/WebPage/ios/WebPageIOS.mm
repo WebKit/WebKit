@@ -2762,8 +2762,12 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element
 
 static FloatRect lineCaretExtent(const InteractionInformationRequest& request, const HitTestResult& hitTestResult)
 {
-    auto* frame = hitTestResult.innerNodeFrame();
+    auto frame = makeRefPtr(hitTestResult.innerNodeFrame());
     if (!frame)
+        return { };
+
+    auto view = makeRefPtr(frame->view());
+    if (!view)
         return { };
 
     auto* renderer = hitTestResult.innerNode()->renderer();
@@ -2779,7 +2783,7 @@ static FloatRect lineCaretExtent(const InteractionInformationRequest& request, c
     // FIXME: We should be able to retrieve this geometry information without
     // forcing the text to fall out of Simple Line Layout.
     auto& blockFlow = downcast<RenderBlockFlow>(*renderer);
-    VisiblePosition position = frame->visiblePositionForPoint(request.point);
+    auto position = frame->visiblePositionForPoint(view->rootViewToContents(request.point));
     auto lineRect = position.absoluteSelectionBoundsForLine();
     lineRect.setWidth(blockFlow.contentWidth());
     return lineRect;
