@@ -28,6 +28,7 @@
 
 #import "APIFrameHandle.h"
 #import "APIResourceLoadInfo.h"
+#import "ResourceLoadInfo.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 
@@ -61,6 +62,52 @@
 - (API::Object&)_apiObject
 {
     return *_info;
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [super init]))
+        return nil;
+
+    NSNumber *resourceLoadID = [coder decodeObjectOfClass:[NSNumber class] forKey:@"resourceLoadID"];
+    if (!resourceLoadID) {
+        [self release];
+        return nil;
+    }
+
+    NSNumber *frame = [coder decodeObjectOfClass:[NSNumber class] forKey:@"frame"];
+    if (!frame) {
+        [self release];
+        return nil;
+    }
+
+    NSNumber *parentFrame = [coder decodeObjectOfClass:[NSNumber class] forKey:@"parentFrame"];
+    if (!parentFrame) {
+        [self release];
+        return nil;
+    }
+
+    WebKit::ResourceLoadInfo info {
+        makeObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
+        makeObjectIdentifier<WebCore::FrameIdentifierType>(frame.unsignedLongLongValue),
+        makeObjectIdentifier<WebCore::FrameIdentifierType>(parentFrame.unsignedLongLongValue)
+    };
+
+    API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTFMove(info));
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:@(self.resourceLoadID) forKey:@"resourceLoadID"];
+    [coder encodeObject:@(self.frame.frameID) forKey:@"frame"];
+    [coder encodeObject:@(self.parentFrame.frameID) forKey:@"parentFrame"];
 }
 
 @end

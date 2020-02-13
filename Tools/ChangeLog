@@ -1,3 +1,13 @@
+2020-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        _WKResourceLoadInfo should conform to NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=207667
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+
 2020-02-13  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Add Buildbots for Debug/Release builds

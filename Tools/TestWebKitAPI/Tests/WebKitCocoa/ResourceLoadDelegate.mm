@@ -305,6 +305,17 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[7] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[7] URL].path, "/fetchTarget");
     EXPECT_EQ(otherParameters[8], nil);
+    
+    _WKResourceLoadInfo *original = loadInfos[0].get();
+    NSError *error = nil;
+    NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
+    EXPECT_EQ(archiveData.length, 299ull);
+    EXPECT_FALSE(error);
+    _WKResourceLoadInfo *deserialized = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKResourceLoadInfo class] fromData:archiveData error:&error];
+    EXPECT_FALSE(error);
+    EXPECT_TRUE(deserialized.resourceLoadID == original.resourceLoadID);
+    EXPECT_TRUE(deserialized.frame.frameID == original.frame.frameID);
+    EXPECT_TRUE(deserialized.parentFrame.frameID == original.parentFrame.frameID);
 }
 
 #endif // HAVE(NETWORK_FRAMEWORK)

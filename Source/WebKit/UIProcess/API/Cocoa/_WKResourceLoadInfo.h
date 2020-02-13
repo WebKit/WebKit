@@ -30,7 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface _WKResourceLoadInfo : NSObject
+@interface _WKResourceLoadInfo : NSObject <NSSecureCoding>
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

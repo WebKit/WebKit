@@ -1,5 +1,21 @@
 2020-02-13  Alex Christensen  <achristensen@webkit.org>
 
+        _WKResourceLoadInfo should conform to NSSecureCoding
+        https://bugs.webkit.org/show_bug.cgi?id=207667
+
+        Reviewed by Brady Eidson.
+
+        This makes rdar://problem/57132290 nicer.
+        Covered by API tests.
+
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (+[_WKResourceLoadInfo supportsSecureCoding]):
+        (-[_WKResourceLoadInfo initWithCoder:]):
+        (-[_WKResourceLoadInfo encodeWithCoder:]):
+
+2020-02-13  Alex Christensen  <achristensen@webkit.org>
+
         Deprecate _WKUserContentWorld replaced by WKContentWorld
         https://bugs.webkit.org/show_bug.cgi?id=207514
 
