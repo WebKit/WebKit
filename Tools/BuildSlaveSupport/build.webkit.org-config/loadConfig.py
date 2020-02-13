@@ -120,6 +120,8 @@ def loadBuilderConfig(c, test_mode_is_enabled=False):
             builder["category"] = 'WPE'
         elif platform == 'wincairo':
             builder["category"] = 'WinCairo'
+        elif platform.startswith('playstation'):
+            builder["category"] = 'PlayStation'
         else:
             builder["category"] = 'misc'
 

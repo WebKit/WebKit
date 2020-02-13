@@ -64,6 +64,9 @@
                     { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
                     { "name": "wincairo-jsc-debug-tests-01", "platform": "wincairo" },
 
+                    { "name": "playstation-release-build-01", "platform": "playstation" },
+                    { "name": "playstation-debug-build-01", "platform": "playstation" },
+
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
                     { "name": "gtk-linux-slave-3", "platform": "gtk" },
@@ -330,6 +333,16 @@
                       "slavenames": ["wincairo-jsc-debug-tests-01"]
                     },
                     {
+                      "name": "PlayStation-Debug-Build", "type": "Build", "builddir": "playstation-debug",
+                      "platform": "playstation", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["playstation-debug-build-01"]
+                    },
+                    {
+                      "name": "PlayStation-Release-Build", "type": "Build", "builddir": "playstation-release",
+                      "platform": "playstation", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["playstation-release-build-01"]
+                    },
+                    {
                       "name": "JSCOnly Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-aarch64-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
                       "slavenames": ["jsconly-linux-igalia-bot-2"]
@@ -378,7 +391,8 @@
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
                                        "JSCOnly Linux AArch64 Release",
                                        "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Thumb2 SoftFP Release",
-                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
+                                       "JSCOnly Linux MIPS32el Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
+                                       "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,

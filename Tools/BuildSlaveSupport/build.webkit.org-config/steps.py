@@ -191,7 +191,7 @@ class InstallWpeDependencies(shell.ShellCommand):
 
 
 def appendCustomBuildFlags(step, platform, fullPlatform):
-    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation'):
         return
     if fullPlatform.startswith('ios-simulator'):
         platform = 'ios-simulator'

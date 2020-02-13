@@ -51,7 +51,7 @@ class BuildFactory(Factory):
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, SVNMirror, device_model)
 
-        if platform == "win":
+        if platform == "win" or platform.startswith("playstation"):
             self.addStep(CompileWebKit(timeout=2 * 60 * 60))
         else:
             self.addStep(CompileWebKit())
