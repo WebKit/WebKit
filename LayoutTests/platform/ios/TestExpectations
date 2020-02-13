@@ -3499,3 +3499,5 @@ webkit.org/b/207650 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_obj
 webkit.org/b/207651 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore4.html [ Pass Timeout ]
 
 webkit.org/b/207652 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore5.html [ Pass Timeout ]
+
+webkit.org/b/207702 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.serviceworker.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2020-02-13  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.serviceworker.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207702
+
+        Unreviewed test gardening
+
+        * platform/ios/TestExpectations:
+
 2020-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r255037): Zooming in and out on Quip in macOS Safari can cause the content to be offset to the side
