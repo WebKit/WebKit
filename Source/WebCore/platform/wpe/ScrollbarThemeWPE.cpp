@@ -30,6 +30,7 @@
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
 
 namespace WebCore {

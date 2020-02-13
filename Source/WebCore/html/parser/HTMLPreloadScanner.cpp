@@ -43,6 +43,7 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SecurityPolicy.h"
+#include "Settings.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 
