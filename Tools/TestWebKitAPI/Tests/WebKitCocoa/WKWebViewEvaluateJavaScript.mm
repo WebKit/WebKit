@@ -30,7 +30,7 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import <WebKit/WKWebView.h>
+#import "TestWKWebView.h"
 #import <WebKit/WKErrorPrivate.h>
 #import <wtf/RetainPtr.h>
 
