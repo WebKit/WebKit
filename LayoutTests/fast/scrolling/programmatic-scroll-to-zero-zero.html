@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The page should scroll back to the top</title>
+    <style>
+        body {
+            height: 2000px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script>
+		if (window.testRunner)
+            testRunner.waitUntilDone();
+
+		function doTest()
+        {
+            document.scrollingElement.scrollTop = 20;
+            document.scrollingElement.scrollTop = 0;
+            
+            eventSender.monitorWheelEvents();
+
+            setTimeout(() => {
+                eventSender.mouseMoveTo(20, 20);
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+                eventSender.callAfterScrollingCompletes(() => {
+                    document.scrollingElement.scrollTop = 0;
+                    testRunner.notifyDone();
+                });
+            }, 0);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="box"></div>
+</body>
+</html>

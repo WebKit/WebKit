@@ -1,3 +1,18 @@
+2020-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r255037): Zooming in and out on Quip in macOS Safari can cause the content to be offset to the side
+        https://bugs.webkit.org/show_bug.cgi?id=207674
+        rdar://problem/59404866
+
+        Reviewed by Antti Koivisto.
+        
+        Test that does a programmatic scroll to 0,0, does a user scroll, then a second programmatic scroll to 0,0,
+        which is expected to work.
+
+        * fast/scrolling/programmatic-scroll-to-zero-zero-expected.html: Added.
+        * fast/scrolling/programmatic-scroll-to-zero-zero.html: Added.
+        * platform/ios/TestExpectations: Skip the new test on iOS (it relies on eventSender) and sort the grouping.
+
 2020-02-13  Said Abou-Hallawa  <said@apple.com>
 
         Unreviewed, rolling out r255158, 255405 and r255486
