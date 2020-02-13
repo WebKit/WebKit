@@ -117,6 +117,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
+#include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
 #endif
 
@@ -719,7 +720,7 @@ public:
     void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint, WebCore::TextGranularity, WebCore::SelectionDirection, bool isInteractingWithFocusedElement, WTF::Function<void(CallbackBase::Error)>&&);
     void moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity, WebCore::SelectionDirection, WTF::Function<void(CallbackBase::Error)>&&);
     void beginSelectionInDirection(WebCore::SelectionDirection, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&&);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&&);
     void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);

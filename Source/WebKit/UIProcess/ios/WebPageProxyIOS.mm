@@ -539,7 +539,7 @@ void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection directi
     m_process->send(Messages::WebPage::BeginSelectionInDirection(direction, callbackID), m_webPageID);
 }
 
-void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, RespectSelectionAnchor respectSelectionAnchor, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction(0, CallbackBase::Error::Unknown);
@@ -547,7 +547,7 @@ void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point,
     }
     
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithExtentPoint"_s));
-    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithFocusedElement, callbackID), m_webPageID);
+    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithFocusedElement, respectSelectionAnchor, callbackID), m_webPageID);
     
 }
 

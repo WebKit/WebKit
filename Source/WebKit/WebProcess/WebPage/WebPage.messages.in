@@ -74,7 +74,7 @@ messages -> WebPage LegacyReceiver {
     MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, WebKit::CallbackID callbackID)
     SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
     BeginSelectionInDirection(uint32_t direction, WebKit::CallbackID callbackID)
-    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor, WebKit::CallbackID callbackID)
     UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
     RequestDictationContext(WebKit::CallbackID callbackID)
     ReplaceDictatedText(String oldText, String newText)

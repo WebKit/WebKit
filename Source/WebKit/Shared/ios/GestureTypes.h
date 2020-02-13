@@ -75,11 +75,9 @@ enum SelectionFlags {
     PhraseBoundaryChanged = 1 << 1,
 };
 
-enum class SelectionHandlePosition {
-    Top,
-    Right,
-    Bottom,
-    Left
+enum class RespectSelectionAnchor : bool {
+    No,
+    Yes
 };
 
 } // namespace WebKit

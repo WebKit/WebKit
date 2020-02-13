@@ -313,6 +313,10 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 - (void)selectWord;
 @end
 
+@interface UITextInteractionAssistant (WebKit)
+@property (nonatomic, readonly) BOOL _wk_hasFloatingCursor;
+@end
+
 @interface UIView (UIViewInternalHack)
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
@@ -321,6 +325,15 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithFocusedElementInformation:(const WebKit::FocusedElementInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
+@end
+
+@implementation UITextInteractionAssistant (WebKit)
+
+- (BOOL)_wk_hasFloatingCursor
+{
+    return self.inGesture && !self.interactions.inGesture;
+}
+
 @end
 
 @implementation WKFormInputSession {
@@ -4054,7 +4067,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), [self _isInteractingWithFocusedElement], [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
+    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._isInteractingWithFocusedElement, respectSelectionAnchor, [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
     });

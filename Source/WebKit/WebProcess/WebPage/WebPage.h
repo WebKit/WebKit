@@ -665,7 +665,7 @@ public:
     void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CallbackID);
     void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, CallbackID);
     void beginSelectionInDirection(uint32_t direction, CallbackID);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, CallbackID);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CallbackID);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID);
 
     void requestDictationContext(CallbackID);
