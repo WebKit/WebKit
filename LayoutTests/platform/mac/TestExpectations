@@ -1789,13 +1789,6 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 [ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
 [ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
 
-# <rdar://problem/8509491>
-[ Catalina+ ] fast/images/webp-as-image.html [ Pass ]
-[ Catalina+ ] fast/images/animated-webp-as-image.html [ Pass ]
-
-# <rdar://problem/59015708>
-[ Catalina+ ] fast/images/animated-webp.html [ ImageOnlyFailure ]
-
 # <rdar://problem/40172428>
 [ Catalina+ ] fast/text/font-collection.html [ ImageOnlyFailure ]
 [ Catalina+ ] fast/text/woff2.html [ ImageOnlyFailure ]
