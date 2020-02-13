@@ -1,5 +1,56 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256433. rdar://problem/59412971
+
+    macCatalyst: Unable to grab scrollbar on editable text field
+    https://bugs.webkit.org/show_bug.cgi?id=207615
+    <rdar://problem/59212993>
+    
+    Reviewed by Tim Horton.
+    
+    In macCatalyst, hovering over the scrollbar (an instance of the internal UIKit class
+    `_UIScrollViewScrollIndicator`) is required in order for a click and drag with the mouse to actually move the
+    scrollbar. This is because UIKit depends on the cursor interaction added to this view to recognize and call its
+    delegate methods.
+    
+    However, we override hit-testing in WebKit to skip over all children of scroll views, and instead force hit-
+    testing to find the scroll view instead. This means that UIKit can never hit-test to the scroll indicator views
+    embedded directly beneath each WKChildScrollView, so the cursor interactions described earlier will not
+    recognize. To work around this, special case these scroll indicator views, such that we will allow
+    -hitTest:withEvent: to find these views.
+    
+    * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+    (WebKit::scrollViewScrollIndicatorClass):
+    (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256433 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            macCatalyst: Unable to grab scrollbar on editable text field
+            https://bugs.webkit.org/show_bug.cgi?id=207615
+            <rdar://problem/59212993>
+
+            Reviewed by Tim Horton.
+
+            In macCatalyst, hovering over the scrollbar (an instance of the internal UIKit class
+            `_UIScrollViewScrollIndicator`) is required in order for a click and drag with the mouse to actually move the
+            scrollbar. This is because UIKit depends on the cursor interaction added to this view to recognize and call its
+            delegate methods.
+
+            However, we override hit-testing in WebKit to skip over all children of scroll views, and instead force hit-
+            testing to find the scroll view instead. This means that UIKit can never hit-test to the scroll indicator views
+            embedded directly beneath each WKChildScrollView, so the cursor interactions described earlier will not
+            recognize. To work around this, special case these scroll indicator views, such that we will allow
+            -hitTest:withEvent: to find these views.
+
+            * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+            (WebKit::scrollViewScrollIndicatorClass):
+            (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256005. rdar://problem/59299335
 
     macCatalyst: Unnecessary I-beam over images in editable areas
