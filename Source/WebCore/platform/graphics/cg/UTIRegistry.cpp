@@ -35,26 +35,25 @@
 #include <wtf/NeverDestroyed.h>
 #include <ImageIO/ImageIO.h>
 
-#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-#include "ArchiveFactory.h"
-#endif
-
 namespace WebCore {
 
 const HashSet<String>& defaultSupportedImageTypes()
 {
     // CG at least supports the following standard image types:
     static NeverDestroyed<HashSet<String>> defaultSupportedImageTypes = std::initializer_list<String> {
-        "com.compuserve.gif",
-        "com.microsoft.bmp",
-        "com.microsoft.cur",
-        "com.microsoft.ico",
-        "public.jpeg",
-        "public.png",
-        "public.tiff",
+        "com.compuserve.gif"_s,
+        "com.microsoft.bmp"_s,
+        "com.microsoft.cur"_s,
+        "com.microsoft.ico"_s,
+        "public.jpeg"_s,
+        "public.png"_s,
+        "public.tiff"_s,
 #if !PLATFORM(WIN)
-        "public.jpeg-2000",
-        "public.mpo-image",
+        "public.jpeg-2000"_s,
+        "public.mpo-image"_s,
+#endif
+#if HAVE(WEBP)
+        "public.webp"_s,
 #endif
     };
 

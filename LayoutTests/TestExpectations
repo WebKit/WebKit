@@ -1793,6 +1793,11 @@ fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 fast/images/animated-heics-draw.html [ Skip ]
 fast/images/animated-heics-verify.html [ Skip ]
 
+# WebP images are only supported on macOS and iOS post Catalina
+fast/images/webp-as-image.html [ Skip ]
+fast/images/animated-webp-as-image.html [ Skip ]
+fast/images/animated-webp.html [ Skip ]
+
 webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [ Pass Failure ]
 
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)

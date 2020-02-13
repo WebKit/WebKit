@@ -82,7 +82,9 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImag
 
         "image/x-icon"_s, // Favicons don't have a MIME type in the registry either.
         "image/pjpeg"_s, //  We only get one MIME type per UTI, hence our need to add these manually
-
+#if HAVE(WEBP)
+        "image/webp"_s,
+#endif
 #if PLATFORM(IOS_FAMILY)
         // Add malformed image mimetype for compatibility with Mail and to handle malformed mimetypes from the net
         // These were removed for <rdar://problem/6564538> Re-enable UTI code in WebCore now that MobileCoreServices exists

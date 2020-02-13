@@ -1,3 +1,21 @@
+2020-02-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        WebP image format is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=192672
+
+        Reviewed by Youenn Fablet.
+
+        Disable the tests for all ports and enable it only for [ Catalina+ ].
+
+        * TestExpectations:
+        * fast/images/animated-webp-as-image-expected.html: Added.
+        * fast/images/animated-webp-as-image.html: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-infinite.webp: Added.
+        * fast/images/resources/green-400x400.webp: Added.
+        * fast/images/webp-as-image-expected.html: Added.
+        * fast/images/webp-as-image.html: Added.
+        * platform/mac/TestExpectations:
+
 2020-02-12  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: encode binary web socket frames using base64
