@@ -1,3 +1,109 @@
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r255603. rdar://problem/59299321
+
+    [iOS 13] Dragging on-screen volume control on a YouTube video selects text around the panel
+    https://bugs.webkit.org/show_bug.cgi?id=207140
+    <rdar://problem/58852938>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    This bug occurs on iPadOS when long pressing the volume controls on the desktop version of YouTube, and then
+    performing a pan gesture; this activates the highlight text selection gesture recognizer added in iOS 13,
+    causing text to be selected while adjusting the volume using these custom controls. On macOS, we avoid this
+    because `Node::canStartSelection()` returns `false`, due to a container node having both `user-drag: element`
+    and `user-select: none`; in this scenario, we allow dragging to take precendence over text selection, so the
+    volume slider can be moved using a mouse without simultaneously selecting text.
+    
+    This logic is currently absent on iOS, where UIKit text interaction gesture recognizers ask us for information
+    about the DOM at given locations, and we determine whether to allow text interaction gestures (such as long
+    pressing) to begin in `-textInteractionGesture:shouldBeginAtPoint:` and `-hasSelectablePositionAtPoint:`.
+    Ideally, we'd want to eventually unify these two codepaths for triggering text selection (and preferably just
+    have both go through EventHandler); in lieu of this, simply make the iOS codepath behave a little more like
+    macOS by adding a bit to allow text interaction gestures to bail in the case where at least one container of the
+    hit-tested element is both draggable and unselectable.
+    
+    Test: editing/selection/ios/prefer-drag-over-text-selection.html
+    
+    * Shared/ios/InteractionInformationAtPosition.h:
+    * Shared/ios/InteractionInformationAtPosition.mm:
+    (WebKit::InteractionInformationAtPosition::encode const):
+    (WebKit::InteractionInformationAtPosition::decode):
+    
+    Add the new bit to InteractionInformationAtPosition.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+    
+    Avoid beginning text selection if the bit is set.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::selectionPositionInformation):
+    
+    Move a comment about the ">= 97% of the document's visible area" heuristic next to the relevant code, and also
+    leave a FIXME mentioning that we should reconsider whether this is really needed; it seems that this was
+    originally intended to avoid ending up with an excessively large block selection, but block selection has been
+    removed entirely since iOS 12. That said, this logic may still be helping avoid situations where the text
+    selection is too aggressive on iOS and ends up selecting too much text.
+    
+    LayoutTests:
+    
+    Add a layout test to verify that we don't allow text selection gestures inside of containers that have both
+    `user-drag: element` and `user-select: none`.
+    
+    * editing/selection/ios/prefer-drag-over-text-selection-expected.txt: Added.
+    * editing/selection/ios/prefer-drag-over-text-selection.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255603 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS 13] Dragging on-screen volume control on a YouTube video selects text around the panel
+            https://bugs.webkit.org/show_bug.cgi?id=207140
+            <rdar://problem/58852938>
+
+            Reviewed by Tim Horton.
+
+            This bug occurs on iPadOS when long pressing the volume controls on the desktop version of YouTube, and then
+            performing a pan gesture; this activates the highlight text selection gesture recognizer added in iOS 13,
+            causing text to be selected while adjusting the volume using these custom controls. On macOS, we avoid this
+            because `Node::canStartSelection()` returns `false`, due to a container node having both `user-drag: element`
+            and `user-select: none`; in this scenario, we allow dragging to take precendence over text selection, so the
+            volume slider can be moved using a mouse without simultaneously selecting text.
+
+            This logic is currently absent on iOS, where UIKit text interaction gesture recognizers ask us for information
+            about the DOM at given locations, and we determine whether to allow text interaction gestures (such as long
+            pressing) to begin in `-textInteractionGesture:shouldBeginAtPoint:` and `-hasSelectablePositionAtPoint:`.
+            Ideally, we'd want to eventually unify these two codepaths for triggering text selection (and preferably just
+            have both go through EventHandler); in lieu of this, simply make the iOS codepath behave a little more like
+            macOS by adding a bit to allow text interaction gestures to bail in the case where at least one container of the
+            hit-tested element is both draggable and unselectable.
+
+            Test: editing/selection/ios/prefer-drag-over-text-selection.html
+
+            * Shared/ios/InteractionInformationAtPosition.h:
+            * Shared/ios/InteractionInformationAtPosition.mm:
+            (WebKit::InteractionInformationAtPosition::encode const):
+            (WebKit::InteractionInformationAtPosition::decode):
+
+            Add the new bit to InteractionInformationAtPosition.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+            Avoid beginning text selection if the bit is set.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::selectionPositionInformation):
+
+            Move a comment about the ">= 97% of the document's visible area" heuristic next to the relevant code, and also
+            leave a FIXME mentioning that we should reconsider whether this is really needed; it seems that this was
+            originally intended to avoid ending up with an excessively large block selection, but block selection has been
+            removed entirely since iOS 12. That said, this logic may still be helping avoid situations where the text
+            selection is too aggressive on iOS and ends up selecting too much text.
+
 2020-02-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254873. rdar://problem/59161343

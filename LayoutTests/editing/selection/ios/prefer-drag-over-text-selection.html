@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+#target {
+    font-size: 40px;
+    -webkit-user-select: none;
+    -webkit-user-drag: element;
+    display: inline;
+}
+
+body, html {
+    margin: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that text selection does not begin when long pressing on an element that is inside a container with both 'user-select: none' and 'user-drag: element'. To manually run the test, try to select the word 'WebKit' below; the text selection should not change.");
+
+    await UIHelper.longPressElement(document.getElementById("target"));
+    shouldBeEqualToString("getSelection().toString()", "");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p id="target">WebKit</p>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>
