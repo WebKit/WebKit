@@ -1,5 +1,38 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255664. rdar://problem/59299338
+
+    Add a WebKitAdditions hook to provide additional customizations to UIDragInteraction
+    https://bugs.webkit.org/show_bug.cgi?id=207177
+    <rdar://problem/59121266>
+    
+    Reviewed by Tim Horton.
+    
+    Add a WebKitAdditions extension point that runs immediately after setting up UIDragInteraction and
+    UIDropInteraction.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setupDragAndDropInteractions]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255664 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Add a WebKitAdditions hook to provide additional customizations to UIDragInteraction
+            https://bugs.webkit.org/show_bug.cgi?id=207177
+            <rdar://problem/59121266>
+
+            Reviewed by Tim Horton.
+
+            Add a WebKitAdditions extension point that runs immediately after setting up UIDragInteraction and
+            UIDropInteraction.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setupDragAndDropInteractions]):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255658. rdar://problem/59299333
 
     Unreviewed, fix the internal build after <rdar://problem/59132944>
