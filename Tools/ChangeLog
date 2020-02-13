@@ -1,3 +1,9 @@
+2020-02-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the TestWebKitAPI build.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256520. rdar://problem/59430255
