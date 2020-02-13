@@ -374,12 +374,15 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     {
         bool isSafari = false;
+        bool isMiniBrowser = false;
 #if PLATFORM(IOS_FAMILY)
         isSafari = WebCore::IOSApplication::isMobileSafari();
+        isMiniBrowser = WebCore::IOSApplication::isMiniBrowser();
 #elif PLATFORM(MAC)
         isSafari = WebCore::MacApplication::isSafari();
+        isMiniBrowser = WebCore::MacApplication::isMiniBrowser();
 #endif
-        if (isSafari) {
+        if (isSafari || isMiniBrowser) {
             parameters.defaultDataStoreParameters.networkSessionParameters.httpProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey]);
             parameters.defaultDataStoreParameters.networkSessionParameters.httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
         }

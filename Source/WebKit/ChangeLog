@@ -1,3 +1,21 @@
+2020-02-13  Benjamin Nham  <nham@apple.com>
+
+        Allow use of proxies in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=207598
+
+        For testing purposes, we allow Safari to use a custom HTTP/HTTPS proxy passed through
+        command line arguments. This gives MiniBrowser the same ability. Example invocation:
+
+        $ run-minibrowser --release -WebKit2HTTPProxy "http://127.0.0.1:8080" \
+                                    -WebKit2HTTPSProxy "http://127.0.0.1:8080"
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2020-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] -updateSelectionWithExtentPoint:completionHandler: should work without requiring floating cursor

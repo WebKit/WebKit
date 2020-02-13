@@ -166,6 +166,12 @@ bool MacApplication::isMicrosoftOutlook()
     return isMicrosoftOutlook;
 }
 
+bool MacApplication::isMiniBrowser()
+{
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s);
+    return isMiniBrowser;
+}
+
 bool MacApplication::isQuickenEssentials()
 {
     static bool isQuickenEssentials = applicationBundleIsEqualTo("com.intuit.QuickenEssentials"_s);
@@ -343,6 +349,12 @@ bool IOSApplication::isDataActivation()
 {
     static bool isDataActivation = applicationBundleIsEqualTo("com.apple.DataActivation"_s);
     return isDataActivation;
+}
+
+bool IOSApplication::isMiniBrowser()
+{
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s);
+    return isMiniBrowser;
 }
 
 #endif
