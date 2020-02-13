@@ -75,6 +75,8 @@ WI.WebSocketResource = class WebSocketResource extends WI.Resource
 
         let frame = {data: frameData, isOutgoing, opcode, walltime: this._walltimeForWebSocketTimestamp(timestamp)};
         this._frames.push(frame);
+        if (InspectorFrontendHost.isUnderTest())
+            frame.dataForTest = data;
 
         // COMPATIBILITY (iOS 10.3): `payloadLength` did not exist in 10.3 and earlier.
         if (payloadLength === undefined)

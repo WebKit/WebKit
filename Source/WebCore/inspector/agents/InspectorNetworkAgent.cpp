@@ -171,6 +171,16 @@ private:
     int m_statusCode;
 };
 
+Ref<Inspector::Protocol::Network::WebSocketFrame> buildWebSocketMessage(const WebSocketFrame& frame)
+{
+    return Inspector::Protocol::Network::WebSocketFrame::create()
+        .setOpcode(frame.opCode)
+        .setMask(frame.masked)
+        .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength) : base64Encode(frame.payload, frame.payloadLength))
+        .setPayloadLength(frame.payloadLength)
+        .release();
+}
+
 } // namespace
 
 InspectorNetworkAgent::InspectorNetworkAgent(WebAgentContext& context)
@@ -770,24 +780,11 @@ void InspectorNetworkAgent::didCloseWebSocket(unsigned long identifier)
 
 void InspectorNetworkAgent::didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
 {
-    auto frameObject = Inspector::Protocol::Network::WebSocketFrame::create()
-        .setOpcode(frame.opCode)
-        .setMask(frame.masked)
-        .setPayloadData(String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength))
-        .setPayloadLength(frame.payloadLength)
-        .release();
-    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
+    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), buildWebSocketMessage(frame));
 }
-
 void InspectorNetworkAgent::didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
 {
-    auto frameObject = Inspector::Protocol::Network::WebSocketFrame::create()
-        .setOpcode(frame.opCode)
-        .setMask(frame.masked)
-        .setPayloadData(String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength))
-        .setPayloadLength(frame.payloadLength)
-        .release();
-    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
+    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), buildWebSocketMessage(frame));
 }
 
 void InspectorNetworkAgent::didReceiveWebSocketFrameError(unsigned long identifier, const String& errorMessage)

@@ -56,6 +56,7 @@ function test()
                 InspectorTest.expectEqual(frame.opcode, WI.WebSocketResource.OpCodes.BinaryFrame, "Frame should be binary.");
 
                 if (frameAddedCount === 1) {
+                    InspectorTest.expectEqual(atob(frame.dataForTest), "Hello, world!", "Binary frames should be base64 encoded.");
                     InspectorTest.expectThat(frame.isOutgoing, "Frame should be outgoing.");
                     InspectorTest.expectThat(typeof frame.walltime === "number", "Frame should have walltime.");
                 } else {

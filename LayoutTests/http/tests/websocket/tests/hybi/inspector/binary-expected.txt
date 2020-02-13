@@ -6,6 +6,7 @@ Tests sending and receiving binary data.
 PASS: Resource size should be 13 bytes.
 PASS: Frame should not have data.
 PASS: Frame should be binary.
+PASS: Binary frames should be base64 encoded.
 PASS: Frame should be outgoing.
 PASS: Frame should have walltime.
 PASS: Resource size should increase by 13 bytes.
@@ -33,6 +34,7 @@ PASS: Frame walltime should be greater than the previous one.
 PASS: Resource size should be 13 bytes.
 PASS: Frame should not have data.
 PASS: Frame should be binary.
+PASS: Binary frames should be base64 encoded.
 PASS: Frame should be outgoing.
 PASS: Frame should have walltime.
 PASS: Resource size should increase by 13 bytes.

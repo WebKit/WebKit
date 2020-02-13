@@ -1,3 +1,15 @@
+2020-02-12  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: encode binary web socket frames using base64
+        https://bugs.webkit.org/show_bug.cgi?id=207448
+        
+        Previous representation of binary frames is lossy using fromUTF8WithLatin1Fallback,
+        this patch consistently encodes binary data using base64.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Network.json:
+
 2020-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Remove CSS_DEVICE_ADAPTATION

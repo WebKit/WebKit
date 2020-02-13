@@ -1,3 +1,16 @@
+2020-02-12  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: encode binary web socket frames using base64
+        https://bugs.webkit.org/show_bug.cgi?id=207448
+        
+        Previous representation of binary frames is lossy using fromUTF8WithLatin1Fallback,
+        this patch consistently encodes binary data using base64.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/WebSocketResource.js:
+        (WI.WebSocketResource.prototype.addFrame):
+
 2020-02-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector RTL: Elements closing tag is reversed
