@@ -2815,9 +2815,18 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     info.lineCaretExtent = view->contentsToRootView(lineRect);
     info.caretHeight = info.lineCaretExtent.height();
 
+    bool lineContainsRequestPoint = info.lineCaretExtent.contains(request.point);
     // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
-    if (info.lineCaretExtent.contains(request.point) && info.cursor->type() != Cursor::Hand && canForceCaretForPosition(position))
+    if (lineContainsRequestPoint && info.cursor->type() != Cursor::Hand && canForceCaretForPosition(position))
         info.cursor = Cursor::fromType(Cursor::IBeam);
+
+    if (!lineContainsRequestPoint && info.cursor->type() == Cursor::IBeam) {
+        auto approximateLineRectInContentCoordinates = renderer->absoluteBoundingBoxRect();
+        approximateLineRectInContentCoordinates.setHeight(position.absoluteCaretBounds().height());
+        info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);
+        info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
+        info.caretHeight = info.lineCaretExtent.height();
+    }
 }
 
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)

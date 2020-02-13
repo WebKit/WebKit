@@ -1,5 +1,66 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255827. rdar://problem/59299345
+
+    [macCatalyst] IBeam cursor doesn't show up when hovering over text form controls prior to editing
+    https://bugs.webkit.org/show_bug.cgi?id=207268
+    <rdar://problem/59188152>
+    
+    Reviewed by Tim Horton.
+    
+    On macCatalyst, when hovering over textareas and input fields that have not been edited yet, the cursor fails to
+    change to an IBeam and instead falls back to the default style. Even though `EventHandler::selectCursor()`
+    returns `IBeam`, we end up not actually using an IBeam because the position information's `lineCaretExtent` is
+    an empty rect, which means the caret height is 0 and, more importantly, the line rect will not contain the
+    request point.
+    
+    The line rect is empty in text fields that have not been edited yet because the form control's inner plaintext
+    contenteditable div (embedded in the shadow root) does not contain any child renderers with a non-zero height.
+    Even if it did, however, the element may still be much taller than the combined height of the inner div's
+    children, so the line rect may still not contain the position information request point (this is most easily
+    noticeable when focusing a textarea, typing a few letters, and then moving the cursor to near the bottom of the
+    textarea element).
+    
+    To fix this, add a fallback path for the scenario where we want to show an IBeam, but fail to find line rects
+    that contain the request point. Instead, we still show an IBeam, but simply fake the lineCaretExtent to be an
+    element-wide rect that is the height of the caret, and is also vertically centered about the request point.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::populateCaretContext):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255827 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macCatalyst] IBeam cursor doesn't show up when hovering over text form controls prior to editing
+            https://bugs.webkit.org/show_bug.cgi?id=207268
+            <rdar://problem/59188152>
+
+            Reviewed by Tim Horton.
+
+            On macCatalyst, when hovering over textareas and input fields that have not been edited yet, the cursor fails to
+            change to an IBeam and instead falls back to the default style. Even though `EventHandler::selectCursor()`
+            returns `IBeam`, we end up not actually using an IBeam because the position information's `lineCaretExtent` is
+            an empty rect, which means the caret height is 0 and, more importantly, the line rect will not contain the
+            request point.
+
+            The line rect is empty in text fields that have not been edited yet because the form control's inner plaintext
+            contenteditable div (embedded in the shadow root) does not contain any child renderers with a non-zero height.
+            Even if it did, however, the element may still be much taller than the combined height of the inner div's
+            children, so the line rect may still not contain the position information request point (this is most easily
+            noticeable when focusing a textarea, typing a few letters, and then moving the cursor to near the bottom of the
+            textarea element).
+
+            To fix this, add a fallback path for the scenario where we want to show an IBeam, but fail to find line rects
+            that contain the request point. Instead, we still show an IBeam, but simply fake the lineCaretExtent to be an
+            element-wide rect that is the height of the caret, and is also vertically centered about the request point.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::populateCaretContext):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255710. rdar://problem/59299340
 
     macCatalyst: Shouldn't get text cursor on checkboxes
