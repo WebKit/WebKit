@@ -1319,6 +1319,12 @@ webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ I
 
 webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
+webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
+
+webkit.org/b/207625 compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
+webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
+webkit.org/b/207625 legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2443,6 +2449,8 @@ webkit.org/b/206691 animations/no-style-recalc-during-accelerated-animation.html
 webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass ]
 
 webkit.org/b/206498 animations/transform-non-accelerated.html [ Failure Pass ]
+
+webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
 
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 
@@ -4034,8 +4042,6 @@ webkit.org/b/202234 storage/indexeddb/request-size-estimate.html [ Failure ]
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
 # These indexeddb tests below started failing in the same range 251425-251429
-webkit.org/b/206367 storage/indexeddb/cursor-request-cycle.html [ Failure ]
-webkit.org/b/206367 storage/indexeddb/cursor-request-cycle-private.html [ Failure ]
 webkit.org/b/206367 storage/indexeddb/result-request-cycle.html [ Failure ]
 webkit.org/b/206367 storage/indexeddb/value-cursor-cycle.html [ Failure ]
 
@@ -4139,8 +4145,6 @@ webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoot
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/image-smoothing/image.smoothing.worker.html [ Failure ]
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.html [ Failure ]
 webkit.org/b/204675 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/initial.reset.pattern.worker.html [ Failure ]
-
-webkit.org/b/207016 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
 
 webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
