@@ -1,5 +1,38 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255625. rdar://problem/59299317
+
+    Add a WebKitAdditions hook to override the behavior of -[WKContentView gestureRecognizer:shouldReceiveTouch:]
+    https://bugs.webkit.org/show_bug.cgi?id=207162
+    <rdar://problem/59129739>
+    
+    Reviewed by Tim Horton.
+    
+    Allow an internal implementation of `-_allowGestureRecognizer:toReceiveTouch:` to prevent touches from being
+    routed to certain gesture recognizers, if necessary.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255625 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Add a WebKitAdditions hook to override the behavior of -[WKContentView gestureRecognizer:shouldReceiveTouch:]
+            https://bugs.webkit.org/show_bug.cgi?id=207162
+            <rdar://problem/59129739>
+
+            Reviewed by Tim Horton.
+
+            Allow an internal implementation of `-_allowGestureRecognizer:toReceiveTouch:` to prevent touches from being
+            routed to certain gesture recognizers, if necessary.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255603. rdar://problem/59299321
 
     [iOS 13] Dragging on-screen volume control on a YouTube video selects text around the panel
