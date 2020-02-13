@@ -2017,3 +2017,5 @@ webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass 
 webkit.org/b/207710 svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
 
 webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
+
+webkit.org/b/207718 fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
