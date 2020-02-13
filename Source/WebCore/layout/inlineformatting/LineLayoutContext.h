@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-struct LineCandidateContent;
+struct LineCandidate;
 
 class LineLayoutContext {
 public:
@@ -56,18 +56,17 @@ public:
         size_t end { 0 };
     };
     LineContent layoutLine(LineBuilder&, const InlineItemRange, Optional<unsigned> partialLeadingContentLength);
-    using FloatList = Vector<const InlineItem*>;
 
 private:
-    void nextContentForLine(LineCandidateContent&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         size_t committedCount { 0 };
         Optional <LineContent::PartialContent> partialContent { };
         const InlineItem* revertTo { nullptr };
     };
-    Result tryAddingFloatItems(LineBuilder&, const FloatList&);
-    Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineCandidateContent&);
+    Result tryAddingFloatItem(LineBuilder&, const InlineItem& floatItem);
+    Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const LineCandidate&);
     void rebuildLineForRevert(LineBuilder&, const InlineItem& revertTo, const InlineItemRange layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
     LineContent close(LineBuilder&, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
@@ -80,6 +79,7 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const ContainerBox& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
+    using FloatList = Vector<const InlineItem*>;
     FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
     unsigned m_successiveHyphenatedLineCount { 0 };
