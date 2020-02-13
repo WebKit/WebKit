@@ -268,10 +268,17 @@ TEST(DocumentEditingContext, Simple)
         return [@(a.CGRectValue.origin.x) compare:@(b.CGRectValue.origin.x)];
     }];
     EXPECT_EQ(4UL, rects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, -1, glyphWidth, glyphWidth + 1), rects[0].CGRectValue);
+    EXPECT_EQ(CGRectMake(glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[1].CGRectValue);
+    EXPECT_EQ(CGRectMake(2 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[2].CGRectValue);
+    EXPECT_EQ(CGRectMake(3 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects[3].CGRectValue);
+#else
     EXPECT_EQ(CGRectMake(0, 0, glyphWidth, glyphWidth), rects[0].CGRectValue);
     EXPECT_EQ(CGRectMake(glyphWidth, 0, glyphWidth, glyphWidth), rects[1].CGRectValue);
     EXPECT_EQ(CGRectMake(2 * glyphWidth, 0, glyphWidth, glyphWidth), rects[2].CGRectValue);
     EXPECT_EQ(CGRectMake(3 * glyphWidth, 0, glyphWidth, glyphWidth), rects[3].CGRectValue);
+#endif
     rects = [context characterRectsForCharacterRange:NSMakeRange(5, 1)];
     EXPECT_EQ(0UL, rects.count);
 
@@ -279,10 +286,18 @@ TEST(DocumentEditingContext, Simple)
     EXPECT_NSSTRING_EQ(" MMM", context.contextAfter);
     rects = [context characterRectsForCharacterRange:NSMakeRange(0, 1)];
     EXPECT_EQ(1UL, rects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, -1, glyphWidth, glyphWidth + 1), rects.firstObject.CGRectValue);
+#else
     EXPECT_EQ(CGRectMake(0, 0, glyphWidth, glyphWidth), rects.firstObject.CGRectValue);
+#endif
     rects = [context characterRectsForCharacterRange:NSMakeRange(6, 1)];
     EXPECT_EQ(1UL, rects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(6 * glyphWidth, -1, glyphWidth, glyphWidth + 1), rects.firstObject.CGRectValue);
+#else
     EXPECT_EQ(CGRectMake(6 * glyphWidth, 0, glyphWidth, glyphWidth), rects.firstObject.CGRectValue);
+#endif
 
     // Text Input Context
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;' value='hello, world'>")];
@@ -411,11 +426,19 @@ TEST(DocumentEditingContext, RequestMarkedTextRectsAndTextOnly)
 
     auto context = retainPtr([webView synchronouslyRequestDocumentContext:request.get()]);
     auto *rectValues = [context markedTextRects];
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(165, 8, 26, 26), [rectValues[0] CGRectValue]);
+    EXPECT_EQ(CGRectMake(190, 8, 26, 26), [rectValues[1] CGRectValue]);
+    EXPECT_EQ(CGRectMake(215, 8, 26, 26), [rectValues[2] CGRectValue]);
+    EXPECT_EQ(CGRectMake(240, 8, 26, 26), [rectValues[3] CGRectValue]);
+    EXPECT_EQ(CGRectMake(265, 8, 26, 26), [rectValues[4] CGRectValue]);
+#else
     EXPECT_EQ(CGRectMake(165, 8, 26, 25), [rectValues[0] CGRectValue]);
     EXPECT_EQ(CGRectMake(190, 8, 26, 25), [rectValues[1] CGRectValue]);
     EXPECT_EQ(CGRectMake(215, 8, 26, 25), [rectValues[2] CGRectValue]);
     EXPECT_EQ(CGRectMake(240, 8, 26, 25), [rectValues[3] CGRectValue]);
     EXPECT_EQ(CGRectMake(265, 8, 26, 25), [rectValues[4] CGRectValue]);
+#endif
 }
 
 TEST(DocumentEditingContext, SpatialRequestInTextField)
@@ -456,28 +479,37 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
     EXPECT_NSSTRING_EQ(" over the", context.contextAfter);
     auto *textRects = [context textRects];
     EXPECT_EQ(18U, textRects.count);
+
+#if PLATFORM(MACCATALYST)
+    const size_t yPos = 2;
+    const size_t height = 26;
+#else
+    const size_t yPos = 3;
+    const size_t height = 25;
+#endif
+    
     if (textRects.count >= 18) {
         CGFloat x = 401;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 3, 25, 25), textRects[0].CGRectValue); // f
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 3, 25, 25), textRects[1].CGRectValue); // o
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 3, 25, 25), textRects[2].CGRectValue); // x
-        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 3, 25, 25), textRects[3].CGRectValue); //
-        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 3, 25, 25), textRects[4].CGRectValue); // j
-        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 3, 25, 25), textRects[5].CGRectValue); // u
-        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 3, 25, 25), textRects[6].CGRectValue); // m
-        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 3, 25, 25), textRects[7].CGRectValue); // p
-        EXPECT_EQ(CGRectMake(x + 8 * glyphWidth, 3, 25, 25), textRects[8].CGRectValue); // s
-        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, 3, 23, 25), textRects[9].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // f
+        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // x
+        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, yPos, 25, height), textRects[3].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, yPos, 25, height), textRects[4].CGRectValue); // j
+        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, yPos, 25, height), textRects[5].CGRectValue); // u
+        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, yPos, 25, height), textRects[6].CGRectValue); // m
+        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, yPos, 25, height), textRects[7].CGRectValue); // p
+        EXPECT_EQ(CGRectMake(x + 8 * glyphWidth, yPos, 25, height), textRects[8].CGRectValue); // s
+        EXPECT_EQ(CGRectMake(x + 9 * glyphWidth, yPos, 23, height), textRects[9].CGRectValue); //
 
         x = 1;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 28, 25, 25), textRects[10].CGRectValue); // o
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 28, 25, 25), textRects[11].CGRectValue); // v
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 28, 25, 25), textRects[12].CGRectValue); // e
-        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 28, 25, 25), textRects[13].CGRectValue); // r
-        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 28, 25, 25), textRects[14].CGRectValue); //
-        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 28, 25, 25), textRects[15].CGRectValue); // t
-        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 28, 25, 25), textRects[16].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 28, 25, 25), textRects[17].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, 25 + yPos, 25, height), textRects[10].CGRectValue); // o
+        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, 25 + yPos, 25, height), textRects[11].CGRectValue); // v
+        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, 25 + yPos, 25, height), textRects[12].CGRectValue); // e
+        EXPECT_EQ(CGRectMake(x + 3 * glyphWidth, 25 + yPos, 25, height), textRects[13].CGRectValue); // r
+        EXPECT_EQ(CGRectMake(x + 4 * glyphWidth, 25 + yPos, 25, height), textRects[14].CGRectValue); //
+        EXPECT_EQ(CGRectMake(x + 5 * glyphWidth, 25 + yPos, 25, height), textRects[15].CGRectValue); // t
+        EXPECT_EQ(CGRectMake(x + 6 * glyphWidth, 25 + yPos, 25, height), textRects[16].CGRectValue); // h
+        EXPECT_EQ(CGRectMake(x + 7 * glyphWidth, 25 + yPos, 25, height), textRects[17].CGRectValue); // e
     }
 }
 
@@ -497,6 +529,17 @@ TEST(DocumentEditingContext, RequestFirstTwoWords)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(9U, textRects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, -1, 25, 26), textRects[0].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(25, -1, 25, 26), textRects[1].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(50, -1, 25, 26), textRects[2].CGRectValue); // e
+    EXPECT_EQ(CGRectMake(75, -1, 25, 26), textRects[3].CGRectValue); //
+    EXPECT_EQ(CGRectMake(100, -1, 25, 26), textRects[4].CGRectValue); // q
+    EXPECT_EQ(CGRectMake(125, -1, 25, 26), textRects[5].CGRectValue); // u
+    EXPECT_EQ(CGRectMake(150, -1, 25, 26), textRects[6].CGRectValue); // i
+    EXPECT_EQ(CGRectMake(175, -1, 25, 26), textRects[7].CGRectValue); // c
+    EXPECT_EQ(CGRectMake(200, -1, 25, 26), textRects[8].CGRectValue); // k
+#else
     EXPECT_EQ(CGRectMake(0, 0, 25, 25), textRects[0].CGRectValue); // T
     EXPECT_EQ(CGRectMake(25, 0, 25, 25), textRects[1].CGRectValue); // h
     EXPECT_EQ(CGRectMake(50, 0, 25, 25), textRects[2].CGRectValue); // e
@@ -506,6 +549,7 @@ TEST(DocumentEditingContext, RequestFirstTwoWords)
     EXPECT_EQ(CGRectMake(150, 0, 25, 25), textRects[6].CGRectValue); // i
     EXPECT_EQ(CGRectMake(175, 0, 25, 25), textRects[7].CGRectValue); // c
     EXPECT_EQ(CGRectMake(200, 0, 25, 25), textRects[8].CGRectValue); // k
+#endif
 }
 
 TEST(DocumentEditingContext, RequestFirstTwoWordWithLeadingNonBreakableSpace)
@@ -522,10 +566,17 @@ TEST(DocumentEditingContext, RequestFirstTwoWordWithLeadingNonBreakableSpace)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(4U, textRects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, -1, 25, 26), textRects[0].CGRectValue); //
+    EXPECT_EQ(CGRectMake(25, -1, 25, 26), textRects[1].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(50, -1, 25, 26), textRects[2].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(75, -1, 25, 26), textRects[3].CGRectValue); // e
+#else
     EXPECT_EQ(CGRectMake(0, 0, 25, 25), textRects[0].CGRectValue); //
     EXPECT_EQ(CGRectMake(25, 0, 25, 25), textRects[1].CGRectValue); // T
     EXPECT_EQ(CGRectMake(50, 0, 25, 25), textRects[2].CGRectValue); // h
     EXPECT_EQ(CGRectMake(75, 0, 25, 25), textRects[3].CGRectValue); // e
+#endif
 }
 
 TEST(DocumentEditingContext, RequestLastWord)
@@ -542,10 +593,17 @@ TEST(DocumentEditingContext, RequestLastWord)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(4U, textRects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, 24, 25, 26), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(25, 24, 25, 26), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(50, 24, 25, 26), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(75, 24, 25, 26), textRects[3].CGRectValue); // .
+#else
     EXPECT_EQ(CGRectMake(0, 25, 25, 25), textRects[0].CGRectValue); // d
     EXPECT_EQ(CGRectMake(25, 25, 25, 25), textRects[1].CGRectValue); // o
     EXPECT_EQ(CGRectMake(50, 25, 25, 25), textRects[2].CGRectValue); // g
     EXPECT_EQ(CGRectMake(75, 25, 25, 25), textRects[3].CGRectValue); // .
+#endif
 }
 
 TEST(DocumentEditingContext, RequestLastWordWithTrailingNonBreakableSpace)
@@ -562,11 +620,19 @@ TEST(DocumentEditingContext, RequestLastWordWithTrailingNonBreakableSpace)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(5U, textRects.count);
+#if PLATFORM(MACCATALYST)
+    EXPECT_EQ(CGRectMake(0, 24, 25, 26), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(25, 24, 25, 26), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(50, 24, 25, 26), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(75, 24, 25, 26), textRects[3].CGRectValue); // .
+    EXPECT_EQ(CGRectMake(100, 24, 25, 26), textRects[4].CGRectValue); //
+#else
     EXPECT_EQ(CGRectMake(0, 25, 25, 25), textRects[0].CGRectValue); // d
     EXPECT_EQ(CGRectMake(25, 25, 25, 25), textRects[1].CGRectValue); // o
     EXPECT_EQ(CGRectMake(50, 25, 25, 25), textRects[2].CGRectValue); // g
     EXPECT_EQ(CGRectMake(75, 25, 25, 25), textRects[3].CGRectValue); // .
     EXPECT_EQ(CGRectMake(100, 25, 25, 25), textRects[4].CGRectValue); //
+#endif
 }
 
 TEST(DocumentEditingContext, RequestTwoWordsAroundSelection)
