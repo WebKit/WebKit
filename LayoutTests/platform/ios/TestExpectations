@@ -3503,3 +3503,5 @@ webkit.org/b/207652 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_obj
 webkit.org/b/207702 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.serviceworker.html [ Pass Failure ]
 
 webkit.org/b/207703 imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html [ Pass Failure ]
+
+webkit.org/b/207705 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
