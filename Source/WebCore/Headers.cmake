@@ -994,7 +994,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ScrollbarTheme.h
     platform/ScrollbarThemeComposite.h
     platform/SearchPopupMenu.h
-    platform/SerializedPlatformRepresentation.h
+    platform/SerializedPlatformDataCue.h
     platform/SharedBuffer.h
     platform/SharedStringHash.h
     platform/SuddenTermination.h

@@ -50,12 +50,12 @@ private:
 #endif
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&) final;
-    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) final;
-    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) final;
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&) final;
+    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) final;
+    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;
 
-    HashMap<RefPtr<SerializedPlatformRepresentation>, RefPtr<DataCue>> m_incompleteCueMap;
+    HashMap<RefPtr<SerializedPlatformDataCue>, RefPtr<DataCue>> m_incompleteCueMap;
 #endif
 };
 

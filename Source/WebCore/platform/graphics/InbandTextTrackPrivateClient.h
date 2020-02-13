@@ -33,7 +33,7 @@
 #include <wtf/MediaTime.h>
 
 #if ENABLE(DATACUE_VALUE)
-#include "SerializedPlatformRepresentation.h"
+#include "SerializedPlatformDataCue.h"
 #endif
 
 namespace WebCore {
@@ -229,9 +229,9 @@ public:
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) = 0;
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&) = 0;
-    virtual void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) = 0;
-    virtual void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) = 0;
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&) = 0;
+    virtual void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) = 0;
+    virtual void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) = 0;
 #endif
 
     virtual void addGenericCue(GenericCueData&) = 0;

@@ -72,9 +72,9 @@ private:
     void addDataCue(const MediaTime&, const MediaTime&, const void*, unsigned) override { ASSERT_NOT_REACHED(); }
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformRepresentation>&&, const String&) override { ASSERT_NOT_REACHED(); }
-    void updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation&) override  { ASSERT_NOT_REACHED(); }
-    void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation&) override  { ASSERT_NOT_REACHED(); }
+    void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&) override { ASSERT_NOT_REACHED(); }
+    void updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override  { ASSERT_NOT_REACHED(); }
+    void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override  { ASSERT_NOT_REACHED(); }
 #endif
 
     void addGenericCue(GenericCueData&) override { ASSERT_NOT_REACHED(); }

@@ -102,17 +102,17 @@ void RemoteTextTrackProxy::addDataCue(const MediaTime&, const MediaTime&, const 
 }
 
 #if ENABLE(DATACUE_VALUE)
-void RemoteTextTrackProxy::addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformRepresentation>&&, const String&)
+void RemoteTextTrackProxy::addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&)
 {
     notImplemented();
 }
 
-void RemoteTextTrackProxy::updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation&)
+void RemoteTextTrackProxy::updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&)
 {
     notImplemented();
 }
 
-void RemoteTextTrackProxy::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation&)
+void RemoteTextTrackProxy::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&)
 {
     notImplemented();
 }

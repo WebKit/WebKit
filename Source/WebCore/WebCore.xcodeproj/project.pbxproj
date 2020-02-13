@@ -137,8 +137,8 @@
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */; };
-		077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */; };
+		077AF14018F4AE400001ED61 /* SerializedPlatformDataCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF13E18F4AE400001ED61 /* SerializedPlatformDataCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		077AF14318F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h */; };
 		077B64131B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B64111B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077B64171B95F703003E9AD5 /* MediaPlaybackTargetMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0783228318013ED800999E0C /* MediaStreamAudioSource.h */; };
@@ -5475,9 +5475,9 @@
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
 		077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuickTimePluginReplacement.cpp; sourceTree = "<group>"; };
 		077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuickTimePluginReplacement.h; sourceTree = "<group>"; };
-		077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformRepresentation.h; sourceTree = "<group>"; };
-		077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformRepresentationMac.h; sourceTree = "<group>"; };
-		077AF14218F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedPlatformRepresentationMac.mm; sourceTree = "<group>"; };
+		077AF13E18F4AE400001ED61 /* SerializedPlatformDataCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformDataCue.h; sourceTree = "<group>"; };
+		077AF14118F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformDataCueMac.h; sourceTree = "<group>"; };
+		077AF14218F4B1BB0001ED61 /* SerializedPlatformDataCueMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedPlatformDataCueMac.mm; sourceTree = "<group>"; };
 		077B64101B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlaybackTargetPickerMock.cpp; sourceTree = "<group>"; };
 		077B64111B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetPickerMock.h; sourceTree = "<group>"; };
 		077B64141B95F703003E9AD5 /* MediaPlaybackTargetMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlaybackTargetMock.cpp; sourceTree = "<group>"; };
@@ -20464,8 +20464,8 @@
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
 				BCEF869E0E844E9D00A85CD5 /* ScrollbarThemeMac.mm */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
-				077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */,
-				077AF14218F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.mm */,
+				077AF14118F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h */,
+				077AF14218F4B1BB0001ED61 /* SerializedPlatformDataCueMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
 				ECA680C61E67724500731D20 /* StringUtilities.h */,
 				ECA680C81E67730B00731D20 /* StringUtilities.mm */,
@@ -25960,7 +25960,7 @@
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
-				077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */,
+				077AF13E18F4AE400001ED61 /* SerializedPlatformDataCue.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				834DFACE1F7DAE5700C2725B /* SharedStringHash.cpp */,
@@ -32215,8 +32215,8 @@
 				E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */,
 				F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */,
 				E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */,
-				077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */,
-				077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */,
+				077AF14018F4AE400001ED61 /* SerializedPlatformDataCue.h in Headers */,
+				077AF14318F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,

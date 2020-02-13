@@ -94,17 +94,17 @@ void TextTrackPrivateRemote::addDataCue(const MediaTime& start, const MediaTime&
 }
 
 #if ENABLE(DATACUE_VALUE)
-void TextTrackPrivateRemote::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&)
+void TextTrackPrivateRemote::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&)
 {
     notImplemented();
 }
 
-void TextTrackPrivateRemote::updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&)
+void TextTrackPrivateRemote::updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&)
 {
     notImplemented();
 }
 
-void TextTrackPrivateRemote::removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&)
+void TextTrackPrivateRemote::removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&)
 {
     notImplemented();
 }

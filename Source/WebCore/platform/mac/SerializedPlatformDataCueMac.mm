@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "SerializedPlatformDataCueMac.h"
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
-#include "SerializedPlatformRepresentationMac.h"
 
 #import "JSDOMConvertBufferSource.h"
 #import <AVFoundation/AVMetadataItem.h>
@@ -38,8 +38,6 @@
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <objc/runtime.h>
-#import <wtf/text/Base64.h>
-
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
@@ -52,27 +50,27 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *, JSContext *
 static JSValue *jsValueWithValueInContext(id, JSContext *);
 #endif
 
-SerializedPlatformRepresentationMac::SerializedPlatformRepresentationMac(id nativeValue)
-    : SerializedPlatformRepresentation()
+SerializedPlatformDataCueMac::SerializedPlatformDataCueMac(id nativeValue)
+    : SerializedPlatformDataCue()
     , m_nativeValue(nativeValue)
 {
 }
 
-SerializedPlatformRepresentationMac::~SerializedPlatformRepresentationMac()
+SerializedPlatformDataCueMac::~SerializedPlatformDataCueMac()
 {
 }
 
-Ref<SerializedPlatformRepresentation> SerializedPlatformRepresentationMac::create(id nativeValue)
+Ref<SerializedPlatformDataCue> SerializedPlatformDataCueMac::create(id nativeValue)
 {
-    return adoptRef(*new SerializedPlatformRepresentationMac(nativeValue));
+    return adoptRef(*new SerializedPlatformDataCueMac(nativeValue));
 }
 
-RefPtr<ArrayBuffer> SerializedPlatformRepresentationMac::data() const
+RefPtr<ArrayBuffer> SerializedPlatformDataCueMac::data() const
 {
     return nullptr;
 }
 
-JSC::JSValue SerializedPlatformRepresentationMac::deserialize(JSC::JSGlobalObject* lexicalGlobalObject) const
+JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexicalGlobalObject) const
 {
 #if JSC_OBJC_API_ENABLED
     if (!m_nativeValue)
@@ -89,12 +87,12 @@ JSC::JSValue SerializedPlatformRepresentationMac::deserialize(JSC::JSGlobalObjec
 #endif
 }
 
-bool SerializedPlatformRepresentationMac::isEqual(const SerializedPlatformRepresentation& other) const
+bool SerializedPlatformDataCueMac::isEqual(const SerializedPlatformDataCue& other) const
 {
-    if (other.platformType() != SerializedPlatformRepresentation::ObjC)
+    if (other.platformType() != SerializedPlatformDataCue::ObjC)
         return false;
 
-    const SerializedPlatformRepresentationMac* otherObjC = toSerializedPlatformRepresentationMac(&other);
+    const SerializedPlatformDataCueMac* otherObjC = toSerializedPlatformDataCueMac(&other);
 
     if (!m_nativeValue || !otherObjC->nativeValue())
         return false;
@@ -102,15 +100,15 @@ bool SerializedPlatformRepresentationMac::isEqual(const SerializedPlatformRepres
     return [m_nativeValue.get() isEqual:otherObjC->nativeValue()];
 }
 
-SerializedPlatformRepresentationMac* toSerializedPlatformRepresentationMac(SerializedPlatformRepresentation* rep)
+SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(SerializedPlatformDataCue* rep)
 {
-    return const_cast<SerializedPlatformRepresentationMac*>(toSerializedPlatformRepresentationMac(const_cast<const SerializedPlatformRepresentation*>(rep)));
+    return const_cast<SerializedPlatformDataCueMac*>(toSerializedPlatformDataCueMac(const_cast<const SerializedPlatformDataCue*>(rep)));
 }
 
-const SerializedPlatformRepresentationMac* toSerializedPlatformRepresentationMac(const SerializedPlatformRepresentation* rep)
+const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const SerializedPlatformDataCue* rep)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(rep->platformType() == SerializedPlatformRepresentation::ObjC);
-    return static_cast<const SerializedPlatformRepresentationMac*>(rep);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(rep->platformType() == SerializedPlatformDataCue::ObjC);
+    return static_cast<const SerializedPlatformDataCueMac*>(rep);
 }
 
 #if JSC_OBJC_API_ENABLED

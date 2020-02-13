@@ -47,9 +47,9 @@ public:
     void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned);
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&);
-    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&);
-    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&);
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
+    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
+    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
 #endif
 
     void addGenericCue(GenericCueData&);

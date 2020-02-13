@@ -54,7 +54,7 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF() = defaul
 
 #if ENABLE(DATACUE_VALUE)
 
-void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&& cueData, const String& type)
+void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
 {
     ASSERT(cueFormat() == CueFormat::Data);
     ASSERT(start >= MediaTime::zeroTime());

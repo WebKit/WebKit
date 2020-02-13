@@ -57,7 +57,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
 
 #if ENABLE(DATACUE_VALUE)
 
-void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&& platformValue, const String& type)
+void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
 {
     if (m_incompleteCueMap.contains(platformValue.ptr()))
         return;
@@ -78,7 +78,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
     addCue(WTFMove(cue));
 }
 
-void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime& inEnd, SerializedPlatformRepresentation& platformValue)
+void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime& inEnd, SerializedPlatformDataCue& platformValue)
 {
     RefPtr<DataCue> cue = m_incompleteCueMap.get(&platformValue);
     if (!cue)
@@ -100,7 +100,7 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
     cue->didChange();
 }
 
-void InbandDataTextTrack::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation& platformValue)
+void InbandDataTextTrack::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue& platformValue)
 {
     if (auto cue = m_incompleteCueMap.take(&platformValue)) {
         INFO_LOG(LOGIDENTIFIER, "removing: ", *cue);
@@ -112,7 +112,7 @@ ExceptionOr<void> InbandDataTextTrack::removeCue(TextTrackCue& cue)
 {
     ASSERT(cue.cueType() == TextTrackCue::Data);
 
-    m_incompleteCueMap.remove(const_cast<SerializedPlatformRepresentation*>(toDataCue(&cue)->platformValue()));
+    m_incompleteCueMap.remove(const_cast<SerializedPlatformDataCue*>(toDataCue(&cue)->platformValue()));
 
     return InbandTextTrack::removeCue(cue);
 }

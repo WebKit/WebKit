@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SerializedPlatformRepresentationMac_h
-#define SerializedPlatformRepresentationMac_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
 
-#include "SerializedPlatformRepresentation.h"
+#include "SerializedPlatformDataCue.h"
 
 #if USE(FOUNDATION) && !defined(__OBJC__)
 typedef struct objc_object *id;
@@ -36,30 +35,29 @@ typedef struct objc_object *id;
 
 namespace WebCore {
 
-class SerializedPlatformRepresentationMac : public SerializedPlatformRepresentation {
+class SerializedPlatformDataCueMac final : public SerializedPlatformDataCue {
 public:
-    virtual ~SerializedPlatformRepresentationMac();
-    static Ref<SerializedPlatformRepresentation> create(id);
+    virtual ~SerializedPlatformDataCueMac();
+    static Ref<SerializedPlatformDataCue> create(id);
 
-    JSC::JSValue deserialize(JSC::JSGlobalObject*) const override;
-    RefPtr<ArrayBuffer> data() const override;
+    JSC::JSValue deserialize(JSC::JSGlobalObject*) const final;
+    RefPtr<ArrayBuffer> data() const final;
 
-    bool isEqual(const SerializedPlatformRepresentation&) const override;
+    bool isEqual(const SerializedPlatformDataCue&) const final;
 
-    PlatformType platformType() const override { return SerializedPlatformRepresentation::ObjC; }
+    PlatformType platformType() const final { return SerializedPlatformDataCue::ObjC; }
 
     id nativeValue() const { return m_nativeValue.get(); }
 
 private:
-    SerializedPlatformRepresentationMac(id nativeValue);
+    explicit SerializedPlatformDataCueMac(id nativeValue);
 
     RetainPtr<id> m_nativeValue;
 };
 
-SerializedPlatformRepresentationMac* toSerializedPlatformRepresentationMac(SerializedPlatformRepresentation*);
-const SerializedPlatformRepresentationMac* toSerializedPlatformRepresentationMac(const SerializedPlatformRepresentation*);
+SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(SerializedPlatformDataCue*);
+const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const SerializedPlatformDataCue*);
 
 } // namespace WebCore
 
 #endif
-#endif // SerializedPlatformRepresentationMac_h

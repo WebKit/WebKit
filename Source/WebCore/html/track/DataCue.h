@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "SerializedPlatformRepresentation.h"
+#include "SerializedPlatformDataCue.h"
 #include "TextTrackCue.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
@@ -57,7 +57,7 @@ public:
         return adoptRef(*new DataCue(context, start, end, data, type));
     }
 
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformRepresentation>&& platformValue, const String& type)
+    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&& platformValue, const String& type)
     {
         return adoptRef(*new DataCue(context, start, end, WTFMove(platformValue), type));
     }
@@ -77,7 +77,7 @@ public:
     RefPtr<JSC::ArrayBuffer> data() const;
     void setData(JSC::ArrayBuffer&);
 
-    const SerializedPlatformRepresentation* platformValue() const { return m_platformValue.get(); }
+    const SerializedPlatformDataCue* platformValue() const { return m_platformValue.get(); }
 
     JSC::JSValue value(JSC::JSGlobalObject&) const;
     void setValue(JSC::JSGlobalObject&, JSC::JSValue);
@@ -94,14 +94,14 @@ public:
 private:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformRepresentation>&&, const String&);
+    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&&, const String&);
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
 
     JSC::JSValue valueOrNull() const;
 
     RefPtr<ArrayBuffer> m_data;
     String m_type;
-    RefPtr<SerializedPlatformRepresentation> m_platformValue;
+    RefPtr<SerializedPlatformDataCue> m_platformValue;
     // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
     // due to reference cycles; we should use JSValueInWrappedObject instead.
     // https://bugs.webkit.org/show_bug.cgi?id=201173

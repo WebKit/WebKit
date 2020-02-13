@@ -55,7 +55,7 @@
 #import "PixelBufferConformerCV.h"
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
-#import "SerializedPlatformRepresentationMac.h"
+#import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
@@ -3073,7 +3073,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
         if (item.keySpace)
             type = metadataType(item.keySpace);
 
-        m_metadataTrack->addDataCue(start, end, SerializedPlatformRepresentationMac::create(item), type);
+        m_metadataTrack->addDataCue(start, end, SerializedPlatformDataCueMac::create(item), type);
     }
 #endif
 }

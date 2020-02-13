@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-class SerializedPlatformRepresentation : public RefCounted<SerializedPlatformRepresentation> {
+class SerializedPlatformDataCue : public RefCounted<SerializedPlatformDataCue> {
 public:
-    virtual ~SerializedPlatformRepresentation() = default;
+    virtual ~SerializedPlatformDataCue() = default;
 
     virtual JSC::JSValue deserialize(JSC::JSGlobalObject*) const = 0;
     virtual RefPtr<JSC::ArrayBuffer> data() const = 0;
-    virtual bool isEqual(const SerializedPlatformRepresentation&) const = 0;
+    virtual bool isEqual(const SerializedPlatformDataCue&) const = 0;
 
     enum PlatformType {
         ObjC,
@@ -46,7 +46,7 @@ public:
     virtual PlatformType platformType() const = 0;
 
 protected:
-    SerializedPlatformRepresentation() = default;
+    SerializedPlatformDataCue() = default;
 };
 
 } // namespace WebCore

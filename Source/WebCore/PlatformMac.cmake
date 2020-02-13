@@ -381,7 +381,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
-    platform/mac/SerializedPlatformRepresentationMac.mm
+    platform/mac/SerializedPlatformDataCueMac.mm
     platform/mac/StringUtilities.mm
     platform/mac/SuddenTermination.mm
     platform/mac/ThemeMac.mm

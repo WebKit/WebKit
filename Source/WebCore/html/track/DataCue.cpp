@@ -54,7 +54,7 @@ DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const 
 {
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformRepresentation>&& platformValue, const String& type)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&& platformValue, const String& type)
     : TextTrackCue(context, start, end)
     , m_type(type)
     , m_platformValue(WTFMove(platformValue))
@@ -116,7 +116,7 @@ bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
     if (m_data && m_data->data() && memcmp(m_data->data(), otherData->data(), m_data->byteLength()))
         return false;
 
-    const SerializedPlatformRepresentation* otherPlatformValue = dataCue->platformValue();
+    auto otherPlatformValue = dataCue->platformValue();
     if ((otherPlatformValue && !m_platformValue) || (!otherPlatformValue && m_platformValue))
         return false;
     if (m_platformValue && !m_platformValue->isEqual(*otherPlatformValue))

@@ -34,7 +34,7 @@ namespace WebCore {
 
 #if ENABLE(DATACUE_VALUE)
 struct IncompleteMetaDataCue {
-    RefPtr<SerializedPlatformRepresentation> cueData;
+    RefPtr<SerializedPlatformDataCue> cueData;
     MediaTime startTime;
 };
 #endif
@@ -51,7 +51,7 @@ public:
     void setInBandMetadataTrackDispatchType(const AtomString& value) { m_inBandMetadataTrackDispatchType = value; }
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&);
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
     void updatePendingCueEndTimes(const MediaTime&);
 #endif
 
