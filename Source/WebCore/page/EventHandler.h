@@ -626,8 +626,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_shouldAllowMouseDownToStartDrag { false };
-    IntPoint m_targetAutoscrollPositionInWindow;
     bool m_isAutoscrolling { false };
+    IntPoint m_targetAutoscrollPositionInUnscrolledRootViewCoordinates;
+    Optional<IntPoint> m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates;
 #endif
 
 #if ENABLE(CURSOR_VISIBILITY)
