@@ -1,3 +1,13 @@
+2020-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Allow insecure requests on upload
+        https://bugs.webkit.org/show_bug.cgi?id=207662
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (uploadResults): Allow insecure curl request when posting results.
+
 2020-02-12  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r256463.
