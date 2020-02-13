@@ -34,6 +34,7 @@
 
 @interface TestWKWebView (UIWKInteractionViewTesting)
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point;
+- (void)updateSelectionWithExtentPoint:(CGPoint)point;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity;
 @end
 
@@ -43,6 +44,15 @@
 {
     __block bool done = false;
     [self.textInputContentView selectTextWithGranularity:granularity atPoint:point completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+- (void)updateSelectionWithExtentPoint:(CGPoint)point
+{
+    __block bool done = false;
+    [self.textInputContentView updateSelectionWithExtentPoint:point completionHandler:^(BOOL) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -65,6 +75,20 @@ TEST(UIWKInteractionViewProtocol, SelectTextWithCharacterGranularity)
     [webView synchronouslyLoadHTMLString:@"<body style='font-size: 20px;'>Hello world</body>"];
     [webView selectTextWithGranularity:UITextGranularityCharacter atPoint:CGPointMake(10, 20)];
     [webView updateSelectionWithExtentPoint:CGPointMake(300, 20) withBoundary:UITextGranularityCharacter];
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(UIWKInteractionViewProtocol, UpdateSelectionWithExtentPoint)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable style='font-size: 20px;'>Hello world</body>"];
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(document.body, 1)" completionHandler:nil];
+    [webView updateSelectionWithExtentPoint:CGPointMake(5, 20)];
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(document.body, 0)" completionHandler:nil];
+    [webView updateSelectionWithExtentPoint:CGPointMake(300, 20)];
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
