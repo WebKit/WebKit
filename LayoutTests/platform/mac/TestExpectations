@@ -2015,3 +2015,5 @@ webkit.org/b/194162 storage/websql/read-transactions-running-concurrently.html [
 webkit.org/b/207337 http/wpt/css/css-animations/start-animation-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207710 svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
+
+webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
