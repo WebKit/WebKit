@@ -1,5 +1,33 @@
 2020-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256493. rdar://problem/59412867
+
+    Unreviewed, rolling out r256010.
+    
+    Introduced ASan crashes
+    
+    Reverted changeset:
+    
+    "[Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder"
+    https://bugs.webkit.org/show_bug.cgi?id=206582
+    https://trac.webkit.org/changeset/r256010
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256493 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, rolling out r256010.
+
+            Introduced ASan crashes
+
+            Reverted changeset:
+
+            "[Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder"
+            https://bugs.webkit.org/show_bug.cgi?id=206582
+            https://trac.webkit.org/changeset/r256010
+
+2020-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256317. rdar://problem/59398474
 
     REGRESSION (r256009): [ Mojave wk2 Debug ] ASSERTION FAILED: Completion handler should always be called under WebKit::WebMDNSRegister::PendingRegistration
