@@ -1,3 +1,22 @@
+2020-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate _WKUserContentWorld replaced by WKContentWorld
+        https://bugs.webkit.org/show_bug.cgi?id=207514
+
+        Reviewed by Brady Eidson.
+
+        _WKUserContentWorld.contentWorld is not needed,
+        but WKContentWorld._userContentWorld needs to return an autoreleased object.
+
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::fromUserContentWorld): Deleted.
+        * UIProcess/API/APIContentWorld.h:
+        * UIProcess/API/Cocoa/WKContentWorld.mm:
+        (-[WKContentWorld _userContentWorld]):
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm:
+        (-[_WKUserContentWorld contentWorld]): Deleted.
+
 2020-02-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Check if PIP is supported in the UI process

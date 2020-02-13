@@ -76,11 +76,6 @@ ContentWorld& ContentWorld::defaultClientWorld()
     return *world.get();
 }
 
-Ref<ContentWorld> ContentWorld::fromUserContentWorld(const UserContentWorld& userContentWorld)
-{
-    return adoptRef(*new ContentWorld(userContentWorld));
-}
-
 ContentWorld::ContentWorld(const WTF::String& name)
     : ContentWorldBase(name)
 {

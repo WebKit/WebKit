@@ -74,7 +74,7 @@
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (_WKUserContentWorld *)_userContentWorld
 {
-    return wrapper(API::UserContentWorld::fromContentWorld(*_contentWorld));
+    return [[wrapper(API::UserContentWorld::fromContentWorld(*_contentWorld)) retain] autorelease];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

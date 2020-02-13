@@ -61,7 +61,6 @@ public:
     static Ref<ContentWorld> sharedWorldWithName(const WTF::String&);
     static ContentWorld& pageContentWorld();
     static ContentWorld& defaultClientWorld();
-    static Ref<ContentWorld> fromUserContentWorld(const UserContentWorld&);
 
     virtual ~ContentWorld();
 

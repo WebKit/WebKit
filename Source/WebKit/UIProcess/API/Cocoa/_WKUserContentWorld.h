@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-@class WKContentWorld;
-
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContentWorld", macos(10.12, WK_MAC_TBA), ios(10.0, WK_IOS_TBA))
@@ -36,8 +34,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContentWorld", macos(10.12, WK_MAC_TBA),
 + (_WKUserContentWorld *)normalWorld;
 
 @property (nullable, nonatomic, readonly, copy) NSString *name;
-
-@property (nonatomic, copy, readonly) WKContentWorld *contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
