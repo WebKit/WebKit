@@ -2760,25 +2760,50 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element
     return nullptr;
 }
 
-static FloatRect lineCaretExtent(const InteractionInformationRequest& request, const HitTestResult& hitTestResult)
+static bool canForceCaretForPosition(const VisiblePosition& position)
+{
+    auto* node = position.deepEquivalent().anchorNode();
+    if (!node)
+        return false;
+
+    auto* renderer = node->renderer();
+    auto* style = renderer ? &renderer->style() : nullptr;
+    auto cursorType = style ? style->cursor() : CursorType::Auto;
+
+    if (cursorType == CursorType::Text)
+        return true;
+
+    if (cursorType != CursorType::Auto)
+        return false;
+
+    if (node->hasEditableStyle())
+        return true;
+
+    if (!renderer)
+        return false;
+
+    return renderer->isText() && node->canStartSelection();
+}
+
+static void populateCaretContext(const HitTestResult& hitTestResult, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     auto frame = makeRefPtr(hitTestResult.innerNodeFrame());
     if (!frame)
-        return { };
+        return;
 
     auto view = makeRefPtr(frame->view());
     if (!view)
-        return { };
+        return;
 
     auto* renderer = hitTestResult.innerNode()->renderer();
     if (!renderer)
-        return { };
+        return;
 
     while (renderer && !is<RenderBlockFlow>(*renderer))
         renderer = renderer->parent();
 
     if (!renderer)
-        return { };
+        return;
 
     // FIXME: We should be able to retrieve this geometry information without
     // forcing the text to fall out of Simple Line Layout.
@@ -2786,24 +2811,12 @@ static FloatRect lineCaretExtent(const InteractionInformationRequest& request, c
     auto position = frame->visiblePositionForPoint(view->rootViewToContents(request.point));
     auto lineRect = position.absoluteSelectionBoundsForLine();
     lineRect.setWidth(blockFlow.contentWidth());
-    return lineRect;
-}
 
-static void populateCaretContext(const HitTestResult& hitTestResult, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
-{
-    auto* frame = hitTestResult.innerNodeFrame();
-    if (!frame)
-        return;
-
-    auto* frameView = frame->view();
-    if (!frameView)
-        return;
-
-    info.lineCaretExtent = frameView->contentsToRootView(lineCaretExtent(request, hitTestResult));
+    info.lineCaretExtent = view->contentsToRootView(lineRect);
     info.caretHeight = info.lineCaretExtent.height();
 
     // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
-    if (info.lineCaretExtent.contains(request.point) && info.cursor->type() != Cursor::Hand)
+    if (info.lineCaretExtent.contains(request.point) && info.cursor->type() != Cursor::Hand && canForceCaretForPosition(position))
         info.cursor = Cursor::fromType(Cursor::IBeam);
 }
 

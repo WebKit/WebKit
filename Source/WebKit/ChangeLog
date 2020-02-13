@@ -1,5 +1,42 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255710. rdar://problem/59299340
+
+    macCatalyst: Shouldn't get text cursor on checkboxes
+    https://bugs.webkit.org/show_bug.cgi?id=207234
+    <rdar://problem/59155917>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::canForceCaretForPosition):
+    (WebKit::populateCaretContext):
+    (WebKit::lineCaretExtent): Deleted.
+    The I-beam forcing code was a bit too aggressive; it should consider
+    the style of the node that it ends up finding after searching, not just
+    assume it wants an I-beam because it's "texty".
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255710 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-04  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: Shouldn't get text cursor on checkboxes
+            https://bugs.webkit.org/show_bug.cgi?id=207234
+            <rdar://problem/59155917>
+
+            Reviewed by Wenson Hsieh.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::canForceCaretForPosition):
+            (WebKit::populateCaretContext):
+            (WebKit::lineCaretExtent): Deleted.
+            The I-beam forcing code was a bit too aggressive; it should consider
+            the style of the node that it ends up finding after searching, not just
+            assume it wants an I-beam because it's "texty".
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255691. rdar://problem/59299315
 
     [macCatalyst] Missing custom cursors in subframes that are offset from the origin of the root view
