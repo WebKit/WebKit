@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -233,6 +233,17 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().executableAddress<>());
 }
 
+inline bool shouldJIT(unsigned functionIndex)
+{
+    if (!VM::canUseJIT())
+        return false;
+    if (!Options::useOMGJIT())
+        return false;
+    if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))
+        return false;
+    return true;
+}
+
 void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context& context)
 {
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
@@ -253,6 +264,12 @@ void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context& context)
     ASSERT(codeBlock.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(codeBlock.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
     TierUpCount& tierUp = *callee.tierUpCount();
+
+    if (!shouldJIT(functionIndex)) {
+        tierUp.deferIndefinitely();
+        return returnWithoutOSREntry();
+    }
+
     dataLogLnIf(Options::verboseOSR(), "Consider OMGForOSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
 
     if (!Options::useWebAssemblyOSR()) {
@@ -426,6 +443,12 @@ void JIT_OPERATION operationWasmTriggerTierUpNow(Instance* instance, uint32_t fu
     ASSERT(codeBlock.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(codeBlock.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
     TierUpCount& tierUp = *callee.tierUpCount();
+
+    if (!shouldJIT(functionIndex)) {
+        tierUp.deferIndefinitely();
+        return;
+    }
+
     dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
 
     if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))

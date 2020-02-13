@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -467,6 +467,12 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, useFastTLSForWasmContext, true, Normal, "If true, we will store context in fast TLS. If false, we will pin it to a register.") \
     v(Bool, wasmBBQUsesAir, true, Normal, nullptr) \
     v(Bool, useWasmLLInt, true, Normal, nullptr) \
+    v(Bool, useBBQJIT, true, Normal, "allows the BBQ JIT to be used if true") \
+    v(Bool, useOMGJIT, true, Normal, "allows the OMG JIT to be used if true") \
+    v(Bool, useWasmLLIntPrologueOSR, true, Normal, "allows prologue OSR from Wasm LLInt if true") \
+    v(Bool, useWasmLLIntLoopOSR, true, Normal, "allows loop OSR from Wasm LLInt if true") \
+    v(Bool, useWasmLLIntEpilogueOSR, true, Normal, "allows epilogue OSR from Wasm LLInt if true") \
+    v(OptionRange, wasmFunctionIndexRangeToCompile, 0, Normal, "wasm function index range to allow compilation on, e.g. 1:100") \
     v(Bool, wasmLLIntTiersUpToBBQ, true, Normal, nullptr) \
     v(Size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
     v(Bool, useWebAssemblyStreamingApi, enableWebAssemblyStreamingApi, Normal, "Allow to run WebAssembly's Streaming API") \

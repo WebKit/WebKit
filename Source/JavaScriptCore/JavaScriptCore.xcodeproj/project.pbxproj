@@ -5073,6 +5073,7 @@
 		F692A87E0255597D01FF60F7 /* RegExp.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegExp.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8870255597D01FF60F7 /* JSCJSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCJSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F73926918DC64330AFCDF0D7 /* JSSourceCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSourceCode.cpp; sourceTree = "<group>"; };
+		FE00262223F3AF33003A358F /* WebAssembly.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; name = WebAssembly.asm; path = llint/WebAssembly.asm; sourceTree = "<group>"; };
 		FE086BC92123DEFA003F2929 /* EntryFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryFrame.h; sourceTree = "<group>"; };
 		FE0D4A041AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecutionTimeLimitTest.cpp; path = API/tests/ExecutionTimeLimitTest.cpp; sourceTree = "<group>"; };
 		FE0D4A051AB8DD0A002F54BF /* ExecutionTimeLimitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionTimeLimitTest.h; path = API/tests/ExecutionTimeLimitTest.h; sourceTree = "<group>"; };
@@ -5476,6 +5477,7 @@
 				0F4680C814BBB16900BFE272 /* LowLevelInterpreter.h */,
 				86A054471556451B00445157 /* LowLevelInterpreter32_64.asm */,
 				86A054481556451B00445157 /* LowLevelInterpreter64.asm */,
+				FE00262223F3AF33003A358F /* WebAssembly.asm */,
 			);
 			name = llint;
 			sourceTree = "<group>";

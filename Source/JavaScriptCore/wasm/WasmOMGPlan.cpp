@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@ OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex,
     , m_codeBlock(*m_module->codeBlockFor(mode))
     , m_functionIndex(functionIndex)
 {
+    ASSERT(Options::useOMGJIT());
     setMode(mode);
     ASSERT(m_codeBlock->runnable());
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(m_mode));

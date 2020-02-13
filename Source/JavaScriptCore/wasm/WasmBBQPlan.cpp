@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,9 @@ BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uin
     , m_codeBlock(codeBlock)
     , m_functionIndex(functionIndex)
 {
+    ASSERT(Options::useBBQJIT());
     setMode(m_codeBlock->mode());
+    dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
 }
 
 bool BBQPlan::prepareImpl()

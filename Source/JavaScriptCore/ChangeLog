@@ -1,3 +1,38 @@
+2020-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Add options for debugging WASM code.
+        https://bugs.webkit.org/show_bug.cgi?id=207677
+        <rdar://problem/59411390>
+
+        Reviewed by Yusuke Suzuki.
+
+        Specifically ...
+
+            JSC_useBBQJIT                            - allows the BBQ JIT to be used if true
+            JSC_useOMGJIT                            - allows the OMG JIT to be used if true
+            JSC_useWasmLLIntPrologueOSR              - allows prologue OSR from Wasm LLInt if true
+            JSC_useWasmLLIntLoopOSR                  - allows loop OSR from Wasm LLInt if true
+            JSC_useWasmLLIntEpilogueOSR              - allows epilogue OSR from Wasm LLInt if true
+            JSC_wasmFunctionIndexRangeToCompile=N:M  - wasm function index range to allow compilation on, e.g. 1:100
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Options.cpp:
+        (JSC::Options::ensureOptionsAreCoherent):
+        * runtime/OptionsList.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::shouldJIT):
+        (JSC::Wasm::operationWasmTriggerOSREntryNow):
+        (JSC::Wasm::operationWasmTriggerTierUpNow):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+
 2020-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Compact JITCodeMap by storing BytecodeIndex and CodeLocation separately

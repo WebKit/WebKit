@@ -949,6 +949,10 @@ void Options::ensureOptionsAreCoherent()
         coherent = false;
         dataLog("INCOHERENT OPTIONS: at least one of useLLInt or useJIT must be true\n");
     }
+    if (useWebAssembly() && !(useWasmLLInt() || useBBQJIT())) {
+        coherent = false;
+        dataLog("INCOHERENT OPTIONS: at least one of useWasmLLInt or useBBQJIT must be true\n");
+    }
     if (!coherent)
         CRASH();
 }
