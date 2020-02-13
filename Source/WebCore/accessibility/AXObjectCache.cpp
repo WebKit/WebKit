@@ -1937,7 +1937,7 @@ RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRan
         return nullptr;
     
     auto range = Range::create(m_document, startPosition, originalRange->startPosition());
-    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
     return findClosestPlainText(searchRange.get(), matchText, { }, targetOffset);
 }
 

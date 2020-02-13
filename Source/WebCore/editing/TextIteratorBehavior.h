@@ -63,9 +63,4 @@ enum TextIteratorBehaviorFlag {
 
 typedef unsigned short TextIteratorBehavior;
 
-enum class TextIteratorLengthOption : uint8_t {
-    GenerateSpacesForReplacedElements = 1 << 0,
-    IgnoreVisibility = 1 << 1,
-};
-
 } // namespace WebCore

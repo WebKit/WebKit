@@ -68,12 +68,11 @@ void DictationCommandIOS::doApply()
 
     // FIXME: Add the result marker using a Position cached before results are inserted, instead of relying on TextIterators.
     auto rangeToEnd = Range::create(document(), createLegacyEditingPosition((Node *)root, 0), afterResults.deepEquivalent());
-    int endIndex = TextIterator::rangeLength(rangeToEnd.ptr(), { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+    int endIndex = TextIterator::rangeLength(rangeToEnd.ptr(), true);
     int startIndex = endIndex - resultLength;
 
     if (startIndex >= 0) {
-        RefPtr<Range> resultRange = TextIterator::rangeFromLocationAndLength(document().documentElement(), startIndex, endIndex,
-            { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+        RefPtr<Range> resultRange = TextIterator::rangeFromLocationAndLength(document().documentElement(), startIndex, endIndex, true);
         ASSERT(resultRange); // FIXME: What guarantees this?
         document().markers().addDictationResultMarker(*resultRange, m_metadata);
     }
