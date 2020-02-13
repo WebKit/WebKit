@@ -1086,7 +1086,7 @@ void InlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase,
     }
 }
 
-void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset)
+void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle style)
 {
     if (clampedStartOffset >= clampedEndOffset)
         return;
@@ -1112,7 +1112,15 @@ void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatP
     lineFont().adjustSelectionRectForText(textRun, selectionRect, clampedStartOffset, clampedEndOffset);
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
+    auto backgroundRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr());
+    if (style == MarkedTextBackgroundStyle::Rounded) {
+        backgroundRect.expand(-1, -1);
+        backgroundRect.move(0.5, 0.5);
+        context.fillRoundedRect(FloatRoundedRect { backgroundRect, FloatRoundedRect::Radii { 2 } }, color);
+        return;
+    }
+
+    context.fillRect(backgroundRect, color);
 }
 
 void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatRect& boxRect, const StyledMarkedText& markedText)
@@ -1225,7 +1233,7 @@ void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const Float
         if (highlight.startOffset >= end())
             break;
 
-        paintMarkedTextBackground(paintInfo, boxOrigin, highlight.color, clampedOffset(highlight.startOffset), clampedOffset(highlight.endOffset));
+        paintMarkedTextBackground(paintInfo, boxOrigin, highlight.color, clampedOffset(highlight.startOffset), clampedOffset(highlight.endOffset), MarkedTextBackgroundStyle::Rounded);
 
         if (highlight.endOffset > end())
             break;
