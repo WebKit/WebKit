@@ -102,17 +102,10 @@ void StorageNamespaceImpl::destroyStorageAreaMap(StorageAreaMap& map)
 
 Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOriginData)
 {
-    RefPtr<StorageAreaMap> map;
-
-    auto securityOrigin = securityOriginData.securityOrigin();
-    auto& slot = m_storageAreaMaps.add(securityOrigin->data(), nullptr).iterator->value;
-    if (!slot) {
-        map = StorageAreaMap::create(this, WTFMove(securityOrigin));
-        slot = map.get();
-    } else
-        map = slot;
-
-    return StorageAreaImpl::create(map.releaseNonNull());
+    auto& map = m_storageAreaMaps.ensure(securityOriginData, [&] {
+        return makeUnique<StorageAreaMap>(*this, securityOriginData.securityOrigin());
+    }).iterator->value;
+    return StorageAreaImpl::create(*map);
 }
 
 Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)

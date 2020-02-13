@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class StorageType {
+enum class StorageType : uint8_t {
     Session,
     Local,
     TransientLocal,

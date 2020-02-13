@@ -37,9 +37,7 @@ Ref<StorageMap> StorageMap::create(unsigned quota)
 
 StorageMap::StorageMap(unsigned quota)
     : m_iterator(m_map.end())
-    , m_iteratorIndex(UINT_MAX)
     , m_quotaSize(quota)  // quota measured in bytes
-    , m_currentLength(0)
 {
 }
 
