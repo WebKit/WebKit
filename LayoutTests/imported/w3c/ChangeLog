@@ -1,3 +1,16 @@
+2020-02-14  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-gutters-and-alignment test to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=207751
+
+        Reviewed by Javier Fernandez.
+
+        Add grid-gutters-and-alignment test, checked and adapted to WPT, with its expected.txt file.
+        Imported to WPT with this PR: https://github.com/web-platform-tests/wpt/pull/21717
+
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-and-alignment-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-and-alignment.html:
+
 2020-02-14  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Style changes due to Web Animations should not trigger CSS Transitions 

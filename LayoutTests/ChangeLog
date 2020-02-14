@@ -1,3 +1,16 @@
+2020-02-14  Rossana Monteriso  <rmonteriso@igalia.com>
+
+        [css-grid] Move grid-gutters-and-alignment test to WPT folder
+        https://bugs.webkit.org/show_bug.cgi?id=207751
+
+        Reviewed by Javier Fernandez.
+
+        Remove grid-gutters-and-alignment test and its expected.txt file. The test is being replaced
+        by an adapted test in the corresponding WPT test folder.
+
+        * fast/css-grid-layout/grid-gutters-and-alignment-expected.txt: Removed.
+        * fast/css-grid-layout/grid-gutters-and-alignment.html: Removed.
+
 2020-02-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         WebKit support for Apple Pay Buttons with custom corner radii
