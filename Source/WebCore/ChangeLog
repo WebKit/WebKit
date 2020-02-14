@@ -1,3 +1,15 @@
+2019-12-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit URL to reasonable size
+        https://bugs.webkit.org/show_bug.cgi?id=203825
+        <rdar://problem/56878680>
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay const): Place an upper bound on the amount of
+        memory a URL may consume.
+
 2020-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix specification violation in Font Loading API
