@@ -84,7 +84,11 @@ bool CDMProxyClearKey::cencSetCounterVector(const cencDecryptContext& input)
         memcpy(ctr, input.iv, ClearKey::IVSizeInBytes);
 
     if (gcry_error_t cipherError = gcry_cipher_setctr(m_gcryHandle, ctr, ClearKey::IVSizeInBytes)) {
+#if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setctr): %s", gpg_strerror(cipherError));
+#else
+        UNUSED_VARIABLE(cipherError);
+#endif
         return false;
     }
 
@@ -103,8 +107,12 @@ bool CDMProxyClearKey::cencSetDecryptionKey(const cencDecryptContext& in)
     if (!keyData)
         return false;
 
-    if (gcry_error_t error = gcry_cipher_setkey(m_gcryHandle, keyData->data(), keyData->size())) {
-        LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setkey): %s", gpg_strerror(error));
+    if (gcry_error_t cipherError = gcry_cipher_setkey(m_gcryHandle, keyData->data(), keyData->size())) {
+#if !LOG_DISABLED
+        LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_setkey): %s", gpg_strerror(cipherError));
+#else
+        UNUSED_VARIABLE(cipherError);
+#endif
         return false;
     }
 
@@ -119,7 +127,11 @@ bool CDMProxyClearKey::cencDecryptFullSample(cencDecryptContext& in)
     LOG(EME, "EME - CDMProxyClearKey - full-sample decryption: %zu encrypted bytes", in.encryptedBufferSizeInBytes);
 
     if (gcry_error_t cipherError = gcry_cipher_decrypt(m_gcryHandle, in.encryptedBuffer, in.encryptedBufferSizeInBytes, 0, 0)) {
+#if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_decrypt): %s", gpg_strerror(cipherError));
+#else
+        UNUSED_VARIABLE(cipherError);
+#endif
         return false;
     }
 
