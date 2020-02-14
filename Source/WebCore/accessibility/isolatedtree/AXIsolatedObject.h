@@ -46,6 +46,7 @@ namespace WebCore {
 class AXIsolatedTree;
 
 class AXIsolatedObject final : public AXCoreObject {
+    friend class AXIsolatedTree;
 public:
     static Ref<AXIsolatedObject> create(AXCoreObject&, AXIsolatedTreeID, AXID parentID);
     ~AXIsolatedObject();

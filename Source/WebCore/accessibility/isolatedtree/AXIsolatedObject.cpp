@@ -48,7 +48,10 @@ Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedT
     return adoptRef(*new AXIsolatedObject(object, treeID, parentID));
 }
 
-AXIsolatedObject::~AXIsolatedObject() = default;
+AXIsolatedObject::~AXIsolatedObject()
+{
+    ASSERT(!wrapper());
+}
 
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
 {

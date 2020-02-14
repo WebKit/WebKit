@@ -3075,9 +3075,15 @@ void AXObjectCache::performDeferredCacheUpdate()
 static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID, bool attachWrapper, Vector<AXIsolatedTree::NodeChange>& nodeChanges)
 {
     auto isolatedObject = AXIsolatedObject::create(object, treeID, parentID);
-    nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, object.wrapper()));
-    if (attachWrapper)
+    if (attachWrapper) {
         isolatedObject->attachPlatformWrapper(object.wrapper());
+        // Since this object has already an attached wrapper, set the wrapper
+        // in the NodeChange to null so that it is not re-attached.
+        nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, nullptr));
+    } else {
+        // Set the wrapper in the NodeChange so that it is set on the AX thread.
+        nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, object.wrapper()));
+    }
 
     for (const auto& child : object.children()) {
         auto staticChild = createIsolatedTreeHierarchy(*child, treeID, isolatedObject->objectID(), attachWrapper, nodeChanges);
@@ -3128,7 +3134,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification noti
     case AXCheckedStateChanged:
     case AXChildrenChanged:
     case AXValueChanged: {
-        tree->removeNode(object->objectID());
+        tree->removeSubtree(object->objectID());
         auto* parent = object->parentObject();
         AXID parentID = parent ? parent->objectID() : InvalidAXID;
         Vector<AXIsolatedTree::NodeChange> nodeChanges;

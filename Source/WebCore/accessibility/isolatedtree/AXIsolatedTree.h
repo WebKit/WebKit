@@ -64,13 +64,14 @@ public:
     struct NodeChange {
         Ref<AXIsolatedObject> m_isolatedObject;
         AccessibilityObjectWrapper* m_wrapper;
-        NodeChange(const Ref<AXIsolatedObject>&, AccessibilityObjectWrapper*);
+        NodeChange(AXIsolatedObject&, AccessibilityObjectWrapper*);
         NodeChange(const NodeChange&);
     };
 
     // Call on main thread
     void appendNodeChanges(const Vector<NodeChange>&);
     void removeNode(AXID);
+    void removeSubtree(AXID);
 
     void setRootNode(Ref<AXIsolatedObject>&);
     void setFocusedNodeID(AXID);
