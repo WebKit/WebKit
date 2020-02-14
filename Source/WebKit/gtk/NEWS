@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.26.4
+================
+
+What's new in WebKitGTK 2.26.4?
+
+  - Always use a light theme for rendering form controls.
+  - Fix the build with WPE renderer disabled.
+  - Fix the build with OpenGL disabled.
+  - Fix the build with GCC 10.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.26.3
 ================
 
