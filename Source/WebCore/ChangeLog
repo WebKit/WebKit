@@ -1,3 +1,24 @@
+2020-02-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Cannot perform most local loads with sandbox enabled
+        https://bugs.webkit.org/show_bug.cgi?id=202071
+
+        Reviewed by Carlos Garcia Campos.
+
+        SecurityOrigin::canDisplay is improperly checking whether the target file URL points to a
+        file on the same "volume" (mount point) as the source file. That can't happen here because
+        this code is running in the web process, but only the network process has access to the
+        unsandboxed filesystem. This code can only check whether the target file exists within the
+        sandbox's mount namespace, but that's not what we want to do because we're not going to load
+        that file, we're going to ask the network process to load the file with the same path
+        outside the mount namespace.
+
+        We can probably live without this check. But if bringing it back is desired, it has to be
+        done someplace totally different, in network process code rather than web process code.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay const):
+
 2020-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Should use light theme unless website declares support for dark themes in color-schemes property
