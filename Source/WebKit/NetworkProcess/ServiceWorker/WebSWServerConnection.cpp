@@ -272,6 +272,12 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
+    ASSERT(!jobData.scopeURL.isNull());
+    if (jobData.scopeURL.isNull()) {
+        rejectJobInClient(jobData.identifier().jobIdentifier, ExceptionData { InvalidStateError, "Scope URL is empty"_s });
+        return;
+    }
+
     SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
