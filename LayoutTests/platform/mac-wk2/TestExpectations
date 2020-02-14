@@ -1039,3 +1039,5 @@ webkit.org/b/206699 http/tests/media/now-playing-info.html [ Pass Failure ]
 webkit.org/b/207779 webgpu/whlsl/dereference-pointer-should-type-check.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207785 fast/events/keydown-1.html [ Pass Failure ]
+
+webkit.org/b/207793 fast/html/marquee-child-wrap.html [ Pass ImageOnlyFailure ]
