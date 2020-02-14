@@ -1,3 +1,20 @@
+2019-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        executeIfJavaScriptURL should check requester's security origin
+        https://bugs.webkit.org/show_bug.cgi?id=205324
+
+        Reviewed by Brent Fulgham.
+
+        Don't execute the JavaScript in ScriptController::executeIfJavaScriptURL if the security origin
+        of the current document is no longer accessible from the request originator's security origin.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL): Added a check.
+        * bindings/js/ScriptController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Pass around the security origin of the requester.
+        (WebCore::FrameLoader::submitForm):
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Consider top-level context whose origin is unique as insecure
