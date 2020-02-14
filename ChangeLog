@@ -1,3 +1,14 @@
+2020-02-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add Fontconfig::Fontconfig target
+        https://bugs.webkit.org/show_bug.cgi?id=207730
+
+        Reviewed by Adrian Perez de Castro.
+
+        Redo the Fontconfig find module to export a target.
+
+        * Source/cmake/FindFontconfig.cmake:
+
 2020-02-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [CMake] Prepend -Wno-noexcept-type only to global CXX flags

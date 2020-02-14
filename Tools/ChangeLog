@@ -1,3 +1,14 @@
+2020-02-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add Fontconfig::Fontconfig target
+        https://bugs.webkit.org/show_bug.cgi?id=207730
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the Fontconfig::Fontconfig target.
+
+        * WebKitTestRunner/PlatformGTK.cmake:
+
 2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
 
          Expose prevalent domains on a per-page basis

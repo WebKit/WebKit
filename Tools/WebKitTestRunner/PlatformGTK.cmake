@@ -34,9 +34,9 @@ list(APPEND WebKitTestRunner_LIBRARIES
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
     ${ATK_LIBRARIES}
-    ${FONTCONFIG_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GTK3_LIBRARIES}
+    Fontconfig::Fontconfig
     WebCoreTestSupport
     WebKit
 )
