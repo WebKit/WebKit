@@ -1,3 +1,11 @@
+2020-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS 13.1 build after r256520
+
+        These two methods are not in the internal iOS 13.1 SDK.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2020-02-14  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Implement NetworkCache::Data by using FileSystem::MappedFileData

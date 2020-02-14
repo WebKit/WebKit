@@ -453,8 +453,6 @@ typedef enum {
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOverflow;
-- (void)willStartScrollingOrZooming;
-- (void)didEndScrollingOrZooming;
 @end
 
 @interface UITextSuggestion : NSObject
@@ -1115,6 +1113,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @interface UITextInteractionAssistant (IPI)
 @property (nonatomic, readonly) BOOL inGesture;
 @property (nonatomic, readonly) UITextInteraction *interactions;
+- (void)willStartScrollingOrZooming;
+- (void)didEndScrollingOrZooming;
 @end
 
 @interface UITextInteraction (IPI)
