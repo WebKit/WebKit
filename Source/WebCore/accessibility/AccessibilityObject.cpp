@@ -2115,24 +2115,6 @@ AccessibilityOrientation AccessibilityObject::orientation() const
     return AccessibilityOrientation::Undefined;
 }    
 
-bool AccessibilityObject::isDescendantOfObject(const AXCoreObject* axObject) const
-{
-    if (!axObject || !axObject->hasChildren())
-        return false;
-
-    return Accessibility::findAncestor<AccessibilityObject>(*this, false, [axObject] (const AccessibilityObject& object) {
-        return &object == axObject;
-    }) != nullptr;
-}
-
-bool AccessibilityObject::isAncestorOfObject(const AXCoreObject* axObject) const
-{
-    if (!axObject)
-        return false;
-
-    return this == axObject || axObject->isDescendantOfObject(this);
-}
-
 AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
 {
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {

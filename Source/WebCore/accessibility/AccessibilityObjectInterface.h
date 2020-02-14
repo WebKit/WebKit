@@ -888,8 +888,8 @@ public:
     virtual AXCoreObject* activeDescendant() const = 0;
     virtual void handleActiveDescendantChanged() = 0;
     virtual void handleAriaExpandedChanged() = 0;
-    virtual bool isDescendantOfObject(const AXCoreObject*) const = 0;
-    virtual bool isAncestorOfObject(const AXCoreObject*) const = 0;
+    bool isDescendantOfObject(const AXCoreObject*) const;
+    bool isAncestorOfObject(const AXCoreObject*) const;
     virtual AXCoreObject* firstAnonymousBlockChild() const = 0;
 
     virtual bool hasAttribute(const QualifiedName&) const = 0;
@@ -1221,5 +1221,18 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 #endif
 
 } // namespace Accessibility
+
+inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject* axObject) const
+{
+    return axObject && axObject->hasChildren()
+        && Accessibility::findAncestor<AXCoreObject>(*this, false, [axObject] (const AXCoreObject& object) {
+            return &object == axObject;
+        }) != nullptr;
+}
+
+inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const
+{
+    return axObject && (this == axObject || axObject->isDescendantOfObject(this));
+}
 
 } // namespace WebCore

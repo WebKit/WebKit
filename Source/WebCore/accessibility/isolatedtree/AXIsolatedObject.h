@@ -132,6 +132,7 @@ private:
         FileUploadButtonReturnsValueInTitle,
         FocusableAncestor,
         HasARIAValueNow,
+        HasChildren,
         HasPopup,
         HeadingLevel,
         HelpText,
@@ -771,7 +772,7 @@ private:
     void insertChild(AXCoreObject*, unsigned) override;
     bool shouldIgnoreAttributeRole() const override;
     bool canHaveChildren() const override;
-    bool hasChildren() const override;
+    bool hasChildren() const override { return boolAttributeValue(AXPropertyName::HasChildren); }
     void setNeedsToUpdateChildren() override;
     void setNeedsToUpdateSubtree() override;
     void clearChildren() override;
@@ -781,8 +782,6 @@ private:
     AXCoreObject* activeDescendant() const override;
     void handleActiveDescendantChanged() override;
     void handleAriaExpandedChanged() override;
-    bool isDescendantOfObject(const AXCoreObject*) const override;
-    bool isAncestorOfObject(const AXCoreObject*) const override;
     AXCoreObject* firstAnonymousBlockChild() const override;
     bool hasAttribute(const QualifiedName&) const override;
     const AtomString& getAttribute(const QualifiedName&) const override;

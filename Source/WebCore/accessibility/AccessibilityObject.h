@@ -484,8 +484,6 @@ public:
     AccessibilityObject* activeDescendant() const override { return nullptr; }
     void handleActiveDescendantChanged() override { }
     void handleAriaExpandedChanged() override { }
-    bool isDescendantOfObject(const AXCoreObject*) const override;
-    bool isAncestorOfObject(const AXCoreObject*) const override;
     AccessibilityObject* firstAnonymousBlockChild() const override;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);

@@ -155,6 +155,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LayoutCount, object.layoutCount());
     setProperty(AXPropertyName::EstimatedLoadingProgress, object.estimatedLoadingProgress());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
+    setProperty(AXPropertyName::HasChildren, object.hasChildren());
     setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue());
     setProperty(AXPropertyName::PressedIsPresent, object.pressedIsPresent());
@@ -1573,12 +1574,6 @@ bool AXIsolatedObject::canHaveChildren() const
     return false;
 }
 
-bool AXIsolatedObject::hasChildren() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void AXIsolatedObject::setNeedsToUpdateChildren()
 {
     ASSERT_NOT_REACHED();
@@ -1620,18 +1615,6 @@ void AXIsolatedObject::handleActiveDescendantChanged()
 void AXIsolatedObject::handleAriaExpandedChanged()
 {
     ASSERT_NOT_REACHED();
-}
-
-bool AXIsolatedObject::isDescendantOfObject(const AXCoreObject*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAncestorOfObject(const AXCoreObject*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 AXCoreObject* AXIsolatedObject::firstAnonymousBlockChild() const
