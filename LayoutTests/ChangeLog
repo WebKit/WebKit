@@ -1,3 +1,17 @@
+2020-02-14  Charles Turner  <cturner@igalia.com>
+
+        [EME][GStreamer] REGRESSION(r256429): Several encrypted-media tests are crashing or failing
+        https://bugs.webkit.org/show_bug.cgi?id=207741
+
+        Skip WPT encrypted-media tests, in-line with the expectations of
+        the GTK port until they have been properly triaged.
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations: Skip all WPT encrypted-media
+        tests. They behave in incompliant ways and need time for correct
+        triage.
+
 2020-02-14  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Ensure CSS Transition and CSS Animation events are queued, sorted and dispatched by their timeline
