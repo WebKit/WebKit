@@ -3515,3 +3515,5 @@ webkit.org/b/207763 http/wpt/service-workers/file-upload.html [ Pass Failure ]
 webkit.org/b/207766 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
 
 webkit.org/b/207767 http/wpt/service-workers/online.https.html [ Pass Failure ]
+
+webkit.org/b/207768 http/wpt/service-workers/useragent.https.html [ Pass Failure ]
