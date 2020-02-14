@@ -108,7 +108,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
 
     m_response = ResourceResponse(receivedResponse);
     m_response.setCertificateInfo(WTFMove(receivedResponse.certificateInfo));
-    m_response.setDeprecatedNetworkLoadMetrics(WTFMove(receivedResponse.networkLoadMetrics));
+    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTFMove(receivedResponse.networkLoadMetrics)));
 
     handleCookieHeaders(d(), request.resourceRequest(), receivedResponse);
 

@@ -1,3 +1,20 @@
+2020-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        NetworkLoadMetrics should be shared by multiple ResourceResponse instances
+        https://bugs.webkit.org/show_bug.cgi?id=207747
+
+        Reviewed by Keith Miller.
+
+        Add ArgumentCoder support for Box<T>.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<Box<T>>::encode):
+        (IPC::ArgumentCoder<Box<T>>::decode):
+
 2020-02-14  Alberto Garcia  <berto@igalia.com>
 
         [WPE] WPEQtView.h includes the uninstalled WPEQtViewBackend.h
