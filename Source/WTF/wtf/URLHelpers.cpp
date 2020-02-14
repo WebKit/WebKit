@@ -548,7 +548,8 @@ Optional<String> mapHostName(const String& hostName, const Optional<URLDecodeFun
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
     int32_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer, hostNameBufferLength, &processingDetails, &uerror);
-    if (length && (U_FAILURE(uerror) || processingDetails.errors))
+    int allowedErrors = decodeFunction ? 0 : UIDNA_ERROR_EMPTY_LABEL | UIDNA_ERROR_LEADING_HYPHEN | UIDNA_ERROR_TRAILING_HYPHEN | UIDNA_ERROR_HYPHEN_3_4;
+    if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
         return nullopt;
     
     if (numCharactersConverted == static_cast<int32_t>(length) && !memcmp(sourceBuffer.data(), destinationBuffer, length * sizeof(UChar)))

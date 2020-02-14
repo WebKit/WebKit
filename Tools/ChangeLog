@@ -1,3 +1,14 @@
+2020-02-14  Alex Christensen  <achristensen@webkit.org>
+
+        Allow UIDNAInfo.errors from uidna_nameToUnicode that would not cause URL parsing failures
+        https://bugs.webkit.org/show_bug.cgi?id=207360
+        <rdar://problem/57825317>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2020-02-14  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add Fontconfig::Fontconfig target
