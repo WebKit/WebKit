@@ -9,6 +9,7 @@
 #ifndef ANGLE_PLATFORM_H
 #define ANGLE_PLATFORM_H
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <array>
 

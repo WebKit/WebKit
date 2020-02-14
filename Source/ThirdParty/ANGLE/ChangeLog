@@ -1,3 +1,14 @@
+2020-02-12  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Multiple GCC 10 build failures in ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=207365
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * changes.diff: Updated.
+        * include/platform/Platform.h: Add missing #include to get size_t.
+        * src/common/PackedEnums.h: Remove problematic const_casts.
+
 2019-09-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] ANGLE's eglplatform.h is build broken with -DENABLE_X11_PLATFORM=OFF
