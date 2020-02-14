@@ -1,5 +1,26 @@
 2020-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: VoiceOver doesn't read selected panel tab
+        https://bugs.webkit.org/show_bug.cgi?id=207735
+        <rdar://problem/59445157>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar):
+        (WI.NavigationBar.prototype._mouseDown):
+        (WI.NavigationBar.prototype._mouseUp):
+        Navigation bar itself shouldn't receive focus - its items should.
+
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WI.RadioButtonNavigationItem):
+        "tab" was passed as a label by mistake. VoiceOver read every tab as "tab" instead of it's actual label.
+
+        (WI.RadioButtonNavigationItem.prototype.set selected):
+        When clicking on a tab, focus on it so VoiceOver could read it.
+
+2020-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Bezier editor popover should be strictly LTR
         https://bugs.webkit.org/show_bug.cgi?id=206968
         <rdar://problem/59007065>

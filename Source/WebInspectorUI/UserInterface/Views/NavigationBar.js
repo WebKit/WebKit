@@ -30,7 +30,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         super(element);
 
         this.element.classList.add(this.constructor.StyleClassName || "navigation-bar");
-        this.element.tabIndex = 0;
 
         if (role)
             this.element.setAttribute("role", role);
@@ -312,7 +311,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         document.addEventListener("mousemove", this._mouseMovedEventListener, false);
         document.addEventListener("mouseup", this._mouseUpEventListener, false);
 
-        event.preventDefault();
         event.stopPropagation();
     }
 
@@ -361,9 +359,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         document.removeEventListener("mousemove", this._mouseMovedEventListener, false);
         document.removeEventListener("mouseup", this._mouseUpEventListener, false);
-
-        // Restore the tabIndex so the navigation bar can be in the keyboard tab loop.
-        this.element.tabIndex = 0;
 
         // Dispatch the selected event here since the selectedNavigationItem setter surpresses it
         // while the mouse is down to prevent sending it while scrubbing the bar.

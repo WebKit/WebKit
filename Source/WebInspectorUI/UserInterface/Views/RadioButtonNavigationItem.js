@@ -27,7 +27,7 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
 {
     constructor(identifier, toolTip, image, imageWidth, imageHeight)
     {
-        super(identifier, toolTip, image, imageWidth, imageHeight, null, "tab");
+        super(identifier, toolTip, image, imageWidth, imageHeight, "tab");
     }
 
     // Public
@@ -42,9 +42,11 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
         if (flag) {
             this.element.classList.add(WI.RadioButtonNavigationItem.SelectedStyleClassName);
             this.element.setAttribute("aria-selected", "true");
+            this.element.tabIndex = 0;
         } else {
             this.element.classList.remove(WI.RadioButtonNavigationItem.SelectedStyleClassName);
             this.element.setAttribute("aria-selected", "false");
+            this.element.tabIndex = -1;
         }
     }
 
