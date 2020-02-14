@@ -693,6 +693,10 @@ webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ I
 
 webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html [ Failure ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -996,6 +1000,17 @@ webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207605 [ Debug ] http/wpt/cache-storage/quota-third-party.https.html [ Crash ]
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redundant-worker.html [ Crash Pass ]
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-terminate.https.html [ Crash ]
+
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Crash ]
+webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS

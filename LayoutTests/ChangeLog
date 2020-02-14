@@ -1,3 +1,12 @@
+2020-02-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, several encrypted-media tests are failing or crashing
+        https://bugs.webkit.org/show_bug.cgi?id=207742
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Expose prevalent domains on a per-page basis
