@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "DeclarativeAnimation.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

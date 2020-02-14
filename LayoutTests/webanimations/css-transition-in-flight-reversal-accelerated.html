@@ -46,19 +46,23 @@ function targetTest(propertyName)
             initialTransition = animations[0];
             assert_true(initialTransition instanceof CSSTransition, "There is one animation applied to the target after starting the initial transition.");
 
-            // Wait for the initial transition to start and then another frame before reversing the transition.
+            // Wait for the initial transition to start and then two frames before reversing the transition, to be certain that the animation did start.
+            // Indeed, the "transitionstart" event will be fired right before the next rAF callback is called, as the animation starts in that very same
+            // frame, and so progress will be 0 and the transition wouldn't be reversable until the next frame when the animation has progress > 0.
             target.addEventListener("transitionstart", event => {
                 requestAnimationFrame(() => {
-                    target.classList.remove("in-flight");
-                    const animations = target.getAnimations();
-                    assert_equals(animations.length, 1, "There is one animation applied to the target after reversing the initial transition.");
+                    requestAnimationFrame(() => {
+                        target.classList.remove("in-flight");
+                        const animations = target.getAnimations();
+                        assert_equals(animations.length, 1, "There is one animation applied to the target after reversing the initial transition.");
 
-                    reversedTransition = animations[0];
-                    assert_true(reversedTransition instanceof CSSTransition, "There is one animation applied to the target after reversing the initial transition.");
-                    assert_not_equals(initialTransition, reversedTransition, "The animation applied to the target after reversing the initial transition is different than the original transition.");
+                        reversedTransition = animations[0];
+                        assert_true(reversedTransition instanceof CSSTransition, "There is one animation applied to the target after reversing the initial transition.");
+                        assert_not_equals(initialTransition, reversedTransition, "The animation applied to the target after reversing the initial transition is different than the original transition.");
 
-                    target.remove();
-                    test.done();
+                        target.remove();
+                        test.done();
+                    });
                 });
             });
         });
