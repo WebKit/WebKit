@@ -1,3 +1,18 @@
+2020-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r253662): Large Data URLs are not being handled properly
+        https://bugs.webkit.org/show_bug.cgi?id=205979
+        <rdar://problem/58346124>
+
+        Reviewed by Youenn Fablet.
+
+        The URL size limitation added in r253662 was too low. We should bump it to handle
+        reasonable data URI sizes.
+
+        Test: fast/url/data-url-large.html.
+
+        * page/SecurityOrigin.cpp:
+
 2019-12-17  Brent Fulgham  <bfulgham@apple.com>
 
         Limit URL to reasonable size

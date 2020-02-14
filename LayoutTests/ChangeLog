@@ -1,3 +1,14 @@
+2020-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r253662): Large Data URLs are not being handled properly
+        https://bugs.webkit.org/show_bug.cgi?id=205979
+        <rdar://problem/58346124>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/url/data-url-large-expected.txt: Added.
+        * fast/url/data-url-large.html: Added.
+
 2020-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix specification violation in Font Loading API

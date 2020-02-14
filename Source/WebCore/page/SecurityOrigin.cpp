@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-constexpr unsigned maximumURLSize = 0x8000;
+constexpr unsigned maximumURLSize = 0x04000000;
 
 static bool schemeRequiresHost(const URL& url)
 {
