@@ -1,5 +1,14 @@
 2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ iOS ] crypto/subtle/rsa-indexeddb-non-exportable.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207769
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         REGRESSION (r253312): imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html is super flaky
         https://bugs.webkit.org/show_bug.cgi?id=205216
 
