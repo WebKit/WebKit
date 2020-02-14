@@ -61,18 +61,21 @@ private:
     void onURLBarEnter();
     void updateDeviceScaleFactor();
 
+    void createToolbar(HINSTANCE);
+    void resizeToolbar(int);
+    void rescaleToolbar();
+
     // BrowserWindowClient
     void progressChanged(double) final;
     void progressFinished() final;
     void activeURLChanged(std::wstring) final;
 
     HWND m_hMainWnd { nullptr };
+    HWND m_hToolbarWnd { nullptr };
     HWND m_hURLBarWnd { nullptr };
-    HWND m_hBackButtonWnd { nullptr };
-    HWND m_hForwardButtonWnd { nullptr };
-    HWND m_hReloadButtonWnd { nullptr };
     HWND m_hProgressIndicator { nullptr };
     HWND m_hCacheWnd { nullptr };
     HGDIOBJ m_hURLBarFont { nullptr };
     RefPtr<BrowserWindow> m_browserWindow;
+    int m_toolbarItemsWidth { };
 };

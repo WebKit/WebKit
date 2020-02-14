@@ -46,8 +46,9 @@ namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
 }
 
-static constexpr int controlButtonWidth = 24;
-static constexpr int urlBarHeight = 24;
+static constexpr int kToolbarImageSize = 24;
+static constexpr int kToolbarURLBarIndex = 4;
+static constexpr int kToolbarProgressIndicatorIndex = 6;
 
 static WNDPROC DefEditProc = nullptr;
 
@@ -114,6 +115,88 @@ Ref<MainWindow> MainWindow::create()
     return adoptRef(*new MainWindow());
 }
 
+void MainWindow::createToolbar(HINSTANCE hInstance)
+{
+    m_hToolbarWnd = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, 
+        WS_CHILD | WS_BORDER | TBSTYLE_LIST | TBSTYLE_TOOLTIPS, 0, 0, 0, 0, 
+        m_hMainWnd, nullptr, hInstance, nullptr);
+        
+    if (!m_hToolbarWnd)
+        return;
+
+    const int ImageListID = 0;
+    const int numButtons = 3;
+
+    HIMAGELIST hImageList;
+    hImageList = ImageList_Create(kToolbarImageSize, kToolbarImageSize, ILC_COLOR16 | ILC_MASK, numButtons, 0);
+
+    SendMessage(m_hToolbarWnd, TB_SETIMAGELIST, ImageListID, reinterpret_cast<LPARAM>(hImageList));
+    SendMessage(m_hToolbarWnd, TB_LOADIMAGES, IDB_HIST_LARGE_COLOR, reinterpret_cast<LPARAM>(HINST_COMMCTRL));
+    SendMessage(m_hToolbarWnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS | TBSTYLE_EX_MIXEDBUTTONS);
+
+    const DWORD buttonStyles = BTNS_AUTOSIZE;
+
+    TBBUTTON tbButtons[] = {
+        { MAKELONG(HIST_BACK,  ImageListID), IDM_HISTORY_BACKWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Back" },
+        { MAKELONG(HIST_FORWARD, ImageListID), IDM_HISTORY_FORWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Forward"},
+        { I_IMAGENONE, IDM_RELOAD, TBSTATE_ENABLED, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"↺"},
+        { I_IMAGENONE, IDM_RELOAD, 0, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"⌂"},
+        { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // URL bar
+        { MAKELONG(HIST_ADDTOFAVORITES, ImageListID), IDM_ABOUT, 0, buttonStyles, { }, 0, (INT_PTR)L"Add to Bookmarks"},
+        { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // Progress indicator
+    };
+    ASSERT(tbButtons[kToolbarURLBarIndex].fsStyle == BTNS_SEP);
+    ASSERT(tbButtons[kToolbarProgressIndicatorIndex].fsStyle == BTNS_SEP);
+
+    SendMessage(m_hToolbarWnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+    SendMessage(m_hToolbarWnd, TB_ADDBUTTONS, _countof(tbButtons), reinterpret_cast<LPARAM>(&tbButtons));
+    SendMessage(m_hToolbarWnd, TB_AUTOSIZE, 0, 0);
+    ShowWindow(m_hToolbarWnd, true);
+
+    m_hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 0, 0, 0, 0, m_hToolbarWnd, 0, hInstance, 0);
+    m_hProgressIndicator = CreateWindow(L"STATIC", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, m_hToolbarWnd, 0, hInstance, 0);
+
+    DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
+    SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
+}
+
+void MainWindow::resizeToolbar(int parentWidth)
+{
+    TBBUTTONINFO info { sizeof(TBBUTTONINFO), TBIF_BYINDEX | TBIF_SIZE };
+    info.cx = parentWidth - m_toolbarItemsWidth;
+    SendMessage(m_hToolbarWnd, TB_SETBUTTONINFO, kToolbarURLBarIndex, reinterpret_cast<LPARAM>(&info));
+
+    SendMessage(m_hToolbarWnd, TB_AUTOSIZE, 0, 0);
+
+    RECT rect;
+    SendMessage(m_hToolbarWnd, TB_GETITEMRECT, kToolbarURLBarIndex, reinterpret_cast<LPARAM>(&rect));
+    MoveWindow(m_hURLBarWnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
+
+    SendMessage(m_hToolbarWnd, TB_GETITEMRECT, kToolbarProgressIndicatorIndex, reinterpret_cast<LPARAM>(&rect));
+    MoveWindow(m_hProgressIndicator, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
+}
+
+void MainWindow::rescaleToolbar()
+{
+    const float scaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
+    const int scaledImageSize = kToolbarImageSize * scaleFactor;
+
+    TBBUTTONINFO info { sizeof(TBBUTTONINFO), TBIF_BYINDEX | TBIF_SIZE };
+
+    info.cx = 0;
+    SendMessage(m_hToolbarWnd, TB_SETBUTTONINFO, kToolbarURLBarIndex, reinterpret_cast<LPARAM>(&info));
+    info.cx = scaledImageSize * 2;
+    SendMessage(m_hToolbarWnd, TB_SETBUTTONINFO, kToolbarProgressIndicatorIndex, reinterpret_cast<LPARAM>(&info));
+
+    SendMessage(m_hToolbarWnd, TB_AUTOSIZE, 0, 0);
+
+    int numItems = SendMessage(m_hToolbarWnd, TB_BUTTONCOUNT, 0, 0);
+
+    RECT rect;
+    SendMessage(m_hToolbarWnd, TB_GETITEMRECT, numItems-1, reinterpret_cast<LPARAM>(&rect));
+    m_toolbarItemsWidth = rect.right;
+}
+
 bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool usesLayeredWebView)
 {
     registerClass(hInstance);
@@ -133,14 +216,9 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     EnableMenuItem(GetMenu(m_hMainWnd), IDM_NEW_WEBKITLEGACY_WINDOW, MF_GRAYED);
 #endif
 
-    m_hBackButtonWnd = CreateWindow(L"BUTTON", L"<", WS_CHILD | WS_VISIBLE  | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_BACKWARD), hInstance, 0);
-    m_hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_HISTORY_FORWARD), hInstance, 0);
-    m_hReloadButtonWnd = CreateWindow(L"BUTTON", L"↺", WS_CHILD | WS_VISIBLE | BS_TEXT, 0, 0, 0, 0, m_hMainWnd, reinterpret_cast<HMENU>(IDM_RELOAD), hInstance, 0);
-    m_hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 0, 0, 0, 0, m_hMainWnd, 0, hInstance, 0);
-    m_hProgressIndicator = CreateWindow(L"STATIC", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, m_hMainWnd, 0, hInstance, 0);
-
-    DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
-    SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
+    createToolbar(hInstance);
+    if (!m_hToolbarWnd)
+        return false;
 
     m_browserWindow = factory(*this, m_hMainWnd, usesLayeredWebView);
     if (!m_browserWindow)
@@ -157,23 +235,20 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
 
 void MainWindow::resizeSubViews()
 {
-    float scaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
-
     RECT rcClient;
     GetClientRect(m_hMainWnd, &rcClient);
 
-    int height = scaleFactor * urlBarHeight;
-    int width = scaleFactor * controlButtonWidth;
-
-    MoveWindow(m_hBackButtonWnd, 0, 0, width, height, TRUE);
-    MoveWindow(m_hForwardButtonWnd, width, 0, width, height, TRUE);
-    MoveWindow(m_hReloadButtonWnd, width * 2, 0, width, height, TRUE);
-    MoveWindow(m_hURLBarWnd, width * 3, 0, rcClient.right - width * 5, height, TRUE);
-    MoveWindow(m_hProgressIndicator, rcClient.right - width * 2, 0, width * 2, height, TRUE);
+    resizeToolbar(rcClient.right);
 
     if (m_browserWindow->usesLayeredWebView() || !m_browserWindow->hwnd())
         return;
-    MoveWindow(m_browserWindow->hwnd(), 0, height, rcClient.right, rcClient.bottom - height, TRUE);
+
+    RECT rect;
+    GetWindowRect(m_hToolbarWnd, &rect);
+    POINT toolbarBottom = { 0, rect.bottom };
+    ScreenToClient(m_hMainWnd, &toolbarBottom);
+    auto height = toolbarBottom.y;
+    MoveWindow(m_browserWindow->hwnd(), 0, height, rcClient.right, rcClient.bottom - height, true);
 }
 
 LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -501,8 +576,13 @@ void MainWindow::updateDeviceScaleFactor()
 {
     if (m_hURLBarFont)
         ::DeleteObject(m_hURLBarFont);
-    auto scaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
-    int fontHeight = scaleFactor * urlBarHeight * 3 / 4;
+
+    rescaleToolbar();
+
+    RECT rect;
+    GetClientRect(m_hToolbarWnd, &rect);
+    int fontHeight = rect.bottom * 3. / 4;
+
     m_hURLBarFont = ::CreateFont(fontHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
         OUT_TT_ONLY_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_DONTCARE, L"Tahoma");
     ::SendMessage(m_hURLBarWnd, static_cast<UINT>(WM_SETFONT), reinterpret_cast<WPARAM>(m_hURLBarFont), TRUE);
