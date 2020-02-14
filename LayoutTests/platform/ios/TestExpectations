@@ -3490,7 +3490,6 @@ webkit.org/b/207643 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/207645 http/tests/security/cross-frame-access-private-browsing.html [ Pass Timeout ]
 
-webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass Timeout ]
 
 webkit.org/b/207649 imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Pass Timeout ]
 

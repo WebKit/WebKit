@@ -1411,3 +1411,5 @@ webkit.org/b/207665 http/tests/cache-storage/cache-representation.https.html [ S
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
 
 webkit.org/b/207709 imported/w3c/IndexedDB-private-browsing/close-in-upgradeneeded.html [ Pass Timeout ]
+
+webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass Timeout ]
