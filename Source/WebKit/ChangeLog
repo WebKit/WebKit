@@ -1,5 +1,9 @@
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
+        Revert r256407. rdar://problem/59299143
+
+2020-02-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256520. rdar://problem/59430255
 
     [iOS] -updateSelectionWithExtentPoint:completionHandler: should work without requiring floating cursor

@@ -77,7 +77,6 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
 #import <wtf/FileSystem.h>
-#import <wtf/ProcessPrivilege.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS)
@@ -891,29 +890,6 @@ void WebProcess::setMediaMIMETypes(const Vector<String> types)
 {
     AVAssetMIMETypeCache::singleton().addSupportedTypes(types);
 }
-
-#if PLATFORM(MAC)
-void WebProcess::setScreenProperties(const ScreenProperties& properties)
-{
-    WebCore::setScreenProperties(properties);
-    for (auto& page : m_pageMap.values())
-        page->screenPropertiesDidChange();
-    updatePageScreenProperties();
-}
-
-void WebProcess::updatePageScreenProperties()
-{
-    if (hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer)) {
-        setShouldOverrideScreenSupportsHighDynamicRange(false, false);
-        return;
-    }
-
-    bool allPagesAreOnHDRScreens = allOf(m_pageMap.values(), [] (auto& page) {
-        return screenSupportsHighDynamicRange(page->mainFrameView());
-    });
-    setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
-}
-#endif
 
 } // namespace WebKit
 
