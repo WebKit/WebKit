@@ -1,5 +1,16 @@
 2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ WK2 ] Layout Test http/wpt/service-workers/update-service-worker.https.html is a flaky Timeout
+        https://bugs.webkit.org/show_bug.cgi?id=187766
+
+        Set expectations to include failing.
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
+2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ iOS ] http/wpt/service-workers/online.https.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207767
 
