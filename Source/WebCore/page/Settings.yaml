@@ -108,7 +108,7 @@ allowSettingAnyXHRHeaderFromFileURLs:
 allowCrossOriginSubresourcesToAskForCredentials:
   initial: false
 allowTopNavigationToDataURLs:
-  initial: false
+  initial: true
 needsStorageAccessFromFileURLsQuirk:
   initial: true
 needsFrameNameFallbackToIdQuirk:
