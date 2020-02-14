@@ -352,15 +352,17 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     keyframeEffectStack.setCSSAnimationList(currentAnimationList);
 }
 
-RefPtr<WebAnimation> AnimationTimeline::cssAnimationForElementAndProperty(Element& element, CSSPropertyID property)
+static KeyframeEffect* keyframeEffectForElementAndProperty(Element& element, CSSPropertyID property)
 {
-    RefPtr<WebAnimation> matchingAnimation;
-    for (const auto& animation : m_elementToCSSAnimationsMap.get(&element)) {
-        auto* effect = animation->effect();
-        if (is<KeyframeEffect>(effect) && downcast<KeyframeEffect>(effect)->animatedProperties().contains(property))
-            matchingAnimation = animation;
+    if (auto* keyframeEffectStack = element.keyframeEffectStack()) {
+        auto effects = keyframeEffectStack->sortedEffects();
+        for (const auto& effect : makeReversedRange(effects)) {
+            if (effect->animatesProperty(property))
+                return effect.get();
+        }
     }
-    return matchingAnimation;
+
+    return nullptr;
 }
 
 static bool propertyInStyleMatchesValueForTransitionInMap(CSSPropertyID property, const RenderStyle& style, AnimationTimeline::PropertyToTransitionMap& transitions)
@@ -460,9 +462,21 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             }
         }
 
-        if (auto existingAnimation = cssAnimationForElementAndProperty(element, property))
-            return downcast<CSSAnimation>(existingAnimation.get())->unanimatedStyle();
+        if (auto* keyframeEffect = keyframeEffectForElementAndProperty(element, property)) {
+            // If we already have a keyframe effect targeting this property, we should use its unanimated style to determine what the potential
+            // start value of the transition shoud be to make sure that we don't account for animated values that would have been blended onto
+            // the style applied during the last style resolution.
+            if (auto* unanimatedStyle = keyframeEffect->unanimatedStyle())
+                return *unanimatedStyle;
 
+            // If we have a keyframe effect targeting this property, but it doesn't yet have an unanimated style, this is because it has not
+            // had a chance to apply itself with a non-null progress. In this case, the before-change and after-change styles should be the
+            // same in order to prevent a transition from being triggered as the unanimated style for this keyframe effect will most likely
+            // be this after-change style, or any future style change that may happen before the keyframe effect starts blending animated values.
+            return afterChangeStyle;
+        }
+
+        // In any other scenario, the before-change style should be the previously resolved style for this element.
         return currentStyle;
     }();
 
