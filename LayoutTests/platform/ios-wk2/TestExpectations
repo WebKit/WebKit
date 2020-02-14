@@ -1417,3 +1417,5 @@ webkit.org/b/207647 http/tests/security/strip-referrer-to-origin-for-third-party
 webkit.org/b/207771 http/wpt/service-workers/persistent-importScripts.html [ Pass Timeout ]
 
 webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Timeout ]
+
+webkit.org/b/207775 imported/w3c/IndexedDB-private-browsing/cursor-overloads.html [ Pass Timeout ]
