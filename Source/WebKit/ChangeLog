@@ -1,3 +1,18 @@
+2019-09-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK] Compilation errors when GL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=200223
+
+        Fix following compilation error when building with ENABLE_OPENGL=OFF
+        ../../Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp:123:51: error: use of undeclared identifier 'WaylandCompositor'
+        parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
+                                                  ^
+        Reviewed by Philippe Normand.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): only make a call when using EGL, this matches
+        guards in WaylandCompositor.h. The condition was changed in r245807.
+
 2019-09-12  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Allow CacheStore::destroyEngine to destroy default engine for soup.
