@@ -1,3 +1,16 @@
+2020-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dark Mode: In Notes, list item becomes invisible in dark mode after outdenting
+        https://bugs.webkit.org/show_bug.cgi?id=207676
+
+        Reviewed by Wenson Hsieh and Timothy Hatcher.
+
+        Added regression tests for pasting content with -apple-system-label and outdenting content.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        (PasteHTML.TransformColorsOfDarkContentButNotSemanticColor):
+        (PasteHTML.DoesNotTransformColorsOfLightContentDuringOutdent):
+
 2020-02-13  Alex Christensen  <achristensen@webkit.org>
 
         _WKResourceLoadInfo should conform to NSSecureCoding
