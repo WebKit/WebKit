@@ -1044,4 +1044,4 @@ webkit.org/b/207793 fast/html/marquee-child-wrap.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/207798 webrtc/connection-state.html [ Pass failure ]
+webkit.org/b/207798 webrtc/connection-state.html [ Pass Failure ]
