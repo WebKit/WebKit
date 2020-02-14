@@ -47,13 +47,15 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
 #endif
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKDrawApplePayButton, void, (CGContextRef context, CGRect drawRect, CGFloat scale, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, type, style, languageCode))
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
+
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationResult)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestPaymentMethodUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingContactUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingMethodUpdate)
 
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKApplePayButtonDefaultCornerRadius, CGFloat)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldEmailAddress, PKContactField)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldName, PKContactField)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPhoneNumber, PKContactField)

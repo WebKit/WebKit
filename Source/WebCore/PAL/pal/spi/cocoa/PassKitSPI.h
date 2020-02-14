@@ -364,7 +364,7 @@ NS_ASSUME_NONNULL_END
 #endif
 
 extern "C"
-void PKDrawApplePayButton(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);
+void PKDrawApplePayButtonWithCornerRadius(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -51,13 +51,14 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentAuthorizationContr
 #endif
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, PassKit, PKDrawApplePayButton, void, (CGContextRef context, CGRect drawRect, CGFloat scale, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, type, style, languageCode))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, PassKit, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
 
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentAuthorizationResult, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentRequestPaymentMethodUpdate, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentRequestShippingContactUpdate, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKPaymentRequestShippingMethodUpdate, PAL_EXPORT)
 
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKApplePayButtonDefaultCornerRadius, CGFloat, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKContactFieldEmailAddress, PKContactField, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKContactFieldName, PKContactField, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKit, PKContactFieldPhoneNumber, PKContactField, PAL_EXPORT)

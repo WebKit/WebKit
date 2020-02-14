@@ -1,3 +1,22 @@
+2020-02-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        WebKit support for Apple Pay Buttons with custom corner radii
+        https://bugs.webkit.org/show_bug.cgi?id=207664
+
+        Reviewed by Andy Estes.
+
+        Modified both tests to test new functionality for setting custom corner
+        radii.
+
+        * http/tests/ssl/applepay/ApplePayButton.html:
+        * http/tests/ssl/applepay/ApplePayButtonV4.html:
+        * platform/mac-highsierra/http/tests/ssl/applepay/ApplePayButton-expected.png:
+        * platform/mac-highsierra/http/tests/ssl/applepay/ApplePayButton-expected.txt:
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.png:
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.txt:
+        * platform/mac/http/tests/ssl/applepay/ApplePayButtonV4-expected.png:
+        * platform/mac/http/tests/ssl/applepay/ApplePayButtonV4-expected.txt:
+
 2020-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Web Animations] Unflake web-animations/timing-model/timelines/update-and-send-events.html WPT test

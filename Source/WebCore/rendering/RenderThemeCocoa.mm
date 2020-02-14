@@ -97,6 +97,23 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
     }
 }
 
+static CGFloat largestCornerRadius(const RenderStyle& style)
+{
+    if (!style.hasBorderRadius())
+        return PAL::get_PassKit_PKApplePayButtonDefaultCornerRadius();
+
+    return std::max<CGFloat>({
+        style.borderTopLeftRadius().height.value(),
+        style.borderTopLeftRadius().width.value(),
+        style.borderTopRightRadius().height.value(),
+        style.borderTopRightRadius().width.value(),
+        style.borderBottomLeftRadius().height.value(),
+        style.borderBottomLeftRadius().width.value(),
+        style.borderBottomRightRadius().height.value(),
+        style.borderBottomRightRadius().width.value()
+    });
+}
+
 bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -104,8 +121,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
     paintInfo.context().setShouldSmoothFonts(true);
     paintInfo.context().scale(FloatSize(1, -1));
 
-    PKDrawApplePayButton(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, toPKPaymentButtonType(renderer.style().applePayButtonType()), toPKPaymentButtonStyle(renderer.style().applePayButtonStyle()), renderer.style().locale());
-
+    PKDrawApplePayButtonWithCornerRadius(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius(renderer.style()), toPKPaymentButtonType(renderer.style().applePayButtonType()), toPKPaymentButtonStyle(renderer.style().applePayButtonStyle()), renderer.style().locale());
     return false;
 }
 

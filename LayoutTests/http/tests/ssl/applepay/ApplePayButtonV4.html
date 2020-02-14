@@ -32,15 +32,24 @@
         .subscribe {
             -apple-pay-button-type: subscribe;
         }
+        .borderRadiusLarge {
+            border-top-left-radius: 20px/21px;
+            border-top-right-radius: 25px;
+            border-bottom-left-radius: 10px/1px;
+            border-bottom-right-radius: 5px;
+        }
     </style>
 </head>
-<body>
+<body bgcolor="#E6E6FA">
     <script>
         for (let style of ["white", "white-outline", "black"]) {
             for (let type of ["check-out", "book", "subscribe"]) {
                 var button = document.createElement("button");
-                button.classList.add("apple-pay-button", style, type);
+                button.classList.add("apple-pay-button", style, type, "borderRadiusLarge");
+                var buttonNoRadius = document.createElement("button");
+                buttonNoRadius.classList.add("apple-pay-button", style, type);
                 document.body.appendChild(button);
+                document.body.appendChild(buttonNoRadius);
             }
         }
     </script>

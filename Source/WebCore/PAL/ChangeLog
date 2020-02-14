@@ -1,3 +1,18 @@
+2020-02-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        WebKit support for Apple Pay Buttons with custom corner radii
+        https://bugs.webkit.org/show_bug.cgi?id=207664
+        <rdar://problem/43718114>
+
+        Reviewed by Andy Estes.
+
+        Added link for PKDrawApplePayButtonWithCornerRadius and
+        PKApplePayButtonDefaultCornerRadius.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2020-02-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r256010.
