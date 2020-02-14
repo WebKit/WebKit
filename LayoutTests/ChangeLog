@@ -1,5 +1,14 @@
 2020-02-13  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 ] fast/scrolling/latching/iframe_in_iframe.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207732
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-13  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac Release wk2 ] accessibility/press-targets-center-point.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=207728
 
