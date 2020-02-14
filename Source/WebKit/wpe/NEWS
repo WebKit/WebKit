@@ -1,8 +1,18 @@
 =================
+WPE WebKit 2.26.4
+=================
+
+What's new in WPE WebKit 2.26.4?
+
+  - Fix the build with OpenGL disabled.
+  - Fix the build with GCC 10.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.26.3
 =================
 
-What's new in WPE WebKit 2.26.2?
+What's new in WPE WebKit 2.26.3?
 
   - Fix issues while trying to play a video on NextCloud.
   - Make sure the GL video sink uses a valid WebKit shared GL context.
