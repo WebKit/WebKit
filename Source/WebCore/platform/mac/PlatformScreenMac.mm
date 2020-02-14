@@ -158,7 +158,7 @@ void setScreenProperties(const ScreenProperties& properties)
 
 void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange)
 {
-    if (PAL::canLoad_MediaToolbox_MTOverrideShouldPlayHDRVideo())
+    if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTOverrideShouldPlayHDRVideo())
         PAL::softLink_MediaToolbox_MTOverrideShouldPlayHDRVideo(shouldOverride, supportsHighDynamicRange);
 }
 
