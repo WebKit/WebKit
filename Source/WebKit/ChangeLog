@@ -1,3 +1,13 @@
+2020-02-14  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView._setResourceLoadDelegate should clear the WebPageProxy's ResourceLoadClient
+        https://bugs.webkit.org/show_bug.cgi?id=205887
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setResourceLoadDelegate:]):
+        WebPageProxy::setResourceLoadClient has some special logic to possibly clear a bit in the web process that will reduce IPCs.
+        This is a small oversight in my original implementation.
+
 2020-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS 13.1 build after r256520

@@ -684,8 +684,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (void)_setResourceLoadDelegate:(id<_WKResourceLoadDelegate>)delegate
 {
-    _page->setResourceLoadClient(_resourceLoadDelegate->createResourceLoadClient());
-    _resourceLoadDelegate->setDelegate(delegate);
+    if (delegate) {
+        _page->setResourceLoadClient(_resourceLoadDelegate->createResourceLoadClient());
+        _resourceLoadDelegate->setDelegate(delegate);
+    } else {
+        _page->setResourceLoadClient(nullptr);
+        _resourceLoadDelegate->setDelegate(nil);
+    }
 }
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
