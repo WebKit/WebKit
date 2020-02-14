@@ -4230,8 +4230,6 @@ webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [
 
 webkit.org/b/206264 imported/w3c/web-platform-tests/css/css-multicol/multicol-gap-percentage-001.html [ Failure ]
 
-webkit.org/b/207016 http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
-
 webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/generic-family-keywords-001.html [ Failure ]
