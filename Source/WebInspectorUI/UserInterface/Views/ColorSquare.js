@@ -205,8 +205,11 @@ WI.ColorSquare = class ColorSquare
 
     _updateColorForMouseEvent(event)
     {
-        let point = window.webkitConvertPointFromPageToNode(this._element, new WebKitPoint(event.pageX, event.pageY));
-        this._setCrosshairPosition(point);
+        let rect = this._element.getBoundingClientRect();
+        this._setCrosshairPosition({
+            x: event.pageX - rect.x,
+            y: event.pageY - rect.y,
+        });
 
         if (this._delegate && this._delegate.colorSquareColorDidChange)
             this._delegate.colorSquareColorDidChange(this);

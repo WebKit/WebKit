@@ -40,8 +40,8 @@ WI.Point = class Point
 
     static fromEventInElement(event, element)
     {
-        var wkPoint = window.webkitConvertPointFromPageToNode(element, new WebKitPoint(event.pageX, event.pageY));
-        return new WI.Point(wkPoint.x, wkPoint.y);
+        let rect = element.getBoundingClientRect();
+        return new WI.Point(event.pageX - rect.x, event.pageY - rect.y);
     }
 
     // Public

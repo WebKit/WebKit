@@ -1,3 +1,24 @@
+2020-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Bezier editor popover should be strictly LTR
+        https://bugs.webkit.org/show_bug.cgi?id=206968
+        <rdar://problem/59007065>
+
+        Reviewed by Timothy Hatcher.
+
+        webkitConvertPointFromPageToNode does not work correctly with the zoom level other than 1.
+        Replace all uses of webkitConvertPointFromPageToNode with getBoundingClientRect.
+
+        * UserInterface/Models/Geometry.js:
+        (WI.Point.fromEventInElement):
+        * UserInterface/Views/ColorSquare.js:
+        (WI.ColorSquare.prototype._updateColorForMouseEvent):
+        * UserInterface/Views/GradientSlider.js:
+        (WI.GradientSlider.prototype._updateShadowKnob):
+        * UserInterface/Views/Slider.js:
+        (WI.Slider.prototype._localPointForEvent):
+        (WI.Slider):
+
 2020-02-12  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: encode binary web socket frames using base64
