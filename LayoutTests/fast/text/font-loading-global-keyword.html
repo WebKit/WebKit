@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test ensure that global CSS keywords generate expected syntax errors.");
+shouldThrowErrorName("document.fonts.check('initial', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('inherited', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('unset', 'A')", "SyntaxError");
+shouldThrowErrorName("document.fonts.check('revert', 'A')", "SyntaxError");
+shouldReject("document.fonts.load('initial', 'A')");
+shouldReject("document.fonts.load('inherited', 'A')");
+shouldReject("document.fonts.load('unset', 'A')");
+shouldReject("document.fonts.load('revert', 'A')");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'style': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'style': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'style': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'style': 'revert'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'weight': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'weight': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'weight': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'weight': 'revert'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'stretch': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'stretch': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'stretch': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'stretch': 'revert'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'unicodeRange': 'revert'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'featureSettings': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'featureSettings': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'featureSettings': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'featureSettings': 'revert'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'display': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'display': 'inherited'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'display': 'unset'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'url(asdf)', {'display': 'initial'})", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'inherited')", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'unset')", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'revert')", "SyntaxError");
+shouldThrowErrorName("new FontFace('abc', 'revert')", "SyntaxError");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

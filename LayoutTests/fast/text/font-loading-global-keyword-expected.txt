@@ -1,0 +1,45 @@
+This test ensure that global CSS keywords generate expected syntax errors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.fonts.check('initial', 'A') threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.check('inherited', 'A') threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.check('unset', 'A') threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.check('revert', 'A') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'style': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'style': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'style': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'style': 'revert'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'weight': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'weight': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'weight': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'weight': 'revert'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'stretch': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'stretch': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'stretch': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'stretch': 'revert'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'unicodeRange': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'unicodeRange': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'unicodeRange': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'unicodeRange': 'revert'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'featureSettings': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'featureSettings': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'featureSettings': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'featureSettings': 'revert'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'display': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'display': 'inherited'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'display': 'unset'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'url(asdf)', {'display': 'initial'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'inherited') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'unset') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'revert') threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('abc', 'revert') threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.load('initial', 'A') rejected promise  with SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.load('inherited', 'A') rejected promise  with SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.load('unset', 'A') rejected promise  with SyntaxError: The string did not match the expected pattern..
+PASS document.fonts.load('revert', 'A') rejected promise  with SyntaxError: The string did not match the expected pattern..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

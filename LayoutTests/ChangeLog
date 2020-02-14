@@ -1,3 +1,16 @@
+2020-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix specification violation in Font Loading API
+        https://bugs.webkit.org/show_bug.cgi?id=205901
+        <rdar://problem/58083743>
+
+        Reviewed by Brent Fulgham.
+
+        Test all the entry points to the CSS Font Loading API that accept CSS keywords.
+
+        * fast/text/font-loading-global-keyword-expected.txt: Added.
+        * fast/text/font-loading-global-keyword.html: Added.
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Consider top-level context whose origin is unique as insecure

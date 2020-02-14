@@ -1,3 +1,23 @@
+2020-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix specification violation in Font Loading API
+        https://bugs.webkit.org/show_bug.cgi?id=205901
+        <rdar://problem/58083743>
+
+        Reviewed by Brent Fulgham.
+
+        Our Font Loading API does not comply with the spec:
+
+        > If the parsed value is a CSS-wide keyword, return a syntax error.
+
+        Rather than crashing, we should return a syntax error.
+
+        Test: fast/text/font-loading-global-keyword.html
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::computeFontSelectionRequest):
+        (WebCore::CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts):
+
 2019-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         executeIfJavaScriptURL should check requester's security origin
