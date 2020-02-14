@@ -30,40 +30,42 @@ namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(const uint8_t* data, size_t size)
+    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(size)))
+    , m_size(size)
 {
-    m_buffer.resize(size);
-    m_size = size;
-    memcpy(m_buffer.data(), data, size);
+    memcpy(WTF::get<Vector<uint8_t>>(*m_buffer).data(), data, size);
 }
 
-Data::Data(FileSystem::PlatformFileHandle file, size_t offset, size_t size)
+Data::Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
+    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
+    , m_isMap(WTF::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
 {
-    m_buffer.resize(size);
-    m_size = size;
-    FileSystem::seekFile(file, offset, FileSystem::FileSeekOrigin::Beginning);
-    FileSystem::readFromFile(file, reinterpret_cast<char*>(m_buffer.data()), size);
-    FileSystem::closeFile(file);
-}
-
-Data::Data(Vector<uint8_t>&& buffer)
-    : m_buffer(WTFMove(buffer))
-{
-    m_size = m_buffer.size();
+    m_size = WTF::switchOn(*m_buffer,
+        [](const Vector<uint8_t>& buffer) -> size_t { return buffer.size(); },
+        [](const FileSystem::MappedFileData& mappedFile) -> size_t { return mappedFile.size(); }
+    );
 }
 
 Data Data::empty()
 {
-    return { };
+    Vector<uint8_t> buffer;
+    return { WTFMove(buffer) };
 }
 
 const uint8_t* Data::data() const
 {
-    return m_buffer.data();
+    if (!m_buffer)
+        return nullptr;
+
+    return WTF::switchOn(*m_buffer,
+        [](const Vector<uint8_t>& buffer) -> const uint8_t* { return buffer.data(); },
+        [](const FileSystem::MappedFileData& mappedFile) -> const uint8_t* { return static_cast<const uint8_t*>(mappedFile.data()); }
+    );
 }
 
 bool Data::isNull() const
 {
-    return m_buffer.isEmpty();
+    return !m_buffer;
 }
 
 bool Data::apply(const Function<bool(const uint8_t*, size_t)>& applier) const
@@ -71,20 +73,36 @@ bool Data::apply(const Function<bool(const uint8_t*, size_t)>& applier) const
     if (isEmpty())
         return false;
 
-    return applier(reinterpret_cast<const uint8_t*>(m_buffer.data()), m_buffer.size());
+    return applier(reinterpret_cast<const uint8_t*>(data()), size());
 }
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { m_buffer.data() + offset, size };
+    if (!m_buffer)
+        return { };
+
+    return { data() + offset, size };
 }
 
 Data concatenate(const Data& a, const Data& b)
 {
+    if (a.isNull())
+        return b;
+    if (b.isNull())
+        return a;
+
     Vector<uint8_t> buffer(a.size() + b.size());
     memcpy(buffer.data(), a.data(), a.size());
     memcpy(buffer.data() + a.size(), b.data(), b.size());
     return Data(WTFMove(buffer));
+}
+
+Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
+{
+    ASSERT(mappedFile.data());
+    FileSystem::closeFile(fd);
+
+    return { WTFMove(mappedFile) };
 }
 
 } // namespace NetworkCache

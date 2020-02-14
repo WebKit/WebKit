@@ -1,3 +1,25 @@
+2020-02-14  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Implement NetworkCache::Data by using FileSystem::MappedFileData
+        https://bugs.webkit.org/show_bug.cgi?id=197684
+
+        Reviewed by Fujii Hironori.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        Added FileAccessPermission flag when opening files.
+        Remove default argument for the listDirectory filter since the defaut
+        String() filter doesn't match all files on Mac and Windows.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        Added (S_IRUSR | S_IWUSR) file open modes.
+
+        * wtf/win/FileSystemWin.cpp:
+        Implement getVolumeFreeSpace since some of the tests use it when toggling cache.
+        
+        * wtf/win/PathWalker.cpp:
+
 2020-02-14  Alex Christensen  <achristensen@webkit.org>
 
         Allow UIDNAInfo.errors from uidna_nameToUnicode that would not cause URL parsing failures

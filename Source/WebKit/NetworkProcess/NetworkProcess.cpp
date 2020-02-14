@@ -453,8 +453,11 @@ void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uin
     auto isNewEntry = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
         return makeUnique<SessionStorageQuotaManager>(cacheRootPath, defaultQuota, defaultThirdPartyQuota);
     }).isNewEntry;
-    if (isNewEntry)
+    if (isNewEntry) {
         SandboxExtension::consumePermanently(cacheRootPathHandle);
+        if (!cacheRootPath.isEmpty())
+            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, cacheRootPath));
+    }
 }
 
 void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
