@@ -1035,3 +1035,5 @@ webkit.org/b/207728 [ Release ] accessibility/press-targets-center-point.html [ 
 webkit.org/b/207732 fast/scrolling/latching/iframe_in_iframe.html [ Pass Failure ]
 
 webkit.org/b/206699 http/tests/media/now-playing-info.html [ Pass Failure ]
+
+webkit.org/b/207779 webgpu/whlsl/dereference-pointer-should-type-check.html [ Pass ImageOnlyFailure ]
