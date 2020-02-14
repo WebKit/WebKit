@@ -57,6 +57,7 @@ public:
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
     Optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
+    Vector<Cookie> getAllCookies();
     bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source);
     bool setCookie(const Cookie&);
 

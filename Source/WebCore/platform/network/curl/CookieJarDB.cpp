@@ -445,6 +445,32 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
     return results;
 }
 
+Vector<Cookie> CookieJarDB::getAllCookies()
+{
+    Vector<Cookie> result;
+    if (!isEnabled() || !m_database.isOpen())
+        return result;
+    const String sql = "SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie"_s;
+    auto pstmt = makeUnique<SQLiteStatement>(m_database, sql);
+    if (!pstmt)
+        return result;
+    pstmt->prepare();
+    while (pstmt->step() == SQLITE_ROW) {
+        Cookie cookie;
+        cookie.name = pstmt->getColumnText(0);
+        cookie.value = pstmt->getColumnText(1);
+        cookie.domain = pstmt->getColumnText(2).convertToASCIILowercase();
+        cookie.path = pstmt->getColumnText(3);
+        cookie.expires = (double)pstmt->getColumnInt64(4) * 1000;
+        cookie.httpOnly = (pstmt->getColumnInt(5) == 1);
+        cookie.secure = (pstmt->getColumnInt(6) == 1);
+        cookie.session = (pstmt->getColumnInt(7) == 1);
+        result.append(WTFMove(cookie));
+    }
+    pstmt->finalize();
+    return result;
+}
+
 bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, const String& path)
 {
     auto& statement = preparedStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);

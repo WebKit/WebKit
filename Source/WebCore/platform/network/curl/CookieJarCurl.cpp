@@ -147,6 +147,25 @@ void CookieJarCurl::deleteAllCookies(const NetworkStorageSession& session) const
     cookieJarDB.deleteAllCookies();
 }
 
+Vector<Cookie> CookieJarCurl::getAllCookies(const NetworkStorageSession& session) const
+{
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    return cookieJarDB.getAllCookies();
+}
+
+void CookieJarCurl::setCookie(const NetworkStorageSession& session, const Cookie& cookie) const
+{
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.setCookie(cookie);
+}
+
+void CookieJarCurl::deleteCookie(const NetworkStorageSession& session, const Cookie& cookie) const
+{
+    String url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.deleteCookie(url, cookie.name);
+}
+
 void CookieJarCurl::deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) const
 {
     // FIXME: Not yet implemented

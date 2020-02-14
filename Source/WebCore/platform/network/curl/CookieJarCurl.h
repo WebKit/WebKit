@@ -58,6 +58,9 @@ public:
     void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) const;
     void deleteAllCookies(const NetworkStorageSession&) const;
     void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) const;
+    Vector<Cookie> getAllCookies(const NetworkStorageSession&) const;
+    void setCookie(const NetworkStorageSession&, const Cookie&) const;
+    void deleteCookie(const NetworkStorageSession&, const Cookie&) const;
 };
 
 } // namespace WebCore

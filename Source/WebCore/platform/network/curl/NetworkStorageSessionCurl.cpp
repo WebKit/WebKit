@@ -62,7 +62,8 @@ static String defaultCookieJarPath()
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
     , m_cookieStorage(makeUniqueRef<CookieJarCurl>())
-    , m_cookieDatabase(makeUniqueRef<CookieJarDB>(defaultCookieJarPath()))
+    // :memory: creates in-memory database, see https://www.sqlite.org/inmemorydb.html
+    , m_cookieDatabase(makeUniqueRef<CookieJarDB>(sessionID.isEphemeral() ? ":memory:"_s : defaultCookieJarPath()))
 {
 }
 
@@ -113,14 +114,14 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const 
     // FIXME: Implement for WebKit to use.
 }
 
-void NetworkStorageSession::setCookie(const Cookie&)
+void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
-    // FIXME: Implement for WebKit to use.
+    cookieStorage().setCookie(*this, cookie);
 }
 
-void NetworkStorageSession::deleteCookie(const Cookie&)
+void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 {
-    // FIXME: Implement for WebKit to use.
+    cookieStorage().deleteCookie(*this, cookie);
 }
 
 void NetworkStorageSession::deleteCookie(const URL& url, const String& cookie) const
@@ -152,8 +153,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cook
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
-    // FIXME: Implement for WebKit to use.
-    return { };
+    return cookieStorage().getAllCookies(*this);
 }
 
 void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
