@@ -3511,3 +3511,5 @@ webkit.org/b/202003 imported/w3c/web-platform-tests/websockets/bufferedAmount-un
 webkit.org/b/207762 http/wpt/service-workers/check-service-worker-header.https.html [ Pass Failure ]
 
 webkit.org/b/207763 http/wpt/service-workers/file-upload.html [ Pass Failure ]
+
+webkit.org/b/207766 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
