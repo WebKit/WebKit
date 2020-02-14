@@ -1,3 +1,16 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        Consider top-level context whose origin is unique as insecure
+        https://bugs.webkit.org/show_bug.cgi?id=205111
+        <rdar://problem/57834967>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        (TEST):
+        Disable secure context checks so that loading directly about:blank from the API test
+        can call DeviceOrientationEvent.requestPermission() successfully.
+
 2019-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r249142): [GTK] Epiphany delayed page loads continue indefinitely

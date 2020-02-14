@@ -206,6 +206,9 @@ TEST(DeviceOrientation, RememberPermissionForSession)
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
+    auto preferences = [configuration preferences];
+    [preferences _setSecureContextChecksEnabled: NO];
+
     webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setUIDelegate:uiDelegate.get()];
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function doTest()
+    {
+        if (window.location.hash === "") {
+            window.location = "data:text/html,<"+ "script>window.location = '" + window.location.href + "#' + window.isSecureContext;<" + "/script>"
+            return;
+        }
+        onload = () => {
+            document.body.innerHTML = window.location.hash === "#false" ? "PASS" : ("FAIL: got " + window.location.hash);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        };
+    }
+    doTest();
+</script>

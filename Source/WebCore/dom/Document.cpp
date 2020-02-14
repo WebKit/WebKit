@@ -5941,10 +5941,12 @@ bool Document::isSecureContext() const
         return true;
     if (!securityOrigin().isPotentiallyTrustworthy())
         return false;
-    for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
+    for (auto* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
         if (!frame->document()->securityOrigin().isPotentiallyTrustworthy())
             return false;
     }
+    if (topOrigin().isUnique())
+        return false;
     return true;
 }
 

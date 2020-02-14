@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: data URL frame loaded
+CONSOLE MESSAGE: line 1: blob popup opened
+CONSOLE MESSAGE: line 1: blob popup loaded
+CONSOLE MESSAGE: line 1: blob popup message posted
+PASS
