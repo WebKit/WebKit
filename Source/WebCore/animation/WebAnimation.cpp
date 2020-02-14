@@ -1445,6 +1445,8 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
 Seconds WebAnimation::timeToNextTick() const
 {
+    ASSERT(effect());
+
     if (pending())
         return 0_s;
 
