@@ -1,3 +1,15 @@
+2020-02-14  Alberto Garcia  <berto@igalia.com>
+
+        [WPE] WPEQtView.h includes the uninstalled WPEQtViewBackend.h
+        https://bugs.webkit.org/show_bug.cgi?id=207765
+
+        Reviewed by Philippe Normand.
+
+        Do a forward declaration instead of including the header.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        * UIProcess/API/wpe/qt/WPEQtView.h:
+
 2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Expose prevalent domains on a per-page basis

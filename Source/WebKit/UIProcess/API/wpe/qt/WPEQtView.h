@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include "WPEQtViewBackend.h"
 #include <QQmlEngine>
 #include <QQuickItem>
 #include <QUrl>
@@ -30,6 +29,7 @@
 #include <wpe/webkit.h>
 #include <wtf/glib/GRefPtr.h>
 
+class WPEQtViewBackend;
 class WPEQtViewLoadRequest;
 
 class WPEQtView : public QQuickItem {
