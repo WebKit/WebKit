@@ -404,6 +404,24 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->callDidReceiveAllStorageAccessEntriesCallback(domains);
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceivePrevalentDomains")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+
+        WKArrayRef domainsArray = static_cast<WKArrayRef>(messageBody);
+        auto size = WKArrayGetSize(domainsArray);
+        Vector<String> domains;
+        domains.reserveInitialCapacity(size);
+        for (size_t i = 0; i < size; ++i) {
+            WKTypeRef item = WKArrayGetItemAtIndex(domainsArray, i);
+            if (item && WKGetTypeID(item) == WKStringGetTypeID())
+                domains.uncheckedAppend(toWTFString(static_cast<WKStringRef>(item)));
+        }
+
+        m_testRunner->callDidReceivePrevalentDomainsCallback(WTFMove(domains));
+        return;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidRemoveAllSessionCredentialsCallback")) {
         m_testRunner->callDidRemoveAllSessionCredentialsCallback();

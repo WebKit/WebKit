@@ -1,3 +1,21 @@
+2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expose prevalent domains on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=207523
+        <rdar://problem/59270758>
+
+        Reviewed by Chris Dumez.
+
+        Added 2 new tests for the resource load statistics database and
+        memory stores. Added a basic iframe that both tests can use to test
+        if a resource load from a prevalent domain gets reported properly.
+
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page-database.html: Added.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page.html: Added.
+        * http/tests/resourceLoadStatistics/resources/basic-iframe.html: Added.
+
 2020-02-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening more flaky crashes

@@ -1546,6 +1546,8 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
+    void getPrevalentDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&);
+    void clearPrevalentDomains();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

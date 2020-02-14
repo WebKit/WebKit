@@ -754,6 +754,7 @@ enum {
     StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
     StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
     AllStorageAccessEntriesCallbackID,
+    GetPrevalentDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
     TextDidChangeInTextFieldCallbackID,
@@ -2350,6 +2351,38 @@ void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& d
     JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
 
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
+}
+
+void TestRunner::getPrevalentDomains(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetPrevalentDomainsCallbackID, callback);
+    
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetPrevalentDomains"));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
+}
+
+void TestRunner::callDidReceivePrevalentDomainsCallback(Vector<String>&& domains)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    
+    StringBuilder stringBuilder;
+    stringBuilder.append('[');
+    bool isFirstDomain = true;
+    for (auto& domain : domains) {
+        if (isFirstDomain)
+            isFirstDomain = false;
+        else
+            stringBuilder.appendLiteral(", ");
+        stringBuilder.appendLiteral("\"");
+        stringBuilder.append(domain);
+        stringBuilder.appendLiteral("\"");
+    }
+    stringBuilder.append(']');
+    
+    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
+
+    callTestRunnerCallback(GetPrevalentDomainsCallbackID, 1, &result);
 }
 
 void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type)

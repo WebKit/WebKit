@@ -332,6 +332,30 @@ void TestController::getAllStorageAccessEntries()
     }];
 }
 
+void TestController::getPrevalentDomains()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+    
+    [globalWebViewConfiguration.websiteDataStore _getPrevalentDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
+        Vector<String> domains;
+        domains.reserveInitialCapacity(nsDomains.count);
+        for (NSString *domain : nsDomains)
+            domains.uncheckedAppend(domain);
+        m_currentInvocation->didReceivePrevalentDomains(WTFMove(domains));
+    }];
+}
+
+void TestController::clearPrevalentDomains()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+
+    [globalWebViewConfiguration.websiteDataStore _clearPrevalentDomainsFor:parentView->platformView()];
+}
+
 void TestController::injectUserScript(WKStringRef script)
 {
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource: toWTFString(script) injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);

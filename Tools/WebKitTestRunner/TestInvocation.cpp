@@ -807,6 +807,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 #endif
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "GetPrevalentDomains")) {
+        TestController::singleton().getPrevalentDomains();
+        return;
+    }
 
     ASSERT_NOT_REACHED();
 }
@@ -1934,6 +1939,17 @@ void TestInvocation::didSetHasHadUserInteraction()
 void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>& domains)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveAllStorageAccessEntries"));
+    
+    WKRetainPtr<WKMutableArrayRef> messageBody = adoptWK(WKMutableArrayCreate());
+    for (auto& domain : domains)
+        WKArrayAppendItem(messageBody.get(), adoptWK(WKStringCreateWithUTF8CString(domain.utf8().data())).get());
+    
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
+}
+
+void TestInvocation::didReceivePrevalentDomains(Vector<String>&& domains)
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceivePrevalentDomains"));
     
     WKRetainPtr<WKMutableArrayRef> messageBody = adoptWK(WKMutableArrayCreate());
     for (auto& domain : domains)

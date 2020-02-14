@@ -258,6 +258,8 @@ public:
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
+    void getPrevalentDomains();
+    void clearPrevalentDomains();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }

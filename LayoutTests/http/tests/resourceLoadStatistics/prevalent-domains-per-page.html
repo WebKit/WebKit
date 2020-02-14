@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests that a iframe from a prevalent domain will be reported as prevalent under this page.");
+        jsTestIsAsync = true;
+
+        function finishTest() {
+            setEnableFeature(false, finishJSTest);
+        }
+
+        const iframeID = "iFrameFromPrevalentDomain";
+        function askForPrevalentResources() {
+            testRunner.getPrevalentDomains(function (arrayOfDomains) {
+                var passed = false;
+                for (var i = 0; i < arrayOfDomains.length; ++i) {
+                    if (arrayOfDomains[i] === "localhost") {
+                        passed = true;
+                        break;
+                    }
+                }
+                if (passed)
+                    testPassed("Domain was successfully marked prevalent.");
+                else
+                    testFailed("Domain was not successfully marked prevalent.");
+                finishTest();
+            });
+        }
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(
+                function () { },
+                function () {
+                    testFailed("Promise rejected.");
+                    finishTest();
+                }
+            );
+            askForPrevalentResources();
+        }
+
+        function runTest() {
+            if (document.location.hash !== "#elementActivated") {
+                document.location.hash = "elementActivated";
+                activateElement(iframeID);
+            }
+        }
+
+        const hostUnderTest = "localhost:8000";
+        const statisticsUrl = "http://" + hostUnderTest;
+        
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as prevalent resource.");
+
+                let iframeElement = document.createElement("iframe");
+                iframeElement.onload = runTest;
+                iframeElement.id = "iFrameFromPrevalentDomain";
+                iframeElement.src = "http://localhost:8000/storageAccess/resourceLoadStatistics/basic-iframe.html";
+                document.body.appendChild(iframeElement);
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

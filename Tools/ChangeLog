@@ -1,3 +1,35 @@
+2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
+
+         Expose prevalent domains on a per-page basis
+         https://bugs.webkit.org/show_bug.cgi?id=207523
+         <rdar://problem/59270758>
+
+        Reviewed by Chris Dumez.
+
+        Added WebKitTestRunner functions so this functionality can be tested.
+        clearPrevalentDomains should be called between tests to reset the
+        state.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::getPrevalentDomains):
+        (WTR::TestRunner::callDidReceivePrevalentDomainsCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::getPrevalentDomains):
+        (WTR::TestController::clearPrevalentDomains):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceivePrevalentDomains):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::getPrevalentDomains):
+        (WTR::TestController::clearPrevalentDomains):
+
 2020-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Reimplement the toolbar by using toolbar common control

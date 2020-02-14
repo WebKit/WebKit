@@ -1,3 +1,45 @@
+2020-02-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expose prevalent domains on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=207523
+        <rdar://problem/59270758>
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/resourceLoadStatistics/prevalent-domains-per-page-database.html
+               http/tests/resourceLoadStatistics/prevalent-domains-per-page.html
+
+        Added an API to report prevalent domains. The Web Process sends all
+        new loads to the Network Process, which determines if the resources are
+        prevalent. When the API is queried, the Web Process reports these
+        domains to the UI Process.
+
+        The WebPage keeps a hash set of previously loaded domains to avoid
+        spamming IPC with repeat domains.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccessUnderOpener):
+        (WebKit::NetworkConnectionToWebProcess::reportSubresourceLoadToDomain):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getPrevalentDomainsFor:completionHandler:]):
+        (-[WKWebsiteDataStore _clearPrevalentDomainsFor:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::addLoadedRegistrableDomain):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsSuspended):
+        (WebKit::WebPage::addLoadedRegistrableDomain):
+        (WebKit::WebPage::getPrevalentDomains):
+        (WebKit::WebPage::clearPrevalentDomains):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-02-13  Youenn Fablet  <youenn@apple.com>
 
         Protect WebSWServerConnection::scheduleJobInServer from bad scopeURL

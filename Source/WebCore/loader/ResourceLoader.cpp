@@ -410,9 +410,12 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 #endif
 
     bool isRedirect = !redirectResponse.isNull();
-    if (isRedirect)
+    if (isRedirect) {
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
-
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+        frameLoader()->client().addLoadedRegistrableDomain(RegistrableDomain(request.url()));
+#endif
+    }
     m_request = request;
 
     if (isRedirect) {

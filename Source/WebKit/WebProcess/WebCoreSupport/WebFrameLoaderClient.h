@@ -61,6 +61,7 @@ public:
         WebCore::PageIdentifier pageID;
     };
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
+    void addLoadedRegistrableDomain(WebCore::RegistrableDomain&&) final;
 #endif
     
 private:

@@ -787,6 +787,17 @@ void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::Reg
             resourceLoadStatistics->requestStorageAccessUnderOpener(WTFMove(domainInNeedOfStorageAccess), openerPageID, WTFMove(openerDomain));
     }
 }
+
+void NetworkConnectionToWebProcess::isPrevalentSubresourceLoad(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession()) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->isPrevalentResource(domain, WTFMove(completionHandler));
+            return;
+        }
+    }
+    completionHandler(false);
+}
 #endif
 
 void NetworkConnectionToWebProcess::addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains)

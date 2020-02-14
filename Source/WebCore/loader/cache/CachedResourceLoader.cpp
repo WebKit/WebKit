@@ -982,6 +982,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url(), resource);
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    frame.loader().client().addLoadedRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
+#endif
     return resource;
 }
 

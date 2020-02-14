@@ -90,6 +90,7 @@ class NavigationAction;
 class Page;
 class PluginViewBase;
 class ProtectionSpace;
+class RegistrableDomain;
 class RTCPeerConnectionHandler;
 class ResourceError;
 class ResourceHandle;
@@ -374,6 +375,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
+    virtual void addLoadedRegistrableDomain(RegistrableDomain&&) { }
 #endif
 };
 

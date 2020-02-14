@@ -344,6 +344,7 @@ interface TestRunner {
     void setStatisticsShouldDowngradeReferrer(boolean value, object callback);
     void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
+    void getPrevalentDomains(object callback);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

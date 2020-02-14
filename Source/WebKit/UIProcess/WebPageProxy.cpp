@@ -9856,6 +9856,18 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 #endif
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebPageProxy::getPrevalentDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPage::GetPrevalentDomains(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::clearPrevalentDomains()
+{
+    send(Messages::WebPage::ClearPrevalentDomains());
+}
+#endif
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

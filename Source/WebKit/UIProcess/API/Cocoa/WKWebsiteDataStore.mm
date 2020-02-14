@@ -407,6 +407,46 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();
 }
 
+- (void)_getPrevalentDomainsFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!webView) {
+        completionHandler(nil);
+        return;
+    }
+
+    auto webPageProxy = [webView _page];
+    if (!webPageProxy) {
+        completionHandler(nil);
+        return;
+    }
+    
+    webPageProxy->getPrevalentDomains([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::RegistrableDomain>&& prevalentDomains) {
+        Vector<RefPtr<API::Object>> apiDomains = WTF::map(prevalentDomains, [](auto& domain) {
+            return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
+        });
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+    });
+#else
+    completionHandler(nil);
+#endif
+}
+
+- (void)_clearPrevalentDomainsFor:(WKWebView *)webView
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!webView)
+        return;
+
+    auto webPageProxy = [webView _page];
+    if (!webPageProxy)
+        return;
+
+    webPageProxy->clearPrevalentDomains();
+#endif
+}
+
+
 - (void)_getAllStorageAccessEntriesFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
 {
     if (!webView) {

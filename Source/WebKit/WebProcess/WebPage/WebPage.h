@@ -1176,6 +1176,9 @@ public:
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
     void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
     void wasLoadedWithDataTransferFromPrevalentResource();
+    void addLoadedRegistrableDomain(WebCore::RegistrableDomain&&);
+    void clearPrevalentDomains();
+    void getPrevalentDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>)>&&);
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -2045,6 +2048,8 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> m_domainsWithPageLevelStorageAccess;
+    HashSet<WebCore::RegistrableDomain> m_loadedDomains;
+    HashSet<WebCore::RegistrableDomain> m_prevalentDomains;
 #endif
 
     String m_overriddenMediaType;

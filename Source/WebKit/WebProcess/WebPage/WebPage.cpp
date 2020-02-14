@@ -5830,6 +5830,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    clearPrevalentDomains();
+#endif
+    
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
     // Most likely, this is actually the first load to be committed in this page.
     if (frame->coreFrame()->loader().previousURL().isValid())
@@ -6660,6 +6664,29 @@ void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
 
     frame->document()->wasLoadedWithDataTransferFromPrevalentResource();
 }
+
+void WebPage::addLoadedRegistrableDomain(RegistrableDomain&& domain)
+{
+    auto addResult = m_loadedDomains.add(domain);
+    if (addResult.isNewEntry) {
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsPrevalentSubresourceLoad(domain), [this, protectedThis = makeRef(*this), domain] (bool isPrevalent) {
+            if (isPrevalent)
+                m_prevalentDomains.add(domain);
+        });
+    }
+}
+
+void WebPage::getPrevalentDomains(CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
+{
+    completionHandler(copyToVector(m_prevalentDomains));
+}
+
+void WebPage::clearPrevalentDomains()
+{
+    m_prevalentDomains.clear();
+    m_loadedDomains.clear();
+}
+
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

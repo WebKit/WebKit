@@ -1109,7 +1109,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setAllowsAnySSLCertificate(true);
 
     statisticsResetToConsistentState();
-    
+    clearPrevalentDomains();
+
     clearAdClickAttribution();
 
     m_didReceiveServerRedirectForProvisionalNavigation = false;
@@ -3110,6 +3111,14 @@ void TestController::removeAllSessionCredentials()
 }
 
 void TestController::getAllStorageAccessEntries()
+{
+}
+
+void TestController::getPrevalentDomains()
+{
+}
+
+void TestController::clearPrevalentDomains()
 {
 }
 
