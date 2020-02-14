@@ -1,5 +1,79 @@
 2020-02-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r256297. rdar://problem/59442308
+
+    [iOS] Non-internal API test runners frequently crash due to Objective-C exceptions
+    https://bugs.webkit.org/show_bug.cgi?id=207525
+    <rdar://problem/59110543>
+    
+    Reviewed by Tim Horton.
+    
+    After the fix for <rdar://problem/56301207>, some scroll view content offset changes will attempt to call into
+    CoreAnalytics API to try and report data about scrolling velocities. In the iOS 13.3 simulator, this involves
+    creating a dictionary, of which one of the keys is the bundle identifier of the application. The value is
+    unconditionally inserted into the dictionary. Since TestWebKitAPI does not run in the context of a
+    UIApplication, the bundle identifier (that is, `NSBundle.mainBundle.bundleIdentifier`) ends up being nil,
+    causing us to crash upon trying to create the dictionary.
+    
+    While it would make things easier, we can't just swizzle -bundleIdentifier for the entirely of every test, since
+    some tests expect the bundle identifier to be nil (or call into system frameworks that expect the bundle
+    identifier to be nil). These tests fail or time out when -bundleIdentifier is unconditionally swizzled
+    throughout the test run. To work around this bug for the time being, simply pretend that we have a bundle
+    identifier when running API tests on iOS, by swizzling `-[NSBundle bundleIdentifier]` to return a string at the
+    beginning of each API test.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/cocoa/TestWKWebView.mm:
+    (overrideBundleIdentifier):
+    
+    Move this to the top of the file, so it can be shared.
+    
+    (+[WKWebView initialize]):
+    
+    At the start of each test, force UIKit to cache a fake value for `_UIMainBundleIdentifier()` by invoking an
+    internal class method that calls into the internal helper function, with no other side effects.
+    
+    * TestWebKitAPI/ios/UIKitSPI.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256297 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Non-internal API test runners frequently crash due to Objective-C exceptions
+            https://bugs.webkit.org/show_bug.cgi?id=207525
+            <rdar://problem/59110543>
+
+            Reviewed by Tim Horton.
+
+            After the fix for <rdar://problem/56301207>, some scroll view content offset changes will attempt to call into
+            CoreAnalytics API to try and report data about scrolling velocities. In the iOS 13.3 simulator, this involves
+            creating a dictionary, of which one of the keys is the bundle identifier of the application. The value is
+            unconditionally inserted into the dictionary. Since TestWebKitAPI does not run in the context of a
+            UIApplication, the bundle identifier (that is, `NSBundle.mainBundle.bundleIdentifier`) ends up being nil,
+            causing us to crash upon trying to create the dictionary.
+
+            While it would make things easier, we can't just swizzle -bundleIdentifier for the entirely of every test, since
+            some tests expect the bundle identifier to be nil (or call into system frameworks that expect the bundle
+            identifier to be nil). These tests fail or time out when -bundleIdentifier is unconditionally swizzled
+            throughout the test run. To work around this bug for the time being, simply pretend that we have a bundle
+            identifier when running API tests on iOS, by swizzling `-[NSBundle bundleIdentifier]` to return a string at the
+            beginning of each API test.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/cocoa/TestWKWebView.mm:
+            (overrideBundleIdentifier):
+
+            Move this to the top of the file, so it can be shared.
+
+            (+[WKWebView initialize]):
+
+            At the start of each test, force UIKit to cache a fake value for `_UIMainBundleIdentifier()` by invoking an
+            internal class method that calls into the internal helper function, with no other side effects.
+
+            * TestWebKitAPI/ios/UIKitSPI.h:
+
+2020-02-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed attempt to fix the TestWebKitAPI build.
 
         * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
