@@ -1,3 +1,12 @@
+2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] IndexedDB tests are flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=207778
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-14  Sunny He  <sunny_he@apple.com>
 
         Ensure animations that lose their effect don't schedule an animation update

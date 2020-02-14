@@ -1421,3 +1421,11 @@ webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Time
 webkit.org/b/207775 imported/w3c/IndexedDB-private-browsing/cursor-overloads.html [ Pass Timeout ]
 
 webkit.org/b/207776 imported/w3c/IndexedDB-private-browsing/idbcursor_advance_index3.html [ Pass Timeout ]
+
+webkit.org/b/207778 imported/w3c/IndexedDB-private-browsing/idbcursor_advance_objectstore4.html [ Pass Timeout ]
+
+webkit.org/b/207778 imported/w3c/IndexedDB-private-browsing/idbcursor-advance-continue-async.html [ Pass Timeout ]
+
+webkit.org/b/207778 imported/w3c/IndexedDB-private-browsing/idbcursor_continue_objectstore3.html [ Pass Timeout ]
+
+webkit.org/b/207778 imported/w3c/IndexedDB-private-browsing/idbcursor_continue_objectstore2.html [ Pass Timeout ]
