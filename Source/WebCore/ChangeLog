@@ -1,3 +1,19 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        SecurityOrigin should be unique for null blob URLs that have been unregistered
+        https://bugs.webkit.org/show_bug.cgi?id=205169
+
+        Reviewed by Darin Adler.
+
+        In case we cannot retrieve a cached origin for a null origin, just create a unique one.
+        This is better than having an origin with an empty host and empty scheme.
+
+        Test: http/tests/security/blob-null-url-location-origin.html
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        (WebCore::ThreadableBlobRegistry::getCachedOrigin):
+
 2020-02-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Cannot perform most local loads with sandbox enabled

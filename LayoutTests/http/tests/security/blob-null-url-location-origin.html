@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+}
+
+let count = 0;
+onmessage = (event) => {
+    ++count;
+    if (event.data !== "null") {
+        document.body.innerHTML = "FAIL, got " + event.data + " with count " + count;
+        if (window.testRunner)
+            testRunner.notifyDone();
+        window.clearTimeout(timer);
+        count = 3;
+        return;
+    }
+    if (count === 2) {
+        document.body.innerHTML = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+        window.clearTimeout(timer);
+    }
+};
+
+const timer = setTimeout(() => {
+    document.body.innerHTML = "TIMEOUT";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 10000);
+</script>
+<iframe src="data:text/html,<script>console.log('data URL frame loaded'); const blob = new Blob(['<'+ 'script>console.log(\'blob popup loaded\' + location.origin); onload = () => window.opener.postMessage(location.origin, \'*\'); console.log(\'blob popup message posted\'); onmessage = () => window.opener.postMessage(location.origin, \'*\'); <' + '/script>'], {type: 'text/html'}); const blobURL = URL.createObjectURL(blob); const popup = window.open(blobURL); onmessage = (event) => { popup.postMessage('check', '*'); parent.postMessage(event.data, '*'); URL.revokeObjectURL(blobURL); onmessage = (event) => { parent.postMessage(event.data, '*'); popup.close(); }; }; console.log('blob popup opened'); </script>"></iframe>
+</body>

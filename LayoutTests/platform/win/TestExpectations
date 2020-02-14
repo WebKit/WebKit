@@ -735,6 +735,8 @@ http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
 
+http/tests/security/blob-null-url-location-origin.html [ Skip ]
+
 ################################################################################
 ############################   End Plugin Failures   ###########################
 ################################################################################
