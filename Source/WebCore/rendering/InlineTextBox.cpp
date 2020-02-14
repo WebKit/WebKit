@@ -32,6 +32,7 @@
 #include "ElementRuleCollector.h"
 #include "EllipsisBox.h"
 #include "EventRegion.h"
+#include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HighlightMap.h"
