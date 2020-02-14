@@ -854,22 +854,6 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
     auto error = m_backingStore->iterateCursor(transactionIdentifier, cursorIdentifier, data, result);
 
     callback(error, result);
-
-    if (error.isNull())
-        prefetchCursor(transactionIdentifier, cursorIdentifier, data.count ? data.count : 1);
-}
-
-void UniqueIDBDatabase::prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, uint64_t step)
-{
-    LOG(IndexedDB, "UniqueIDBDatabase::prefetchCursor");
-
-    ASSERT(!isMainThread());
-
-    uint64_t countToPrefetch = step * 2;
-    while (countToPrefetch --) {
-        if (!m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
-            return;
-    }
 }
 
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)

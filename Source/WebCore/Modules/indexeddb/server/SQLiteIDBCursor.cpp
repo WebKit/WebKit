@@ -42,8 +42,8 @@
 namespace WebCore {
 namespace IDBServer {
 
-static const size_t prefetchLimit = 128;
-static const size_t prefetchSizeLimit = 8 * MB;
+static const size_t prefetchLimit = 256;
+static const size_t prefetchSizeLimit = 1 * MB;
 
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransaction& transaction, const IDBCursorInfo& info)
 {
@@ -102,7 +102,7 @@ SQLiteIDBCursor::~SQLiteIDBCursor()
         m_transaction->closeCursor(*this);
 }
 
-void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPath>& keyPath)
+void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPath>& keyPath, ShouldIncludePrefetchedRecords shouldIncludePrefetchedRecords)
 {
     ASSERT(!m_fetchedRecords.isEmpty());
 
@@ -113,7 +113,25 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPat
         return;
     }
 
-    result = { currentRecord.record.key, currentRecord.record.primaryKey, currentRecord.record.value ? *currentRecord.record.value : IDBValue(), keyPath};
+    if (shouldIncludePrefetchedRecords == ShouldIncludePrefetchedRecords::No) {
+        result = { currentRecord.record.key, currentRecord.record.primaryKey, IDBValue(currentRecord.record.value), keyPath };
+        return;
+    }
+
+    Vector<IDBCursorRecord> prefetchedRecords;
+    prefetchedRecords.reserveCapacity(m_fetchedRecords.size());
+    for (auto& record : m_fetchedRecords) {
+        if (record.isTerminalRecord())
+            break;
+
+        prefetchedRecords.append(record.record);
+    }
+
+    // First record will be returned as current record.
+    if (!prefetchedRecords.isEmpty())
+        prefetchedRecords.remove(0);
+
+    result = { currentRecord.record.key, currentRecord.record.primaryKey, IDBValue(currentRecord.record.value), keyPath, WTFMove(prefetchedRecords) };
 }
 
 static String buildPreIndexStatement(bool isDirectionNext)
@@ -263,6 +281,8 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
     // We also need to throw away any fetched records as they may no longer be valid.
     m_fetchedRecords.clear();
     m_fetchedRecordsSize = 0;
+
+    m_prefetchCount = 0;
 }
 
 void SQLiteIDBCursor::resetAndRebindStatement()
@@ -359,17 +379,32 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
     return true;
 }
 
-bool SQLiteIDBCursor::prefetch()
+bool SQLiteIDBCursor::prefetchOneRecord()
 {
-    LOG(IndexedDB, "SQLiteIDBCursor::prefetch() - Cursor already has %zu fetched records", m_fetchedRecords.size());
+    LOG(IndexedDB, "SQLiteIDBCursor::prefetchOneRecord() - Cursor already has %zu fetched records", m_fetchedRecords.size());
 
     if (m_fetchedRecordsSize >= prefetchSizeLimit || m_fetchedRecords.isEmpty() || m_fetchedRecords.size() >= prefetchLimit || m_fetchedRecords.last().isTerminalRecord())
         return false;
 
     m_currentKeyForUniqueness = m_fetchedRecords.last().record.key;
-    fetch();
 
-    return m_fetchedRecords.size() < prefetchLimit && m_fetchedRecordsSize < prefetchSizeLimit;
+    return fetch() && m_fetchedRecords.size() < prefetchLimit && m_fetchedRecordsSize < prefetchSizeLimit;
+}
+
+void SQLiteIDBCursor::increaseCountToPrefetch()
+{
+    m_prefetchCount = m_prefetchCount ? m_prefetchCount * 2 : 1;
+}
+
+bool SQLiteIDBCursor::prefetch()
+{
+    for (unsigned i = 0; i < m_prefetchCount; ++i) {
+        if (!prefetchOneRecord())
+            return false;
+    }
+
+    increaseCountToPrefetch();
+    return true;
 }
 
 bool SQLiteIDBCursor::advance(uint64_t count)
@@ -488,7 +523,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
     ASSERT(!m_fetchedRecords.isEmpty());
     ASSERT(!m_fetchedRecords.last().isTerminalRecord());
 
-    record.record.value = nullptr;
+    record.record.value = { };
 
     auto& database = m_transaction->sqliteTransaction()->database();
     SQLiteStatement* statement = nullptr;
@@ -546,7 +581,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
-            record.record.value = makeUnique<IDBValue>(ThreadSafeDataBuffer::create(WTFMove(keyData)), blobURLs, blobFilePaths);
+            record.record.value = { ThreadSafeDataBuffer::create(WTFMove(keyData)), blobURLs, blobFilePaths };
     } else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
@@ -572,7 +607,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
         if (result == SQLITE_ROW) {
             m_cachedObjectStoreStatement->getColumnBlobAsVector(0, keyData);
-            record.record.value = makeUnique<IDBValue>(ThreadSafeDataBuffer::create(WTFMove(keyData)));
+            record.record.value = { ThreadSafeDataBuffer::create(WTFMove(keyData)) };
         } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.
@@ -645,10 +680,10 @@ const IDBKeyData& SQLiteIDBCursor::currentPrimaryKey() const
     return m_fetchedRecords.first().record.primaryKey;
 }
 
-IDBValue* SQLiteIDBCursor::currentValue() const
+const IDBValue& SQLiteIDBCursor::currentValue() const
 {
     ASSERT(!m_fetchedRecords.isEmpty());
-    return m_fetchedRecords.first().record.value.get();
+    return m_fetchedRecords.first().record.value;
 }
 
 bool SQLiteIDBCursor::didComplete() const

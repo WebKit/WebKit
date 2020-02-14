@@ -81,9 +81,12 @@ public:
     void clearWrappers();
     IDBRequest* request() { return m_request.get(); }
 
-    bool setGetResult(IDBRequest&, const IDBGetResult&);
+    bool setGetResult(IDBRequest&, const IDBGetResult&, uint64_t operationID);
 
     virtual bool isKeyCursorWithValue() const { return false; }
+
+    Optional<IDBGetResult> iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID);
+    void clearPrefetchedRecords();
 
 protected:
     IDBCursor(IDBObjectStore&, const IDBCursorInfo&);
@@ -113,6 +116,9 @@ private:
     JSValueInWrappedObject m_keyWrapper;
     JSValueInWrappedObject m_primaryKeyWrapper;
     JSValueInWrappedObject m_valueWrapper;
+
+    Deque<IDBCursorRecord> m_prefetchedRecords;
+    uint64_t m_prefetchOperationID { 0 };
 };
 
 

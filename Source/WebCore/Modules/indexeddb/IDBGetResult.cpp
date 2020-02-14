@@ -55,6 +55,7 @@ void IDBGetResult::isolatedCopy(const IDBGetResult& source, IDBGetResult& destin
     destination.m_primaryKeyData = source.m_primaryKeyData.isolatedCopy();
     destination.m_keyPath = WebCore::isolatedCopy(source.m_keyPath);
     destination.m_isDefined = source.m_isDefined;
+    destination.m_prefetchedRecords = source.m_prefetchedRecords.isolatedCopy();
 }
 
 void IDBGetResult::setValue(IDBValue&& value)

@@ -112,10 +112,13 @@ public:
     bool nextRequestCanGoToServer() const { return m_nextRequestCanGoToServer && m_idbRequest; }
     void setNextRequestCanGoToServer(bool nextRequestCanGoToServer) { m_nextRequestCanGoToServer = nextRequestCanGoToServer; }
 
+    uint64_t operationID() const { return m_operationID; }
+
 protected:
     TransactionOperation(IDBTransaction& transaction)
         : m_transaction(transaction)
         , m_identifier(transaction.connectionProxy())
+        , m_operationID(transaction.generateOperationID())
     {
     }
 
@@ -142,6 +145,8 @@ private:
     RefPtr<IDBRequest> m_idbRequest;
     bool m_nextRequestCanGoToServer { true };
     bool m_didComplete { false };
+
+    uint64_t m_operationID { 0 };
 };
 
 class TransactionOperationImpl final : public TransactionOperation {

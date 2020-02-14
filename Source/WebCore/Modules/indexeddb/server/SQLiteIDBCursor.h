@@ -66,10 +66,11 @@ public:
 
     const IDBKeyData& currentKey() const;
     const IDBKeyData& currentPrimaryKey() const;
-    IDBValue* currentValue() const;
+    const IDBValue& currentValue() const;
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey);
+    bool prefetchOneRecord();
     bool prefetch();
 
     bool didComplete() const;
@@ -77,7 +78,8 @@ public:
 
     void objectStoreRecordsChanged();
 
-    void currentData(IDBGetResult&, const Optional<IDBKeyPath>&);
+    enum class ShouldIncludePrefetchedRecords { No, Yes };
+    void currentData(IDBGetResult&, const Optional<IDBKeyPath>&, ShouldIncludePrefetchedRecords = ShouldIncludePrefetchedRecords::No);
 
 private:
     bool establishStatement();
@@ -109,6 +111,8 @@ private:
 
     bool isDirectionNext() const { return m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique; }
 
+    void increaseCountToPrefetch();
+
     SQLiteIDBTransaction* m_transaction;
     IDBResourceIdentifier m_cursorIdentifier;
     int64_t m_objectStoreID;
@@ -133,6 +137,8 @@ private:
     int64_t m_boundID { 0 };
 
     bool m_backingStoreCursor { false };
+
+    unsigned m_prefetchCount { 0 };
 };
 
 } // namespace IDBServer

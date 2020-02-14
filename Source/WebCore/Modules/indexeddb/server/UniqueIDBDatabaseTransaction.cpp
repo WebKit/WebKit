@@ -374,8 +374,11 @@ void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestDa
     auto database = m_databaseConnection->database();
     ASSERT(database);
     
-    database->iterateCursor(requestData, data, [this, requestData](auto& error, const IDBGetResult& result) {
+    database->iterateCursor(requestData, data, [this, requestData, option = data.option](auto& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor (callback)");
+
+        if (option == IndexedDB::CursorIterateOption::DoNotReply)
+            return;
 
         if (error.isNull())
             m_databaseConnection->connectionToClient().didIterateCursor(IDBResultData::iterateCursorSuccess(requestData.requestIdentifier(), result));
