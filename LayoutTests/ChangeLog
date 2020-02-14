@@ -1,3 +1,14 @@
+2020-02-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening more debug timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=207764
+
+        From debug bot build 5916.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-14  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/wpt/service-workers/useragent.https.html is flaky failing

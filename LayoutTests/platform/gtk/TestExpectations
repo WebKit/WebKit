@@ -2468,7 +2468,7 @@ webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failu
 
 webkit.org/b/206691 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
 
-webkit.org/b/206875 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass ]
+webkit.org/b/206875 webkit.org/b/207711 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Pass Timeout ]
 
 webkit.org/b/206498 animations/transform-non-accelerated.html [ Failure Pass ]
 
@@ -2538,7 +2538,7 @@ webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow
 webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
 webkit.org/b/149916 inspector/controller/runtime-controller.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow Failure ]
-webkit.org/b/149916 inspector/css/css-property.html [ Failure Pass ]
+webkit.org/b/149916 [ Release ] inspector/css/css-property.html [ Failure Pass ]
 webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Failure Pass Slow ]
 webkit.org/b/149916 inspector/css/get-system-fonts.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/manager-preferredInspectorStyleSheetForFrame.html [ Pass Slow ]
@@ -2858,6 +2858,48 @@ webkit.org/b/207711 [ Release ] imported/w3c/web-platform-tests/web-animations/t
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Timeout ]
 webkit.org/b/207711 [ Debug ] inspector/controller/runtime-controller-import.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] inspector/css/add-css-property.html [ Timeout ]
+
+# Tests not tested before r256571 (probably skipped due to earlier tests crashes/timeouts)
+webkit.org/b/207711 [ Debug ] inspector/animation/lifecycle-css-animation.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/modify-inline-style.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/remote-object/array.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/remote-object/class.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/formatting/source-map-css-1.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom-debugger/url-breakpoints.html [ Timeout ]
+
+# Tests good until r238072 but not tested again until in r256571
+webkit.org/b/207711 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/debugger/breakpoint-action-eval.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/debugger/breakpoint-columns.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/debugger/breakpoint-scope.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/debugger/command-line-api-exception.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom/csp-hash.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom/domutilities-path-dump.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom/getEventListenersForNode.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/auditTestCaseResult.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/auditTestGroup.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/auditTestGroupResult.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/color.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/model/remote-object/dom.html [ Timeout ]
+
+# Other timeouts from r256571 / debug build 5916
+webkit.org/b/207711 [ Debug ] http/tests/inspector/dom/didFireEvent.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] http/tests/inspector/network/local-resource-override-main-resource.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/console/console-count.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/console/console-time.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/console/messageAdded-from-named-evaluations.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/add-rule.html [ Pass Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/css-property.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/indexeddb/requestData.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/indexeddb/requestDatabase.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/formatting/formatting-javascript.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom-debugger/event-breakpoint-with-navigation.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/dom-debugger/event-listener-breakpoints.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/generateCSSRuleString.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/modify-css-property-race.html [ Timeout ]
+webkit.org/b/207711 [ Debug ] inspector/css/modify-css-property.html [ Timeout ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
