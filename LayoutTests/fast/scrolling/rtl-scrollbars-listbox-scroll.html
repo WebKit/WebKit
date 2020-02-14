@@ -26,9 +26,11 @@ if (window.internals) {
 </select>
 <script>
 if (window.eventSender) {
-    eventSender.mouseMoveTo(25, 5);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "began", "none");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    window.addEventListener('load', function() {
+        eventSender.mouseMoveTo(25, 5);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "began", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    });
 }
 </script>
 </body>

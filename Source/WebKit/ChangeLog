@@ -1,3 +1,16 @@
+2020-02-13  Ben Nham  <nham@apple.com>
+
+        Flash of white can occur if JS forces an early layout
+        https://bugs.webkit.org/show_bug.cgi?id=207516
+
+        This causes us to wait for the first non-empty layout before we paint on Mac, which we
+        already do on all other platforms.
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+
 2020-02-13  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r255961): Default state for data URL handling is incorrect

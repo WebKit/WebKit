@@ -1,3 +1,16 @@
+2020-02-13  Ben Nham  <nham@apple.com>
+
+        Flash of white can occur if JS forces an early layout
+        https://bugs.webkit.org/show_bug.cgi?id=207516
+
+        This causes us to wait for the first non-empty layout before we paint on Mac, which we
+        already do on all other platforms.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/rtl-scrollbars-listbox-scroll.html: Wait for document to load before scrolling.
+        * platform/mac/TestExpectations: Skip before-load-001.html as we already do on iOS. This test depends on first paint timing and this patch makes the Mac behave like iOS in terms of first paint.
+
 2020-02-13  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] fast/scrolling/latching/iframe_in_iframe.html is flaky failing.
