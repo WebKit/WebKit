@@ -487,11 +487,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void remove(ValueType*);
 
         static constexpr unsigned computeBestTableSize(unsigned keyCount);
-        static constexpr bool shouldExpand(uint64_t keyAndDeleteCount, uint64_t tableSize)
-        {
-            return keyAndDeleteCount * maxLoadDenominator >= tableSize * maxLoadNumerator;
-        }
-        bool shouldExpand() const { return shouldExpand(keyCount() + deletedCount(), tableSize()); }
+        bool shouldExpand() const { return (keyCount() + deletedCount()) * maxLoad >= tableSize(); }
         bool mustRehashInPlace() const { return keyCount() * minLoad < tableSize() * 2; }
         bool shouldShrink() const { return keyCount() * minLoad < tableSize() && tableSize() > KeyTraits::minimumTableSize; }
         ValueType* expand(ValueType* entry = nullptr);
@@ -526,9 +522,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         static void invalidateIterators() { }
 #endif
 
-        // Load-factor is 75%.
-        static constexpr unsigned maxLoadNumerator = 3;
-        static constexpr unsigned maxLoadDenominator = 4;
+        static constexpr unsigned maxLoad = 2;
         static constexpr unsigned minLoad = 6;
 
         static constexpr int tableSizeOffset = -1;
@@ -562,25 +556,42 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #endif
     };
 
+    // Set all the bits to one after the most significant bit: 00110101010 -> 00111111111.
+    template<unsigned size> struct OneifyLowBits;
+    template<>
+    struct OneifyLowBits<0> {
+        static constexpr unsigned value = 0;
+    };
+    template<unsigned number>
+    struct OneifyLowBits {
+        static constexpr unsigned value = number | OneifyLowBits<(number >> 1)>::value;
+    };
+    // Compute the first power of two integer that is an upper bound of the parameter 'number'.
+    template<unsigned number>
+    struct UpperPowerOfTwoBound {
+        static constexpr unsigned value = (OneifyLowBits<number - 1>::value + 1) * 2;
+    };
+
+    // Because power of two numbers are the limit of maxLoad, their capacity is twice the
+    // UpperPowerOfTwoBound, or 4 times their values.
+    template<unsigned size, bool isPowerOfTwo> struct HashTableCapacityForSizeSplitter;
+    template<unsigned size>
+    struct HashTableCapacityForSizeSplitter<size, true> {
+        static constexpr unsigned value = size * 4;
+    };
+    template<unsigned size>
+    struct HashTableCapacityForSizeSplitter<size, false> {
+        static constexpr unsigned value = UpperPowerOfTwoBound<size>::value;
+    };
+
     // HashTableCapacityForSize computes the upper power of two capacity to hold the size parameter.
     // This is done at compile time to initialize the HashTraits.
     template<unsigned size>
     struct HashTableCapacityForSize {
-        static constexpr unsigned capacityForSize(uint64_t sizeArg)
-        {
-            constexpr uint64_t maxLoadNumerator = 3;
-            constexpr uint64_t maxLoadDenominator = 4;
-            if (!sizeArg)
-                return 0;
-            uint64_t capacity = roundUpToPowerOfTwo(sizeArg);
-            if (sizeArg * maxLoadDenominator >= capacity * maxLoadNumerator)
-                return capacity * 2;
-            return capacity;
-        }
-
-        static constexpr unsigned value = capacityForSize(size);
+        static constexpr unsigned value = HashTableCapacityForSizeSplitter<size, !(size & (size - 1))>::value;
         COMPILE_ASSERT(size > 0, HashTableNonZeroMinimumCapacity);
         COMPILE_ASSERT(!static_cast<unsigned>(value >> 31), HashTableNoCapacityOverflow);
+        COMPILE_ASSERT(value > (2 * size), HashTableCapacityHoldsContentSize);
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -1227,13 +1238,11 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     {
         unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount) * 2;
 
-        // With maxLoad at 3/4 and minLoad at 1/6, our average load is 11/24.
-        // If we are getting halfway between 11/24 and 3/4 (i.e. past 14.5/24,
-        // which we'll round up to 15/24 i.e. 5/8), we double the size to avoid
-        // being too close to loadMax and bring the ratio close to 11/24. This
-        // give us a load in the bounds [9/24, 15/24).
-        bool aboveThresholdForEagerExpansion = keyCount * 8 >= bestTableSize * 5;
-        if (aboveThresholdForEagerExpansion)
+        // With maxLoad at 1/2 and minLoad at 1/6, our average load is 2/6.
+        // If we are getting halfway between 2/6 and 1/2 (past 5/12), we double the size to avoid being too close to
+        // loadMax and bring the ratio close to 2/6. This give us a load in the bounds [3/12, 5/12).
+        bool aboveThreeQuarterLoad = keyCount * 12 >= bestTableSize * 5;
+        if (aboveThreeQuarterLoad)
             bestTableSize *= 2;
 
         unsigned minimumTableSize = KeyTraits::minimumTableSize;

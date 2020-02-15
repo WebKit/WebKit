@@ -1,5 +1,35 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256011. rdar://problem/59446995
+
+    Unreviewed, revert 75% load-factor because of JetStream2/string-unpack-code-SP regression
+    https://bugs.webkit.org/show_bug.cgi?id=207183
+    
+    Source/WTF:
+    
+    * wtf/HashTable.h:
+    (WTF::HashTable::shouldExpand const):
+    (WTF::KeyTraits>::computeBestTableSize):
+    (WTF::HashTable::shouldExpand): Deleted.
+    (WTF::HashTableCapacityForSize::capacityForSize): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+    (TestWebKitAPI::testInitialCapacity):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256011 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, revert 75% load-factor because of JetStream2/string-unpack-code-SP regression
+            https://bugs.webkit.org/show_bug.cgi?id=207183
+
+            * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+            (TestWebKitAPI::testInitialCapacity):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255889. rdar://problem/59446995
 
     [WTF] Try using 75% load factor for HashTable
