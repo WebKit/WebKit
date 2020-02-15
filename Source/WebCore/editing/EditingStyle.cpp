@@ -1366,6 +1366,30 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
         if (!computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
             computedStyle->m_mutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
 
+        RefPtr<EditingStyle> computedStyleOfElement;
+        auto replaceSemanticColorWithComputedValue = [&](const CSSPropertyID id) {
+            auto color = m_mutableStyle->propertyAsColor(id);
+            if (!color || (color->isVisible() && !color->isSemantic()))
+                return;
+
+            if (!computedStyleOfElement)
+                computedStyleOfElement = EditingStyle::create(&element, EditingPropertiesInEffect);
+
+            if (!computedStyleOfElement->m_mutableStyle)
+                return;
+
+            auto computedValue = computedStyleOfElement->m_mutableStyle->getPropertyValue(id);
+            if (!computedValue)
+                return;
+
+            m_mutableStyle->setProperty(id, computedValue);
+        };
+
+        // Replace semantic color identifiers like -apple-system-label with RGB values so that comparsions in getPropertiesNotIn below would work.
+        replaceSemanticColorWithComputedValue(CSSPropertyColor);
+        replaceSemanticColorWithComputedValue(CSSPropertyCaretColor);
+        replaceSemanticColorWithComputedValue(CSSPropertyBackgroundColor);
+
         removePropertiesInStyle(computedStyle->m_mutableStyle.get(), styleFromMatchedRules.get());
         m_mutableStyle = getPropertiesNotIn(*m_mutableStyle, *computedStyle->m_mutableStyle);
     }
@@ -1587,10 +1611,17 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
     if (!m_mutableStyle || !renderer || !renderer->style().hasAppleColorFilter())
         return *this;
 
-    bool hasColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyColor);
-    bool hasCaretColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyCaretColor);
-    bool hasBackgroundColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
-    if (!hasColor && !hasCaretColor && !hasBackgroundColor)
+    auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> Optional<Color> {
+        auto color = m_mutableStyle->propertyAsColor(id);
+        if (!color || !color->isVisible() || color->isSemantic())
+            return WTF::nullopt;
+        return color;
+    };
+
+    auto color = colorForPropertyIfInvertible(CSSPropertyColor);
+    auto caretColor = colorForPropertyIfInvertible(CSSPropertyCaretColor);
+    auto backgroundColor = colorForPropertyIfInvertible(CSSPropertyBackgroundColor);
+    if (!color && !caretColor && !backgroundColor)
         return *this;
 
     auto styleWithInvertedColors = copy();
@@ -1603,13 +1634,13 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
         styleWithInvertedColors->m_mutableStyle->setProperty(propertyID, newColor.cssText());
     };
 
-    if (hasColor)
+    if (color)
         invertedColor(CSSPropertyColor);
 
-    if (hasCaretColor)
+    if (caretColor)
         invertedColor(CSSPropertyCaretColor);
 
-    if (hasBackgroundColor)
+    if (backgroundColor)
         invertedColor(CSSPropertyBackgroundColor);
 
     return styleWithInvertedColors;
