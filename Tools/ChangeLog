@@ -1,3 +1,44 @@
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256377. rdar://problem/59446971
+
+    Regression: RTCRtpSender.getCapabilities("video") returns null on iOS 13.4 (17E5223h)
+    https://bugs.webkit.org/show_bug.cgi?id=207325
+    <rdar://problem/59224810>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Manually tested and covered by API test.
+    
+    * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+    (WebCore::LibWebRTCProvider::webRTCAvailable):
+    Return true unconditionally on iOS since libwebrtc.dylib is always available.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+    (TestWebKitAPI::TEST):
+    Add a test validating that RTCRtpSender.getCapabilities does not return null.
+    * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256377 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Youenn Fablet  <youenn@apple.com>
+
+            Regression: RTCRtpSender.getCapabilities("video") returns null on iOS 13.4 (17E5223h)
+            https://bugs.webkit.org/show_bug.cgi?id=207325
+            <rdar://problem/59224810>
+
+            Reviewed by Eric Carlson.
+
+            * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+            (TestWebKitAPI::TEST):
+            Add a test validating that RTCRtpSender.getCapabilities does not return null.
+            * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2020-02-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r256297. rdar://problem/59442308
