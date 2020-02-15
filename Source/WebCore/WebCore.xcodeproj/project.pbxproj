@@ -7352,6 +7352,7 @@
 		4176900422FCD8F200B1576D /* MediaSourceRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceRegistry.cpp; sourceTree = "<group>"; };
 		4176E88F23C348D2003E83FE /* MediaRecorderProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorderProvider.h; sourceTree = "<group>"; };
 		4176E89123C34B75003E83FE /* MediaRecorderProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderProvider.cpp; sourceTree = "<group>"; };
+		4177040B23F70CAB000C54EE /* MediaRecorderPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderPrivate.cpp; sourceTree = "<group>"; };
 		4177F51C2382544000C04486 /* BaseAudioSharedUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseAudioSharedUnit.cpp; sourceTree = "<group>"; };
 		4177F51E2382545E00C04486 /* BaseAudioSharedUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseAudioSharedUnit.h; sourceTree = "<group>"; };
 		417DA4CE13734326007C57FB /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Internals.h; sourceTree = "<group>"; };
@@ -18873,6 +18874,7 @@
 			isa = PBXGroup;
 			children = (
 				4D3C05D421AF480900F2890A /* cocoa */,
+				4177040B23F70CAB000C54EE /* MediaRecorderPrivate.cpp */,
 				4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */,
 				4D73F945218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.cpp */,
 				4D73F944218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h */,

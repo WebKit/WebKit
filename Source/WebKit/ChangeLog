@@ -1,3 +1,14 @@
+2020-02-14  Youenn Fablet  <youenn@apple.com>
+
+        Introduce MediaStreamPrivate::forEachTrack
+        https://bugs.webkit.org/show_bug.cgi?id=207773
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::MediaRecorderPrivate):
+        Use helper routine instead of MediaStreamPrviate::streamTracks().
+
 2020-02-14  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView._setResourceLoadDelegate should clear the WebPageProxy's ResourceLoadClient

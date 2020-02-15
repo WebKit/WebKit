@@ -116,6 +116,12 @@ MediaStreamTrackPrivateVector MediaStreamPrivate::tracks() const
     return copyToVector(m_trackSet.values());
 }
 
+void MediaStreamPrivate::forEachTrack(const Function<void(const MediaStreamTrackPrivate&)>& callback) const
+{
+    for (auto& track : m_trackSet.values())
+        callback(*track);
+}
+
 void MediaStreamPrivate::updateActiveState(NotifyClientOption notifyClientOption)
 {
     bool newActiveState = false;

@@ -81,7 +81,9 @@ public:
 
     String id() const { return m_id; }
 
-    WEBCORE_EXPORT MediaStreamTrackPrivateVector tracks() const;
+    MediaStreamTrackPrivateVector tracks() const;
+    bool hasTracks() const { return !m_trackSet.isEmpty(); }
+    void forEachTrack(const Function<void(const MediaStreamTrackPrivate&)>&) const;
     MediaStreamTrackPrivate* activeVideoTrack() { return m_activeVideoTrack; }
 
     bool active() const { return m_isActive; }

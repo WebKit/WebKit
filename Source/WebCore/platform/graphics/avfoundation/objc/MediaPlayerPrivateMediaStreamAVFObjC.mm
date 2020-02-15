@@ -630,19 +630,19 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::readyState() const
 
 MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState()
 {
-    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->active() || !m_mediaStreamPrivate->tracks().size())
+    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->active() || !m_mediaStreamPrivate->hasTracks())
         return MediaPlayer::ReadyState::HaveNothing;
 
-    bool allTracksAreLive = true;
-    for (auto& track : m_mediaStreamPrivate->tracks()) {
-        if (!track->enabled() || track->readyState() != MediaStreamTrackPrivate::ReadyState::Live)
-            allTracksAreLive = false;
+    bool waitingForImage = m_mediaStreamPrivate->activeVideoTrack() && !m_imagePainter.mediaSample;
+    if (waitingForImage && (!m_haveSeenMetadata || m_waitingForFirstImage))
+        return MediaPlayer::ReadyState::HaveNothing;
 
-        if (track == m_mediaStreamPrivate->activeVideoTrack() && !m_imagePainter.mediaSample) {
-            if (!m_haveSeenMetadata || m_waitingForFirstImage)
-                return MediaPlayer::ReadyState::HaveNothing;
-            allTracksAreLive = false;
-        }
+    bool allTracksAreLive = !waitingForImage;
+    if (allTracksAreLive) {
+        m_mediaStreamPrivate->forEachTrack([&](auto& track) {
+            if (!track.enabled() || track.readyState() != MediaStreamTrackPrivate::ReadyState::Live)
+                allTracksAreLive = false;
+        });
     }
 
     if (m_waitingForFirstImage || (!allTracksAreLive && !m_haveSeenMetadata))

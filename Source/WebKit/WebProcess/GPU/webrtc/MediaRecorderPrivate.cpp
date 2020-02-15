@@ -50,32 +50,21 @@ MediaRecorderPrivate::MediaRecorderPrivate(const MediaStreamPrivate& stream)
     // FIXME: we will need to implement support for multiple audio/video tracks
     // Currently we only choose the first track as the recorded track.
 
-    const MediaStreamTrackPrivate* audioTrack { nullptr };
-    const MediaStreamTrackPrivate* videoTrack { nullptr };
-    for (auto& track : stream.tracks()) {
-        if (!track->enabled() || track->ended())
-            continue;
-        switch (track->type()) {
-        case RealtimeMediaSource::Type::Video: {
-            auto& settings = track->settings();
-            if (!videoTrack && settings.supportsWidth() && settings.supportsHeight()) {
-                videoTrack = track.get();
-                m_recordedVideoTrackID = videoTrack->id();
-            }
-            break;
-        }
-        case RealtimeMediaSource::Type::Audio:
-            if (!audioTrack) {
-                m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
-                audioTrack = track.get();
-                m_recordedAudioTrackID = audioTrack->id();
-            }
-            break;
-        case RealtimeMediaSource::Type::None:
-            break;
-        }
+    auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
+    if (selectedTracks.audioTrack) {
+        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
+        m_recordedAudioTrackID = selectedTracks.audioTrack->id();
     }
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!audioTrack, videoTrack ? videoTrack->settings().width() : 0, videoTrack ? videoTrack->settings().height() : 0 }, [this, weakThis = makeWeakPtr(this)](auto&& exception) {
+
+    int width = 0;
+    int height = 0;
+    if (selectedTracks.videoTrack) {
+        m_recordedVideoTrackID = selectedTracks.videoTrack->id();
+        height = selectedTracks.videoTrack->settings().height();
+        width = selectedTracks.videoTrack->settings().width();
+    }
+
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this)](auto&& exception) {
         if (!weakThis || !exception)
             return;
         m_errorCallback(Exception { exception->code, WTFMove(exception->message) });

@@ -38,6 +38,7 @@ namespace WebCore {
 
 class AudioStreamDescription;
 class MediaSample;
+class MediaStreamPrivate;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
 class SharedBuffer;
@@ -45,6 +46,12 @@ class SharedBuffer;
 class MediaRecorderPrivate {
 public:
     virtual ~MediaRecorderPrivate() = default;
+
+    struct AudioVideoSelectedTracks {
+        const MediaStreamTrackPrivate* audioTrack { nullptr };
+        const MediaStreamTrackPrivate* videoTrack { nullptr };
+    };
+    WEBCORE_EXPORT static AudioVideoSelectedTracks selectTracks(const MediaStreamPrivate&);
 
     virtual void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) = 0;
     virtual void audioSamplesAvailable(const MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
@@ -58,7 +65,7 @@ public:
 protected:
     ErrorCallback m_errorCallback;
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

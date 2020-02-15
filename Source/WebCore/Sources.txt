@@ -1965,6 +1965,7 @@ platform/graphics/transforms/TranslateTransformOperation.cpp
 platform/mediacapabilities/MediaEngineConfigurationFactory.cpp
 platform/mediacapabilities/MediaCapabilitiesLogging.cpp
 
+platform/mediarecorder/MediaRecorderPrivate.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 
 platform/mediastream/AudioMediaStreamTrackRenderer.cpp
