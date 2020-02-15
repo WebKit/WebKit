@@ -1,0 +1,4 @@
+ 
+Confirm that SVG elements with bad scale don't crash when nearby elements go through transitions.
+
+PASS
