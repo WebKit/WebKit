@@ -1,3 +1,47 @@
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256207. rdar://problem/59447263
+
+    Don't update selection when calling setSelectionRange on a disconnected input element
+    https://bugs.webkit.org/show_bug.cgi?id=207357
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Rebaselined the test that progressed a little. The test now passes offset checks but still fails direction check.
+    
+    * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea-expected.txt:
+    
+    Source/WebCore:
+    
+    Don't update FrameSelection when the text form control element is disconnected from document.
+    
+    * html/HTMLTextFormControlElement.cpp:
+    (WebCore::HTMLTextFormControlElement::setSelectionRange):
+    
+    LayoutTests:
+    
+    Rebaselined the test that has progressed with this change.
+    
+    * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+    * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+    * platform/mac/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256207 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Don't update selection when calling setSelectionRange on a disconnected input element
+            https://bugs.webkit.org/show_bug.cgi?id=207357
+
+            Reviewed by Antti Koivisto.
+
+            Rebaselined the test that progressed a little. The test now passes offset checks but still fails direction check.
+
+            * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea-expected.txt:
+
 2020-02-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r255668. rdar://problem/59299120
