@@ -691,10 +691,10 @@ void WebProcessPool::initializeClassesForParameterCoding()
     auto mutableSet = adoptNS([standardClasses mutableCopy]);
 
     for (const auto& customClass : customClasses) {
-        const auto* className = customClass.utf8().data();
-        Class objectClass = objc_lookUpClass(className);
+        auto className = customClass.utf8();
+        Class objectClass = objc_lookUpClass(className.data());
         if (!objectClass) {
-            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className);
+            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className.data());
             break;
         }
 
