@@ -1,5 +1,52 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256401. rdar://problem/59447020
+
+    WebPage::getFocusedElementInformation should be robust when the focused element changes during layout
+    https://bugs.webkit.org/show_bug.cgi?id=207582
+    <rdar://problem/47634344>
+    
+    Reviewed by Tim Horton.
+    
+    This is a speculative fix for <rdar://problem/47634344>, wherein the initial layout update in WebPage::
+    getFocusedElementInformation may cause the currently focused element to disappear (or change). In the case where
+    m_focusedElement becomes nil, we end up crashing with a null pointer deref, since the rest of the method assumes
+    that m_focusedElement exists.
+    
+    To patch this crash, bail early (after the first layout update) if m_focusedElement changed during the layout
+    pass. Since the rest of the function my trigger even more layout updates that could nuke m_focusedElement, I
+    also changed the rest of the function to use the locally stored `focusedElement` variable instead of
+    m_focusedElement, on WebPage.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getFocusedElementInformation):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256401 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            WebPage::getFocusedElementInformation should be robust when the focused element changes during layout
+            https://bugs.webkit.org/show_bug.cgi?id=207582
+            <rdar://problem/47634344>
+
+            Reviewed by Tim Horton.
+
+            This is a speculative fix for <rdar://problem/47634344>, wherein the initial layout update in WebPage::
+            getFocusedElementInformation may cause the currently focused element to disappear (or change). In the case where
+            m_focusedElement becomes nil, we end up crashing with a null pointer deref, since the rest of the method assumes
+            that m_focusedElement exists.
+
+            To patch this crash, bail early (after the first layout update) if m_focusedElement changed during the layout
+            pass. Since the rest of the function my trigger even more layout updates that could nuke m_focusedElement, I
+            also changed the rest of the function to use the locally stored `focusedElement` variable instead of
+            m_focusedElement, on WebPage.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getFocusedElementInformation):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256346. rdar://problem/59446984
 
     video.currentTime is not being updated in iOS 13.4 Beta

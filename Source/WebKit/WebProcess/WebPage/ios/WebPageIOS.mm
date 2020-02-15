@@ -2992,14 +2992,17 @@ void WebPage::focusNextFocusedElement(bool isForward, CallbackID callbackID)
 
 void WebPage::getFocusedElementInformation(FocusedElementInformation& information)
 {
+    auto focusedElement = m_focusedElement.copyRef();
     layoutIfNeeded();
+    if (focusedElement != m_focusedElement)
+        return;
 
     information.lastInteractionLocation = m_lastInteractionLocation;
-    if (auto elementContext = contextForElement(*m_focusedElement))
+    if (auto elementContext = contextForElement(*focusedElement))
         information.elementContext = WTFMove(*elementContext);
 
-    if (auto* renderer = m_focusedElement->renderer()) {
-        information.interactionRect = rootViewInteractionBoundsForElement(*m_focusedElement);
+    if (auto* renderer = focusedElement->renderer()) {
+        information.interactionRect = rootViewInteractionBoundsForElement(*focusedElement);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
@@ -3009,26 +3012,26 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     } else
         information.interactionRect = { };
 
-    if (is<HTMLElement>(m_focusedElement))
-        information.isSpellCheckingEnabled = downcast<HTMLElement>(*m_focusedElement).spellcheck();
+    if (is<HTMLElement>(focusedElement))
+        information.isSpellCheckingEnabled = downcast<HTMLElement>(*focusedElement).spellcheck();
 
     information.minimumScaleFactor = minimumPageScaleFactor();
     information.maximumScaleFactor = maximumPageScaleFactor();
     information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
-    if (auto* nextElement = nextAssistableElement(m_focusedElement.get(), *m_page, true)) {
+    if (auto* nextElement = nextAssistableElement(focusedElement.get(), *m_page, true)) {
         information.nextNodeRect = rootViewBoundsForElement(*nextElement);
         information.hasNextNode = true;
     }
-    if (auto* previousElement = nextAssistableElement(m_focusedElement.get(), *m_page, false)) {
+    if (auto* previousElement = nextAssistableElement(focusedElement.get(), *m_page, false)) {
         information.previousNodeRect = rootViewBoundsForElement(*previousElement);
         information.hasPreviousNode = true;
     }
     information.focusedElementIdentifier = m_currentFocusedElementIdentifier;
 
-    if (is<LabelableElement>(*m_focusedElement)) {
-        auto labels = downcast<LabelableElement>(*m_focusedElement).labels();
+    if (is<LabelableElement>(*focusedElement)) {
+        auto labels = downcast<LabelableElement>(*focusedElement).labels();
         Vector<Ref<Element>> associatedLabels;
         for (unsigned index = 0; index < labels->length(); ++index) {
             if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
@@ -3043,11 +3046,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         }
     }
 
-    information.title = m_focusedElement->title();
-    information.ariaLabel = m_focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
+    information.title = focusedElement->title();
+    information.ariaLabel = focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
 
-    if (is<HTMLSelectElement>(*m_focusedElement)) {
-        HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_focusedElement);
+    if (is<HTMLSelectElement>(*focusedElement)) {
+        HTMLSelectElement& element = downcast<HTMLSelectElement>(*focusedElement);
         information.elementType = InputType::Select;
         const Vector<HTMLElement*>& items = element.listItems();
         size_t count = items.size();
@@ -3068,8 +3071,8 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         }
         information.selectedIndex = element.selectedIndex();
         information.isMultiSelect = element.multiple();
-    } else if (is<HTMLTextAreaElement>(*m_focusedElement)) {
-        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*m_focusedElement);
+    } else if (is<HTMLTextAreaElement>(*focusedElement)) {
+        HTMLTextAreaElement& element = downcast<HTMLTextAreaElement>(*focusedElement);
         information.autocapitalizeType = element.autocapitalizeType();
         information.isAutocorrect = element.shouldAutocorrect();
         information.elementType = InputType::TextArea;
@@ -3079,14 +3082,14 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
         information.inputMode = element.canonicalInputMode();
         information.enterKeyHint = element.canonicalEnterKeyHint();
-    } else if (is<HTMLInputElement>(*m_focusedElement)) {
-        HTMLInputElement& element = downcast<HTMLInputElement>(*m_focusedElement);
+    } else if (is<HTMLInputElement>(*focusedElement)) {
+        HTMLInputElement& element = downcast<HTMLInputElement>(*focusedElement);
         HTMLFormElement* form = element.form();
         if (form)
             information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
         if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(element)) {
             information.acceptsAutofilledLoginCredentials = true;
-            information.isAutofillableUsernameField = autofillElements->username() == m_focusedElement;
+            information.isAutofillableUsernameField = autofillElements->username() == focusedElement;
         }
         information.representingPageURL = element.document().urlForBindings();
         information.autocapitalizeType = element.autocapitalizeType();
@@ -3145,18 +3148,18 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
-    } else if (is<HTMLImageElement>(*m_focusedElement) && downcast<HTMLImageElement>(*m_focusedElement).hasEditableImageAttribute()) {
+    } else if (is<HTMLImageElement>(*focusedElement) && downcast<HTMLImageElement>(*focusedElement).hasEditableImageAttribute()) {
         information.elementType = InputType::Drawing;
-        information.embeddedViewID = downcast<HTMLImageElement>(*m_focusedElement).editableImageViewID();
-    } else if (m_focusedElement->hasEditableStyle()) {
+        information.embeddedViewID = downcast<HTMLImageElement>(*focusedElement).editableImageViewID();
+    } else if (focusedElement->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
-        if (is<HTMLElement>(*m_focusedElement)) {
-            auto& focusedElement = downcast<HTMLElement>(*m_focusedElement);
-            information.isAutocorrect = focusedElement.shouldAutocorrect();
-            information.autocapitalizeType = focusedElement.autocapitalizeType();
-            information.inputMode = focusedElement.canonicalInputMode();
-            information.enterKeyHint = focusedElement.canonicalEnterKeyHint();
-            information.shouldSynthesizeKeyEventsForEditing = focusedElement.document().settings().syntheticEditingCommandsEnabled();
+        if (is<HTMLElement>(*focusedElement)) {
+            auto& focusedHTMLElement = downcast<HTMLElement>(*focusedElement);
+            information.isAutocorrect = focusedHTMLElement.shouldAutocorrect();
+            information.autocapitalizeType = focusedHTMLElement.autocapitalizeType();
+            information.inputMode = focusedHTMLElement.canonicalInputMode();
+            information.enterKeyHint = focusedHTMLElement.canonicalEnterKeyHint();
+            information.shouldSynthesizeKeyEventsForEditing = focusedHTMLElement.document().settings().syntheticEditingCommandsEnabled();
         } else {
             information.isAutocorrect = true;
             information.autocapitalizeType = AutocapitalizeTypeDefault;
@@ -3164,12 +3167,12 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.isReadOnly = false;
     }
 
-    if (m_focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() && isTransparentOrFullyClipped(*m_focusedElement)) {
+    if (focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
         information.autocapitalizeType = AutocapitalizeTypeNone;
         information.isAutocorrect = false;
     }
 
-    auto& quirks = m_focusedElement->document().quirks();
+    auto& quirks = focusedElement->document().quirks();
     information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
     information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
     information.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = quirks.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation();
