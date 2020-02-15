@@ -53,7 +53,7 @@ public:
     };
     
     using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
-    static ExceptionOr<Ref<FontFace>> create(Document&, const String& family, Source&&, const Descriptors&);
+    static Ref<FontFace> create(Document&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 
@@ -94,10 +94,9 @@ public:
 private:
     explicit FontFace(CSSFontSelector&);
     explicit FontFace(CSSFontFace&);
-
     // Callback for LoadedPromise.
     FontFace& loadedPromiseResolve();
-
+    void setErrorState();
     Ref<CSSFontFace> m_backing;
     UniqueRef<LoadedPromise> m_loadedPromise;
 };

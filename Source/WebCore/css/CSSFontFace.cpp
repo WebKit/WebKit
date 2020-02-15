@@ -712,4 +712,22 @@ bool CSSFontFace::hasSVGFontFaceSource() const
 }
 #endif
 
+void CSSFontFace::setErrorState()
+{
+    switch (m_status) {
+    case Status::Pending:
+        setStatus(Status::Loading);
+        break;
+    case Status::Success:
+        ASSERT_NOT_REACHED();
+        break;
+    case Status::Failure:
+        return;
+    default:
+        break;
+    }
+    
+    setStatus(Status::Failure);
+}
+
 }

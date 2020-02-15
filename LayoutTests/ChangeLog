@@ -1,3 +1,15 @@
+2020-02-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        new FontFace() should not throw when failing to parse arguments
+        https://bugs.webkit.org/show_bug.cgi?id=205770
+
+        Reviewed by Myles Maxfield.
+
+        Tests that constructor doesn't throw, sets members to corresponding default strings.
+
+        * http/tests/css/font-face-constructor-expected.txt: Added.
+        * http/tests/css/font-face-constructor.html: Added.
+
 2020-02-14  Ben Nham  <nham@apple.com>
 
         Fix flaky tests that scroll before first paint

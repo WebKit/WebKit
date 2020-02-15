@@ -1,5 +1,5 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FontFaceSetLoadEvent"
 PASS idl_test validation 
 PASS Partial interface Document: member names are unique 
 PASS Partial interface Document[2]: member names are unique 
@@ -29,20 +29,20 @@ PASS FontFace interface: attribute display
 PASS FontFace interface: attribute status 
 PASS FontFace interface: operation load() 
 PASS FontFace interface: attribute loaded 
-FAIL FontFace must be primary interface of fontFace assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL Stringification of fontFace assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "family" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "style" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "weight" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "stretch" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "unicodeRange" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "variant" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "featureSettings" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "variationSettings" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "display" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "status" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "load()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
-FAIL FontFace interface: fontFace must inherit property "loaded" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFace"
+PASS FontFace must be primary interface of fontFace 
+PASS Stringification of fontFace 
+PASS FontFace interface: fontFace must inherit property "family" with the proper type 
+PASS FontFace interface: fontFace must inherit property "style" with the proper type 
+PASS FontFace interface: fontFace must inherit property "weight" with the proper type 
+PASS FontFace interface: fontFace must inherit property "stretch" with the proper type 
+PASS FontFace interface: fontFace must inherit property "unicodeRange" with the proper type 
+FAIL FontFace interface: fontFace must inherit property "variant" with the proper type assert_inherits: property "variant" not found in prototype chain
+PASS FontFace interface: fontFace must inherit property "featureSettings" with the proper type 
+FAIL FontFace interface: fontFace must inherit property "variationSettings" with the proper type assert_inherits: property "variationSettings" not found in prototype chain
+PASS FontFace interface: fontFace must inherit property "display" with the proper type 
+PASS FontFace interface: fontFace must inherit property "status" with the proper type 
+PASS FontFace interface: fontFace must inherit property "load()" with the proper type 
+PASS FontFace interface: fontFace must inherit property "loaded" with the proper type 
 FAIL FontFaceSetLoadEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
 FAIL FontFaceSetLoadEvent interface object length assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
 FAIL FontFaceSetLoadEvent interface object name assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing

@@ -2,5 +2,5 @@
 The width of character is same as font used
 Actual output:
 
-FAIL The width of character is same as font used The string did not match the expected pattern.
+PASS The width of character is same as font used 
 

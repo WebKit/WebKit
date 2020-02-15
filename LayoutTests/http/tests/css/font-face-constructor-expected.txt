@@ -1,0 +1,18 @@
+Test Font Face constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).status is "error"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).style is "normal"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).weight is "normal"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).stretch is "normal"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).unicodeRange is "U+0-10FFFF"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).featureSettings is "normal"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).display is "auto"
+PASS: Did not throw
+Good
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a
