@@ -37,14 +37,43 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class CSSValueList;
+class CSSValuePool;
 
 enum class FromSystemFontID { No, Yes };
+
+class StaticCSSValuePool {
+    friend class CSSValuePool;
+    friend class LazyNeverDestroyed<StaticCSSValuePool>;
+public:
+    static void init();
+
+private:
+    StaticCSSValuePool();
+
+    LazyNeverDestroyed<CSSInheritedValue> m_inheritedValue;
+    LazyNeverDestroyed<CSSInitialValue> m_implicitInitialValue;
+    LazyNeverDestroyed<CSSInitialValue> m_explicitInitialValue;
+    LazyNeverDestroyed<CSSUnsetValue> m_unsetValue;
+    LazyNeverDestroyed<CSSRevertValue> m_revertValue;
+
+    LazyNeverDestroyed<CSSPrimitiveValue> m_transparentColor;
+    LazyNeverDestroyed<CSSPrimitiveValue> m_whiteColor;
+    LazyNeverDestroyed<CSSPrimitiveValue> m_blackColor;
+
+    static constexpr int maximumCacheableIntegerValue = 255;
+
+    LazyNeverDestroyed<CSSPrimitiveValue> m_pixelValues[maximumCacheableIntegerValue + 1];
+    LazyNeverDestroyed<CSSPrimitiveValue> m_percentValues[maximumCacheableIntegerValue + 1];
+    LazyNeverDestroyed<CSSPrimitiveValue> m_numberValues[maximumCacheableIntegerValue + 1];
+    LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
+};
+
+WEBCORE_EXPORT extern LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,11 +84,11 @@ public:
 
     RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
     Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontID = FromSystemFontID::No);
-    Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.get(); }
-    Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.get(); }
-    Ref<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.get(); }
-    Ref<CSSUnsetValue> createUnsetValue() { return m_unsetValue.get(); }
-    Ref<CSSRevertValue> createRevertValue() { return m_revertValue.get(); }
+    Ref<CSSInheritedValue> createInheritedValue() { return staticCSSValuePool->m_inheritedValue.get(); }
+    Ref<CSSInitialValue> createImplicitInitialValue() { return staticCSSValuePool->m_implicitInitialValue.get(); }
+    Ref<CSSInitialValue> createExplicitInitialValue() { return staticCSSValuePool->m_explicitInitialValue.get(); }
+    Ref<CSSUnsetValue> createUnsetValue() { return staticCSSValuePool->m_unsetValue.get(); }
+    Ref<CSSRevertValue> createRevertValue() { return staticCSSValuePool->m_revertValue.get(); }
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     Ref<CSSPrimitiveValue> createColorValue(const Color&);
@@ -81,24 +110,7 @@ private:
     typedef HashMap<std::pair<String, bool>, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;
     FontFamilyValueCache m_fontFamilyValueCache;
 
-    friend class WTF::NeverDestroyed<CSSValuePool>;
-
-    Ref<CSSInheritedValue> m_inheritedValue;
-    Ref<CSSInitialValue> m_implicitInitialValue;
-    Ref<CSSInitialValue> m_explicitInitialValue;
-    Ref<CSSUnsetValue> m_unsetValue;
-    Ref<CSSRevertValue> m_revertValue;
-
-    Ref<CSSPrimitiveValue> m_transparentColor;
-    Ref<CSSPrimitiveValue> m_whiteColor;
-    Ref<CSSPrimitiveValue> m_blackColor;
-
-    static const int maximumCacheableIntegerValue = 255;
-
-    Vector<Ref<CSSPrimitiveValue>> m_pixelValues;
-    Vector<Ref<CSSPrimitiveValue>> m_percentValues;
-    Vector<Ref<CSSPrimitiveValue>> m_numberValues;
-    Vector<Ref<CSSPrimitiveValue>> m_identifierValues;
+    friend class NeverDestroyed<CSSValuePool>;
 };
 
 } // namespace WebCore

@@ -74,7 +74,8 @@
 
 namespace WebCore {
 
-struct SameSizeAsCSSValue : public RefCounted<SameSizeAsCSSValue> {
+struct SameSizeAsCSSValue {
+    uint32_t refCount;
     uint32_t bitfields;
 };
 
