@@ -1,5 +1,33 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256233. rdar://problem/59447027
+
+    WebKit::WebProcessPool::initializeClassesForParameterCoding() should keep a copy of CString
+    <https://webkit.org/b/207519>
+    <rdar://problem/59043436>
+    
+    Reviewed by Brent Fulgham.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::initializeClassesForParameterCoding):
+    - Change `className` to keep a copy of the CString object.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256233 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  David Kilzer  <ddkilzer@apple.com>
+
+            WebKit::WebProcessPool::initializeClassesForParameterCoding() should keep a copy of CString
+            <https://webkit.org/b/207519>
+            <rdar://problem/59043436>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::initializeClassesForParameterCoding):
+            - Change `className` to keep a copy of the CString object.
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256187. rdar://problem/59446994
 
     Crash under WebProcessProxy::shouldSendPendingMessage()
