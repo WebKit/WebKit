@@ -421,7 +421,7 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
     return proposedPath;
 }
 
-PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission)
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     DWORD desiredAccess = 0;
     DWORD creationDisposition = 0;
@@ -436,6 +436,8 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
         desiredAccess = GENERIC_WRITE;
         creationDisposition = CREATE_ALWAYS;
         break;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     String destination = path;
@@ -547,14 +549,9 @@ Vector<String> listDirectory(const String& directory, const String& filter)
     return entries;
 }
 
-bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
+bool getVolumeFreeSpace(const String&, uint64_t&)
 {
-    ULARGE_INTEGER freeBytesAvailableToCaller;
-    if (!GetDiskFreeSpaceExW(path.wideCharacters().data(), &freeBytesAvailableToCaller, nullptr, nullptr))
-        return false;
-
-    freeSpace = freeBytesAvailableToCaller.QuadPart;
-    return true;
+    return false;
 }
 
 Optional<int32_t> getFileDeviceId(const CString& fsFile)
@@ -606,7 +603,15 @@ bool unmapViewOfFile(void* buffer, size_t)
     return UnmapViewOfFile(buffer);
 }
 
-bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode)
+MappedFileData::MappedFileData(const String& filePath, MappedFileMode mode, bool& success)
+{
+    auto file = CreateFile(filePath.wideCharacters().data(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+    success = mapFileHandle(file, mode);
+    closeFile(file);
+}
+
+bool MappedFileData::mapFileHandle(PlatformFileHandle handle, MappedFileMode)
 {
     if (!isHandleValid(handle))
         return false;
@@ -620,24 +625,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         return true;
     }
 
-    DWORD pageProtection = PAGE_READONLY;
-    DWORD desiredAccess = FILE_MAP_READ;
-    switch (openMode) {
-    case FileOpenMode::Read:
-        pageProtection = PAGE_READONLY;
-        desiredAccess = FILE_MAP_READ;
-        break;
-    case FileOpenMode::Write:
-        pageProtection = PAGE_READWRITE;
-        desiredAccess = FILE_MAP_WRITE;
-        break;
-    }
-
-    auto mapping = CreateFileMapping(handle, nullptr, pageProtection, 0, 0, nullptr);
+    auto mapping = CreateFileMapping(handle, nullptr, PAGE_READONLY, 0, 0, nullptr);
     if (!mapping)
         return false;
 
-    m_fileData = MapViewOfFile(mapping, desiredAccess, 0, 0, size);
+    m_fileData = MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, size);
     CloseHandle(mapping);
     if (!m_fileData)
         return false;

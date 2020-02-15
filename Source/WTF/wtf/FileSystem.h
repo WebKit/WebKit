@@ -84,11 +84,6 @@ enum class FileOpenMode {
 #endif
 };
 
-enum class FileAccessPermission : bool {
-    User,
-    All
-};
-
 enum class FileSeekOrigin {
     Beginning,
     Current,
@@ -136,7 +131,7 @@ WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlStri
 bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
 bool excludeFromBackup(const String&); // Returns true if successful.
 
-WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter);
+WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter = String());
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
 String stringFromFileSystemRepresentation(const char*);
@@ -145,7 +140,7 @@ inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != i
 
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF_EXPORT_PRIVATE String openTemporaryFile(const String& prefix, PlatformFileHandle&);
-WTF_EXPORT_PRIVATE PlatformFileHandle openFile(const String& path, FileOpenMode, FileAccessPermission = FileAccessPermission::All);
+WTF_EXPORT_PRIVATE PlatformFileHandle openFile(const String& path, FileOpenMode);
 WTF_EXPORT_PRIVATE void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
 WTF_EXPORT_PRIVATE long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
@@ -211,7 +206,6 @@ public:
     MappedFileData(MappedFileData&&);
     WTF_EXPORT_PRIVATE MappedFileData(const String& filePath, MappedFileMode, bool& success);
     WTF_EXPORT_PRIVATE MappedFileData(PlatformFileHandle, MappedFileMode, bool& success);
-    WTF_EXPORT_PRIVATE MappedFileData(PlatformFileHandle, FileOpenMode, MappedFileMode, bool& success);
     WTF_EXPORT_PRIVATE ~MappedFileData();
     MappedFileData& operator=(MappedFileData&&);
 
@@ -222,20 +216,15 @@ public:
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }
 
 private:
-    WTF_EXPORT_PRIVATE bool mapFileHandle(PlatformFileHandle, FileOpenMode, MappedFileMode);
+    WTF_EXPORT_PRIVATE bool mapFileHandle(PlatformFileHandle, MappedFileMode);
 
     void* m_fileData { nullptr };
     unsigned m_fileSize { 0 };
 };
 
-inline MappedFileData::MappedFileData(PlatformFileHandle handle, MappedFileMode mapMode, bool& success)
+inline MappedFileData::MappedFileData(PlatformFileHandle handle, MappedFileMode mode, bool& success)
 {
-    success = mapFileHandle(handle, FileOpenMode::Read, mapMode);
-}
-
-inline MappedFileData::MappedFileData(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode mapMode, bool& success)
-{
-    success = mapFileHandle(handle, openMode, mapMode);
+    success = mapFileHandle(handle, mode);
 }
 
 inline MappedFileData::MappedFileData(MappedFileData&& other)

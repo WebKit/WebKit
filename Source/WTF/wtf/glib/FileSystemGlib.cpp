@@ -338,7 +338,7 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
     return String::fromUTF8(tempPath.get());
 }
 
-PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission)
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     auto filename = fileSystemRepresentation(path);
     if (!validRepresentation(filename))
@@ -351,10 +351,8 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
     else if (mode == FileOpenMode::Write) {
         if (g_file_test(filename.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
             ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
-        else {
-            GFileCreateFlags permissionFlag = (permission == FileAccessPermission::All) ? G_FILE_CREATE_NONE : G_FILE_CREATE_PRIVATE;
-            ioStream = adoptGRef(g_file_create_readwrite(file.get(), permissionFlag, nullptr, nullptr));
-        }
+        else
+            ioStream = adoptGRef(g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, nullptr, nullptr));
     }
 
     return ioStream.leakRef();

@@ -287,17 +287,17 @@ MappedFileData::~MappedFileData()
     unmapViewOfFile(m_fileData, m_fileSize);
 }
 
-MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, bool& success)
-{
-    auto fd = openFile(filePath, FileSystem::FileOpenMode::Read);
+#if HAVE(MMAP)
 
-    success = mapFileHandle(fd, FileSystem::FileOpenMode::Read, mapMode);
+MappedFileData::MappedFileData(const String& filePath, MappedFileMode mode, bool& success)
+{
+    auto fd = openFile(filePath, FileOpenMode::Read);
+
+    success = mapFileHandle(fd, mode);
     closeFile(fd);
 }
 
-#if HAVE(MMAP)
-
-bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode mapMode)
+bool MappedFileData::mapFileHandle(PlatformFileHandle handle, MappedFileMode mode)
 {
     if (!isHandleValid(handle))
         return false;
@@ -324,21 +324,7 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         return true;
     }
 
-    int pageProtection = PROT_READ;
-    switch (openMode) {
-    case FileOpenMode::Read:
-        pageProtection = PROT_READ;
-        break;
-    case FileOpenMode::Write:
-        pageProtection = PROT_WRITE;
-        break;
-#if OS(DARWIN)
-    case FileOpenMode::EventsOnly:
-        ASSERT_NOT_REACHED();
-#endif
-    }
-
-    void* data = mmap(0, size, pageProtection, MAP_FILE | (mapMode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), fd, 0);
+    void* data = mmap(0, size, PROT_READ, MAP_FILE | (mode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), fd, 0);
 
     if (data == MAP_FAILED) {
         return false;
