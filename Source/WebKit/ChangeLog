@@ -1,3 +1,22 @@
+2020-02-14  Youenn Fablet  <youenn@apple.com>
+
+        Improve NSURLSession WebSocket message handling in case of error
+        https://bugs.webkit.org/show_bug.cgi?id=207799
+
+        Reviewed by Alex Christensen.
+
+        Tested by running layout tests with NSURLSession WebSocket code path enabled..
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::readNextMessage):
+        readNextMessage completion handler may be called when the connection is closed or in case of real error.
+        We discriminate this case by checking closeCode and if not null, we do nothing since the connection is being closed.
+        Otherwise, we communicate the error to WebProcess and close the connection.
+        (WebKit::WebSocketTask::sendString):
+        Add workaround until this gets fixed underneath.
+        (WebKit::WebSocketTask::sendData):
+        Add workaround until this gets fixed underneath.
+
 2020-02-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Make Local Authenticator appear as an experimental feature

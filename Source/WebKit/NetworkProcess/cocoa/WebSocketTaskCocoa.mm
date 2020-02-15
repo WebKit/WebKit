@@ -54,8 +54,11 @@ void WebSocketTask::readNextMessage()
             return;
 
         if (error) {
-            // FIXME: the error code is probably not a correct WebSocket code.
-            didClose([error code], [error localizedDescription]);
+            // If closeCode is not zero, we are closing the connection and didClose will be called for us.
+            if ([m_task closeCode])
+                return;
+            m_channel.didReceiveMessageError([error localizedDescription]);
+            didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
         }
         if (!message) {
@@ -101,7 +104,8 @@ void WebSocketTask::sendString(const String& text , CompletionHandler<void()>&& 
 {
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithString: text]);
     [m_task sendMessage: message.get() completionHandler: makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
-        callback();
+        // Workaround rdar://problem/55324926 until it gets fixed.
+        callOnMainRunLoop(WTFMove(callback));
     }).get()];
 }
 
@@ -110,7 +114,8 @@ void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<v
     auto nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData: nsData.get()]);
     [m_task sendMessage: message.get() completionHandler: makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
-        callback();
+        // Workaround rdar://problem/55324926 until it gets fixed.
+        callOnMainRunLoop(WTFMove(callback));
     }).get()];
 }
 
