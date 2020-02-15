@@ -1,5 +1,59 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256623. rdar://problem/59478938
+
+    Ensure animations that lose their effect don't schedule an animation update
+    https://bugs.webkit.org/show_bug.cgi?id=207713
+    rdar://59174840
+    
+    Patch by Sunny He <sunny_he@apple.com> on 2020-02-14
+    Reviewed by Antoine Quint.
+    
+    Source/WebCore:
+    An active animation for which the effect is removed may be considered for
+    an upcoming animation resolution. However, WebAnimation::timeToNextTick()
+    expects a valid effect to be available to be able to determine timing.
+    We now check an animation is relevant before calling timeToNextTick() and
+    add an ASSERT() in that function to catch cases where an animation effect
+    might not be available.
+    
+    Source/WebCore:
+    
+    Test: webanimations/animation-null-effect.html
+    
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::scheduleNextTick):
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::timeToNextTick const):
+    
+    LayoutTests:
+    
+    * webanimations/animation-null-effect-expected.txt: Added.
+    * webanimations/animation-null-effect.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256623 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-14  Sunny He  <sunny_he@apple.com>
+
+            Ensure animations that lose their effect don't schedule an animation update
+            https://bugs.webkit.org/show_bug.cgi?id=207713
+            rdar://59174840
+
+            Reviewed by Antoine Quint.
+
+            Source/WebCore:
+            An active animation for which the effect is removed may be considered for
+            an upcoming animation resolution. However, WebAnimation::timeToNextTick()
+            expects a valid effect to be available to be able to determine timing.
+            We now check an animation is relevant before calling timeToNextTick() and
+            add an ASSERT() in that function to catch cases where an animation effect
+            might not be available.
+
+            * webanimations/animation-null-effect-expected.txt: Added.
+            * webanimations/animation-null-effect.html: Added.
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r255889. rdar://problem/59446995
 
     [WTF] Try using 75% load factor for HashTable
