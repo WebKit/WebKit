@@ -88,6 +88,9 @@ TEST(WTF_HashMap, DoubleHashCollisions)
     const double negativeZeroKey = -zeroKey;
 
     DoubleHashMap map;
+#if !CHECK_HASHTABLE_ITERATORS &&!DUMP_HASHTABLE_STATS_PER_TABLE
+    static_assert(sizeof(map) == sizeof(void*));
+#endif
 
     map.add(clobberKey, 1);
     map.add(zeroKey, 2);
