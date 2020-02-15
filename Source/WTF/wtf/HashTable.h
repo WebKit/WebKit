@@ -323,7 +323,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             return keyAndDeleteCount * largeMaxLoadDenominator >= tableSize * largeMaxLoadNumerator;
         }
 
-        static constexpr unsigned capacityForSize(uint64_t sizeArg)
+        static constexpr unsigned capacityForSize(uint32_t sizeArg)
         {
             if (!sizeArg)
                 return 0;
