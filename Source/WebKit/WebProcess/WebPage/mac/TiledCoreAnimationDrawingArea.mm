@@ -137,6 +137,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graph
         return;
     }
 
+    m_pendingRootLayer = nullptr;
     setRootCompositingLayer(rootLayer);
 }
 

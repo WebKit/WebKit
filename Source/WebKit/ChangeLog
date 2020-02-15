@@ -1,5 +1,62 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256452. rdar://problem/59446979
+
+    Pages that trigger a redirect will sometimes be left blank
+    https://bugs.webkit.org/show_bug.cgi?id=207614
+    rdar://problem/59077740
+    
+    Reviewed by Tim Horton.
+    
+    TiledCoreAnimationDrawingArea::setRootCompositingGraphicsLayer() can be called when the layer tree
+    is frozen, in which case we stash away the layer in m_pendingRootLayer to be parented later at flush
+    time. However, this sequence of calls had a bug:
+    
+    setRootCompositingGraphicsLayer() when frozen
+        -> stash in m_pendingRootLayer
+    setRootCompositingGraphicsLayer() when not frozen
+        -> set the root layer
+    flushLayers()
+        -> set the root layer to the (old) m_pendingRootLayer
+    
+    So we need to clear m_pendingRootLayer at step 2.
+    
+    Very timing dependent, hard to test.
+    
+    * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+    (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256452 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+            Pages that trigger a redirect will sometimes be left blank
+            https://bugs.webkit.org/show_bug.cgi?id=207614
+            rdar://problem/59077740
+
+            Reviewed by Tim Horton.
+
+            TiledCoreAnimationDrawingArea::setRootCompositingGraphicsLayer() can be called when the layer tree
+            is frozen, in which case we stash away the layer in m_pendingRootLayer to be parented later at flush
+            time. However, this sequence of calls had a bug:
+
+            setRootCompositingGraphicsLayer() when frozen
+                -> stash in m_pendingRootLayer
+            setRootCompositingGraphicsLayer() when not frozen
+                -> set the root layer
+            flushLayers()
+                -> set the root layer to the (old) m_pendingRootLayer
+
+            So we need to clear m_pendingRootLayer at step 2.
+
+            Very timing dependent, hard to test.
+
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256401. rdar://problem/59447020
 
     WebPage::getFocusedElementInformation should be robust when the focused element changes during layout
