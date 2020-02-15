@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include "OESTextureHalfFloat.h"
 #include "OESTextureHalfFloatLinear.h"
 #include "RenderBox.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
@@ -940,7 +941,7 @@ void WebGL2RenderingContext::vertexAttribDivisor(GCGLuint index, GCGLuint diviso
 {
     if (isContextLostOrPending())
         return;
-    
+
     WebGLRenderingContextBase::vertexAttribDivisor(index, divisor);
 }
 
@@ -1516,7 +1517,7 @@ RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 {
     if (isContextLost())
         return nullptr;
-    
+
     auto object = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
     addContextObject(object.get());
     return WTFMove(object);
@@ -1526,17 +1527,17 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 {
     if (!arrayObject || isContextLost())
         return;
-    
+
     if (arrayObject->isDeleted())
         return;
-    
+
     if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject)
 #if USE(OPENGL_ES)
         setBoundVertexArrayObject(nullptr);
 #else
         bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
 #endif
-    
+
     arrayObject->deleteObject(graphicsContextGL());
 }
 
@@ -1544,10 +1545,10 @@ GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayO
 {
     if (!arrayObject || isContextLost())
         return false;
-    
+
     if (!arrayObject->hasEverBeenBound() || !arrayObject->validate(0, *this))
         return false;
-    
+
     return m_context->isVertexArray(arrayObject->object());
 }
 
@@ -1555,14 +1556,14 @@ void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject
 {
     if (isContextLost())
         return;
-    
+
     if (arrayObject && (arrayObject->isDeleted() || !arrayObject->validate(0, *this) || !m_contextObjects.contains(arrayObject))) {
         m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
         return;
     }
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         m_context->bindVertexArray(arrayObject->object());
-        
+
         arrayObject->setHasEverBeenBound();
         setBoundVertexArrayObject(arrayObject);
     } else {
@@ -1610,7 +1611,7 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         return WTF::nullopt;
 
     Vector<String> result;
-    
+
     if (m_isPendingPolicyResolution)
         return result;
 
@@ -1704,7 +1705,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         return value;
     }
     }
-    
+
     if (object->isTexture()) {
         switch (pname) {
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
@@ -2114,7 +2115,9 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+        if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+            return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+        return "WebGL GLSL ES 1.0 (1.0)"_str;
     case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::STENCIL_BACK_FUNC:
@@ -2173,17 +2176,22 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return getWebGLIntArrayParameter(pname);
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo) {
-#if PLATFORM(IOS_FAMILY)
-            return "Apple GPU"_str;
-#else
-            return m_context->getString(GraphicsContextGL::RENDERER);
+#if !PLATFORM(IOS_FAMILY)
+            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+                return m_context->getString(GraphicsContextGL::RENDERER);
 #endif
+            return "Apple GPU"_str;
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
-        if (m_webglDebugRendererInfo)
-            return m_context->getString(GraphicsContextGL::VENDOR);
+        if (m_webglDebugRendererInfo) {
+#if !PLATFORM(IOS_FAMILY)
+            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+                return m_context->getString(GraphicsContextGL::VENDOR);
+#endif
+            return "Apple Inc."_str;
+        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case ExtensionsGL::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
@@ -2241,8 +2249,8 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_VERTEX_UNIFORM_BLOCKS:
         return getIntParameter(pname);
-    case GraphicsContextGL::MAX_VERTEX_UNIFORM_COMPONENTS: 
-        return getIntParameter(pname);                            
+    case GraphicsContextGL::MAX_VERTEX_UNIFORM_COMPONENTS:
+        return getIntParameter(pname);
     case GraphicsContextGL::MIN_PROGRAM_TEXEL_OFFSET:
         return getIntParameter(pname);
     case GraphicsContextGL::PACK_ROW_LENGTH:
@@ -2306,7 +2314,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return m_boundSamplers[m_activeTextureUnit];
     case GraphicsContextGL::COPY_READ_BUFFER:
     case GraphicsContextGL::COPY_WRITE_BUFFER:
-    case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:   
+    case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:
     case GraphicsContextGL::PIXEL_UNPACK_BUFFER_BINDING:
     case GraphicsContextGL::READ_BUFFER:
     case GraphicsContextGL::TEXTURE_BINDING_2D_ARRAY:
@@ -2327,19 +2335,19 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GCGLenum type, unsig
     // array buffers have enough elements to satisfy that maximum
     // index, skips the expensive per-draw-call iteration in
     // validateIndexArrayPrecise.
-    
+
     RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
-    
+
     if (!elementArrayBuffer)
         return false;
-    
+
     GCGLsizeiptr numElements = elementArrayBuffer->byteLength();
     // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
     if (!numElements)
         return false;
     auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
-    
+
     Optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
@@ -2359,7 +2367,7 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GCGLenum type, unsig
         if (maxIndex)
             elementArrayBuffer->setCachedMaxIndex(type, maxIndex.value());
     }
-    
+
     if (!maxIndex)
         return false;
 

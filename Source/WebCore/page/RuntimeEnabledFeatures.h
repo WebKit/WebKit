@@ -78,7 +78,7 @@ public:
 
     void setMenuItemElementEnabled(bool isEnabled) { m_isMenuItemElementEnabled = isEnabled; }
     bool menuItemElementEnabled() const { return m_isMenuItemElementEnabled; }
-    
+
     void setDirectoryUploadEnabled(bool isEnabled) { m_isDirectoryUploadEnabled = isEnabled; }
     bool directoryUploadEnabled() const { return m_isDirectoryUploadEnabled; }
 
@@ -87,7 +87,7 @@ public:
 
     void setCustomPasteboardDataEnabled(bool isEnabled) { m_isCustomPasteboardDataEnabled = isEnabled; }
     bool customPasteboardDataEnabled() const { return m_isCustomPasteboardDataEnabled; }
-    
+
     void setWebShareEnabled(bool isEnabled) { m_isWebShareEnabled = isEnabled; }
     bool webShareEnabled() const { return m_isWebShareEnabled; }
 
@@ -176,14 +176,14 @@ public:
 
     void setPointerEventsEnabled(bool isEnabled) { m_pointerEventsEnabled = isEnabled; }
     bool pointerEventsEnabled() const { return m_pointerEventsEnabled; }
-    
+
     void setSyntheticEditingCommandsEnabled(bool isEnabled) { m_syntheticEditingCommandsEnabled = isEnabled; }
     bool syntheticEditingCommandsEnabled() const { return m_syntheticEditingCommandsEnabled; }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     void setLayoutFormattingContextEnabled(bool isEnabled) { m_layoutFormattingContextEnabled = isEnabled; }
     bool layoutFormattingContextEnabled() const { return m_layoutFormattingContextEnabled; }
-    
+
     void setLayoutFormattingContextIntegrationEnabled(bool isEnabled) { m_layoutFormattingContextIntegrationEnabled = isEnabled; }
     bool layoutFormattingContextIntegrationEnabled() const { return m_layoutFormattingContextIntegrationEnabled; }
 #endif
@@ -206,7 +206,7 @@ public:
 
     void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
     bool keygenElementEnabled() const { return m_keygenElementEnabled; }
-    
+
     void setHighlightAPIEnabled(bool isEnabled) { m_highlightAPIEnabled = isEnabled; }
     bool highlightAPIEnabled() const { return m_highlightAPIEnabled; }
 
@@ -298,10 +298,15 @@ public:
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
-    
+
 #if ENABLE(WEBGPU)
     void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
     bool webGPUEnabled() const { return m_isWebGPUEnabled; }
+#endif
+
+#if ENABLE(WEBGL) || ENABLE(WEBGL2)
+    void setMaskWebGLStringsEnabled(bool isEnabled) { m_isMaskWebGLStringsEnabled = isEnabled; }
+    bool maskWebGLStringsEnabled() const { return m_isMaskWebGLStringsEnabled; }
 #endif
 
 #if ENABLE(STREAMS_API)
@@ -310,7 +315,7 @@ public:
     void setWritableStreamAPIEnabled(bool isEnabled) { m_isWritableStreamAPIEnabled = isEnabled; }
     bool writableStreamAPIEnabled() const { return m_isWritableStreamAPIEnabled; }
 #endif
-    
+
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     void setDownloadAttributeEnabled(bool isEnabled) { m_isDownloadAttributeEnabled = isEnabled; }
     bool downloadAttributeEnabled() const { return m_isDownloadAttributeEnabled; }
@@ -358,7 +363,7 @@ public:
     bool touchEventsEnabled() const;
     void setTouchEventsEnabled(bool isEnabled) { m_touchEventsEnabled = isEnabled; }
 #endif
-    
+
     bool referrerPolicyAttributeEnabled() const { return m_referrerPolicyAttributeEnabled; }
     void setReferrerPolicyAttributeEnabled(bool isEnabled) { m_referrerPolicyAttributeEnabled = isEnabled; }
 
@@ -534,9 +539,13 @@ private:
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };
 #endif
-    
+
 #if ENABLE(WEBGPU)
     bool m_isWebGPUEnabled { false };
+#endif
+
+#if ENABLE(WEBGL) || ENABLE(WEBGL2)
+    bool m_isMaskWebGLStringsEnabled { false };
 #endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

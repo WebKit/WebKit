@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -49,6 +49,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "RenderBox.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTextureETC.h"
@@ -191,10 +192,10 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         return WTF::nullopt;
 
     Vector<String> result;
-    
+
     if (m_isPendingPolicyResolution)
         return result;
-    
+
     if (m_context->getExtensions().supports("GL_EXT_blend_minmax"_s))
         result.append("EXT_blend_minmax"_s);
     if (m_context->getExtensions().supports("GL_EXT_sRGB"_s))
@@ -249,12 +250,12 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
         return nullptr;
-    
+
     if (!m_framebufferBinding || !m_framebufferBinding->object()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
         return nullptr;
     }
-    
+
     auto object = makeRefPtr(m_framebufferBinding->getAttachmentObject(attachment));
     if (!object) {
         if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
@@ -264,7 +265,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
         return nullptr;
     }
-    
+
     if (object->isTexture()) {
         switch (pname) {
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
@@ -331,7 +332,7 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functi
         return false;
     }
 }
-    
+
 void WebGLRenderingContext::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (isContextLostOrPending())
@@ -396,7 +397,7 @@ void WebGLRenderingContext::hint(GCGLenum target, GCGLenum mode)
     }
     m_context->hint(target, mode);
 }
-    
+
 void WebGLRenderingContext::clear(GCGLbitfield mask)
 {
     if (isContextLostOrPending())
@@ -546,7 +547,9 @@ WebGLAny WebGLRenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+        if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+            return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+        return "WebGL GLSL ES 1.0 (1.0)"_str;
     case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
     case GraphicsContextGL::STENCIL_BACK_FUNC:
@@ -610,17 +613,22 @@ WebGLAny WebGLRenderingContext::getParameter(GCGLenum pname)
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo) {
-#if PLATFORM(IOS_FAMILY)
-            return "Apple GPU"_str;
-#else
-            return m_context->getString(GraphicsContextGL::RENDERER);
+#if !PLATFORM(IOS_FAMILY)
+            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+                return m_context->getString(GraphicsContextGL::RENDERER);
 #endif
+            return "Apple GPU"_str;
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
-        if (m_webglDebugRendererInfo)
-            return m_context->getString(GraphicsContextGL::VENDOR);
+        if (m_webglDebugRendererInfo) {
+#if !PLATFORM(IOS_FAMILY)
+            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+                return m_context->getString(GraphicsContextGL::VENDOR);
+#endif
+            return "Apple Inc."_str;
+        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case ExtensionsGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
@@ -682,7 +690,7 @@ GCGLint WebGLRenderingContext::getMaxColorAttachments()
         m_context->getIntegerv(ExtensionsGL::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
     return m_maxColorAttachments;
 }
-    
+
 bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired)
 {
     // Performs conservative validation by caching a maximum index of
@@ -690,19 +698,19 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsign
     // array buffers have enough elements to satisfy that maximum
     // index, skips the expensive per-draw-call iteration in
     // validateIndexArrayPrecise.
-    
+
     RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
-    
+
     if (!elementArrayBuffer)
         return false;
-    
+
     GCGLsizeiptr numElements = elementArrayBuffer->byteLength();
     // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
     if (!numElements)
         return false;
     auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
-    
+
     Optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
     if (!maxIndex) {
         // Compute the maximum index in the entire buffer for the given type of index.
@@ -735,7 +743,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsign
         if (maxIndex)
             elementArrayBuffer->setCachedMaxIndex(type, maxIndex.value());
     }
-    
+
     if (!maxIndex)
         return false;
 

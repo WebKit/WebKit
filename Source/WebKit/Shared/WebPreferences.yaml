@@ -768,7 +768,7 @@ GamepadsEnabled:
   humanReadableDescription: "Web Gamepad API support"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(GAMEPAD)
-  
+
 HighlightAPIEnabled:
     type: bool
     defaultValue: false
@@ -1384,6 +1384,15 @@ WebGPUEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGPU)
+
+MaskWebGLStringsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Mask WebGL Strings"
+  humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
 
 AccessibilityObjectModelEnabled:
   type: bool

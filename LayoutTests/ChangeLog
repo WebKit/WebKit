@@ -1,3 +1,13 @@
+2020-02-14  Jon Lee  <jonlee@apple.com>
+
+        Mask WebGL strings
+        https://bugs.webkit.org/show_bug.cgi?id=207608
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/webgl/fingerprinting-strings-expected.txt: Added.
+        * platform/mac/webgl/fingerprinting-strings.html: Added.
+
 2020-02-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         new FontFace() should not throw when failing to parse arguments

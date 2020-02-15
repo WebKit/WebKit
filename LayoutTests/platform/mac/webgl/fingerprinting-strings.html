@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<style>
+canvas {
+    width: 1px;
+    height: 1px;
+}
+</style>
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2"></canvas>
+<script>
+function run() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    var canvas = document.getElementById("canvas1");
+    canvas.width = 1;
+    canvas.height = 1;
+    outputString("#webgl1", canvas.getContext("webgl"));
+
+    canvas = document.getElementById("canvas2");
+    canvas.width = 1;
+    canvas.height = 1;
+    outputString("#webgl2", canvas.getContext("webgl2"));
+}
+
+function outputString(glId, gl) {
+    if (!gl)
+        return;
+    document.querySelector(glId + " .vendor").innerText = gl.getParameter(gl.VENDOR);
+    document.querySelector(glId + " .renderer").innerText = gl.getParameter(gl.RENDERER);
+    document.querySelector(glId + " .shading_language_version").innerText = gl.getParameter(gl.SHADING_LANGUAGE_VERSION);
+
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    document.querySelector(glId + " .unmasked_vendor").innerText = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+    document.querySelector(glId + " .unmasked_renderer").innerText = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+}
+window.addEventListener("load", run, false);
+</script>
+
+<section id="webgl1">
+<div>WebGL 1 vendor is: <span class="vendor">NOT SUPPORTED</span></div>
+<div>WebGL 1 renderer is: <span class="renderer">NOT SUPPORTED</span></div>
+<div>WebGL 1 shading language version is: <span class="shading_language_version">NOT SUPPORTED</span></div>
+<div>WebGL 1 unmasked vendor is: <span class="unmasked_vendor">NOT SUPPORTED</span></div>
+<div>WebGL 1 unmasked renderer is: <span class="unmasked_renderer">NOT SUPPORTED</span></div>
+</section>
+
+<section id="webgl2">
+<div>WebGL 2 vendor is: <span class="vendor">NOT SUPPORTED</span></div>
+<div>WebGL 2 renderer is: <span class="renderer">NOT SUPPORTED</span></div>
+<div>WebGL 2 shading language version is: <span class="shading_language_version">NOT SUPPORTED</span></div>
+<div>WebGL 2 unmasked vendor is: <span class="unmasked_vendor">NOT SUPPORTED</span></div>
+<div>WebGL 2 unmasked renderer is: <span class="unmasked_renderer">NOT SUPPORTED</span></div>
+</section>
