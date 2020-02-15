@@ -2173,6 +2173,9 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
         restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, currentInstance, continuation);
     } else {
         auto* patchpoint = emitCallPatchpoint(m_currentBlock, signature, results, args);
+        // We need to clobber the size register since the LLInt always bounds checks
+        if (m_mode == MemoryMode::Signaling)
+            patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().sizeRegister });
         patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();

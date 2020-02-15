@@ -1726,6 +1726,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
 
+                // We need to clobber the size register since the LLInt always bounds checks
+                if (m_mode == MemoryMode::Signaling)
+                    patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().sizeRegister });
                 patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     CCallHelpers::Call call = jit.threadSafePatchableNearCall();

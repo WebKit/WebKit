@@ -1,3 +1,13 @@
+2020-02-14  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WASM] Wasm interpreter's calling convention doesn't match Wasm JIT's convention.
+        https://bugs.webkit.org/show_bug.cgi?id=207727
+
+        Reviewed by Mark Lam.
+
+        * wasm/regress/llint-callee-saves-with-fast-memory.js: Added.
+        * wasm/regress/llint-callee-saves-without-fast-memory.js: Added.
+
 2020-02-13  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] We don't support BigInt literal as PropertyName
