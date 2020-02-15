@@ -70,6 +70,13 @@ TEST(WTF_URLExtras, URLExtras)
 
     EXPECT_STREQ("http://site.com", userVisibleString(literalURL("http://site.com")));
     EXPECT_STREQ("http://%77ebsite.com", userVisibleString(literalURL("http://%77ebsite.com")));
+
+    EXPECT_STREQ("-.example.com", [WTF::decodeHostName(@"-.example.com") UTF8String]);
+    EXPECT_STREQ("-a.example.com", [WTF::decodeHostName(@"-a.example.com") UTF8String]);
+    EXPECT_STREQ("a-.example.com", [WTF::decodeHostName(@"a-.example.com") UTF8String]);
+    EXPECT_STREQ("ab--cd.example.com", [WTF::decodeHostName(@"ab--cd.example.com") UTF8String]);
+    EXPECT_STREQ(".example.com", [WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+    EXPECT_STREQ("a..example.com", [WTF::decodeHostName(@"a..example.com") UTF8String]);
 }
     
 TEST(WTF_URLExtras, URLExtras_Spoof)

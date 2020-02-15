@@ -1,5 +1,39 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256629. rdar://problem/59478949
+
+    Allow UIDNAInfo.errors from uidna_nameToUnicode that would not cause URL parsing failures
+    https://bugs.webkit.org/show_bug.cgi?id=207360
+    <rdar://problem/57825317>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-02-14
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WTF:
+    
+    * wtf/URLHelpers.cpp:
+    (WTF::URLHelpers::mapHostName):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256629 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-14  Alex Christensen  <achristensen@webkit.org>
+
+            Allow UIDNAInfo.errors from uidna_nameToUnicode that would not cause URL parsing failures
+            https://bugs.webkit.org/show_bug.cgi?id=207360
+            <rdar://problem/57825317>
+
+            Reviewed by Ryosuke Niwa.
+
+            * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+            (TestWebKitAPI::TEST):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256580. rdar://problem/59478981
 
     Dark Mode: In Notes, list item becomes invisible in dark mode after outdenting
