@@ -22,9 +22,7 @@
   <div class=scrollable></div>
 </div>
 <script>
-  if (window.eventSender && window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
+  function runTest() {
     eventSender.monitorWheelEvents();
     // Scroll vertically to reach the bottom scrollable container.
     eventSender.mouseMoveTo(10, 499);
@@ -48,7 +46,13 @@
         document.body.innerText = !firstOffset && secondOffset ? "PASS" : "FAIL";  
         testRunner.notifyDone();
         }); 
-	});
+    });
+  }
+
+  if (window.eventSender && window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    window.addEventListener('load', runTest);
   }
 </script>
 </body>

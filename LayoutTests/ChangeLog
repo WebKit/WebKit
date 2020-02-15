@@ -1,3 +1,18 @@
+2020-02-14  Ben Nham  <nham@apple.com>
+
+        Fix flaky tests that scroll before first paint
+        https://bugs.webkit.org/show_bug.cgi?id=207780
+
+        After https://bugs.webkit.org/show_bug.cgi?id=207516, a couple of tests are now flaky. This
+        is because that patch delays first paint until there is enough content to render, and some
+        of these tests are issuing scroll events on controls before those controls render. To fix
+        this, we delay issuing the events until after the page loads.
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/scroll-in-scaled-page-with-overflow-hidden.html:
+        * fast/scrolling/scroll-container-horizontally.html:
+
 2020-02-14  Truitt Savell  <tsavell@apple.com>
 
         [ Mac wk2 ] fast/html/marquee-child-wrap.html is flaky failing.

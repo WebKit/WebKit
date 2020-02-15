@@ -13,7 +13,7 @@
 </div>
 
 <script>
-    (function() {
+    window.addEventListener('load', function() {
         if (!window.testRunner) {
             debug("This test only works in the test runner.");
             return;
@@ -44,5 +44,5 @@
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollBy(0, -5);
         }
-    })();
+    });
 </script>
