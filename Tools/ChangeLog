@@ -1,5 +1,48 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256395. rdar://problem/59447024
+
+    Bug 207424: Crash in WebCore::ParsedContentType::parseContentType when parsing invalid MIME type
+    <https://webkit.org/b/207424>
+    <rdar://problem/59250384>
+    
+    Patch by Rob Buis <rbuis@igalia.com> and David Kilzer <ddkilzer@apple.com> on 2020-02-11
+    Reviewed by Rob Buis.
+    
+    Source/WebCore:
+    
+    Return StringView directly rather than wrapping
+    it in Optional, since StringView's can be null tested.
+    
+    Tests: TestWebKitAPI.ParsedContentType
+    
+    * platform/network/ParsedContentType.cpp:
+    (WebCore::parseToken):
+    (WebCore::parseQuotedString):
+    (WebCore::ParsedContentType::parseContentType): Don't set type
+    parameter if parameterName is null string.  Remove unneeded
+    `parameterName` variable; use keyRange.toString() instead.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+    (TestWebKitAPI::TEST): Add more tests.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256395 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Rob Buis  <rbuis@igalia.com>
+
+            Bug 207424: Crash in WebCore::ParsedContentType::parseContentType when parsing invalid MIME type
+            <https://webkit.org/b/207424>
+            <rdar://problem/59250384>
+
+            Reviewed by Rob Buis.
+
+            * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+            (TestWebKitAPI::TEST): Add more tests.
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256377. rdar://problem/59446971
 
     Regression: RTCRtpSender.getCapabilities("video") returns null on iOS 13.4 (17E5223h)

@@ -49,16 +49,28 @@ TEST(ParsedContentType, MimeSniff)
     EXPECT_FALSE(isValidContentType("/plain", Mode::MimeSniff));
 
     EXPECT_TRUE(isValidContentType("text/plain;", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;;", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;;;", Mode::MimeSniff));
 
     EXPECT_TRUE(isValidContentType("text/plain;test", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain; test", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test=", Mode::MimeSniff));
-    EXPECT_TRUE(isValidContentType("text/plain;test=;test=value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;;;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;;", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;;;", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain; test=value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test =value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test= value", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test=value ", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;=;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;=", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;wrong=;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;=wrong;test=value", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;wrong=", Mode::MimeSniff));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;=wrong", Mode::MimeSniff));
 
     EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"", Mode::MimeSniff));
     EXPECT_TRUE(isValidContentType("text/plain;test=\"value", Mode::MimeSniff));
@@ -82,16 +94,28 @@ TEST(ParsedContentType, Rfc2045)
     EXPECT_FALSE(isValidContentType("/plain", Mode::Rfc2045));
 
     EXPECT_FALSE(isValidContentType("text/plain;", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;;", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;;;", Mode::Rfc2045));
 
     EXPECT_FALSE(isValidContentType("text/plain;test", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain; test", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=", Mode::Rfc2045));
-    EXPECT_FALSE(isValidContentType("text/plain;test=;test=value", Mode::Rfc2045));
     EXPECT_TRUE(isValidContentType("text/plain;test=value", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;;test=value", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;;;test=value", Mode::Rfc2045));
+    EXPECT_TRUE(isValidContentType("text/plain;test=value;", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=value;;", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=value;;;", Mode::Rfc2045));
     EXPECT_TRUE(isValidContentType("text/plain; test=value", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test =value", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test= value", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=value ", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;=;test=value", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=value;=", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;wrong=;test=value", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;=wrong;test=value", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=value;wrong=", Mode::Rfc2045));
+    EXPECT_FALSE(isValidContentType("text/plain;test=value;=wrong", Mode::Rfc2045));
 
     EXPECT_TRUE(isValidContentType("text/plain;test=\"value\"", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=\"value", Mode::Rfc2045));
@@ -144,7 +168,13 @@ static const char* serializeIfValid(const String& input)
 TEST(ParsedContentType, Serialize)
 {
     EXPECT_STREQ(serializeIfValid(""), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(" "), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("  "), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("\t"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid(";"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(";="), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("="), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("=;"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/\0"), "NOTVALID");
@@ -200,6 +230,8 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("text/\xD8\x88\x12\x34"), "NOTVALID");
 
     EXPECT_STREQ(serializeIfValid("text/plain;"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;;"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;;;"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain;test"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain; test"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain;\ttest"), "text/plain");
@@ -212,8 +244,18 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("text/plain;test\r"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain;test\b"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain;test="), "text/plain");
-    EXPECT_STREQ(serializeIfValid("text/plain;test=;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;=;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;="), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;wrong=;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;=wrong;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;wrong="), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;=wrong"), "text/plain;test=value");
     EXPECT_STREQ(serializeIfValid("text/plain;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;;;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;;"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value;;;"), "text/plain;test=value");
     EXPECT_STREQ(serializeIfValid("text/plain;TEST=value"), "text/plain;test=value");
     EXPECT_STREQ(serializeIfValid("text/plain;test=VALUE"), "text/plain;test=VALUE");
     EXPECT_STREQ(serializeIfValid("text/plain; test=value"), "text/plain;test=value");
