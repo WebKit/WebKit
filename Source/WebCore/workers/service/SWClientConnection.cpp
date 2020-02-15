@@ -108,13 +108,6 @@ void SWClientConnection::registrationJobResolvedInServer(ServiceWorkerJobIdentif
         didResolveRegistrationPromise(registrationData.key);
 }
 
-void SWClientConnection::unregistrationJobResolvedInServer(ServiceWorkerJobIdentifier jobIdentifier, bool unregistrationResult)
-{
-    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [unregistrationResult] (auto& job) {
-        job.resolvedWithUnregistrationResult(unregistrationResult);
-    });
-}
-
 void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
 {
     bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy] (auto& job) {

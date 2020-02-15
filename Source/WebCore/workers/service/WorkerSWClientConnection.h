@@ -57,6 +57,7 @@ private:
     void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&) final;
+    void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, const URL& /* clientCreationURL */, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;
 
     Ref<WorkerThread> m_thread;
 
@@ -64,6 +65,7 @@ private:
     HashMap<uint64_t, RegistrationCallback> m_matchRegistrationRequests;
     HashMap<uint64_t, GetRegistrationsCallback> m_getRegistrationsRequests;
     HashMap<uint64_t, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
+    HashMap<uint64_t, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
 };
 
 } // namespace WebCore

@@ -1,5 +1,30 @@
 2020-02-14  Youenn Fablet  <youenn@apple.com>
 
+        Simplify WebProcess handling of unregistering of service workers
+        https://bugs.webkit.org/show_bug.cgi?id=207669
+
+        Reviewed by Chris Dumez.
+
+        Use Async Reply IPC for scheduling an unregister job.
+
+        Make WebSWServerConnection own a map of CompletionHandler keyed by unregister job identifiers.
+        WebSWServerConnection then asks SWServer to schedule the unregister job.
+        When job is run, WebSWServerConnection will call the corresponding completion handler.
+        The completion handler will trigger an IPC response that will trigger the unregister promise to be resolved.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        (WebKit::WebSWServerConnection::scheduleUnregisterJobInServer):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::scheduleUnregisterJobInServer):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2020-02-14  Youenn Fablet  <youenn@apple.com>
+
         Improve NSURLSession WebSocket message handling in case of error
         https://bugs.webkit.org/show_bug.cgi?id=207799
 

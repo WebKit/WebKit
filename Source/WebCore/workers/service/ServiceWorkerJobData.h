@@ -41,6 +41,7 @@ namespace WebCore {
 struct ServiceWorkerJobData {
     using Identifier = ServiceWorkerJobDataIdentifier;
     ServiceWorkerJobData(SWServerConnectionIdentifier, const DocumentOrWorkerIdentifier& sourceContext);
+    ServiceWorkerJobData(Identifier, const DocumentOrWorkerIdentifier& sourceContext);
 
     SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 

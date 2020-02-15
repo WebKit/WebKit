@@ -159,7 +159,7 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
+    m_container->unregisterRegistration(identifier(), WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)

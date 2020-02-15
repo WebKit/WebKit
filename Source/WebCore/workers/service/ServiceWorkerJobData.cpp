@@ -30,14 +30,25 @@
 
 namespace WebCore {
 
-ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
-    : m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
+static inline ServiceWorkerOrClientIdentifier serviceWorkerOrClientIdentifier(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
 {
-    WTF::switchOn(localSourceContext, [&](DocumentIdentifier documentIdentifier) {
-        sourceContext = ServiceWorkerClientIdentifier { connectionIdentifier, documentIdentifier };
-    }, [&](ServiceWorkerIdentifier serviceWorkerIdentifier) {
-        sourceContext = serviceWorkerIdentifier;
+    return WTF::switchOn(localSourceContext, [&](DocumentIdentifier documentIdentifier) -> ServiceWorkerOrClientIdentifier {
+        return ServiceWorkerClientIdentifier { connectionIdentifier, documentIdentifier };
+    }, [&](ServiceWorkerIdentifier serviceWorkerIdentifier) -> ServiceWorkerOrClientIdentifier {
+        return serviceWorkerIdentifier;
     });
+}
+
+ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const DocumentOrWorkerIdentifier& localSourceContext)
+    : sourceContext(serviceWorkerOrClientIdentifier(connectionIdentifier, localSourceContext))
+    , m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
+{
+}
+
+ServiceWorkerJobData::ServiceWorkerJobData(Identifier identifier, const DocumentOrWorkerIdentifier& localSourceContext)
+    : sourceContext(serviceWorkerOrClientIdentifier(identifier.connectionIdentifier, localSourceContext))
+    , m_identifier { identifier }
+{
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const

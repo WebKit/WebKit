@@ -357,6 +357,17 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
         jobQueue.runNextJob();
 }
 
+void SWServer::scheduleUnregisterJob(ServiceWorkerJobDataIdentifier jobDataIdentifier, SWServerRegistration& registration, DocumentOrWorkerIdentifier contextIdentifier, URL&& clientCreationURL)
+{
+    ServiceWorkerJobData jobData { jobDataIdentifier, contextIdentifier };
+    jobData.clientCreationURL = WTFMove(clientCreationURL);
+    jobData.topOrigin = registration.data().key.topOrigin();
+    jobData.type = ServiceWorkerJobType::Unregister;
+    jobData.scopeURL = registration.data().scopeURL;
+
+    scheduleJob(WTFMove(jobData));
+}
+
 void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)
 {
     LOG(ServiceWorker, "Rejected ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());

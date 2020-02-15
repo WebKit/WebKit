@@ -187,30 +187,25 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
-void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIdentifier registrationIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     auto* context = scriptExecutionContext();
     if (!context) {
         ASSERT_NOT_REACHED();
-        promise->reject(Exception(InvalidStateError));
+        promise.reject(Exception(InvalidStateError));
         return;
     }
 
     if (!m_swConnection) {
         ASSERT_NOT_REACHED();
-        promise->reject(Exception(InvalidStateError));
+        promise.reject(Exception(InvalidStateError));
         return;
     }
 
-    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
-    jobData.clientCreationURL = context->url();
-    jobData.topOrigin = context->topOrigin().data();
-    jobData.type = ServiceWorkerJobType::Unregister;
-    jobData.scopeURL = scopeURL;
-
-    CONTAINER_RELEASE_LOG_IF_ALLOWED("removeRegistration: Unregistering service worker. Job ID: %" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
-
-    scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
+    CONTAINER_RELEASE_LOG_IF_ALLOWED("unregisterRegistration: Unregistering service worker.");
+    m_swConnection->scheduleUnregisterJobInServer(registrationIdentifier, contextIdentifier(), context->url(), [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.settle(WTFMove(result));
+    });
 }
 
 void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, RefPtr<DeferredPromise>&& promise)

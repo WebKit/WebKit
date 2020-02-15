@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "ServiceWorkerFetchTask.h"
+#include <WebCore/ExceptionOr.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SWServer.h>
@@ -39,6 +40,11 @@
 
 namespace IPC {
 class FormDataReference;
+
+template<> struct AsyncReplyError<WebCore::ExceptionOr<bool>> {
+    static WebCore::ExceptionOr<bool> create() { return WebCore::Exception { WebCore::TypeError, "Internal error"_s }; }
+};
+
 }
 
 namespace WebCore {
@@ -87,6 +93,9 @@ private:
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 
+    using UnregisterJobResult = Expected<bool, WebCore::ExceptionData>;
+    void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentOrWorkerIdentifier, URL&&, CompletionHandler<void(UnregisterJobResult&&)>&&);
+
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const URL& clientURL);
@@ -118,6 +127,7 @@ private:
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;
     HashMap<WebCore::ServiceWorkerClientIdentifier, WebCore::ClientOrigin> m_clientOrigins;
+    HashMap<WebCore::ServiceWorkerJobIdentifier, CompletionHandler<void(UnregisterJobResult&&)>> m_unregisterJobs;
     bool m_isThrottleable { true };
 };
 

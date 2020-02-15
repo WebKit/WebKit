@@ -81,6 +81,8 @@ WebSWServerConnection::~WebSWServerConnection()
 
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
 {
+    if (auto completionHandler = m_unregisterJobs.take(jobIdentifier))
+        return completionHandler(makeUnexpected(exceptionData));
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
@@ -91,7 +93,9 @@ void WebSWServerConnection::resolveRegistrationJobInClient(ServiceWorkerJobIdent
 
 void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
 {
-    send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobIdentifier, unregistrationResult));
+    ASSERT(m_unregisterJobs.contains(jobIdentifier));
+    if (auto completionHandler = m_unregisterJobs.take(jobIdentifier))
+        completionHandler(unregistrationResult);
 }
 
 void WebSWServerConnection::startScriptFetchInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
@@ -282,6 +286,20 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     server().scheduleJob(WTFMove(jobData));
+}
+
+void WebSWServerConnection::scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::DocumentOrWorkerIdentifier contextIdentifier, URL&& clientCreationURL, CompletionHandler<void(UnregisterJobResult&&)>&& completionHandler)
+{
+    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling unregister ServiceWorker job in server");
+
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration)
+        return completionHandler(false);
+
+    ASSERT(!m_unregisterJobs.contains(jobIdentifier));
+    m_unregisterJobs.add(jobIdentifier, WTFMove(completionHandler));
+
+    server().scheduleUnregisterJob(ServiceWorkerJobDataIdentifier { identifier(), jobIdentifier }, *registration, contextIdentifier, WTFMove(clientCreationURL));
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
