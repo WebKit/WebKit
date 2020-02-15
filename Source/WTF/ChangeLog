@@ -1,5 +1,64 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256093. rdar://problem/59446995
+
+    [WTF] Try using 75% load factor for HashTable
+    https://bugs.webkit.org/show_bug.cgi?id=207183
+    
+    Reviewed by Mark Lam.
+    
+    Source/WTF:
+    
+    We know that hash-table is one of the most memory consuming part in WebKit.
+    By analyzing many production hash-table implementations[1], I found that many
+    of them are using 75% load-factor while our one is 50%.
+    
+    This patch changes the load-factor from 50% to 75%. But we pick 75% only for
+    small tables which capacity is <= 1024 based on collected data by micro-benchmarking.
+    The collected data is telling that longer probe-length affects on performance if table
+    size gets larger.
+    
+    [1]: LLVM DenseMap, Abseil's, rust's, and so on.
+    
+    * wtf/HashTable.h:
+    (WTF::HashTableCapacityForSize::shouldExpand):
+    (WTF::HashTableCapacityForSize::capacityForSize):
+    (WTF::HashTable::shouldExpand const):
+    (WTF::KeyTraits>::computeBestTableSize):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+    (TestWebKitAPI::testInitialCapacity):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256093 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [WTF] Try using 75% load factor for HashTable
+            https://bugs.webkit.org/show_bug.cgi?id=207183
+
+            Reviewed by Mark Lam.
+
+            We know that hash-table is one of the most memory consuming part in WebKit.
+            By analyzing many production hash-table implementations[1], I found that many
+            of them are using 75% load-factor while our one is 50%.
+
+            This patch changes the load-factor from 50% to 75%. But we pick 75% only for
+            small tables which capacity is <= 1024 based on collected data by micro-benchmarking.
+            The collected data is telling that longer probe-length affects on performance if table
+            size gets larger.
+
+            [1]: LLVM DenseMap, Abseil's, rust's, and so on.
+
+            * wtf/HashTable.h:
+            (WTF::HashTableCapacityForSize::shouldExpand):
+            (WTF::HashTableCapacityForSize::capacityForSize):
+            (WTF::HashTable::shouldExpand const):
+            (WTF::KeyTraits>::computeBestTableSize):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256011. rdar://problem/59446995
 
     Unreviewed, revert 75% load-factor because of JetStream2/string-unpack-code-SP regression
