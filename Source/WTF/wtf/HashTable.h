@@ -303,6 +303,41 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         explicit operator bool() const { return isNewEntry; }
     };
 
+    // HashTableCapacityForSize computes the upper power of two capacity to hold the size parameter.
+    // This is done at compile time to initialize the HashTraits.
+    template<unsigned size>
+    struct HashTableCapacityForSize {
+        // Load-factor for small table is 75%.
+        static constexpr unsigned smallMaxLoadNumerator = 3;
+        static constexpr unsigned smallMaxLoadDenominator = 4;
+        // Load-factor for large table is 50%.
+        static constexpr unsigned largeMaxLoadNumerator = 1;
+        static constexpr unsigned largeMaxLoadDenominator = 2;
+        static constexpr unsigned maxSmallTableCapacity = 1024;
+        static constexpr unsigned minLoad = 6;
+
+        static constexpr bool shouldExpand(uint64_t keyAndDeleteCount, uint64_t tableSize)
+        {
+            if (tableSize <= maxSmallTableCapacity)
+                return keyAndDeleteCount * smallMaxLoadDenominator >= tableSize * smallMaxLoadNumerator;
+            return keyAndDeleteCount * largeMaxLoadDenominator >= tableSize * largeMaxLoadNumerator;
+        }
+
+        static constexpr unsigned capacityForSize(uint64_t sizeArg)
+        {
+            if (!sizeArg)
+                return 0;
+            uint64_t capacity = roundUpToPowerOfTwo(sizeArg);
+            if (shouldExpand(sizeArg, capacity))
+                return capacity * 2;
+            return capacity;
+        }
+
+        static constexpr unsigned value = capacityForSize(size);
+        static_assert(size > 0, "HashTableNonZeroMinimumCapacity");
+        static_assert(!static_cast<unsigned>(value >> 31), "HashTableNoCapacityOverflow");
+    };
+
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable {
     public:
@@ -313,6 +348,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         typedef Value ValueType;
         typedef IdentityHashTranslator<ValueTraits, HashFunctions> IdentityTranslatorType;
         typedef HashTableAddResult<iterator> AddResult;
+
+        using HashTableSizePolicy = HashTableCapacityForSize<1>;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         struct Stats {
@@ -487,7 +524,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void remove(ValueType*);
 
         static constexpr unsigned computeBestTableSize(unsigned keyCount);
-        bool shouldExpand() const { return (keyCount() + deletedCount()) * maxLoad >= tableSize(); }
+        bool shouldExpand() const { return HashTableSizePolicy::shouldExpand(keyCount() + deletedCount(), tableSize()); }
         bool mustRehashInPlace() const { return keyCount() * minLoad < tableSize() * 2; }
         bool shouldShrink() const { return keyCount() * minLoad < tableSize() && tableSize() > KeyTraits::minimumTableSize; }
         ValueType* expand(ValueType* entry = nullptr);
@@ -522,8 +559,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         static void invalidateIterators() { }
 #endif
 
-        static constexpr unsigned maxLoad = 2;
-        static constexpr unsigned minLoad = 6;
+        // Load-factor for small table is 75%.
+        static constexpr unsigned smallMaxLoadNumerator = HashTableSizePolicy::smallMaxLoadNumerator;
+        static constexpr unsigned smallMaxLoadDenominator = HashTableSizePolicy::smallMaxLoadDenominator;
+        // Load-factor for large table is 50%.
+        static constexpr unsigned largeMaxLoadNumerator = HashTableSizePolicy::largeMaxLoadNumerator;
+        static constexpr unsigned largeMaxLoadDenominator = HashTableSizePolicy::largeMaxLoadDenominator;
+        static constexpr unsigned maxSmallTableCapacity = HashTableSizePolicy::maxSmallTableCapacity;
+        static constexpr unsigned minLoad = HashTableSizePolicy::minLoad;
 
         static constexpr int tableSizeOffset = -1;
         static constexpr int tableSizeMaskOffset = -2;
@@ -554,44 +597,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     public:
         mutable std::unique_ptr<Stats> m_stats;
 #endif
-    };
-
-    // Set all the bits to one after the most significant bit: 00110101010 -> 00111111111.
-    template<unsigned size> struct OneifyLowBits;
-    template<>
-    struct OneifyLowBits<0> {
-        static constexpr unsigned value = 0;
-    };
-    template<unsigned number>
-    struct OneifyLowBits {
-        static constexpr unsigned value = number | OneifyLowBits<(number >> 1)>::value;
-    };
-    // Compute the first power of two integer that is an upper bound of the parameter 'number'.
-    template<unsigned number>
-    struct UpperPowerOfTwoBound {
-        static constexpr unsigned value = (OneifyLowBits<number - 1>::value + 1) * 2;
-    };
-
-    // Because power of two numbers are the limit of maxLoad, their capacity is twice the
-    // UpperPowerOfTwoBound, or 4 times their values.
-    template<unsigned size, bool isPowerOfTwo> struct HashTableCapacityForSizeSplitter;
-    template<unsigned size>
-    struct HashTableCapacityForSizeSplitter<size, true> {
-        static constexpr unsigned value = size * 4;
-    };
-    template<unsigned size>
-    struct HashTableCapacityForSizeSplitter<size, false> {
-        static constexpr unsigned value = UpperPowerOfTwoBound<size>::value;
-    };
-
-    // HashTableCapacityForSize computes the upper power of two capacity to hold the size parameter.
-    // This is done at compile time to initialize the HashTraits.
-    template<unsigned size>
-    struct HashTableCapacityForSize {
-        static constexpr unsigned value = HashTableCapacityForSizeSplitter<size, !(size & (size - 1))>::value;
-        COMPILE_ASSERT(size > 0, HashTableNonZeroMinimumCapacity);
-        COMPILE_ASSERT(!static_cast<unsigned>(value >> 31), HashTableNoCapacityOverflow);
-        COMPILE_ASSERT(value > (2 * size), HashTableCapacityHoldsContentSize);
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -1236,15 +1241,34 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     constexpr unsigned HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::computeBestTableSize(unsigned keyCount)
     {
-        unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount) * 2;
+        unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount);
 
-        // With maxLoad at 1/2 and minLoad at 1/6, our average load is 2/6.
-        // If we are getting halfway between 2/6 and 1/2 (past 5/12), we double the size to avoid being too close to
-        // loadMax and bring the ratio close to 2/6. This give us a load in the bounds [3/12, 5/12).
-        bool aboveThreeQuarterLoad = keyCount * 12 >= bestTableSize * 5;
-        if (aboveThreeQuarterLoad)
+        if (HashTableSizePolicy::shouldExpand(keyCount, bestTableSize))
             bestTableSize *= 2;
 
+        auto aboveThresholdForEagerExpansion = [](double loadFactor, unsigned keyCount, unsigned tableSize)
+        {
+            // Here is the rationale behind this calculation, using 3/4 load-factor.
+            // With maxLoad at 3/4 and minLoad at 1/6, our average load is 11/24.
+            // If we are getting half-way between 11/24 and 3/4, we double the size
+            // to avoid being too close to loadMax and bring the ratio close to 11/24. This
+            // give us a load in the bounds [9/24, 15/24).
+            double maxLoadRatio = loadFactor;
+            double minLoadRatio = 1.0 / minLoad;
+            double averageLoadRatio = (maxLoadRatio + minLoadRatio) / 2;
+            double halfWayBetweenAverageAndMaxLoadRatio = (averageLoadRatio + maxLoadRatio) / 2;
+            return keyCount >= tableSize * halfWayBetweenAverageAndMaxLoadRatio;
+        };
+
+        if (bestTableSize <= maxSmallTableCapacity) {
+            constexpr double smallLoadFactor = static_cast<double>(smallMaxLoadNumerator) / smallMaxLoadDenominator;
+            if (aboveThresholdForEagerExpansion(smallLoadFactor, keyCount, bestTableSize))
+                bestTableSize *= 2;
+        } else {
+            constexpr double largeLoadFactor = static_cast<double>(largeMaxLoadNumerator) / largeMaxLoadDenominator;
+            if (aboveThresholdForEagerExpansion(largeLoadFactor, keyCount, bestTableSize))
+                bestTableSize *= 2;
+        }
         unsigned minimumTableSize = KeyTraits::minimumTableSize;
         return std::max(bestTableSize, minimumTableSize);
     }
