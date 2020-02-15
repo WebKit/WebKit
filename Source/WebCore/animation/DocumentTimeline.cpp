@@ -545,6 +545,8 @@ void DocumentTimeline::scheduleNextTick()
     Seconds scheduleDelay = Seconds::infinity();
 
     for (const auto& animation : m_animations) {
+        if (!animation->isRelevant())
+            continue;
         auto animationTimeToNextRequiredTick = animation->timeToNextTick();
         if (animationTimeToNextRequiredTick < animationInterval()) {
             scheduleAnimationResolution();
