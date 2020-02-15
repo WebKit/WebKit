@@ -1,5 +1,50 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256346. rdar://problem/59446984
+
+    video.currentTime is not being updated in iOS 13.4 Beta
+    https://bugs.webkit.org/show_bug.cgi?id=207489
+    <rdar://problem/59322640>
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebKit:
+    
+    Allow the Web process and the GPU process to communicate with
+    'com.apple.coremedia.audiodeviceclock.xpc' because it is necessary to use a
+    CMTimeBase, which is used by MediaPlayerPrivateMediaStreamAVFObjC for currentTime.
+    
+    Test: fast/mediastream/media-element-current-time.html
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    LayoutTests:
+    
+    * fast/mediastream/media-element-current-time.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256346 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Eric Carlson  <eric.carlson@apple.com>
+
+            video.currentTime is not being updated in iOS 13.4 Beta
+            https://bugs.webkit.org/show_bug.cgi?id=207489
+            <rdar://problem/59322640>
+
+            Reviewed by Youenn Fablet.
+
+            Allow the Web process and the GPU process to communicate with
+            'com.apple.coremedia.audiodeviceclock.xpc' because it is necessary to use a
+            CMTimeBase, which is used by MediaPlayerPrivateMediaStreamAVFObjC for currentTime.
+
+            Test: fast/mediastream/media-element-current-time.html
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256233. rdar://problem/59447027
 
     WebKit::WebProcessPool::initializeClassesForParameterCoding() should keep a copy of CString
