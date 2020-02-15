@@ -289,6 +289,11 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     auto innerText = innerTextElement();
     bool hasFocus = document().focusedElement() == this;
     if (!hasFocus && innerText) {
+        if (!isConnected()) {
+            cacheSelection(start, end, direction);
+            return;
+        }
+
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         document().updateLayoutIgnorePendingStylesheets();
 

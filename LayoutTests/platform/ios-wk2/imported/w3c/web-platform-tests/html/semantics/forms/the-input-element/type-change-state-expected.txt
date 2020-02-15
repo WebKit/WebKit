@@ -252,12 +252,12 @@ FAIL change state from time to image Type error
 FAIL change state from time to reset Type error
 FAIL change state from time to button Type error
 FAIL change state from number to hidden Type error
-FAIL change state from number to text assert_equals: selectionStart should be unchanged expected 2 but got 0
-FAIL change state from number to search assert_equals: selectionStart should be unchanged expected 2 but got 0
-FAIL change state from number to tel assert_equals: selectionStart should be unchanged expected 2 but got 0
-FAIL change state from number to url assert_equals: selectionStart should be unchanged expected 2 but got 0
-FAIL change state from number to email assert_equals: selectionStart should be unchanged expected 2 but got 0
-FAIL change state from number to password assert_equals: selectionStart should be unchanged expected 2 but got 0
+PASS change state from number to text 
+PASS change state from number to search 
+PASS change state from number to tel 
+PASS change state from number to url 
+PASS change state from number to email 
+PASS change state from number to password 
 FAIL change state from number to datetime-local Type error
 FAIL change state from number to date Type error
 FAIL change state from number to month Type error
