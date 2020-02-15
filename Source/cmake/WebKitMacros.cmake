@@ -370,7 +370,7 @@ function(WEBKIT_COPY_FILES target_name)
         )
         list(APPEND dst_files ${dst_file})
     endforeach ()
-    add_custom_target(${target_name} DEPENDS ${dst_files})
+    add_custom_target(${target_name} ALL DEPENDS ${dst_files})
 endfunction()
 
 # Helper macros for debugging CMake problems.

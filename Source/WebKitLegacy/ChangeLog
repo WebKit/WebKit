@@ -1,3 +1,64 @@
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r254681. rdar://problem/59474790
+
+    [Win] Fix AppleWin build
+    https://bugs.webkit.org/show_bug.cgi?id=206299
+    
+    Reviewed by Brent Fulgham.
+    
+    .:
+    
+    This patch has been created by don.olmstead@sony.com and pvollan@apple.com. Add target files for WTF and
+    JavaScriptCore. Also, to make sure headers are copied to the forwarding headers directory, add the CMake
+    keywork ALL when adding custom target for copying files.
+    
+    * Source/cmake/TargetJavaScriptCore.cmake: Added.
+    * Source/cmake/TargetWTF.cmake: Added.
+    * Source/cmake/WebKitMacros.cmake:
+    
+    Source/JavaScriptCore:
+    
+    Include required target. Build internal builds with VS2019.
+    
+    * CMakeLists.txt:
+    * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+    
+    Source/WebCore:
+    
+    Include required targets. Build internal builds with VS2019.
+    
+    * CMakeLists.txt:
+    * WebCore.vcxproj/WebCore.proj:
+    
+    Source/WebKitLegacy:
+    
+    Include required targets. Build internal builds with VS2019.
+    
+    * CMakeLists.txt:
+    * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+    
+    Source/WTF:
+    
+    Build internal builds with VS2019.
+    
+    * WTF.vcxproj/WTF.proj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254681 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-16  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Fix AppleWin build
+            https://bugs.webkit.org/show_bug.cgi?id=206299
+
+            Reviewed by Brent Fulgham.
+
+            Include required targets. Build internal builds with VS2019.
+
+            * CMakeLists.txt:
+            * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2020-02-10  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r255615. rdar://problem/59298181
