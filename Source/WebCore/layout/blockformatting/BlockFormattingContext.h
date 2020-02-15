@@ -57,13 +57,13 @@ private:
         const T root;
         const T containingBlock;
     };
-    void placeInFlowPositionedChildren(const Box&, const ConstraintsPair<HorizontalConstraints>&);
+    void placeInFlowPositionedChildren(const Box&, const HorizontalConstraints&);
 
-    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&);
-    void computeHeightAndMargin(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
 
-    void computeStaticHorizontalPosition(const Box&, const ConstraintsPair<HorizontalConstraints>&);
-    void computeStaticVerticalPosition(const Box&, const ConstraintsPair<VerticalConstraints>&);
+    void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
+    void computeStaticVerticalPosition(const Box&, const VerticalConstraints&);
     void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
 
@@ -161,7 +161,7 @@ private:
     void setPrecomputedMarginBefore(const Box&, const PrecomputedMarginBefore&);
     void removePrecomputedMarginBefore(const Box& layoutBox) { m_precomputedMarginBeforeList.remove(&layoutBox); }
     bool hasPrecomputedMarginBefore(const Box&) const;
-    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&) const;
+    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
 #if ASSERT_ENABLED
     PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
 #endif
