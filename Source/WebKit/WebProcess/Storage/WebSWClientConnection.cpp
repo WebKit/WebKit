@@ -73,6 +73,7 @@ IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
+    RELEASE_ASSERT(!jobData.scopeURL.isNull());
     runOrDelayTaskForImport([this, jobData] {
         send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
     });
