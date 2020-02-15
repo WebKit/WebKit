@@ -383,7 +383,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         destroyJob(job);
     });
 
-    auto notifyIfExitEarly = WTF::makeScopeExit([this, protectedThis = makeRef(*this), key = data.key, &shouldNotifyWhenResolved] {
+    auto notifyIfExitEarly = WTF::makeScopeExit([this, protectedThis = makeRef(*this), key = data.key, shouldNotifyWhenResolved] {
         if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
             notifyRegistrationIsSettled(key);
     });
