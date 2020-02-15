@@ -201,6 +201,35 @@ TEST(WebKit2, CaptureStop)
     wasPrompted = false;
 }
 
+TEST(WebKit2, GetCapabilities)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    wasPrompted = false;
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+
+    TestWebKitAPI::Util::run(&wasPrompted);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkGetCapabilities()"];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 #if WK_HAVE_C_SPI
 TEST(WebKit, WebAudioAndGetUserMedia)
 {

@@ -87,6 +87,11 @@
                     window.webkit.messageHandlers.gum.postMessage("Did not receive an ended event after 5 seconds");
                 }, 5000);
             }
+
+            function checkGetCapabilities() {
+                window.webkit.messageHandlers.gum.postMessage(RTCRtpSender.getCapabilities('video') != null ? "PASS" : "FAIL");
+            }
+
         </script>
     <head>
 
