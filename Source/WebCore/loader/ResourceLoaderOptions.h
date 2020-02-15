@@ -46,6 +46,7 @@ enum class SendCallbackPolicy : uint8_t {
     SendCallbacks,
     DoNotSendCallbacks
 };
+static constexpr unsigned bitWidthOfSendCallbackPolicy = 1;
 
 // FIXME: These options are named poorly. We only implement force disabling content sniffing, not enabling it,
 // and even that only on some platforms.
@@ -53,62 +54,74 @@ enum class ContentSniffingPolicy : uint8_t {
     SniffContent,
     DoNotSniffContent
 };
+static constexpr unsigned bitWidthOfContentSniffingPolicy = 1;
 
 enum class DataBufferingPolicy : uint8_t {
     BufferData,
     DoNotBufferData
 };
+static constexpr unsigned bitWidthOfDataBufferingPolicy = 1;
 
 enum class SecurityCheckPolicy : uint8_t {
     SkipSecurityCheck,
     DoSecurityCheck
 };
+static constexpr unsigned bitWidthOfSecurityCheckPolicy = 1;
 
 enum class CertificateInfoPolicy : uint8_t {
     IncludeCertificateInfo,
     DoNotIncludeCertificateInfo
 };
+static constexpr unsigned bitWidthOfCertificateInfoPolicy = 1;
 
 enum class ContentSecurityPolicyImposition : uint8_t {
     SkipPolicyCheck,
     DoPolicyCheck
 };
+static constexpr unsigned bitWidthOfContentSecurityPolicyImposition = 1;
 
 enum class DefersLoadingPolicy : uint8_t {
     AllowDefersLoading,
     DisallowDefersLoading
 };
+static constexpr unsigned bitWidthOfDefersLoadingPolicy = 1;
 
 enum class CachingPolicy : uint8_t {
     AllowCaching,
     DisallowCaching
 };
+static constexpr unsigned bitWidthOfCachingPolicy = 1;
 
 enum class ClientCredentialPolicy : uint8_t {
     CannotAskClientForCredentials,
     MayAskClientForCredentials
 };
+static constexpr unsigned bitWidthOfClientCredentialPolicy = 1;
 
 enum class SameOriginDataURLFlag : uint8_t {
     Set,
     Unset
 };
+static constexpr unsigned bitWidthOfSameOriginDataURLFlag = 1;
 
 enum class InitiatorContext : uint8_t {
     Document,
     Worker,
 };
+static constexpr unsigned bitWidthOfInitiatorContext = 1;
 
 enum class ServiceWorkersMode : uint8_t {
     All,
     None,
     Only // An error will happen if service worker is not handling the fetch. Used to bypass preflight safely.
 };
+static constexpr unsigned bitWidthOfServiceWorkersMode = 2;
 
 enum class ApplicationCacheMode : uint8_t {
     Use,
     Bypass
 };
+static constexpr unsigned bitWidthOfApplicationCacheMode = 1;
 
 // FIXME: These options are named poorly. We only implement force disabling content encoding sniffing, not enabling it,
 // and even that only on some platforms.
@@ -116,26 +129,52 @@ enum class ContentEncodingSniffingPolicy : uint8_t {
     Sniff,
     DoNotSniff,
 };
+static constexpr unsigned bitWidthOfContentEncodingSniffingPolicy = 1;
 
 enum class PreflightPolicy : uint8_t {
     Consider,
     Force,
     Prevent
 };
+static constexpr unsigned bitWidthOfPreflightPolicy = 2;
 
 enum class LoadedFromOpaqueSource : uint8_t {
     Yes,
     No
 };
+static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 
 struct ResourceLoaderOptions : public FetchOptions {
-    ResourceLoaderOptions() { }
+    ResourceLoaderOptions()
+        : ResourceLoaderOptions(FetchOptions())
+    {
+    }
 
-    ResourceLoaderOptions(FetchOptions options) : FetchOptions { WTFMove(options) } { }
+    ResourceLoaderOptions(FetchOptions options)
+        : FetchOptions { WTFMove(options) }
+        , sendLoadCallbacks(SendCallbackPolicy::DoNotSendCallbacks)
+        , sniffContent(ContentSniffingPolicy::DoNotSniffContent)
+        , sniffContentEncoding(ContentEncodingSniffingPolicy::Sniff)
+        , dataBufferingPolicy(DataBufferingPolicy::BufferData)
+        , storedCredentialsPolicy(StoredCredentialsPolicy::DoNotUse)
+        , securityCheck(SecurityCheckPolicy::DoSecurityCheck)
+        , certificateInfoPolicy(CertificateInfoPolicy::DoNotIncludeCertificateInfo)
+        , contentSecurityPolicyImposition(ContentSecurityPolicyImposition::DoPolicyCheck)
+        , defersLoadingPolicy(DefersLoadingPolicy::AllowDefersLoading)
+        , cachingPolicy(CachingPolicy::AllowCaching)
+        , sameOriginDataURLFlag(SameOriginDataURLFlag::Unset)
+        , initiatorContext(InitiatorContext::Document)
+        , serviceWorkersMode(ServiceWorkersMode::All)
+        , applicationCacheMode(ApplicationCacheMode::Use)
+        , clientCredentialPolicy(ClientCredentialPolicy::CannotAskClientForCredentials)
+        , preflightPolicy(PreflightPolicy::Consider)
+        , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
+    { }
 
     ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
         : sendLoadCallbacks(sendLoadCallbacks)
         , sniffContent(sniffContent)
+        , sniffContentEncoding(ContentEncodingSniffingPolicy::Sniff)
         , dataBufferingPolicy(dataBufferingPolicy)
         , storedCredentialsPolicy(storedCredentialsPolicy)
         , securityCheck(securityCheck)
@@ -143,36 +182,43 @@ struct ResourceLoaderOptions : public FetchOptions {
         , contentSecurityPolicyImposition(contentSecurityPolicyImposition)
         , defersLoadingPolicy(defersLoadingPolicy)
         , cachingPolicy(cachingPolicy)
+        , sameOriginDataURLFlag(SameOriginDataURLFlag::Unset)
+        , initiatorContext(InitiatorContext::Document)
+        , serviceWorkersMode(ServiceWorkersMode::All)
+        , applicationCacheMode(ApplicationCacheMode::Use)
         , clientCredentialPolicy(credentialPolicy)
+        , preflightPolicy(PreflightPolicy::Consider)
+        , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
+
     {
         this->credentials = credentials;
         this->mode = mode;
     }
 
 #if ENABLE(SERVICE_WORKER)
-    Optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
 #endif
+    Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
-    Optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
-    unsigned maxRedirectCount { 20 };
+    uint8_t maxRedirectCount { 20 };
 
-    SendCallbackPolicy sendLoadCallbacks { SendCallbackPolicy::DoNotSendCallbacks };
-    ContentSniffingPolicy sniffContent { ContentSniffingPolicy::DoNotSniffContent };
-    ContentEncodingSniffingPolicy sniffContentEncoding { ContentEncodingSniffingPolicy::Sniff };
-    DataBufferingPolicy dataBufferingPolicy { DataBufferingPolicy::BufferData };
-    StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::DoNotUse };
-    SecurityCheckPolicy securityCheck { SecurityCheckPolicy::DoSecurityCheck };
-    CertificateInfoPolicy certificateInfoPolicy { CertificateInfoPolicy::DoNotIncludeCertificateInfo };
-    ContentSecurityPolicyImposition contentSecurityPolicyImposition { ContentSecurityPolicyImposition::DoPolicyCheck };
-    DefersLoadingPolicy defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
-    CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };
-    SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
-    InitiatorContext initiatorContext { InitiatorContext::Document };
-    ServiceWorkersMode serviceWorkersMode { ServiceWorkersMode::All };
-    ApplicationCacheMode applicationCacheMode { ApplicationCacheMode::Use };
-    ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
-    PreflightPolicy preflightPolicy { PreflightPolicy::Consider };
-    LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
+    SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;
+    ContentSniffingPolicy sniffContent : bitWidthOfContentSniffingPolicy;
+    ContentEncodingSniffingPolicy sniffContentEncoding : bitWidthOfContentEncodingSniffingPolicy;
+    DataBufferingPolicy dataBufferingPolicy : bitWidthOfDataBufferingPolicy;
+    StoredCredentialsPolicy storedCredentialsPolicy : bitWidthOfStoredCredentialsPolicy;
+    SecurityCheckPolicy securityCheck : bitWidthOfSecurityCheckPolicy;
+    CertificateInfoPolicy certificateInfoPolicy : bitWidthOfCertificateInfoPolicy;
+    ContentSecurityPolicyImposition contentSecurityPolicyImposition : bitWidthOfContentSecurityPolicyImposition;
+    DefersLoadingPolicy defersLoadingPolicy : bitWidthOfDefersLoadingPolicy;
+    CachingPolicy cachingPolicy : bitWidthOfCachingPolicy;
+    SameOriginDataURLFlag sameOriginDataURLFlag : bitWidthOfSameOriginDataURLFlag;
+    InitiatorContext initiatorContext : bitWidthOfInitiatorContext;
+    ServiceWorkersMode serviceWorkersMode : bitWidthOfServiceWorkersMode;
+    ApplicationCacheMode applicationCacheMode : bitWidthOfApplicationCacheMode;
+    ClientCredentialPolicy clientCredentialPolicy : bitWidthOfClientCredentialPolicy;
+    PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
+    LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
 };
 
 } // namespace WebCore
