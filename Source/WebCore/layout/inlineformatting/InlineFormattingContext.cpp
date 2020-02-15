@@ -106,14 +106,8 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
             }
         } else if (layoutBox->isInlineBox()) {
-            if (layoutBox->isAnonymous() || layoutBox->isLineBreakBox()) {
-                // Text wrapper boxes are anonymous inline level boxes. Their computed border/padding/margins are 0.
-                auto& displayBox = formattingState().displayBox(*layoutBox);
-                displayBox.setVerticalMargin({ { }, { } });
-                displayBox.setHorizontalMargin({ });
-                displayBox.setBorder({ { }, { } });
-                displayBox.setPadding({ });
-            } else {
+            // Text wrapper boxes (anonymous inline level boxes) and <br>s don't generate display boxes (only display runs).
+            if (!layoutBox->isAnonymous() && !layoutBox->isLineBreakBox()) {
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and paddings.
                 computeBorderAndPadding(*layoutBox, horizontalConstraints);
                 computeHorizontalMargin(*layoutBox, horizontalConstraints);

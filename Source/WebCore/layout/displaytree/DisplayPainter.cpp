@@ -168,6 +168,8 @@ static void paintSubtree(GraphicsContext& context, const Layout::LayoutState& la
     auto paint = [&] (auto& layoutBox) {
         if (layoutBox.style().visibility() != Visibility::Visible)
             return;
+        if (!layoutState.hasDisplayBox(layoutBox))
+            return;
         auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
         if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
             return;
@@ -237,7 +239,8 @@ static LayoutRect collectPaintRootsAndContentRect(const Layout::LayoutState& lay
                 break;
             if (isPaintRootCandidate(layoutBox))
                 appendPaintRoot(layoutBox);
-            contentRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
+            if (layoutState.hasDisplayBox(layoutBox))
+                contentRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
             if (!is<Layout::ContainerBox>(layoutBox) || !downcast<Layout::ContainerBox>(layoutBox).hasChild())
                 break;
             layoutBoxList.append(downcast<Layout::ContainerBox>(layoutBox).firstChild());

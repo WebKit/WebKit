@@ -52,6 +52,8 @@ Display::Box& FormattingState::displayBox(const Box& layoutBox)
 {
     // Should never need to mutate a display box outside of the formatting context.
     ASSERT(&layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this);
+    // Anonymous text wrappers/line break boxes should not need display boxes.
+    ASSERT(!layoutBox.isInlineTextBox() && !layoutBox.isLineBreakBox());
     return layoutState().ensureDisplayBoxForLayoutBox(layoutBox);
 }
 
