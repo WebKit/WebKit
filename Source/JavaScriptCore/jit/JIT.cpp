@@ -894,13 +894,14 @@ CompilationResult JIT::link()
             patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.hotPathOther));
     }
 
-    JITCodeMap jitCodeMap;
-    for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
-        if (m_labels[bytecodeOffset].isSet())
-            jitCodeMap.append(BytecodeIndex(bytecodeOffset), patchBuffer.locationOf<JSEntryPtrTag>(m_labels[bytecodeOffset]));
+    {
+        JITCodeMapBuilder jitCodeMapBuilder;
+        for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
+            if (m_labels[bytecodeOffset].isSet())
+                jitCodeMapBuilder.append(BytecodeIndex(bytecodeOffset), patchBuffer.locationOf<JSEntryPtrTag>(m_labels[bytecodeOffset]));
+        }
+        m_codeBlock->setJITCodeMap(jitCodeMapBuilder.finalize());
     }
-    jitCodeMap.finish();
-    m_codeBlock->setJITCodeMap(WTFMove(jitCodeMap));
 
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
 

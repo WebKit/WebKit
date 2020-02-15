@@ -1,5 +1,53 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256498. rdar://problem/59478929
+
+    [JSC] Compact JITCodeMap by storing BytecodeIndex and CodeLocation separately
+    https://bugs.webkit.org/show_bug.cgi?id=207673
+    
+    Reviewed by Mark Lam.
+    
+    Source/JavaScriptCore:
+    
+    While BytecodeIndex is 4 bytes, CodeLocation is 8 bytes. So the tuple of them "JITCodeMap::Entry"
+    becomes 16 bytes because it adds 4 bytes padding. We should store BytecodeIndex and CodeLocation separately
+    to avoid this padding.
+    
+    This patch introduces JITCodeMapBuilder. We use this to build JITCodeMap data structure as a immutable final result.
+    
+    * jit/JIT.cpp:
+    (JSC::JIT::link):
+    * jit/JITCodeMap.h:
+    (JSC::JITCodeMap::JITCodeMap):
+    (JSC::JITCodeMap::find const):
+    (JSC::JITCodeMap::operator bool const):
+    (JSC::JITCodeMap::codeLocations const):
+    (JSC::JITCodeMap::indexes const):
+    (JSC::JITCodeMapBuilder::append):
+    (JSC::JITCodeMapBuilder::finalize):
+    (JSC::JITCodeMap::Entry::Entry): Deleted.
+    (JSC::JITCodeMap::Entry::bytecodeIndex const): Deleted.
+    (JSC::JITCodeMap::Entry::codeLocation): Deleted.
+    (JSC::JITCodeMap::append): Deleted.
+    (JSC::JITCodeMap::finish): Deleted.
+    
+    Source/WTF:
+    
+    * wtf/MallocPtr.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256498 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Compact JITCodeMap by storing BytecodeIndex and CodeLocation separately
+            https://bugs.webkit.org/show_bug.cgi?id=207673
+
+            Reviewed by Mark Lam.
+
+            * wtf/MallocPtr.h:
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256482. rdar://problem/59478881
 
     Shrink CachedResource
