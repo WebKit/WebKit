@@ -799,6 +799,7 @@ WebAuthenticationLocalAuthenticatorEnabled:
   humanReadableName: "Web Authentication Local Authenticator"
   humanReadableDescription: "Enable Web Authentication local authenticator support"
   webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
   condition: ENABLE(WEB_AUTHN)
 
 ModernMediaControlsEnabled:
