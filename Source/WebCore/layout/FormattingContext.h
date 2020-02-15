@@ -66,7 +66,7 @@ public:
     virtual ~FormattingContext();
 
     virtual void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&);
+    void layoutOutOfFlowContent(InvalidationState&, const OutOfFlowHorizontalConstraints&, const VerticalConstraints&);
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);
@@ -146,7 +146,7 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
-        static HorizontalConstraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
+        static OutOfFlowHorizontalConstraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
         static VerticalConstraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
         static HorizontalConstraints horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
         static VerticalConstraints verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry);

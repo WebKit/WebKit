@@ -89,21 +89,32 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
 
         if (layoutBox->isAtomicInlineLevelBox()) {
             // Inline-blocks, inline-tables and replaced elements (img, video) can be sized but not yet positioned.
-            computeBorderAndPadding(*layoutBox, horizontalConstraints);
-            computeWidthAndMargin(*layoutBox, horizontalConstraints);
-            auto createsFormattingContext = layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox();
-            auto hasInFlowOrFloatingChild = is<ContainerBox>(*layoutBox) && downcast<ContainerBox>(*layoutBox).hasInFlowOrFloatingChild();
-            if (createsFormattingContext && hasInFlowOrFloatingChild) {
-                auto formattingContext = LayoutContext::createFormattingContext(downcast<ContainerBox>(*layoutBox), layoutState());
-                formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
-            }
-            computeHeightAndMargin(*layoutBox, horizontalConstraints);
-            if (createsFormattingContext && is<ContainerBox>(*layoutBox) && downcast<ContainerBox>(*layoutBox).hasChild()) {
-                auto& displayBox = geometryForBox(*layoutBox);
-                auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(displayBox);
-                auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(displayBox);
-                auto formattingContext = LayoutContext::createFormattingContext(downcast<ContainerBox>(*layoutBox), layoutState());
-                formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
+            if (layoutBox->establishesFormattingContext()) {
+                ASSERT(is<ContainerBox>(*layoutBox));
+                ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox());
+                auto& containerBox = downcast<ContainerBox>(*layoutBox);
+                computeBorderAndPadding(containerBox, horizontalConstraints);
+                computeWidthAndMargin(containerBox, horizontalConstraints);
+
+                auto& rootDisplayBox = geometryForBox(containerBox);
+                if (containerBox.hasInFlowOrFloatingChild()) {
+                    auto horizontalConstraintsForInFlowContent = Geometry::horizontalConstraintsForInFlow(rootDisplayBox);
+                    auto verticalConstraintsForInFlowContent = Geometry::verticalConstraintsForInFlow(rootDisplayBox);
+                    auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
+                    formattingContext->layoutInFlowContent(invalidationState, horizontalConstraintsForInFlowContent, verticalConstraintsForInFlowContent);
+                }
+                computeHeightAndMargin(containerBox, horizontalConstraints);
+                if (containerBox.hasChild()) {
+                    auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(rootDisplayBox);
+                    auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(rootDisplayBox);
+                    auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
+                    formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
+                }
+            } else {
+                // Replaced and other type of leaf atomic inline boxes.
+                computeBorderAndPadding(*layoutBox, horizontalConstraints);
+                computeWidthAndMargin(*layoutBox, horizontalConstraints);
+                computeHeightAndMargin(*layoutBox, horizontalConstraints);
             }
         } else if (layoutBox->isInlineBox()) {
             // Text wrapper boxes (anonymous inline level boxes) and <br>s don't generate display boxes (only display runs).

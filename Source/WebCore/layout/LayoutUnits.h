@@ -157,6 +157,12 @@ struct HorizontalConstraints {
     LayoutUnit logicalWidth;
 };
 
+struct OutOfFlowHorizontalConstraints {
+    HorizontalConstraints value;
+    // Borders and paddings are resolved against the containing block's content box as if the box was an in-flow box.
+    LayoutUnit borderAndPaddingSpecificWidth;
+};
+
 struct VerticalConstraints {
     LayoutUnit logicalTop;
     Optional<LayoutUnit> logicalHeight;
