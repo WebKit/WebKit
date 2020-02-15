@@ -1,5 +1,25 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256203. rdar://problem/59446995
+
+    Unreviewed, speculative build fix on watchOS simulator
+    https://bugs.webkit.org/show_bug.cgi?id=207183
+    
+    * wtf/HashTable.h:
+    (WTF::HashTableCapacityForSize::capacityForSize):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256203 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, speculative build fix on watchOS simulator
+            https://bugs.webkit.org/show_bug.cgi?id=207183
+
+            * wtf/HashTable.h:
+            (WTF::HashTableCapacityForSize::capacityForSize):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256194. rdar://problem/59446995
 
     Unreviewed, fix build failure on watchOS simulator
