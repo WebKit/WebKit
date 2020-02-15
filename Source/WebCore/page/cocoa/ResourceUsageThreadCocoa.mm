@@ -168,6 +168,9 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
     {
         LockHolder lock(WorkerThread::workerThreadsMutex());
         for (auto* thread : WorkerThread::workerThreads(lock)) {
+            // Ignore worker threads that have not been fully started yet.
+            if (!thread->thread())
+                continue;
             mach_port_t machThread = thread->thread()->machThread();
             if (machThread != MACH_PORT_NULL)
                 knownWorkerThreads.set(machThread, thread->identifier().isolatedCopy());

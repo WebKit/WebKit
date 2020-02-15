@@ -143,9 +143,12 @@ void WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 
     m_evaluateCallback = WTFMove(evaluateCallback);
 
-    m_thread = Thread::create(isServiceWorkerThread() ? "WebCore: Service Worker" : "WebCore: Worker", [this] {
+    Ref<Thread> thread = Thread::create(isServiceWorkerThread() ? "WebCore: Service Worker" : "WebCore: Worker", [this] {
         workerThread();
     });
+    // Force the Thread object to be initialized fully before storing it to m_thread (and becoming visible to other threads).
+    WTF::storeStoreFence();
+    m_thread = WTFMove(thread);
 }
 
 void WorkerThread::workerThread()
