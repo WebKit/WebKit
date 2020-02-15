@@ -1,5 +1,59 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256580. rdar://problem/59478981
+
+    Dark Mode: In Notes, list item becomes invisible in dark mode after outdenting
+    https://bugs.webkit.org/show_bug.cgi?id=207676
+    
+    Reviewed by Wenson Hsieh and Timothy Hatcher.
+    
+    Source/WebCore:
+    
+    The bug was caused by EditingStyle::inverseTransformColorIfNeeded converting -apple-system-label to
+    transparent color in ReplaceSelectionCommand when InsertListCommand invokes moveParagraphs.
+    
+    This patch fixes the bug in EditingStyle::inverseTransformColorIfNeeded by treating any semantic color
+    name or semantic RGB color value as if the color was not specified.
+    
+    It also fixes the bug that removeStyleFromRulesAndContext was incapable of removing superflous semantic
+    color names that appear in the inline since the context's computed style only contain RGB values by
+    replacing the inline style's color values with that of the computed style. This fix is necessary to
+    eliminate -apple-system-label in the pasted content, which can cause issues when such a content is
+    sync'ed to other devices via iCloud, etc...
+    
+    Tests: PasteHTML.TransformColorsOfDarkContentButNotSemanticColor
+           PasteHTML.DoesNotTransformColorsOfLightContentDuringOutdent
+    
+    * editing/EditingStyle.cpp:
+    (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+    (WebCore::EditingStyle::inverseTransformColorIfNeeded):
+    
+    Tools:
+    
+    Added regression tests for pasting content with -apple-system-label and outdenting content.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+    (PasteHTML.TransformColorsOfDarkContentButNotSemanticColor):
+    (PasteHTML.DoesNotTransformColorsOfLightContentDuringOutdent):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256580 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Dark Mode: In Notes, list item becomes invisible in dark mode after outdenting
+            https://bugs.webkit.org/show_bug.cgi?id=207676
+
+            Reviewed by Wenson Hsieh and Timothy Hatcher.
+
+            Added regression tests for pasting content with -apple-system-label and outdenting content.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+            (PasteHTML.TransformColorsOfDarkContentButNotSemanticColor):
+            (PasteHTML.DoesNotTransformColorsOfLightContentDuringOutdent):
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256093. rdar://problem/59446995
 
     [WTF] Try using 75% load factor for HashTable
