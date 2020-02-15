@@ -1,5 +1,50 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r252849. rdar://problem/59446998
+
+    Crash in WebCore::ServiceWorkerRegistrationKey::hash() const
+    https://bugs.webkit.org/show_bug.cgi?id=204497
+    <rdar://problem/57348603>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    Update ServiceWorkerContainer::jobResolvedWithRegistration to handle the case of a
+    ServiceWorkerContainer that might have a job whose promise is not related to the same context.
+    In that case, the ServiceWorkerContainer might get stopped, thus its m_ongoingSettledRegistrations be cleared.
+    But the promise may get settled shortly after since its context is not stopped and will then retrieve an empty registration data key.
+    This is difficult to test given we do not control when the resolvedWithRegistration task is posted to the client.
+    
+    * workers/service/ServiceWorkerContainer.cpp:
+    (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+    * workers/service/ServiceWorkerRegistrationKey.h:
+    (WebCore::ServiceWorkerRegistrationKey::encode const):
+    Add release asserts to make sure we do not store/transfer empty registration keys.
+    
+    Source/WebKit:
+    
+    * WebProcess/Storage/WebSWClientConnection.cpp:
+    (WebKit::WebSWClientConnection::scheduleJobInServer):
+    Add a release assert to be able to further debug the crash.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@252849 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-11-25  Youenn Fablet  <youenn@apple.com>
+
+            Crash in WebCore::ServiceWorkerRegistrationKey::hash() const
+            https://bugs.webkit.org/show_bug.cgi?id=204497
+            <rdar://problem/57348603>
+
+            Reviewed by Alex Christensen.
+
+            * WebProcess/Storage/WebSWClientConnection.cpp:
+            (WebKit::WebSWClientConnection::scheduleJobInServer):
+            Add a release assert to be able to further debug the crash.
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256578. rdar://problem/59447009
 
     Protect WebSWServerConnection::scheduleJobInServer from bad scopeURL
