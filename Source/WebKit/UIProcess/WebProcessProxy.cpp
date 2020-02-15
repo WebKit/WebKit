@@ -884,6 +884,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
+    auto protectedThis = makeRef(*this);
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {

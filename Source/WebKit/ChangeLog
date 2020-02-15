@@ -1,3 +1,40 @@
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256187. rdar://problem/59446994
+
+    Crash under WebProcessProxy::shouldSendPendingMessage()
+    https://bugs.webkit.org/show_bug.cgi?id=207464
+    <rdar://problem/59293825>
+    
+    Reviewed by Alex Christensen.
+    
+    I suspect the WebProcessProxy object is getting destroyed as we are iterating over the
+    pending messages in AuxiliaryProcessProxy::didFinishLaunching(), thus crashing when
+    calling WebProcessProxy::shouldSendPendingMessage() inside the loop. As a speculative
+    fix, protect |this| at the beginning of WebProcessProxy::didFinishLaunching().
+    
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::didFinishLaunching):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebProcessProxy::shouldSendPendingMessage()
+            https://bugs.webkit.org/show_bug.cgi?id=207464
+            <rdar://problem/59293825>
+
+            Reviewed by Alex Christensen.
+
+            I suspect the WebProcessProxy object is getting destroyed as we are iterating over the
+            pending messages in AuxiliaryProcessProxy::didFinishLaunching(), thus crashing when
+            calling WebProcessProxy::shouldSendPendingMessage() inside the loop. As a speculative
+            fix, protect |this| at the beginning of WebProcessProxy::didFinishLaunching().
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::didFinishLaunching):
+
 2020-02-13  Russell Epstein  <repstein@apple.com>
 
         Revert r256407. rdar://problem/59299143
