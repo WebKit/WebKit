@@ -1,5 +1,60 @@
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255889. rdar://problem/59446995
+
+    [WTF] Try using 75% load factor for HashTable
+    https://bugs.webkit.org/show_bug.cgi?id=207183
+    
+    Reviewed by Mark Lam.
+    
+    Source/WTF:
+    
+    We know that hash-table is one of the most memory consuming part in WebKit.
+    By analyzing many production hash-table implementations[1], I found that many
+    of them are using 75% load-factor while our one is 50%.
+    
+    A/B test shows that 75% load-factor is performance-neutral in Speedometer2 and
+    JetStream2, while it offers 2~% improvement in Membuster. This means that we are
+    wasting too much memory for no-performance-improvement.
+    
+    This patch changes the load-factor from 50% to 75%.
+    
+    [1]: LLVM DenseMap, Abseil's, rust's, and so on.
+    
+    * wtf/HashTable.h:
+    (WTF::HashTable::shouldExpand):
+    (WTF::HashTable::shouldExpand const):
+    (WTF::HashTableCapacityForSize::capacityForSize):
+    (WTF::KeyTraits>::computeBestTableSize):
+    
+    Tools:
+    
+    Fix load-factor assumption in existing tests.
+    
+    * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+    (TestWebKitAPI::testInitialCapacity):
+    
+    LayoutTests:
+    
+    It seems that this test is relying on hash-table's order.
+    
+    * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255889 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [WTF] Try using 75% load factor for HashTable
+            https://bugs.webkit.org/show_bug.cgi?id=207183
+
+            Reviewed by Mark Lam.
+
+            It seems that this test is relying on hash-table's order.
+
+            * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access-expected.txt:
+
+2020-02-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256427. rdar://problem/59447029
 
     Fix crash due to uninitialized currentStyle in CSSTransition
