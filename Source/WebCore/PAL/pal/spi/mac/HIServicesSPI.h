@@ -102,8 +102,6 @@ enum {
     kMSHDoNotCreateSendRightOption = 0x4,
 };
 
-#endif
-
 typedef UInt32 MSHCreateOptions;
 typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
@@ -127,3 +125,5 @@ bool _AXUIElementRequestServicedBySecondaryAXThread(void);
 OSStatus SetApplicationIsDaemon(Boolean);
 
 WTF_EXTERN_C_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
