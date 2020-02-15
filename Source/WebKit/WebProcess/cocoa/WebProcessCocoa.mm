@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -271,6 +271,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
     RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
+#endif
+
+#if PLATFORM(COCOA)
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    for (size_t i = 0, size = parameters.mediaExtensionHandles.size(); i < size; ++i)
+        SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
 #endif
 }
 

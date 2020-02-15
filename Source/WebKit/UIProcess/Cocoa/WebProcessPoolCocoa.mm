@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,6 +216,41 @@ static bool isInternalInstall()
 }
 #endif
 
+// FIXME(207716): The following should be removed when the GPU process is complete.
+static const Vector<String>& mediaRelatedMachServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<String> {
+        "com.apple.audio.AudioComponentRegistrar", "com.apple.coremedia.endpoint.xpc",
+        "com.apple.coremedia.routediscoverer.xpc", "com.apple.coremedia.routingcontext.xpc",
+        "com.apple.coremedia.volumecontroller.xpc", "com.apple.accessibility.mediaaccessibilityd",
+        "com.apple.mediaremoted.xpc",
+#if PLATFORM(IOS_FAMILY)
+        "com.apple.audio.AudioSession", "com.apple.MediaPlayer.RemotePlayerService",
+        "com.apple.audio.toolbox.reporting.service", "com.apple.coremedia.admin",
+        "com.apple.coremedia.asset.xpc", "com.apple.coremedia.assetimagegenerator.xpc",
+        "com.apple.coremedia.audiodeviceclock.xpc", "com.apple.coremedia.audioprocessingtap.xpc",
+        "com.apple.coremedia.capturesession", "com.apple.coremedia.capturesource",
+        "com.apple.coremedia.compressionsession", "com.apple.coremedia.cpe.xpc",
+        "com.apple.coremedia.cpeprotector.xpc", "com.apple.coremedia.customurlloader.xpc",
+        "com.apple.coremedia.decompressionsession", "com.apple.coremedia.figcontentkeysession.xpc",
+        "com.apple.coremedia.figcpecryptor", "com.apple.coremedia.formatreader.xpc",
+        "com.apple.coremedia.player.xpc", "com.apple.coremedia.remaker",
+        "com.apple.coremedia.remotequeue", "com.apple.coremedia.routingsessionmanager.xpc",
+        "com.apple.coremedia.samplebufferaudiorenderer.xpc", "com.apple.coremedia.samplebufferrendersynchronizer.xpc",
+        "com.apple.coremedia.sandboxserver.xpc", "com.apple.coremedia.sts",
+        "com.apple.coremedia.systemcontroller.xpc", "com.apple.coremedia.videoqueue",
+        "com.apple.airplay.apsynccontroller.xpc", "com.apple.audio.AURemoteIOServer"
+#endif
+#if PLATFORM(MAC)
+        "com.apple.coremedia.endpointstream.xpc", "com.apple.coremedia.endpointplaybacksession.xpc",
+        "com.apple.coremedia.endpointremotecontrolsession.xpc", "com.apple.coremedia.videodecoder",
+        "com.apple.coremedia.videoencoder"
+#endif
+    });
+    return services;
+}
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -336,15 +371,16 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
 #if PLATFORM(COCOA)
     if ([getNEFilterSourceClass() filterRequired]) {
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.nehelper", WTF::nullopt, handle);
-        parameters.neHelperExtensionHandle = WTFMove(handle);
+        SandboxExtension::Handle helperHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.nehelper", WTF::nullopt, helperHandle);
+        parameters.neHelperExtensionHandle = WTFMove(helperHandle);
+        SandboxExtension::Handle managerHandle;
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager", WTF::nullopt, handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager", WTF::nullopt, managerHandle);
 #else
-        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, managerHandle);
 #endif
-        parameters.neSessionManagerExtensionHandle = WTFMove(handle);
+        parameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
     }
     parameters.systemHasBattery = systemHasBattery();
 #endif
@@ -364,6 +400,20 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
 #endif
+
+    
+    // Allow microphone access if either preference is set because WebRTC requires microphone access.
+    bool needWebProcessExtensions = !m_defaultPageGroup->preferences().useGPUProcessForMedia()
+        || !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()
+        || !m_defaultPageGroup->preferences().captureVideoInGPUProcessEnabled();
+
+    if (needWebProcessExtensions) {
+        // FIXME(207716): The following should be removed when the GPU process is complete.
+        const auto& services = mediaRelatedMachServices();
+        parameters.mediaExtensionHandles.allocate(services.size());
+        for (size_t i = 0, size = services.size(); i < size; ++i)
+            SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, parameters.mediaExtensionHandles[i]);
+    }
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
