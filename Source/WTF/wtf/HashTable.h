@@ -327,9 +327,15 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         {
             if (!sizeArg)
                 return 0;
-            uint64_t capacity = roundUpToPowerOfTwo(sizeArg);
-            if (shouldExpand(sizeArg, capacity))
+            constexpr unsigned maxCapacity = 1U << 31;
+            UNUSED_PARAM(maxCapacity);
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(sizeArg <= maxCapacity);
+            uint32_t capacity = roundUpToPowerOfTwo(sizeArg);
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(capacity <= maxCapacity);
+            if (shouldExpand(sizeArg, capacity)) {
+                ASSERT_UNDER_CONSTEXPR_CONTEXT((static_cast<uint64_t>(capacity) * 2) <= maxCapacity);
                 return capacity * 2;
+            }
             return capacity;
         }
 
