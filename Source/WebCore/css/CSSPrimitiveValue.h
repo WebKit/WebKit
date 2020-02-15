@@ -221,6 +221,10 @@ private:
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
 
+    CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
+    CSSPrimitiveValue(StaticCSSValueTag, const Color&);
+    CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
+
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(RefPtr<T>&&);
     template<typename T> CSSPrimitiveValue(Ref<T>&&);

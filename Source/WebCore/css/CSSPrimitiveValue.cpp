@@ -312,6 +312,24 @@ CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize, const RenderS
     init(lengthSize, style);
 }
 
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, CSSValueID valueID)
+    : CSSPrimitiveValue(valueID)
+{
+    makeStatic();
+}
+
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, const Color& color)
+    : CSSPrimitiveValue(color)
+{
+    makeStatic();
+}
+
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, double num, CSSUnitType type)
+    : CSSPrimitiveValue(num, type)
+{
+    makeStatic();
+}
+
 void CSSPrimitiveValue::init(const Length& length)
 {
     switch (length.type()) {
