@@ -150,6 +150,7 @@
            (global-name "com.apple.coremedia.admin")
            (global-name "com.apple.coremedia.asset.xpc")
            (global-name "com.apple.coremedia.assetimagegenerator.xpc")
+           (global-name "com.apple.coremedia.audiodeviceclock.xpc") ; Needed for CMTimeBase
            (global-name "com.apple.coremedia.audioprocessingtap.xpc")
            (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
            (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
