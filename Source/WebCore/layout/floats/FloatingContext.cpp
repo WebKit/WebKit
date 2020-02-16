@@ -162,7 +162,7 @@ FloatingContext::FloatingContext(const ContainerBox& floatingContextRoot, const 
 {
 }
 
-Point FloatingContext::positionForFloat(const Box& layoutBox) const
+Point FloatingContext::positionForFloat(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
@@ -172,12 +172,10 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
 
         auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            auto& containingBlockGeometry = formattingContext().geometryForBox(*layoutBox.containingBlock());
-
             if (layoutBox.isLeftFloatingPositioned())
-                return Position { containingBlockGeometry.contentBoxLeft() + boxGeometry.marginStart() };
+                return { horizontalConstraints.logicalLeft + boxGeometry.marginStart() };
 
-            return Position { containingBlockGeometry.contentBoxRight() - boxGeometry.marginEnd() - boxGeometry.width() };
+            return { horizontalConstraints.logicalRight() - boxGeometry.marginEnd() - boxGeometry.width() };
         };
 
         // No float box on the context yet -> align it with the containing block's left/right edge.
@@ -186,10 +184,8 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
 
     // Find the top most position where the float box fits.
     auto absoluteDisplayBoxCoordinates = this->absoluteDisplayBoxCoordinates(layoutBox);
-
-    Optional<LayoutUnit> previousFloatAbsoluteTop;
-    if (!isEmpty())
-        previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
+    ASSERT(!isEmpty());
+    auto previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
     auto floatBox = FloatBox { layoutBox, absoluteDisplayBoxCoordinates.displayBox, absoluteDisplayBoxCoordinates.containingBlockTopLeft, absoluteDisplayBoxCoordinates.containingBlockContentBox, previousFloatAbsoluteTop };
     findPositionForFloatBox(floatBox);
     return floatBox.rectInContainingBlock().topLeft();

@@ -153,6 +153,8 @@ struct VerticalGeometry {
 };
 
 struct HorizontalConstraints {
+    LayoutUnit logicalRight() const { return logicalLeft + logicalWidth; }
+
     LayoutUnit logicalLeft;
     LayoutUnit logicalWidth;
 };

@@ -445,7 +445,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             // Set static position first.
             displayBox.setTopLeft({ lineBox.logicalLeft(), lineBox.logicalTop() });
             // Float it.
-            displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
+            displayBox.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
         }
     }

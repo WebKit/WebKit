@@ -49,7 +49,7 @@ public:
 
     FloatingState& floatingState() const { return m_floatingState; }
 
-    Point positionForFloat(const Box&) const;
+    Point positionForFloat(const Box&, const HorizontalConstraints&) const;
     Optional<Point> positionForFormattingContextRoot(const Box&) const;
 
     struct ClearancePosition {
