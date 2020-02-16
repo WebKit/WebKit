@@ -1,3 +1,10 @@
+2020-02-16  Dean Jackson  <dino@apple.com>
+
+        Fix a typo and some merge conflict markers that
+        were checked in a few days ago.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Enable LFC regression testing on fast/block/block-only
