@@ -57,7 +57,7 @@ private:
         const T root;
         const T containingBlock;
     };
-    void placeInFlowPositionedChildren(const Box&, const HorizontalConstraints&);
+    void placeInFlowPositionedChildren(const ContainerBox&, const HorizontalConstraints&);
 
     void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
     void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);

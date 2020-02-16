@@ -154,7 +154,8 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
             computeHeightAndMargin(layoutBox, horizontalConstraints, verticalConstraints);
 
-            if (layoutBox.establishesFormattingContext()) {
+            auto establishesFormattingContext = layoutBox.establishesFormattingContext(); 
+            if (establishesFormattingContext) {
                 // Now that we computed the root's height, we can layout the out-of-flow descendants.
                 if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasChild()) {
                     auto& containerBox = downcast<ContainerBox>(layoutBox);
@@ -165,7 +166,6 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                 }
             }
             // Resolve final positions.
-            placeInFlowPositionedChildren(layoutBox, horizontalConstraints);
             if (layoutBox.isFloatAvoider()) {
                 auto horizontalConstraintsPair = ConstraintsPair<HorizontalConstraints> { rootHorizontalConstraints, horizontalConstraints };
                 auto verticalConstraintsPair = ConstraintsPair<VerticalConstraints> { rootVerticalConstraints, verticalConstraints };
@@ -173,6 +173,8 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                 if (layoutBox.isFloatingPositioned())
                     floatingContext.append(layoutBox);
             }
+            if (!establishesFormattingContext && is<ContainerBox>(layoutBox))
+                placeInFlowPositionedChildren(downcast<ContainerBox>(layoutBox), horizontalConstraints);
 
             if (appendNextToLayoutQueue(layoutBox, LayoutDirection::Sibling))
                 break;
@@ -221,19 +223,16 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     return availableWidth;
 }
 
-void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
+void BlockFormattingContext::placeInFlowPositionedChildren(const ContainerBox& containerBox, const HorizontalConstraints& horizontalConstraints)
 {
-    if (!is<ContainerBox>(layoutBox))
-        return;
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &layoutBox);
-    auto& containerBox = downcast<ContainerBox>(layoutBox);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &containerBox);
     for (auto& childBox : childrenOfType<Box>(containerBox)) {
         if (!childBox.isInFlowPositioned())
             continue;
         auto positionOffset = geometry().inFlowPositionedPositionOffset(childBox, horizontalConstraints);
         formattingState().displayBox(childBox).move(positionOffset);
     }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &layoutBox);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &containerBox);
 }
 
 void BlockFormattingContext::computeStaticVerticalPosition(const Box& layoutBox, const VerticalConstraints& verticalConstraints)
