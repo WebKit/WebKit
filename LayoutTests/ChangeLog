@@ -1,3 +1,16 @@
+2020-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a layout test for <rdar://problem/59090510>
+        https://bugs.webkit.org/show_bug.cgi?id=207824
+
+        Reviewed by Anders Carlsson.
+
+        Add a layout test to verify that tapping near the caret rect in a focused input field still dispatches a click
+        event and brings up the keyboard.
+
+        * fast/events/ios/click-in-autofocused-input-when-tapping-near-caret-expected.txt: Added.
+        * fast/events/ios/click-in-autofocused-input-when-tapping-near-caret.html: Added.
+
 2020-02-16  Dean Jackson  <dino@apple.com>
 
         Fix a typo and some merge conflict markers that

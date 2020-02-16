@@ -1,0 +1,11 @@
+Verifies that tapping near the caret rect of an autofocused text field dispatches a click event and presents a keyboard when there is no hardware keyboard attached. To manually run the test, tap on the center of the input field. The keyboard should appear, and the callout bar should not be visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clicked is true
+PASS showingMenu is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
