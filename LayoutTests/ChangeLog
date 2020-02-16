@@ -1,3 +1,116 @@
+2020-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Enable LFC regression testing on fast/block/block-only
+        https://bugs.webkit.org/show_bug.cgi?id=207825
+        <rdar://problem/59491089>
+
+        Reviewed by Antti Koivisto.
+        
+        This helps to catch full LFC regressions while working on the integration part.
+
+        * fast/block/block-only/abs-pos-with-border-padding-and-float-child-expected.html:
+        * fast/block/block-only/abs-pos-with-border-padding-and-float-child.html:
+        * fast/block/block-only/absolute-auto-with-sibling-margin-bottom.html:
+        * fast/block/block-only/absolute-height-stretch.html:
+        * fast/block/block-only/absolute-left-auto.html:
+        * fast/block/block-only/absolute-left-right-top-bottom-auto.html:
+        * fast/block/block-only/absolute-nested.html:
+        * fast/block/block-only/absolute-nested2.html:
+        * fast/block/block-only/absolute-position-left-right-margin.html:
+        * fast/block/block-only/absolute-position-min-max-height.html:
+        * fast/block/block-only/absolute-position-min-max-width.html:
+        * fast/block/block-only/absolute-position-when-containing-block-is-not-in-the-formatting-context.html:
+        * fast/block/block-only/absolute-position-when-containing-block-is-not-in-the-formatting-context2.html:
+        * fast/block/block-only/absolute-position-with-margin-auto-simple-expected.html:
+        * fast/block/block-only/absolute-position-with-margin-auto-simple.html:
+        * fast/block/block-only/absolute-position-with-margin-auto-simple2-expected.html:
+        * fast/block/block-only/absolute-position-with-margin-auto-simple2.html:
+        * fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding-expected.html:
+        * fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding.html:
+        * fast/block/block-only/absolute-simple.html:
+        * fast/block/block-only/absolute-width-shrink-to-fit.html:
+        * fast/block/block-only/absolute-width-stretch.html:
+        * fast/block/block-only/absolute-with-static-block-position-nested.html:
+        * fast/block/block-only/almost-intruding-left-float-simple.html:
+        * fast/block/block-only/block-replaced-with-vertical-margins-expected.html:
+        * fast/block/block-only/block-replaced-with-vertical-margins.html:
+        * fast/block/block-only/body-height-with-auto-html-height-quirk.html:
+        * fast/block/block-only/body-height-with-auto-html-height-quirk2.html:
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk.html:
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html:
+        * fast/block/block-only/border-simple.html:
+        * fast/block/block-only/box-sizing-inflow-out-of-flow-simple.html:
+        * fast/block/block-only/collapsed-margin-with-min-height.html:
+        * fast/block/block-only/collapsed-through-siblings.html:
+        * fast/block/block-only/collapsed-through-with-parent.html:
+        * fast/block/block-only/fixed-nested.html:
+        * fast/block/block-only/float-and-siblings-with-margins.html:
+        * fast/block/block-only/float-avoider-multiple-roots.html:
+        * fast/block/block-only/float-avoider-simple-left.html:
+        * fast/block/block-only/float-avoider-simple-right.html:
+        * fast/block/block-only/float-avoider-with-margins.html:
+        * fast/block/block-only/float-left-when-container-has-padding-margin.html:
+        * fast/block/block-only/float-min-max-height.html:
+        * fast/block/block-only/float-min-max-width.html:
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin-with-no-border.html:
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin.html:
+        * fast/block/block-only/floating-box-clear-both-simple.html:
+        * fast/block/block-only/floating-box-clear-right-simple.html:
+        * fast/block/block-only/floating-box-left-and-right-multiple-with-top-offset.html:
+        * fast/block/block-only/floating-box-left-and-right-multiple.html:
+        * fast/block/block-only/floating-box-right-simple.html:
+        * fast/block/block-only/floating-box-with-clear-siblings.html:
+        * fast/block/block-only/floating-box-with-clear-simple.html:
+        * fast/block/block-only/floating-box-with-new-formatting-context.html:
+        * fast/block/block-only/floating-box-with-relative-positioned-sibling.html:
+        * fast/block/block-only/floating-left-and-right-with-clearance.html:
+        * fast/block/block-only/floating-left-right-simple.html:
+        * fast/block/block-only/floating-left-right-with-all-margins.html:
+        * fast/block/block-only/floating-lefts-and-rights-simple.html:
+        * fast/block/block-only/floating-multiple-lefts-in-body.html:
+        * fast/block/block-only/floating-multiple-lefts-multiple-lines.html:
+        * fast/block/block-only/floating-multiple-lefts.html:
+        * fast/block/block-only/floating-with-new-block-formatting-context.html:
+        * fast/block/block-only/floats-and-block-formatting-roots-expected.html:
+        * fast/block/block-only/floats-and-block-formatting-roots.html:
+        * fast/block/block-only/inflow-min-max-height.html:
+        * fast/block/block-only/inflow-min-max-width.html:
+        * fast/block/block-only/margin-collapse-bottom-bottom.html:
+        * fast/block/block-only/margin-collapse-bottom-nested.html:
+        * fast/block/block-only/margin-collapse-first-last-are-floating.html:
+        * fast/block/block-only/margin-collapse-simple.html:
+        * fast/block/block-only/margin-collapse-top-nested.html:
+        * fast/block/block-only/margin-collapse-when-child-has-padding-border.html:
+        * fast/block/block-only/margin-collapse-with-block-formatting-context.html:
+        * fast/block/block-only/margin-collapse-with-block-formatting-context2.html:
+        * fast/block/block-only/margin-collapse-with-clearance.html:
+        * fast/block/block-only/margin-left-right-sizing-out-of-flow.html:
+        * fast/block/block-only/margin-left-right-sizing.html:
+        * fast/block/block-only/margin-propagation-simple-content-height.html:
+        * fast/block/block-only/margin-sibling-collapse-propagated.html:
+        * fast/block/block-only/margin-simple.html:
+        * fast/block/block-only/min-max-and-preferred-width-simple-expected.html:
+        * fast/block/block-only/min-max-and-preferred-width-simple.html:
+        * fast/block/block-only/min-max-height-percentage.html:
+        * fast/block/block-only/negative-margin-simple.html:
+        * fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html:
+        * fast/block/block-only/non-auto-top-bottom-height-with-margins.html:
+        * fast/block/block-only/non-auto-top-bottom-left-right-widht-height-out-of-flow.html:
+        * fast/block/block-only/out-of-flow-is-never-float-box-expected.html:
+        * fast/block/block-only/out-of-flow-is-never-float-box.html:
+        * fast/block/block-only/out-of-flow-with-containing-block-border-padding.html:
+        * fast/block/block-only/padding-nested.html:
+        * fast/block/block-only/padding-simple.html:
+        * fast/block/block-only/relative-auto-with-parent-offset.html:
+        * fast/block/block-only/relative-auto.html:
+        * fast/block/block-only/relative-bottom.html:
+        * fast/block/block-only/relative-position-when-containing-block-is-not-in-the-formatting-context.html:
+        * fast/block/block-only/relative-right.html:
+        * fast/block/block-only/relative-siblings.html:
+        * fast/block/block-only/relative-simple.html:
+        * fast/block/block-only/replaced-intrinsic-width-simple-expected.html:
+        * fast/block/block-only/replaced-intrinsic-width-simple.html:
+
 2020-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r256633.
