@@ -195,31 +195,29 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     // Vertical static position is not computed yet, so let's just pre-compute it for now.
     precomputeVerticalPositionForAncestors(layoutBox, horizontalConstraints, verticalConstraints);
     precomputeVerticalPosition(layoutBox, horizontalConstraints.containingBlock, verticalConstraints.containingBlock);
-    auto verticalPosition = mapTopToFormattingContextRoot(layoutBox);
-    // FIXME: Check if the non-yet-computed height affects this computation - and whether we have to resolve it
-    // at a later point or not (can't find this in the spec).
+
+    auto mapLogicalTopToFormattingContextRoot = [&] {
+        auto& formattingContextRoot = root();
+        ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
+        auto top = geometryForBox(layoutBox).top();
+        for (auto* containerBox = layoutBox.containingBlock(); containerBox && containerBox != &formattingContextRoot; containerBox = containerBox->containingBlock())
+            top += geometryForBox(*containerBox).top();
+        return top;
+    };
+
+    auto verticalPosition = mapLogicalTopToFormattingContextRoot();
+    // FIXME: Check if the non-yet-computed height affects this computation - and whether we have to resolve it at a later point.
     auto constraints = floatingContext.constraints(verticalPosition, verticalPosition);
     if (!constraints.left && !constraints.right)
         return { };
-    auto& containingBlock = *layoutBox.containingBlock();
-    auto& containingBlockGeometry = geometryForBox(containingBlock);
-    auto availableWidth = containingBlockGeometry.contentBoxWidth();
-
-    LayoutUnit containingBlockLeft;
-    LayoutUnit containingBlockRight = containingBlockGeometry.right();
-    if (&containingBlock != &root()) {
-        // Move containing block left/right to the root's coordinate system.
-        containingBlockLeft = mapLeftToFormattingContextRoot(containingBlock);
-        containingBlockRight = mapRightToFormattingContextRoot(containingBlock);
-    }
-    auto containingBlockContentBoxLeft = containingBlockLeft + containingBlockGeometry.borderLeft() + containingBlockGeometry.paddingLeft().valueOr(0);
-    auto containingBlockContentBoxRight = containingBlockRight - containingBlockGeometry.borderRight() + containingBlockGeometry.paddingRight().valueOr(0);
-
     // Shrink the available space if the floats are actually intruding at this vertical position.
+    auto availableWidth = horizontalConstraints.containingBlock.logicalWidth;
     if (constraints.left)
-        availableWidth -= std::max<LayoutUnit>(0, constraints.left->x - containingBlockContentBoxLeft);
-    if (constraints.right)
-        availableWidth -= std::max<LayoutUnit>(0, containingBlockContentBoxRight - constraints.right->x);
+        availableWidth -= constraints.left->x;
+    if (constraints.right) {
+        // FIXME: Map the logicalRight to the root's coordinate system.
+        availableWidth -= std::max(0_lu, horizontalConstraints.containingBlock.logicalRight() - constraints.right->x);
+    }
     return availableWidth;
 }
 
@@ -358,7 +356,9 @@ void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floati
             return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
 
         if (layoutBox.isFloatAvoider()) {
-            auto availableWidth = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, horizontalConstraintsPair, verticalConstraintsPair).valueOr(horizontalConstraints.logicalWidth);
+            auto availableWidth = horizontalConstraints.logicalWidth;
+            if (layoutBox.style().logicalWidth().isAuto())
+                availableWidth = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, horizontalConstraintsPair, verticalConstraintsPair).valueOr(availableWidth);
             return geometry().inFlowWidthAndMargin(layoutBox, { horizontalConstraints.logicalLeft, availableWidth }, { usedWidth, { } });
         }
 

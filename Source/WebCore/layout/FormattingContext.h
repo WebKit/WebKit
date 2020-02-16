@@ -77,10 +77,6 @@ public:
     };
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
 
-    LayoutUnit mapTopToFormattingContextRoot(const Box&) const;
-    LayoutUnit mapLeftToFormattingContextRoot(const Box&) const;
-    LayoutUnit mapRightToFormattingContextRoot(const Box&) const;
-
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
     bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }

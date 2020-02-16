@@ -188,41 +188,6 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
-static LayoutUnit mapHorizontalPositionToAncestor(const FormattingContext& formattingContext, LayoutUnit horizontalPosition, const ContainerBox& containingBlock, const ContainerBox& ancestor)
-{
-    // "horizontalPosition" is in the coordinate system of the "containingBlock". -> map from containingBlock to ancestor.
-    if (&containingBlock == &ancestor)
-        return horizontalPosition;
-    ASSERT(containingBlock.isContainingBlockDescendantOf(ancestor));
-    for (auto* containerBox = &containingBlock; containerBox && containerBox != &ancestor; containerBox = containerBox->containingBlock())
-        horizontalPosition += formattingContext.geometryForBox(*containerBox).left();
-    return horizontalPosition;
-}
-
-// FIXME: turn these into templates.
-LayoutUnit FormattingContext::mapTopToFormattingContextRoot(const Box& layoutBox) const
-{
-    ASSERT(layoutBox.containingBlock());
-    auto& formattingContextRoot = root();
-    ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
-    auto top = geometryForBox(layoutBox).top();
-    for (auto* containerBox = layoutBox.containingBlock(); containerBox && containerBox != &formattingContextRoot; containerBox = containerBox->containingBlock())
-        top += geometryForBox(*containerBox).top();
-    return top;
-}
-
-LayoutUnit FormattingContext::mapLeftToFormattingContextRoot(const Box& layoutBox) const
-{
-    ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).left(), *layoutBox.containingBlock(), root());
-}
-
-LayoutUnit FormattingContext::mapRightToFormattingContextRoot(const Box& layoutBox) const
-{
-    ASSERT(layoutBox.containingBlock());
-    return mapHorizontalPositionToAncestor(*this, geometryForBox(layoutBox).right(), *layoutBox.containingBlock(), root());
-}
-
 const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
 {
     UNUSED_PARAM(escapeReason);
