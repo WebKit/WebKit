@@ -284,11 +284,11 @@ void BlockFormattingContext::precomputeVerticalPositionForAncestors(const Box& l
         if (hasPrecomputedMarginBefore(*ancestor))
             return;
         auto horizontalConstraintsForAncestor = [&] {
-            auto* containingBlock = layoutBox.containingBlock();
+            auto* containingBlock = ancestor->containingBlock();
             return containingBlock == &root() ? horizontalConstraints.root : Geometry::horizontalConstraintsForInFlow(geometryForBox(*containingBlock));
         };
         auto verticalConstraintsForAncestor = [&] {
-            auto* containingBlock = layoutBox.containingBlock();
+            auto* containingBlock = ancestor->containingBlock();
             return containingBlock == &root() ? verticalConstraints.root : Geometry::verticalConstraintsForInFlow(geometryForBox(*containingBlock));
         };
         precomputeVerticalPosition(*ancestor, horizontalConstraintsForAncestor(), verticalConstraintsForAncestor());
