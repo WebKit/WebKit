@@ -72,6 +72,8 @@ private:
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 
+    NetworkSession* session();
+
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 

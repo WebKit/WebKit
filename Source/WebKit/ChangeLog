@@ -1,3 +1,28 @@
+2020-02-17  Youenn Fablet  <youenn@apple.com>
+
+        Fix regression in NSURLSessionWebSocketTask WSS support
+        https://bugs.webkit.org/show_bug.cgi?id=207855
+
+        Reviewed by Alex Christensen.
+
+        Covered by http/tests/websocket/tests/hybi/simple-wss.html passing with NSURLSessionWebSocketTask code path.
+        When having an authentication challenge, we need to get the session from the task.
+        This was not working for websocket tasks.
+        Fix this by retrieving the session from the web socket data task, which is retrieved from the task identifier.
+
+        * NetworkProcess/Downloads/DownloadID.h:
+        (WebKit::DownloadID::operator bool const):
+        Add operator bool for convenience.
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::session):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate sessionFromTask:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::networkSession):
+
 2020-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Allow suffixes on com.apple.WebKit.WebContent XPC service name

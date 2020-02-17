@@ -38,6 +38,7 @@ class DataReference;
 
 namespace WebKit {
 class NetworkSession;
+class NetworkSessionCocoa;
 class NetworkSocketChannel;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
@@ -58,6 +59,8 @@ public:
 
     typedef uint64_t TaskIdentifier;
     TaskIdentifier identifier() const;
+
+    NetworkSessionCocoa* networkSession();
 
 private:
     void readNextMessage();

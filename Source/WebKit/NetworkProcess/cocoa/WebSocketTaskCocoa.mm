@@ -29,6 +29,7 @@
 #if HAVE(NSURLSESSION_WEBSOCKET)
 
 #import "DataReference.h"
+#import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/WebSocketChannel.h>
@@ -131,6 +132,11 @@ void WebSocketTask::close(int32_t code, const String& reason)
 WebSocketTask::TaskIdentifier WebSocketTask::identifier() const
 {
     return [m_task taskIdentifier];
+}
+
+NetworkSessionCocoa* WebSocketTask::networkSession()
+{
+    return static_cast<NetworkSessionCocoa*>(m_channel.session());
 }
 
 }

@@ -128,4 +128,9 @@ IPC::Connection* NetworkSocketChannel::messageSenderConnection() const
     return &m_connectionToWebProcess.connection();
 }
 
+NetworkSession* NetworkSocketChannel::session()
+{
+    return m_session.get();
+}
+
 } // namespace WebKit
