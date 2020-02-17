@@ -6481,8 +6481,11 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
 
+        if (page() && page()->isLowPowerModeEnabled())
+            m_scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::LowPowerMode);
+
         if (!topOrigin().canAccess(securityOrigin()) && !hasHadUserInteraction())
-            m_scriptedAnimationController->addThrottlingReason(ThrottlingReason::NonInteractedCrossOriginFrame);
+            m_scriptedAnimationController->addThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
     }
 
     return m_scriptedAnimationController->registerCallback(WTFMove(callback));
@@ -6721,7 +6724,7 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 
     if (static_cast<bool>(time) && m_scriptedAnimationController) {
         // It's OK to always remove NonInteractedCrossOriginFrame even if this frame isn't cross-origin.
-        m_scriptedAnimationController->removeThrottlingReason(ThrottlingReason::NonInteractedCrossOriginFrame);
+        m_scriptedAnimationController->removeThrottlingReason(ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame);
     }
 
     // DOM Timer alignment may depend on the user having interacted with the document.

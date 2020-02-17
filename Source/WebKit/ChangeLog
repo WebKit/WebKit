@@ -1,5 +1,9 @@
 2020-02-17  Russell Epstein  <repstein@apple.com>
 
+        Revert r256385. rdar://problem/59408870
+
+2020-02-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256396. rdar://problem/59298180
 
     Unreviewed, revert r255662 as it seems to cause blank views in SVC.

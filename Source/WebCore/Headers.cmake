@@ -1016,7 +1016,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gamepad/PlatformGamepad.h
 
     platform/graphics/ANGLEWebKitBridge.h
-    platform/graphics/AnimationFrameRate.h
     platform/graphics/AudioTrackPrivate.h
     platform/graphics/BitmapImage.h
     platform/graphics/Color.h

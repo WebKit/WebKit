@@ -1,5 +1,9 @@
 2020-02-17  Russell Epstein  <repstein@apple.com>
 
+        Revert r256385. rdar://problem/59408870
+
+2020-02-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256317. rdar://problem/59408870
 
     REGRESSION (r256009): [ Mojave wk2 Debug ] ASSERTION FAILED: Completion handler should always be called under WebKit::WebMDNSRegister::PendingRegistration

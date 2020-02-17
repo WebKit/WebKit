@@ -5598,11 +5598,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setRequestAnimationFrameEnabled(enabled);
 
-    hr = prefsPrivate->renderingUpdateThrottlingEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setRenderingUpdateThrottlingEnabled(enabled);
-
     hr = prefsPrivate->mockScrollbarsEnabled(&enabled);
     if (FAILED(hr))
         return hr;

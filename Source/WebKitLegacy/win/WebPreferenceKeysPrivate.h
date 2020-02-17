@@ -219,5 +219,3 @@
 #define WebKitRequestIdleCallbackEnabledPreferenceKey "WebKitRequestIdleCallbackEnabled"
 
 #define WebKitAsyncClipboardAPIEnabledPreferenceKey "WebKitAsyncClipboardAPIEnabled"
-
-#define WebKitRenderingUpdateThrottlingEnabledPreferenceKey "WebKitRenderingUpdateThrottlingEnabled"

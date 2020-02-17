@@ -22,7 +22,6 @@
 
 #include "ActivityStateChangeObserver.h"
 #include "AlternativeTextClient.h"
-#include "AnimationFrameRate.h"
 #include "ApplicationCacheStorage.h"
 #include "AuthenticatorCoordinator.h"
 #include "BackForwardCache.h"
@@ -1366,50 +1365,34 @@ void Page::resumeScriptedAnimations()
     });
 }
 
-bool Page::renderingUpdateThrottlingEnabled() const
+enum class ThrottlingReasonOperation { Add, Remove };
+static void updateScriptedAnimationsThrottlingReason(Page& page, ThrottlingReasonOperation operation, ScriptedAnimationController::ThrottlingReason reason)
 {
-    return m_settings->renderingUpdateThrottlingEnabled();
-}
-
-void Page::renderingUpdateThrottlingEnabledChanged()
-{
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
-}
-
-bool Page::isRenderingUpdateThrottled() const
-{
-    return renderingUpdateThrottlingEnabled() && !m_throttlingReasons.isEmpty();
-}
-
-Seconds Page::preferredRenderingUpdateInterval() const
-{
-    return renderingUpdateThrottlingEnabled() ? preferredFrameInterval(m_throttlingReasons) : FullSpeedAnimationInterval;
+    page.forEachDocument([&] (Document& document) {
+        if (auto* controller = document.scriptedAnimationController()) {
+            if (operation == ThrottlingReasonOperation::Add)
+                controller->addThrottlingReason(reason);
+            else
+                controller->removeThrottlingReason(reason);
+        }
+    });
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
 {
-    if (isVisuallyIdle == m_throttlingReasons.contains(ThrottlingReason::VisuallyIdle))
-        return;
-
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::VisuallyIdle;
-
-    if (renderingUpdateThrottlingEnabled())
-        renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    updateScriptedAnimationsThrottlingReason(*this, isVisuallyIdle ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::VisuallyIdle);
 }
 
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
 {
-    if (isLowPowerModeEnabled == m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
-        return;
-
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::LowPowerMode;
-
-    if (renderingUpdateThrottlingEnabled())
-        renderingUpdateScheduler().adjustRenderingUpdateFrequency();
-
-    if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
+    updateScriptedAnimationsThrottlingReason(*this, isLowPowerModeEnabled ? ThrottlingReasonOperation::Add : ThrottlingReasonOperation::Remove, ScriptedAnimationController::ThrottlingReason::LowPowerMode);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
+        forEachDocument([] (Document& document) {
+            if (auto timeline = document.existingTimeline())
+                timeline->updateThrottlingState();
+        });
+    } else
         mainFrame().animation().updateThrottlingState();
-
     updateDOMTimerAlignmentInterval();
 }
 

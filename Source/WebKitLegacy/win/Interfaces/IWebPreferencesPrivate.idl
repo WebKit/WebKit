@@ -252,6 +252,4 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
     HRESULT setWebAnimationsCompositeOperationsEnabled([in] BOOL enabled);
     HRESULT webAnimationsMutableTimelinesEnabled([out, retval] BOOL*);
     HRESULT setWebAnimationsMutableTimelinesEnabled([in] BOOL enabled);
-    HRESULT setRenderingUpdateThrottlingEnabled([in] BOOL enabled);
-    HRESULT renderingUpdateThrottlingEnabled([out, retval] BOOL* enabled);
 }
