@@ -357,19 +357,19 @@ void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigne
 
     for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItems[index];
-        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
-            ASSERT(!lineCandidate.floatItem);
-            auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
-            lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItenmWidth);
-            currentLogicalRight += inlineItenmWidth;
-            continue;
-        }
         if (inlineItem.isFloat()) {
             // Floats are not part of the line context.
             // FIXME: Check if their width should be added to currentLogicalRight.
             ASSERT(!lineCandidate.floatItem);
             ASSERT(lineCandidate.inlineContent.runs().isEmpty());
             lineCandidate.floatItem = &inlineItem;
+            continue;
+        }
+        if (inlineItem.isText() || inlineItem.isContainerStart() || inlineItem.isContainerEnd() || inlineItem.isBox()) {
+            ASSERT(!lineCandidate.floatItem);
+            auto inlineItenmWidth = inlineItemWidth(inlineItem, currentLogicalRight);
+            lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItenmWidth);
+            currentLogicalRight += inlineItenmWidth;
             continue;
         }
         if (inlineItem.isLineBreak()) {
