@@ -1413,5 +1413,6 @@ webkit.org/b/207771 http/wpt/service-workers/persistent-importScripts.html [ Pas
 
 webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Timeout ]
 
-
 webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
+
+webkit.org/b/207841 fast/block/block-only/floats-and-block-formatting-roots.html [ Pass Crash ]

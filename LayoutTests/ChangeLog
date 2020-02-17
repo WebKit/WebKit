@@ -1,5 +1,14 @@
 2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: (r256712?) [ iOS wk2 ] fast/block/block-only/floats-and-block-formatting-roots.html is crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=207841
+
+        Unreviewed test gardening.
+        
+        * platform/ios-wk2/TestExpectations:
+
+2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk2 ] webgpu/whlsl/loops-break.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=207839
 
