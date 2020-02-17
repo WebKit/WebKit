@@ -381,6 +381,7 @@ String RegistrationDatabase::importRecords()
         auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql.getColumnText(0));
         auto originURL = URL { URL(), sql.getColumnText(1) };
         auto scopePath = sql.getColumnText(2);
+        auto scopeURL = URL { originURL, scopePath };
         auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql.getColumnText(3));
         auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql.getColumnDouble(4));
         auto updateViaCache = stringToUpdateViaCache(sql.getColumnText(5));
@@ -410,13 +411,13 @@ String RegistrationDatabase::importRecords()
         // Validate the input for this registration.
         // If any part of this input is invalid, let's skip this registration.
         // FIXME: Should we return an error skipping *all* registrations?
-        if (!key || !originURL.isValid() || !topOrigin || !updateViaCache || !scriptURL.isValid() || !workerType)
+        if (!key || !originURL.isValid() || !topOrigin || !updateViaCache || !scriptURL.isValid() || !workerType || !scopeURL.isValid())
             continue;
 
         auto workerIdentifier = ServiceWorkerIdentifier::generate();
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
-        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
+        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
         auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
