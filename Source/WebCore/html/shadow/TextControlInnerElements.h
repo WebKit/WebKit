@@ -112,6 +112,7 @@ public:
 private:
     SearchFieldCancelButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 };
 
 } // namespace WebCore

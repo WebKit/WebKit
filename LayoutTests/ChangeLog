@@ -1,3 +1,13 @@
+2020-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Search cancel button becomes visible when there's a hover effect in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=207328
+
+        Reviewed by Adrian Perez de Castro.
+
+        * fast/forms/search-cancel-button-hover-expected.html: Added.
+        * fast/forms/search-cancel-button-hover.html: Added.
+
 2020-02-16  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] More debug build timeouts gardening
