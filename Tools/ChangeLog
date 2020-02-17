@@ -1,3 +1,16 @@
+2020-02-17  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should be able to comment on Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=201927
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin.comment_on_bug): Method to comment on bugzilla bug.
+        (BugzillaMixin.remove_flags_on_patch): Drive-by fix to correctly identify failure based on status code.
+        (BugzillaMixin.close_bug): Ditto.
+        (CommentOnBug): Build step to comment on bugzilla bug.
+
 2020-02-17  Antti Koivisto  <antti@apple.com>
 
         [macOS] Add trace points for layer flush runloop observer

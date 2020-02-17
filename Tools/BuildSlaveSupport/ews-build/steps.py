@@ -439,6 +439,9 @@ class BugzillaMixin(object):
         flags = [{'name': 'review', 'status': 'X'}, {'name': 'commit-queue', 'status': 'X'}]
         try:
             response = requests.put(patch_url, json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            if response.status_code not in [200, 201]:
+                self._addToLog('stdio', 'Unable to remove flags on patch {}. Unexpected response code from bugzilla: {}'.format(patch_id, response.status_code))
+                return FAILURE
         except Exception as e:
             self._addToLog('stdio', 'Error in removing flags on Patch {}'.format(patch_id))
             return FAILURE
@@ -448,8 +451,25 @@ class BugzillaMixin(object):
         bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
         try:
             response = requests.put(bug_url, json={'status': 'RESOLVED', 'resolution': 'FIXED', 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            if response.status_code not in [200, 201]:
+                self._addToLog('stdio', 'Unable to close bug {}. Unexpected response code from bugzilla: {}'.format(bug_id, response.status_code))
+                return FAILURE
         except Exception as e:
             self._addToLog('stdio', 'Error in closing bug {}'.format(bug_id))
+            return FAILURE
+        return SUCCESS
+
+    def comment_on_bug(self, bug_id, comment_text):
+        bug_comment_url = '{}rest/bug/{}/comment'.format(BUG_SERVER_URL, bug_id)
+        if not comment_text:
+            return FAILURE
+        try:
+            response = requests.post(bug_comment_url, data={'comment': comment_text, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            if response.status_code not in [200, 201]:
+                self._addToLog('stdio', 'Unable to comment on bug {}. Unexpected response code from bugzilla: {}'.format(bug_id, response.status_code))
+                return FAILURE
+        except Exception as e:
+            self._addToLog('stdio', 'Error in commenting on bug {}'.format(bug_id))
             return FAILURE
         return SUCCESS
 
@@ -572,6 +592,31 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
         if self.results == SUCCESS:
             return {u'step': u'Closed bug {}'.format(self.bug_id)}
         return {u'step': u'Failed to close bug {}'.format(self.bug_id)}
+
+
+class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
+    name = 'comment-on-bugzilla-bug'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def start(self):
+        self.bug_id = self.getProperty('bug_id', '')
+        self.comment_text = self.getProperty('bugzilla_comment_text', '')
+
+        if not self.comment_text:
+            self._addToLog('stdio', 'bugzilla_comment_text build property not found.\n')
+            self.descriptionDone = 'No bugzilla comment found'
+            self.finished(WARNINGS)
+            return None
+
+        rc = self.comment_on_bug(self.bug_id, self.comment_text)
+        self.finished(rc)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Added comment on bug {}'.format(self.bug_id)}
+        return {u'step': u'Failed to add comment on bug {}'.format(self.bug_id)}
 
 
 class UnApplyPatchIfRequired(CleanWorkingDirectory):
