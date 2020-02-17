@@ -1,5 +1,25 @@
 2020-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r255566. rdar://problem/59524417
+
+    Unreviewed, disable ResponsivenessTimer test in Debug / ASAN
+    
+    The ResponsivenessTimer is disabled for those configurations as of r255518.
+    
+    * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255566 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-03  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, disable ResponsivenessTimer test in Debug / ASAN
+
+            The ResponsivenessTimer is disabled for those configurations as of r255518.
+
+            * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm:
+
+2020-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed build fix. rdar://59461287
 
         * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
