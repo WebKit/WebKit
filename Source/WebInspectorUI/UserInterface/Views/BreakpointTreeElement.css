@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,19 +68,19 @@
 }
 
 .breakpoint-exception-icon .icon {
-    content: url(../Images/Exception.svg);
+    content: url(../Images/TypeIcons.svg#Exception-light);
 }
 
 .breakpoint-assertion-icon .icon {
-    content: url(../Images/Assertion.svg);
+    content: url(../Images/TypeIcons.svg#Assertion-light);
 }
 
 .breakpoint-microtask-icon .icon {
-    content: url(../Images/Microtask.svg);
+    content: url(../Images/TypeIcons.svg#Microtask-light);
 }
 
 .breakpoint-paused-icon .icon {
-    content: url(../Images/PausedBreakpoint.svg);
+    content: url(../Images/TypeIcons.svg#PausedBreakpoint-light);
 }
 
 /* When animating a layer on top of a tree element's icon, move the main
@@ -108,4 +108,22 @@ icon to the icon element's background so animations are layered on top. */
     transform: scale(0.85);
     transition: all .4s ease-out;
     background-color: hsla(216, 30%, 42%, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .breakpoint-exception-icon .icon {
+        content: url(../Images/TypeIcons.svg#Exception-dark);
+    }
+
+    .breakpoint-assertion-icon .icon {
+        content: url(../Images/TypeIcons.svg#Assertion-dark);
+    }
+
+    .breakpoint-microtask-icon .icon {
+        content: url(../Images/TypeIcons.svg#Microtask-dark);
+    }
+
+    .breakpoint-paused-icon .icon {
+        content: url(../Images/TypeIcons.svg#PausedBreakpoint-dark);
+    }
 }

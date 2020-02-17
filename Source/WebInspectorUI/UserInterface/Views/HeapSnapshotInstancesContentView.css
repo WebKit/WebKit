@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,47 +92,47 @@
     width: 16px;
     height: 16px;
     margin-right: 4px;
-    content: url(../Images/TypeUndefined.svg);
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light);
 }
 
 .heap-snapshot .icon.native {
-    content: url(../Images/Native.svg);
+    content: url(../Images/TypeIcons.svg#Native-light);
 }
 
 .heap-snapshot .icon.boolean {
-    content: url(../Images/TypeBoolean.svg);
+    content: url(../Images/TypeIcons.svg#TypeBoolean-light);
 }
 
 .heap-snapshot .icon.function {
-    content: url(../Images/Function.svg);
+    content: url(../Images/TypeIcons.svg#Function-light);
 }
 
 .heap-snapshot .icon.number {
-    content: url(../Images/TypeNumber.svg);
+    content: url(../Images/TypeIcons.svg#TypeNumber-light);
 }
 
 .heap-snapshot .icon.bigint {
-    content: url(../Images/TypeBigInt.svg);
+    content: url(../Images/TypeIcons.svg#TypeBigInt-light);
 }
 
 .heap-snapshot .icon.object {
-    content: url(../Images/TypeObject.svg);
+    content: url(../Images/TypeIcons.svg#TypeObject-light);
 }
 
 .heap-snapshot .icon.node {
-    content: url(../Images/DOMElement.svg);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .heap-snapshot .icon.regex {
-    content: url(../Images/TypeRegex.svg);
+    content: url(../Images/TypeIcons.svg#TypeRegex-light);
 }
 
 .heap-snapshot .icon.string {
-    content: url(../Images/TypeString.svg);
+    content: url(../Images/TypeIcons.svg#TypeString-light);
 }
 
 .heap-snapshot .icon.symbol {
-    content: url(../Images/TypeSymbol.svg);
+    content: url(../Images/TypeIcons.svg#TypeSymbol-light);
 }
 
 .heap-snapshot > .data-grid td .formatted-node-preview,
@@ -200,4 +200,50 @@
 .heap-snapshot-instance-popover-content .node .go-to-link {
     position: relative;
     top: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .heap-snapshot .icon {
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark);
+    }
+
+    .heap-snapshot .icon.native {
+        content: url(../Images/TypeIcons.svg#Native-dark);
+    }
+
+    .heap-snapshot .icon.boolean {
+        content: url(../Images/TypeIcons.svg#TypeBoolean-dark);
+    }
+
+    .heap-snapshot .icon.function {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .heap-snapshot .icon.number {
+        content: url(../Images/TypeIcons.svg#TypeNumber-dark);
+    }
+
+    .heap-snapshot .icon.bigint {
+        content: url(../Images/TypeIcons.svg#TypeBigInt-dark);
+    }
+
+    .heap-snapshot .icon.object {
+        content: url(../Images/TypeIcons.svg#TypeObject-dark);
+    }
+
+    .heap-snapshot .icon.node {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .heap-snapshot .icon.regex {
+        content: url(../Images/TypeIcons.svg#TypeRegex-dark);
+    }
+
+    .heap-snapshot .icon.string {
+        content: url(../Images/TypeIcons.svg#TypeString-dark);
+    }
+
+    .heap-snapshot .icon.symbol {
+        content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
+    }
 }

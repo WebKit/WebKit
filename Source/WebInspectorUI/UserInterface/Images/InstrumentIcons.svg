@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+            .dark {
+                --stroke: hsla(0, 0%, 0%, 0.5);
+            }
+
+            .light.blue {
+                --fill: hsl(207, 64%, 67%);
+                --stroke: hsl(202, 55%, 51%);
+                --outline: hsl(202, 55%, 51%);
+            }
+
+            .dark.blue {
+                --fill: hsl(210, 50%, 21%);
+                --outline: hsl(212, 94%, 54%);
+            }
+
+            .light.red {
+                --fill: hsl(360, 64%, 75%);
+                --stroke: hsl(360, 54%, 62%);
+                --outline: hsl(360, 54%, 62%);
+            }
+
+            .dark.red {
+                --fill: hsl(359, 69%, 25%);
+                --outline: hsl(357, 77%, 59%);
+            }
+
+            .light.green {
+                --fill: hsl(118, 43%, 55%);
+                --stroke: hsl(118, 33%, 42%);
+                --outline: hsl(118, 33%, 42%);
+            }
+
+            .dark.green {
+                --fill: hsl(118, 26%, 24%);
+                --outline: hsl(117, 56%, 65%);
+            }
+
+            .light.purple {
+                --fill: hsl(269, 65%, 74%);
+                --stroke: hsl(273, 33%, 58%);
+                --outline: hsl(273, 33%, 58%);
+            }
+
+            .dark.purple {
+                --fill: hsl(269, 26%, 23%);
+                --stroke: hsl(272, 25%, 12%);
+                --outline: hsl(273, 40%, 53%);
+            }
+
+            .light.brown {
+                --fill: hsl(22, 59%, 70%);
+                --stroke: hsl(22, 40%, 50%);
+                --outline: hsl(22, 40%, 50%);
+            }
+
+            .dark.brown {
+                --fill: hsl(28, 51%, 21%);
+                --outline: hsl(28, 56%, 65%);
+            }
+
+            .light.lime {
+                --fill: hsl(76, 49%, 60%);
+                --stroke: hsl(79, 43%, 48%);
+                --outline: hsl(79, 43%, 48%);
+            }
+
+            .dark.lime {
+                --fill: hsl(77, 49%, 23%);
+                --outline: hsl(79, 75%, 52%);
+            }
+
+            .light.teal {
+                --fill: hsl(143, 24%, 66%);
+                --stroke: hsl(153, 24%, 51%);
+                --outline: hsl(153, 24%, 51%);
+            }
+
+            .dark.teal {
+                --fill: hsl(143, 48%, 20%);
+                --outline: hsl(153, 50%, 52%);
+            }
+        </style>
+
+        <clipPath id="clip">
+            <circle cx="8" cy="8" r="7"/>
+        </clipPath>
+    </defs>
+
+    <symbol id="circle" viewBox="0 0 16 16">
+        <circle stroke="var(--outline)" fill="var(--fill)" cx="8" cy="8" r="7.5"/>
+    </symbol>
+
+    <symbol id="network" viewBox="0 0 16 16">
+        <path d="M 11 14.3325755 L 10 14.6900635 L 10 4.81711004 L 8.46831066 6.24134473 L 7.75 5.5705206 L 10.5 3.00231934 L 13.25 5.5705206 L 12.5316893 6.24134473 L 11 4.81091327 L 11 14.3325755 Z" stroke="var(--stroke)" stroke-linejoin="round" stroke-width="2" style="clip-path: url(#clip);"/>
+        <path d="M 6 1.32731142 L 5 1.79199219 L 5 10.2777191 L 3.46831066 8.84604471 L 2.75 9.520373 L 5.5 12.1019897 L 8.25 9.520373 L 7.53168934 8.84604471 L 6 10.2839483 L 6 1.32731142 Z" stroke="var(--stroke)" stroke-linejoin="round" stroke-width="2" style="clip-path: url(#clip);"/>
+        <path d="M 11 14.3325755 L 10 14.6900635 L 10 4.81711004 L 8.46831066 6.24134473 L 7.75 5.5705206 L 10.5 3.00231934 L 13.25 5.5705206 L 12.5316893 6.24134473 L 11 4.81091327 L 11 14.3325755 Z" fill="white"/>
+        <path d="M 6 1.32731142 L 5 1.79199219 L 5 10.2777191 L 3.46831066 8.84604471 L 2.75 9.520373 L 5.5 12.1019897 L 8.25 9.520373 L 7.53168934 8.84604471 L 6 10.2839483 L 6 1.32731142 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="cpu" viewBox="0 0 16 16">
+        <rect stroke="var(--stroke)" stroke-width="2" x="4" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="7" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="10" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="4" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="7" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="10" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="3" y="6" width="10" height="4" rx="0.25"/>
+        <rect fill="white" x="3" y="6" width="10" height="4" rx="0.25"/>
+    </symbol>
+
+    <symbol id="cube" viewBox="0 0 16 16">
+        <path d="M 3.00628662 11.0028076 L 3 5 L 8 3 L 13 5.00280762 L 13 11.0028076 L 8 13 L 3.00628662 11.0028076 Z" stroke="var(--stroke)"/>
+        <path d="M 3.00628662 5.00280762 L 8 7 L 8 13 L 3.00628662 11.0028076 L 3.00628662 5.00280762 Z M 8 7 L 8 13 L 13 11.0028076 L 13 5.00280762 L 8 7 Z M 8 3 L 13 5 L 8 7 L 3 5 L 8 3 Z" fill="white" stroke="var(--stroke)" stroke-width="0.5" stroke-linejoin="bevel"/>
+    </symbol>
+
+    <symbol id="paintbrush" viewBox="0 0 16 16">
+        <path d="M 3 10.4935773 C 3 11.6310702 3.94215347 11.9907402 4.93496556 12 C 6.42418369 11.9907402 6.92058973 11.3204375 6.92058973 10.4935773 C 6.92058973 9.66671703 6.24966718 8.99641436 5.42204226 8.99641436 C 4.59441735 8.99641436 3.94215347 9.66671703 3.94215347 10.4935773 C 3.94215347 10.999895 3.31764654 10.7238538 3 10.4935773 Z M 8.99763014 9.08837807 L 11.7565232 5.32059047 C 12.059741 4.94168339 12.0992889 4.42825986 11.8436112 4.17258216 C 11.5879335 3.91690445 11.070247 3.9521894 10.6860812 4.25014853 L 6.88966617 6.98041409 C 6.48986361 7.26273645 5.98436755 8.19410964 6.86513881 9.0748809 C 7.74591007 9.95565216 8.71076191 9.48363474 8.99763014 9.08837807 Z" stroke="var(--stroke)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 3 10.4935773 C 3 11.6310702 3.94215347 11.9907402 4.93496556 12 C 6.42418369 11.9907402 6.92058973 11.3204375 6.92058973 10.4935773 C 6.92058973 9.66671703 6.24966718 8.99641436 5.42204226 8.99641436 C 4.59441735 8.99641436 3.94215347 9.66671703 3.94215347 10.4935773 C 3.94215347 10.999895 3.31764654 10.7238538 3 10.4935773 Z M 8.99763014 9.08837807 L 11.7565232 5.32059047 C 12.059741 4.94168339 12.0992889 4.42825986 11.8436112 4.17258216 C 11.5879335 3.91690445 11.070247 3.9521894 10.6860812 4.25014853 L 6.88966617 6.98041409 C 6.48986361 7.26273645 5.98436755 8.19410964 6.86513881 9.0748809 C 7.74591007 9.95565216 8.71076191 9.48363474 8.99763014 9.08837807 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="camera" viewBox="0 0 16 16">
+        <path d="M 9.05 7.38920455 L 12.375 5.5 L 12.375 10.5 L 9.05 8.61079545 L 9.05 9.5 C 9.05 10.0522847 8.60228475 10.5 8.05 10.5 L 4.25 10.5 C 3.69771525 10.5 3.25 10.0522847 3.25 9.5 L 3.25 6.5 C 3.25 5.94771525 3.69771525 5.5 4.25 5.5 L 8.05 5.5 C 8.60228475 5.5 9.05 5.94771525 9.05 6.5 L 9.05 7.38920455 Z" stroke="var(--stroke)" fill="var(--fill)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 9.05 7.38920455 L 12.375 5.5 L 12.375 10.5 L 9.05 8.61079545 L 9.05 9.5 C 9.05 10.0522847 8.60228475 10.5 8.05 10.5 L 4.25 10.5 C 3.69771525 10.5 3.25 10.0522847 3.25 9.5 L 3.25 6.5 C 3.25 5.94771525 3.69771525 5.5 4.25 5.5 L 8.05 5.5 C 8.60228475 5.5 9.05 5.94771525 9.05 6.5 L 9.05 7.38920455 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="barchart" viewBox="0 0 16 16">
+        <rect stroke-linejoin="round" fill="white" x="9.5" y="4" width="3" height="8" stroke="var(--stroke)"/>
+        <rect stroke-linejoin="round" fill="white" x="3.5" y="9" width="3" height="3" stroke="var(--stroke)"/>
+        <rect stroke-linejoin="round" fill="white" x="6.5" y="7" width="3" height="5" stroke="var(--stroke)"/>
+    </symbol>
+
+    <symbol id="script" viewBox="0 0 16 16">
+        <path d="M 5.22715696 6.125 C 5.91982955 6.125 6.45431395 6.6811371 6.45431395 7.25000001 C 6.45431395 7.25000001 6.93478361 6.81078546 7.17501843 6.59117817 C 7.92513716 5.90546775 9.42537462 4.53404687 9.42537462 4.53404687 C 9.42537462 4.53404687 12.4169327 7.54094502 12.5269833 7.67306518 C 12.6753846 7.85122682 13 8.17674256 13 8.7521515 C 13 9.03857762 12.8713126 9.31763171 12.6565014 9.52590133 C 12.4398269 9.73597737 7.89350922 13.8804761 8.11042201 13.69328 C 8.34989886 13.4865646 8.49957557 13.1940886 8.49957557 12.875 C 8.49957557 12.2636566 8.18050277 11.9713059 8.0225143 11.7980652 C 8.01851356 11.7936782 7.87412439 11.647648 7.6463559 11.4174298 L 6.04526161 12.875 C 6.04526161 13.4963203 6.59467851 14 7.2724186 14 C 7.5964145 14 7.89108408 13.8826115 8.11042201 13.69328 C 8.34996717 13.4864312 8.49957557 13.1940158 8.49957557 12.875 C 8.49957557 12.2636566 8.18050277 11.9713059 8.0225143 11.7980652 C 7.86452582 11.6248245 4.77566147 8.52086639 4.5648687 8.29740906 C 4.35407594 8.07395173 4 7.82797241 4 7.25000001 C 4 6.9391318 4.15462275 6.63721575 4.40531682 6.42455392 C 4.15462324 6.63721527 8.68638208 2.47343347 8.96623147 2.26163853 C 9.17952159 2.10021679 9.4468593 2 9.72673256 2 C 10.3738162 2 10.9667723 2.55439758 10.9667723 3.125 L 6.45431395 7.25000001 C 6.45431395 6.6811371 5.91982955 6.125 5.22715696 6.125 C 4.90704524 6.125 4.62071828 6.24183056 4.40531685 6.42455387 C 4.62071825 6.24183056 4.90704521 6.125 5.22715696 6.125 Z" stroke="var(--stroke)" />
+        <path d="M 5.22715696 6.125 C 5.91982955 6.125 6.45431395 6.6811371 6.45431395 7.25000001 C 6.45431395 7.25000001 6.93478361 6.81078546 7.17501843 6.59117817 C 7.92513716 5.90546775 9.42537462 4.53404687 9.42537462 4.53404687 C 9.42537462 4.53404687 12.4169327 7.54094502 12.5269833 7.67306518 C 12.6753846 7.85122682 13 8.17674256 13 8.7521515 C 13 9.03857762 12.8713126 9.31763171 12.6565014 9.52590133 C 12.4398269 9.73597737 7.89350922 13.8804761 8.11042201 13.69328 C 8.34989886 13.4865646 8.49957557 13.1940886 8.49957557 12.875 C 8.49957557 12.2636566 8.18050277 11.9713059 8.0225143 11.7980652 C 8.01851356 11.7936782 7.87412439 11.647648 7.6463559 11.4174298 L 6.04526161 12.875 C 6.04526161 13.4963203 6.59467851 14 7.2724186 14 C 7.5964145 14 7.89108408 13.8826115 8.11042201 13.69328 C 8.34996717 13.4864312 8.49957557 13.1940158 8.49957557 12.875 C 8.49957557 12.2636566 8.18050277 11.9713059 8.0225143 11.7980652 C 7.86452582 11.6248245 4.77566147 8.52086639 4.5648687 8.29740906 C 4.35407594 8.07395173 4 7.82797241 4 7.25000001 C 4 6.9391318 4.15462275 6.63721575 4.40531682 6.42455392 C 4.15462324 6.63721527 8.68638208 2.47343347 8.96623147 2.26163853 C 9.17952159 2.10021679 9.4468593 2 9.72673256 2 C 10.3738162 2 10.9667723 2.55439758 10.9667723 3.125 L 6.45431395 7.25000001 C 6.45431395 6.6811371 5.91982955 6.125 5.22715696 6.125 C 4.90704524 6.125 4.62071828 6.24183056 4.40531685 6.42455387 C 4.62071825 6.24183056 4.90704521 6.125 5.22715696 6.125 Z" fill="white" stroke="var(--stroke)" stroke-width="0.5"/>
+    </symbol>
+
+    <g id="NetworkInstrument-light" class="light blue"><use href="#circle"/><use href="#network"/></g>
+    <g id="NetworkInstrument-dark" class="dark blue"><use href="#circle"/><use href="#network"/></g>
+    <g id="CPUInstrument-light" class="light green"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="CPUInstrument-dark" class="dark green"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="HeapAllocationsInstrument-light" class="light brown"><use href="#circle"/><use href="#cube"/></g>
+    <g id="HeapAllocationsInstrument-dark" class="dark brown"><use href="#circle"/><use href="#cube"/></g>
+    <g id="LayoutInstrument-light" class="light lime"><use href="#circle"/><use href="#paintbrush"/></g>
+    <g id="LayoutInstrument-dark" class="dark lime"><use href="#circle"/><use href="#paintbrush"/></g>
+    <g id="MediaInstrument-light" class="light teal"><use href="#circle"/><use href="#camera"/></g>
+    <g id="MediaInstrument-dark" class="dark teal"><use href="#circle"/><use href="#camera"/></g>
+    <g id="MemoryInstrument-light" class="light brown"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="MemoryInstrument-dark" class="dark brown"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="RenderingFramesInstrument-light" class="light red"><use href="#circle"/><use href="#barchart"/></g>
+    <g id="RenderingFramesInstrument-dark" class="dark red"><use href="#circle"/><use href="#barchart"/></g>
+    <g id="ScriptsInstrument-light" class="light purple"><use href="#circle"/><use href="#script"/></g>
+    <g id="ScriptsInstrument-dark" class="dark purple"><use href="#circle"/><use href="#script"/></g>
+</svg>

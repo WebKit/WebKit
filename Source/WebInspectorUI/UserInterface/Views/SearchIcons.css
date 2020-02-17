@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,29 +24,59 @@
  */
 
 .dom-match-element-icon .icon {
-    content: url(../Images/DOMElement.svg);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .dom-match-text-node-icon .icon {
-    content: url(../Images/DOMTextNode.svg);
+    content: url(../Images/TypeIcons.svg#DOMTextNode-light);
 }
 
 .dom-match-comment-icon .icon {
-    content: url(../Images/DOMComment.svg);
+    content: url(../Images/TypeIcons.svg#DOMComment-light);
 }
 
 .dom-match-document-type-icon .icon {
-    content: url(../Images/DOMDocumentType.svg);
+    content: url(../Images/TypeIcons.svg#DOMDocumentType-light);
 }
 
 .dom-match-character-data-icon .icon {
-    content: url(../Images/DOMCharacterData.svg);
+    content: url(../Images/TypeIcons.svg#DOMCharacterData-light);
 }
 
 .dom-match-node-icon .icon {
-    content: url(../Images/DOMNode.svg);
+    content: url(../Images/TypeIcons.svg#DOMNode-light);
 }
 
 .source-code-match .icon {
-    content: url(../Images/ResultLine.svg);
+    content: url(../Images/TypeIcons.svg#ResultLine-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .dom-match-element-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .dom-match-text-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMTextNode-dark);
+    }
+
+    .dom-match-comment-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMComment-dark);
+    }
+
+    .dom-match-document-type-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMDocumentType-dark);
+    }
+
+    .dom-match-character-data-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMCharacterData-dark);
+    }
+
+    .dom-match-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMNode-dark);
+    }
+
+    .source-code-match .icon {
+        content: url(../Images/TypeIcons.svg#ResultLine-dark);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,15 +33,15 @@
 }
 
 .panel.details.layer .name-column .icon {
-    content: url(../Images/DOMElement.svg);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .panel.details.layer tr.reflection .name-column .icon {
-    content: url(../Images/Reflection.svg);
+    content: url(../Images/TypeIcons.svg#Reflection-light);
 }
 
 .panel.details.layer tr.pseudo-element .name-column .icon {
-    content: url(../Images/PseudoElement.svg);
+    content: url(../Images/TypeIcons.svg#PseudoElement-light);
 }
 
 .panel.details.layer .name-column :matches(.pseudo-element, .reflection) {
@@ -73,4 +73,18 @@
 
 .panel.details.layer .layers-memory-label {
     justify-content: flex-end;
+}
+
+@media (prefers-color-scheme: dark) {
+    .panel.details.layer .name-column .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .panel.details.layer tr.reflection .name-column .icon {
+        content: url(../Images/TypeIcons.svg#Reflection-dark);
+    }
+
+    .panel.details.layer tr.pseudo-element .name-column .icon {
+        content: url(../Images/TypeIcons.svg#PseudoElement-dark);
+    }
 }

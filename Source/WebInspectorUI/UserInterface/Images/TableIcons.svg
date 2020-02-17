@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            .light {
+                --border: black;
+                --backfill: hsla(0, 0%, 100%, 0.5);
+            }
+
+            .dark {
+                --border: white;
+                --backfill: hsla(0, 0%, 0%, 0.5);
+            }
+
+            .database.light {
+                --border: hsl(43, 33%, 37%);
+            }
+
+            .database.dark {
+                --border: hsl(43, 33%, 53%);
+            }
+
+            .local {
+                --border: hsl(222, 22%, 51%);
+            }
+
+            .session {
+                --border: hsl(336, 19%, 53%);
+            }
+
+            .application-cache {
+                --border: hsl(136, 19%, 52%);
+            }
+        </style>
+    </defs>
+
+    <symbol id="i" stroke="none" viewBox="0 0 32 32">
+        <path fill="var(--backfill)" d="M 4.32393736 27.5 C 1.47472036 27.5 5.32907052e-15 26.1156482 5.32907052e-15 23.4017704 L 5.32907052e-15 7.58452313 C 5.32907052e-15 4.87064535 1.47472036 3.5 4.32393736 3.5 L 27.6760626 3.5 C 30.553915 3.5 32 4.8843518 32 7.58452313 L 32 23.4017704 C 32 26.1156482 30.553915 27.5 27.6760626 27.5 L 4.32393736 27.5 Z"/>
+        <path fill="var(--border)" d="M 5.05369128 26.5 C 2.38255034 26.5 1 25.2310109 1 22.7432895 L 1 8.2441462 C 1 5.7564249 2.38255034 4.5 5.05369128 4.5 L 26.9463087 4.5 C 29.6442953 4.5 31 5.76898915 31 8.2441462 L 31 22.7432895 C 31 25.2310109 29.6442953 26.5 26.9463087 26.5 L 5.05369128 26.5 Z M 3.2147651 8.38235294 L 3.2147651 11.3475157 L 15.0671141 11.3475157 L 15.0671141 6.57310109 L 5.13422819 6.57310109 C 3.89932886 6.57310109 3.2147651 7.17618504 3.2147651 8.38235294 Z M 16.9463087 11.3475157 L 28.7852349 11.3475157 L 28.7852349 8.38235294 C 28.7852349 7.17618504 28.1006711 6.57310109 26.8657718 6.57310109 L 16.9463087 6.57310109 L 16.9463087 11.3475157 Z M 16.9463087 17.8934894 L 28.7852349 17.8934894 L 28.7852349 13.1065106 L 16.9463087 13.1065106 L 16.9463087 17.8934894 Z M 15.0671141 13.1065106 L 3.2147651 13.1065106 L 3.2147651 17.8934894 L 15.0671141 17.8934894 L 15.0671141 13.1065106 Z M 26.8657718 24.4268989 C 28.1006711 24.4268989 28.7852349 23.8112507 28.7852349 22.6050828 L 28.7852349 19.6524843 L 16.9463087 19.6524843 L 16.9463087 24.4268989 L 26.8657718 24.4268989 Z M 5.13422819 24.4268989 L 15.0671141 24.4268989 L 15.0671141 19.6524843 L 3.2147651 19.6524843 L 3.2147651 22.6050828 C 3.2147651 23.8112507 3.89932886 24.4268989 5.13422819 24.4268989 Z"/>
+    </symbol>
+
+    <g id="light" class="light"><use href="#i"/></g>
+    <g id="dark" class="dark"><use href="#i"/></g>
+    <g id="database-light" class="database light"><use href="#i"/></g>
+    <g id="database-dark" class="database dark"><use href="#i"/></g>
+    <g id="local-light" class="local light"><use href="#i"/></g>
+    <g id="local-dark" class="local dark"><use href="#i"/></g>
+    <g id="session-light" class="session light"><use href="#i"/></g>
+    <g id="session-dark" class="session dark"><use href="#i"/></g>
+    <g id="application-cache-light" class="application-cache light"><use href="#i"/></g>
+    <g id="application-cache-dark" class="application-cache dark"><use href="#i"/></g>
+</svg>

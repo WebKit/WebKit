@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                color: black;
+            }
+
+            #dark {
+                color: white;
+            }
+        </style>
+    </defs>
+    <symbol id="i" stroke="none" stroke-width="1" fill="none" viewBox="0 0 32 32">
+        <rect fill-opacity="0.1" fill="currentColor" width="30" height="5" x="1" y="22.5" />
+        <path stroke="currentColor" fill-opacity="0.3" fill="currentColor" d="M 1 9 L 31 9 C 31.2761424 9 31.5 9.22385763 31.5 9.5 L 31.5 27.5 C 31.5 27.7761424 31.2761424 28 31 28 L 1 28 C 0.723857625 28 0.5 27.7761424 0.5 27.5 L 0.5 9.5 C 0.5 9.22385763 0.723857625 9 1 9 Z"/>
+        <path fill="currentColor" fill-opacity="0.1" stroke="currentColor" d="M 0.5 9.60526316 L 0.5 4.5877193 C 0.5 3.98698852 0.986988518 3.5 1.5877193 3.5 L 8.98100563 3.5 C 9.27991068 3.5 9.56564391 3.62300401 9.77108471 3.84011759 L 11.6980079 5.6562203 C 11.9034487 5.87333388 12.189182 5.99633789 12.488087 5.99633789 L 30.4122807 5.99633789 C 31.0130115 5.99633789 31.5 6.48332641 31.5 7.08405719 L 31.5 9.60526316"/>
+    </symbol>
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

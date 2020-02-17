@@ -1,3 +1,364 @@
+2020-02-17  Jon Davis  <jond@apple.com>
+
+        Update resource, type, and instrument icons for light, dark, and override colors
+        https://bugs.webkit.org/show_bug.cgi?id=207587
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/ApplicationCacheManifest.svg: Added.
+        * UserInterface/Images/Beacon.svg:
+        * UserInterface/Images/ClippingIcons.svg: Added.
+        * UserInterface/Images/Cookie.svg: Added.
+        * UserInterface/Images/Database.svg: Added.
+        * UserInterface/Images/DocumentIcons.svg: Added.
+        * UserInterface/Images/FolderGeneric.svg: Added.
+        * UserInterface/Images/InstrumentIcons.svg: Added.
+        * UserInterface/Images/Origin.svg:
+        * UserInterface/Images/Stopwatch.svg:
+        * UserInterface/Images/TableIcons.svg: Added.
+        * UserInterface/Images/TypeIcons.svg: Added.
+        * UserInterface/Views/AuditTreeElement.css:
+        (.audit.test-case .icon):
+        (.audit.test-group .icon):
+        (.audit.test-case-result .icon):
+        (.audit.test-group-result .icon):
+        (@media (prefers-color-scheme: dark) .audit.test-case .icon):
+        (@media (prefers-color-scheme: dark) .audit.test-group .icon):
+        (@media (prefers-color-scheme: dark) .audit.test-case-result .icon):
+        (@media (prefers-color-scheme: dark) .audit.test-group-result .icon):
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-exception-icon .icon):
+        (.breakpoint-assertion-icon .icon):
+        (.breakpoint-microtask-icon .icon):
+        (.breakpoint-paused-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-exception-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-assertion-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-microtask-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-paused-icon .icon):
+        * UserInterface/Views/CallFrameIcons.css:
+        (.program-icon .icon):
+        (.function-icon .icon):
+        (.event-listener-icon .icon):
+        (.native-icon .icon):
+        (.tail-deleted .icon):
+        (@media (prefers-color-scheme: dark) .program-icon .icon):
+        (@media (prefers-color-scheme: dark) .function-icon .icon):
+        (@media (prefers-color-scheme: dark) .event-listener-icon .icon):
+        (@media (prefers-color-scheme: dark) .native-icon .icon):
+        (@media (prefers-color-scheme: dark) .tail-deleted .icon):
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon):
+        (@media (prefers-color-scheme: dark) .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon):
+        * UserInterface/Views/DOMBreakpointTreeElement.css:
+        (.breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon):
+        * UserInterface/Views/DOMNodeTreeElement.css:
+        (.tree-outline .item.dom-node .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline .item.dom-node .icon):
+        * UserInterface/Views/FolderIcon.css:
+        (.folder-icon .icon):
+        (.tree-outline:focus .folder-icon.selected .icon):
+        (.origin-icon .icon):
+        (.tree-outline:focus .origin-icon.selected .icon):
+        (@media (prefers-color-scheme: dark) .folder-icon .icon):
+        (@media (prefers-color-scheme: dark) .origin-icon .icon):
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css:
+        (.timeline-overview-graph.heap-allocations > img.snapshot):
+        (@media (prefers-color-scheme: dark) .timeline-overview-graph.heap-allocations > img.snapshot):
+        * UserInterface/Views/HeapAllocationsTimelineView.css:
+        (.timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot):
+        (@media (prefers-color-scheme: dark) .timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot):
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot .icon):
+        (.heap-snapshot .icon.native):
+        (.heap-snapshot .icon.boolean):
+        (.heap-snapshot .icon.function):
+        (.heap-snapshot .icon.number):
+        (.heap-snapshot .icon.bigint):
+        (.heap-snapshot .icon.object):
+        (.heap-snapshot .icon.node):
+        (.heap-snapshot .icon.regex):
+        (.heap-snapshot .icon.string):
+        (.heap-snapshot .icon.symbol):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.native):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.boolean):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.function):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.number):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.bigint):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.object):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.node):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.regex):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.string):
+        (@media (prefers-color-scheme: dark) .heap-snapshot .icon.symbol):
+        * UserInterface/Views/IdleTreeElement.css:
+        (.details-section.call-stack .idle .icon):
+        (@media (prefers-color-scheme: dark) .details-section.call-stack .idle .icon):
+        * UserInterface/Views/LayerDetailsSidebarPanel.css:
+        (.panel.details.layer .name-column .icon):
+        (.panel.details.layer tr.reflection .name-column .icon):
+        (.panel.details.layer tr.pseudo-element .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer tr.reflection .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer tr.pseudo-element .name-column .icon):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.panel.details.layer-tree .name-column .icon):
+        (.panel.details.layer-tree tr.reflection .name-column .icon):
+        (.panel.details.layer-tree tr.pseudo-element .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer-tree .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer-tree tr.reflection .name-column .icon):
+        (@media (prefers-color-scheme: dark) .panel.details.layer-tree tr.pseudo-element .name-column .icon):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .table li:not(.selected) .cell:not(.current-session)):
+        (.network-table > .table .cell.dom-node.name .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-assertion-icon .icon):
+        (@media (prefers-color-scheme: dark) .network-table > .table .cell.dom-node.name .icon):
+        (.network-table .cell.dom-node.name .icon): Deleted.
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property.boolean > .icon):
+        (.object-tree-property.function > .icon):
+        (.object-tree-property.number > .icon):
+        (.object-tree-property.bigint > .icon):
+        (.object-tree-property.object > .icon):
+        (.object-tree-property.object.null > .icon):
+        (.object-tree-property.object.node > .icon):
+        (.object-tree-property.regex > .icon):
+        (.object-tree-property.string > .icon):
+        (.object-tree-property.symbol > .icon):
+        (.object-tree-property.accessor > .icon,):
+        (.object-tree-property.had-error > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.boolean > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.function > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.number > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.bigint > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object.null > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object.node > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.regex > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.string > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.symbol > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.accessor > .icon,):
+        (@media (prefers-color-scheme: dark) .object-tree-property.had-error > .icon):
+        * UserInterface/Views/PathComponentIcons.css:
+        (.request-icon .icon):
+        (.response-icon .icon):
+        (.heap-snapshot-summary-icon .icon):
+        (.heap-snapshot-instances-icon .icon):
+        (.heap-snapshot-object-graph-icon .icon):
+        (.dom-element-icon .icon):
+        (.dom-pseudo-element-icon .icon):
+        (.dom-text-node-icon .icon):
+        (.dom-comment-icon .icon):
+        (.dom-document-type-icon .icon):
+        (.dom-document-icon .icon):
+        (.dom-character-data-icon .icon):
+        (.dom-node-icon .icon):
+        (.object-icon .icon):
+        (.function-icon .icon):
+        (.native-icon .icon):
+        (.program-icon .icon):
+        (.events-icon .icon):
+        (.call-trees-icon .icon):
+        (.snapshot-list-icon .icon):
+        (.snapshot-diff-icon .icon):
+        (.image-icon .icon):
+        (.source-icon .icon):
+        (@media (prefers-color-scheme: dark) .request-icon .icon):
+        (@media (prefers-color-scheme: dark) .response-icon .icon):
+        (@media (prefers-color-scheme: dark) .heap-snapshot-summary-icon .icon):
+        (@media (prefers-color-scheme: dark) .heap-snapshot-instances-icon .icon):
+        (@media (prefers-color-scheme: dark) .heap-snapshot-object-graph-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-element-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-pseudo-element-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-text-node-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-comment-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-document-type-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-document-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-character-data-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-node-icon .icon):
+        (@media (prefers-color-scheme: dark) .object-icon .icon):
+        (@media (prefers-color-scheme: dark) .function-icon .icon):
+        (@media (prefers-color-scheme: dark) .native-icon .icon):
+        (@media (prefers-color-scheme: dark) .program-icon .icon):
+        (@media (prefers-color-scheme: dark) .events-icon .icon):
+        (@media (prefers-color-scheme: dark) .call-trees-icon .icon):
+        (@media (prefers-color-scheme: dark) .snapshot-list-icon .icon):
+        (@media (prefers-color-scheme: dark) .snapshot-diff-icon .icon):
+        (@media (prefers-color-scheme: dark) .source-icon .icon):
+        * UserInterface/Views/ProfileView.css:
+        (.profile > .data-grid td .icon.function-icon):
+        (.profile > .data-grid td .icon.native-icon):
+        (.profile > .data-grid td .icon.program-icon):
+        (@media (prefers-color-scheme: dark) .profile > .data-grid td .icon.function-icon):
+        (@media (prefers-color-scheme: dark) .profile > .data-grid td .icon.native-icon):
+        (@media (prefers-color-scheme: dark) .profile > .data-grid td .icon.program-icon):
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon .icon):
+        (.resource-icon.override .icon):
+        (.resource-icon.resource-type-document .icon):
+        (.resource-icon.resource-type-document.override .icon):
+        (.resource-icon.resource-type-image .icon):
+        (.resource-icon.resource-type-image.override .icon):
+        (.resource-icon.resource-type-font .icon):
+        (.resource-icon.resource-type-font.override .icon):
+        (:matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon):
+        (:matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon):
+        (.resource-icon.resource-type-script .icon):
+        (.resource-icon.resource-type-script.override .icon):
+        (.anonymous-script-icon .icon):
+        (.source-map-resource.resource-icon .icon):
+        (.source-map-resource.resource-icon.resource-type-style-sheet .icon):
+        (.source-map-resource.resource-icon.resource-type-script .icon):
+        (.script.worker-icon .icon):
+        (.script.worker-icon.override .icon):
+        (.resource-icon.resource-type-websocket .icon):
+        (.resource-icon.resource-type-ping .icon,):
+        (.resource-icon.resource-type-range .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.override .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-document .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-document.override .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-image .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-image.override .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-font .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-font.override .icon):
+        (@media (prefers-color-scheme: dark) :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon):
+        (@media (prefers-color-scheme: dark) :matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-script .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-script.override .icon):
+        (@media (prefers-color-scheme: dark) .anonymous-script-icon .icon):
+        (@media (prefers-color-scheme: dark) .source-map-resource.resource-icon .icon):
+        (@media (prefers-color-scheme: dark) .source-map-resource.resource-icon.resource-type-style-sheet .icon):
+        (@media (prefers-color-scheme: dark) .source-map-resource.resource-icon.resource-type-script .icon):
+        (@media (prefers-color-scheme: dark) .script.worker-icon .icon):
+        (@media (prefers-color-scheme: dark) .script.worker-icon.override .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-websocket .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-ping .icon,):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-range .icon):
+        (.large .resource-icon .icon): Deleted.
+        (.large .resource-icon.resource-type-document .icon): Deleted.
+        (.large .resource-icon.resource-type-image .icon): Deleted.
+        (.large .resource-icon.resource-type-font .icon): Deleted.
+        (.large :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon): Deleted.
+        (.large .resource-icon.resource-type-script .icon): Deleted.
+        (.large .anonymous-script-icon .icon): Deleted.
+        (.large .source-map-resource.resource-icon .icon): Deleted.
+        (.large .source-map-resource.resource-icon.resource-type-style-sheet .icon): Deleted.
+        (.large .source-map-resource.resource-icon.resource-type-script .icon): Deleted.
+        (.large .script.worker-icon .icon): Deleted.
+        (.large .resource-icon.resource-type-websocket .icon): Deleted.
+        (.large .resource-icon.resource-type-range .icon): Deleted.
+        * UserInterface/Views/SearchIcons.css:
+        (.dom-match-element-icon .icon):
+        (.dom-match-text-node-icon .icon):
+        (.dom-match-comment-icon .icon):
+        (.dom-match-document-type-icon .icon):
+        (.dom-match-character-data-icon .icon):
+        (.dom-match-node-icon .icon):
+        (.source-code-match .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-element-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-text-node-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-comment-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-document-type-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-character-data-icon .icon):
+        (@media (prefers-color-scheme: dark) .dom-match-node-icon .icon):
+        (@media (prefers-color-scheme: dark) .source-code-match .icon):
+        * UserInterface/Views/StorageIcons.css:
+        (.application-cache-manifest .icon):
+        (.application-cache-frame .icon):
+        (.cookie-icon .icon):
+        (.local-storage-icon .icon):
+        (.session-storage-icon .icon):
+        (.database-icon .icon):
+        (.database-table-icon .icon):
+        (@media (prefers-color-scheme: dark) .application-cache-manifest .icon):
+        (@media (prefers-color-scheme: dark) .application-cache-frame .icon):
+        (@media (prefers-color-scheme: dark) .local-storage-icon .icon):
+        (@media (prefers-color-scheme: dark) .session-storage-icon .icon):
+        (@media (prefers-color-scheme: dark) .database-icon .icon):
+        (@media (prefers-color-scheme: dark) .database-table-icon .icon):
+        * UserInterface/Views/StyleRuleIcons.css:
+        (.author-style-rule-icon .icon):
+        (.author-style-rule-icon.pseudo-selector .icon):
+        (.user-style-rule-icon .icon):
+        (.user-style-rule-icon.pseudo-selector .icon):
+        (.user-agent-style-rule-icon .icon):
+        (.user-agent-style-rule-icon.pseudo-selector .icon):
+        (.inspector-style-rule-icon .icon):
+        (.inspector-style-rule-icon.pseudo-selector .icon):
+        (.inherited-style-rule-icon .icon):
+        (.inherited-element-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .author-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .author-style-rule-icon.pseudo-selector .icon):
+        (@media (prefers-color-scheme: dark) .user-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .user-style-rule-icon.pseudo-selector .icon):
+        (@media (prefers-color-scheme: dark) .user-agent-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .user-agent-style-rule-icon.pseudo-selector .icon):
+        (@media (prefers-color-scheme: dark) .inspector-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .inspector-style-rule-icon.pseudo-selector .icon):
+        (@media (prefers-color-scheme: dark) .inherited-style-rule-icon .icon):
+        (@media (prefers-color-scheme: dark) .inherited-element-style-rule-icon .icon):
+        * UserInterface/Views/TimelineIcons.css:
+        (.network-icon .icon):
+        (.script-icon .icon):
+        (.cpu-icon .icon):
+        (.memory-icon .icon):
+        (.heap-allocations-icon .icon):
+        (.layout-icon .icon):
+        (.rendering-frame-icon .icon):
+        (.media-icon .icon):
+        (.stopwatch-icon .icon):
+        (.style-record .icon):
+        (.layout-record .icon):
+        (.paint-record .icon):
+        (.composite-record .icon):
+        (.rendering-frame-record .icon):
+        (.api-record .icon):
+        (.evaluated-record .icon):
+        (.event-record .icon):
+        (.probe-record .icon):
+        (.console-profile-record .icon):
+        (.garbage-collection-profile-record .icon):
+        (.timer-record .icon):
+        (.animation-frame-record .icon):
+        (.css-animation-record .icon):
+        (.css-transition-record .icon):
+        (.media-element-record .icon):
+        (.heap-snapshot-record .icon):
+        (@media (prefers-color-scheme: dark) .network-icon .icon):
+        (@media (prefers-color-scheme: dark) .script-icon .icon):
+        (@media (prefers-color-scheme: dark) .cpu-icon .icon):
+        (@media (prefers-color-scheme: dark) .memory-icon .icon):
+        (@media (prefers-color-scheme: dark) .heap-allocations-icon .icon):
+        (@media (prefers-color-scheme: dark) .layout-icon .icon):
+        (@media (prefers-color-scheme: dark) .rendering-frame-icon .icon):
+        (@media (prefers-color-scheme: dark) .media-icon .icon):
+        (@media (prefers-color-scheme: dark) .stopwatch-icon .icon):
+        (@media (prefers-color-scheme: dark) .style-record .icon):
+        (@media (prefers-color-scheme: dark) .layout-record .icon):
+        (@media (prefers-color-scheme: dark) .paint-record .icon):
+        (@media (prefers-color-scheme: dark) .composite-record .icon):
+        (@media (prefers-color-scheme: dark) .rendering-frame-record .icon):
+        (@media (prefers-color-scheme: dark) .api-record .icon):
+        (@media (prefers-color-scheme: dark) .evaluated-record .icon):
+        (@media (prefers-color-scheme: dark) .event-record .icon):
+        (@media (prefers-color-scheme: dark) .probe-record .icon):
+        (@media (prefers-color-scheme: dark) .console-profile-record .icon):
+        (@media (prefers-color-scheme: dark) .garbage-collection-profile-record .icon):
+        (@media (prefers-color-scheme: dark) .timer-record .icon):
+        (@media (prefers-color-scheme: dark) .animation-frame-record .icon):
+        (@media (prefers-color-scheme: dark) .css-animation-record .icon):
+        (@media (prefers-color-scheme: dark) .css-transition-record .icon):
+        (@media (prefers-color-scheme: dark) .media-element-record .icon):
+        (@media (prefers-color-scheme: dark) .heap-snapshot-record .icon):
+        * UserInterface/Views/URLBreakpointTreeElement.css:
+        (.breakpoint.url:not(.breakpoint-paused-icon) .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint.url:not(.breakpoint-paused-icon) .icon):
+
 2020-02-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: VoiceOver doesn't read selected panel tab

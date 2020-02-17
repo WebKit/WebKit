@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,116 +24,169 @@
  */
 
 .resource-icon .icon {
-    content: image-set(url(../Images/DocumentGeneric.png) 1x, url(../Images/DocumentGeneric@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#generic-light);
 }
 
 .resource-icon.override .icon {
-    filter: invert() hue-rotate(260deg);
+    content: url(../Images/DocumentIcons.svg#generic-light-override);
 }
 
 .resource-icon.resource-type-document .icon {
-    content: image-set(url(../Images/DocumentMarkup.png) 1x, url(../Images/DocumentMarkup@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#markup-light);
+}
+
+.resource-icon.resource-type-document.override .icon {
+    content: url(../Images/DocumentIcons.svg#markup-light-override);
 }
 
 .resource-icon.resource-type-image .icon {
-    content: image-set(url(../Images/DocumentImage.png) 1x, url(../Images/DocumentImage@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#image-light);
+}
+
+.resource-icon.resource-type-image.override .icon {
+    content: url(../Images/DocumentIcons.svg#image-light-override);
 }
 
 .resource-icon.resource-type-font .icon {
-    content: image-set(url(../Images/DocumentFont.png) 1x, url(../Images/DocumentFont@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#font-light);
+}
+
+.resource-icon.resource-type-font.override .icon {
+    content: url(../Images/DocumentIcons.svg#font-light-override);
 }
 
 :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
-    content: image-set(url(../Images/DocumentCSS.png) 1x, url(../Images/DocumentCSS@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#css-light);
+}
+
+:matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+    content: url(../Images/DocumentIcons.svg#css-light-override);
 }
 
 .resource-icon.resource-type-script .icon {
-    content: image-set(url(../Images/DocumentJS.png) 1x, url(../Images/DocumentJS@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#js-light);
+}
+
+.resource-icon.resource-type-script.override .icon {
+    content: url(../Images/DocumentIcons.svg#js-light-override);
 }
 
 .anonymous-script-icon .icon {
-    content: image-set(url(../Images/ClippingJS.png) 1x, url(../Images/ClippingJS@2x.png) 2x);
+    content: url(../Images/ClippingIcons.svg#js-light);
 }
 
 .source-map-resource.resource-icon .icon {
-    content: image-set(url(../Images/ClippingGeneric.png) 1x, url(../Images/ClippingGeneric@2x.png) 2x);
+    content: url(../Images/ClippingIcons.svg#generic-light);
 }
 
 .source-map-resource.resource-icon.resource-type-style-sheet .icon {
-    content: image-set(url(../Images/ClippingCSS.png) 1x, url(../Images/ClippingCSS@2x.png) 2x);
+    content: url(../Images/ClippingIcons.svg#css-light);
 }
 
 .source-map-resource.resource-icon.resource-type-script .icon {
-    content: image-set(url(../Images/ClippingJS.png) 1x, url(../Images/ClippingJS@2x.png) 2x);
+    content: url(../Images/ClippingIcons.svg#js-light);
 }
 
 .script.worker-icon .icon {
-    content: image-set(url(../Images/WorkerScript.png) 1x, url(../Images/WorkerScript@2x.png) 2x);
+    content: url(../Images/DocumentIcons.svg#worker-light);
+}
+
+.script.worker-icon.override .icon {
+    content: url(../Images/DocumentIcons.svg#worker-light-override);
 }
 
 .resource-icon.resource-type-websocket .icon {
-    content: image-set(url(../Images/WebSocket.png) 1x, url(../Images/WebSocket@2x.png) 2x);
+    content: url(../Images/WebSocket.svg#light);
 }
 
 .resource-icon.resource-type-ping .icon,
-.resource-icon.resource-type-beacon .icon,
-.large .resource-icon.resource-type-ping .icon,
-.large .resource-icon.resource-type-beacon .icon {
-    content: url(../Images/Beacon.svg);
+.resource-icon.resource-type-beacon .icon {
+    content: url(../Images/Beacon.svg#light);
 }
 
 .resource-icon.resource-type-range .icon {
-    content: url(../Images/Range.svg);
+    content: url(../Images/ClippingIcons.svg#range-light);
 }
 
-.large .resource-icon .icon {
-    content: image-set(url(../Images/DocumentGenericLarge.png) 1x, url(../Images/DocumentGenericLarge@2x.png) 2x);
-}
+@media (prefers-color-scheme: dark) {
+    .resource-icon .icon {
+        content: url(../Images/DocumentIcons.svg#generic-dark);
+    }
 
-.large .resource-icon.resource-type-document .icon {
-    content: image-set(url(../Images/DocumentMarkupLarge.png) 1x, url(../Images/DocumentMarkupLarge@2x.png) 2x);
-}
+    .resource-icon.override .icon {
+        content: url(../Images/DocumentIcons.svg#generic-dark-override);
+    }
 
-.large .resource-icon.resource-type-image .icon {
-    content: image-set(url(../Images/DocumentImageLarge.png) 1x, url(../Images/DocumentImageLarge@2x.png) 2x);
-}
+    .resource-icon.resource-type-document .icon {
+        content: url(../Images/DocumentIcons.svg#markup-dark);
+    }
 
-.large .resource-icon.resource-type-font .icon {
-    content: image-set(url(../Images/DocumentFontLarge.png) 1x, url(../Images/DocumentFontLarge@2x.png) 2x);
-}
+    .resource-icon.resource-type-document.override .icon {
+        content: url(../Images/DocumentIcons.svg#markup-dark-override);
+    }
 
-.large :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
-    content: image-set(url(../Images/DocumentCSSLarge.png) 1x, url(../Images/DocumentCSSLarge@2x.png) 2x);
-}
+    .resource-icon.resource-type-image .icon {
+        content: url(../Images/DocumentIcons.svg#image-dark);
+    }
+    .resource-icon.resource-type-image.override .icon {
+        content: url(../Images/DocumentIcons.svg#image-dark-override);
+    }
 
-.large .resource-icon.resource-type-script .icon {
-    content: image-set(url(../Images/DocumentJSLarge.png) 1x, url(../Images/DocumentJSLarge@2x.png) 2x);
-}
+    .resource-icon.resource-type-font .icon {
+        content: url(../Images/DocumentIcons.svg#font-dark);
+    }
+    .resource-icon.resource-type-font.override .icon {
+        content: url(../Images/DocumentIcons.svg#font-dark-override);
+    }
 
-.large .anonymous-script-icon .icon {
-    content: image-set(url(../Images/ClippingJSLarge.png) 1x, url(../Images/ClippingJSLarge@2x.png) 2x);
-}
+    :matches(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
+        content: url(../Images/DocumentIcons.svg#css-dark);
+    }
+    :matches(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+        content: url(../Images/DocumentIcons.svg#css-dark-override);
+    }
 
-.large .source-map-resource.resource-icon .icon {
-    content: image-set(url(../Images/ClippingGenericLarge.png) 1x, url(../Images/ClippingGenericLarge@2x.png) 2x);
-}
+    .resource-icon.resource-type-script .icon {
+        content: url(../Images/DocumentIcons.svg#js-dark);
+    }
+    .resource-icon.resource-type-script.override .icon {
+        content: url(../Images/DocumentIcons.svg#js-dark-override);
+    }
 
-.large .source-map-resource.resource-icon.resource-type-style-sheet .icon {
-    content: image-set(url(../Images/ClippingCSSLarge.png) 1x, url(../Images/ClippingCSSLarge@2x.png) 2x);
-}
+    .anonymous-script-icon .icon {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
 
-.large .source-map-resource.resource-icon.resource-type-script .icon {
-    content: image-set(url(../Images/ClippingJSLarge.png) 1x, url(../Images/ClippingJSLarge@2x.png) 2x);
-}
+    .source-map-resource.resource-icon .icon {
+        content: url(../Images/ClippingIcons.svg#generic-dark);
+    }
 
-.large .script.worker-icon .icon {
-    content: image-set(url(../Images/WorkerScriptLarge.png) 1x, url(../Images/WorkerScriptLarge@2x.png) 2x);
-}
+    .source-map-resource.resource-icon.resource-type-style-sheet .icon {
+        content: url(../Images/ClippingIcons.svg#css-dark);
+    }
 
-.large .resource-icon.resource-type-websocket .icon {
-    content: image-set(url(../Images/WebSocketLarge.png) 1x, url(../Images/WebSocketLarge@2x.png) 2x);
-}
+    .source-map-resource.resource-icon.resource-type-script .icon {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
 
-.large .resource-icon.resource-type-range .icon {
-    content: url(../Images/RangeLarge.svg);
+    .script.worker-icon .icon {
+        content: url(../Images/DocumentIcons.svg#worker-dark);
+    }
+
+    .script.worker-icon.override .icon {
+        content: url(../Images/DocumentIcons.svg#worker-dark-override);
+    }
+
+    .resource-icon.resource-type-websocket .icon {
+        content: url(../Images/WebSocket.svg#dark);
+    }
+
+    .resource-icon.resource-type-ping .icon,
+    .resource-icon.resource-type-beacon .icon {
+        content: url(../Images/Beacon.svg#dark);
+    }
+
+    .resource-icon.resource-type-range .icon {
+        content: url(../Images/ClippingIcons.svg#range-dark);
+    }
 }

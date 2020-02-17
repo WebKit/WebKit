@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,93 +24,183 @@
  */
 
 .request-icon .icon {
-    content: url(../Images/Request.svg);
+    content: url(../Images/TypeIcons.svg#Request-light);
 }
 
 .response-icon .icon {
-    content: url(../Images/Response.svg);
+    content: url(../Images/TypeIcons.svg#Response-light);
 }
 
 .heap-snapshot-summary-icon .icon {
-    content: url(../Images/HeapSnapshotSummary.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshotSummary-light);
 }
 
 .heap-snapshot-instances-icon .icon {
-    content: url(../Images/HeapSnapshotInstances.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshotInstances-light);
 }
 
 .heap-snapshot-object-graph-icon .icon {
-    content: url(../Images/HeapSnapshotObjectGraph.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshotObjectGraph-light);
 }
 
 .dom-element-icon .icon {
-    content: url(../Images/DOMElement.svg);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .dom-pseudo-element-icon .icon {
-    content: url(../Images/PseudoElement.svg);
+    content: url(../Images/TypeIcons.svg#PseudoElement-light);
 }
 
 .dom-text-node-icon .icon {
-    content: url(../Images/DOMTextNode.svg);
+    content: url(../Images/TypeIcons.svg#DOMTextNode-light);
 }
 
 .dom-comment-icon .icon {
-    content: url(../Images/DOMComment.svg);
+    content: url(../Images/TypeIcons.svg#DOMComment-light);
 }
 
 .dom-document-type-icon .icon {
-    content: url(../Images/DOMDocumentType.svg);
+    content: url(../Images/TypeIcons.svg#DOMDocumentType-light);
 }
 
 .dom-document-icon .icon {
-    content: url(../Images/DOMDocument.svg);
+    content: url(../Images/TypeIcons.svg#DOMDocument-light);
 }
 
 .dom-character-data-icon .icon {
-    content: url(../Images/DOMCharacterData.svg);
+    content: url(../Images/TypeIcons.svg#DOMCharacterData-light);
 }
 
 .dom-node-icon .icon {
-    content: url(../Images/DOMNode.svg);
+    content: url(../Images/TypeIcons.svg#DOMNode-light);
 }
 
 .object-icon .icon {
-    content: url(../Images/Object.svg);
+    content: url(../Images/TypeIcons.svg#Object-light);
 }
 
 .function-icon .icon {
-    content: url(../Images/Function.svg);
+    content: url(../Images/TypeIcons.svg#Function-light);
 }
 
 .native-icon .icon {
-    content: url(../Images/Native.svg);
+    content: url(../Images/TypeIcons.svg#Native-light);
 }
 
 .program-icon .icon {
-    content: url(../Images/Program.svg);
+    content: url(../Images/TypeIcons.svg#Program-light);
 }
 
 .events-icon .icon {
-    content: url(../Images/Events.svg);
+    content: url(../Images/TypeIcons.svg#Events-light);
 }
 
 .call-trees-icon .icon {
-    content: url(../Images/CallTrees.svg);
+    content: url(../Images/TypeIcons.svg#CallTrees-light);
 }
 
 .snapshot-list-icon .icon {
-    content: url(../Images/Events.svg);
+    content: url(../Images/TypeIcons.svg#Events-light);
 }
 
 .snapshot-diff-icon .icon {
-    content: url(../Images/HeapSnapshotDiff.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshotDiff-light);
 }
 
 .image-icon .icon {
-    content: url("../Images/Image.svg");
+    content: url(../Images/Image.svg);
 }
 
 .source-icon .icon {
-    content: url("../Images/Source.svg");
+    content: url(../Images/TypeIcons.svg#Source-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .request-icon .icon {
+        content: url(../Images/TypeIcons.svg#Request-dark);
+    }
+
+    .response-icon .icon {
+        content: url(../Images/TypeIcons.svg#Response-dark);
+    }
+
+    .heap-snapshot-summary-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotSummary-dark);
+    }
+
+    .heap-snapshot-instances-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotInstances-dark);
+    }
+
+    .heap-snapshot-object-graph-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotObjectGraph-dark);
+    }
+
+    .dom-element-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .dom-pseudo-element-icon .icon {
+        content: url(../Images/TypeIcons.svg#PseudoElement-dark);
+    }
+
+    .dom-text-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMTextNode-dark);
+    }
+
+    .dom-comment-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMComment-dark);
+    }
+
+    .dom-document-type-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMDocumentType-dark);
+    }
+
+    .dom-document-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMDocument-dark);
+    }
+
+    .dom-character-data-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMCharacterData-dark);
+    }
+
+    .dom-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMNode-dark);
+    }
+
+    .object-icon .icon {
+        content: url(../Images/TypeIcons.svg#Object-dark);
+    }
+
+    .function-icon .icon {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .native-icon .icon {
+        content: url(../Images/TypeIcons.svg#Native-dark);
+    }
+
+    .program-icon .icon {
+        content: url(../Images/TypeIcons.svg#Program-dark);
+    }
+
+    .events-icon .icon {
+        content: url(../Images/TypeIcons.svg#Events-dark);
+    }
+
+    .call-trees-icon .icon {
+        content: url(../Images/TypeIcons.svg#CallTrees-dark);
+    }
+
+    .snapshot-list-icon .icon {
+        content: url(../Images/TypeIcons.svg#Events-dark);
+    }
+
+    .snapshot-diff-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotDiff-dark);
+    }
+
+    .source-icon .icon {
+        content: url(../Images/TypeIcons.svg#Source-dark);
+    }
 }

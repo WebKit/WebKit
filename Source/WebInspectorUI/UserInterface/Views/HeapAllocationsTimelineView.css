@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 }
 
 .timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot {
-    content: url(../Images/HeapSnapshot.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshot-light);
 }
 
 .timeline-view.heap-allocations > .data-grid tr.invalid {
@@ -53,4 +53,10 @@
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot {
+        content: url(../Images/TypeIcons.svg#HeapSnapshot-dark);
+    }
 }

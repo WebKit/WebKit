@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,12 +45,16 @@
     -webkit-margin-end: 4px;
 }
 
+.network-table > .table li:not(.selected) .cell:not(.current-session) {
+    opacity: 0.5;
+}
+
 .network-table li:not(.filler) .cell.name {
     cursor: pointer;
 }
 
-.network-table .cell.dom-node.name .icon {
-    content: url(../Images/DOMElement.svg);
+.network-table > .table .cell.dom-node.name .icon {
+    content: url(../Images/InstrumentIcons.svg#DOMElement-light);
 }
 
 .network-table .cell.dom-node.name .disclosure {
@@ -322,5 +326,9 @@ body[dir=rtl] .waterfall .block {
 
     .network-table .data-container .cell.name .range {
         color: var(--text-color-secondary);
+    }
+
+    .network-table > .table .cell.dom-node.name .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
     }
 }

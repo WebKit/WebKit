@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,27 @@
  */
 
 .breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon {
-    content: url(../Images/DOMBreakpointSubtreeModified.svg);
+    content: url(../Images/TypeIcons.svg#DOMBreakpointSubtreeModified-light);
 }
 
 .breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon {
-    content: url(../Images/DOMBreakpointAttributeModified.svg);
+    content: url(../Images/TypeIcons.svg#DOMBreakpointAttributeModified-light);
 }
 
 .breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon {
-    content: url(../Images/DOMBreakpointNodeRemoved.svg);
+    content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon {
+        content: url(../Images/TypeIcons.svg#DOMBreakpointSubtreeModified-dark);
+    }
+
+    .breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon {
+        content: url(../Images/TypeIcons.svg#DOMBreakpointAttributeModified-dark);
+    }
+
+    .breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon {
+        content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-dark);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +24,83 @@
  */
 
 .author-style-rule-icon .icon {
-    content: url(../Images/StyleRule.svg#author);
+    content: url(../Images/TypeIcons.svg#StyleRuleAuthor-light);
 }
 
 .author-style-rule-icon.pseudo-selector .icon {
-    content: url(../Images/StyleRulePseudo.svg#author);
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoAuthor-light);
 }
 
 .user-style-rule-icon .icon {
-    content: url(../Images/StyleRule.svg#user);
+    content: url(../Images/TypeIcons.svg#StyleRuleUser-light);
 }
 
 .user-style-rule-icon.pseudo-selector .icon {
-    content: url(../Images/StyleRulePseudo.svg#user);
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoUser-light);
 }
 
 .user-agent-style-rule-icon .icon {
-    content: url(../Images/StyleRule.svg#useragent);
+    content: url(../Images/TypeIcons.svg#StyleRuleUserAgent-light);
 }
 
 .user-agent-style-rule-icon.pseudo-selector .icon {
-    content: url(../Images/StyleRulePseudo.svg#useragent);
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoUserAgent-light);
 }
 
 .inspector-style-rule-icon .icon {
-    content: url(../Images/StyleRule.svg#inspector);
+    content: url(../Images/TypeIcons.svg#StyleRuleInspector-light);
 }
 
 .inspector-style-rule-icon.pseudo-selector .icon {
-    content: url(../Images/StyleRulePseudo.svg#inspector);
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoInspector-light);
 }
 
 .inherited-style-rule-icon .icon {
-    content: url(../Images/StyleRule.svg#inherited);
+    content: url(../Images/TypeIcons.svg#StyleRuleInherited-light);
 }
 
 .inherited-element-style-rule-icon .icon {
-    content: url(../Images/StyleRuleInheritedElement.svg);
+    content: url(../Images/TypeIcons.svg#StyleRuleInheritedElement-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .author-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleAuthor-dark);
+    }
+
+    .author-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoAuthor-dark);
+    }
+
+    .user-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleUser-dark);
+    }
+
+    .user-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoUser-dark);
+    }
+
+    .user-agent-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleUserAgent-dark);
+    }
+
+    .user-agent-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoUserAgent-dark);
+    }
+
+    .inspector-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInspector-dark);
+    }
+
+    .inspector-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoInspector-dark);
+    }
+
+    .inherited-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInherited-dark);
+    }
+
+    .inherited-element-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInheritedElement-dark);
+    }
 }

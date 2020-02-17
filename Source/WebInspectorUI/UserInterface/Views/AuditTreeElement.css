@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,17 +86,35 @@
 }
 
 .audit.test-case .icon {
-    content: url(../Images/AuditTestCase.svg);
+    content: url(../Images/TypeIcons.svg#AuditTestCase-light);
 }
 
 .audit.test-group .icon {
-    content: url(../Images/AuditTestGroup.svg);
+    content: url(../Images/TypeIcons.svg#AuditTestGroup-light);
 }
 
 .audit.test-case-result .icon {
-    content: url(../Images/AuditTestCaseResult.svg);
+    content: url(../Images/TypeIcons.svg#AuditTestCaseResult-light);
 }
 
 .audit.test-group-result .icon {
-    content: url(../Images/AuditTestGroupResult.svg);
+    content: url(../Images/TypeIcons.svg#AuditTestGroupResult-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .audit.test-case .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestCase-dark);
+    }
+
+    .audit.test-group .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestGroup-dark);
+    }
+
+    .audit.test-case-result .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestCaseResult-dark);
+    }
+
+    .audit.test-group-result .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestGroupResult-dark);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,5 +28,11 @@
 }
 
 .breakpoint.url:not(.breakpoint-paused-icon) .icon {
-    content: url(../Images/URLBreakpoint.svg);
+    content: url(../Images/TypeIcons.svg#URLBreakpoint-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .breakpoint.url:not(.breakpoint-paused-icon) .icon {
+        content: url(../Images/TypeIcons.svg#URLBreakpoint-dark);
+    }
 }
