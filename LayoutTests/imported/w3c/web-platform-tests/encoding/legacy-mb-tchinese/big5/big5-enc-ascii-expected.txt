@@ -8,12 +8,8 @@ PASS big5 encoder: test for ASCII codepoint 0x5 
 PASS big5 encoder: test for ASCII codepoint 0x6  
 PASS big5 encoder: test for ASCII codepoint 0x7  
 PASS big5 encoder: test for ASCII codepoint 0x8  
-FAIL big5 encoder: test for ASCII codepoint 0x9 	 assert_true: expected true got false
-FAIL big5 encoder: test for ASCII codepoint 0xa 
- assert_true: expected true got false
 PASS big5 encoder: test for ASCII codepoint 0xb  
 PASS big5 encoder: test for ASCII codepoint 0xc  
-FAIL big5 encoder: test for ASCII codepoint 0xd \r assert_true: expected true got false
 PASS big5 encoder: test for ASCII codepoint 0xe  
 PASS big5 encoder: test for ASCII codepoint 0xf  
 PASS big5 encoder: test for ASCII codepoint 0x10  
@@ -35,7 +31,6 @@ PASS big5 encoder: test for ASCII codepoint 0x1f 
 PASS big5 encoder: test for ASCII codepoint 0x20   
 PASS big5 encoder: test for ASCII codepoint 0x21 ! 
 PASS big5 encoder: test for ASCII codepoint 0x22 " 
-FAIL big5 encoder: test for ASCII codepoint 0x23 # assert_true: expected true got false
 PASS big5 encoder: test for ASCII codepoint 0x24 $ 
 PASS big5 encoder: test for ASCII codepoint 0x25 % 
 PASS big5 encoder: test for ASCII codepoint 0x26 & 

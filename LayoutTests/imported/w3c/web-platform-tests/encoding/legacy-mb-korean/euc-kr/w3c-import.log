@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -32,8 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html
-/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149.html

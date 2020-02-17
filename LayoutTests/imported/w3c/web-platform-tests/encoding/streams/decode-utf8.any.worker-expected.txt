@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 11: TypeError: undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](0)')
+
+Harness Error (FAIL), message = TypeError: undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](0)')
+
+FAIL decoding one UTF-8 chunk should give one output string - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL decoding an empty chunk should give no output chunks - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL an initial empty chunk should be ignored - ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL a trailing empty chunk should be ignored- ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+

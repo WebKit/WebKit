@@ -1,0 +1,14 @@
+
+FAIL ignoreBOM should work for encoding utf-8, split at character 0 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-8, split at character 1 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-8, split at character 2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-8, split at character 3 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16le, split at character 0 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16le, split at character 1 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16le, split at character 2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16le, split at character 3 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16be, split at character 0 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16be, split at character 1 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16be, split at character 2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL ignoreBOM should work for encoding utf-16be, split at character 3 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+

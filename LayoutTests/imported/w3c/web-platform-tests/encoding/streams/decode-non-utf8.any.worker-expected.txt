@@ -1,0 +1,12 @@
+
+FAIL TextDecoderStream should be able to decode UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16BE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode invalid sequences in UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to reject invalid sequences in UTF-16LE promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode invalid sequences in Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to reject invalid sequences in Shift_JIS promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+FAIL TextDecoderStream should be able to decode ISO-8859-14 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TextDecoderStream"
+
