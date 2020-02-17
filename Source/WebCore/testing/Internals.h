@@ -933,6 +933,9 @@ public:
 
     bool systemHasBattery() const;
 
+    int readPreferenceInteger(const String& domain, const String& key);
+    String encodedPreferenceValue(const String& domain, const String& key);
+
     String mediaMIMETypeForExtension(const String& extension);
 
     bool supportsPictureInPicture();

@@ -28,6 +28,7 @@
 #import "XPCServiceEntryPoint.h"
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -115,6 +116,9 @@ int XPCServiceMain(int, const char**)
         return true;
     });
 #endif
+
+    // Enable CF prefs direct mode to avoid connecting to the CF prefs daemon.
+    _CFPrefsSetDirectModeEnabled(YES);
 
     if (bootstrap) {
 #if PLATFORM(MAC)

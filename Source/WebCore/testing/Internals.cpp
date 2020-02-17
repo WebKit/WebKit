@@ -5462,6 +5462,23 @@ bool Internals::systemHasBattery() const
 #endif
 }
 
+int Internals::readPreferenceInteger(const String& domain, const String& key)
+{
+#if PLATFORM(COCOA)
+    Boolean keyExistsAndHasValidFormat = false;
+    return CFPreferencesGetAppIntegerValue(key.createCFString().get(), domain.createCFString().get(), &keyExistsAndHasValidFormat);
+#else
+    return -1;
+#endif
+}
+
+#if !PLATFORM(COCOA)
+String Internals::encodedPreferenceValue(const String& domain, const String& key)
+{
+    return emptyString();
+}
+#endif
+
 String Internals::mediaMIMETypeForExtension(const String& extension)
 {
     return MIMETypeRegistry::getMediaMIMETypeForExtension(extension);

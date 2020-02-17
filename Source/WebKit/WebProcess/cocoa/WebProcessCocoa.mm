@@ -929,6 +929,24 @@ void WebProcess::setMediaMIMETypes(const Vector<String> types)
         cache.addSupportedTypes(types);
 }
 
+void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
+{
+    auto defaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain]);
+    if (!encodedValue.hasValue()) {
+        [defaults setObject:nil forKey:key];
+        return;
+    }
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:*encodedValue options:0]);
+    if (!encodedData)
+        return;
+    NSError *err = nil;
+    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
+    ASSERT(!err);
+    if (err)
+        return;
+    [defaults setObject:object.get() forKey:key];
+}
+
 #if PLATFORM(IOS)
 void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
 {

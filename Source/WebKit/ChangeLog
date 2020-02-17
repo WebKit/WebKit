@@ -1,3 +1,41 @@
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Use CF prefs direct mode in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203420
+
+        Reviewed by Brent Fulgham.
+
+        Enable CF prefs direct mode, in order to avoid connecting to the CF prefs daemon in the WebContent process.
+        In direct mode, the prefs files will be accessed directly, and not through the CF prefs daemon. A preference
+        observer is added in the UI process, which will notify the WebContent process about preferences changes to a
+        domain. After a preference change, the WebContent process will set the new preference value for the changed
+        key/domain.
+
+        API tests: Tests added in PreferenceChanges.mm.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * UIProcess/Cocoa/PreferenceObserver.h: Added.
+        (__attribute__):
+        * UIProcess/Cocoa/PreferenceObserver.mm: Added.
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+        (-[WKUserDefaults observeValueForKeyPath:ofObject:change:context:]):
+        (-[WKUserDefaults initWithSuiteName:]):
+        (+[WKPreferenceObserver sharedInstance]):
+        (-[WKPreferenceObserver init]):
+        (-[WKPreferenceObserver preferenceDidChange:key:encodedValue:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::notifyPreferencesChanged):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-02-17  Youenn Fablet  <youenn@apple.com>
 
         Do not send the client URL to network process

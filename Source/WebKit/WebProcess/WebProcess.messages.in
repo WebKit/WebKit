@@ -171,4 +171,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetHandle, WebKit::SandboxExtension::Handle mobileAssetV2Handle)
     RevokeAccessToAssetServices()
 #endif
+
+#if PLATFORM(COCOA)
+    NotifyPreferencesChanged(String domain, String key, Optional<String> encodedValue)
+#endif
 }

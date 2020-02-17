@@ -33,6 +33,7 @@
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "PluginProcessManager.h"
+#import "PreferenceObserver.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
@@ -194,6 +195,9 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
     m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::webContentCachesDirectory());
     m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
 #endif
+
+    // Start observing preference changes.
+    [WKPreferenceObserver sharedInstance];
 }
 
 #if PLATFORM(IOS)
@@ -804,6 +808,12 @@ void WebProcessPool::initializeClassesForParameterCoding()
 NSSet *WebProcessPool::allowedClassesForParameterCoding() const
 {
     return m_classesForParameterCoder.get();
+}
+
+void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
+{
+    for (auto process : m_processes)
+        process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 }
 
 } // namespace WebKit

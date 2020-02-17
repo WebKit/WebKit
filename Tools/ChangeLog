@@ -1,3 +1,14 @@
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Use CF prefs direct mode in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203420
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm: Added.
+        (TEST):
+
 2020-02-17  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should be able to file Bugzilla bugs

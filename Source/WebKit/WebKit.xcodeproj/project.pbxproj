@@ -1662,6 +1662,8 @@
 		C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */; };
 		C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = C11E1692212B87C500985FF6 /* WKMockDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */; };
+		C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
@@ -4879,9 +4881,11 @@
 		C11A9ED021403B4000CFB20A /* WebSwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C11E1692212B87C500985FF6 /* WKMockDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockDisplay.h; sourceTree = "<group>"; };
 		C11E1693212B87C500985FF6 /* WKMockDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockDisplay.cpp; sourceTree = "<group>"; };
+		C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreferenceObserver.h; sourceTree = "<group>"; };
 		C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechSynthesisClient.cpp; sourceTree = "<group>"; };
 		C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisVoice.h; sourceTree = "<group>"; };
+		C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceObserver.mm; sourceTree = "<group>"; };
 		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
@@ -6010,6 +6014,8 @@
 				CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */,
 				CDA29A221CBEB61A00901CCF /* PlaybackSessionManagerProxy.messages.in */,
 				CDA29A1F1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm */,
+				C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */,
+				C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */,
 				5CB7AFDD23C5273D00E49CF3 /* ResourceLoadDelegate.h */,
 				5CB7AFDE23C5273D00E49CF3 /* ResourceLoadDelegate.mm */,
 				5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */,
@@ -6997,8 +7003,8 @@
 				1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */,
 				51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */,
 				51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */,
-				DF462E0E23F22F5300EFF35F /* WKHTTPCookieStorePrivate.h */,
 				51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */,
+				DF462E0E23F22F5300EFF35F /* WKHTTPCookieStorePrivate.h */,
 				1AB40EE31BF677E300BA81BE /* WKMenuItemIdentifiers.mm */,
 				1AB40EE41BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h */,
 				1A5B1C4F1898606F004FCF9B /* WKNavigation.h */,
@@ -10254,7 +10260,6 @@
 				2D5875BF219B53150070B9AA /* EditableImageController.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
-				DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
@@ -10475,6 +10480,7 @@
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
 				57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */,
 				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
+				C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */,
 				AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
@@ -10721,7 +10727,6 @@
 				FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */,
 				FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
-				DF462E0F23F22F5500EFF35F /* WKHTTPCookieStorePrivate.h in Headers */,
 				1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */,
 				1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */,
 				1C891D6619B124FF00BA79DD /* WebInspectorUI.h in Headers */,
@@ -10934,6 +10939,7 @@
 				0F04159E23C7CC730060A3E2 /* WKContentViewMac.h in Headers */,
 				511065FC23EC9572005443D6 /* WKContentWorld.h in Headers */,
 				511065FD23EC957B005443D6 /* WKContentWorldInternal.h in Headers */,
+				DF462E1223F338BE00EFF35F /* WKContentWorldPrivate.h in Headers */,
 				BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */,
 				1AE52F981920267200A1FA37 /* WKContextConfigurationRef.h in Headers */,
 				1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */,
@@ -11017,6 +11023,7 @@
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
 				B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */,
 				51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */,
+				DF462E0F23F22F5500EFF35F /* WKHTTPCookieStorePrivate.h in Headers */,
 				5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */,
 				5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */,
 				5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */,
@@ -12176,6 +12183,7 @@
 				1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */,
 				BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */,
 				2D91344D212CF9F000128AFD /* PluginView.cpp in Sources */,
+				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
 				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,

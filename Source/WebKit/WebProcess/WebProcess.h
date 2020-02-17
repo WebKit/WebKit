@@ -310,6 +310,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     void enableRemoteWebInspector(const SandboxExtension::Handle&);
 #endif
+    void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
 #endif
 
     bool areAllPagesThrottleable() const;

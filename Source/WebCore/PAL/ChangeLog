@@ -1,3 +1,16 @@
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Use CF prefs direct mode in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203420
+
+        Reviewed by Brent Fulgham.
+
+        Add SPI to enable CF prefs direct mode and declare method called when preference are changed.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cf/CFUtilitiesSPI.h:
+        * pal/spi/cocoa/NSUserDefaultsSPI.h: Added.
+
 2020-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin targets

@@ -88,4 +88,15 @@ double Internals::privatePlayerVolume(const HTMLMediaElement& element)
 }
 #endif
 
+String Internals::encodedPreferenceValue(const String& domain, const String& key)
+{
+    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName: domain]);
+    id value = [userDefaults.get() objectForKey:key];
+    NSError *e = nil;
+    auto data = adoptNS([NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:&e]);
+    ASSERT(!e);
+    auto encodedString = [data base64EncodedStringWithOptions:0];
+    return encodedString;
+}
+
 }

@@ -58,4 +58,6 @@ CFDictionaryRef _CFWebServicesCopyProviderInfo(CFStringRef serviceType, Boolean*
 
 void __CFRunLoopSetOptionsReason(__CFRunLoopOptions opts, CFStringRef reason);
 
+void _CFPrefsSetDirectModeEnabled(bool enabled);
+
 WTF_EXTERN_C_END
