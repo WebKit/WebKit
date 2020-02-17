@@ -35,6 +35,9 @@
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 
+// The responsiveness time is disabled for slow builds.
+#if defined(NDEBUG) && !ASAN_ENABLED
+
 static bool didBecomeUnresponsive;
 static RetainPtr<TestWKWebView> webView;
 static HashSet<RetainPtr<id>> observableStates;
@@ -93,5 +96,7 @@ TEST(WebKit, ResponsivenessTimerCrash)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // defined(NDEBUG) && !ASAN_ENABLED
 
 #endif // WK_HAVE_C_SPI
