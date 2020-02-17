@@ -89,6 +89,7 @@ private:
 // CurlContext --------------------------------------------
 
 class CurlRequestScheduler;
+class CurlStreamScheduler;
 
 class CurlContext : public CurlGlobal {
     WTF_MAKE_NONCOPYABLE(CurlContext);
@@ -101,6 +102,7 @@ public:
     const CurlShareHandle& shareHandle() { return m_shareHandle; }
 
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
+    CurlStreamScheduler& streamScheduler();
 
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
@@ -293,6 +295,11 @@ public:
 
     static long long maxCurlOffT();
 
+    // socket
+    Expected<curl_socket_t, CURLcode> getActiveSocket();
+    CURLcode send(const uint8_t*, size_t, size_t&);
+    CURLcode receive(uint8_t*, size_t, size_t&);
+
 #ifndef NDEBUG
     void enableVerboseIfUsed();
     void enableStdErrIfUsed();
@@ -311,26 +318,6 @@ private:
     URL m_url;
     CurlSList m_requestHeaders;
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
-};
-
-class CurlSocketHandle : public CurlHandle {
-    WTF_MAKE_NONCOPYABLE(CurlSocketHandle);
-
-public:
-    struct WaitResult {
-        bool readable { false };
-        bool writable { false };
-    };
-
-    CurlSocketHandle(const URL&, Function<void(CURLcode)>&& errorHandler);
-
-    bool connect();
-    size_t send(const uint8_t*, size_t);
-    Optional<size_t> receive(uint8_t*, size_t);
-    Optional<WaitResult> wait(const Seconds& timeout, bool alsoWaitForWrite);
-
-private:
-    Function<void(CURLcode)> m_errorHandler;
 };
 
 } // namespace WebCore

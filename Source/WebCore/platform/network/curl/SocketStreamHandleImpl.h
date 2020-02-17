@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,23 +32,17 @@
 
 #pragma once
 
-#include "CurlContext.h"
+#include "CurlStream.h"
 #include "SocketStreamHandle.h"
 #include <pal/SessionID.h>
-#include <wtf/Function.h>
-#include <wtf/Lock.h>
-#include <wtf/MessageQueue.h>
-#include <wtf/RefCounted.h>
 #include <wtf/StreamBuffer.h>
-#include <wtf/Threading.h>
-#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
 class SocketStreamHandleClient;
 class StorageSessionProvider;
 
-class SocketStreamHandleImpl : public SocketStreamHandle {
+class SocketStreamHandleImpl : public SocketStreamHandle, public CurlStream::Client {
 public:
     static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
 
@@ -64,28 +59,22 @@ private:
     Optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
-    void threadEntryPoint(const URL&);
-    void handleError(CURLcode);
-    void stopThread();
+    void didOpen(CurlStreamID) final;
+    void didSendData(CurlStreamID, size_t) final;
+    void didReceiveData(CurlStreamID, const char*, size_t) final;
+    void didFail(CurlStreamID, CURLcode) final;
 
-    void callOnWorkerThread(Function<void()>&&);
-    void executeTasks();
-
-    static const size_t kReadBufferSize = 4 * 1024;
+    bool isStreamInvalidated() { return m_streamID == invalidCurlStreamID; }
+    void destructStream();
 
     RefPtr<const StorageSessionProvider> m_storageSessionProvider;
-    RefPtr<Thread> m_workerThread;
-    std::atomic<bool> m_running { true };
-
-    MessageQueue<Function<void()>> m_taskQueue;
-
-    bool m_hasPendingWriteData { false };
-    size_t m_writeBufferSize { 0 };
-    size_t m_writeBufferOffset { 0 };
-    UniqueArray<uint8_t> m_writeBuffer;
 
     StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;
+
+    CurlStreamScheduler& m_scheduler;
+    CurlStreamID m_streamID { invalidCurlStreamID };
+    unsigned m_totalSendDataSize { 0 };
 };
 
 } // namespace WebCore

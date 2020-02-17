@@ -32,6 +32,7 @@
 #include "CurlRequestScheduler.h"
 #include "CurlSSLHandle.h"
 #include "CurlSSLVerifier.h"
+#include "CurlStreamScheduler.h"
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
 #include <mutex>
@@ -144,6 +145,12 @@ void CurlContext::initShareHandle()
     curl_easy_setopt(curl, CURLOPT_SHARE, m_shareHandle.handle());
 
     curl_easy_cleanup(curl);
+}
+
+CurlStreamScheduler& CurlContext::streamScheduler()
+{
+    static NeverDestroyed<CurlStreamScheduler> sharedInstance;
+    return sharedInstance;
 }
 
 bool CurlContext::isHttp2Enabled() const
@@ -888,114 +895,25 @@ void CurlHandle::enableStdErrIfUsed()
 
 #endif
 
-// CurlSocketHandle
-
-CurlSocketHandle::CurlSocketHandle(const URL& url, Function<void(CURLcode)>&& errorHandler)
-    : m_errorHandler(WTFMove(errorHandler))
-{
-    // Libcurl is not responsible for the protocol handling. It just handles connection.
-    // Only scheme, host and port is required.
-    URL urlForConnection;
-    urlForConnection.setProtocol(url.protocolIs("wss") ? "https" : "http");
-    urlForConnection.setHostAndPort(url.hostAndPort());
-    setUrl(urlForConnection);
-
-    enableConnectionOnly();
-}
-
-bool CurlSocketHandle::connect()
-{
-    CURLcode errorCode = perform();
-    if (errorCode != CURLE_OK) {
-        m_errorHandler(errorCode);
-        return false;
-    }
-
-    return true;
-}
-
-size_t CurlSocketHandle::send(const uint8_t* buffer, size_t size)
-{
-    size_t totalBytesSent = 0;
-
-    while (totalBytesSent < size) {
-        size_t bytesSent = 0;
-        CURLcode errorCode = curl_easy_send(handle(), buffer + totalBytesSent, size - totalBytesSent, &bytesSent);
-        if (errorCode != CURLE_OK) {
-            if (errorCode != CURLE_AGAIN)
-                m_errorHandler(errorCode);
-            break;
-        }
-
-        totalBytesSent += bytesSent;
-    }
-
-    return totalBytesSent;
-}
-
-Optional<size_t> CurlSocketHandle::receive(uint8_t* buffer, size_t bufferSize)
-{
-    size_t bytesRead = 0;
-
-    CURLcode errorCode = curl_easy_recv(handle(), buffer, bufferSize, &bytesRead);
-    if (errorCode != CURLE_OK) {
-        if (errorCode != CURLE_AGAIN)
-            m_errorHandler(errorCode);
-
-        return WTF::nullopt;
-    }
-
-    return bytesRead;
-}
-
-Optional<CurlSocketHandle::WaitResult> CurlSocketHandle::wait(const Seconds& timeout, bool alsoWaitForWrite)
+Expected<curl_socket_t, CURLcode> CurlHandle::getActiveSocket()
 {
     curl_socket_t socket;
-    CURLcode errorCode = curl_easy_getinfo(handle(), CURLINFO_ACTIVESOCKET, &socket);
-    if (errorCode != CURLE_OK) {
-        m_errorHandler(errorCode);
-        return WTF::nullopt;
-    }
 
-    int64_t usec = timeout.microsecondsAs<int64_t>();
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &socket);
+    if (errorCode != CURLE_OK)
+        return makeUnexpected(errorCode);
 
-    struct timeval selectTimeout;
-    if (usec <= 0) {
-        selectTimeout.tv_sec = 0;
-        selectTimeout.tv_usec = 0;
-    } else {
-        selectTimeout.tv_sec = usec / 1000000;
-        selectTimeout.tv_usec = usec % 1000000;
-    }
+    return socket;
+}
 
-    int rc = 0;
-    int maxfd = static_cast<int>(socket) + 1;
-    fd_set fdread;
-    fd_set fdwrite;
-    fd_set fderr;
+CURLcode CurlHandle::send(const uint8_t* buffer, size_t bufferSize, size_t& bytesSent)
+{
+    return curl_easy_send(m_handle, buffer, bufferSize, &bytesSent);
+}
 
-    // Retry 'select' if it was interrupted by a process signal.
-    do {
-        FD_ZERO(&fdread);
-        FD_SET(socket, &fdread);
-
-        FD_ZERO(&fdwrite);
-        if (alsoWaitForWrite)
-            FD_SET(socket, &fdwrite);
-
-        FD_ZERO(&fderr);
-        FD_SET(socket, &fderr);
-
-        rc = ::select(maxfd, &fdread, &fdwrite, &fderr, &selectTimeout);
-    } while (rc == -1 && errno == EINTR);
-
-    if (rc <= 0)
-        return WTF::nullopt;
-
-    WaitResult result;
-    result.readable = FD_ISSET(socket, &fdread) || FD_ISSET(socket, &fderr);
-    result.writable = FD_ISSET(socket, &fdwrite);
-    return result;
+CURLcode CurlHandle::receive(uint8_t* buffer, size_t bufferSize, size_t& bytesRead)
+{
+    return curl_easy_recv(m_handle, buffer, bufferSize, &bytesRead);
 }
 
 }
