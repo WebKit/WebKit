@@ -1,3 +1,12 @@
+2020-02-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] More debug build timeouts gardening
+        https://bugs.webkit.org/show_bug.cgi?id=207831
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-14  Alexey Proskuryakov  <ap@apple.com>
 
         [ Mac wk2 ] fast/events/keydown-1.html is flaky failing
