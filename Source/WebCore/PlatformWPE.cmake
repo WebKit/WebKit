@@ -38,6 +38,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WEBCORE_DIR}/css/themeAdwaita.css
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.css
 )
 

@@ -40,6 +40,12 @@
 
 namespace WebCore {
 
+static const int textFieldBorderSize = 1;
+static const Color textFieldBorderColor = makeRGB(205, 199, 194);
+static const Color textFieldBorderActiveColor = makeRGB(52, 132, 228);
+static const Color textFieldBorderDisabledColor = makeRGB(213, 208, 204);
+static const Color textFieldBackgroundColor = makeRGB(255, 255, 255);
+static const Color textFieldBackgroundDisabledColor = makeRGB(252, 252, 252);
 static const int focusOffset = 3;
 static const unsigned focusLineWidth = 1;
 static const Color focusColor = makeRGBA(46, 52, 54, 150);
@@ -63,10 +69,10 @@ bool RenderThemeWPE::supportsFocusRing(const RenderStyle& style) const
     switch (style.appearance()) {
     case PushButtonPart:
     case ButtonPart:
+        return false;
     case TextFieldPart:
     case TextAreaPart:
     case SearchFieldPart:
-        return false;
     case MenulistPart:
         return true;
     case RadioPart:
@@ -88,7 +94,7 @@ void RenderThemeWPE::updateCachedSystemFontDescription(CSSValueID, FontCascadeDe
 
 String RenderThemeWPE::extraDefaultStyleSheet()
 {
-    return String();
+    return String(themeAdwaitaUserAgentStyleSheet, sizeof(themeAdwaitaUserAgentStyleSheet));
 }
 
 #if ENABLE(VIDEO)
@@ -105,6 +111,52 @@ String RenderThemeWPE::mediaControlsScript()
     return scriptBuilder.toString();
 }
 #endif
+
+bool RenderThemeWPE::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    int borderSize = textFieldBorderSize;
+    if (isEnabled(renderObject) && !isReadOnlyControl(renderObject) && isFocused(renderObject))
+        borderSize *= 2;
+
+    FloatRect fieldRect = rect;
+    FloatSize corner(5, 5);
+    Path path;
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-borderSize);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        graphicsContext.setFillColor(textFieldBorderDisabledColor);
+    else if (isFocused(renderObject))
+        graphicsContext.setFillColor(textFieldBorderActiveColor);
+    else
+        graphicsContext.setFillColor(textFieldBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        graphicsContext.setFillColor(textFieldBackgroundDisabledColor);
+    else
+        graphicsContext.setFillColor(textFieldBackgroundColor);
+    graphicsContext.fillPath(path);
+
+    return false;
+}
+
+bool RenderThemeWPE::paintTextArea(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    return paintTextField(renderObject, paintInfo, rect);
+}
+
+bool RenderThemeWPE::paintSearchField(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintTextField(renderObject, paintInfo, rect);
+}
 
 static void paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect)
 {

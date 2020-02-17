@@ -48,6 +48,10 @@ private:
 
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
+    bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
+
     bool popsMenuBySpaceOrReturn() const override { return true; }
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
