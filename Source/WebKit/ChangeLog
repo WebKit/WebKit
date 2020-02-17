@@ -1,3 +1,16 @@
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add telemetry with backtrace for specific rules
+        https://bugs.webkit.org/show_bug.cgi?id=207494
+
+        Reviewed by Brent Fulgham.
+
+        For specific sandbox mach lookup rules in the WebContent process, add telemetry with backtrace.
+
+        No new tests, no behavior change.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-02-17  Antti Koivisto  <antti@apple.com>
 
         [macOS] Add trace points for layer flush runloop observer

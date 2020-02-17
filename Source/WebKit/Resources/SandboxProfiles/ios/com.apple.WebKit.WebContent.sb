@@ -115,7 +115,7 @@
         (allow file-read* asset-access-filter)
         (if (memq 'with-media-playback options)
             (play-media asset-access-filter))
-        (allow mach-lookup (with report) (with telemetry)
+        (allow mach-lookup (with telemetry-backtrace) (with telemetry)
                (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
         (mobile-preferences-read "com.apple.MobileAsset")))
 
@@ -353,7 +353,7 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (allow mach-lookup (with report) (with telemetry)
+    (allow mach-lookup (with telemetry-backtrace) (with telemetry)
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
@@ -544,7 +544,7 @@
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))
  
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup (with telemetry-backtrace) (with telemetry)
     (global-name "com.apple.lsd.open")
     (global-name "com.apple.lsd.mapdb"))
 
@@ -669,7 +669,7 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup (with telemetry-backtrace) (with telemetry)
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 
@@ -828,7 +828,7 @@
 (allow mach-lookup
        (global-name "com.apple.webinspector"))
 
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup (with telemetry-backtrace) (with telemetry)
     (global-name "com.apple.PowerManagement.control"))
 
 (deny file-write-create (vnode-type SYMLINK))
