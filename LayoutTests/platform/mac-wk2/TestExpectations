@@ -1051,3 +1051,5 @@ webkit.org/b/207848 [ Release ] fast/scrolling/latching/scroll-iframe-fragment.h
 webkit.org/b/207861 [ Release ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html [ Pass Failure ]
 
 webkit.org/b/148405 [ Release ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html [ Pass Failure ]
+
+webkit.org/b/207864 webgpu/whlsl/do-while-loop-continue.html [ Pass ImageOnlyFailure ]
