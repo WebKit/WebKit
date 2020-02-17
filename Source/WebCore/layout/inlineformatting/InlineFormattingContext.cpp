@@ -283,7 +283,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
     else if (layoutBox.isInlineBlockBox())
         contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
     else if (layoutBox.isReplacedBox())
-        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, usedWidth);
+        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, usedWidth);
     else
         ASSERT_NOT_REACHED();
 

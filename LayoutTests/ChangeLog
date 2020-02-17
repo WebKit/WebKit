@@ -1,5 +1,16 @@
 2020-02-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Out-of-flow] FormattingContext::computeOutOfFlowHorizontalGeometry needs verticalConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=207832
+        <rdar://problem/59499844>
+
+        Reviewed by Dean Jackson.
+
+        * fast/layoutformattingcontext/simple-absolute-positioned-replaced-inline-element-with-percentage-height-expected.html: Added.
+        * fast/layoutformattingcontext/simple-absolute-positioned-replaced-inline-element-with-percentage-height.html: Added.
+
+2020-02-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] LineLayoutContext::nextContentForLine should be able to handle regular inline boxes
         https://bugs.webkit.org/show_bug.cgi?id=207829
         <rdar://problem/59498031>
