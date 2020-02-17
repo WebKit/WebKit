@@ -87,6 +87,11 @@ RemoteInspector& RemoteInspector::singleton()
 {
     static NeverDestroyed<RemoteInspector> shared;
 
+#if PLATFORM(COCOA)
+    if (needMachSandboxExtension)
+        return shared;
+#endif
+    
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         if (canAccessWebInspectorMachPort()) {

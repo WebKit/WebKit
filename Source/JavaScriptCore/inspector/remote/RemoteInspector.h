@@ -114,6 +114,9 @@ public:
         virtual void requestAutomationSession(const String& sessionIdentifier, const SessionCapabilities&) = 0;
     };
 
+#if PLATFORM(COCOA)
+    static void setNeedMachSandboxExtension(bool needExtension) { needMachSandboxExtension = needExtension; }
+#endif
     static void startDisabled();
     static RemoteInspector& singleton();
     friend class NeverDestroyed<RemoteInspector>;
@@ -236,6 +239,9 @@ private:
     String backendCommands() const;
 #endif
     static bool startEnabled;
+#if PLATFORM(COCOA)
+    static std::atomic<bool> needMachSandboxExtension;
+#endif
 
     // Targets can be registered from any thread at any time.
     // Any target can send messages over the XPC connection.

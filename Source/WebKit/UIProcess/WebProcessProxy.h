@@ -325,6 +325,10 @@ public:
     void revokeAudioCaptureExtension() { m_mediaCaptureSandboxExtensions &= ~Audio; }
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
+    void enableRemoteInspectorIfNeeded();
+#endif
+    
 #if PLATFORM(IOS_FAMILY)
     void unblockAccessibilityServerIfNeeded();
 #endif

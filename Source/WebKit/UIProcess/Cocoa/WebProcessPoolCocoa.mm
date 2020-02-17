@@ -64,6 +64,11 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#import <JavaScriptCore/RemoteInspector.h>
+#import <JavaScriptCore/RemoteInspectorConstants.h>
+#endif
+
 #if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
 #else
@@ -550,8 +555,19 @@ float WebProcessPool::displayBrightness()
     
 void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    WebProcessPool* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
     pool->sendToAllProcesses(Messages::WebProcess::BacklightLevelDidChange(BKSDisplayBrightnessGetCurrent()));
+}
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+{
+    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    for (size_t i = 0; i < pool->m_processes.size(); ++i) {
+        auto process = pool->m_processes[i];
+        process->enableRemoteInspectorIfNeeded();
+    }
 }
 #endif
 
@@ -608,6 +624,9 @@ void WebProcessPool::registerNotificationObservers()
         for (size_t i = 0; i < m_processes.size(); ++i)
             m_processes[i]->unblockAccessibilityServerIfNeeded();
     }];
+#if ENABLE(REMOTE_INSPECTOR)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, remoteWebInspectorEnabledCallback, static_cast<CFStringRef>(CFSTR(WIRServiceEnabledNotification)), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+#endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
 }
@@ -630,6 +649,9 @@ void WebProcessPool::unregisterNotificationObservers()
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
 #if PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+#if ENABLE(REMOTE_INSPECTOR)
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, CFSTR(WIRServiceEnabledNotification), nullptr);
+#endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
 }

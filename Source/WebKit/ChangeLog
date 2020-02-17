@@ -1,5 +1,40 @@
 2020-02-17  Per Arne Vollan  <pvollan@apple.com>
 
+        Mach lookup to com.apple.webinspector should not be allowed in WebKit's WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203214
+
+        Reviewed by Brent Fulgham.
+
+        If the Web inspector is enabled when the WebContent process is started, a sandbox extension is created
+        for 'com.apple.webinspector' and a message is sent to the WebContent process, where the extension will
+        be consumed, and the remote Web inspector will be started. The same happens if Web inspector is enabled
+        by the user while Safari is running. When RemoteInspector::singleton() is called in the UI process there
+        is no need for an extension, since access to the Web inspector daemon is already allowed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::backlightLevelDidChangeCallback):
+        (WebKit::WebProcessPool::remoteWebInspectorEnabledCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::enableRemoteInspectorIfNeeded):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::mayBecomeUnresponsive):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::enableRemoteWebInspector):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add telemetry with backtrace for specific rules
         https://bugs.webkit.org/show_bug.cgi?id=207494
 

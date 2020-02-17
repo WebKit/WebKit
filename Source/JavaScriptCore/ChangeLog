@@ -1,3 +1,21 @@
+2020-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Mach lookup to com.apple.webinspector should not be allowed in WebKit's WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203214
+
+        Reviewed by Brent Fulgham.
+
+        Add static flag in RemoteInspector to indicate whether a sandbox extension is needed. The remote inspector will only be
+        started if the sandbox extension is not needed. Only the WebContent process will need a sandbox extension, since this
+        patch removes mach access to 'com.apple.webinspector' for this process. Also add name and domain for the
+        'Enable Remote Inspector' setting, since this will be used in the UI process.
+
+        * inspector/remote/RemoteInspector.cpp:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::singleton):
+
 2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION

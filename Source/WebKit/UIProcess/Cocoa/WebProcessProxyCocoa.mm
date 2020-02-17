@@ -40,6 +40,10 @@
 #import <wtf/Scope.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#import <JavaScriptCore/RemoteInspectorConstants.h>
+#endif
+
 namespace WebKit {
 
 static const Seconds unexpectedActivityDuration = 10_s;
@@ -210,4 +214,15 @@ void WebProcessProxy::processWasResumed(CompletionHandler<void()>&& completionHa
 }
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+void WebProcessProxy::enableRemoteInspectorIfNeeded()
+{
+    if (!CFPreferencesGetAppIntegerValue(WIRRemoteInspectorEnabledKey, WIRRemoteInspectorDomainName, nullptr))
+        return;
+    SandboxExtension::Handle handle;
+    auto auditToken = connection() ? connection()->getAuditToken() : WTF::nullopt;
+    if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector", auditToken, handle))
+        send(Messages::WebProcess::EnableRemoteWebInspector(handle), 0);
+}
+#endif
 }

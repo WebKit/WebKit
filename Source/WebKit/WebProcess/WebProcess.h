@@ -307,6 +307,9 @@ public:
 
 #if PLATFORM(COCOA)
     void setMediaMIMETypes(const Vector<String>);
+#if ENABLE(REMOTE_INSPECTOR)
+    void enableRemoteWebInspector(const SandboxExtension::Handle&);
+#endif
 #endif
 
     bool areAllPagesThrottleable() const;

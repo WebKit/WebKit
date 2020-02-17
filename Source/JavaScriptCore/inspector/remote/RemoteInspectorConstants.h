@@ -118,3 +118,6 @@
 #define WIRProxyApplicationParentAuditDataKey   @"WIRProxyApplicationParentAuditData"
 #define WIRProxyApplicationSetupMessage         @"WIRProxyApplicationSetupMessage"
 #define WIRProxyApplicationSetupResponseMessage @"WIRProxyApplicationSetupResponseMessage"
+
+#define WIRRemoteInspectorEnabledKey            CFSTR("RemoteInspectorEnabled")
+#define WIRRemoteInspectorDomainName            CFSTR("com.apple.webinspectord")

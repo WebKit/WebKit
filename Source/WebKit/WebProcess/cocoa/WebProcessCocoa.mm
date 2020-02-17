@@ -82,6 +82,10 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspector.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
@@ -906,6 +910,15 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
             Method methodToPatch = class_getInstanceMethod([UIDevice class], @selector(_backlightLevel));
             method_setImplementation(methodToPatch, reinterpret_cast<IMP>(currentBacklightLevel));
         });
+}
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+void WebProcess::enableRemoteWebInspector(const SandboxExtension::Handle& handle)
+{
+    SandboxExtension::consumePermanently(handle);
+    Inspector::RemoteInspector::setNeedMachSandboxExtension(false);
+    Inspector::RemoteInspector::singleton();
 }
 #endif
 
