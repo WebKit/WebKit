@@ -34,6 +34,7 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "ThemeWPE.h"
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/StringBuilder.h>
@@ -46,17 +47,11 @@ static const Color textFieldBorderActiveColor = makeRGB(52, 132, 228);
 static const Color textFieldBorderDisabledColor = makeRGB(213, 208, 204);
 static const Color textFieldBackgroundColor = makeRGB(255, 255, 255);
 static const Color textFieldBackgroundDisabledColor = makeRGB(252, 252, 252);
-static const int focusOffset = 3;
-static const unsigned focusLineWidth = 1;
-static const Color focusColor = makeRGBA(46, 52, 54, 150);
 static const unsigned arrowSize = 16;
 static const Color arrowColor = makeRGB(46, 52, 54);
+static const int menuListButtonFocusOffset = -3;
 static const unsigned menuListButtonPadding = 5;
-static const int menuListButtonBorderSize = 1;
-static const Color menuListButtonBackgroundBorderColor = makeRGB(205, 199, 194);
-static const Color menuListButtonBackgroundColor = makeRGB(244, 242, 241);
-static const Color menuListButtonBackgroundPressedColor = makeRGB(214, 209, 205);
-static const Color menuListButtonBackgroundHoveredColor = makeRGB(248, 248, 247);
+static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeWPE.
 
 RenderTheme& RenderTheme::singleton()
 {
@@ -69,14 +64,13 @@ bool RenderThemeWPE::supportsFocusRing(const RenderStyle& style) const
     switch (style.appearance()) {
     case PushButtonPart:
     case ButtonPart:
-        return false;
     case TextFieldPart:
     case TextAreaPart:
     case SearchFieldPart:
     case MenulistPart:
-        return true;
     case RadioPart:
     case CheckboxPart:
+        return true;
     case SliderHorizontalPart:
     case SliderVerticalPart:
         return false;
@@ -158,21 +152,6 @@ bool RenderThemeWPE::paintSearchField(const RenderObject& renderObject, const Pa
     return paintTextField(renderObject, paintInfo, rect);
 }
 
-static void paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect)
-{
-    FloatRect focusRect = rect;
-    focusRect.inflate(-focusOffset);
-    graphicsContext.setStrokeThickness(focusLineWidth);
-    graphicsContext.setLineDash({ focusLineWidth, 2 * focusLineWidth }, 0);
-    graphicsContext.setLineCap(SquareCap);
-    graphicsContext.setLineJoin(MiterJoin);
-
-    Path path;
-    path.addRoundedRect(focusRect, { 5, 5 });
-    graphicsContext.setStrokeColor(focusColor);
-    graphicsContext.strokePath(path);
-}
-
 static void paintArrow(GraphicsContext& graphicsContext, const FloatRect& rect)
 {
     Path path;
@@ -201,28 +180,18 @@ bool RenderThemeWPE::paintMenuList(const RenderObject& renderObject, const Paint
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    FloatRect fieldRect = rect;
-    FloatSize corner(5, 5);
-    Path path;
-    path.addRoundedRect(fieldRect, corner);
-    fieldRect.inflate(-menuListButtonBorderSize);
-    path.addRoundedRect(fieldRect, corner);
-    graphicsContext.setFillRule(WindRule::EvenOdd);
-    graphicsContext.setFillColor(menuListButtonBackgroundBorderColor);
-    graphicsContext.fillPath(path);
-    path.clear();
-
-    path.addRoundedRect(fieldRect, corner);
-    graphicsContext.setFillRule(WindRule::NonZero);
+    ControlStates::States states = 0;
+    if (isEnabled(renderObject))
+        states |= ControlStates::EnabledState;
     if (isPressed(renderObject))
-        graphicsContext.setFillColor(menuListButtonBackgroundPressedColor);
-    else if (isHovered(renderObject))
-        graphicsContext.setFillColor(menuListButtonBackgroundHoveredColor);
-    else
-        graphicsContext.setFillColor(menuListButtonBackgroundColor);
-    graphicsContext.fillPath(path);
-    path.clear();
+        states |= ControlStates::PressedState;
+    if (isHovered(renderObject))
+        states |= ControlStates::HoverState;
+    ControlStates controlStates(states);
+    Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, false);
 
+    FloatRect fieldRect = rect;
+    fieldRect.inflate(menuListButtonBorderSize);
     if (renderObject.style().direction() == TextDirection::LTR)
         fieldRect.move(fieldRect.width() - (arrowSize + menuListButtonPadding), (fieldRect.height() / 2.) - (arrowSize / 2));
     else
@@ -232,7 +201,7 @@ bool RenderThemeWPE::paintMenuList(const RenderObject& renderObject, const Paint
     paintArrow(graphicsContext, fieldRect);
 
     if (isFocused(renderObject))
-        paintFocus(graphicsContext, rect);
+        ThemeWPE::paintFocus(graphicsContext, rect, menuListButtonFocusOffset);
 
     return false;
 }

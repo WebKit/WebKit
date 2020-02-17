@@ -35,10 +35,43 @@
 
 namespace WebCore {
 
+static const unsigned focusLineWidth = 1;
+static const Color focusColor = makeRGBA(46, 52, 54, 150);
+static const int buttonFocusOffset = -3;
+static const unsigned buttonPadding = 5;
+static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeWPE.
+static const Color buttonBorderColor = makeRGB(205, 199, 194);
+static const Color buttonBackgroundColor = makeRGB(244, 242, 241);
+static const Color buttonBackgroundPressedColor = makeRGB(214, 209, 205);
+static const Color buttonBackgroundHoveredColor = makeRGB(248, 248, 247);
+static const Color buttonBackgroundDisabledColor = makeRGB(246, 246, 244);
+static const Color toggleBackgroundColor = makeRGB(255, 255, 255);
+static const Color toggleBackgroundHoveredColor = makeRGB(242, 242, 242);
+static const Color toggleBackgroundDisabledColor = makeRGB(252, 252, 252);
+static const double toggleSize = 14.;
+static const int toggleFocusOffset = 2;
+static const Color toggleColor = makeRGB(46, 52, 54);
+static const Color toggleDisabledColor = makeRGB(160, 160, 160);
+
 Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeWPE> theme;
     return theme;
+}
+
+void ThemeWPE::paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect, int offset)
+{
+    FloatRect focusRect = rect;
+    focusRect.inflate(offset);
+    graphicsContext.setStrokeThickness(focusLineWidth);
+    graphicsContext.setLineDash({ focusLineWidth, 2 * focusLineWidth }, 0);
+    graphicsContext.setLineCap(SquareCap);
+    graphicsContext.setLineJoin(MiterJoin);
+
+    Path path;
+    path.addRoundedRect(focusRect, { 2, 2 });
+    graphicsContext.setStrokeColor(focusColor);
+    graphicsContext.strokePath(path);
 }
 
 LengthSize ThemeWPE::controlSize(ControlPart part, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
@@ -70,86 +103,134 @@ void ThemeWPE::paint(ControlPart part, ControlStates& states, GraphicsContext& c
     case DefaultButtonPart:
     case ButtonPart:
     case SquareButtonPart:
-        paintButton(part, states, context, zoomedRect, zoomFactor);
+        paintButton(states, context, zoomedRect, zoomFactor);
         break;
     default:
         break;
     }
 }
 
-void ThemeWPE::paintCheckbox(ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float)
+void ThemeWPE::paintCheckbox(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, float)
 {
-    GraphicsContextStateSaver stateSaver(context);
+    GraphicsContextStateSaver stateSaver(graphicsContext);
 
+    FloatRect fieldRect = zoomedRect;
     FloatSize corner(2, 2);
-    FloatRoundedRect roundedRect(zoomedRect, corner, corner, corner, corner);
     Path path;
-    path.addRoundedRect(roundedRect);
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-buttonBorderSize);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(buttonBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
 
-    context.setFillColor(makeRGB(224, 224, 224));
-    context.fillPath(path);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    if (!(states.states() & ControlStates::EnabledState))
+        graphicsContext.setFillColor(toggleBackgroundDisabledColor);
+    else if (states.states() & ControlStates::HoverState)
+        graphicsContext.setFillColor(toggleBackgroundHoveredColor);
+    else
+        graphicsContext.setFillColor(toggleBackgroundColor);
+    graphicsContext.fillPath(path);
+    path.clear();
 
-    context.setStrokeThickness(1);
-    context.setStrokeColor(makeRGB(94, 94, 94));
-    context.strokePath(path);
+    if (states.states() & (ControlStates::CheckedState | ControlStates::IndeterminateState)) {
+        GraphicsContextStateSaver checkedStateSaver(graphicsContext);
+        graphicsContext.translate(fieldRect.x(), fieldRect.y());
+        graphicsContext.scale(FloatSize::narrowPrecision(fieldRect.width() / toggleSize, fieldRect.height() / toggleSize));
+        if (states.states() & ControlStates::CheckedState) {
+            path.moveTo({ 2.43, 6.57 });
+            path.addLineTo({ 7.5, 11.63 });
+            path.addLineTo({ 14, 5 });
+            path.addLineTo({ 14, 1 });
+            path.addLineTo({ 7.5, 7.38 });
+            path.addLineTo({ 4.56, 4.44 });
+            path.closeSubpath();
+        } else
+            path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
 
-    if (states.states() & ControlStates::CheckedState) {
-        auto& rect = roundedRect.rect();
+        if (!(states.states() & ControlStates::EnabledState))
+            graphicsContext.setFillColor(toggleDisabledColor);
+        else
+            graphicsContext.setFillColor(toggleColor);
 
-        Path checkerPath;
-        checkerPath.moveTo(FloatPoint(rect.x() + 3, rect.maxY() - 3));
-        checkerPath.addLineTo(FloatPoint(rect.maxX() - 3, rect.y() + 3));
-
-        context.setStrokeThickness(2);
-        context.setStrokeColor(makeRGB(84, 84, 84));
-        context.strokePath(checkerPath);
+        graphicsContext.fillPath(path);
+        path.clear();
     }
+
+    if (states.states() & ControlStates::FocusState)
+        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset);
 }
 
-void ThemeWPE::paintRadio(ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float)
+void ThemeWPE::paintRadio(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, float)
 {
-    GraphicsContextStateSaver stateSaver(context);
-
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+    FloatRect fieldRect = zoomedRect;
     Path path;
-    path.addEllipse(zoomedRect);
+    path.addEllipse(fieldRect);
+    fieldRect.inflate(-buttonBorderSize);
+    path.addEllipse(fieldRect);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(buttonBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
 
-    context.setFillColor(makeRGB(224, 224, 224));
-    context.fillPath(path);
-
-    context.setStrokeThickness(1);
-    context.setStrokeColor(makeRGB(94, 94, 94));
-    context.strokePath(path);
+    path.addEllipse(fieldRect);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    if (!(states.states() & ControlStates::EnabledState))
+        graphicsContext.setFillColor(toggleBackgroundDisabledColor);
+    else if (states.states() & ControlStates::HoverState)
+        graphicsContext.setFillColor(toggleBackgroundHoveredColor);
+    else
+        graphicsContext.setFillColor(toggleBackgroundColor);
+    graphicsContext.fillPath(path);
+    path.clear();
 
     if (states.states() & ControlStates::CheckedState) {
-        FloatRect checkerRect = zoomedRect;
-        checkerRect.inflate(-3);
-
-        Path checkerPath;
-        checkerPath.addEllipse(checkerRect);
-
-        context.setFillColor(makeRGB(84, 84, 84));
-        context.fillPath(checkerPath);
+        fieldRect.inflate(-(fieldRect.width() - fieldRect.width() * 0.70));
+        path.addEllipse(fieldRect);
+        if (!(states.states() & ControlStates::EnabledState))
+            graphicsContext.setFillColor(toggleDisabledColor);
+        else
+            graphicsContext.setFillColor(toggleColor);
+        graphicsContext.fillPath(path);
     }
+
+    if (states.states() & ControlStates::FocusState)
+        paintFocus(graphicsContext, zoomedRect, toggleFocusOffset);
 }
 
-void ThemeWPE::paintButton(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float)
+void ThemeWPE::paintButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, float)
 {
-    GraphicsContextStateSaver stateSaver(context);
+    GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    float roundness = (part == SquareButtonPart) ? 0 : 2;
-
-    FloatSize corner(roundness, roundness);
-    FloatRoundedRect roundedRect(zoomedRect, corner, corner, corner, corner);
+    FloatRect fieldRect = zoomedRect;
+    FloatSize corner(5, 5);
     Path path;
-    path.addRoundedRect(roundedRect);
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-buttonBorderSize);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(buttonBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
 
-    Color fillColor = states.states() & ControlStates::PressedState ? makeRGB(244, 244, 244) : makeRGB(224, 224, 224);
-    context.setFillColor(fillColor);
-    context.fillPath(path);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    if (!(states.states() & ControlStates::EnabledState))
+        graphicsContext.setFillColor(buttonBackgroundDisabledColor);
+    else if (states.states() & ControlStates::PressedState)
+        graphicsContext.setFillColor(buttonBackgroundPressedColor);
+    else if (states.states() & ControlStates::HoverState)
+        graphicsContext.setFillColor(buttonBackgroundHoveredColor);
+    else
+        graphicsContext.setFillColor(buttonBackgroundColor);
+    graphicsContext.fillPath(path);
 
-    context.setStrokeThickness(1);
-    context.setStrokeColor(makeRGB(94, 94, 94));
-    context.strokePath(path);
+    if (states.states() & ControlStates::FocusState)
+        paintFocus(graphicsContext, zoomedRect, buttonFocusOffset);
 }
 
 } // namespace WebCore
