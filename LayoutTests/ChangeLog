@@ -1,3 +1,10 @@
+2020-02-17  Dean Jackson  <dino@apple.com>
+
+        Removing expectations for tests that no longer exist + fixing a typo.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r256232?) [ Mac wk1 Release ] resize-observer/delete-observers-in-callbacks.html is flaky failing.
