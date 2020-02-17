@@ -95,9 +95,11 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
     auto& displayBox = layoutState().displayBoxForLayoutBox(formattingContextRoot);
 
-    auto horizontalConstraints = HorizontalConstraints { displayBox.contentBoxLeft(), displayBox.contentBoxWidth() };
-    auto verticalConstraints = VerticalConstraints { displayBox.contentBoxTop(), { } };
-    formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
+    if (formattingContextRoot.hasInFlowOrFloatingChild()) {
+        auto horizontalConstraints = HorizontalConstraints { displayBox.contentBoxLeft(), displayBox.contentBoxWidth() };
+        auto verticalConstraints = VerticalConstraints { displayBox.contentBoxTop(), { } };
+        formattingContext->layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
+    }
 
     // FIXME: layoutFormattingContextSubtree() does not perform layout on the root, rather it lays out the root's content.
     // It constructs an FC for descendant boxes and runs layout on them. The formattingContextRoot is laid out in the FC in which it lives (parent formatting context).
