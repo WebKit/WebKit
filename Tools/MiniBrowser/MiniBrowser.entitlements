@@ -17,5 +17,9 @@
 		<string>com.apple.Safari.SafeBrowsing.Service</string>
 		<string>com.apple.WebKit.NetworkingDaemon</string>
 	</array>
+	<key>com.apple.security.temporary-exception.sbpl</key>
+	<array>
+		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>
+	</array>
 </dict>
 </plist>

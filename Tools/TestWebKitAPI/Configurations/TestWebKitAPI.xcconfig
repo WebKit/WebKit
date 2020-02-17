@@ -66,5 +66,6 @@ OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework WebCore -framework CoreGraphics -
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/TestWebKitAPI-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = Configurations/TestWebKitAPI-macOS.entitlements;
 
 STRIP_STYLE = debugging;

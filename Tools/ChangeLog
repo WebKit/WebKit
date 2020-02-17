@@ -1,3 +1,20 @@
+2020-02-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Update WebKit Tools to issue mach extensions as needed
+        https://bugs.webkit.org/show_bug.cgi?id=207850
+        <rdar://problem/59521019>
+
+        Reviewed by Per Arne Vollan.
+
+        Revise the codesign settings for our testing tools to allow the process to vend mach extensions
+        to its child processes (WebContent, GPU, Network, etc.) as needed.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.entitlements:
+
 2020-02-17  Peng Liu  <peng.liu6@apple.com>
 
         Fix check-webkit-style errors related to AVFoundationSPI.h

@@ -2120,6 +2120,7 @@
 		7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuTypesForMouseEvents.mm; sourceTree = "<group>"; };
 		7AA021BA1AB09EA70052953F /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
+		7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "TestWebKitAPI-macOS.entitlements"; sourceTree = "<group>"; };
 		7AC7B56B20D9768E002C09A0 /* CustomBundleParameter_Bundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleParameter_Bundle.mm; sourceTree = "<group>"; };
 		7AC7B56C20D9768F002C09A0 /* CustomBundleParameter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleParameter.mm; sourceTree = "<group>"; };
 		7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomBundleObject.mm; sourceTree = "<group>"; };
@@ -3682,6 +3683,7 @@
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */,
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
+				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
 				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
 				7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */,
