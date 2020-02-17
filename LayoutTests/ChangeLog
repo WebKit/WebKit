@@ -1,5 +1,40 @@
 2020-02-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256317. rdar://problem/59408870
+
+    REGRESSION (r256009): [ Mojave wk2 Debug ] ASSERTION FAILED: Completion handler should always be called under WebKit::WebMDNSRegister::PendingRegistration
+    https://bugs.webkit.org/show_bug.cgi?id=207521
+    <rdar://problem/59331313>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    Covered by debug assertion not hit in layout tests.
+    
+    * WebProcess/Network/webrtc/WebMDNSRegister.cpp:
+    (WebKit::WebMDNSRegister::finishedRegisteringMDNSName):
+    Call completion handler even if the document entry has been cleared, which can happen in suspend/destruction case.
+    If the entry is not there, all MDNS names for the document have been unregistered. We then report a registration error.
+    
+    LayoutTests:
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256317 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION (r256009): [ Mojave wk2 Debug ] ASSERTION FAILED: Completion handler should always be called under WebKit::WebMDNSRegister::PendingRegistration
+            https://bugs.webkit.org/show_bug.cgi?id=207521
+            <rdar://problem/59331313>
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac-wk2/TestExpectations:
+
+2020-02-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256231. rdar://problem/59408870
 
     Regression: (r256009?) [ Mojave wk2 Debug ] webrtc/peerconnection-page-cache-long.html is crashing.
