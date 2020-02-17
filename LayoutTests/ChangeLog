@@ -1,3 +1,16 @@
+2020-02-17  James Darpinian  <jdarpinian@chromium.org>
+
+        ANGLE: Fix object deletion behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=205610
+
+        Remove incorrect (out-of-date) test. This correct version of this test is still present in the WebGL
+        conformance tests.
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/object-deletion-behaviour-expected.txt: Removed.
+        * fast/canvas/webgl/object-deletion-behaviour.html: Removed.
+
 2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] fast/scrolling/latching/scroll-iframe-fragment.html is flaky failing.

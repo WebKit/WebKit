@@ -77,6 +77,9 @@ private:
     PlatformGLObject m_object { 0 };
     unsigned m_attachmentCount { 0 };
     bool m_deleted { false };
+#if USE(ANGLE)
+    bool m_calledDelete { false };
+#endif
 };
 
 inline PlatformGLObject objectOrZero(WebGLObject* object)

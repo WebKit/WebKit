@@ -814,9 +814,8 @@ protected:
     bool deleteObject(WebGLObject*);
 
     // Helper function for bind* (bindBuffer, bindTexture, etc) and useProgram.
-    // If the object has already been deleted, set deleted to true upon return.
     // Return false if caller should return without further processing.
-    bool checkObjectToBeBound(const char* functionName, WebGLObject*, bool& deleted);
+    bool checkObjectToBeBound(const char* functionName, WebGLObject*);
 
     bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
 

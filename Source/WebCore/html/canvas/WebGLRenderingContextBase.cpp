@@ -1173,9 +1173,8 @@ void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram* program, GCGLui
     m_context->bindAttribLocation(objectOrZero(program), index, name);
 }
 
-bool WebGLRenderingContextBase::checkObjectToBeBound(const char* functionName, WebGLObject* object, bool& deleted)
+bool WebGLRenderingContextBase::checkObjectToBeBound(const char* functionName, WebGLObject* object)
 {
-    deleted = false;
     if (isContextLostOrPending())
         return false;
     if (object) {
@@ -1183,18 +1182,18 @@ bool WebGLRenderingContextBase::checkObjectToBeBound(const char* functionName, W
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object not from this context");
             return false;
         }
-        deleted = !object->object();
+        if (!object->object()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "deleted objects cannot be bound");
+            return false;
+        }
     }
     return true;
 }
 
 bool WebGLRenderingContextBase::validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer* buffer)
 {
-    bool deleted;
-    if (!checkObjectToBeBound(functionName, buffer, deleted))
+    if (!checkObjectToBeBound(functionName, buffer))
         return false;
-    if (deleted)
-        buffer = nullptr;
 
     if (buffer) {
         // In WebGL, a buffer may only be bound to one of the ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER target in its lifetime.
@@ -1261,11 +1260,8 @@ void WebGLRenderingContextBase::bindBuffer(GCGLenum target, WebGLBuffer* buffer)
 
 void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
 {
-    bool deleted;
-    if (!checkObjectToBeBound("bindFramebuffer", buffer, deleted))
+    if (!checkObjectToBeBound("bindFramebuffer", buffer))
         return;
-    if (deleted)
-        buffer = 0;
 
     bool isWebGL2DrawFramebufferTarget = false;
 #if ENABLE(WEBGL2)
@@ -1297,11 +1293,8 @@ void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffe
 
 void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuffer* renderBuffer)
 {
-    bool deleted;
-    if (!checkObjectToBeBound("bindRenderbuffer", renderBuffer, deleted))
+    if (!checkObjectToBeBound("bindRenderbuffer", renderBuffer))
         return;
-    if (deleted)
-        renderBuffer = 0;
     if (target != GraphicsContextGL::RENDERBUFFER) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindRenderbuffer", "invalid target");
         return;
@@ -1314,11 +1307,8 @@ void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuf
 
 void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* texture)
 {
-    bool deleted;
-    if (!checkObjectToBeBound("bindTexture", texture, deleted))
+    if (!checkObjectToBeBound("bindTexture", texture))
         return;
-    if (deleted)
-        texture = nullptr;
     if (texture && texture->getTarget() && texture->getTarget() != target) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindTexture", "textures can not be used with multiple targets");
         return;
@@ -4968,11 +4958,8 @@ void WebGLRenderingContextBase::uniformMatrix4fv(const WebGLUniformLocation* loc
 
 void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 {
-    bool deleted;
-    if (!checkObjectToBeBound("useProgram", program, deleted))
+    if (!checkObjectToBeBound("useProgram", program))
         return;
-    if (deleted)
-        program = 0;
     if (program && !program->getLinkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "useProgram", "program not valid");
         return;

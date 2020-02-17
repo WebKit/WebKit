@@ -1688,6 +1688,8 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
     if (!object) {
         if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return static_cast<unsigned>(GraphicsContextGL::NONE);
+        if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME)
+            return nullptr;
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "invalid parameter name");
         return nullptr;
     }
