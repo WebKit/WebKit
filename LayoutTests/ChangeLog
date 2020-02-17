@@ -1,3 +1,12 @@
+2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 Release ] fast/scrolling/latching/scroll-iframe-fragment.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207848
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-17  Dean Jackson  <dino@apple.com>
 
         Removing expectations for tests that no longer exist + fixing a typo.
