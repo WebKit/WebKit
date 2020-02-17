@@ -6511,7 +6511,6 @@
 		1D2C82B6236A3F6A0055D6C5 /* PictureInPictureSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureSupport.h; sourceTree = "<group>"; };
 		1D392F2823F209B400E04B2D /* VideoLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoLayerManagerObjC.mm; sourceTree = "<group>"; };
 		1D392F2A23F209B500E04B2D /* VideoLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerManagerObjC.h; sourceTree = "<group>"; };
-		1D392F2B23F209D800E04B2D /* VideoLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerManager.h; sourceTree = "<group>"; };
 		1DBC1B552347B3D200B901AF /* PictureInPictureObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureInPictureObserver.h; sourceTree = "<group>"; };
 		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
 		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
@@ -25120,7 +25119,6 @@
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				0F5A57CA229B18AE0025EDA9 /* VelocityData.cpp */,
 				0F1A0C36229A481800D37ADB /* VelocityData.h */,
-				1D392F2B23F209D800E04B2D /* VideoLayerManager.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
 				1411DCB0164C39A800D49BC1 /* WidthCache.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,

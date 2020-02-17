@@ -34,15 +34,17 @@
 #import <mach/mach_port.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Logger.h>
 #import <wtf/MachSendRight.h>
 
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
+OBJC_CLASS AVPlayerLayer;
+
 namespace WebCore {
 
 VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* logIdentifier)
-    : VideoLayerManager()
-    , m_logger(logger)
+    : m_logger(logger)
     , m_logIdentifier(logIdentifier)
 {
 }

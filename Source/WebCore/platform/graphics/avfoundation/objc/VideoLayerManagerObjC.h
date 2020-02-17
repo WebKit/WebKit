@@ -27,36 +27,37 @@
 
 #include "FloatRect.h"
 #include "IntSize.h"
+#include "NativeImage.h"
 #include "PlatformLayer.h"
-#include "VideoLayerManager.h"
 #include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS AVPlayerLayer;
-
 namespace WebCore {
 
-class VideoLayerManagerObjC final : public VideoLayerManager , public LoggerHelper {
+class TextTrackRepresentation;
+
+class VideoLayerManagerObjC final : public LoggerHelper {
+    WTF_MAKE_NONCOPYABLE(VideoLayerManagerObjC);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     VideoLayerManagerObjC(const Logger&, const void*);
 
-    PlatformLayer *videoInlineLayer() const final { return m_videoInlineLayer.get(); }
-    PlatformLayer *videoFullscreenLayer() const final { return m_videoFullscreenLayer.get(); }
-    FloatRect videoFullscreenFrame() const final { return m_videoFullscreenFrame; }
+    PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
+    PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
+    FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
 
-    void setVideoLayer(PlatformLayer *, IntSize contentSize) final;
-    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr) final;
-    void updateVideoFullscreenInlineImage(NativeImagePtr) final;
-    void setVideoFullscreenFrame(FloatRect) final;
-    void didDestroyVideoLayer() final;
+    void setVideoLayer(PlatformLayer *, IntSize contentSize);
+    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr);
+    void updateVideoFullscreenInlineImage(NativeImagePtr);
+    void setVideoFullscreenFrame(FloatRect);
+    void didDestroyVideoLayer();
 
-    bool requiresTextTrackRepresentation() const final;
-    void setTextTrackRepresentation(TextTrackRepresentation*) final;
-    void syncTextTrackBounds() final;
+    bool requiresTextTrackRepresentation() const;
+    void setTextTrackRepresentation(TextTrackRepresentation*);
+    void syncTextTrackBounds();
 
 private:
     const Logger& logger() const final { return m_logger.get(); }
