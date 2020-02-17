@@ -34,6 +34,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
+#include "EventTargetConcrete.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "InspectorInstrumentation.h"
@@ -57,6 +58,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(EventTarget);
 WTF_MAKE_ISO_ALLOCATED_IMPL(EventTargetWithInlineData);
+
+Ref<EventTarget> EventTarget::create(ScriptExecutionContext& context)
+{
+    return EventTargetConcrete::create(context);
+}
 
 bool EventTarget::isNode() const
 {

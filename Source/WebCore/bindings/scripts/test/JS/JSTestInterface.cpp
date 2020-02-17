@@ -258,7 +258,6 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JS
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestInterfaceConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
@@ -271,7 +270,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JS
     auto str2 = callFrame->argument(1).isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object)));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    setSubclassStructureIfNeeded<TestInterface>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
 }
 
 template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

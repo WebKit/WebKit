@@ -1948,7 +1948,6 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(JSGlobal
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestObjConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 2))
@@ -1963,7 +1962,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(JSGlobal
     auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, callFrame->uncheckedArgument(1), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestObject", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestObj::create(document, testCallback.releaseNonNull(), testCallbackFunction.releaseNonNull());
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object)));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
+    setSubclassStructureIfNeeded<TestObj>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
 }
 
 template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

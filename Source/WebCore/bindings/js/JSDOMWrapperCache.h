@@ -201,4 +201,23 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::JSGlobalObject* lexica
     return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<DOMClass>(domObject));
 }
 
+template<typename DOMClass> inline void setSubclassStructureIfNeeded(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, JSC::JSObject* jsObject)
+{
+    JSC::JSObject* newTarget = callFrame->newTarget().getObject();
+    JSC::JSObject* constructor = callFrame->jsCallee();
+    if (!newTarget || newTarget == constructor)
+        return;
+
+    using WrapperClass = typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass;
+
+    JSC::VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* newTargetGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(newTarget->globalObject(vm));
+    auto* baseStructure = getDOMStructure<WrapperClass>(vm, *newTargetGlobalObject);
+    auto* subclassStructure = JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, constructor, newTarget, baseStructure);
+    RETURN_IF_EXCEPTION(scope, void());
+    jsObject->setStructure(vm, subclassStructure);
+}
+
 } // namespace WebCore

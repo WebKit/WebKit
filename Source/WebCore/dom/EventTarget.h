@@ -54,6 +54,8 @@ public:
 class EventTarget : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(EventTarget);
 public:
+    static Ref<EventTarget> create(ScriptExecutionContext&);
+
     void ref() { refEventTarget(); }
     void deref() { derefEventTarget(); }
 

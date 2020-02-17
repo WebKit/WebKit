@@ -133,14 +133,14 @@ PASS EventTarget interface: existence and properties of interface prototype obje
 PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
 PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
 PASS EventTarget interface: operation dispatchEvent(Event) 
-FAIL EventTarget must be primary interface of new EventTarget() assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL Stringification of new EventTarget() assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: new EventTarget() must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: new EventTarget() must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: new EventTarget() must inherit property "dispatchEvent(Event)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
-FAIL EventTarget interface: calling dispatchEvent(Event) on new EventTarget() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new EventTarget()')"
+PASS EventTarget must be primary interface of new EventTarget() 
+PASS Stringification of new EventTarget() 
+PASS EventTarget interface: new EventTarget() must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
+PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventTarget() must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
+PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventTarget() must inherit property "dispatchEvent(Event)" with the proper type 
+PASS EventTarget interface: calling dispatchEvent(Event) on new EventTarget() with too few arguments must throw TypeError 
 PASS EventListener interface: existence and properties of interface object 
 PASS AbortController interface: existence and properties of interface object 
 PASS AbortController interface object length 

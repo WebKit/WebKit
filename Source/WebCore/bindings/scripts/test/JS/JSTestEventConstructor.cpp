@@ -159,7 +159,6 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
@@ -169,7 +168,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*lexicalGlobalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestEventConstructor::create(WTFMove(type), WTFMove(eventInitDict));
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object)));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
+    setSubclassStructureIfNeeded<TestEventConstructor>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
 }
 
 template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

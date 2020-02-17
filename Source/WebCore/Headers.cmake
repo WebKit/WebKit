@@ -403,6 +403,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventNames.h
     dom/EventQueue.h
     dom/EventTarget.h
+    dom/EventTargetConcrete.h
     dom/Exception.h
     dom/ExceptionCode.h
     dom/ExceptionData.h

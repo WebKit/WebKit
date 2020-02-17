@@ -882,6 +882,7 @@ dom/EventLoop.cpp
 dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp
+dom/EventTargetConcrete.cpp
 dom/ExceptionData.cpp
 dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp

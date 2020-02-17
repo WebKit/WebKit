@@ -148,7 +148,6 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(JSG
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestTypedefsConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 3))
@@ -160,7 +159,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(JSG
     auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, callFrame->uncheckedArgument(2), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestTypedefs::create(WTFMove(hello), testCallbackFunction.releaseNonNull(), testCallbackInterface.releaseNonNull());
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object)));
+    auto jsValue = toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
+    setSubclassStructureIfNeeded<TestTypedefs>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsValue);
 }
 
 template<> JSValue JSTestTypedefsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)

@@ -7333,7 +7333,6 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "{\n");
             push(@$outputArray, "    VM& vm = lexicalGlobalObject->vm();\n");
             push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-            push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(callFrame->jsCallee());\n");
             push(@$outputArray, "    ASSERT(castedThis);\n");
 
@@ -7354,6 +7353,7 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ExecState");
 
             my $IDLType = GetIDLType($interface, $interface->type);
+            my $implType = GetImplClassName($interface);
 
             AddToImplIncludes("JSDOMConvertInterface.h");
 
@@ -7363,7 +7363,12 @@ sub GenerateConstructorDefinition
             push(@constructionConversionArguments, "throwScope") if $interface->extendedAttributes->{ConstructorMayThrowException};
             push(@constructionConversionArguments, "WTFMove(object)");
 
-            push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated<${IDLType}>(" . join(", ", @constructionConversionArguments) . "));\n");
+            # FIXME: toJSNewlyCreated should return JSObject* instead of JSValue.
+            push(@$outputArray, "    auto jsValue = toJSNewlyCreated<${IDLType}>(" . join(", ", @constructionConversionArguments) . ");\n");
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $interface->extendedAttributes->{ConstructorMayThrowException};
+            push(@$outputArray, "    setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, asObject(jsValue));\n");
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n");
+            push(@$outputArray, "    return JSValue::encode(jsValue);\n");
             push(@$outputArray, "}\n\n");
         }
     }

@@ -19,6 +19,8 @@
  */
 
 [
+    Constructor,
+    ConstructorCallWith=ScriptExecutionContext,
     CustomToJSObject,
     Exposed=(Window,Worker),
     IsImmutablePrototypeExoticObjectOnPrototype,

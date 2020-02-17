@@ -1,3 +1,18 @@
+2020-02-16  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implement EventTarget constructor
+        https://bugs.webkit.org/show_bug.cgi?id=174313
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/constructors-expected.txt:
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+        * web-platform-tests/dom/events/EventTarget-constructible.any-expected.txt:
+        * web-platform-tests/dom/events/EventTarget-constructible.any.worker-expected.txt:
+        * web-platform-tests/dom/events/event-global-extra.window-expected.txt:
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+
 2020-02-14  Rossana Monteriso  <rmonteriso@igalia.com>
 
         [css-grid] Move grid-gutters-and-alignment test to WPT folder

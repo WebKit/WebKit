@@ -243,6 +243,11 @@ sub generateInterfacesHeader()
         print F "#endif\n";
     }
 
+    if ($namespace eq "EventTarget") {
+        print F "    ${suffix} = $count,\n";
+        $count++;
+    }
+
     for my $interface (sort keys %unconditionalInterfaces) {
         print F "    ${interface}${suffix} = $count,\n";
         $count++;
