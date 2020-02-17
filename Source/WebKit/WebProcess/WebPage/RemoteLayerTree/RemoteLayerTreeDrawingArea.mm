@@ -188,6 +188,8 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
     if (m_isFlushingSuspended == isFrozen)
         return;
 
+    tracePoint(isFrozen ? LayerTreeFreezeStart : LayerTreeFreezeEnd);
+
     m_isFlushingSuspended = isFrozen;
 
     if (!m_isFlushingSuspended && m_hasDeferredFlush) {

@@ -1,3 +1,23 @@
+2020-02-17  Antti Koivisto  <antti@apple.com>
+
+        [macOS] Add trace points for layer flush runloop observer
+        https://bugs.webkit.org/show_bug.cgi?id=207837
+
+        Reviewed by Sam Weinig.
+
+        Add trace points to see how much scheduled layer flushes get delayed by timers and other runloop activities.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+
+        Also add trace points for layer tree freezing (iOS too).
+
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback):
+        (WebKit::TiledCoreAnimationDrawingArea::invalidateLayerFlushRunLoopObserver):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver):
+
 2020-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin targets

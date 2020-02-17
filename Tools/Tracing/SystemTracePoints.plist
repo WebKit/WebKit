@@ -359,6 +359,30 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Layer flush runloop observer</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12011</string>
+                 <key>CodeEnd</key>
+                 <string>12012</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Layer tree frozen</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12013</string>
+                 <key>CodeEnd</key>
+                 <string>12014</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

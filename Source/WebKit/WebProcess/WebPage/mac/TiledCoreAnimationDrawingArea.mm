@@ -59,6 +59,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
+#import <wtf/SystemTracing.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #import <WebCore/AsyncScrollingCoordinator.h>
@@ -175,6 +176,8 @@ void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStat
 {
     if (m_layerTreeStateIsFrozen == layerTreeStateIsFrozen)
         return;
+
+    tracePoint(layerTreeStateIsFrozen ? LayerTreeFreezeStart : LayerTreeFreezeEnd);
 
     m_layerTreeStateIsFrozen = layerTreeStateIsFrozen;
 
@@ -936,16 +939,25 @@ void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
 
 void TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback()
 {
+    tracePoint(LayerFlushRunLoopObserverEnd, 0);
+
     flushLayers();
 }
 
 void TiledCoreAnimationDrawingArea::invalidateLayerFlushRunLoopObserver()
 {
+    if (!m_layerFlushRunLoopObserver->isScheduled())
+        return;
+
+    tracePoint(LayerFlushRunLoopObserverEnd, 1);
+
     m_layerFlushRunLoopObserver->invalidate();
 }
 
 void TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver()
 {
+    tracePoint(LayerFlushRunLoopObserverStart);
+    
     m_layerFlushRunLoopObserver->schedule(CFRunLoopGetCurrent());
 }
 

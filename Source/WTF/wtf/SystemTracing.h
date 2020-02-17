@@ -102,6 +102,10 @@ enum TracePointCode {
     SyncTouchEventEnd,
     InitializeWebProcessStart,
     InitializeWebProcessEnd,
+    LayerFlushRunLoopObserverStart,
+    LayerFlushRunLoopObserverEnd,
+    LayerTreeFreezeStart,
+    LayerTreeFreezeEnd,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,
