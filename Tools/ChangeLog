@@ -1,3 +1,9 @@
+2020-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix. rdar://59461287
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
         Revert r256693. rdar://problem/59478981
