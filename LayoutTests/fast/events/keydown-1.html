@@ -4,6 +4,11 @@
 <ul id="console"></ul>
 
 <script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
 function log(str) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
@@ -25,7 +30,8 @@ false);
 false);
 }
 
-function step2() {
+window.onload = function()
+{
     addEventListeners();
     
     if (!window.testRunner)
@@ -46,17 +52,7 @@ function step2() {
     eventSender.keyDown("delete");
 
     log(window.frames[0].document.body.innerText);
-    window.testRunner.notifyDone();
+    testRunner.notifyDone();
 }
-
-function runTest() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        window.testRunner.waitUntilDone();
-    }
-    window.setTimeout(step2, 200);
-}
-
-runTest();
 </script>
 </body>

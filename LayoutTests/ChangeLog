@@ -1,3 +1,19 @@
+2020-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [ Mac wk2 ] fast/events/keydown-1.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=154297
+        https://bugs.webkit.org/show_bug.cgi?id=207785
+        <rdar://problem/59469424>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/keydown-1.html: Attempt to deflake by using onload instead of a 200 ms timer.
+
+        * platform/mac-wk1/TestExpectations: Removed flaky expectation.
+
+        * platform/mac-wk2/TestExpectations: Removed flaky expectation. Also corrected a 
+        conflict that was landed in r256656 today.
+
 2020-02-16  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Implement EventTarget constructor
