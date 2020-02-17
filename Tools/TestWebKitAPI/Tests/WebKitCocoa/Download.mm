@@ -1182,6 +1182,7 @@ TEST(_WKDownload, ResumedDownloadCanHandleAuthenticationChallenge)
 
 @end
 
+#if HAVE(NETWORK_FRAMEWORK)
 static const char* documentText = R"DOCDOCDOC(
 <script>
 function loaded()
@@ -1214,4 +1215,5 @@ TEST(_WKDownload, SubframeSecurityOrigin)
     [webView loadHTMLString:[NSString stringWithFormat:@"<body><iframe src='http://127.0.0.1:%d/page'></iframe></body>", server.port()] baseURL:nil];
     TestWebKitAPI::Util::run(&isDone);
 }
+#endif // HAVE(NETWORK_FRAMEWORK)
 #endif // PLATFORM(MAC) || PLATFORM(IOS)
