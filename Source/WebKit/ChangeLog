@@ -1,3 +1,50 @@
+2020-02-17  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        a lot gcc warnings because of %{public}s format specifier
+        https://bugs.webkit.org/show_bug.cgi?id=207478
+
+        Reviewed by Darin Adler.
+
+        Add PUBLIC_LOG_STRING macro which is defined depending on if
+        os_log()[1] is used or rather old printf().
+
+        OS Logging processes format specifiers for privacy matters, for
+        example dynamic strings, which demands %{public}s. But these
+        specifiers are not valid for printf().
+
+        Calls to logging with this specifier, if they are not Mac/Darwing
+        exclusive, use this new macro to avoid gcc warnings.
+
+        1. https://developer.apple.com/documentation/os/logging?language=objc
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsMemoryStore::ensurePrevalentResourcesForDebugMode):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::debugLogDomainsInBatches):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::logInvalidMessage):
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::Activity::Activity):
+        (WebKit::ProcessThrottler::Activity::invalidate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2020-02-17  Per Arne Vollan  <pvollan@apple.com>
 
         Mach lookup to com.apple.webinspector should not be allowed in WebKit's WebContent process

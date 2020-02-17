@@ -3122,10 +3122,10 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         bool shouldProcessSwap = processForNavigation.ptr() != sourceProcess.ptr();
         if (shouldProcessSwap) {
             policyAction = PolicyAction::StopAllLoads;
-            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
+            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %" PUBLIC_LOG_STRING, processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else
-            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
+            RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %" PUBLIC_LOG_STRING, processIdentifier(), reason.utf8().data());
 
         if (shouldProcessSwap) {
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.

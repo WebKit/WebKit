@@ -160,14 +160,14 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     
     String errorMessage = ensureValidRecordsTable();
     if (!errorMessage.isNull()) {
-        RELEASE_LOG_ERROR(ServiceWorker, "ensureValidRecordsTable failed, reason: %{public}s", errorMessage.utf8().data());
+        RELEASE_LOG_ERROR(ServiceWorker, "ensureValidRecordsTable failed, reason: %" PUBLIC_LOG_STRING, errorMessage.utf8().data());
         doRecoveryAttempt();
         return;
     }
     
     errorMessage = importRecords();
     if (!errorMessage.isNull()) {
-        RELEASE_LOG_ERROR(ServiceWorker, "importRecords failed, reason: %{public}s", errorMessage.utf8().data());
+        RELEASE_LOG_ERROR(ServiceWorker, "importRecords failed, reason: %" PUBLIC_LOG_STRING, errorMessage.utf8().data());
         doRecoveryAttempt();
         return;
     }

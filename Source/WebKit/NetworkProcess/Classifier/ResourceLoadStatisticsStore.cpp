@@ -205,7 +205,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         return;
     }
 
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %{public}s.", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
 
     setDataRecordsBeingRemoved(true);
 
@@ -601,7 +601,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
         return;
     
     if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
-        RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for: %{public}s.", action, domainsToString(domains).utf8().data());
+        RELEASE_LOG_INFO(ITPDebug, "About to %" PUBLIC_LOG_STRING " cookies in third-party contexts for: %" PUBLIC_LOG_STRING ".", action, domainsToString(domains).utf8().data());
         return;
     }
     
@@ -612,14 +612,14 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
     
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
-            RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+            RELEASE_LOG_INFO(ITPDebug, "About to %" PUBLIC_LOG_STRING " cookies in third-party contexts for (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
             batch.shrink(0);
             ++batchNumber;
         }
         batch.append(domain);
     }
     if (!batch.isEmpty())
-        RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+        RELEASE_LOG_INFO(ITPDebug, "About to %" PUBLIC_LOG_STRING " cookies in third-party contexts for (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
 }
 
 } // namespace WebKit

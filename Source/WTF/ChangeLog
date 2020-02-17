@@ -1,3 +1,26 @@
+2020-02-17  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        a lot gcc warnings because of %{public}s format specifier
+        https://bugs.webkit.org/show_bug.cgi?id=207478
+
+        Reviewed by Darin Adler.
+
+        Add PUBLIC_LOG_STRING macro which is defined depending on if
+        os_log()[1] is used or rather old printf().
+
+        OS Logging processes format specifiers for privacy matters, for
+        example dynamic strings, which demands %{public}s. But these
+        specifiers are not valid for printf().
+
+        Calls to logging with this specifier, if they are not Mac/Darwing
+        exclusive, use this new macro to avoid gcc warnings.
+
+        1. https://developer.apple.com/documentation/os/logging?language=objc
+
+        * wtf/Assertions.h:
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+
 2020-02-17  Antti Koivisto  <antti@apple.com>
 
         [macOS] Add trace points for layer flush runloop observer

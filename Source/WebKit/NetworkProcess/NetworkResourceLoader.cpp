@@ -188,7 +188,7 @@ void NetworkResourceLoader::start()
 
             WTF::switchOn(result,
                 [this] (ResourceError& error) {
-                    RELEASE_LOG_IF_ALLOWED("start: NetworkLoadChecker::check returned an error (error.domain=%{public}s, error.code=%d, isCancellation=%d)", error.domain().utf8().data(), error.errorCode(), error.isCancellation());
+                    RELEASE_LOG_IF_ALLOWED("start: NetworkLoadChecker::check returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d, isCancellation=%d)", error.domain().utf8().data(), error.errorCode(), error.isCancellation());
                     if (!error.isCancellation())
                         this->didFailLoading(error);
                 },
@@ -330,7 +330,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTFMove(request);
     m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
 
-    RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Going to the network (description=%{public}s)", m_networkLoad->description().utf8().data());
+    RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Going to the network (description=%" PUBLIC_LOG_STRING ")", m_networkLoad->description().utf8().data());
 }
 
 ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
@@ -487,7 +487,7 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
 
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (httpStatusCode=%d, MIMEType=%{public}s, expectedContentLength=%" PRId64 ", hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%" PRId64 ", hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
     if (isMainResource())
         didReceiveMainResourceResponse(receivedResponse);
@@ -531,7 +531,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_networkLoadChecker) {
         auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
         if (!error.isNull()) {
-            RELEASE_LOG_ERROR_IF_ALLOWED("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%{public}s, error.code=%d)", error.domain().utf8().data(), error.errorCode());
+            RELEASE_LOG_ERROR_IF_ALLOWED("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
             RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
                 if (protectedThis->m_networkLoad)
                     protectedThis->didFailLoading(error);

@@ -286,17 +286,17 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
 
     if (!m_database.tableExists("ObservedDomains"_s)) {
         if (!createSchema()) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createSchema failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
             ASSERT_NOT_REACHED();
             return;
         }
     }
     
     if (!m_database.turnOnIncrementalAutoVacuum())
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::turnOnIncrementalAutoVacuum failed, error message: %{public}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::turnOnIncrementalAutoVacuum failed, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
 
     if (!prepareStatements()) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
         ASSERT_NOT_REACHED();
         return;
     }
@@ -315,7 +315,7 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
         m_isNewResourceLoadStatisticsDatabaseFile = false;
 
     if (!m_database.open(m_storageDirectoryPath)) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
         ASSERT_NOT_REACHED();
     }
 }
@@ -330,14 +330,14 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema()
 {
     SQLiteStatement statement(m_database, "SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?");
     if (statement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
 
     bool hasAllTables = true;
     for (auto table : tables) {
         if (statement.bindText(1, table) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to bind, error message: %{public}s", this, m_database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
             return false;
         }
         if (statement.step() != SQLITE_ROW) {
@@ -418,7 +418,7 @@ bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
         || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
         || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createUniqueIndices failed to execute, error message: %{public}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createUniqueIndices failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
     return true;
@@ -525,7 +525,7 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_storageAccessExistsStatement.prepare() != SQLITE_OK
         || m_getMostRecentlyUpdatedTimestampStatement.prepare() != SQLITE_OK
         ) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return false;
     }
@@ -817,7 +817,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> Reso
     if (m_getAllSubStatisticsStatement.bindInt(1, thirdPartyDomainID) != SQLITE_OK
         || m_getAllSubStatisticsStatement.bindInt(2, thirdPartyDomainID) != SQLITE_OK
         || m_getAllSubStatisticsStatement.bindInt(3, thirdPartyDomainID) != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomain, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomain, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
@@ -843,7 +843,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
     if (sortedStatistics.prepare() != SQLITE_OK
         || sortedStatistics.bindText(1, "1")
         || sortedStatistics.bindText(2, "%") != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return thirdPartyDataList;
     }
@@ -892,21 +892,21 @@ static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase&
 
     // Prepare
     if (medianDaysSinceUIStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
 
     // Bind
     if (medianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || medianDaysSinceUIStatement.bindInt(2, 1) != SQLITE_OK || medianDaysSinceUIStatement.bindInt(3, (prevalentResourcesWithUserInteractionCount / 2) != SQLITE_OK)) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
 
     // Step
     if (medianDaysSinceUIStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         return 0;
     }
 
@@ -921,21 +921,21 @@ static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase&
 
     // Prepare
     if (lowerMedianDaysSinceUIStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
 
     // Bind
     if (lowerMedianDaysSinceUIStatement.bindInt(1, 1) != SQLITE_OK || lowerMedianDaysSinceUIStatement.bindInt(2, 1) != SQLITE_OK || lowerMedianDaysSinceUIStatement.bindInt(3, ((prevalentResourcesWithUserInteractionCount - 1) / 2)) != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
 
     // Step
     if (lowerMedianDaysSinceUIStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %{public}s", database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
         return 0;
     }
 
@@ -948,7 +948,7 @@ unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources() co
 {
     auto stepValue = m_countPrevalentResourcesStatement.step();
     if (stepValue != SQLITE_ROW && stepValue != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources failed to step, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources failed to step, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -980,7 +980,7 @@ unsigned ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI
     
     // Prepare
     if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to prepare, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to prepare, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -988,14 +988,14 @@ unsigned ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI
     // Bind
     if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.bindInt(1, 1) != SQLITE_OK
         || topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.bindInt(2, 1) != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to bind, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to bind, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return 0;
     }
     
     // Step
     if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to step, error message: %{public}s", m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to step, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         return 0;
     }
     
@@ -1017,7 +1017,7 @@ static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabas
         if (getMedianStatistic.bindInt(1, 1) != SQLITE_OK
             || getMedianStatistic.bindInt(2, 0) != SQLITE_OK
             || getMedianStatistic.bindInt(3, (bucketSize / 2)) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %{public}s", database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return 0;
         }
@@ -1034,7 +1034,7 @@ static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabas
         if (getLowerMedianStatistic.bindInt(1, 1) != SQLITE_OK
             || getLowerMedianStatistic.bindInt(2, 0) != SQLITE_OK
             || getLowerMedianStatistic.bindInt(2, ((bucketSize-1) / 2)) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %{public}s", database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::makeMedianWithoutUIQuery, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return 0;
         }
@@ -1053,7 +1053,7 @@ static unsigned getNumberOfPrevalentResourcesInTopResources(SQLiteDatabase& data
         if (prevalentResourceCountInTop.bindInt(1, 1) != SQLITE_OK
             || prevalentResourceCountInTop.bindText(2, "%") != SQLITE_OK
             || prevalentResourceCountInTop.bindInt(3, bucketSize) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesInTopResources, error message: %{public}s", database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResourcesInTopResources, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return 0;
         }

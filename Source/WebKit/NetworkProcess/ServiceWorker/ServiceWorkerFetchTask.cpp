@@ -140,7 +140,7 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
     if (m_isDone)
         return;
 
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (httpStatusCode=%d, MIMEType=%{public}s, expectedContentLength=%" PRId64 ", needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), response.mimeType().utf8().data(), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%" PRId64 ", needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), response.mimeType().utf8().data(), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
     m_wasHandled = true;
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
@@ -184,7 +184,7 @@ void ServiceWorkerFetchTask::didFail(const ResourceError& error)
         m_timeoutTimer.stop();
         softUpdateIfNeeded();
     }
-    RELEASE_LOG_ERROR_IF_ALLOWED("didFail: (error.domain=%{public}s, error.code=%d)", error.domain().utf8().data(), error.errorCode());
+    RELEASE_LOG_ERROR_IF_ALLOWED("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
     m_loader.didFailLoading(error);
 }
 

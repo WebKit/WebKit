@@ -484,6 +484,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 /* RELEASE_LOG */
 
 #if RELEASE_LOG_DISABLED
+#define PUBLIC_LOG_STRING "s"
 #define RELEASE_LOG(channel, ...) ((void)0)
 #define RELEASE_LOG_ERROR(channel, ...) LOG_ERROR(__VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) LOG_ERROR(__VA_ARGS__)
@@ -498,6 +499,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #define RELEASE_LOG_STACKTRACE(channel) ((void)0)
 #else
+#define PUBLIC_LOG_STRING "{public}s"
 #define RELEASE_LOG(channel, ...) os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) os_log_fault(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)

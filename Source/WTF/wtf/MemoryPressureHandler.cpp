@@ -275,23 +275,21 @@ void MemoryPressureHandler::memoryPressureStatusChanged()
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 {
 #if !RELEASE_LOG_DISABLED
-#define STRING_SPECIFICATION "%{public}s"
 #define MEMORYPRESSURE_LOG(...) RELEASE_LOG(MemoryPressure, __VA_ARGS__)
 #else
-#define STRING_SPECIFICATION "%s"
 #define MEMORYPRESSURE_LOG(...) WTFLogAlways(__VA_ARGS__)
 #endif
 
     auto currentMemory = platformMemoryUsage();
     if (!currentMemory || !m_initialMemory) {
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": (Unable to get dirty memory information for process)", m_logString);
+        MEMORYPRESSURE_LOG("Memory pressure relief: %" PUBLIC_LOG_STRING ": (Unable to get dirty memory information for process)", m_logString);
         return;
     }
 
     long residentDiff = currentMemory->resident - m_initialMemory->resident;
     long physicalDiff = currentMemory->physical - m_initialMemory->physical;
 
-    MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": res = %zu/%zu/%ld, res+swap = %zu/%zu/%ld",
+    MEMORYPRESSURE_LOG("Memory pressure relief: %" PUBLIC_LOG_STRING ": res = %zu/%zu/%ld, res+swap = %zu/%zu/%ld",
         m_logString,
         m_initialMemory->resident, currentMemory->resident, residentDiff,
         m_initialMemory->physical, currentMemory->physical, physicalDiff);

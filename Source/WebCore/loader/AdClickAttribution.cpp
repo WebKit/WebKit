@@ -59,7 +59,7 @@ Optional<AdClickAttribution::Conversion> AdClickAttribution::parseConversionRequ
 
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
     if (path.isEmpty() || !path.startsWith(adClickAttributionPathPrefix)) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the URL path did not start with %{public}s.", adClickAttributionPathPrefix);
+        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the URL path did not start with %" PUBLIC_LOG_STRING ".", adClickAttributionPathPrefix);
         return { };
     }
 
