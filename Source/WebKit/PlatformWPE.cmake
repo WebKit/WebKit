@@ -394,16 +394,16 @@ if (ENABLE_WPE_QT_API)
     target_compile_definitions(qtwpe PUBLIC QT_NO_KEYWORDS=1)
     target_link_libraries(qtwpe ${qtwpe_LIBRARIES})
     target_include_directories(qtwpe SYSTEM PRIVATE ${qtwpe_INCLUDE_DIRECTORIES})
-    install(TARGETS qtwpe DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qml/org/wpewebkit/qtwpe/")
-    install(FILES ${WEBKIT_DIR}/UIProcess/API/wpe/qt/qmldir DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qml/org/wpewebkit/qtwpe/")
+    install(TARGETS qtwpe DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qt5/qml/org/wpewebkit/qtwpe/")
+    install(FILES ${WEBKIT_DIR}/UIProcess/API/wpe/qt/qmldir DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/qt5/qml/org/wpewebkit/qtwpe/")
 
-    file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qml/org/wpewebkit/qtwpe)
+    file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qt5/qml/org/wpewebkit/qtwpe)
     add_custom_command(TARGET qtwpe POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libqtwpe.so
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qml/org/wpewebkit/qtwpe)
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qt5/qml/org/wpewebkit/qtwpe)
     add_custom_command(TARGET qtwpe POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt/qmldir
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qml/org/wpewebkit/qtwpe)
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/qt5/qml/org/wpewebkit/qtwpe)
 endif ()
 
 install(TARGETS WPEInjectedBundle

@@ -1,3 +1,14 @@
+2020-02-17  Alberto Garcia  <berto@igalia.com>
+
+        [WPE] Change the QML plugin install path
+        https://bugs.webkit.org/show_bug.cgi?id=207761
+
+        Reviewed by Philippe Normand.
+
+        This way there's no need to set QML2_IMPORT_PATH manually.
+
+        * PlatformWPE.cmake:
+
 2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION

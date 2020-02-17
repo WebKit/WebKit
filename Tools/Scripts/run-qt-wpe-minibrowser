@@ -38,7 +38,7 @@ my @jhbuildWrapper;
 my $configuration = passedConfiguration();
 my $productDir = productDir();
 
-$libPath = "/app/webkit/WebKitBuild/$configuration/lib/qml" if $configuration;
+$libPath = "/app/webkit/WebKitBuild/$configuration/lib/qt5/qml" if $configuration;
 $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
 runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-qt-wpe-minibrowser");
 
