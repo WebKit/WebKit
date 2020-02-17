@@ -1,3 +1,17 @@
+2020-02-16  Youenn Fablet  <youenn@apple.com>
+
+        Log WebSocket failure in case of network crash
+        https://bugs.webkit.org/show_bug.cgi?id=207801
+
+        Reviewed by Darin Adler.
+
+        Covered by http/tests/websocket/tests/hybi/network-process-crash-error.html.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::didReceiveMessageError):
+        (WebKit::WebSocketChannel::networkProcessCrashed):
+        Add a console log message in case of error coming from network process.
+
 2020-02-16  Brady Eidson  <beidson@apple.com>
 
         Expose "allowsContentJavaScript" on WKWebpagePreferences

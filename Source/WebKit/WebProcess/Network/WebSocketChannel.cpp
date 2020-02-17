@@ -298,13 +298,15 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
         return;
     }
 
-    // FIXME: do something with errorMessage.
+    if (m_document)
+        m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, errorMessage);
+
     m_client->didReceiveMessageError();
 }
 
 void WebSocketChannel::networkProcessCrashed()
 {
-    didReceiveMessageError({ });
+    didReceiveMessageError("WebSocket network error: Network process crashed."_s);
 }
 
 void WebSocketChannel::suspend()
