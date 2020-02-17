@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include <memory>
 #include <wtf/Function.h>
+#include <wtf/Packed.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
