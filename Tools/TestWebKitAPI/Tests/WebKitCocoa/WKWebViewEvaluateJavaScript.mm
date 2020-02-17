@@ -258,6 +258,7 @@ TEST(WebKit, EvaluateJavaScriptInAttachments)
     TestWebKitAPI::Util::run(&done);
 }
 
+#if HAVE(NETWORK_FRAMEWORK)
 TEST(WebKit, AllowsContentJavaScript)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -334,6 +335,7 @@ TEST(WebKit, AllowsContentJavaScript)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+#endif
 
 TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)
 {
