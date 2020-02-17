@@ -2025,3 +2025,5 @@ webkit.org/b/207718 fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
 webkit.org/b/207726 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
+
+webkit.org/b/207859 fast/images/slower-decoding-than-animation-image.html [ Pass Failure ]

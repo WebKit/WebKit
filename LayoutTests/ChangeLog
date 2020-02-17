@@ -1,5 +1,14 @@
 2020-02-17  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS ] fast/images/slower-decoding-than-animation-image.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207859
+
+        Unreviewed test gardening
+
+        * platform/mac/TestExpectations:
+
+2020-02-17  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ Mojave wk1 ] fast/canvas/webgl/texImage2D-mse-flipY-false.html is flaky timing out
         https://bugs.webkit.org/show_bug.cgi?id=207857
 
