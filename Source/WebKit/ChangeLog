@@ -1,3 +1,49 @@
+2020-02-16  Brady Eidson  <beidson@apple.com>
+
+        Expose "allowsContentJavaScript" on WKWebpagePreferences
+        <rdar://problem/51534967> and https://bugs.webkit.org/show_bug.cgi?id=207427
+
+        Reviewed by Darin Adler.
+
+        This utiizes the pre-existing WebCore::Settings::setScriptMarkupEnabled() mechanism.
+        
+        This also deprecates the global "disable JavaScript" WKPreference as it doesn't make much sense anymore.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        * Shared/WebsitePoliciesData.h:
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences encodeWithCoder:]):
+        (-[WKPreferences initWithCoder:]):
+        (-[WKPreferences javaScriptEnabled]):
+        (-[WKPreferences setJavaScriptEnabled:]):
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences setAllowsContentJavaScript:]):
+        (-[WKWebpagePreferences allowsContentJavaScript]):
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::allowsContentJavaScriptFromMostRecentNavigation const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+        (WebKit::WebPage::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::allowsContentJavaScriptFromMostRecentNavigation const):
+        (WebKit::WebPage::setAllowsContentJavaScriptFromMostRecentNavigation):
+
 2020-02-15  Pavel Feldman  <pavel.feldman@gmail.com>
 
         [Geoclue] Avoid usage of provider in callbacks after it has been destroyed

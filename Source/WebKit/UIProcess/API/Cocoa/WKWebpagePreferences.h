@@ -57,4 +57,19 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  */
 @property (nonatomic) WKContentMode preferredContentMode WK_API_AVAILABLE(ios(13.0));
 
+/* @abstract A Boolean value indicating whether JavaScript from web content is enabled
+ @discussion If this value is set to NO then JavaScript referenced by the web content will not execute.
+ This includes JavaScript found in inline <script> elements, referenced by external JavaScript resources,
+ "javascript:" URLs, and all other forms.
+
+ Even if this value is set to NO your application can still execute JavaScript using:
+ - [WKWebView evaluteJavaScript:completionHandler:]
+ - [WKWebView evaluteJavaScript:inContentWorld:completionHandler:]
+ - [WKWebView callAsyncJavaScript:arguments:inContentWorld:completionHandler:]
+ - WKUserScripts
+
+ The default value is YES.
+*/
+@property (nonatomic) BOOL allowsContentJavaScript WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end

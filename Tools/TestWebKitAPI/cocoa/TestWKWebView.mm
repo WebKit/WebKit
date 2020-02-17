@@ -122,6 +122,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
 }
 
+- (void)synchronouslyLoadHTMLString:(NSString *)html preferences:(WKWebpagePreferences *)preferences
+{
+    [self loadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self _test_waitForDidFinishNavigationWithPreferences:preferences];
+}
+
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName
 {
     [self loadTestPageNamed:pageName];

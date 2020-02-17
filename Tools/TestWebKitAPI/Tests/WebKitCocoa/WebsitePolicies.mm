@@ -239,15 +239,15 @@ TEST(WebpagePreferences, WebsitePoliciesContentBlockersEnabled)
 @end
 
 @interface WebsitePoliciesNavigationDelegate : TestNavigationDelegate <WKNavigationDelegatePrivate>
-@property (nonatomic, copy) void (^decidePolicyForNavigationActionWithWebsitePolicies)(WKNavigationAction *, WKWebpagePreferences *, id <NSSecureCoding>, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
+@property (nonatomic, copy) void (^decidePolicyForNavigationActionWithWebsitePolicies)(WKNavigationAction *, WKWebpagePreferences *, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
 @end
 
 @implementation WebsitePoliciesNavigationDelegate
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     if (_decidePolicyForNavigationActionWithWebsitePolicies)
-        _decidePolicyForNavigationActionWithWebsitePolicies(navigationAction, preferences, userInfo, decisionHandler);
+        _decidePolicyForNavigationActionWithWebsitePolicies(navigationAction, preferences, decisionHandler);
     else
         decisionHandler(WKNavigationActionPolicyAllow, nil);
 }
@@ -616,7 +616,7 @@ TEST(WebpagePreferences, WebsitePoliciesWithBridgingCast)
     auto delegate = adoptNS([[WebsitePoliciesNavigationDelegate alloc] init]);
 
     __block bool didInvokeDecisionHandler = false;
-    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, WKWebpagePreferences *, id <NSSecureCoding>, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, WKWebpagePreferences *, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         auto policies = adoptWK(WKWebsitePoliciesCreate());
         decisionHandler(WKNavigationActionPolicyAllow, (__bridge WKWebpagePreferences *)policies.get());
         didInvokeDecisionHandler = true;
@@ -635,7 +635,7 @@ TEST(WebpagePreferences, WebsitePoliciesWithUnexpectedType)
     auto delegate = adoptNS([[WebsitePoliciesNavigationDelegate alloc] init]);
 
     __block bool didCatchException = false;
-    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, WKWebpagePreferences *, id <NSSecureCoding>, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, WKWebpagePreferences *, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         @try {
             id fakePolicies = @"Hello";
             decisionHandler(WKNavigationActionPolicyAllow, (WKWebpagePreferences *)fakePolicies);

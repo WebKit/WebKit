@@ -227,6 +227,11 @@ enum class LoadCompletionType : uint8_t {
     Cancel
 };
 
+enum class AllowsContentJavaScript : uint8_t {
+    Yes,
+    No,
+};
+
 } // namespace WebCore
 
 namespace WTF {
@@ -263,6 +268,14 @@ template<> struct EnumTraits<WebCore::ShouldOpenExternalURLsPolicy> {
         WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow,
         WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes,
         WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow
+    >;
+};
+
+template<> struct EnumTraits<WebCore::AllowsContentJavaScript> {
+    using values = EnumValues<
+        WebCore::AllowsContentJavaScript,
+        WebCore::AllowsContentJavaScript::Yes,
+        WebCore::AllowsContentJavaScript::No
     >;
 };
 

@@ -377,6 +377,8 @@ public:
     virtual bool hasFrameSpecificStorageAccess() { return false; }
     virtual void addLoadedRegistrableDomain(RegistrableDomain&&) { }
 #endif
+
+    virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
 };
 
 } // namespace WebCore

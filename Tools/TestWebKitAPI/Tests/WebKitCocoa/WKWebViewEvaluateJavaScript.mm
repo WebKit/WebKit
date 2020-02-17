@@ -26,13 +26,17 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKErrorPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -254,3 +258,114 @@ TEST(WebKit, EvaluateJavaScriptInAttachments)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WebKit, AllowsContentJavaScript)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<script>var foo = 'bar'</script>"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_TRUE([result isEqualToString:@"bar"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr<WKWebpagePreferences> preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    EXPECT_TRUE(preferences.get().allowsContentJavaScript);
+    preferences.get().allowsContentJavaScript = NO;
+    [webView synchronouslyLoadHTMLString:@"<script>var foo = 'bar'</script>" preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE([[error description] containsString:@"Can't find variable: foo"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/script", { "var foo = 'bar'" } }
+    });
+    preferences.get().allowsContentJavaScript = YES;
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<script src='http://127.0.0.1:%d/script'></script>", server.port()] preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+        EXPECT_TRUE([result isEqualToString:@"bar"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    preferences.get().allowsContentJavaScript = NO;
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<script src='http://127.0.0.1:%d/script'></script>", server.port()] preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE([[error description] containsString:@"Can't find variable: foo"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    preferences.get().allowsContentJavaScript = YES;
+    [webView synchronouslyLoadHTMLString:@"<iframe src='javascript:window.foo = 1'></iframe>" preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"window.frames[0].foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@1]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    preferences.get().allowsContentJavaScript = NO;
+    [webView synchronouslyLoadHTMLString:@"<iframe src='javascript:window.foo = 1'></iframe>" preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"window.frames[0].foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)
+{
+    // There's not a dynamically configuration setting for javascript markup,
+    // but it can be configured at WKWebView creation time.
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    configuration._allowsJavaScriptMarkup = NO;
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    // Verify that the following JS does not execute.
+    [webView synchronouslyLoadHTMLString:@"<script>var foo = 'bar'</script>"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE([[error description] containsString:@"Can't find variable: foo"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Try to explicitly enable script markup using WKWebpagePreferences, but verify it should still fail because
+    // of the above configuration setting.
+    RetainPtr<WKWebpagePreferences> preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    EXPECT_TRUE(preferences.get().allowsContentJavaScript);
+    [webView synchronouslyLoadHTMLString:@"<script>var foo = 'bar'</script>" preferences:preferences.get()];
+
+    done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE([[error description] containsString:@"Can't find variable: foo"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+}

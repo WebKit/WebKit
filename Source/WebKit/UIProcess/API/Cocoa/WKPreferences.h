@@ -40,11 +40,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic) CGFloat minimumFontSize;
 
-/*! @abstract A Boolean value indicating whether JavaScript is enabled.
- @discussion The default value is YES.
- */
-@property (nonatomic) BOOL javaScriptEnabled;
-
 /*! @abstract A Boolean value indicating whether JavaScript can open
  windows without user interaction.
  @discussion The default value is NO in iOS and YES in OS X.
@@ -71,7 +66,11 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @interface WKPreferences (WKDeprecated)
 
+#if !TARGET_OS_IPHONE
 @property (nonatomic) BOOL javaEnabled WK_API_DEPRECATED("Java is no longer supported", macos(10.10, 10.15));
 @property (nonatomic) BOOL plugInsEnabled WK_API_DEPRECATED("Plug-ins are no longer supported", macos(10.10, 10.15));
+#endif
+
+@property (nonatomic) BOOL javaScriptEnabled WK_API_DEPRECATED("Use WKWebPagePreferences.allowsJavaScriptMarkup to disable JavaScript markup on a per-navigation basis", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @end

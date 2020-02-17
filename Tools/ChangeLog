@@ -1,3 +1,26 @@
+2020-02-16  Brady Eidson  <beidson@apple.com>
+
+        Expose "allowsContentJavaScript" on WKWebpagePreferences
+        <rdar://problem/51534967> and https://bugs.webkit.org/show_bug.cgi?id=207427
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesNavigationDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (TEST):
+        (-[WebsitePoliciesNavigationDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]): Deleted.
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[TestNavigationDelegate waitForDidFinishNavigationWithPreferences:]):
+        (-[WKWebView _test_waitForDidFinishNavigationWithPreferences:]):
+        (-[TestNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView synchronouslyLoadHTMLString:preferences:]):
+
 2020-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         NetworkLoadMetrics should be shared by multiple ResourceResponse instances

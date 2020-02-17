@@ -1551,6 +1551,8 @@ public:
     HighlightMap& highlightMap();
     void updateHighlightPositions();
 
+    bool allowsContentJavaScript() const;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);

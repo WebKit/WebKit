@@ -188,10 +188,10 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             else
                 m_responseDocument = XMLDocument::create(nullptr, m_response.url());
             m_responseDocument->overrideLastModified(m_response.lastModified());
-            m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
             m_responseDocument->setContextDocument(context);
             m_responseDocument->setSecurityOriginPolicy(context.securityOriginPolicy());
             m_responseDocument->overrideMIMEType(mimeType);
+            m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
 
             if (!m_responseDocument->wellFormed())
                 m_responseDocument = nullptr;

@@ -117,6 +117,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_simulatedMouseEventsDispatchPolicy,
         m_legacyOverflowScrollingTouchPolicy,
         m_allowContentChangeObserverQuirk,
+        m_allowsContentJavaScript, 
     };
 }
 

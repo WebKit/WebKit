@@ -197,8 +197,6 @@ forceFTPDirectoryListings:
   initial: false
 developerExtrasEnabled:
   initial: false
-scriptMarkupEnabled:
-  initial: true
 needsSiteSpecificQuirks:
   initial: false
   inspectorOverride: true
@@ -947,3 +945,7 @@ mediaCaptureRequiresSecureConnection:
 
 shouldUseServiceWorkerShortTimeout:
   initial: false
+
+# Clients should use per-navigation "allowsContentJavaScript" policies instead
+scriptMarkupEnabled:
+    initial: true

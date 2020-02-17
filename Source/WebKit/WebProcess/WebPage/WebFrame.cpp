@@ -265,8 +265,12 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyChec
 
     invalidatePolicyListener();
 
-    if (forNavigationAction && m_frameLoaderClient && websitePolicies)
+    if (forNavigationAction && m_frameLoaderClient && websitePolicies) {
+        ASSERT(page());
+        if (page())
+            page()->setAllowsContentJavaScriptFromMostRecentNavigation(websitePolicies->allowsContentJavaScript);
         m_frameLoaderClient->applyToDocumentLoader(WTFMove(*websitePolicies));
+    }
 
     m_policyDownloadID = downloadID;
     if (navigationID) {

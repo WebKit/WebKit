@@ -63,7 +63,9 @@ public:
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
     void addLoadedRegistrableDomain(WebCore::RegistrableDomain&&) final;
 #endif
-    
+
+    WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
+
 private:
     void frameLoaderDestroyed() final;
 

@@ -6812,6 +6812,21 @@ DocumentLoader* Document::loader() const
     return loader;
 }
 
+bool Document::allowsContentJavaScript() const
+{
+    // FIXME: Get all SPI clients off of this potentially dangerous Setting.
+    if (!settings().scriptMarkupEnabled())
+        return false;
+
+    if (!m_frame || m_frame->document() != this) {
+        // If this Document is frameless or in the wrong frame, its context document
+        // must allow for it to run content JavaScript.
+        return m_contextDocument && m_contextDocument->allowsContentJavaScript();
+    }
+
+    return m_frame->loader().client().allowsContentJavaScriptFromMostRecentNavigation() == AllowsContentJavaScript::Yes;
+}
+
 Element* eventTargetElementForDocument(Document* document)
 {
     if (!document)

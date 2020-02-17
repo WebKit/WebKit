@@ -54,6 +54,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << simulatedMouseEventsDispatchPolicy;
     encoder << legacyOverflowScrollingTouchPolicy;
     encoder << allowContentChangeObserverQuirk;
+    encoder << allowsContentJavaScript;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -134,7 +135,12 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     decoder >> allowContentChangeObserverQuirk;
     if (!allowContentChangeObserverQuirk)
         return WTF::nullopt;
-    
+
+    Optional<WebCore::AllowsContentJavaScript> allowsContentJavaScript;
+    decoder >> allowsContentJavaScript;
+    if (!allowsContentJavaScript)
+        return WTF::nullopt;
+
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
@@ -153,6 +159,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*simulatedMouseEventsDispatchPolicy),
         WTFMove(*legacyOverflowScrollingTouchPolicy),
         WTFMove(*allowContentChangeObserverQuirk),
+        WTFMove(*allowsContentJavaScript),
     } };
 }
 

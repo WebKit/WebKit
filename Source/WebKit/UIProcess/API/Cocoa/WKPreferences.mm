@@ -65,8 +65,11 @@
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeDouble:self.minimumFontSize forKey:@"minimumFontSize"];
-    [coder encodeBool:self.javaScriptEnabled forKey:@"javaScriptEnabled"];
     [coder encodeBool:self.javaScriptCanOpenWindowsAutomatically forKey:@"javaScriptCanOpenWindowsAutomatically"];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [coder encodeBool:self.javaScriptEnabled forKey:@"javaScriptEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -83,8 +86,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     self.minimumFontSize = [coder decodeDoubleForKey:@"minimumFontSize"];
-    self.javaScriptEnabled = [coder decodeBoolForKey:@"javaScriptEnabled"];
     self.javaScriptCanOpenWindowsAutomatically = [coder decodeBoolForKey:@"javaScriptCanOpenWindowsAutomatically"];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    self.javaScriptEnabled = [coder decodeBoolForKey:@"javaScriptEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -110,16 +116,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setMinimumFontSize:(CGFloat)minimumFontSize
 {
     _preferences->setMinimumFontSize(minimumFontSize);
-}
-
-- (BOOL)javaScriptEnabled
-{
-    return _preferences->javaScriptEnabled();
-}
-
-- (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
-{
-    _preferences->setJavaScriptEnabled(javaScriptEnabled);
 }
 
 - (void)setFraudulentWebsiteWarningEnabled:(BOOL)enabled
@@ -1432,9 +1428,10 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 @end
 
-#if !TARGET_OS_IPHONE
 
 @implementation WKPreferences (WKDeprecated)
+
+#if !TARGET_OS_IPHONE
 
 - (BOOL)javaEnabled
 {
@@ -1456,6 +1453,17 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setPluginsEnabled(plugInsEnabled);
 }
 
+#endif
+
+- (BOOL)javaScriptEnabled
+{
+    return _preferences->javaScriptEnabled();
+}
+
+- (void)setJavaScriptEnabled:(BOOL)javaScriptEnabled
+{
+    _preferences->setJavaScriptEnabled(javaScriptEnabled);
+}
+
 @end
 
-#endif

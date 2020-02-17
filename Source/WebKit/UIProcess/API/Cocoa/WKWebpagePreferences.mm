@@ -331,6 +331,21 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return *_websitePolicies;
 }
 
+- (void)setAllowsContentJavaScript:(BOOL)allowsContentJavaScript
+{
+    _websitePolicies->setAllowsContentJavaScript(allowsContentJavaScript ? WebCore::AllowsContentJavaScript::Yes : WebCore::AllowsContentJavaScript::No);
+}
+
+- (BOOL)allowsContentJavaScript
+{
+    switch (_websitePolicies->allowsContentJavaScript()) {
+    case WebCore::AllowsContentJavaScript::Yes:
+        return YES;
+    case WebCore::AllowsContentJavaScript::No:
+        return NO;
+    }
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)setPreferredContentMode:(WKContentMode)contentMode
