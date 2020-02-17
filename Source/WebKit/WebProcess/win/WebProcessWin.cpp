@@ -28,7 +28,7 @@
 
 #include <WebCore/SharedBuffer.h>
 
-WTF_EXPORT RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
+RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
 {
     return 0;
 }

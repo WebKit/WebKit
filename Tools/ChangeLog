@@ -1,3 +1,12 @@
+2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION
+        https://bugs.webkit.org/show_bug.cgi?id=207746
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/stdafx.h:
+
 2020-02-16  Brady Eidson  <beidson@apple.com>
 
         Expose "allowsContentJavaScript" on WKWebpagePreferences

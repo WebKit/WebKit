@@ -1,3 +1,13 @@
+2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION
+        https://bugs.webkit.org/show_bug.cgi?id=207746
+
+        Reviewed by Don Olmstead.
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (loadResourceIntoBuffer): Removed WTF_EXPORT. loadResourceIntoBuffer is used from WebCore which is in same DLL.
+
 2020-02-16  Youenn Fablet  <youenn@apple.com>
 
         Log WebSocket failure in case of network crash

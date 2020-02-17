@@ -1,3 +1,24 @@
+2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION
+        https://bugs.webkit.org/show_bug.cgi?id=207746
+
+        Reviewed by Don Olmstead.
+
+        I removed WTF_EXPORT from function declarations in r256420 (Bug 207453).
+        WTF_EXPORT is still used mostly in *ExportMacros.h. However, there is no
+        difference between WTF_EXPORT and WTF_EXPORT_DECLARATION.
+
+        Removed WTF_EXPORT and WTF_IMPORT by replacing them with
+        WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION
+
+        Removed unused WTF_HIDDEN.
+
+        Defined WTF_EXPORT_DECLARATION, WTF_IMPORT_DECLARATION and WTF_HIDDEN_DECLARATION empty
+        in case of !USE(EXPORT_MACROS) to simplify *ExportMacros.h.
+
+        * wtf/ExportMacros.h:
+
 2020-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r256633.
