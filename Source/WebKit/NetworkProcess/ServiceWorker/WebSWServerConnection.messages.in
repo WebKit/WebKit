@@ -25,7 +25,7 @@
 messages -> WebSWServerConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
-    ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::DocumentOrWorkerIdentifier documentIdentifier, URL clientCreationURL) -> (Expected<bool, WebCore::ExceptionData> result) Async
+    ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::DocumentOrWorkerIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
 
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
     AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)

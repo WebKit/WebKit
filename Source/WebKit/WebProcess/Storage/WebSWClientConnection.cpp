@@ -96,9 +96,9 @@ void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorke
         send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
 }
 
-void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::DocumentOrWorkerIdentifier documentIdentifier, const URL& clientCreationURL, CompletionHandler<void(ExceptionOr<bool>&&)>&& completionHandler)
+void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::DocumentOrWorkerIdentifier documentIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::ScheduleUnregisterJobInServer { ServiceWorkerJobIdentifier::generateThreadSafe(), registrationIdentifier, documentIdentifier, clientCreationURL }, [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+    sendWithAsyncReply(Messages::WebSWServerConnection::ScheduleUnregisterJobInServer { ServiceWorkerJobIdentifier::generateThreadSafe(), registrationIdentifier, documentIdentifier }, [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         if (!result.has_value())
             return completionHandler(result.error().toException());
         completionHandler(result.value());

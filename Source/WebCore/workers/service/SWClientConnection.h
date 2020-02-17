@@ -69,7 +69,7 @@ public:
 
     virtual void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
     virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
-    virtual void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, const URL& /* clientCreationURL */, CompletionHandler<void(ExceptionOr<bool>&&)>&&) = 0;
+    virtual void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) = 0;
 
     WEBCORE_EXPORT virtual void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&);
 

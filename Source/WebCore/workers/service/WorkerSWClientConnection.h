@@ -57,7 +57,7 @@ private:
     void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&) final;
-    void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, const URL& /* clientCreationURL */, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;
+    void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, DocumentOrWorkerIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;
 
     Ref<WorkerThread> m_thread;
 

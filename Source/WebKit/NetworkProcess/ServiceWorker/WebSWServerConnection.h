@@ -94,7 +94,7 @@ private:
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 
     using UnregisterJobResult = Expected<bool, WebCore::ExceptionData>;
-    void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentOrWorkerIdentifier, URL&&, CompletionHandler<void(UnregisterJobResult&&)>&&);
+    void scheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentOrWorkerIdentifier, CompletionHandler<void(UnregisterJobResult&&)>&&);
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
@@ -118,6 +118,8 @@ private:
 
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
     void controlClient(WebCore::ServiceWorkerClientIdentifier, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
+
+    URL clientURLFromIdentifier(WebCore::DocumentOrWorkerIdentifier);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return 0; }

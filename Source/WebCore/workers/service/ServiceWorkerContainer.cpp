@@ -189,13 +189,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
 void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIdentifier registrationIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    auto* context = scriptExecutionContext();
-    if (!context) {
-        ASSERT_NOT_REACHED();
-        promise.reject(Exception(InvalidStateError));
-        return;
-    }
-
+    ASSERT(!m_isStopped);
     if (!m_swConnection) {
         ASSERT_NOT_REACHED();
         promise.reject(Exception(InvalidStateError));
@@ -203,7 +197,7 @@ void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIde
     }
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("unregisterRegistration: Unregistering service worker.");
-    m_swConnection->scheduleUnregisterJobInServer(registrationIdentifier, contextIdentifier(), context->url(), [promise = WTFMove(promise)](auto&& result) mutable {
+    m_swConnection->scheduleUnregisterJobInServer(registrationIdentifier, contextIdentifier(), [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
     });
 }
