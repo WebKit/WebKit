@@ -1415,4 +1415,5 @@ webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Time
 
 webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
 
-webkit.org/b/207841 fast/block/block-only/floats-and-block-formatting-roots.html [ Pass Crash ]
+# skip LFC regression tests on iOS for now.
+fast/layoutformattingcontext/block-only/ [ Skip ]
