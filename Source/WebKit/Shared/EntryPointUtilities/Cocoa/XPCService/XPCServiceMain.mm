@@ -59,7 +59,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 
                 const char* serviceName = xpc_dictionary_get_string(event, "service-name");
                 CFStringRef entryPointFunctionName = nullptr;
-                if (!strcmp(serviceName, "com.apple.WebKit.WebContent") || !strcmp(serviceName, "com.apple.WebKit.WebContent.Development"))
+                if (strstr(serviceName, "com.apple.WebKit.WebContent") == serviceName)
                     entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
                 else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
                     entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));

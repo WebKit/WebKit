@@ -1,3 +1,14 @@
+2020-02-17  Alex Christensen  <achristensen@webkit.org>
+
+        Allow suffixes on com.apple.WebKit.WebContent XPC service name
+        https://bugs.webkit.org/show_bug.cgi?id=207856
+        <rdar://problem/59455881>
+
+        Reviewed by Chris Dumez.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+
 2020-02-17  Youenn Fablet  <youenn@apple.com>
 
         Add WebInspector support to WebKit::WebSocketChannel
