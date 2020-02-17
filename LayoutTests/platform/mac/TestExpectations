@@ -2020,8 +2020,6 @@ webkit.org/b/207710 svg/custom/animate-initial-pause-unpause.html [ Pass Failure
 
 webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
 
-webkit.org/b/207718 fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
 webkit.org/b/207726 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
