@@ -1,3 +1,17 @@
+2020-02-17  Zalan Bujtas  <zalan@apple.com>
+
+        Inline boxes for images that represent nothing should collapse to empty.
+        https://bugs.webkit.org/show_bug.cgi?id=207740
+        <rdar://problem/57339992>
+
+        Reviewed by Darin Adler.
+
+        * fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks-expected.txt: Added.
+        * fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html: Added.
+        * fast/images/inline-image-box-with-no-alt-should-collapse-quirks-expected.txt: Added.
+        * fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html: Added.
+        * tables/mozilla/bugs/bug56201.html:
+
 2020-02-17  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] fast/images/webp-as-image.html is failing.

@@ -257,6 +257,38 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 #endif
 }
 
+bool RenderImage::shouldCollapseToEmpty() const
+{
+    auto imageRepresentsNothing = [&] {
+        if (!element()->hasAttribute(HTMLNames::altAttr))
+            return false;
+        return imageResource().errorOccurred() && m_altText.isEmpty();
+    };
+    if (!element()) {
+        // Images with no associated elements do not fall under the category of unwanted content.
+        return false;
+    }
+    if (!isInline())
+        return false;
+    if (!imageRepresentsNothing())
+        return false;
+    return document().inNoQuirksMode() || (style().logicalWidth().isAuto() && style().logicalHeight().isAuto());
+}
+
+LayoutUnit RenderImage::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+{
+    if (shouldCollapseToEmpty())
+        return { };
+    return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
+}
+
+LayoutUnit RenderImage::computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth) const
+{
+    if (shouldCollapseToEmpty())
+        return { };
+    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+}
+
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
@@ -264,6 +296,11 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderReplaced::imageChanged(newImage, rect);
+
+    if (shouldCollapseToEmpty()) {
+        // Image might need resizing when we are at the final state.
+        setNeedsLayout();
+    }
 
     if (newImage != imageResource().imagePtr() || !newImage)
         return;

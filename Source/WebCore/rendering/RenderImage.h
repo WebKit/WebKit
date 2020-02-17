@@ -138,6 +138,11 @@ private:
     
     void layoutShadowControls(const LayoutSize& oldSize);
 
+    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
+    LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const override;
+
+    bool shouldCollapseToEmpty() const;
+
     // Text to display as long as the image isn't available.
     String m_altText;
     std::unique_ptr<RenderImageResource> m_imageResource;
