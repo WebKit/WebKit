@@ -1043,3 +1043,5 @@ webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass Ima
 webkit.org/b/207798 webrtc/connection-state.html [ Pass Failure ]
 
 webkit.org/b/207839 webgpu/whlsl/loops-break.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207844 storage/indexeddb/detached-iframe.html [ Pass Failure ]
