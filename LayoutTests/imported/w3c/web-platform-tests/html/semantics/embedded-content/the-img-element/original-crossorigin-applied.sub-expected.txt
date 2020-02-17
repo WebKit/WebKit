@@ -1,0 +1,6 @@
+Blocked access to external URL http://www.127.0.0.1:8800/html/semantics/embedded-content/the-img-element/resources/image.png
+Blocked access to external URL http://www.127.0.0.1:8800/html/semantics/embedded-content/the-img-element/resources/image.png
+
+
+FAIL Test that when deferred image is loaded, it uses the crossorigin attribute specified at parse time. assert_unreached: The image load should not fail, trying to load with CORS headers set. Reached unreachable code
+

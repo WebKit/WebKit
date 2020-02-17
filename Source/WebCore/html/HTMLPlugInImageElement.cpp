@@ -315,7 +315,7 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document& oldDocument, Documen
     }
 
     if (m_imageLoader)
-        m_imageLoader->elementDidMoveToNewDocument();
+        m_imageLoader->elementDidMoveToNewDocument(oldDocument);
 
     if (m_hasUpdateScheduledForAfterStyleResolution) {
         oldDocument.decrementLoadEventDelayCount();

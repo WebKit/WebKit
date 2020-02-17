@@ -43,6 +43,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "LazyLoadImageObserver.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
@@ -53,6 +54,7 @@
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
@@ -69,7 +71,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 
-HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
     , m_imageLoader(WTF::makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
@@ -77,7 +79,6 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
     , m_experimentalImageMenuEnabled(false)
-    , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
@@ -88,9 +89,9 @@ Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
     return adoptRef(*new HTMLImageElement(imgTag, document));
 }
 
-Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    return adoptRef(*new HTMLImageElement(tagName, document, form, createdByParser));
+    return adoptRef(*new HTMLImageElement(tagName, document, form));
 }
 
 HTMLImageElement::~HTMLImageElement()
@@ -233,6 +234,11 @@ void HTMLImageElement::selectImageSource()
         document().addDynamicMediaQueryDependentImage(*this);
 }
 
+bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attributeValue)
+{
+    return equalLettersIgnoringASCIICase(attributeValue, "lazy");
+}
+
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == altAttr) {
@@ -260,7 +266,11 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
 #endif
     } else if (name == x_apple_editable_imageAttr)
         updateEditableImage();
-    else {
+    else if (name == loadingAttr) {
+        // No action needed for eager to lazy transition.
+        if (!hasLazyLoadableAttributeValue(value))
+            loadDeferredImage();
+    } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
             if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
@@ -277,6 +287,11 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         }
         HTMLElement::parseAttribute(name, value);
     }
+}
+
+void HTMLImageElement::loadDeferredImage()
+{
+    m_imageLoader->loadDeferredImage();
 }
 
 const AtomString& HTMLImageElement::altText() const
@@ -690,7 +705,7 @@ void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& new
 {
     oldDocument.removeDynamicMediaQueryDependentImage(*this);
 
-    m_imageLoader->elementDidMoveToNewDocument();
+    m_imageLoader->elementDidMoveToNewDocument(oldDocument);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -884,6 +899,31 @@ bool HTMLImageElement::hasPendingActivity() const
 size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 {
     return m_imageLoader->pendingDecodePromisesCountForTesting();
+}
+
+const AtomString& HTMLImageElement::loadingForBindings() const
+{
+    static NeverDestroyed<AtomString> eager("eager", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
+    auto& attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
+    return hasLazyLoadableAttributeValue(attributeValue) ? lazy : eager;
+}
+
+void HTMLImageElement::setLoadingForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(loadingAttr, value);
+}
+
+bool HTMLImageElement::isDeferred() const
+{
+    return m_imageLoader->isDeferred();
+}
+
+bool HTMLImageElement::isLazyLoadable() const
+{
+    if (document().frame() && !document().frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+        return false;
+    return hasLazyLoadableAttributeValue(attributeWithoutSynchronization(HTMLNames::loadingAttr));
 }
 
 }

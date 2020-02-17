@@ -154,6 +154,7 @@ class IntPoint;
 class JSNode;
 class LayoutPoint;
 class LayoutRect;
+class LazyLoadImageObserver;
 class LiveNodeList;
 class Locale;
 class Location;
@@ -1553,6 +1554,8 @@ public:
 
     bool allowsContentJavaScript() const;
 
+    LazyLoadImageObserver& lazyLoadImageObserver();
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1736,6 +1739,8 @@ private:
     Timer m_styleRecalcTimer;
 
     Element* m_cssTarget { nullptr };
+
+    std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
     MonotonicTime m_documentCreationTime;

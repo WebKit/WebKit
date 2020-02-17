@@ -1,23 +1,19 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:enableLazyImageLoading=true ] -->
 <head>
-  <title>Images with loading='lazy' load when in the viewport</title>
+  <title>Iframes with loading='lazy' load when in the viewport</title>
   <link rel="author" title="Scott Little" href="mailto:sclittle@chromium.org">
   <link rel="help" href="https://github.com/scott-little/lazyload">
   <script src="/resources/testharness.js"></script>
   <script src="/resources/testharnessreport.js"></script>
 </head>
 
-<!--
-Marked as tentative until https://github.com/whatwg/html/pull/3752 is landed.
--->
-
 <script>
-  const t = async_test("Test that images with loading='lazy' load once they enter the viewport.");
+  const t = async_test("Test that iframes with loading='lazy' load once they enter the viewport.");
 
-  let has_in_viewport_loaded = false;
   let has_window_loaded = false;
+  let has_in_viewport_loaded = false;
 
-  const in_viewport_img_onload = t.step_func(function() {
+  const in_viewport_iframe_onload = t.step_func(function() {
     assert_false(has_in_viewport_loaded, "The in_viewport element should load only once.");
     has_in_viewport_loaded = true;
   });
@@ -29,15 +25,17 @@ Marked as tentative until https://github.com/whatwg/html/pull/3752 is landed.
     document.getElementById("below_viewport").scrollIntoView();
   }));
 
-  const below_viewport_img_onload = t.step_func_done(function() {
+  const below_viewport_iframe_onload = t.step_func_done(function() {
     assert_true(has_window_loaded, "The window.load() event should have fired before below_viewport loaded.");
   });
 </script>
 
 <body>
-  <img id="in_viewport" src="resources/image.png?first" loading="lazy" onload="in_viewport_img_onload();">
+  <iframe id="in_viewport" src="resources/subframe.html?first" loading="lazy" width="200px" height="100px" onload="in_viewport_iframe_onload();">
+  </iframe>
   <div style="height:10000px;"></div>
-  <img id="below_viewport" src="resources/image.png?second" loading="lazy" onload="below_viewport_img_onload();">
+  <iframe id="below_viewport" src="resources/subframe.html?second" loading="lazy" width="200px" height="100px" onload="below_viewport_iframe_onload();">
+  </iframe>
 
   <!--
     This async script loads very slowly in order to ensure that, if the

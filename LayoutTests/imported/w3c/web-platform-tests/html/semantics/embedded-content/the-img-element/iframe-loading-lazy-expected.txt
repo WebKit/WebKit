@@ -1,0 +1,5 @@
+
+
+
+FAIL Test that iframes with loading='lazy' load once they enter the viewport. assert_true: The window.load() event should have fired before below_viewport loaded. expected true got false
+

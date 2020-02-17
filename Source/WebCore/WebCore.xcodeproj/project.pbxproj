@@ -3408,6 +3408,7 @@
 		AA7FEEAD16A4E74B004C0C33 /* JSSpeechSynthesis.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7FEEAC16A4E74B004C0C33 /* JSSpeechSynthesis.h */; };
 		AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA728F116D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h */; };
 		AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */; };
+		AAD9D0B521DFA810001B11C7 /* LazyLoadImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD9D0B321DFA80E001B11C7 /* LazyLoadImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = AB247A6B0AFD6383003FA5FD /* RenderSlider.h */; };
 		AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9183,6 +9184,8 @@
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		697101071C6BE1550018C7F1 /* AccessibilitySVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySVGElement.cpp; sourceTree = "<group>"; };
 		697101081C6BE1550018C7F1 /* AccessibilitySVGElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySVGElement.h; sourceTree = "<group>"; };
+		AAD9D0B121DFA80C001B11C7 /* LazyLoadImageObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazyLoadImageObserver.cpp; sourceTree = "<group>"; };
+		AAD9D0B321DFA80E001B11C7 /* LazyLoadImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyLoadImageObserver.h; sourceTree = "<group>"; };
 		6A22E86F1F10418600F546C3 /* InspectorCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorCanvas.h; sourceTree = "<group>"; };
 		6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvas.cpp; sourceTree = "<group>"; };
 		6A7279881F16C29B003F39B8 /* InspectorShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorShaderProgram.h; sourceTree = "<group>"; };
@@ -22090,6 +22093,8 @@
 				450CEBEF15073BBE002BB149 /* LabelableElement.h */,
 				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
+				AAD9D0B121DFA80C001B11C7 /* LazyLoadImageObserver.cpp */,
+				AAD9D0B321DFA80E001B11C7 /* LazyLoadImageObserver.h */,
 				1A4DA41F1CDD3A8300F4473C /* LinkIconCollector.cpp */,
 				1A4DA4201CDD3A8300F4473C /* LinkIconCollector.h */,
 				1A250E0C1CDD632000D0BE63 /* LinkIconType.h */,
@@ -32311,7 +32316,6 @@
 				510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */,
 				510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */,
 				51ABAE1E103C1913008C5260 /* SocketStreamHandleImpl.h in Headers */,
-				41100C8023F74583001BC33B /* WebSocketChannelInspector.h in Headers */,
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
 				CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */,
@@ -32984,6 +32988,7 @@
 				97AABD1B14FA09D5007457AE /* WebSocket.h in Headers */,
 				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
 				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,
+				41100C8023F74583001BC33B /* WebSocketChannelInspector.h in Headers */,
 				4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */,
 				97AABD2114FA09D5007457AE /* WebSocketDeflater.h in Headers */,
 				97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */,

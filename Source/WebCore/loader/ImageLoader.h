@@ -51,7 +51,7 @@ public:
     // doesn't change; starts new load unconditionally (matches Firefox and Opera behavior).
     void updateFromElementIgnoringPreviousError();
 
-    void elementDidMoveToNewDocument();
+    void elementDidMoveToNewDocument(Document&);
 
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
@@ -75,11 +75,17 @@ public:
     static void dispatchPendingLoadEvents();
     static void dispatchPendingErrorEvents();
 
+    void loadDeferredImage();
+
+    bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred; }
+
 protected:
     explicit ImageLoader(Element&);
     void notifyFinished(CachedResource&) override;
 
 private:
+    enum class LazyImageLoadState : uint8_t { None, Deferred, FullImage };
+
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomString&) const = 0;
 
@@ -114,6 +120,7 @@ private:
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
+    LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 
 }

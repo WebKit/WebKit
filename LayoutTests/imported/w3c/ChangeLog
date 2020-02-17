@@ -1,3 +1,83 @@
+2020-02-17  Rob Buis  <rbuis@igalia.com>
+
+        Main implementation for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=200764
+
+        Reviewed by Darin Adler.
+
+        Set correct test option and import lazyload WPT tests into
+        semantics/embedded-content/the-img-element while removing
+        loading/lazyload directory.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/common.js: Added.
+        (ElementLoadPromise):
+        (ElementLoadPromise.prototype.element):
+        (is_image_fully_loaded):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/disconnected-image-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/disconnected-image-loading-lazy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/iframe-loading-eager-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/iframe-loading-eager.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/iframe-loading-eager.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/iframe-loading-eager.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/iframe-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/iframe-loading-lazy.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/iframe-loading-lazy.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-eager-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/image-loading-eager.tentative-expected.txt.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-eager.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/image-loading-eager.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-below-viewport-dynamic-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-below-viewport-dynamic.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-001.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-001.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-002.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-002.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-script-disabled-iframe-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-script-disabled-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-viewport-dynamic-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-viewport-dynamic.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-load-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-load-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multicol-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-multicol.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/image-loading-lazy.tentative.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invisible-image-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invisible-image.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/move-element-and-scroll-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/move-element-and-scroll.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-below-viewport-image-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-below-viewport-image-loading-lazy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-image-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-image-loading-lazy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-2.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-iframe-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-referrer-policy-applied.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-referrer-policy-applied.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/picture-loading-lazy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/picture-loading-lazy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/remove-element-and-scroll-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/remove-element-and-scroll.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-below-viewport-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image-loading-lazy-in-viewport-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/image.png: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/resources/image.png.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/newwindow.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/referrer-checker-img.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/subframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/loading/lazyload/resources/subframe.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/loading/lazyload/resources/w3c-import.log: Removed.
+        * web-platform-tests/loading/lazyload/w3c-import.log: Removed.
+
 2020-02-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for encoding

@@ -1,0 +1,5 @@
+  
+
+PASS Test that when deferred iframe is loaded, it uses the base URL computed at parse time. 
+PASS Test that when deferred img is loaded, it uses the base URL computed at parse time. 
+

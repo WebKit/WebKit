@@ -1570,7 +1570,7 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
 void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (imageLoader())
-        imageLoader()->elementDidMoveToNewDocument();
+        imageLoader()->elementDidMoveToNewDocument(oldDocument);
 
     // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
     if (needsSuspensionCallback()) {

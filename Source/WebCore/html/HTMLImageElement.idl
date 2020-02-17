@@ -44,7 +44,7 @@
 
     [Conditional=ATTACHMENT_ELEMENT, EnabledAtRuntime=AttachmentElement] readonly attribute DOMString attachmentIdentifier;
 
-    [EnabledAtRuntime=LazyImageLoading, CEReactions, Reflect] attribute DOMString loading;
+    [CEReactions, EnabledAtRuntime=LazyImageLoading, ImplementedAs=loadingForBindings] attribute DOMString loading;
 
     // Extensions
     readonly attribute boolean complete;
