@@ -158,6 +158,7 @@ class WindowsFactory(Factory):
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(ValidatePatch(verifyBugClosed=False, addURLs=False))
         self.addStep(RunWebKit1Tests())
+        self.addStep(SetBuildSummary())
 
 
 class WinCairoFactory(Factory):
@@ -185,6 +186,7 @@ class GTKBuildAndTestFactory(GTKBuildFactory):
         self.addStep(ValidatePatch(verifyBugClosed=False, addURLs=False))
         if self.LayoutTestClass:
             self.addStep(self.LayoutTestClass())
+            self.addStep(SetBuildSummary())
         if self.APITestClass:
             self.addStep(self.APITestClass())
 

@@ -154,3 +154,21 @@ class TestTestsFactory(TestCase):
             _BuildStepFactory(steps.RunResultsdbpyTests),
             _BuildStepFactory(steps.RunBuildWebKitOrgUnitTests),
         ])
+
+
+class TestBuildAndTestsFactory(TestCase):
+    def test_windows_factory(self):
+        factory = factories.WindowsFactory(platform='win', configuration='release', architectures=["x86_64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='win', configuration='release', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch, verifycqplus=False),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
+            _BuildStepFactory(steps.ValidatePatch, verifyBugClosed=False, addURLs=False),
+            _BuildStepFactory(steps.RunWebKit1Tests),
+            _BuildStepFactory(steps.SetBuildSummary),
+        ])
