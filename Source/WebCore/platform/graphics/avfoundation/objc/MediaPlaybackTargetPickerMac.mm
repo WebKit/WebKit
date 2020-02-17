@@ -29,14 +29,14 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
+#import <objc/runtime.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/MediaPlaybackTargetCocoa.h>
-#import <objc/runtime.h>
-#import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/spi/cocoa/AVKitSPI.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFTLINK_AVKIT_FRAMEWORK()

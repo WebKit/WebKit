@@ -39,7 +39,7 @@
 #import <CoreGraphics/CGAffineTransform.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/system/Clock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>

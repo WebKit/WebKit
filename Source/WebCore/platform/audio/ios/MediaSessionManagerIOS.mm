@@ -38,16 +38,16 @@
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
 #import <objc/runtime.h>
-#import <pal/ios/UIKitSoftLink.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/ios/CelestialSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 WEBCORE_EXPORT NSString* WebUIApplicationWillResignActiveNotification = @"WebUIApplicationWillResignActiveNotification";
 WEBCORE_EXPORT NSString* WebUIApplicationWillEnterForegroundNotification = @"WebUIApplicationWillEnterForegroundNotification";

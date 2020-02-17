@@ -26,6 +26,7 @@
 #pragma once
 
 #import <objc/runtime.h>
+#import <wtf/Platform.h>
 #import <wtf/SoftLinking.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
@@ -37,9 +38,9 @@
 #import <AVFoundation/AVAssetCache_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
+#import <AVFoundation/AVPlayer_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
-#import <AVFoundation/AVPlayer_Private.h>
 
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
@@ -57,7 +58,6 @@
 
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
-#import <AVFoundation/AVPlayerLayer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerItem ()
@@ -167,6 +167,8 @@ NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#import <AVFoundation/AVPlayerLayer.h>
+
 #if HAVE(AVCONTENTKEYSESSION)
 @interface AVContentKeyReportGroup : NSObject
 @property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
@@ -188,13 +190,12 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #if PLATFORM(IOS_FAMILY) && (!HAVE(AVKIT) || !USE(APPLE_INTERNAL_SDK))
-#import <AVFoundation/AVPlayerLayer.h>
 @interface AVPlayerLayer (AVPlayerLayerPictureInPictureModeSupportPrivate)
 - (void)setPIPModeEnabled:(BOOL)flag;
 @end
 #endif // !HAVE(AVKIT)
 
-#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101404)
+#if !USE(APPLE_INTERNAL_SDK) || HAVE(VIDEO_PERFORMANCE_METRICS)
 @class AVVideoPerformanceMetrics;
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerLayer (AVPlayerLayerVideoPerformanceMetrics)
@@ -321,7 +322,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
-#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500)
+#if !USE(APPLE_INTERNAL_SDK) || USE(AV_SAMPLE_BUFFER_DISPLAY_LAYER)
 @interface AVSampleBufferDisplayLayer (WebCorePrivate)
 @property (assign, nonatomic) BOOL preventsDisplaySleepDuringVideoPlayback;
 @end

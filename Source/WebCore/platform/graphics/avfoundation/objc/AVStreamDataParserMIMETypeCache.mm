@@ -30,7 +30,7 @@
 
 #import "AVAssetMIMETypeCache.h"
 #import "ContentType.h"
-#import <pal/spi/mac/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/HashSet.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>

@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 

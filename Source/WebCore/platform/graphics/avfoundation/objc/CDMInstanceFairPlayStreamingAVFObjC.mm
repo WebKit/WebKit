@@ -38,7 +38,7 @@
 #import "TextDecoder.h"
 #import <AVFoundation/AVContentKeySession.h>
 #import <objc/runtime.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
 #import <wtf/FileSystem.h>
 #import <wtf/JSONValues.h>

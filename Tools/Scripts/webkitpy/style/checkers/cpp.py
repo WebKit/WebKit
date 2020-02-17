@@ -3117,7 +3117,7 @@ def _classify_include(filename, include, is_system, include_state):
     """
 
     # If it is a system header we know it is classified as _OTHER_HEADER.
-    if is_system and not include.startswith('public/') and not include.startswith('wtf/'):
+    if is_system and not include.startswith('public/') and not include.startswith('wtf/') and not include.endswith('SoftLink.h'):
         return _OTHER_HEADER
 
     # If the include is named config.h then this is WebCore/config.h.
@@ -3270,7 +3270,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
             if previous_header_type == _OTHER_HEADER:
                 if '<' in previous_line and '"' in line:
                     error(line_number, 'build/include_order', 4, 'Bad include order. Mixing system and custom headers.')
-                elif previous_line.strip() > line.strip():
+                elif previous_line.strip().lower() > line.strip().lower():
                     # This type of error is potentially a problem with this line or the previous one,
                     # so if the error is filtered for one line, report it for the next. This is so that
                     # we properly handle patches, for which only modified lines produce errors.

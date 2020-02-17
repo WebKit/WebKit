@@ -29,7 +29,7 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #import <objc/runtime.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
