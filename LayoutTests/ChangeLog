@@ -1,3 +1,37 @@
+2020-02-17  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Enable ANGLE by default for Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=205483
+        rdar://56925821
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline a bunch of tests and mark expectations.
+
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input-expected.txt:
+        * fast/canvas/webgl/draw-elements-out-of-bounds-uint-index-expected.txt:
+        * fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt:
+        * fast/canvas/webgl/readPixels-float-expected.txt:
+        * fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies-expected.txt:
+        * fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html:
+        * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt:
+        * fast/canvas/webgl/webgl-drawarrays-crash-2-expected.txt:
+        * fast/canvas/webgl/webgl-drawarrays-crash-expected.txt:
+        * fast/canvas/webgl/webgl2-texture-upload-enums-expected.txt:
+        * platform/ios-device/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/webgl/1.0.3/conformance/extensions/oes-texture-float-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * webgl/1.0.3/conformance/context/context-lost-restored-expected.txt:
+        * webgl/1.0.3/conformance/extensions/oes-texture-float-expected.txt:
+        * webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shader-struct-scope-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * webgl/1.0.3/conformance/misc/webgl-specific-expected.txt:
+        * webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt:
+        * webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt:
+
 2020-02-17  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html is flaky

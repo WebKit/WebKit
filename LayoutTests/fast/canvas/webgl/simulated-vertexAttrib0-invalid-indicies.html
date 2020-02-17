@@ -53,6 +53,8 @@ if (gl.getError() == gl.INVALID_OPERATION)
 else
     output("FAIL: MAX_UINT index did not fail validation");
 
+output("PASS: MAX_UINT index did not crash");
+
 // Two large numbers, one of which is smaller than 0.25 * max uint.
 data = new Uint32Array([380000000, 4294967295]);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
@@ -62,6 +64,8 @@ if (gl.getError() == gl.INVALID_OPERATION)
     output("PASS: Huge index was unable to be simulated");
 else
     output("FAIL: Huge index did not fail validation");
+
+output("PASS: Huge index did not crash");
 
 </script>
 
