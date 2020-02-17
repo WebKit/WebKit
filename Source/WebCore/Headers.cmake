@@ -154,6 +154,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/ThreadableWebSocketChannel.h
     Modules/websockets/WebSocketChannel.h
     Modules/websockets/WebSocketChannelClient.h
+    Modules/websockets/WebSocketChannelInspector.h
     Modules/websockets/WebSocketDeflateFramer.h
     Modules/websockets/WebSocketDeflater.h
     Modules/websockets/WebSocketExtensionDispatcher.h
