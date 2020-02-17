@@ -1,3 +1,12 @@
+2020-02-17  Yuchen Guo  <egyc@live.com>
+
+        Updated Simplified Chinese translation
+        https://bugs.webkit.org/show_bug.cgi?id=207685
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * zh_CN.po:
+
 2020-01-28  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, speculative gtk build fix after r255214
