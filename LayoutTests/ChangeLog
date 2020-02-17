@@ -1,5 +1,16 @@
 2020-02-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove ReplacedBox::m_layoutBox
+        https://bugs.webkit.org/show_bug.cgi?id=207830
+        <rdar://problem/59498829>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/simple-absolute-positioned-inline-element-expected.html: Added.
+        * fast/layoutformattingcontext/simple-absolute-positioned-inline-element.html: Added.
+
+2020-02-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] The initial containing block does not necessarily have in-flow content.
         https://bugs.webkit.org/show_bug.cgi?id=207833
         <rdar://problem/59500650>
