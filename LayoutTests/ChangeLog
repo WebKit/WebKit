@@ -1,3 +1,15 @@
+2020-02-17  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null Ptr Deref @ WebCore::Node::Treescope
+        https://bugs.webkit.org/show_bug.cgi?id=207748
+
+        Reviewed by Darin Adler.
+
+        Added a regression test provided by Ryosuke Niwa to verify the fix.
+
+        * editing/selection/ignore-selection-range-on-input-style-change-expected.txt: Added.
+        * editing/selection/ignore-selection-range-on-input-style-change.html: Added.
+
 2020-02-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Unreviewed test gardening.

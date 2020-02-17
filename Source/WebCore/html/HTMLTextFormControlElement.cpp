@@ -303,6 +303,9 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
 
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         document().updateLayoutIgnorePendingStylesheets();
+        
+        if (!isTextField())
+            return;
 
         // Double-check the state of innerTextElement after the layout.
         innerText = innerTextElement();
