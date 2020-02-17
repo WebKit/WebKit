@@ -1,3 +1,13 @@
+2020-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin targets
+        https://bugs.webkit.org/show_bug.cgi?id=205166
+
+        Reviewed by Darin Adler.
+
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+
 2020-02-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Fix declarations marked by wrong export macros (WEBCORE_EXPORT and WTF_EXPORT)

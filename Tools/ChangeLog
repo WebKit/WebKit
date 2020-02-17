@@ -1,3 +1,12 @@
+2020-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin targets
+        https://bugs.webkit.org/show_bug.cgi?id=205166
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2020-02-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] add SetBuildSummary step for Windows EWS

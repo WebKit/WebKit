@@ -170,7 +170,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_PRIVATE_LIBRARIES
-        ${OPENSSL_LIBRARIES}
+        OpenSSL::SSL
         mfuuid.lib
         strmiids.lib
     )

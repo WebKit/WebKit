@@ -100,9 +100,7 @@ find_package(ICU REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
 find_package(LibPSL REQUIRED)
 find_package(LibXml2 REQUIRED)
-find_package(Nghttp2 REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Pixman REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
@@ -112,10 +110,6 @@ find_package(ZLIB REQUIRED)
 
 # TODO: Add a check for HAVE_RSA_PSS for support of CryptoAlgorithmRSA_PSS
 # https://bugs.webkit.org/show_bug.cgi?id=206635
-
-# Emulate what pkg-config would do with statically compiled libraries
-# FIXME: https://bugs.webkit.org/show_bug.cgi?id=192410
-list(APPEND CURL_LIBRARIES ${NGHTTP2_LIBRARIES})
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_PTHREAD_SETNAME_NP ON)
 

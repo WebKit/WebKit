@@ -18,10 +18,9 @@ list(APPEND WTF_SOURCES
 )
 
 list(APPEND WTF_LIBRARIES
-    ${CMAKE_THREAD_LIBS_INIT}
-
     ${C_STD_LIBRARY}
     ${KERNEL_LIBRARY}
+    Threads::Threads
 )
 
 # bmalloc is compiled as an OBJECT library so it is statically linked

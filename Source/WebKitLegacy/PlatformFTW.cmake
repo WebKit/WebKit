@@ -7,15 +7,11 @@ list(APPEND WebKitLegacy_SOURCES_Classes
     win/WebURLAuthenticationChallengeSenderCURL.cpp
 )
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    ${OPENSSL_LIBRARIES}
+    OpenSSL::SSL
     D3D11.lib
     Dxgi.lib
     mfuuid.lib
     strmiids.lib
-    ${LIBXML2_LIBRARIES}
-    ${LIBXSLT_LIBRARIES}
-    ${SQLITE_LIBRARIES}
-    ${ZLIB_LIBRARIES}
 )
 
 add_custom_command(

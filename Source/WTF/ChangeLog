@@ -1,3 +1,15 @@
+2020-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin targets
+        https://bugs.webkit.org/show_bug.cgi?id=205166
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+
 2020-02-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove remaining WTF_EXPORT and WTF_IMPORT by replacing them with WTF_EXPORT_DECLARATION and WTF_IMPORT_DECLARATION

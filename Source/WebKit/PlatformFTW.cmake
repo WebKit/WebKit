@@ -169,7 +169,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_PRIVATE_LIBRARIES
-    ${OPENSSL_LIBRARIES}
+    OpenSSL::SSL
     D2d1.lib
     D3d11.lib
     Dwrite

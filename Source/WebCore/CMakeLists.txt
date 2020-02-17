@@ -172,12 +172,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/xml/parser"
 )
 
-set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${LIBXML2_INCLUDE_DIR}
-    ${LIBXSLT_INCLUDE_DIR}
-    ${ZLIB_INCLUDE_DIRS}
-)
-
 set(WebCore_IDL_INCLUDES
     css
     dom
@@ -1219,12 +1213,15 @@ set(WebCore_PLUG_INS_RESOURCES
 )
 
 set(WebCore_LIBRARIES
+    LibXml2::LibXml2
+    PAL
     SQLite::SQLite3
-    ${LIBXML2_LIBRARIES}
-    ${LIBXSLT_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    PAL${DEBUG_SUFFIX}
+    ZLIB::ZLIB
 )
+
+if (ENABLE_XSLT)
+    list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
+endif ()
 
 set(WebCoreTestSupport_LIBRARIES
     WebKit::JavaScriptCore

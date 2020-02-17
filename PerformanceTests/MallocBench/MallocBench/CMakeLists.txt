@@ -49,7 +49,7 @@ include_directories(${MALLOC_BENCH_INCLUDE_DIRECTORIES})
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 if (DEVELOPER_MODE)
     add_executable(MallocBench ${MALLOC_BENCH_SOURCES})
-    target_link_libraries(MallocBench ${CMAKE_THREAD_LIBS_INIT} ${MALLOC_BENCH_LIBRARIES} mbmalloc)
+    target_link_libraries(MallocBench ${MALLOC_BENCH_LIBRARIES} Threads::Threads mbmalloc)
     add_dependencies(MallocBench sysmalloc mbmalloc)
 endif ()
 

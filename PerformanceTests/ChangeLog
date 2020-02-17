@@ -1,3 +1,12 @@
+2020-02-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use builtin targets
+        https://bugs.webkit.org/show_bug.cgi?id=205166
+
+        Reviewed by Darin Adler.
+
+        * MallocBench/MallocBench/CMakeLists.txt:
+
 2020-01-28  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: speed up index records deletion

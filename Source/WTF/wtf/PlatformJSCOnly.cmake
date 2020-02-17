@@ -115,5 +115,5 @@ else ()
 endif ()
 
 list(APPEND WTF_LIBRARIES
-    ${CMAKE_THREAD_LIBS_INIT}
+    Threads::Threads
 )

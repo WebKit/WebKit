@@ -72,13 +72,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/SocketStreamHandleImpl.h
 )
 
-list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${CURL_INCLUDE_DIRS}
-    ${OPENSSL_INCLUDE_DIR}
-)
-
 list(APPEND WebCore_LIBRARIES
+    CURL::libcurl
     LibPSL::LibPSL
-    ${CURL_LIBRARIES}
-    ${OPENSSL_LIBRARIES}
+    OpenSSL::SSL
 )

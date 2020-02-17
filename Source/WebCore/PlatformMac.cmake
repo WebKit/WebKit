@@ -48,7 +48,6 @@ list(APPEND WebCore_LIBRARIES
     ${SQLITE3_LIBRARIES}
     ${SYSTEMCONFIGURATION_LIBRARY}
     ${XML2_LIBRARY}
-    ${ZLIB_LIBRARY}
 )
 
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)

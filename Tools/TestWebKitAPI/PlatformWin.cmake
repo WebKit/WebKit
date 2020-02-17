@@ -55,7 +55,7 @@ list(APPEND TestWebCore_LIBRARIES
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND TestWebCore_LIBRARIES
         Cairo::Cairo
-        ${OPENSSL_LIBRARIES}
+        OpenSSL::SSL
         mfuuid
         strmiids
         vcruntime
@@ -73,10 +73,10 @@ else ()
         CFNetwork${DEBUG_SUFFIX}
         CoreGraphics${DEBUG_SUFFIX}
         CoreText${DEBUG_SUFFIX}
+        LibXslt::LibExslt
         QuartzCore${DEBUG_SUFFIX}
         WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
         libdispatch${DEBUG_SUFFIX}
-        libexslt${DEBUG_SUFFIX}
     )
 endif ()
 

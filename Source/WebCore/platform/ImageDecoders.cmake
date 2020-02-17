@@ -30,13 +30,9 @@ list(APPEND WebCore_SOURCES
     platform/image-decoders/webp/WEBPImageDecoder.cpp
 )
 
-list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${JPEG_INCLUDE_DIR}
-    ${PNG_INCLUDE_DIRS}
-)
 list(APPEND WebCore_LIBRARIES
-    ${JPEG_LIBRARIES}
-    ${PNG_LIBRARIES}
+    JPEG::JPEG
+    PNG::PNG
 )
 
 if (OpenJPEG_FOUND)

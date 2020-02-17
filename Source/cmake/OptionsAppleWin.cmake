@@ -17,6 +17,8 @@ if (NOT WEBKIT_LIBRARIES_DIR)
     endif ()
 endif ()
 
+set(WTF_PLATFORM_APPLE_WIN ON)
+
 include(OptionsWin)
 
 set(ENABLE_WEBCORE ON)
@@ -25,16 +27,15 @@ SET_AND_EXPOSE_TO_BUILD(USE_CF ON)
 SET_AND_EXPOSE_TO_BUILD(USE_CFURLCONNECTION ON)
 
 set(SQLite3_NAMES SQLite3${DEBUG_SUFFIX})
+
+find_package(ICU REQUIRED COMPONENTS data i18n uc)
+find_package(LibXml2 REQUIRED)
+find_package(LibXslt REQUIRED)
 find_package(SQLite3 REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # Libraries where find_package does not work
 set(COREFOUNDATION_LIBRARY CoreFoundation${DEBUG_SUFFIX})
-set(LIBXML2_LIBRARIES libxml2${DEBUG_SUFFIX})
-set(LIBXSLT_LIBRARIES libxslt${DEBUG_SUFFIX})
-set(ZLIB_INCLUDE_DIRS "${WEBKIT_LIBRARIES_DIR}/include/zlib")
-set(ZLIB_LIBRARIES zdll${DEBUG_SUFFIX})
-
-include(target/icu)
 
 # Uncomment the following line to try the Direct2D backend.
 # set(USE_DIRECT2D 1)

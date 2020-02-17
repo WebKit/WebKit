@@ -8,7 +8,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-        ${OPENSSL_LIBRARIES}
+        OpenSSL::SSL
         mfuuid.lib
         strmiids.lib
     )
@@ -23,10 +23,6 @@ else ()
         CoreText${DEBUG_SUFFIX}
         QuartzCore${DEBUG_SUFFIX}
         libdispatch${DEBUG_SUFFIX}
-        ${LIBXML2_LIBRARIES}
-        ${LIBXSLT_LIBRARIES}
-        ${SQLITE_LIBRARIES}
-        ${ZLIB_LIBRARIES}
     )
 endif ()
 
