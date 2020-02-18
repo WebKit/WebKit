@@ -1,3 +1,19 @@
+2020-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r254873.
+        https://bugs.webkit.org/show_bug.cgi?id=205751
+
+        This is reverting r254081 which is effectively re-landing part of r254873 that was reverted
+        supposing that would be related to the fix for rdar://problem/59136037 but it was not.
+        Re-landing this is a step towards rdar://problem/56027111
+
+        Reverted changeset:
+
+        "Revert suppressesConnectionTerminationOnSystemChange part of
+        r254081"
+        https://bugs.webkit.org/show_bug.cgi?id=205751
+        https://trac.webkit.org/changeset/254873
+
 2020-02-18  Per Arne Vollan  <pvollan@apple.com>
 
         Move [UIDevice currentDevice] calls to UI process
