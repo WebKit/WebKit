@@ -1,5 +1,16 @@
 2020-02-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add missing float check in inline line layout
+        https://bugs.webkit.org/show_bug.cgi?id=207878
+        <rdar://problem/59537467>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-in-inline-context-simple-expected.html: Added.
+        * fast/layoutformattingcontext/float-in-inline-context-simple.html: Added.
+
+2020-02-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TreeBuilding] Take createLineBreakBox's return value
         https://bugs.webkit.org/show_bug.cgi?id=207879
         <rdar://problem/59537585>

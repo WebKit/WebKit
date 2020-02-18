@@ -72,8 +72,8 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
     // e.g. [container start][prior_continuous_content][container end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
-    ASSERT(current.isText() || current.isBox());
-    ASSERT(next.isText() || next.isBox());
+    ASSERT(current.isText() || current.isBox() || current.isFloat());
+    ASSERT(next.isText() || next.isBox() || next.isFloat());
     if (current.isText() && next.isText()) {
         auto& currentInlineTextItem = downcast<InlineTextItem>(current);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
@@ -101,6 +101,11 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
     }
+    if (current.isFloat() || next.isFloat()) {
+        // While floats are not part of the inline content, let's just handle them as if they were inline boxes for now and pretend
+        // there's a soft wrapping opportunity here (text before<div style="float: left"></div>and after).
+        return true;
+    }
     ASSERT_NOT_REACHED();
     return true;
 }
@@ -121,7 +126,7 @@ static inline size_t nextWrapOpportunity(const InlineItems& inlineContent, size_
         // Break at the first text/box/line break inline item.
         for (; index < layoutRange.end; ++index) {
             auto& inlineItem = inlineContent[index];
-            if (inlineItem.isText() || inlineItem.isBox())
+            if (inlineItem.isText() || inlineItem.isBox() || inlineItem.isFloat())
                 return index;
             if (inlineItem.isLineBreak()) {
                 isAtLineBreak = true;

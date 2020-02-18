@@ -85,13 +85,13 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     // 1. Visit each inline box and partially compute their geometry (margins, paddings and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
     while (layoutBox) {
-        ASSERT(layoutBox->isInlineLevelBox());
+        ASSERT(layoutBox->isInlineLevelBox() || layoutBox->isFloatingPositioned());
 
-        if (layoutBox->isAtomicInlineLevelBox()) {
+        if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isFloatingPositioned()) {
             // Inline-blocks, inline-tables and replaced elements (img, video) can be sized but not yet positioned.
             if (layoutBox->establishesFormattingContext()) {
                 ASSERT(is<ContainerBox>(*layoutBox));
-                ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox());
+                ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox() || layoutBox->isFloatingPositioned());
                 auto& containerBox = downcast<ContainerBox>(*layoutBox);
                 computeBorderAndPadding(containerBox, horizontalConstraints);
                 computeWidthAndMargin(containerBox, horizontalConstraints);
