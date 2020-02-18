@@ -54,10 +54,6 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
     for (auto& callback : getRegistrationsRequests.values())
         callback({ });
 
-    auto whenRegistrationReadyRequests = WTFMove(m_whenRegistrationReadyRequests);
-    for (auto& callback : whenRegistrationReadyRequests.values())
-        callback({ });
-
     auto unregisterRequests = WTFMove(m_unregisterRequests);
     for (auto& callback : unregisterRequests.values())
         callback(Exception { TypeError, "context stopped"_s });

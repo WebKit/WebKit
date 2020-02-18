@@ -238,9 +238,7 @@ void WebSWClientConnection::clear()
     for (auto& callback : getRegistrationTasks.values())
         callback({ });
 
-    auto registrationReadyTasks = WTFMove(m_ongoingRegistrationReadyTasks);
-    for (auto& callback : registrationReadyTasks.values())
-        callback({ });
+    m_ongoingRegistrationReadyTasks.clear();
 
     clearPendingJobs();
 }

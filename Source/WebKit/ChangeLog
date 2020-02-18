@@ -1,3 +1,14 @@
+2020-02-17  Youenn Fablet  <youenn@apple.com>
+
+        Do not call whenReady callbacks in case of network process crash
+        https://bugs.webkit.org/show_bug.cgi?id=207661
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::clear):
+        The callback is a Function so it is fine not calling it and calling it with a default value is not safe.
+
 2020-02-17  Alex Christensen  <achristensen@webkit.org> and Pavel Feldman <pavel.feldman@gmail.com>
 
         Ephemeral session data leaks between processes
