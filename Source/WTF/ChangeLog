@@ -1,3 +1,14 @@
+2020-02-17  Mark Lam  <mark.lam@apple.com>
+
+        getVTablePointer() should return a const void*.
+        https://bugs.webkit.org/show_bug.cgi?id=207871
+        <rdar://problem/59525721>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PointerPreparations.h:
+        (WTF::getVTablePointer):
+
 2020-02-17  Dean Jackson  <dino@apple.com>
 
         [WebGL] Enable ANGLE by default for Cocoa platforms
