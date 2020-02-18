@@ -3344,9 +3344,6 @@ webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html
 
 webkit.org/b/206676 imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Pass Failure ]
 
-# This seems to be indicative of a CFNetwork bug.
-webkit.org/b/207895 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Pass Failure ]
-
 # wpt css-backgrounds failures
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-4.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-6.html [ ImageOnlyFailure ]

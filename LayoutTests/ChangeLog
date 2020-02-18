@@ -1,5 +1,16 @@
 2020-02-18  Chris Dumez  <cdumez@apple.com>
 
+        [WK1] Flaky Test: http/tests/cookies/document-cookie-during-iframe-parsing.html
+        https://bugs.webkit.org/show_bug.cgi?id=207895
+        <rdar://problem/59558164>
+
+        Unreviewed, mark test as flaky on WK1 only as the WK2 bots appear to be fine.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2020-02-18  Chris Dumez  <cdumez@apple.com>
+
         Flaky Test: http/tests/cookies/document-cookie-during-iframe-parsing.html
         https://bugs.webkit.org/show_bug.cgi?id=207895
 
