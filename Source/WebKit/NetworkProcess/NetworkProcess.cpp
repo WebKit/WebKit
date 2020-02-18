@@ -86,6 +86,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
@@ -510,7 +511,7 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, bool shouldU
     
 #if PLATFORM(COCOA)
     RetainPtr<CFURLStorageSessionRef> storageSession;
-    RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
+    RetainPtr<CFStringRef> cfIdentifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
     if (sessionID.isEphemeral())
         storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
     else

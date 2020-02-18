@@ -1,3 +1,13 @@
+2020-02-17  Alex Christensen  <achristensen@webkit.org> and Pavel Feldman <pavel.feldman@gmail.com>
+
+        Ephemeral session data leaks between processes
+        https://bugs.webkit.org/show_bug.cgi?id=207404
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::ensureSession):
+
 2020-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin targets

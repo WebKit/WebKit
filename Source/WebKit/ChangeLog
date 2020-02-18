@@ -1,3 +1,20 @@
+2020-02-17  Alex Christensen  <achristensen@webkit.org> and Pavel Feldman <pavel.feldman@gmail.com>
+
+        Ephemeral session data leaks between processes
+        https://bugs.webkit.org/show_bug.cgi?id=207404
+
+        Reviewed by Darin Adler.
+
+        If two processes with the same bundle identifier create an ephemeral WKWebsiteDataStore, we were calling
+        _CFURLStorageSessionCreate with the same string, which caused our cookies to be shared.  To prevent this,
+        add a UUID to the identifier to make them truly unique.
+
+        We don't have test infrastructure for multiple UI processes at the same time, but I manually verified
+        that this fixes the bug.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::ensureSession):
+
 2020-02-17  Megan Gardner  <megan_gardner@apple.com>
 
         Data detectors do not trigger on macCatalyst
