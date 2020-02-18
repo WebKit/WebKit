@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
 
 // MallocPtr is a smart pointer class that calls fastFree in its destructor.
 // It is intended to be used for pointers where the C++ lifetime semantics
@@ -35,7 +34,6 @@
 namespace WTF {
 
 template<typename T, typename Malloc = FastMalloc> class MallocPtr {
-    WTF_MAKE_NONCOPYABLE(MallocPtr);
 public:
     MallocPtr() = default;
 
