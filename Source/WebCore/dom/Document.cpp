@@ -2496,7 +2496,7 @@ void Document::prepareForDestruction()
     // FIXME: This should be moved to Modules/mediastream.
     if (LibWebRTCProvider::webRTCAvailable()) {
         if (auto* page = this->page())
-            page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+            page->libWebRTCProvider().unregisterMDNSNames(identifier());
     }
 #endif
 
@@ -5350,7 +5350,7 @@ void Document::suspend(ReasonForSuspension reason)
     // FIXME: This should be moved to Modules/mediastream.
     if (LibWebRTCProvider::webRTCAvailable()) {
         if (auto* page = this->page())
-            page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+            page->libWebRTCProvider().unregisterMDNSNames(identifier());
     }
 #endif
 

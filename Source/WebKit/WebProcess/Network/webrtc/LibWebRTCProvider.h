@@ -54,8 +54,8 @@ private:
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 
-    void unregisterMDNSNames(uint64_t documentIdentifier) final;
-    void registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
+    void unregisterMDNSNames(WebCore::DocumentIdentifier) final;
+    void registerMDNSName(WebCore::DocumentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
     void disableNonLocalhostConnections() final;
 
 #if PLATFORM(COCOA)

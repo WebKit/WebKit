@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DocumentIdentifier.h"
 #include "LibWebRTCMacros.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
@@ -78,14 +79,10 @@ public:
     using IPAddressOrError = Expected<String, MDNSRegisterError>;
     using MDNSNameOrError = Expected<String, MDNSRegisterError>;
 
-    virtual void unregisterMDNSNames(uint64_t documentIdentifier)
-    {
-        UNUSED_PARAM(documentIdentifier);
-    }
+    virtual void unregisterMDNSNames(DocumentIdentifier) { }
 
-    virtual void registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+    virtual void registerMDNSName(DocumentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
     {
-        UNUSED_PARAM(documentIdentifier);
         UNUSED_PARAM(ipAddress);
         callback(makeUnexpected(MDNSRegisterError::NotImplemented));
     }

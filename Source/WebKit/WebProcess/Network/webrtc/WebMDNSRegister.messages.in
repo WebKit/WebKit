@@ -23,7 +23,7 @@
 #if ENABLE(WEB_RTC)
 
 messages -> WebMDNSRegister NotRefCounted {
-    void FinishedRegisteringMDNSName(uint64_t identifier, WebCore::LibWebRTCProvider::MDNSNameOrError result)
+    void FinishedRegisteringMDNSName(WebKit::MDNSRegisterIdentifier identifier, WebCore::LibWebRTCProvider::MDNSNameOrError result)
 }
 
 #endif // ENABLE(WEB_RTC)

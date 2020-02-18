@@ -59,12 +59,12 @@ void LibWebRTCProvider::disableNonLocalhostConnections()
     WebProcess::singleton().libWebRTCNetwork().disableNonLocalhostConnections();
 }
 
-void LibWebRTCProvider::unregisterMDNSNames(uint64_t documentIdentifier)
+void LibWebRTCProvider::unregisterMDNSNames(DocumentIdentifier documentIdentifier)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(documentIdentifier);
 }
 
-void LibWebRTCProvider::registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+void LibWebRTCProvider::registerMDNSName(DocumentIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(documentIdentifier, ipAddress, WTFMove(callback));
 }
