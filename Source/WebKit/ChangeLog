@@ -1,5 +1,42 @@
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256432. rdar://problem/59446974
+
+    WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
+    https://bugs.webkit.org/show_bug.cgi?id=207537
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    Covered by added API test.
+    
+    * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+    (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+    Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256432 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-12  Youenn Fablet  <youenn@apple.com>
+
+            WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
+            https://bugs.webkit.org/show_bug.cgi?id=207537
+
+            Reviewed by Chris Dumez.
+
+            Covered by added API test.
+
+            * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+            (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+            Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
+
+2020-02-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256383. rdar://problem/59446974
 
     Unreviewed, rolling out r256314.
