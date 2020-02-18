@@ -220,9 +220,7 @@ void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAr
 
 void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollData& scrollData)
 {
-    if (scrollData == m_requestedScrollData)
-        return;
-
+    // Scroll position requests are imperative, not stateful, so we can't early return here.
     m_requestedScrollData = scrollData;
     setPropertyChanged(RequestedScrollPosition);
 }
