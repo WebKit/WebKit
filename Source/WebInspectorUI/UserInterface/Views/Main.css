@@ -121,6 +121,11 @@ body.docked.bottom #toolbar .item:not(.flexible-space) {
     cursor: default;
 }
 
+body.focus-debug *:focus {
+    outline: 2px solid fuchsia !important;
+    outline-offset: -1px !important;
+}
+
 input[type=range] {
     -webkit-appearance: none;
 }

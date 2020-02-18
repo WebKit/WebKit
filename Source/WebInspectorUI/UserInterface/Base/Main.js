@@ -564,6 +564,12 @@ WI.contentLoaded = function()
         WI.diagnosticController.addRecorder(new WI.TabActivityDiagnosticEventRecorder(WI.diagnosticController));
         WI.diagnosticController.addRecorder(new WI.TabNavigationDiagnosticEventRecorder(WI.diagnosticController));
     }
+
+    function setFocusDebugOutline() {
+        document.body.classList.toggle("focus-debug", WI.settings.debugOutlineFocusedElement.value);
+    }
+    WI.settings.debugOutlineFocusedElement.addEventListener(WI.Setting.Event.Changed, setFocusDebugOutline);
+    setFocusDebugOutline();
 };
 
 WI.performOneTimeFrontendInitializationsUsingTarget = function(target)

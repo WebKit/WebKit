@@ -1,3 +1,26 @@
+2020-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add "outline focused element" debug setting
+        https://bugs.webkit.org/show_bug.cgi?id=207819
+        <rdar://problem/59489993>
+
+        Reviewed by Timothy Hatcher.
+
+        When debugging accessibility issues of Web Inspector, it's helpful
+        to know what element is focused. Many elements have `outline: none`
+        and no clear indication of what's focused.
+
+        Add a debug setting to display a bright purple outline for all focused
+        elements.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/Main.css:
+        (body.focus-debug *:focus):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+
 2020-02-17  Jon Davis  <jond@apple.com>
 
         Update resource, type, and instrument icons for light, dark, and override colors

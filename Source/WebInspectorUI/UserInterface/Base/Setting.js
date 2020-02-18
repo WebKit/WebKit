@@ -236,6 +236,7 @@ WI.settings = {
 
     // Debug
     debugShowConsoleEvaluations: new WI.DebugSetting("debug-show-console-evaluations", false),
+    debugOutlineFocusedElement: new WI.DebugSetting("debug-outline-focused-element", false),
     debugEnableLayoutFlashing: new WI.DebugSetting("debug-enable-layout-flashing", false),
     debugEnableStyleEditingDebugMode: new WI.DebugSetting("debug-enable-style-editing-debug-mode", false),
     debugEnableUncaughtExceptionReporter: new WI.DebugSetting("debug-enable-uncaught-exception-reporter", true),

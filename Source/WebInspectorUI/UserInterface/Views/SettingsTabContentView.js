@@ -442,7 +442,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         this._debugSettingsView.addSeparator();
 
-        this._debugSettingsView.addSetting(WI.unlocalizedString("Debugging:"), WI.settings.debugShowConsoleEvaluations, WI.unlocalizedString("Show Console Evaluations"));
+        let debuggingGroup = this._debugSettingsView.addGroup(WI.unlocalizedString("Debugging:"));
+        debuggingGroup.addSetting(WI.settings.debugShowConsoleEvaluations, WI.unlocalizedString("Show Console Evaluations"));
+        debuggingGroup.addSetting(WI.settings.debugOutlineFocusedElement, WI.unlocalizedString("Outline focused element"));
 
         this._debugSettingsView.addSeparator();
 
