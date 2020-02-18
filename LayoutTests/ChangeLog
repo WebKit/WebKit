@@ -1,5 +1,14 @@
 2020-02-18  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: (r256784?) [ iOS wk2 ] fast/canvas/webgl/oes-vertex-array-object.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207896
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-02-18  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk2 ] http/wpt/beacon/beacon-quota.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207894
 

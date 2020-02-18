@@ -1417,3 +1417,5 @@ webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
 
 # skip LFC regression tests on iOS for now.
 fast/layoutformattingcontext/block-only/ [ Skip ]
+
+webkit.org/b/207896 fast/canvas/webgl/oes-vertex-array-object.html [ Pass Failure ]
