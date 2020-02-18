@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
+#include "ProgressTracker.h"
 
 namespace WebCore {
 
