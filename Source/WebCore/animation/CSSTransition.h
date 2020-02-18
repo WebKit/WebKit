@@ -55,6 +55,7 @@ public:
 private:
     CSSTransition(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
+    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
 
     CSSPropertyID m_property;
     MonotonicTime m_generationTime;

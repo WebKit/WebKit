@@ -2082,6 +2082,7 @@
 		7116E2CF1FED765B00C06FDE /* JSComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
 		7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118FED315685CC60030B79A /* JSSVGViewSpec.h */; };
+		711AD126236D86E5006FF37C /* AnimationEventBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 711AD123236D86D3006FF37C /* AnimationEventBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71207340216DFB0000C78329 /* OptionalEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7120733D216DFAF100C78329 /* OptionalEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71207343216DFB4100C78329 /* JSOptionalEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71207341216DFB3100C78329 /* JSOptionalEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E351FEA5F81008C08CE /* CompositeOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9423,6 +9424,8 @@
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
 		7118FED315685CC60030B79A /* JSSVGViewSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGViewSpec.h; sourceTree = "<group>"; };
+		711AD123236D86D3006FF37C /* AnimationEventBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEventBase.h; sourceTree = "<group>"; };
+		711AD125236D86D4006FF37C /* AnimationEventBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEventBase.cpp; sourceTree = "<group>"; };
 		711FB0751DC7688F00C4C708 /* placard-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "placard-support.js"; sourceTree = "<group>"; };
 		7120733D216DFAF100C78329 /* OptionalEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionalEffectTiming.h; sourceTree = "<group>"; };
 		7120733F216DFAF200C78329 /* OptionalEffectTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OptionalEffectTiming.idl; sourceTree = "<group>"; };
@@ -20988,6 +20991,8 @@
 				71EFCED7202B388D00D7C411 /* AnimationEffect.h */,
 				71EFCED6202B388C00D7C411 /* AnimationEffect.idl */,
 				71E2C42421C9351D0024F8C8 /* AnimationEffectPhase.h */,
+				711AD125236D86D4006FF37C /* AnimationEventBase.cpp */,
+				711AD123236D86D3006FF37C /* AnimationEventBase.h */,
 				714C7C601FDAD27900F2BEE1 /* AnimationPlaybackEvent.cpp */,
 				714C7C651FDAD27B00F2BEE1 /* AnimationPlaybackEvent.h */,
 				714C7C641FDAD27B00F2BEE1 /* AnimationPlaybackEvent.idl */,
@@ -29007,6 +29012,7 @@
 				71E2C42621C935280024F8C8 /* AnimationEffectPhase.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				722A815D238FDAF000C00583 /* AnimationFrameRate.h in Headers */,
+				711AD126236D86E5006FF37C /* AnimationEventBase.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				714C7C661FDAD2A100F2BEE1 /* AnimationPlaybackEvent.h in Headers */,
 				714C7C671FDAD2A900F2BEE1 /* AnimationPlaybackEventInit.h in Headers */,
