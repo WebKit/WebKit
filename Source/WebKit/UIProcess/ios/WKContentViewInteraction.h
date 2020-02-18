@@ -236,7 +236,7 @@ struct WKAutoCorrectionData {
     RetainPtr<UISwipeGestureRecognizer> _touchActionDownSwipeGestureRecognizer;
 #endif
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
 #endif
 
