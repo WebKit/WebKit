@@ -1,3 +1,12 @@
+2020-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Flaky Test: http/tests/cookies/document-cookie-during-iframe-parsing.html
+        https://bugs.webkit.org/show_bug.cgi?id=207895
+
+        Unreviewed, mark the test as flaky while I work with the CFNetwork team to resolve this.
+
+        * TestExpectations:
+
 2020-02-18  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (256034): http/tests/media/media-stream/get-display-media-prompt.html is failing
