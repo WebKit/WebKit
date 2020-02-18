@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description('Ensure web socket loads are captured by per-page prevalent domain logging.');
+
+    window.jsTestIsAsync = true;
+    
+    if (window.testRunner)
+        testRunner.setAllowsAnySSLCertificate(true);
+
+    function askForPrevalentResources() {
+        testRunner.getPrevalentDomains(function (arrayOfDomains) {
+            if (arrayOfDomains.length == 0) {
+                askForPrevalentResources();
+                return;
+            }
+            if (arrayOfDomains.includes("localhost"))
+                testPassed("Domain was successfully marked prevalent.");
+            else
+                testFailed("Domain was not successfully marked prevalent.");
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    function runTest() {
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsPrevalentResource("http://localhost", true, function () {
+                new WebSocket('ws://localhost:8880/websocket/tests/hybi/simple');
+                setTimeout(askForPrevalentResources, 0);
+            });
+        });
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

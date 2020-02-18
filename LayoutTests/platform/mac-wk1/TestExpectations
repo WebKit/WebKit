@@ -940,3 +940,4 @@ webkit.org/b/207847 resize-observer/delete-observers-in-callbacks.html [ Pass Fa
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]
 
 webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass Failure ]
+http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]

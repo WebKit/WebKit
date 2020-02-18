@@ -1,3 +1,19 @@
+2020-02-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Web socket loads should be captured for logging per-page prevalent domains
+        https://bugs.webkit.org/show_bug.cgi?id=207840
+        <rdar://problem/59511746>
+
+        Reviewed by Chris Dumez.
+
+        Resource load statistics is only supported on mac and iOS, we should
+        skip this on other platforms.
+
+        * http/tests/websocket/web-socket-loads-captured-in-per-page-domains-expected.txt: Added.
+        * http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-02-17  Dean Jackson  <dino@apple.com>
 
         [WebGL] Update WebGL2 results with ANGLE backend

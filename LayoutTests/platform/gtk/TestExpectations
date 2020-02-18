@@ -1184,6 +1184,7 @@ webkit.org/b/191005 inspector/canvas/updateShader-webgpu-sharedVertexFragment.ht
 
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]
+http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
 # No support for screen capture
 fast/mediastream/screencapture-user-gesture.html [ Skip ]

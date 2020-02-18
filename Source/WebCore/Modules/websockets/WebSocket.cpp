@@ -42,6 +42,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ResourceLoadObserver.h"
@@ -51,6 +52,7 @@
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
+#include "WorkerLoaderProxy.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -320,6 +322,17 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         failAsynchronously();
         return { };
     }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    auto reportRegistrableDomain = [url = m_url](ScriptExecutionContext& context) {
+        if (auto* frame = downcast<Document>(context).frame())
+            frame->loader().client().addLoadedRegistrableDomain(RegistrableDomain(url));
+    };
+    if (is<Document>(context))
+        reportRegistrableDomain(context);
+    else
+        downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy().postTaskToLoader(WTFMove(reportRegistrableDomain));
+#endif
 
     m_pendingActivity = makePendingActivity(*this);
 
