@@ -90,7 +90,7 @@ private:
     bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     bool isAlwaysOnLoggingAllowed() const;
 
-    SessionWrapper& m_sessionWrapper;
+    WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
