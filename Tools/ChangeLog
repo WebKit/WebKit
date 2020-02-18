@@ -1,3 +1,25 @@
+2020-02-18  Matt Lewis  <jlewis3@apple.com>
+
+        Stub repositories fail to upload some results due to missing head svn revision
+        https://bugs.webkit.org/show_bug.cgi?id=207684
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (main): Added initializing the scm to the host object.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results): Changed call to head_svn_revision to port.commits_for_upload() to bring
+        it in line with modern code.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Added inializing the scm to the host object.
+        * Scripts/webkitpy/port/base.py:
+        (Port.commits_for_upload): Removed the forced movement up the systems tree that prevented us
+        from using mock SCMs and more
+        * Scripts/webkitpy/test/main.py:
+        (main):  Removed the forced movement up the systems tree, initialized the SCM on the host object,
+        and converted the webkit_root variable to the SCM checkout root.
+        (Tester._run_tests):
+
 2020-02-18  Per Arne Vollan  <pvollan@apple.com>
 
         Move [UIDevice currentDevice] calls to UI process

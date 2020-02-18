@@ -50,6 +50,7 @@ from webkitpy.results.options import upload_options
 _log = logging.getLogger(__name__)
 
 _host = Host()
+_host.initialize_scm()
 _webkit_root = None
 
 
@@ -57,8 +58,7 @@ def main():
     global _webkit_root
     configure_logging(logger=_log)
 
-    up = os.path.dirname
-    _webkit_root = up(up(up(up(up(os.path.abspath(__file__))))))
+    _webkit_root = _host.scm().checkout_root
 
     tester = Tester()
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
@@ -226,7 +226,6 @@ class Tester(object):
             for test, failures in test_runner.failures:
                 results[test] = Upload.create_test_result(actual=Upload.Expectations.FAIL, log='/n'.join(failures))
 
-            _host.initialize_scm()
             upload = Upload(
                 suite='webkitpy-tests',
                 configuration=Upload.create_configuration(

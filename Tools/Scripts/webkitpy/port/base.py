@@ -1601,16 +1601,12 @@ class Port(object):
         repos = {}
         if port_config.apple_additions() and getattr(port_config.apple_additions(), 'repos', False):
             repos = port_config.apple_additions().repos()
-
-        up = os.path.dirname
-        repos['webkit'] = up(up(up(up(up(os.path.abspath(__file__))))))
-
+        repos['webkit'] = self.host.scm().checkout_root
         commits = []
         for repo_id, path in repos.items():
-            scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(path)
             commits.append(Upload.create_commit(
                 repository_id=repo_id,
-                id=scm.native_revision(path),
-                branch=scm.native_branch(path),
+                id=self.host.scm().native_revision(path),
+                branch=self.host.scm().native_branch(path),
             ))
         return commits
