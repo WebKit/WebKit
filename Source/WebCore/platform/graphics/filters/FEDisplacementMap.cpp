@@ -27,7 +27,7 @@
 #include "ColorUtilities.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -94,7 +94,8 @@ void FEDisplacementMap::platformApplySoftware()
     ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
     ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
 
-    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
+    auto* resultImage = createPremultipliedImageResult();
+    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
     if (!dstPixelArray)
         return;
 

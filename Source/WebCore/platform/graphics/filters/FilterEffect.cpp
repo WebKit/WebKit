@@ -27,10 +27,10 @@
 #include "Filter.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "Logging.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/text/TextStream.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)
@@ -199,7 +199,7 @@ void FilterEffect::forceValidPreMultipliedPixels()
     if (!m_premultipliedImageResult)
         return;
 
-    Uint8ClampedArray* imageArray = m_premultipliedImageResult.get();
+    Uint8ClampedArray* imageArray = m_premultipliedImageResult->data();
     uint8_t* pixelData = imageArray->data();
     int pixelArrayLength = imageArray->length();
 
@@ -265,7 +265,7 @@ void FilterEffect::clearResultsRecursive()
 
 ImageBuffer* FilterEffect::imageBufferResult()
 {
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
 
     if (!hasResult())
         return nullptr;
@@ -279,9 +279,9 @@ ImageBuffer* FilterEffect::imageBufferResult()
 
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
-        m_imageBufferResult->putByteArray(*m_premultipliedImageResult, AlphaPremultiplication::Premultiplied, destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putImageData(AlphaPremultiplication::Premultiplied, *m_premultipliedImageResult, destinationRect);
     else
-        m_imageBufferResult->putByteArray(*m_unmultipliedImageResult, AlphaPremultiplication::Unpremultiplied, destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putImageData(AlphaPremultiplication::Unpremultiplied, *m_unmultipliedImageResult, destinationRect);
     return m_imageBufferResult.get();
 }
 
@@ -438,52 +438,52 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
 {
     ASSERT(hasResult());
     
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyUnmultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyUnmultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
 
     if (!m_unmultipliedImageResult) {
         // We prefer a conversion from the image buffer.
         if (m_imageBufferResult) {
-            m_unmultipliedImageResult = m_imageBufferResult->getUnmultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
+            m_unmultipliedImageResult = m_imageBufferResult->getImageData(AlphaPremultiplication::Unpremultiplied, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_unmultipliedImageResult)
                 return;
         } else {
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            m_unmultipliedImageResult = Uint8ClampedArray::tryCreateUninitialized((inputSize.area() * 4).unsafeGet());
+            m_unmultipliedImageResult = ImageData::create(inputSize);
             if (!m_unmultipliedImageResult)
                 return;
             
-            copyUnpremultiplyingAlpha(*m_premultipliedImageResult, *m_unmultipliedImageResult, inputSize);
+            copyUnpremultiplyingAlpha(*m_premultipliedImageResult->data(), *m_unmultipliedImageResult->data(), inputSize);
         }
     }
-    copyImageBytes(*m_unmultipliedImageResult, destination, rect);
+    copyImageBytes(*m_unmultipliedImageResult->data(), destination, rect);
 }
 
 void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect)
 {
     ASSERT(hasResult());
 
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyPremultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyPremultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
 
     if (!m_premultipliedImageResult) {
         // We prefer a conversion from the image buffer.
         if (m_imageBufferResult) {
-            m_premultipliedImageResult = m_imageBufferResult->getPremultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
+            m_premultipliedImageResult = m_imageBufferResult->getImageData(AlphaPremultiplication::Premultiplied, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_premultipliedImageResult)
                 return;
         } else {
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            m_premultipliedImageResult = Uint8ClampedArray::tryCreateUninitialized((inputSize.area() * 4).unsafeGet());
+            m_premultipliedImageResult = ImageData::create(inputSize);
             if (!m_premultipliedImageResult)
                 return;
             
-            copyPremultiplyingAlpha(*m_unmultipliedImageResult, *m_premultipliedImageResult, inputSize);
+            copyPremultiplyingAlpha(*m_unmultipliedImageResult->data(), *m_premultipliedImageResult->data(), inputSize);
         }
     }
-    copyImageBytes(*m_premultipliedImageResult, destination, rect);
+    copyImageBytes(*m_premultipliedImageResult->data(), destination, rect);
 }
 
 ImageBuffer* FilterEffect::createImageBufferResult()
@@ -497,13 +497,10 @@ ImageBuffer* FilterEffect::createImageBufferResult()
 
     FloatSize clampedSize = ImageBuffer::clampedSize(m_absolutePaintRect.size());
     m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
-    if (!m_imageBufferResult)
-        return nullptr;
-
     return m_imageBufferResult.get();
 }
 
-Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
+ImageData* FilterEffect::createUnmultipliedImageResult()
 {
     LOG(Filters, "FilterEffect %s %p createUnmultipliedImageResult", filterName(), this);
 
@@ -515,11 +512,11 @@ Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    m_unmultipliedImageResult = Uint8ClampedArray::tryCreateUninitialized((resultSize.area() * 4).unsafeGet());
+    m_unmultipliedImageResult = ImageData::create(resultSize);
     return m_unmultipliedImageResult.get();
 }
 
-Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
+ImageData* FilterEffect::createPremultipliedImageResult()
 {
     LOG(Filters, "FilterEffect %s %p createPremultipliedImageResult", filterName(), this);
 
@@ -531,7 +528,7 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    m_premultipliedImageResult = Uint8ClampedArray::tryCreateUninitialized((resultSize.area() * 4).unsafeGet());
+    m_premultipliedImageResult = ImageData::create(resultSize);
     return m_premultipliedImageResult.get();
 }
 

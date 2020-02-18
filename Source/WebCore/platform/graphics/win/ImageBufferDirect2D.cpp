@@ -278,49 +278,28 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& des
     }
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
+RefPtr<ImageData> ImageBuffer::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
     if (context().isAcceleratedContext())
         flushContext();
 
-    IntRect srcRect = rect;
-    if (coordinateSystem == LogicalCoordinateSystem)
-        srcRect.scale(m_resolutionScale);
+    IntRect scaledSrcRect = srcRect;
+    scaledSrcRect.scale(m_resolutionScale);
 
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = srcRect.size();
-
-    return m_data.getData(AlphaPremultiplication::Unpremultiplied, srcRect, internalSize(), context().isAcceleratedContext(), 1);
+    return m_data.getData(outputFormat, scaledSrcRect, internalSize());
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
+void ImageBuffer::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
 {
     if (context().isAcceleratedContext())
         flushContext();
 
-    IntRect srcRect = rect;
-    if (coordinateSystem == LogicalCoordinateSystem)
-        srcRect.scale(m_resolutionScale);
+    IntRect scaledSrcRect = srcRect;
+    IntRect scaledDestPoint = destPoint;
+    scaledSrcRect.scale(m_resolutionScale);
+    scaledDestPoint.scale(m_resolutionScale);
 
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = srcRect.size();
-
-    return m_data.getData(AlphaPremultiplication::Premultiplied, srcRect, internalSize(), context().isAcceleratedContext(), 1);
-}
-
-void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultiplication bufferFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
-{
-    if (context().isAcceleratedContext())
-        flushContext();
-
-    IntRect scaledSourceRect = sourceRect;
-    IntSize scaledSourceSize = sourceSize;
-    if (coordinateSystem == LogicalCoordinateSystem) {
-        scaledSourceRect.scale(m_resolutionScale);
-        scaledSourceSize.scale(m_resolutionScale);
-    }
-
-    m_data.putData(source, bufferFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), 1);
+    m_data.putData(inputFormat, imageData, scaledSrcRect, scaledDestPoint, internalSize());
 }
 
 String ImageBuffer::toDataURL(const String&, Optional<double>, PreserveResolution) const

@@ -54,8 +54,8 @@ struct ImageBufferData {
     enum class BitmapBufferSync { InSync, BitmapOutOfSync, BufferOutOfSync };
     mutable BitmapBufferSync bitmapBufferSync { BitmapBufferSync::BufferOutOfSync };
 
-    RefPtr<Uint8ClampedArray> getData(AlphaPremultiplication, const IntRect&, const IntSize&, bool accelerateRendering, float resolutionScale) const;
-    void putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, float resolutionScale);
+    RefPtr<ImageData> getData(AlphaPremultiplication outputFormat, const IntRect&, const IntSize&) const;
+    void putData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&);
 
     COMPtr<ID2D1Bitmap> compatibleBitmap(ID2D1RenderTarget*);
 

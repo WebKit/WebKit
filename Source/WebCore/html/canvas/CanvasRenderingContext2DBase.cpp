@@ -2159,11 +2159,6 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(flo
 
 ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(float sx, float sy, float sw, float sh) const
 {
-    return getImageData(ImageBuffer::LogicalCoordinateSystem, sx, sy, sw, sh);
-}
-
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh) const
-{
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
@@ -2196,8 +2191,8 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(ImageB
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
-    auto byteArray = buffer->getUnmultipliedImageData(imageDataRect, nullptr, coordinateSystem);
-    if (!byteArray) {
+    auto imageData = buffer->getImageData(AlphaPremultiplication::Unpremultiplied, imageDataRect);
+    if (!imageData) {
         StringBuilder consoleMessage;
         consoleMessage.appendLiteral("Unable to get image data from canvas. Requested size was ");
         consoleMessage.appendNumber(imageDataRect.width());
@@ -2208,7 +2203,7 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(ImageB
         return Exception { InvalidStateError };
     }
 
-    return ImageData::create(imageDataRect.size(), byteArray.releaseNonNull());
+    return imageData;
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float dy)
@@ -2217,11 +2212,6 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
-{
-    putImageData(data, ImageBuffer::LogicalCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight);
-}
-
-void CanvasRenderingContext2DBase::putImageData(ImageData& data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
 {
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
@@ -2245,7 +2235,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, ImageBuffer::Co
     IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
     IntRect destRect = enclosingIntRect(clipRect);
     destRect.move(destOffset);
-    destRect.intersect(IntRect(IntPoint(), coordinateSystem == ImageBuffer::LogicalCoordinateSystem ? buffer->logicalSize() : buffer->internalSize()));
+    destRect.intersect(IntRect(IntPoint(), buffer->logicalSize()));
     if (destRect.isEmpty())
         return;
     IntRect sourceRect(destRect);
@@ -2253,7 +2243,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, ImageBuffer::Co
     sourceRect.intersect(IntRect(0, 0, data.width(), data.height()));
 
     if (!sourceRect.isEmpty())
-        buffer->putByteArray(*data.data(), AlphaPremultiplication::Unpremultiplied, IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+        buffer->putImageData(AlphaPremultiplication::Unpremultiplied, data, sourceRect, IntPoint(destOffset));
 
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }

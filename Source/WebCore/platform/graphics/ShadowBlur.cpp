@@ -34,6 +34,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "Timer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -884,12 +885,13 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
         return;
 
     IntRect blurRect(IntPoint(), templateSize);
-    auto layerData = layerImage.getUnmultipliedImageData(blurRect);
+    auto layerData = layerImage.getImageData(AlphaPremultiplication::Unpremultiplied, blurRect);
     if (!layerData)
         return;
 
-    blurLayerImage(layerData->data(), blurRect.size(), blurRect.width() * 4);
-    layerImage.putByteArray(*layerData, AlphaPremultiplication::Unpremultiplied, blurRect.size(), blurRect, { });
+    auto* blurPixelArray = layerData->data();
+    blurLayerImage(blurPixelArray->data(), blurRect.size(), blurRect.width() * 4);
+    layerImage.putImageData(AlphaPremultiplication::Unpremultiplied, *layerData, blurRect);
 }
 
 void ShadowBlur::blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize)

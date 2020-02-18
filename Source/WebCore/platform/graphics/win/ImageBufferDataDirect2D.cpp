@@ -255,14 +255,11 @@ void inPlaceChangePremultiplication(uint8_t* byteData, unsigned byteCount)
     }
 }
 
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication desiredFormat, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
+RefPtr<ImageData> ImageBufferData::getData(AlphaPremultiplication desiredFormat, const IntRect& rect, const IntSize& size) const
 {
-    auto numBytes = rect.area<RecordOverflow>() * 4;
-    if (numBytes.hasOverflowed())
-        return nullptr;
-
-    auto result = Uint8ClampedArray::tryCreateUninitialized(numBytes.unsafeGet());
-    if (!result)
+    auto result = ImageData::create(rect.size());
+    auto* pixelArray = result ? result->data() : nullptr;
+    if (!pixelArray)
         return nullptr;
 
     if (!bitmap)
@@ -354,21 +351,19 @@ bool ImageBufferData::readDataFromBitmapIfNeeded(AlphaPremultiplication desiredF
     return true;
 }
 
-void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, float resolutionScale)
+void ImageBufferData::putData(AlphaPremultiplication sourceFormat, const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
 
     Checked<int> originx = sourceRect.x();
     Checked<int> destx = (Checked<int>(destPoint.x()) + sourceRect.x());
-    destx *= resolutionScale;
     ASSERT(destx.unsafeGet() >= 0);
     ASSERT(destx.unsafeGet() < size.width());
     ASSERT(originx.unsafeGet() >= 0);
     ASSERT(originx.unsafeGet() <= sourceRect.maxX());
 
     Checked<int> endx = (Checked<int>(destPoint.x()) + sourceRect.maxX());
-    endx *= resolutionScale;
     ASSERT(endx.unsafeGet() <= size.width());
 
     Checked<int> width = sourceRect.width();
@@ -376,14 +371,12 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 
     Checked<int> originy = sourceRect.y();
     Checked<int> desty = (Checked<int>(destPoint.y()) + sourceRect.y());
-    desty *= resolutionScale;
     ASSERT(desty.unsafeGet() >= 0);
     ASSERT(desty.unsafeGet() < size.height());
     ASSERT(originy.unsafeGet() >= 0);
     ASSERT(originy.unsafeGet() <= sourceRect.maxY());
 
     Checked<int> endy = (Checked<int>(destPoint.y()) + sourceRect.maxY());
-    endy *= resolutionScale;
     ASSERT(endy.unsafeGet() <= size.height());
 
     Checked<int> height = sourceRect.height();
@@ -395,9 +388,9 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 #if ASSERT_ENABLED
     if (bitmap) {
         auto pixelSize = bitmap->GetPixelSize();
-        ASSERT(pixelSize.width >= sourceSize.width());
+        ASSERT(pixelSize.width >= imageData.size().width());
         ASSERT(pixelSize.width >= size.width());
-        ASSERT(pixelSize.height >= sourceSize.height());
+        ASSERT(pixelSize.height >= imageData.size().height());
         ASSERT(pixelSize.height >= size.height());
     }
 #endif
@@ -405,6 +398,7 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     if (!ensureBackingStore(size))
         return;
 
+    autoz* source = imageData.data();
     if (sourceSize == size) {
         memcpy(data.data(), source.data(), source.length());
         byteFormat = sourceFormat;

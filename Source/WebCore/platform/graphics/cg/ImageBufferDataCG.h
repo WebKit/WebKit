@@ -40,6 +40,7 @@ typedef uint32_t CGBitmapInfo;
 
 namespace WebCore {
 
+class ImageData;
 class IOSurface;
 
 struct ImageBufferData {
@@ -59,8 +60,8 @@ struct ImageBufferData {
 #endif
 
     Vector<uint8_t> toBGRAData(bool accelerateRendering, int width, int height) const;
-    RefPtr<Uint8ClampedArray> getData(AlphaPremultiplication, const IntRect&, const IntSize&, bool accelerateRendering) const;
-    void putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering);
+    RefPtr<ImageData> getData(AlphaPremultiplication outputFormat, const IntRect&, const IntSize&, bool accelerateRendering) const;
+    void putData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering);
 };
 
 } // namespace WebCore

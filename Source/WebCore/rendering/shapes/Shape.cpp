@@ -35,6 +35,7 @@
 #include "BoxShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "ImageData.h"
 #include "LengthFunctions.h"
 #include "PolygonShape.h"
 #include "RasterShape.h"
@@ -188,8 +189,9 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         if (image)
             graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
-        RefPtr<Uint8ClampedArray> pixelArray = imageBuffer->getUnmultipliedImageData(IntRect(IntPoint(), imageRect.size()));
-        RELEASE_ASSERT(pixelArray);
+        auto imageData = imageBuffer->getImageData(AlphaPremultiplication::Unpremultiplied, { IntPoint(), imageRect.size() });
+        RELEASE_ASSERT(imageData && imageData->data());
+        auto* pixelArray = imageData->data();
         unsigned pixelArrayLength = pixelArray->length();
         unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
         uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));

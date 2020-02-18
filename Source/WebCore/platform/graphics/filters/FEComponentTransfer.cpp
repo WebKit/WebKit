@@ -26,7 +26,7 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
@@ -108,7 +108,8 @@ void FEComponentTransfer::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    Uint8ClampedArray* pixelArray = createUnmultipliedImageResult();
+    auto* imageResult = createUnmultipliedImageResult();
+    auto* pixelArray = imageResult ? imageResult->data() : nullptr;
     if (!pixelArray)
         return;
 

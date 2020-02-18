@@ -25,7 +25,7 @@
 #include "FEConvolveMatrix.h"
 
 #include "Filter.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
@@ -371,12 +371,13 @@ void FEConvolveMatrix::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    Uint8ClampedArray* resultImage;
+    ImageData* resultImage;
     if (m_preserveAlpha)
         resultImage = createUnmultipliedImageResult();
     else
         resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
+    if (!dstPixelArray)
         return;
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
@@ -395,7 +396,7 @@ void FEConvolveMatrix::platformApplySoftware()
 
     PaintingData paintingData = {
         *srcPixelArray,
-        *resultImage,
+        *dstPixelArray,
         paintSize.width(),
         paintSize.height(),
         m_bias * 255,

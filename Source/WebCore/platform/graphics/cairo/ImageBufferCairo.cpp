@@ -35,9 +35,11 @@
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "Color.h"
+#include "ColorUtilities.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
+#include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
@@ -382,6 +384,41 @@ void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRec
         Cairo::drawPattern(*context.platformContext(), surface.get(), m_size, destRect, srcRect, patternTransform, phase, options);
 }
 
+void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
+{
+    if (srcColorSpace == dstColorSpace)
+        return;
+
+    // only sRGB <-> linearRGB are supported at the moment
+    if ((srcColorSpace != ColorSpace::LinearRGB && srcColorSpace != ColorSpace::SRGB)
+        || (dstColorSpace != ColorSpace::LinearRGB && dstColorSpace != ColorSpace::SRGB))
+        return;
+
+    if (dstColorSpace == ColorSpace::LinearRGB) {
+        static const std::array<uint8_t, 256> linearRgbLUT = [] {
+            std::array<uint8_t, 256> array;
+            for (unsigned i = 0; i < 256; i++) {
+                float color = i / 255.0f;
+                color = sRGBToLinearColorComponent(color);
+                array[i] = static_cast<uint8_t>(round(color * 255));
+            }
+            return array;
+        }();
+        platformTransformColorSpace(linearRgbLUT);
+    } else if (dstColorSpace == ColorSpace::SRGB) {
+        static const std::array<uint8_t, 256> deviceRgbLUT= [] {
+            std::array<uint8_t, 256> array;
+            for (unsigned i = 0; i < 256; i++) {
+                float color = i / 255.0f;
+                color = linearToSRGBColorComponent(color);
+                array[i] = static_cast<uint8_t>(round(color * 255));
+            }
+            return array;
+        }();
+        platformTransformColorSpace(deviceRgbLUT);
+    }
+}
+
 void ImageBuffer::platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable)
 {
     // FIXME: Enable color space conversions on accelerated canvases.
@@ -420,16 +457,10 @@ RefPtr<cairo_surface_t> copySurfaceToImageAndAdjustRect(cairo_surface_t* surface
 }
 
 template <AlphaPremultiplication premultiplied>
-RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logicalRect, const ImageBufferData& data, const IntSize& size, const IntSize& logicalSize, float resolutionScale)
+RefPtr<ImageData> getData(const IntRect& rect, const IntRect& logicalRect, const ImageBufferData& data, const IntSize& size, const IntSize& logicalSize, float resolutionScale)
 {
-    // The area can overflow if the rect is too big.
-    Checked<unsigned, RecordOverflow> area = 4;
-    area *= rect.width();
-    area *= rect.height();
-    if (area.hasOverflowed())
-        return nullptr;
-
-    auto result = Uint8ClampedArray::tryCreateUninitialized(area.unsafeGet());
+    auto result = ImageData::create(rect.size());
+    auto* pixelArray = result ? result->data() : nullptr;
     if (!result)
         return nullptr;
 
@@ -444,7 +475,7 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
         return nullptr;
 
     if (rect.x() < 0 || rect.y() < 0 || endx > size.width() || endy > size.height())
-        result->zeroFill();
+        pixelArray->zeroFill();
 
     int originx = rect.x();
     int destx = 0;
@@ -486,7 +517,7 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
     }
 
     unsigned char* dataSrc = cairo_image_surface_get_data(imageSurface.get());
-    unsigned char* dataDst = result->data();
+    unsigned char* dataDst = pixelArray->data();
     int stride = cairo_image_surface_get_stride(imageSurface.get());
     unsigned destBytesPerRow = 4 * rect.width();
 
@@ -523,51 +554,28 @@ RefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const IntRect& logic
     return result;
 }
 
-template<typename Unit>
-inline Unit logicalUnit(const Unit& value, ImageBuffer::CoordinateSystem coordinateSystemOfValue, float resolutionScale)
+RefPtr<ImageData> ImageBuffer::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
-    if (coordinateSystemOfValue == ImageBuffer::LogicalCoordinateSystem || resolutionScale == 1.0)
-        return value;
-    Unit result(value);
-    result.scale(1.0 / resolutionScale);
-    return result;
+    IntRect logicalRect = srcRect;
+    IntRect backingStoreRect = srcRect;
+    backingStoreRect.scale(m_resolutionScale);
+    
+    if (outputFormat == AlphaPremultiplication::Unpremultiplied)
+        return getData<AlphaPremultiplication::Unpremultiplied>(backingStoreRect, logicalRect, m_data, m_size, m_logicalSize, m_resolutionScale);
+    return getData<AlphaPremultiplication::Premultiplied>(backingStoreRect, logicalRect, m_data, m_size, m_logicalSize, m_resolutionScale);
 }
 
-template<typename Unit>
-inline Unit backingStoreUnit(const Unit& value, ImageBuffer::CoordinateSystem coordinateSystemOfValue, float resolutionScale)
+void ImageBuffer::putImageData(AlphaPremultiplication sourceFormat, const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (coordinateSystemOfValue == ImageBuffer::BackingStoreCoordinateSystem || resolutionScale == 1.0)
-        return value;
-    Unit result(value);
-    result.scale(resolutionScale);
-    return result;
-}
+    IntRect logicalSourceRect = sourceRect;
+    IntPoint logicalDestPoint = destPoint;
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
-{
-    IntRect logicalRect = logicalUnit(rect, coordinateSystem, m_resolutionScale);
-    IntRect backingStoreRect = backingStoreUnit(rect, coordinateSystem, m_resolutionScale);
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = backingStoreRect.size();
-    return getImageData<AlphaPremultiplication::Unpremultiplied>(backingStoreRect, logicalRect, m_data, m_size, m_logicalSize, m_resolutionScale);
-}
+    IntRect scaledSourceRect = sourceRect;
+    IntSize scaledSourceSize = imageData.size();
+    IntPoint scaledDestPoint = destPoint;
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
-{
-    IntRect logicalRect = logicalUnit(rect, coordinateSystem, m_resolutionScale);
-    IntRect backingStoreRect = backingStoreUnit(rect, coordinateSystem, m_resolutionScale);
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = backingStoreRect.size();
-    return getImageData<AlphaPremultiplication::Premultiplied>(backingStoreRect, logicalRect, m_data, m_size, m_logicalSize, m_resolutionScale);
-}
-
-void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
-{
-    IntRect scaledSourceRect = backingStoreUnit(sourceRect, coordinateSystem, m_resolutionScale);
-    IntSize scaledSourceSize = backingStoreUnit(sourceSize, coordinateSystem, m_resolutionScale);
-    IntPoint scaledDestPoint = backingStoreUnit(destPoint, coordinateSystem, m_resolutionScale);
-    IntRect logicalSourceRect = logicalUnit(sourceRect, coordinateSystem, m_resolutionScale);
-    IntPoint logicalDestPoint = logicalUnit(destPoint, coordinateSystem, m_resolutionScale);
+    scaledSourceRect.scale(m_resolutionScale);
+    scaledDestPoint.scale(m_resolutionScale);
 
     ASSERT(scaledSourceRect.width() > 0);
     ASSERT(scaledSourceRect.height() > 0);
@@ -614,7 +622,7 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
     unsigned srcBytesPerRow = 4 * scaledSourceSize.width();
     int stride = cairo_image_surface_get_stride(imageSurface.get());
 
-    const uint8_t* srcRows = source.data() + originy * srcBytesPerRow + originx * 4;
+    const uint8_t* srcRows = imageData.data()->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
         unsigned* row = reinterpret_cast_ptr<unsigned*>(pixelData + stride * (y + desty));
         for (int x = 0; x < numColumns; x++) {

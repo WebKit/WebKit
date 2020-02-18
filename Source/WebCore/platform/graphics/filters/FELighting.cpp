@@ -30,6 +30,7 @@
 
 #include "ColorUtilities.h"
 #include "FELightingNEON.h"
+#include "ImageData.h"
 #include <wtf/ParallelJobs.h>
 
 namespace WebCore {
@@ -473,7 +474,8 @@ void FELighting::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    Uint8ClampedArray* resutPixelArray = createPremultipliedImageResult();
+    auto* resultImage = createPremultipliedImageResult();
+    auto* resutPixelArray = resultImage ? resultImage->data() : nullptr;
     if (!resutPixelArray)
         return;
 

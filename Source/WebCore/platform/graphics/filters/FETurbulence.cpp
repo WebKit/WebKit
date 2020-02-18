@@ -27,7 +27,7 @@
 #include "FETurbulence.h"
 
 #include "Filter.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
 #include <wtf/text/TextStream.h>
@@ -395,7 +395,8 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 
 void FETurbulence::platformApplySoftware()
 {
-    Uint8ClampedArray* pixelArray = createUnmultipliedImageResult();
+    auto* resultImage = createUnmultipliedImageResult();
+    auto* pixelArray = resultImage ? resultImage->data() : nullptr;
     if (!pixelArray)
         return;
 

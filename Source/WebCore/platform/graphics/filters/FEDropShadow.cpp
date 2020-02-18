@@ -23,8 +23,8 @@
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include "ShadowBlur.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -99,14 +99,15 @@ void FEDropShadow::platformApplySoftware()
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor);
 
     // TODO: Direct pixel access to ImageBuffer would avoid copying the ImageData.
-    IntRect shadowArea(IntPoint(), resultImage->internalSize());
-    auto srcPixelArray = resultImage->getPremultipliedImageData(shadowArea, nullptr, ImageBuffer::BackingStoreCoordinateSystem);
-    if (!srcPixelArray)
+    IntRect shadowArea(IntPoint(), resultImage->logicalSize());
+    auto imageData = resultImage->getImageData(AlphaPremultiplication::Premultiplied, shadowArea);
+    if (!imageData)
         return;
 
-    contextShadow.blurLayerImage(srcPixelArray->data(), shadowArea.size(), 4 * shadowArea.size().width());
-
-    resultImage->putByteArray(*srcPixelArray, AlphaPremultiplication::Premultiplied, shadowArea.size(), shadowArea, IntPoint(), ImageBuffer::BackingStoreCoordinateSystem);
+    auto* srcPixelArray = imageData->data();
+    contextShadow.blurLayerImage(srcPixelArray->data(), imageData->size(), 4 * imageData->size().width());
+    
+    resultImage->putImageData(AlphaPremultiplication::Premultiplied, *imageData, shadowArea);
 
     resultContext.setCompositeOperation(CompositeOperator::SourceIn);
     resultContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor);

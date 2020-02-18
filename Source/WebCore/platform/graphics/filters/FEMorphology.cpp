@@ -27,7 +27,7 @@
 
 #include "ColorUtilities.h"
 #include "Filter.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
@@ -234,7 +234,8 @@ void FEMorphology::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
+    auto* resultImage = createPremultipliedImageResult();
+    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
     if (!dstPixelArray)
         return;
 

@@ -29,6 +29,7 @@
 #include "FEGaussianBlurNEON.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include <wtf/text/TextStream.h>
 
 #if USE(ACCELERATE)
@@ -522,14 +523,15 @@ void FEGaussianBlur::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    Uint8ClampedArray* resultPixelArray = createPremultipliedImageResult();
-    if (!resultPixelArray)
+    auto* resultImage = createPremultipliedImageResult();
+    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
+    if (!dstPixelArray)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedResult(*resultPixelArray, effectDrawingRect);
+    in->copyPremultipliedResult(*dstPixelArray, effectDrawingRect);
 
     if (!m_stdX && !m_stdY)
         return;
@@ -543,7 +545,7 @@ void FEGaussianBlur::platformApplySoftware()
     if (!tmpImageData)
         return;
 
-    platformApply(*resultPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
+    platformApply(*dstPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
 }
 
 IntOutsets FEGaussianBlur::outsets() const

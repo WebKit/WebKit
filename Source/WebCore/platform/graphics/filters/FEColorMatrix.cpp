@@ -25,7 +25,7 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include "ImageData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -286,13 +286,15 @@ void FEColorMatrix::platformApplySoftware()
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
-    IntSize pixelArrayDimensions;
-    auto pixelArray = resultImage->getUnmultipliedImageData(imageRect, &pixelArrayDimensions);
-    if (!pixelArray)
+    auto imageData = resultImage->getImageData(AlphaPremultiplication::Unpremultiplied, imageRect);
+    if (!imageData)
         return;
 
-    Vector<float> values = normalizedFloats(m_values);
+    auto* pixelArray = imageData->data();
+    IntSize pixelArrayDimensions = imageData->size();
 
+    Vector<float> values = normalizedFloats(m_values);
+    
     switch (m_type) {
     case FECOLORMATRIX_TYPE_UNKNOWN:
         break;
@@ -311,7 +313,7 @@ void FEColorMatrix::platformApplySoftware()
         break;
     }
 
-    resultImage->putByteArray(*pixelArray, AlphaPremultiplication::Unpremultiplied, imageRect.size(), imageRect, IntPoint());
+    resultImage->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, imageRect);
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

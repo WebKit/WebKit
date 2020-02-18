@@ -111,7 +111,8 @@ void FEBlend::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
-    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
+    auto* imageResult = createPremultipliedImageResult();
+    auto* dstPixelArray = imageResult ? imageResult->data() : nullptr;
     if (!dstPixelArray)
         return;
 

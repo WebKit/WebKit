@@ -377,49 +377,28 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& des
     }
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
+RefPtr<ImageData> ImageBuffer::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
     if (context().isAcceleratedContext())
         flushContext();
 
-    IntRect srcRect = rect;
-    if (coordinateSystem == LogicalCoordinateSystem)
-        srcRect.scale(m_resolutionScale);
+    IntRect scaledSrcRect = srcRect;
+    scaledSrcRect.scale(m_resolutionScale);
 
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = srcRect.size();
-
-    return m_data.getData(AlphaPremultiplication::Unpremultiplied, srcRect, internalSize(), context().isAcceleratedContext());
+    return m_data.getData(outputFormat, scaledSrcRect, internalSize(), context().isAcceleratedContext());
 }
 
-RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
+void ImageBuffer::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
 {
     if (context().isAcceleratedContext())
         flushContext();
 
-    IntRect srcRect = rect;
-    if (coordinateSystem == LogicalCoordinateSystem)
-        srcRect.scale(m_resolutionScale);
+    IntRect scaledSrcRect = srcRect;
+    IntPoint scaledDestPoint = destPoint;
+    scaledSrcRect.scale(m_resolutionScale);
+    scaledDestPoint.scale(m_resolutionScale);
 
-    if (pixelArrayDimensions)
-        *pixelArrayDimensions = srcRect.size();
-
-    return m_data.getData(AlphaPremultiplication::Premultiplied, srcRect, internalSize(), context().isAcceleratedContext());
-}
-
-void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
-{
-    if (context().isAcceleratedContext())
-        flushContext();
-
-    IntRect scaledSourceRect = sourceRect;
-    IntSize scaledSourceSize = sourceSize;
-    if (coordinateSystem == LogicalCoordinateSystem) {
-        scaledSourceRect.scale(m_resolutionScale);
-        scaledSourceSize.scale(m_resolutionScale);
-    }
-
-    m_data.putData(source, sourceFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext());
+    m_data.putData(inputFormat, imageData, scaledSrcRect, scaledDestPoint, internalSize(), context().isAcceleratedContext());
     
     // Force recreating the IOSurface cached image if it is requested through CGIOSurfaceContextCreateImage().
     // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
@@ -452,17 +431,19 @@ RetainPtr<CFDataRef> ImageBuffer::toCFData(const String& mimeType, Optional<doub
     ASSERT(uti);
 
     RetainPtr<CGImageRef> image;
-    RefPtr<Uint8ClampedArray> premultipliedData;
+    RefPtr<Uint8ClampedArray> protectedPixelArray;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        premultipliedData = getPremultipliedImageData(IntRect(IntPoint(), logicalSize()));
-        if (!premultipliedData)
+        auto imageData = getImageData(AlphaPremultiplication::Premultiplied, { IntPoint(), logicalSize() });
+        if (!imageData)
             return nullptr;
 
         size_t dataSize = 4 * logicalSize().width() * logicalSize().height();
-        verifyImageBufferIsBigEnough(premultipliedData->data(), dataSize);
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, premultipliedData->data(), dataSize, nullptr));
+        protectedPixelArray = makeRefPtr(imageData->data());
+        verifyImageBufferIsBigEnough(protectedPixelArray->data(), dataSize);
+
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, protectedPixelArray->data(), dataSize, nullptr));
         if (!dataProvider)
             return nullptr;
 

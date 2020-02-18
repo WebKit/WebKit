@@ -29,6 +29,7 @@
 #if USE(CG)
 
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include "IntRect.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <JavaScriptCore/JSCInlines.h>
@@ -125,23 +126,17 @@ Vector<uint8_t> ImageBufferData::toBGRAData(bool accelerateRendering, int width,
     return result;
 }
 
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication outputFormat, const IntRect& rect, const IntSize& size, bool accelerateRendering) const
+RefPtr<ImageData> ImageBufferData::getData(AlphaPremultiplication outputFormat, const IntRect& rect, const IntSize& size, bool accelerateRendering) const
 {
-    Checked<unsigned, RecordOverflow> area = 4;
-    area *= rect.width();
-    area *= rect.height();
-    if (area.hasOverflowed())
-        return nullptr;
-
-    auto result = Uint8ClampedArray::tryCreateUninitialized(area.unsafeGet());
-    uint8_t* resultData = result ? result->data() : nullptr;
-    if (!resultData)
+    auto result = ImageData::create(rect.size());
+    auto* pixelArray = result ? result->data() : nullptr;
+    if (!pixelArray)
         return nullptr;
 
     Checked<int> endx = rect.maxX();
     Checked<int> endy = rect.maxY();
     if (rect.x() < 0 || rect.y() < 0 || endx.unsafeGet() > size.width() || endy.unsafeGet() > size.height())
-        result->zeroFill();
+        pixelArray->zeroFill();
     
     int originx = rect.x();
     int destx = 0;
@@ -173,7 +168,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         return result;
     
     unsigned destBytesPerRow = 4 * rect.width();
-    uint8_t* destRows = resultData + desty * destBytesPerRow + destx * 4;
+    uint8_t* destRows = pixelArray->data() + desty * destBytesPerRow + destx * 4;
     
     unsigned srcBytesPerRow;
     uint8_t* srcRows;
@@ -334,7 +329,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
     return result;
 }
 
-void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering)
+void ImageBufferData::putData(AlphaPremultiplication sourceFormat, const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -368,8 +363,8 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     if (width <= 0 || height <= 0)
         return;
     
-    unsigned srcBytesPerRow = 4 * sourceSize.width();
-    const uint8_t* srcRows = source.data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
+    unsigned srcBytesPerRow = 4 * imageData.size().width();
+    const uint8_t* srcRows = imageData.data()->data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
     unsigned destBytesPerRow;
     uint8_t* destRows;
     

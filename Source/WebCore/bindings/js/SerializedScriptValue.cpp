@@ -943,13 +943,13 @@ private:
         }
 
         const IntSize& logicalSize = buffer->logicalSize();
-        auto imageData = buffer->getPremultipliedImageData(IntRect(0, 0, logicalSize.width(), logicalSize.height()));
+        auto imageData = buffer->getImageData(AlphaPremultiplication::Premultiplied, { IntPoint::zero(), logicalSize });
         if (!imageData) {
             code = SerializationReturnCode::ValidationError;
             return;
         }
 
-        RefPtr<ArrayBuffer> arrayBuffer = imageData->possiblySharedBuffer();
+        RefPtr<ArrayBuffer> arrayBuffer = imageData->data()->possiblySharedBuffer();
         if (!arrayBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -2865,19 +2865,29 @@ private:
             return JSValue();
         }
 
-        auto imageData = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, arrayBuffer->byteLength());
+        auto array = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, arrayBuffer->byteLength());
+        if (!array) {
+            fail();
+            return JSValue();
+        }
+
+        IntSize logicalSize = IntSize(logicalWidth, logicalHeight);
+        IntSize imageDataSize = logicalSize;
+        imageDataSize.scale(resolutionScale);
+
+        auto imageData = ImageData::create(imageDataSize, array.releaseNonNull());
         if (!imageData) {
             fail();
             return JSValue();
         }
 
-        auto buffer = ImageBuffer::create(FloatSize(logicalWidth, logicalHeight), RenderingMode::Unaccelerated, resolutionScale);
+        auto buffer = ImageBuffer::create(FloatSize(logicalSize), RenderingMode::Unaccelerated, resolutionScale);
         if (!buffer) {
             fail();
             return JSValue();
         }
 
-        buffer->putByteArray(*imageData, AlphaPremultiplication::Premultiplied, IntSize(logicalWidth, logicalHeight), IntRect(0, 0, logicalWidth, logicalHeight), IntPoint());
+        buffer->putImageData(AlphaPremultiplication::Premultiplied, *imageData, { IntPoint::zero(), logicalSize });
 
         auto bitmap = ImageBitmap::create({ WTFMove(buffer), static_cast<bool>(originClean) });
         return getJSValue(bitmap);

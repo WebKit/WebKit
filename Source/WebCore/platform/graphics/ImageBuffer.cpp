@@ -28,8 +28,8 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "ColorUtilities.h"
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include "IntRect.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -113,51 +113,14 @@ Vector<uint8_t> ImageBuffer::toBGRAData() const
 }
 #endif
 
-#if !(USE(CG) || USE(DIRECT2D))
-void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
+void ImageBuffer::convertToLuminanceMask()
 {
-    if (srcColorSpace == dstColorSpace)
-        return;
-
-    // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != ColorSpace::LinearRGB && srcColorSpace != ColorSpace::SRGB)
-        || (dstColorSpace != ColorSpace::LinearRGB && dstColorSpace != ColorSpace::SRGB))
-        return;
-
-    if (dstColorSpace == ColorSpace::LinearRGB) {
-        static const std::array<uint8_t, 256> linearRgbLUT = [] {
-            std::array<uint8_t, 256> array;
-            for (unsigned i = 0; i < 256; i++) {
-                float color = i / 255.0f;
-                color = sRGBToLinearColorComponent(color);
-                array[i] = static_cast<uint8_t>(round(color * 255));
-            }
-            return array;
-        }();
-        platformTransformColorSpace(linearRgbLUT);
-    } else if (dstColorSpace == ColorSpace::SRGB) {
-        static const std::array<uint8_t, 256> deviceRgbLUT= [] {
-            std::array<uint8_t, 256> array;
-            for (unsigned i = 0; i < 256; i++) {
-                float color = i / 255.0f;
-                color = linearToSRGBColorComponent(color);
-                array[i] = static_cast<uint8_t>(round(color * 255));
-            }
-            return array;
-        }();
-        platformTransformColorSpace(deviceRgbLUT);
-    }
-}
-
-#endif // USE(CG)
-
-inline void ImageBuffer::genericConvertToLuminanceMask()
-{
-    IntRect luminanceRect(IntPoint(), internalSize());
-    auto srcPixelArray = getUnmultipliedImageData(luminanceRect);
-    if (!srcPixelArray)
+    IntRect logicalRect = { IntPoint(), logicalSize() };
+    auto imageData = getImageData(AlphaPremultiplication::Unpremultiplied, logicalRect);
+    if (!imageData)
         return;
     
+    auto* srcPixelArray = imageData->data();
     unsigned pixelArrayLength = srcPixelArray->length();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         uint8_t a = srcPixelArray->item(pixelOffset + 3);
@@ -170,13 +133,7 @@ inline void ImageBuffer::genericConvertToLuminanceMask()
         double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
         srcPixelArray->set(pixelOffset + 3, luma);
     }
-    putByteArray(*srcPixelArray, AlphaPremultiplication::Unpremultiplied, luminanceRect.size(), luminanceRect, IntPoint());
-}
-
-void ImageBuffer::convertToLuminanceMask()
-{
-    // Add platform specific functions with platformConvertToLuminanceMask here later.
-    genericConvertToLuminanceMask();
+    putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, logicalRect);
 }
 
 #if !USE(CAIRO)
