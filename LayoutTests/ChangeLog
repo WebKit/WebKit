@@ -1,5 +1,54 @@
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256513. rdar://problem/59446986
+
+    REGRESSION (r255037): Zooming in and out on Quip in macOS Safari can cause the content to be offset to the side
+    https://bugs.webkit.org/show_bug.cgi?id=207674
+    rdar://problem/59404866
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Remove the early return in ScrollingStateScrollingNode::setRequestedScrollData(); comparing
+    with the last m_requestedScrollData is wrong, because requested scroll positions are not "state"
+    in the scrolling tree, they are requests to scroll. Ideally, they would be represented in some
+    different way in the scrolling tree.
+    
+    Test: fast/scrolling/programmatic-scroll-to-zero-zero.html
+    
+    * page/scrolling/ScrollingStateScrollingNode.cpp:
+    (WebCore::ScrollingStateScrollingNode::setRequestedScrollData):
+    
+    LayoutTests:
+    
+    Test that does a programmatic scroll to 0,0, does a user scroll, then a second programmatic scroll to 0,0,
+    which is expected to work.
+    
+    * fast/scrolling/programmatic-scroll-to-zero-zero-expected.html: Added.
+    * fast/scrolling/programmatic-scroll-to-zero-zero.html: Added.
+    * platform/ios/TestExpectations: Skip the new test on iOS (it relies on eventSender) and sort the grouping.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256513 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r255037): Zooming in and out on Quip in macOS Safari can cause the content to be offset to the side
+            https://bugs.webkit.org/show_bug.cgi?id=207674
+            rdar://problem/59404866
+
+            Reviewed by Antti Koivisto.
+
+            Test that does a programmatic scroll to 0,0, does a user scroll, then a second programmatic scroll to 0,0,
+            which is expected to work.
+
+            * fast/scrolling/programmatic-scroll-to-zero-zero-expected.html: Added.
+            * fast/scrolling/programmatic-scroll-to-zero-zero.html: Added.
+            * platform/ios/TestExpectations: Skip the new test on iOS (it relies on eventSender) and sort the grouping.
+
+2020-02-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255037. rdar://problem/59446986
 
     Fixed elements no longer stay fixed with elastic overscroll
