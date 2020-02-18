@@ -1,3 +1,19 @@
+2020-02-18  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (256034): http/tests/media/media-stream/get-display-media-prompt.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=207893
+        <rdar://problem/59551315>
+
+        Reviewed by Eric Carlson.
+
+        After 256034, we are allowing { audio: true } for getDisplayMedia.
+        Update the test accordingly, and make it easier to debug by resetting the number of getDisplayMedia prompt for each test
+        so that they are more indepedent.
+
+        * http/tests/media/media-stream/get-display-media-prompt-expected.txt:
+        * http/tests/media/media-stream/get-display-media-prompt.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Quirk] Add additional escape reason to cover the case when body needs access to both the body and the ICB geometry
