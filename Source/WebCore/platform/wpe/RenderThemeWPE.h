@@ -56,6 +56,11 @@ private:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+
+    Seconds animationRepeatIntervalForProgressBar(RenderProgress&) const override;
+    Seconds animationDurationForProgressBar(RenderProgress&) const override;
+    IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
+    bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 };
 
 } // namespace WebCore

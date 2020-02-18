@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "RenderProgress.h"
 #include "RenderStyle.h"
 #include "ThemeWPE.h"
 #include "UserAgentScripts.h"
@@ -51,6 +52,12 @@ static const unsigned menuListButtonArrowSize = 16;
 static const int menuListButtonFocusOffset = -3;
 static const unsigned menuListButtonPadding = 5;
 static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeWPE.
+static const unsigned progressActivityBlocks = 5;
+static const unsigned progressAnimationFrameCount = 75;
+static const Seconds progressAnimationFrameRate = 33_ms; // 30fps.
+static const unsigned progressBarSize = 6;
+static const Color progressBarBorderColor = makeRGB(205, 199, 194);
+static const Color progressBarBackgroundColor = makeRGB(225, 222, 219);
 
 RenderTheme& RenderTheme::singleton()
 {
@@ -201,5 +208,78 @@ bool RenderThemeWPE::paintMenuListButtonDecorations(const RenderBox& renderObjec
 {
     return paintMenuList(renderObject, paintInfo, rect);
 }
+
+Seconds RenderThemeWPE::animationRepeatIntervalForProgressBar(RenderProgress&) const
+{
+    return progressAnimationFrameRate;
+}
+
+Seconds RenderThemeWPE::animationDurationForProgressBar(RenderProgress&) const
+{
+    return progressAnimationFrameRate * progressAnimationFrameCount;
+}
+
+IntRect RenderThemeWPE::progressBarRectForBounds(const RenderObject&, const IntRect& bounds) const
+{
+    return { bounds.x(), bounds.y(), bounds.width(), progressBarSize };
+}
+
+bool RenderThemeWPE::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!renderObject.isProgress())
+        return true;
+
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    FloatRect fieldRect = rect;
+    FloatSize corner(3, 3);
+    Path path;
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-1);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(progressBarBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setFillColor(progressBarBackgroundColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    fieldRect = rect;
+    const auto& renderProgress = downcast<RenderProgress>(renderObject);
+    if (renderProgress.isDeterminate()) {
+        auto progressWidth = fieldRect.width() * renderProgress.position();
+        if (renderObject.style().direction() == TextDirection::RTL)
+            fieldRect.move(fieldRect.width() - progressWidth, 0);
+        fieldRect.setWidth(progressWidth);
+    } else {
+        double animationProgress = renderProgress.animationProgress();
+
+        // Never let the progress rect shrink smaller than 2 pixels.
+        fieldRect.setWidth(std::max<float>(2, fieldRect.width() / progressActivityBlocks));
+        auto movableWidth = rect.width() - fieldRect.width();
+
+        // We want the first 0.5 units of the animation progress to represent the
+        // forward motion and the second 0.5 units to represent the backward motion,
+        // thus we multiply by two here to get the full sweep of the progress bar with
+        // each direction.
+        if (animationProgress < 0.5)
+            fieldRect.move(animationProgress * 2 * movableWidth, 0);
+        else
+            fieldRect.move((1.0 - animationProgress) * 2 * movableWidth, 0);
+    }
+
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setFillColor(activeSelectionBackgroundColor({ }));
+    graphicsContext.fillPath(path);
+
+    return false;
+}
+
 
 } // namespace WebCore
