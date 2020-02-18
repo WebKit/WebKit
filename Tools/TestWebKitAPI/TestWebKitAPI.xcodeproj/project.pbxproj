@@ -855,6 +855,7 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
+		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20F88A62295B96700D610FA /* CoreText.framework */; };
 		C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = C22FA32A228F8708009D7988 /* TextWidth.mm */; };
 		C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C22FA32C228F877A009D7988 /* TextWidth.html */; };
@@ -2365,6 +2366,7 @@
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
+		C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BacklightLevelNotification.mm; sourceTree = "<group>"; };
 		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
 		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		C22FA32A228F8708009D7988 /* TextWidth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextWidth.mm; sourceTree = "<group>"; };
@@ -2804,6 +2806,7 @@
 		0F139E741A423A4600F590F5 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
 			);
 			name = cocoa;
@@ -4561,6 +4564,7 @@
 				0711DF52226A95FC003DD2F7 /* AVFoundationSoftLinkTest.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
+				C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */,
 				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,
 				7A89BB67233164320042CB1E /* BundleFormDelegate.mm in Sources */,
 				A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */,
