@@ -498,13 +498,4 @@ TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, ScrollType scrollType)
-{
-    switch (scrollType) {
-    case ScrollType::User: ts << "user"; break;
-    case ScrollType::Programmatic: ts << "programmatic"; break;
-    }
-    return ts;
-}
-
 } // namespace WebCore
