@@ -31,6 +31,7 @@
 #if HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEBlend.h"
+#include "ImageData.h"
 #include <arm_neon.h>
 
 namespace WebCore {
