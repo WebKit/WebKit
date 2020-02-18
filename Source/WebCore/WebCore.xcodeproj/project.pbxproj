@@ -5736,6 +5736,7 @@
 		0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointInit.h; sourceTree = "<group>"; };
 		0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPointReadOnly.cpp; sourceTree = "<group>"; };
 		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
+		0F4CDEAA23D91A8A00251B02 /* ScrollTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollTypes.cpp; sourceTree = "<group>"; };
 		0F53FB81213B1BB800C40D34 /* CSSFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFilter.cpp; sourceTree = "<group>"; };
 		0F53FB83213B1BB800C40D34 /* CSSFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFilter.h; sourceTree = "<group>"; };
 		0F53FB89213B768400C40D34 /* RenderLayerFilters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilters.h; sourceTree = "<group>"; };
@@ -26017,6 +26018,7 @@
 				BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */,
 				BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */,
 				BC1402890E83680800319717 /* ScrollbarThemeComposite.h */,
+				0F4CDEAA23D91A8A00251B02 /* ScrollTypes.cpp */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,

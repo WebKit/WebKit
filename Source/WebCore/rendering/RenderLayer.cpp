@@ -2608,7 +2608,7 @@ void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollType sc
     bool handled = false;
 #if ENABLE(ASYNC_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
-        handled = scrollingCoordinator->requestScrollPositionUpdate(*this, scrollPositionFromOffset(clampedScrollOffset));
+        handled = scrollingCoordinator->requestScrollPositionUpdate(*this, scrollPositionFromOffset(clampedScrollOffset), scrollType, clamping);
 #endif
 
     if (!handled)

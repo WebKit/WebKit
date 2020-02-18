@@ -1,28 +1,169 @@
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r255384. rdar://problem/59447276
+        Cherry-pick r255037. rdar://problem/59446986
 
-    REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
-    https://bugs.webkit.org/show_bug.cgi?id=206965
+    Fixed elements no longer stay fixed with elastic overscroll
+    https://bugs.webkit.org/show_bug.cgi?id=206227
+    rdar://problem/58707084
     
-    Unreviewed test gardening.
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
     
-    Patch by Jacob Uphoff <jacob_uphoff@apple.com> on 2020-01-29
+    Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+    their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+    some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+    in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+    layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
     
-    * platform/ios-wk2/TestExpectations:
-    * platform/mac/TestExpectations:
+    The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+    didn't work for main frame scrolling because of scroll position clamping in various places,
+    so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255384 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+    which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
+    
+    Internals::unconstrainedScrollTo() needs one weird hack to trigger a layout (and thus a scrolling tree commit),
+    because the layout is normally triggered by a layout viewport change, but when rubber-banding we clamp the layoutViewport
+    used for layout, so those layouts are never triggered.
+    
+    Tests: tiled-drawing/scrolling/fixed/fixed-during-rubberband.html
+           tiled-drawing/scrolling/sticky/sticky-during-rubberband.html
+    
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * dom/Element.cpp:
+    (WebCore::Element::scrollTo):
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::scrollTo const):
+    * page/FrameView.cpp:
+    (WebCore::FrameView::setScrollPosition):
+    (WebCore::FrameView::requestScrollPositionUpdate):
+    * page/FrameView.h:
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+    * page/scrolling/AsyncScrollingCoordinator.h:
+    * page/scrolling/ScrollingCoordinator.cpp:
+    * page/scrolling/ScrollingCoordinator.h:
+    (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+    * page/scrolling/ScrollingStateScrollingNode.cpp:
+    (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+    (WebCore::ScrollingStateScrollingNode::setRequestedScrollData):
+    (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+    (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition): Deleted.
+    * page/scrolling/ScrollingStateScrollingNode.h:
+    (WebCore::RequestedScrollData::operator== const):
+    (WebCore::ScrollingStateScrollingNode::requestedScrollData const):
+    (WebCore::ScrollingStateScrollingNode::requestedScrollPosition const): Deleted.
+    (WebCore::ScrollingStateScrollingNode::requestedScrollPositionRepresentsProgrammaticScroll const): Deleted.
+    * page/scrolling/ScrollingTree.h:
+    (WebCore::ScrollingTree::scrollingTreeNodeRequestsScroll):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportRespectingRubberBanding const):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::commitStateAfterChildren):
+    (WebCore::ScrollingTreeScrollingNode::adjustedScrollPosition const):
+    (WebCore::ScrollingTreeScrollingNode::scrollBy):
+    (WebCore::ScrollingTreeScrollingNode::scrollTo):
+    (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+    * page/scrolling/ScrollingTreeScrollingNode.h:
+    * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+    (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+    * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+    (WebCore::ScrollingTreeStickyNode::computeLayerPosition const):
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition const):
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren):
+    (WebCore::ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition const):
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+    (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints):
+    * platform/ScrollTypes.cpp: Added.
+    (WebCore::operator<<):
+    * platform/ScrollTypes.h:
+    * platform/ScrollView.cpp:
+    (WebCore::ScrollView::setContentsScrollPosition):
+    (WebCore::ScrollView::setScrollPosition):
+    * platform/ScrollView.h:
+    * platform/ScrollableArea.cpp:
+    (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+    * platform/ScrollableArea.h:
+    (WebCore::ScrollableArea::requestScrollPositionUpdate):
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::scrollToOffset):
+    * testing/Internals.cpp:
+    (WebCore::Internals::unconstrainedScrollTo):
+    
+    Source/WebKit:
+    
+    Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+    their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+    some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+    in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+    layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
+    
+    The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+    didn't work for main frame scrolling because of scroll position clamping in various places,
+    so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
+    
+    "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+    which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
+    
+    * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+    (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+    (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+    (ArgumentCoder<RequestedScrollData>::encode):
+    (ArgumentCoder<RequestedScrollData>::decode):
+    (WebKit::dump):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+    (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+    * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+    (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+    * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+    (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+    (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+    
+    LayoutTests:
+    
+    * tiled-drawing/scrolling/fixed/fixed-during-rubberband-expected.html: Added.
+    * tiled-drawing/scrolling/fixed/fixed-during-rubberband.html: Added.
+    * tiled-drawing/scrolling/sticky/sticky-during-rubberband-expected.html: Added.
+    * tiled-drawing/scrolling/sticky/sticky-during-rubberband.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255037 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+    2020-02-17  Alan Coon  <alancoon@apple.com>
 
-            REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
-            https://bugs.webkit.org/show_bug.cgi?id=206965
+            Cherry-pick r255384. rdar://problem/59447276
 
-            Unreviewed test gardening.
+        REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206965
 
-            * platform/ios-wk2/TestExpectations:
-            * platform/mac/TestExpectations:
+        Unreviewed test gardening.
+
+        Patch by Jacob Uphoff <jacob_uphoff@apple.com> on 2020-01-29
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255384 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2020-01-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+                REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
+                https://bugs.webkit.org/show_bug.cgi?id=206965
+
+                Unreviewed test gardening.
+
+                * platform/ios-wk2/TestExpectations:
+                * platform/mac/TestExpectations:
 
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
@@ -866,7 +1007,7 @@
 
         [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=206934
-
+        
         Unreviewed test gardening.
 
         Patch by Jason Lawrence <lawrence.j@apple.com> on 2020-01-29

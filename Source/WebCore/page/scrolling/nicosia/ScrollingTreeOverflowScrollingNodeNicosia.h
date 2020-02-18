@@ -44,7 +44,7 @@ private:
 
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp) const override;
+    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 
     void repositionScrollingLayers() override;
 

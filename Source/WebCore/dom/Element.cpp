@@ -943,7 +943,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
         if (!window)
             return;
 
-        window->scrollTo(options);
+        window->scrollTo(options, clamping);
         return;
     }
 
