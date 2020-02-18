@@ -30,6 +30,7 @@
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
+#include "TransitionEvent.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -83,6 +84,11 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     effectTimingDidChange();
 
     unsuspendEffectInvalidation();
+}
+
+Ref<AnimationEventBase> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime)
+{
+    return TransitionEvent::create(eventType, getPropertyNameString(m_property), elapsedTime, pseudoId, timelineTime, this);
 }
 
 } // namespace WebCore

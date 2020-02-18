@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AnimationEventBase.h"
 
-#include "DeclarativeAnimation.h"
-#include <wtf/Ref.h>
+#include "WebAnimationUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-class Animation;
-class Element;
-class RenderStyle;
+WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEventBase);
 
-class CSSAnimation final : public DeclarativeAnimation {
-    WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
-public:
-    static Ref<CSSAnimation> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
-    ~CSSAnimation() = default;
+AnimationEventBase::AnimationEventBase(const AtomString& type, WebAnimation* animation, Optional<Seconds> timelineTime)
+    : Event(type, CanBubble::Yes, IsCancelable::No)
+    , m_animation(animation)
+    , m_timelineTime(timelineTime)
+{
+}
 
-    bool isCSSAnimation() const override { return true; }
-    const String& animationName() const { return m_animationName; }
-    const RenderStyle& unanimatedStyle() const { return *m_unanimatedStyle; }
+AnimationEventBase::AnimationEventBase(const AtomString& type, const EventInit& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
+{
+}
 
-    ExceptionOr<void> bindingsPlay() final;
-    ExceptionOr<void> bindingsPause() final;
-
-protected:
-    void syncPropertiesWithBackingAnimation() final;
-    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
-
-private:
-    CSSAnimation(Element&, const Animation&, const RenderStyle&);
-
-    String m_animationName;
-    std::unique_ptr<RenderStyle> m_unanimatedStyle;
-    bool m_stickyPaused { false };
-};
+AnimationEventBase::~AnimationEventBase() = default;
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(CSSAnimation, isCSSAnimation())
