@@ -32,6 +32,5 @@ enum class StoredCredentialsPolicy : uint8_t {
     Use,
     EphemeralStateless
 };
-static constexpr unsigned bitWidthOfStoredCredentialsPolicy = 2;
 
 } // namespace WebCore
