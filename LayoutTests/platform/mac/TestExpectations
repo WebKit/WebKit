@@ -2026,8 +2026,10 @@ webkit.org/b/207726 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/207859 fast/images/slower-decoding-than-animation-image.html [ Pass Failure ]
 
+webkit.org/b/207858 fast/canvas/webgl/program-test.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/readPixels-float.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
+webkit.org/b/207858 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
