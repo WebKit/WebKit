@@ -1,3 +1,13 @@
+2020-02-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Computed function properties compute their keys twice
+        https://bugs.webkit.org/show_bug.cgi?id=207297
+
+        Reviewed by Keith Miller.
+
+        * stress/computed-property-key-side-effects.js: Added.
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2020-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JITThunk should be HashSet<Weak<NativeExecutable>> with appropriate GC weakness handling

@@ -2203,15 +2203,6 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/computed-property-names/to-name-side-effects/class.js:
-  default: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
-  strict mode: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
-test/language/computed-property-names/to-name-side-effects/numbers-class.js:
-  default: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
-  strict mode: 'Test262Error: Expected [0, 1] and [0] to have the same contents. order set for key1'
-test/language/computed-property-names/to-name-side-effects/object.js:
-  default: 'Test262Error: The result of `counter++` is `0` Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: The result of `counter++` is `0` Expected SameValue(«1», «0») to be true'
 test/language/eval-code/direct/new.target-arrow.js:
   default: 'Test262Error: Expected SameValue(«function ReferenceError() {'
   strict mode: 'Test262Error: Expected SameValue(«function ReferenceError() {'

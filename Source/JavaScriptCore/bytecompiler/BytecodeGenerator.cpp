@@ -3076,37 +3076,38 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
     return dst;
 }
 
-template<typename LazyNameRegisterFn>
-void BytecodeGenerator::emitSetFunctionNameIfNeededImpl(ExpressionNode* valueNode, RegisterID* value, const LazyNameRegisterFn& lazyNameFn)
+bool BytecodeGenerator::shouldSetFunctionName(ExpressionNode* node)
 {
-    if (valueNode->isBaseFuncExprNode()) {
-        FunctionMetadataNode* metadata = static_cast<BaseFuncExprNode*>(valueNode)->metadata();
+    if (node->isBaseFuncExprNode()) {
+        FunctionMetadataNode* metadata = static_cast<BaseFuncExprNode*>(node)->metadata();
         if (!metadata->ecmaName().isNull())
-            return;
-    } else if (valueNode->isClassExprNode()) {
-        ClassExprNode* classExprNode = static_cast<ClassExprNode*>(valueNode);
+            return false;
+    } else if (node->isClassExprNode()) {
+        ClassExprNode* classExprNode = static_cast<ClassExprNode*>(node);
         if (!classExprNode->ecmaName().isNull())
-            return;
+            return false;
         if (classExprNode->hasStaticProperty(m_vm.propertyNames->name))
-            return;
+            return false;
     } else
-        return;
+        return false;
 
-    RegisterID* name = lazyNameFn();
+    return true;
+}
+
+void BytecodeGenerator::emitSetFunctionName(RegisterID* value, const Identifier& ident)
+{
+    RefPtr<RegisterID> name = emitLoad(newTemporary(), ident);
 
     // FIXME: We should use an op_call to an internal function here instead.
     // https://bugs.webkit.org/show_bug.cgi?id=155547
     OpSetFunctionName::emit(this, value, name);
 }
 
-void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, const Identifier& ident)
+void BytecodeGenerator::emitSetFunctionName(RegisterID* value, RegisterID* name)
 {
-    emitSetFunctionNameIfNeededImpl(valueNode, value, [=]() { return emitLoad(newTemporary(), ident); });
-}
-
-void BytecodeGenerator::emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name)
-{
-    emitSetFunctionNameIfNeededImpl(valueNode, value, [=]() { return name; });
+    // FIXME: We should use an op_call to an internal function here instead.
+    // https://bugs.webkit.org/show_bug.cgi?id=155547
+    OpSetFunctionName::emit(this, value, name);
 }
 
 RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)

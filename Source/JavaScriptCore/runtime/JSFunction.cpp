@@ -766,9 +766,8 @@ void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
         else
             name = makeString('[', String(&uid), ']');
     } else {
-        JSString* jsStr = value.toString(globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-        name = jsStr->value(globalObject);
+        ASSERT(value.isString());
+        name = asString(value)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }
     reifyName(vm, globalObject, name);

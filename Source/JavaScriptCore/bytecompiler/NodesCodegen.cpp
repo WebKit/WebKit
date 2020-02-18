@@ -644,7 +644,10 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 // Computed accessors.
                 if (node->m_type & PropertyNode::Computed) {
                     RefPtr<RegisterID> propertyName = generator.emitNode(node->m_expression);
-                    generator.emitSetFunctionNameIfNeeded(node->m_assign, value.get(), propertyName.get());
+                    if (generator.shouldSetFunctionName(node->m_assign)) {
+                        propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyName.get());
+                        generator.emitSetFunctionName(value.get(), propertyName.get());
+                    }
                     if (node->m_type & PropertyNode::Getter)
                         generator.emitPutGetterByVal(dst, propertyName.get(), attributes, value.get());
                     else
@@ -722,7 +725,10 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         else
             propertyNameRegister = generator.emitNode(node.m_expression);
 
-        generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyNameRegister.get());
+        if (generator.shouldSetFunctionName(node.m_assign)) {
+            propertyNameRegister = generator.emitToPropertyKey(generator.newTemporary(), propertyNameRegister.get());
+            generator.emitSetFunctionName(value.get(), propertyNameRegister.get());
+        }
         generator.emitCallDefineProperty(newObj, propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
         return;
     }
@@ -738,7 +744,10 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         return;
     }
     RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
-    generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyName.get());
+    if (generator.shouldSetFunctionName(node.m_assign)) {
+        propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyName.get());
+        generator.emitSetFunctionName(value.get(), propertyName.get());
+    }
     generator.emitDirectPutByVal(newObj, propertyName.get(), value.get());
 }
 
@@ -4325,8 +4334,8 @@ void DefineFieldNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.emitLoad(value.get(), jsUndefined());
     else {
         generator.emitNode(value.get(), m_assign);
-        if (m_ident)
-            generator.emitSetFunctionNameIfNeeded(m_assign, value.get(), *m_ident);
+        if (m_ident && generator.shouldSetFunctionName(m_assign))
+            generator.emitSetFunctionName(value.get(), *m_ident);
     }
 
     switch (m_type) {

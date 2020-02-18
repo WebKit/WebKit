@@ -1,3 +1,37 @@
+2020-02-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Computed function properties compute their keys twice
+        https://bugs.webkit.org/show_bug.cgi?id=207297
+
+        Reviewed by Keith Miller.
+
+        If a pseudo-String is used as the key of a computed function property,
+        any side effects from resolving the string value occur in duplicate.
+
+        The cause has two parts:
+          - We aren't ensuring that the string value is resolved before doing SetFunctionName and PutByVal.
+          - Our implementation of SetFunctionName (https://tc39.es/ecma262/#sec-setfunctionname)
+            calls toString on a non-symbol argument, instead of assuming the type is a string.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::shouldSetFunctionName): Added.
+        (JSC::BytecodeGenerator::emitSetFunctionName): Added.
+        (JSC::BytecodeGenerator::emitSetFunctionNameIfNeededImpl): Deleted.
+        (JSC::BytecodeGenerator::emitSetFunctionNameIfNeeded): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        Split the "if needed" logic out into its own function.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::DefineFieldNode::emitBytecode):
+        Never emit OpSetFunctionName for a name of unknown type.
+        (But also, don't perform a needless ToPropertyKey for non-function computed property keys.)
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName):
+        Don't call toString, assert isString.
+
 2020-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JITThunk should be HashSet<Weak<NativeExecutable>> with appropriate GC weakness handling

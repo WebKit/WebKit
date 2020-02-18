@@ -753,8 +753,9 @@ namespace JSC {
         RegisterID* emitNewMethodDefinition(RegisterID* dst, MethodDefinitionNode*);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
-        void emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, RegisterID* name);
-        void emitSetFunctionNameIfNeeded(ExpressionNode* valueNode, RegisterID* value, const Identifier&);
+        bool shouldSetFunctionName(ExpressionNode*);
+        void emitSetFunctionName(RegisterID* value, RegisterID* name);
+        void emitSetFunctionName(RegisterID* value, const Identifier&);
 
         RegisterID* moveLinkTimeConstant(RegisterID* dst, LinkTimeConstant);
         RegisterID* moveEmptyValue(RegisterID* dst);
@@ -978,9 +979,6 @@ namespace JSC {
         bool emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label& jumpTarget);
         bool emitReturnViaFinallyIfNeeded(RegisterID* returnRegister);
         void emitFinallyCompletion(FinallyContext&, Label& normalCompletionLabel);
-
-        template<typename LazyNameRegisterFn>
-        void emitSetFunctionNameIfNeededImpl(ExpressionNode*, RegisterID*, const LazyNameRegisterFn&);
 
     public:
         void pushFinallyControlFlowScope(FinallyContext&);
