@@ -76,7 +76,7 @@ FloatRect screenAvailableRect(Widget*);
 WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-bool screenSupportsHighDynamicRange(Widget* = nullptr);
+WEBCORE_EXPORT bool screenSupportsHighDynamicRange(Widget* = nullptr);
 #else
 constexpr bool screenSupportsHighDynamicRange(Widget* = nullptr) { return false; }
 #endif
@@ -104,6 +104,8 @@ NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
 WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
+
+WEBCORE_EXPORT void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange);
 
 WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
 
