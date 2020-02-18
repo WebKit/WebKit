@@ -473,7 +473,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
     v(Bool, useWebAssemblyStreamingApi, enableWebAssemblyStreamingApi, Normal, "Allow to run WebAssembly's Streaming API") \
     v(Bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
-    v(Bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
+    v(Bool, useWebAssemblyReferences, false, Normal, "Allow types from the wasm references spec.") \
     v(Bool, useWebAssemblyMultiValues, true, Normal, "Allow types from the wasm mulit-values spec.") \
     v(Bool, useWeakRefs, false, Normal, "Expose the WeakRef constructor.") \
     v(Bool, useBigInt, false, Normal, "If true, we will enable BigInt support.") \
