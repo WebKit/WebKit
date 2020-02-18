@@ -1,3 +1,34 @@
+2020-02-17  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [Webkit.css] Adding popover style element
+        This help to prevent us reinventing the wheel ever again
+        https://bugs.webkit.org/show_bug.cgi?id=207787
+
+        Reviewed by Dean Jackson.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/docs.yaml:
+        * resultsdbpy/resultsdbpy/view/static/library/css/index.html:
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.popover):
+        (.popover>.content):
+        (.popover.display):
+        (.popover .arrow):
+        (.popover .arrow.point-top):
+        (.popover .arrow.point-bottom):
+        (.popover .arrow.point-left):
+        (.popover .arrow.point-right):
+        (@media (prefers-color-scheme: dark) .popover>.content):
+        (@media (prefers-color-scheme: dark) .popover.display):
+        (@media (prefers-color-scheme: dark) .popover .arrow):
+        (.popover>.content>.section): Deleted.
+        (.popover:focus>.content, .popover:hover>.content): Deleted.
+        (.popover.right>.content): Deleted.
+        (.popover.right :focus>.content, .popover.right:hover>.content): Deleted.
+        (.popover.left>.content): Deleted.
+        (.popover.left :focus>.content, .popover.left:hover>.content): Deleted.
+        (.popover.bottom>.content): Deleted.
+        (.popover.bottom :focus>.content, .popover.bottom:hover>.content): Deleted.
+
 2020-02-17  Brent Fulgham  <bfulgham@apple.com>
 
         Update WebKit Tools to issue mach extensions as needed

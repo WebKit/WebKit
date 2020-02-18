@@ -1440,58 +1440,66 @@ pre {
 
 /*popover*/
 .popover {
-  display: inline-block;
-  position: relative;
-}
-
-.popover>.content>.section {
-  margin: 8px;
-  background: var(--white);
-}
-
-.popover:focus>.content, .popover:hover>.content {
-  display: block;
-  opacity: 1;
-  transform: translate(-50%, -100%) scale(1);
-}
-
-.popover>.content {
-  left: 50%;
-  top: 0;
-  opacity: 0;
   position: absolute;
-  transform: translate(-50%,-50%) scale(0);
-  transition: transform .2s;
-  z-index: 300;
-  margin: 0;
-  padding: 0;
+  display: none;
 }
 
-.popover.right>.content {
-  left: 100%;
-  top: 50%;
+.popover>.content{
+  max-width: 200px;
+  padding: var(--tinySize); 
+  font-size: var(--tinySize);
+  background-color: var(--blurBackgroundColor);
+  -webkit-backdrop-filter: blur(5px) brightness(100%);
+  backdrop-filter: blur(5px) brightness(100%);
 }
 
-.popover.right :focus>.content, .popover.right:hover>.content {
-  transform: translate(0, -50%) scale(1);
+.popover.display {
+  box-shadow: 0px 0px 5px 1px var(--grey);
+  display: block;
 }
 
-.popover.left>.content {
-  left: 0;
-  top: 50%;
+.popover .arrow {
+  position: absolute;
+  width: var(--tinySize); 
+  height: var(--tinySize);
+  content: '';
+  box-shadow: 0px 0px 5px 1px var(--black);
+  transform: rotate(45deg);
+  background-color: var(--blurBackgroundColor);
+  -webkit-backdrop-filter: blur(5px) brightness(100%);
+  backdrop-filter: blur(5px) brightness(100%);
 }
 
-.popover.left :focus>.content, .popover.left:hover>.content {
-  transform: translate(-100%, -50%) scale(1);
+
+.popover .arrow.point-top {
+  top: calc(0px - var(--tinySize) / 2);
 }
 
-.popover.bottom>.content {
-  left: 350%;
-  top: 100%;
+.popover .arrow.point-bottom {
+  bottom: calc(0px - var(--tinySize) / 2);
 }
 
-.popover.bottom :focus>.content, .popover.bottom:hover>.content {
-  transform: translate(-50%, 0) scale(1);
+.popover .arrow.point-left {
+  left: calc(0px - var(--tinySize) / 2);
+}
+
+.popover .arrow.point-right {
+  right: calc(0px - var(--tinySize) / 2);
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .popover>.content {
+    background-color: var(--blurBackgroundColorDark);
+  }
+
+  .popover.display {
+    box-shadow: 0px 0px 5px 1px var(--black);
+  }
+
+  .popover .arrow {
+    background-color: var(--blurBackgroundColorDark);
+  }
 }
 
 
