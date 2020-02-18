@@ -1,5 +1,61 @@
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256235. rdar://problem/59447276
+
+    REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
+    https://bugs.webkit.org/show_bug.cgi?id=206965
+    <rdar://problem/59005652>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Modify a test to make it less flaky. Based on our current implementation, there is no guarantee that Block event on
+    delete request would be fired before Complete event on transaction from connection2 in this test. The events
+    sequence we are sure are:
+    1. UpgradeNeeded event on openRequest2 -> VersionChange event on connection2 -> Complete event on VersionChange
+    transaction on connection2 -> Success event on openRequest2.
+    2. VersionChange event on connection2 -> Block event on delete request.
+    Therefore I am changing the test to ensure sequence 1.
+    
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac/TestExpectations:
+    * storage/indexeddb/intversion-long-queue-expected.txt:
+    * storage/indexeddb/intversion-long-queue-private-expected.txt:
+    * storage/indexeddb/resources/intversion-long-queue.js:
+    (connection2Blocked):
+    (connection2UpgradeNeeded):
+    (connection2VersionChangeCallback):
+    (deleteDatabaseBlockedCallback): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256235 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Sihui Liu  <sihui_liu@apple.com>
+
+            REGRESSION: (253807) [ macOS iOS ] storage/indexeddb/intversion-long-queue-private.html is flaky failing
+            https://bugs.webkit.org/show_bug.cgi?id=206965
+            <rdar://problem/59005652>
+
+            Reviewed by Ryosuke Niwa.
+
+            Modify a test to make it less flaky. Based on our current implementation, there is no guarantee that Block event on
+            delete request would be fired before Complete event on transaction from connection2 in this test. The events
+            sequence we are sure are:
+            1. UpgradeNeeded event on openRequest2 -> VersionChange event on connection2 -> Complete event on VersionChange
+            transaction on connection2 -> Success event on openRequest2.
+            2. VersionChange event on connection2 -> Block event on delete request.
+            Therefore I am changing the test to ensure sequence 1.
+
+            * platform/ios-wk2/TestExpectations:
+            * platform/mac/TestExpectations:
+            * storage/indexeddb/intversion-long-queue-expected.txt:
+            * storage/indexeddb/intversion-long-queue-private-expected.txt:
+            * storage/indexeddb/resources/intversion-long-queue.js:
+            (connection2Blocked):
+            (connection2UpgradeNeeded):
+            (connection2VersionChangeCallback):
+            (deleteDatabaseBlockedCallback): Deleted.
+
+2020-02-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256213. rdar://problem/59447008
 
     [ Mac Debug wk2 ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html is flaky crashing.

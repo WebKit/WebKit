@@ -37,7 +37,6 @@ function connection2Blocked(evt)
 {
     preamble(evt);
     evalAndLog("request = indexedDB.deleteDatabase(dbname)");
-    evalAndLog("request.onblocked = deleteDatabaseBlockedCallback");
     evalAndLog("request.onsuccess = deleteDatabaseSuccessCallback");
     request.onerror = unexpectedErrorCallback;
 
@@ -46,13 +45,6 @@ function connection2Blocked(evt)
     evalAndLog("request.onsuccess = connection3Success");
     request.onerror = unexpectedErrorCallback;
     evalAndLog("connection1.close()");
-}
-
-function deleteDatabaseBlockedCallback(evt)
-{
-    preamble(evt);
-    shouldBe("event.oldVersion", "2");
-    shouldBeNull("event.newVersion");
 }
 
 function deleteDatabaseSuccessCallback(evt)
@@ -68,6 +60,7 @@ function connection2UpgradeNeeded(evt)
     shouldBe("event.oldVersion", "1");
     shouldBe("event.newVersion", "2");
     evalAndLog("db = event.target.result");
+    evalAndLog("db.onversionchange = connection2VersionChangeCallback");
     shouldBe("db.objectStoreNames.length", "0");
     evalAndLog("db.createObjectStore('some object store')");
     evalAndLog("transaction = event.target.transaction");
@@ -86,6 +79,13 @@ function connection2TransactionComplete(evt)
 {
     preamble(evt);
     shouldBe("db.version", "2");
+}
+
+function connection2VersionChangeCallback(evt)
+{
+    preamble(evt);
+    shouldBe("event.oldVersion", "2");
+    shouldBeNull("event.newVersion");
 }
 
 var gotUpgradeNeededEvent = false;
