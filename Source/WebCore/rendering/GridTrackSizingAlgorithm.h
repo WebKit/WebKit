@@ -73,6 +73,13 @@ public:
     void setGrowthLimitCap(Optional<LayoutUnit>);
     Optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
+    const GridTrackSize& cachedTrackSize() const
+    {
+        ASSERT(m_cachedTrackSize.hasValue());
+        return m_cachedTrackSize.value();
+    }
+    void setCachedTrackSize(const GridTrackSize&);
+
 private:
     bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= m_baseSize; }
 
@@ -84,6 +91,7 @@ private:
     LayoutUnit m_tempSize { 0 };
     Optional<LayoutUnit> m_growthLimitCap;
     bool m_infinitelyGrowable { false };
+    Optional<GridTrackSize> m_cachedTrackSize;
 };
 
 class GridTrackSizingAlgorithm final {
@@ -137,7 +145,7 @@ public:
 private:
     Optional<LayoutUnit> availableSpace() const;
     bool isRelativeGridLengthAsAuto(const GridLength&, GridTrackSizingDirection) const;
-    GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
+    GridTrackSize calculateGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
 
     // Helper methods for step 1. initializeTrackSizes().
@@ -264,8 +272,6 @@ protected:
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
     bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, Optional<LayoutUnit> = WTF::nullopt) const;
-
-    GridTrackSize gridTrackSize(GridTrackSizingDirection direction, size_t translatedIndex) const { return m_algorithm.gridTrackSize(direction, translatedIndex); }
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
