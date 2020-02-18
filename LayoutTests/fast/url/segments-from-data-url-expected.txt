@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 50: Blocked setting data:text/plain,baseURL as the base URL because it does not have an allowed scheme.
 Test URL segmentation
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -5,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS segments('http://user:pass@foo:21/bar;par?b#c') is '["http:","foo","21","/bar;par","?b","#c"]'
 PASS segments('http:foo.com') is '["http:","foo.com","","/","",""]'
-PASS segments('\t   :foo.com   \n') is '[":","","","","",""]'
-PASS segments(' foo.com  ') is '[":","","","","",""]'
+PASS segments('\t   :foo.com   \n') is '["file:","","","/.../:foo.com","",""]'
+PASS segments(' foo.com  ') is '["file:","","","/.../foo.com","",""]'
 PASS segments('a:\t foo.com') is '["a:","",""," foo.com","",""]'
 PASS segments('http://f:21/ b ? d # e ') is '["http:","f","21","/%20b%20","?%20d%20","# e"]'
 PASS segments('http://f:/c') is '["http:","f","","/c","",""]'
@@ -19,26 +20,26 @@ PASS segments('http://f:\n/c') is '["http:","f","","/c","",""]'
 PASS segments('http://f:fifty-two/c') is '[":","","","","",""]'
 FAIL segments('http://f:999999/c') should be [":","","0","","",""]. Was [":","","","","",""].
 PASS segments('http://f: 21 / b ? d # e ') is '[":","","","","",""]'
-FAIL segments('') should be ["data:","","","text/plain,baseURL","",""]. Was [":","","","","",""].
-FAIL segments('  \t') should be ["data:","","","text/plain,baseURL","",""]. Was [":","","","","",""].
-PASS segments(':foo.com/') is '[":","","","","",""]'
-PASS segments(':foo.com\\') is '[":","","","","",""]'
-PASS segments(':') is '[":","","","","",""]'
-PASS segments(':a') is '[":","","","","",""]'
-PASS segments(':/') is '[":","","","","",""]'
-PASS segments(':\\') is '[":","","","","",""]'
-PASS segments(':#') is '[":","","","","",""]'
-FAIL segments('#') should be [":","","","","",""]. Was ["data:","","","text/plain,baseURL","",""].
-FAIL segments('#/') should be [":","","","","",""]. Was ["data:","","","text/plain,baseURL","","#/"].
-FAIL segments('#\\') should be [":","","","","",""]. Was ["data:","","","text/plain,baseURL","","#\\"].
-FAIL segments('#;?') should be [":","","","","",""]. Was ["data:","","","text/plain,baseURL","","#;?"].
-PASS segments('?') is '[":","","","","",""]'
-PASS segments('/') is '[":","","","","",""]'
-PASS segments(':23') is '[":","","","","",""]'
-FAIL segments('/:23') should be ["data:","","","/:23","",""]. Was [":","","","","",""].
-PASS segments('//') is '[":","","","","",""]'
-PASS segments('::') is '[":","","","","",""]'
-PASS segments('::23') is '[":","","","","",""]'
+PASS segments('') is '["file:","","","/.../segments-from-data-url.html","",""]'
+PASS segments('  \t') is '["file:","","","/.../segments-from-data-url.html","",""]'
+PASS segments(':foo.com/') is '["file:","","","/.../","",""]'
+PASS segments(':foo.com\\') is '["file:","","","/.../","",""]'
+PASS segments(':') is '["file:","","","/.../:","",""]'
+PASS segments(':a') is '["file:","","","/.../:a","",""]'
+PASS segments(':/') is '["file:","","","/.../","",""]'
+PASS segments(':\\') is '["file:","","","/.../","",""]'
+PASS segments(':#') is '["file:","","","/.../:","",""]'
+PASS segments('#') is '["file:","","","/.../segments-from-data-url.html","",""]'
+PASS segments('#/') is '["file:","","","/.../segments-from-data-url.html","","#/"]'
+PASS segments('#\\') is '["file:","","","/.../segments-from-data-url.html","","#\\\\"]'
+PASS segments('#;?') is '["file:","","","/.../segments-from-data-url.html","","#;?"]'
+PASS segments('?') is '["file:","","","/.../segments-from-data-url.html","",""]'
+PASS segments('/') is '["file:","","","/.../","",""]'
+PASS segments(':23') is '["file:","","","/.../:23","",""]'
+PASS segments('/:23') is '["file:","","","/.../:23","",""]'
+PASS segments('//') is '["file:","","","/.../","",""]'
+PASS segments('::') is '["file:","","","/.../::","",""]'
+PASS segments('::23') is '["file:","","","/.../::23","",""]'
 FAIL segments('foo://') should be ["foo:","","","//","",""]. Was ["foo:","","","","",""].
 PASS segments('http://a:b@c:29/d') is '["http:","c","29","/d","",""]'
 PASS segments('http::@c:29') is '["http:","c","29","/","",""]'
@@ -54,11 +55,11 @@ FAIL segments('foo://///////') should be ["foo:","","","/////////","",""]. Was [
 FAIL segments('foo://///////bar.com/') should be ["foo:","","","/////////bar.com/","",""]. Was ["foo:","","","///////bar.com/","",""].
 FAIL segments('foo:////://///') should be ["foo:","","","////://///","",""]. Was ["foo:","","","//://///","",""].
 PASS segments('c:/foo') is '["c:","","","/foo","",""]'
-PASS segments('//foo/bar') is '[":","","","","",""]'
+PASS segments('//foo/bar') is '["file:","foo","","/.../bar","",""]'
 PASS segments('http://foo/path;a??e#f#g') is '["http:","foo","","/path;a","??e","#f#g"]'
 PASS segments('http://foo/abcd?efgh?ijkl') is '["http:","foo","","/abcd","?efgh?ijkl",""]'
 PASS segments('http://foo/abcd#foo?bar') is '["http:","foo","","/abcd","","#foo?bar"]'
-FAIL segments('[61:24:74]:98') should be ["data:","","","text/[61:24:74]:98","",""]. Was [":","","","","",""].
+PASS segments('[61:24:74]:98') is '["file:","","","/.../[61:24:74]:98","",""]'
 FAIL segments('http://[61:27]:98') should be [":","","0","","",""]. Was [":","","","","",""].
 PASS segments('http:[61:27]/:foo') is '[":","","","","",""]'
 PASS segments('http://[1::2]:3:4') is '[":","","","","",""]'
@@ -70,6 +71,7 @@ PASS segments('http://[2001::1]') is '["http:","[2001::1]","","/","",""]'
 PASS segments('http://[2001::1]:80') is '["http:","[2001::1]","","/","",""]'
 PASS segments('http://[[::]]') is '[":","","","","",""]'
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 
