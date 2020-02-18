@@ -136,8 +136,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setIgnoresViewportScaleLimits:YES];
     if (options.useCharacterSelectionGranularity)
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
-    if (options.useCharacterSelectionGranularity)
-        [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
+#else
+    [copiedConfiguration _setServiceControlsEnabled:options.enableServiceControls];
 #endif
 
     if (options.enableAttachmentElement)

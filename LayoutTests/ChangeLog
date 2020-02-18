@@ -1,3 +1,16 @@
+2020-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Web process may crash under ServicesOverlayController::buildPotentialHighlightsIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=207899
+        <rdar://problem/55658207>
+
+        Reviewed by Tim Horton and Simon Fraser.
+
+        Add a new layout test to verify that we don't crash under this circumstance.
+
+        * editing/selection/selection-change-in-disconnected-frame-crash-expected.txt: Added.
+        * editing/selection/selection-change-in-disconnected-frame-crash.html: Added.
+
 2020-02-18  Chris Dumez  <cdumez@apple.com>
 
         [WK1] Flaky Test: http/tests/cookies/document-cookie-during-iframe-parsing.html
