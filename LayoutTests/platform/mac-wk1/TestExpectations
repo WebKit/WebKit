@@ -938,3 +938,5 @@ webkit.org/b/207569 legacy-animation-engine/animations/3d/transform-origin-vs-fu
 webkit.org/b/207847 resize-observer/delete-observers-in-callbacks.html [ Pass Failure ]
 
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]
+
+webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass Failure ]
