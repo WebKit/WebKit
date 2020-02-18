@@ -203,27 +203,32 @@ static Ref<JSON::Object> buildObjectForHeaders(const HTTPHeaderMap& headers)
     return headersObject;
 }
 
-Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
+Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics* timing, ResourceLoader& resourceLoader)
 {
     auto& loadTiming = resourceLoader.loadTiming();
 
     auto elapsedTimeSince = [&] (const MonotonicTime& time) {
         return m_environment.executionStopwatch()->elapsedTimeSince(time).seconds();
     };
+    Optional<NetworkLoadMetrics> empty;
+    if (!timing) {
+        empty.emplace();
+        timing = &empty.value();
+    }
 
     return Inspector::Protocol::Network::ResourceTiming::create()
         .setStartTime(elapsedTimeSince(loadTiming.startTime()))
         .setRedirectStart(elapsedTimeSince(loadTiming.redirectStart()))
         .setRedirectEnd(elapsedTimeSince(loadTiming.redirectEnd()))
         .setFetchStart(elapsedTimeSince(loadTiming.fetchStart()))
-        .setDomainLookupStart(timing.domainLookupStart.milliseconds())
-        .setDomainLookupEnd(timing.domainLookupEnd.milliseconds())
-        .setConnectStart(timing.connectStart.milliseconds())
-        .setConnectEnd(timing.connectEnd.milliseconds())
-        .setSecureConnectionStart(timing.secureConnectionStart.milliseconds())
-        .setRequestStart(timing.requestStart.milliseconds())
-        .setResponseStart(timing.responseStart.milliseconds())
-        .setResponseEnd(timing.responseEnd.milliseconds())
+        .setDomainLookupStart(timing->domainLookupStart.milliseconds())
+        .setDomainLookupEnd(timing->domainLookupEnd.milliseconds())
+        .setConnectStart(timing->connectStart.milliseconds())
+        .setConnectEnd(timing->connectEnd.milliseconds())
+        .setSecureConnectionStart(timing->secureConnectionStart.milliseconds())
+        .setRequestStart(timing->requestStart.milliseconds())
+        .setResponseStart(timing->responseStart.milliseconds())
+        .setResponseEnd(timing->responseEnd.milliseconds())
         .release();
 }
 
@@ -340,7 +345,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         .release();
 
     if (resourceLoader)
-        responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetrics(), *resourceLoader));
+        responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetricsOrNull(), *resourceLoader));
 
     if (auto& certificateInfo = response.certificateInfo()) {
         auto securityPayload = Inspector::Protocol::Security::Security::create()
