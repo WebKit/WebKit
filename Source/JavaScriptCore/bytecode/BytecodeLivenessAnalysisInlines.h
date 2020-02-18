@@ -135,29 +135,31 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
 }
 
 template<typename CodeBlockType, typename Instructions>
-inline bool BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock* block, BytecodeIndex targetIndex, FastBitVector& result)
+inline bool BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock& block, BytecodeIndex targetIndex, FastBitVector& result)
 {
-    ASSERT(!block->isExitBlock());
-    ASSERT(!block->isEntryBlock());
+    ASSERT(!block.isExitBlock());
+    ASSERT(!block.isEntryBlock());
 
-    FastBitVector out = block->out();
+    FastBitVector out = block.out();
 
-    for (int i = block->offsets().size() - 1; i >= 0; i--) {
-        unsigned bytecodeOffset = block->offsets()[i];
-        if (targetIndex.offset() > bytecodeOffset)
+    unsigned cursor = block.totalLength();
+    for (unsigned i = block.delta().size(); i--;) {
+        cursor -= block.delta()[i];
+        BytecodeIndex bytecodeIndex = BytecodeIndex(block.leaderOffset() + cursor);
+        if (targetIndex.offset() > bytecodeIndex.offset())
             break;
-        stepOverInstruction(codeBlock, instructions, graph, BytecodeIndex(bytecodeOffset), out);
+        stepOverInstruction(codeBlock, instructions, graph, bytecodeIndex, out);
     }
 
     return result.setAndCheck(out);
 }
 
 template<typename CodeBlockType, typename Instructions>
-inline bool BytecodeLivenessPropagation::computeLocalLivenessForBlock(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock* block)
+inline bool BytecodeLivenessPropagation::computeLocalLivenessForBlock(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock& block)
 {
-    if (block->isExitBlock() || block->isEntryBlock())
+    if (block.isExitBlock() || block.isEntryBlock())
         return false;
-    return computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, block, BytecodeIndex(block->leaderOffset()), block->in());
+    return computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, block, BytecodeIndex(block.leaderOffset()), block.in());
 }
 
 template<typename CodeBlockType, typename Instructions>
@@ -169,7 +171,7 @@ inline FastBitVector BytecodeLivenessPropagation::getLivenessInfoAtBytecodeIndex
     ASSERT(!block->isExitBlock());
     FastBitVector out;
     out.resize(block->out().numBits());
-    computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, block, bytecodeIndex, out);
+    computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, *block, bytecodeIndex, out);
     return out;
 }
 
@@ -177,27 +179,29 @@ template<typename CodeBlockType, typename Instructions>
 inline void BytecodeLivenessPropagation::runLivenessFixpoint(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph)
 {
     unsigned numberOfVariables = codeBlock->numCalleeLocals();
-    for (BytecodeBasicBlock* block : graph) {
-        block->in().resize(numberOfVariables);
-        block->out().resize(numberOfVariables);
-        block->in().clearAll();
-        block->out().clearAll();
+    for (BytecodeBasicBlock& block : graph) {
+        block.in().resize(numberOfVariables);
+        block.out().resize(numberOfVariables);
+        block.in().clearAll();
+        block.out().clearAll();
     }
 
     bool changed;
-    BytecodeBasicBlock* lastBlock = graph.last();
-    lastBlock->in().clearAll();
-    lastBlock->out().clearAll();
+    BytecodeBasicBlock& lastBlock = graph.last();
+    lastBlock.in().clearAll();
+    lastBlock.out().clearAll();
     FastBitVector newOut;
-    newOut.resize(lastBlock->out().numBits());
+    newOut.resize(lastBlock.out().numBits());
     do {
         changed = false;
-        for (std::unique_ptr<BytecodeBasicBlock>& block : graph.basicBlocksInReverseOrder()) {
+        for (BytecodeBasicBlock& block : graph.basicBlocksInReverseOrder()) {
             newOut.clearAll();
-            for (BytecodeBasicBlock* successor : block->successors())
-                newOut |= successor->in();
-            block->out() = newOut;
-            changed |= computeLocalLivenessForBlock(codeBlock, instructions, graph, block.get());
+            for (unsigned blockIndex : block.successors()) {
+                BytecodeBasicBlock& successor = graph[blockIndex];
+                newOut |= successor.in();
+            }
+            block.out() = newOut;
+            changed |= computeLocalLivenessForBlock(codeBlock, instructions, graph, block);
         }
     } while (changed);
 }
