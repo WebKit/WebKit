@@ -215,7 +215,8 @@ void JIT::privateCompileMainPass()
 
             while (BytecodeBasicBlock* block = worklist.pop()) {
                 startBytecodeIndex = BytecodeIndex(std::min(startBytecodeIndex.offset(), block->leaderOffset()));
-                worklist.pushAll(block->successors());
+                for (unsigned successorIndex : block->successors())
+                    worklist.push(&graph[successorIndex]);
 
                 // Also add catch blocks for bytecodes that throw.
                 if (m_codeBlock->numberOfExceptionHandlers()) {

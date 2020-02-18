@@ -34,11 +34,11 @@ class UnlinkedCodeBlock;
 // Return a sorted list of bytecode index that are the destination of a jump.
 void computePreciseJumpTargets(CodeBlock*, Vector<InstructionStream::Offset, 32>& out);
 void computePreciseJumpTargets(CodeBlock*, const InstructionStream& instructions, Vector<InstructionStream::Offset, 32>& out);
-void computePreciseJumpTargets(UnlinkedCodeBlock*, const InstructionStream&, Vector<InstructionStream::Offset, 32>& out);
+void computePreciseJumpTargets(UnlinkedCodeBlockGenerator*, const InstructionStream&, Vector<InstructionStream::Offset, 32>& out);
 
-void recomputePreciseJumpTargets(UnlinkedCodeBlock*, const InstructionStream&, Vector<InstructionStream::Offset>& out);
+void recomputePreciseJumpTargets(UnlinkedCodeBlockGenerator*, const InstructionStream&, Vector<InstructionStream::Offset>& out);
 
 void findJumpTargetsForInstruction(CodeBlock*, const InstructionStream::Ref&, Vector<InstructionStream::Offset, 1>& out);
-void findJumpTargetsForInstruction(UnlinkedCodeBlock*, const InstructionStream::Ref&, Vector<InstructionStream::Offset, 1>& out);
+void findJumpTargetsForInstruction(UnlinkedCodeBlockGenerator*, const InstructionStream::Ref&, Vector<InstructionStream::Offset, 1>& out);
 
 } // namespace JSC
