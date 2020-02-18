@@ -1677,22 +1677,6 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
     [webView _setAssertionStateForTesting: 0];
     waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
     waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
-
-    [webView _setAssertionStateForTesting: 1];
-    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), true);
-
-    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    [webView2 loadRequest:server.request()];
-    [webView2 _setAssertionStateForTesting: 3];
-
-    [webView _close];
-    webView = nullptr;
-
-    // The first webView is closed so the service worker process should take activity based on webView2.
-    waitUntilServiceWorkerProcessForegroundActivityState(webView2.get(), true);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webView2.get(), false);
 }
 
 TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcesses)
