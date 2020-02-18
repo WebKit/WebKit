@@ -910,10 +910,10 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     notImplemented();
 }
 
-void WebChromeClient::scheduleCompositingLayerFlush()
+void WebChromeClient::scheduleRenderingUpdate()
 {
     if (m_page.drawingArea())
-        m_page.drawingArea()->scheduleCompositingLayerFlush();
+        m_page.drawingArea()->scheduleRenderingUpdate();
 }
 
 void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)
@@ -924,9 +924,9 @@ void WebChromeClient::contentRuleListNotification(const URL& url, const ContentR
 #endif
 }
 
-bool WebChromeClient::adjustLayerFlushThrottling(LayerFlushThrottleState::Flags flags)
+bool WebChromeClient::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)
 {
-    return m_page.drawingArea() && m_page.drawingArea()->adjustLayerFlushThrottling(flags);
+    return m_page.drawingArea() && m_page.drawingArea()->adjustRenderingUpdateThrottling(flags);
 }
 
 bool WebChromeClient::layerTreeStateIsFrozen() const
@@ -937,10 +937,10 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
     return false;
 }
 
-bool WebChromeClient::layerFlushThrottlingIsActive() const
+bool WebChromeClient::renderingUpdateThrottlingIsActive() const
 {
     if (m_page.drawingArea())
-        return m_page.drawingArea()->layerFlushThrottlingIsActive();
+        return m_page.drawingArea()->renderingUpdateThrottlingIsActive();
 
     return false;
 }

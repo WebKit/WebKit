@@ -746,7 +746,7 @@ void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer*)
     // FIXME: If we want view-relative page overlays in Legacy WebKit on Windows, this would be the place to hook them up.
 }
 
-void WebChromeClient::scheduleCompositingLayerFlush()
+void WebChromeClient::scheduleRenderingUpdate()
 {
     m_webView->flushPendingGraphicsLayerChangesSoon();
 }

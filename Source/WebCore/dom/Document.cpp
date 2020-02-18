@@ -1875,7 +1875,7 @@ void Document::scheduleStyleRecalc()
     auto shouldThrottleStyleRecalc = [&] {
         if (!view() || !view()->isVisuallyNonEmpty())
             return false;
-        if (!page() || !page()->chrome().client().layerFlushThrottlingIsActive())
+        if (!page() || !page()->chrome().client().renderingUpdateThrottlingIsActive())
             return false;
         return true;
     };
@@ -3135,7 +3135,7 @@ bool Document::shouldScheduleLayout()
         return false;
     if (styleScope().hasPendingSheetsBeforeBody())
         return false;
-    if (page() && page()->chrome().client().layerFlushThrottlingIsActive() && view() && view()->isVisuallyNonEmpty())
+    if (page() && page()->chrome().client().renderingUpdateThrottlingIsActive() && view() && view()->isVisuallyNonEmpty())
         return false;
 
     return true;

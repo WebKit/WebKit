@@ -37,12 +37,12 @@
 #include "HostWindow.h"
 #include "Icon.h"
 #include "InputMode.h"
-#include "LayerFlushThrottleState.h"
 #include "MediaProducer.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RegistrableDomain.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderingUpdateThrottleState.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
@@ -313,7 +313,7 @@ public:
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
     // Sets a flag to specify that the view needs to be updated, so we need
     // to do an eager layout before the drawing.
-    virtual void scheduleCompositingLayerFlush() = 0;
+    virtual void scheduleRenderingUpdate() = 0;
     virtual bool needsImmediateRenderingUpdate() const { return false; }
     // Returns whether or not the client can render the composited layer,
     // regardless of the settings.
@@ -337,9 +337,9 @@ public:
     
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
-    virtual bool layerFlushThrottlingIsActive() const { return false; }
+    virtual bool renderingUpdateThrottlingIsActive() const { return false; }
 
-    virtual bool adjustLayerFlushThrottling(LayerFlushThrottleState::Flags) { return false; }
+    virtual bool adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState>) { return false; }
 
     virtual RefPtr<ScrollingCoordinator> createScrollingCoordinator(Page&) const { return nullptr; }
 

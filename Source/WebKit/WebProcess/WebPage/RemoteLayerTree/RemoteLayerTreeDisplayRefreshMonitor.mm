@@ -49,7 +49,7 @@ bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
         return false;
 
     if (!isScheduled())
-        static_cast<DrawingArea&>(*m_drawingArea.get()).scheduleCompositingLayerFlush();
+        static_cast<DrawingArea&>(*m_drawingArea.get()).scheduleRenderingUpdate();
 
     setIsActive(true);
     setIsScheduled(true);

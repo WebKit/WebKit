@@ -216,8 +216,8 @@ private:
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
-    void scheduleCompositingLayerFlush() final;
-    bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) final;
+    void scheduleRenderingUpdate() final;
+    bool adjustRenderingUpdateThrottling(OptionSet<WebCore::RenderingUpdateThrottleState>) final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
 
@@ -250,7 +250,7 @@ private:
     }
 
     bool layerTreeStateIsFrozen() const final;
-    bool layerFlushThrottlingIsActive() const final;
+    bool renderingUpdateThrottlingIsActive() const final;
 
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page&) const final;

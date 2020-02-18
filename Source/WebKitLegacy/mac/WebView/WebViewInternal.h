@@ -128,7 +128,7 @@ OBJC_CLASS NSTextAlternatives;
 
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
-- (void)_scheduleCompositingLayerFlush;
+- (void)_scheduleUpdateRendering;
 - (BOOL)_flushCompositingChanges;
 
 #if USE(AUTOCORRECTION_PANEL)

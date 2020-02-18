@@ -130,6 +130,7 @@ public:
         return adoptRef(*new LayerFlushController(webView));
     }
     
+    // FIXME: Rename to use 'updateRendering' terminology.
     bool flushLayers();
     
     void scheduleLayerFlush();

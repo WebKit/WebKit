@@ -107,7 +107,7 @@ void RenderingUpdateScheduler::displayRefreshFired()
 
 void RenderingUpdateScheduler::scheduleImmediateRenderingUpdate()
 {
-    m_page.chrome().client().scheduleCompositingLayerFlush();
+    m_page.chrome().client().scheduleRenderingUpdate();
 }
 
 void RenderingUpdateScheduler::scheduleRenderingUpdate()

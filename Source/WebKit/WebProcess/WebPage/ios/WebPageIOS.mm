@@ -3420,7 +3420,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
         viewportConfigurationChanged();
 #endif
 
-    m_drawingArea->scheduleCompositingLayerFlush();
+    m_drawingArea->scheduleRenderingUpdate();
 
     m_pendingDynamicViewportSizeUpdateID = dynamicViewportSizeUpdateID;
 }

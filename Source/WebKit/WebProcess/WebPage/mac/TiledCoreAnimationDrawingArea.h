@@ -66,8 +66,8 @@ private:
     bool layerTreeStateIsFrozen() const override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void scheduleInitialDeferredPaint() override;
-    void scheduleCompositingLayerFlush() override;
-    void scheduleCompositingLayerFlushImmediately() override;
+    void scheduleRenderingUpdate() override;
+    void scheduleImmediateRenderingUpdate() override;
 
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
@@ -92,8 +92,8 @@ private:
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones) override;
 
     void addCommitHandlers();
-    enum class FlushType { Normal, TransientZoom };
-    void flushLayers(FlushType = FlushType::Normal);
+    enum class UpdateRenderingType { Normal, TransientZoom };
+    void updateRendering(UpdateRenderingType = UpdateRenderingType::Normal);
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
@@ -130,15 +130,15 @@ private:
 
     void sendPendingNewlyReachedPaintingMilestones();
 
-    void layerFlushRunLoopCallback();
-    void invalidateLayerFlushRunLoopObserver();
-    void scheduleLayerFlushRunLoopObserver();
+    void updateRenderingRunLoopCallback();
+    void invalidateRenderingUpdateRunLoopObserver();
+    void scheduleRenderingUpdateRunLoopObserver();
 
-    bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
-    bool layerFlushThrottlingIsActive() const override;
+    bool adjustRenderingUpdateThrottling(OptionSet<WebCore::RenderingUpdateThrottleState>) override;
+    bool renderingUpdateThrottlingIsActive() const override;
 
-    void startLayerFlushThrottlingTimer();
-    void layerFlushThrottlingTimerFired();
+    void startRenderThrottlingTimer();
+    void renderThrottlingTimerFired();
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 
@@ -156,7 +156,7 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
-    WebCore::Timer m_layerFlushThrottlingTimer;
+    WebCore::Timer m_renderThrottlingTimer;
 
     RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
     Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
@@ -167,15 +167,15 @@ private:
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
     Vector<CallbackID> m_pendingCallbackIDs;
 
-    std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;
+    std::unique_ptr<WebCore::RunLoopObserver> m_renderUpdateRunLoopObserver;
 
     bool m_isPaintingSuspended { false };
     bool m_inUpdateGeometry { false };
     bool m_layerTreeStateIsFrozen { false };
     bool m_shouldScaleViewToFitDocument { false };
     bool m_isScalingViewToFitDocument { false };
-    bool m_isThrottlingLayerFlushes { false };
-    bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
+    bool m_isThrottlingRenderingUpdates { false };
+    bool m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
 };
 

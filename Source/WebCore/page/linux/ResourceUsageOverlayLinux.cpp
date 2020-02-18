@@ -124,7 +124,7 @@ private:
 
     void notifyFlushRequired(const GraphicsLayer*) override
     {
-        m_overlay.overlay().page()->chrome().client().scheduleCompositingLayerFlush();
+        m_overlay.overlay().page()->chrome().client().scheduleRenderingUpdate();
     }
 
     ResourceUsageOverlay& m_overlay;

@@ -1,3 +1,18 @@
+2020-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move from "layer flush" terminology to "rendering update"
+        https://bugs.webkit.org/show_bug.cgi?id=207870
+
+        Reviewed by Tim Horton.
+
+        Rename various functions and member variables to move away from the legacy "layer flush"
+        terminology and instead use "rendering update", matching Page::updateRendering(). The fact
+        that we have layers is an implementation detail.
+        
+        Change LayerFlushThrottlingState to be an OptionSet<>.
+
+        * Tracing/SystemTracePoints.plist:
+
 2020-02-17  Zhifei Fang  <zhifei_fang@apple.com>
 
         [Webkit.css] Adding popover style element

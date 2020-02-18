@@ -9288,7 +9288,7 @@ bool LayerFlushController::flushLayers()
     return false;
 }
 
-- (void)_scheduleCompositingLayerFlush
+- (void)_scheduleUpdateRendering
 {
 #if PLATFORM(IOS_FAMILY)
     if (_private->closing)

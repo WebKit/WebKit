@@ -73,8 +73,8 @@ public:
 
     RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
     
-    void setNextFlushIsForImmediatePaint(bool nextFlushIsForImmediatePaint) { m_nextFlushIsForImmediatePaint = nextFlushIsForImmediatePaint; }
-    bool nextFlushIsForImmediatePaint() const { return m_nextFlushIsForImmediatePaint; }
+    void setNextRenderingUpdateRequiresSynchronousImageDecoding(bool requireSynchronousDecoding) { m_nextRenderingUpdateRequiresSynchronousImageDecoding = requireSynchronousDecoding; }
+    bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
 
     void adoptLayersFromContext(RemoteLayerTreeContext&);
     
@@ -102,7 +102,7 @@ private:
 
     WebCore::LayerPool m_layerPool;
     
-    bool m_nextFlushIsForImmediatePaint { false };
+    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
 };
 
 } // namespace WebKit

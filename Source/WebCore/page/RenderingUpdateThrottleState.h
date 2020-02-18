@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,9 @@
 
 namespace WebCore {
 
-struct LayerFlushThrottleState {
-    enum {
-        Enabled = 1 << 0,
-        UserIsInteracting = 1 << 1
-    };
-    typedef unsigned Flags;
+enum class RenderingUpdateThrottleState {
+    Enabled             = 1 << 0,
+    UserIsInteracting   = 1 << 1
 };
 
 } // namespace WebCore

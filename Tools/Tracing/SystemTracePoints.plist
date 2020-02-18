@@ -359,7 +359,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>Layer flush runloop observer</string>
+                 <string>Rendering update runloop observer</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>

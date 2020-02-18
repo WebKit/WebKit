@@ -1,3 +1,94 @@
+2020-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move from "layer flush" terminology to "rendering update"
+        https://bugs.webkit.org/show_bug.cgi?id=207870
+
+        Reviewed by Tim Horton.
+        
+        Rename various functions and member variables to move away from the legacy "layer flush"
+        terminology and instead use "rendering update", matching Page::updateRendering(). The fact
+        that we have layers is an implementation detail.
+        
+        Change LayerFlushThrottlingState to be an OptionSet<>.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleRenderingUpdate):
+        (WebKit::WebChromeClient::adjustRenderUpdateThrottling):
+        (WebKit::WebChromeClient::renderingUpdateThrottlingIsActive const):
+        (WebKit::WebChromeClient::scheduleCompositingLayerFlush): Deleted.
+        (WebKit::WebChromeClient::adjustLayerFlushThrottling): Deleted.
+        (WebKit::WebChromeClient::layerFlushThrottlingIsActive const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::renderingUpdateThrottlingIsActive const):
+        (WebKit::DrawingArea::adjustRenderUpdateThrottling):
+        (WebKit::DrawingArea::layerFlushThrottlingIsActive const): Deleted.
+        (WebKit::DrawingArea::adjustLayerFlushThrottling): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::setNextFlushIsForImmediatePaint):
+        (WebKit::RemoteLayerTreeContext::nextFlushIsForImmediatePaint const):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::RemoteLayerTreeDrawingArea::forceRepaint):
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedContentRect):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleImmediateRenderingUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleRenderingUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::adjustRenderUpdateThrottling):
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        (WebKit::RemoteLayerTreeDrawingArea::didUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        (WebKit::RemoteLayerTreeDrawingArea::addTransactionCallbackID):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately): Deleted.
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush): Deleted.
+        (WebKit::RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling): Deleted.
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scheduleFullEditorStateUpdate):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaint):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdate):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleImmediateRenderingUpdate):
+        (WebKit::TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        (WebKit::TiledCoreAnimationDrawingArea::addTransactionCallbackID):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        (WebKit::TiledCoreAnimationDrawingArea::suspendPainting):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRenderingRunLoopCallback):
+        (WebKit::TiledCoreAnimationDrawingArea::invalidateRenderingUpdateRunLoopObserver):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustRenderUpdateThrottling):
+        (WebKit::TiledCoreAnimationDrawingArea::renderingUpdateThrottlingIsActive const):
+        (WebKit::TiledCoreAnimationDrawingArea::startRenderThrottlingTimer):
+        (WebKit::TiledCoreAnimationDrawingArea::renderThrottlingTimerFired):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlushImmediately): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::invalidateLayerFlushRunLoopObserver): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleLayerFlushRunLoopObserver): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushThrottlingIsActive const): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::startLayerFlushThrottlingTimer): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired): Deleted.
+
 2020-02-18  Daniel Bates  <dabates@apple.com>
 
         Rename dispatchDidReceiveEditorStateAfterFocus() to dispatchDidUpdateEditorState() to better describe its purpose

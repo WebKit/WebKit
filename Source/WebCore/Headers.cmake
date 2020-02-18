@@ -811,7 +811,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameViewLayoutContext.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
-    page/LayerFlushThrottleState.h
     page/LayoutMilestone.h
     page/MediaCanStartListener.h
     page/MediaProducer.h
@@ -837,6 +836,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteDOMWindow.h
     page/RemoteFrame.h
     page/RenderingUpdateScheduler.h
+    page/RenderingUpdateThrottleState.h
     page/RuntimeEnabledFeatures.h
     page/ScrollBehavior.h
     page/ScrollIntoViewOptions.h

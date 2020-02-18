@@ -102,8 +102,8 @@ enum TracePointCode {
     SyncTouchEventEnd,
     InitializeWebProcessStart,
     InitializeWebProcessEnd,
-    LayerFlushRunLoopObserverStart,
-    LayerFlushRunLoopObserverEnd,
+    RenderingUpdateRunLoopObserverStart,
+    RenderingUpdateRunLoopObserverEnd,
     LayerTreeFreezeStart,
     LayerTreeFreezeEnd,
 

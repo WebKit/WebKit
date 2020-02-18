@@ -942,10 +942,10 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::scheduleCompositingLayerFlush()
+void WebChromeClient::scheduleRenderingUpdate()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _scheduleCompositingLayerFlush];
+    [m_webView _scheduleUpdateRendering];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

@@ -60,7 +60,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
-    , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
+    , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayer->setName("drawing area root");
@@ -145,7 +145,7 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
 {
     m_contentLayer = rootLayer;
     updateRootLayers();
-    scheduleCompositingLayerFlush();
+    scheduleRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&)
@@ -153,7 +153,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
     m_viewSize = viewSize;
     m_webPage.setSize(viewSize);
 
-    scheduleCompositingLayerFlush();
+    scheduleRenderingUpdate();
 
     send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
@@ -185,22 +185,22 @@ void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 
 void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 {
-    if (m_isFlushingSuspended == isFrozen)
+    if (m_isRenderingSuspended == isFrozen)
         return;
 
     tracePoint(isFrozen ? LayerTreeFreezeStart : LayerTreeFreezeEnd);
 
-    m_isFlushingSuspended = isFrozen;
+    m_isRenderingSuspended = isFrozen;
 
-    if (!m_isFlushingSuspended && m_hasDeferredFlush) {
-        m_hasDeferredFlush = false;
+    if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
+        m_hasDeferredRenderingUpdate = false;
         scheduleInitialDeferredPaint();
     }
 }
 
 void RemoteLayerTreeDrawingArea::forceRepaint()
 {
-    if (m_isFlushingSuspended)
+    if (m_isRenderingSuspended)
         return;
 
     for (Frame* frame = &m_webPage.corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -211,7 +211,7 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
         frameView->tiledBacking()->forceRepaint();
     }
 
-    flushLayers();
+    updateRendering();
 }
 
 void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime)
@@ -248,7 +248,7 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
         return;
 
     frameView->setExposedContentRect(exposedContentRect);
-    scheduleCompositingLayerFlush();
+    scheduleRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
@@ -273,60 +273,60 @@ TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
     return frameView ? frameView->tiledBacking() : nullptr;
 }
 
-void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlushImmediately()
+void RemoteLayerTreeDrawingArea::scheduleImmediateRenderingUpdate()
 {
-    m_layerFlushTimer.startOneShot(0_s);
+    m_updateRenderingTimer.startOneShot(0_s);
 }
 
 void RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint()
 {
-    ASSERT(!m_isFlushingSuspended);
-    m_flushingInitialDeferredPaint = true;
+    ASSERT(!m_isRenderingSuspended);
+    m_inInitialDeferredRenderingUpdate = true;
 
-    if (m_layerFlushTimer.isActive())
+    if (m_updateRenderingTimer.isActive())
         return;
-    scheduleCompositingLayerFlushImmediately();
+    scheduleImmediateRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
+void RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
 {
-    if (m_isFlushingSuspended) {
-        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = false;
-        m_hasDeferredFlush = true;
+    if (m_isRenderingSuspended) {
+        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
+        m_hasDeferredRenderingUpdate = true;
         return;
     }
-    if (m_isLayerFlushThrottlingTemporarilyDisabledForInteraction) {
-        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = false;
-        scheduleCompositingLayerFlushImmediately();
+    if (m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction) {
+        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
+        scheduleImmediateRenderingUpdate();
         return;
     }
 
-    if (m_layerFlushTimer.isActive())
+    if (m_updateRenderingTimer.isActive())
         return;
 
     const Seconds initialFlushDelay = 500_ms;
     const Seconds flushDelay = 1500_ms;
-    Seconds throttleDelay = m_isThrottlingLayerFlushes ? (m_isInitialThrottledLayerFlush ? initialFlushDelay : flushDelay) : 0_s;
-    m_isInitialThrottledLayerFlush = false;
+    Seconds throttleDelay = m_isThrottlingRenderingUpdates ? (m_isFirstThrottledRenderingUpdate ? initialFlushDelay : flushDelay) : 0_s;
+    m_isFirstThrottledRenderingUpdate = false;
 
-    m_layerFlushTimer.startOneShot(throttleDelay);
+    m_updateRenderingTimer.startOneShot(throttleDelay);
 }
 
-bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags flags)
+bool RemoteLayerTreeDrawingArea::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)
 {
-    if (flags & WebCore::LayerFlushThrottleState::UserIsInteracting)
-        m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = true;
+    if (flags.contains(RenderingUpdateThrottleState::UserIsInteracting))
+        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = true;
 
-    bool wasThrottlingLayerFlushes = m_isThrottlingLayerFlushes;
-    m_isThrottlingLayerFlushes = flags & WebCore::LayerFlushThrottleState::Enabled;
+    bool wasThrottlingLayerFlushes = m_isThrottlingRenderingUpdates;
+    m_isThrottlingRenderingUpdates = flags.contains(RenderingUpdateThrottleState::Enabled);
 
-    if (!wasThrottlingLayerFlushes && m_isThrottlingLayerFlushes)
-        m_isInitialThrottledLayerFlush = true;
+    if (!wasThrottlingLayerFlushes && m_isThrottlingRenderingUpdates)
+        m_isFirstThrottledRenderingUpdate = true;
 
     // Re-schedule the flush if we stopped throttling.
-    if (wasThrottlingLayerFlushes && !m_isThrottlingLayerFlushes && m_layerFlushTimer.isActive()) {
-        m_layerFlushTimer.stop();
-        scheduleCompositingLayerFlush();
+    if (wasThrottlingLayerFlushes && !m_isThrottlingRenderingUpdates && m_updateRenderingTimer.isActive()) {
+        m_updateRenderingTimer.stop();
+        scheduleRenderingUpdate();
     }
     return true;
 }
@@ -354,30 +354,30 @@ void RemoteLayerTreeDrawingArea::addCommitHandlers()
     m_webPage.setFirstFlushAfterCommit(true);
 }
 
-void RemoteLayerTreeDrawingArea::flushLayers()
+void RemoteLayerTreeDrawingArea::updateRendering()
 {
-    if (m_isFlushingSuspended) {
-        m_hasDeferredFlush = true;
+    if (m_isRenderingSuspended) {
+        m_hasDeferredRenderingUpdate = true;
         return;
     }
 
     if (m_waitingForBackingStoreSwap) {
-        m_hadFlushDeferredWhileWaitingForBackingStoreSwap = true;
+        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
         return;
     }
 
-    if (m_flushingInitialDeferredPaint) {
-        m_flushingInitialDeferredPaint = false;
+    if (m_inInitialDeferredRenderingUpdate) {
+        m_inInitialDeferredRenderingUpdate = false;
         // Reschedule the flush timer for the second paint if painting is being throttled.
-        if (m_isThrottlingLayerFlushes)
-            scheduleCompositingLayerFlush();
+        if (m_isThrottlingRenderingUpdates)
+            scheduleRenderingUpdate();
     }
 
     // This function is not reentrant, e.g. a rAF callback may force repaint.
-    if (m_inFlushLayers)
+    if (m_inUpdateRendering)
         return;
 
-    SetForScope<bool> change(m_inFlushLayers, true);
+    SetForScope<bool> change(m_inUpdateRendering, true);
     m_webPage.updateRendering();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
@@ -386,7 +386,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     addCommitHandlers();
 
-    if (m_nextFlushIsForImmediatePaint)
+    if (m_nextRenderingUpdateRequiresSynchronousImageDecoding)
         m_webPage.mainFrameView()->invalidateImagesWithAsyncDecodes();
 
     m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
@@ -406,9 +406,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteLayerTreeTransaction layerTransaction;
     layerTransaction.setTransactionID(takeNextTransactionID());
     layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
-    m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(m_nextFlushIsForImmediatePaint);
+
+    m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding(m_nextRenderingUpdateRequiresSynchronousImageDecoding);
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(m_rootLayer.get()).platformCALayer());
-    m_remoteLayerTreeContext->setNextFlushIsForImmediatePaint(false);
+    m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding(false);
+
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
 
@@ -424,7 +426,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
         downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
 #endif
 
-    m_nextFlushIsForImmediatePaint = false;
+    m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
     m_waitingForBackingStoreSwap = true;
 
     send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
@@ -475,9 +477,9 @@ void RemoteLayerTreeDrawingArea::didUpdate()
 
     m_waitingForBackingStoreSwap = false;
 
-    if (m_hadFlushDeferredWhileWaitingForBackingStoreSwap) {
-        scheduleCompositingLayerFlush();
-        m_hadFlushDeferredWhileWaitingForBackingStoreSwap = false;
+    if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap) {
+        scheduleRenderingUpdate();
+        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
     }
 
     // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
@@ -533,9 +535,9 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
 
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
-        m_nextFlushIsForImmediatePaint = true;
+        m_nextRenderingUpdateRequiresSynchronousImageDecoding = true;
         m_activityStateChangeID = activityStateChangeID;
-        scheduleCompositingLayerFlushImmediately();
+        scheduleImmediateRenderingUpdate();
     }
 
     // FIXME: We may want to match behavior in TiledCoreAnimationDrawingArea by firing these callbacks after the next compositing flush, rather than immediately after
@@ -548,10 +550,10 @@ void RemoteLayerTreeDrawingArea::addTransactionCallbackID(CallbackID callbackID)
 {
     // Assume that if someone is listening for this transaction's completion, that they want it to
     // be a "complete" paint (including images that would normally be asynchronously decoding).
-    m_nextFlushIsForImmediatePaint = true;
+    m_nextRenderingUpdateRequiresSynchronousImageDecoding = true;
 
     m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
-    scheduleCompositingLayerFlush();
+    scheduleRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDrawingArea)
