@@ -41,6 +41,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+struct Cookie;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 enum class HTTPCookieAcceptPolicy : uint8_t;
@@ -82,6 +83,11 @@ public:
 #endif
 
     bool cookiesEnabled() const;
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
+    void cookiesDeleted();
+#endif
 
 private:
     NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);

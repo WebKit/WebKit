@@ -26,11 +26,14 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "Test.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 static bool receivedAlert;
 
@@ -67,4 +70,61 @@ TEST(WebKit, CookiePrivateBrowsing)
     receivedAlert = false;
     [view2 loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&receivedAlert);
+}
+
+TEST(WebKit, CookieCacheSyncAcrossProcess)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto view1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto view2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [view1 synchronouslyLoadHTMLString:@"foo" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    [view2 synchronouslyLoadHTMLString:@"bar" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    // Cache DOM cookies in first WebView.
+    __block bool doneEvaluatingJavaScript = false;
+    [view1 evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ("", (NSString *)cookie);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    // Cache DOM cookies in second WebView.
+    doneEvaluatingJavaScript = false;
+    [view2 evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ("", (NSString *)cookie);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    // Setting cookie in first Webview / process.
+    doneEvaluatingJavaScript = false;
+    [view1 evaluateJavaScript:@"document.cookie = 'foo=bar'; document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ("foo=bar", (NSString *)cookie);
+        doneEvaluatingJavaScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+
+    // Making sure new cookie gets sync'd to second WebView process.
+    int timeout = 0;
+    __block String cookieString;
+    do {
+        TestWebKitAPI::Util::sleep(0.1);
+        doneEvaluatingJavaScript = false;
+        [view2 evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
+            EXPECT_NULL(error);
+            EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
+            cookieString = (NSString *)cookie;
+            doneEvaluatingJavaScript = true;
+        }];
+        TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+        ++timeout;
+    } while (cookieString != "" && timeout < 50);
+    EXPECT_WK_STREQ("foo=bar", cookieString);
 }

@@ -1,0 +1,12 @@
+Tests that document.cookie returns the right value after a showModalDialog() call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS normalizeCookie(document.cookie) is "testKey=testValue"
+PASS normalizeCookie(cookiesInFrame) is "foo=bar; testKey=testValue"
+PASS normalizeCookie(document.cookie) is "foo=bar; testKey=testValue"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

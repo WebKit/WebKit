@@ -361,6 +361,9 @@ requestIdleCallbackEnabled:
 HTTPSUpgradeEnabled:
   initial: false
 
+inProcessCookieCacheEnabled:
+  initial: false
+
 thirdPartyIframeRedirectBlockingEnabled:
   initial: true
 

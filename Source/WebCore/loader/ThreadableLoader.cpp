@@ -110,11 +110,12 @@ RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& contex
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
+    auto resourceURL = request.url();
     if (is<WorkerGlobalScope>(context))
         WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(context), WTFMove(request), client, options);
     else
         DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(context), WTFMove(request), client, options);
-    context.didLoadResourceSynchronously();
+    context.didLoadResourceSynchronously(resourceURL);
 }
 
 void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, const String& initiator)

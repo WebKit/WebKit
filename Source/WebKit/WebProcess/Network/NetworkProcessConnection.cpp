@@ -32,6 +32,7 @@
 #include "StorageAreaMap.h"
 #include "StorageAreaMapMessages.h"
 #include "WebCacheStorageProvider.h"
+#include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServer.h"
 #include "WebIDBConnectionToServerMessages.h"
@@ -233,6 +234,18 @@ void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy 
 {
     m_cookieAcceptPolicy = newPolicy;
 }
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+void NetworkProcessConnection::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+{
+    WebProcess::singleton().cookieJar().cookiesAdded(host, cookies);
+}
+
+void NetworkProcessConnection::cookiesDeleted()
+{
+    WebProcess::singleton().cookieJar().cookiesDeleted();
+}
+#endif
 
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#include "Cookie.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
@@ -55,6 +56,14 @@ void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
     else
         removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
 }
+
+#if !PLATFORM(COCOA)
+Vector<Cookie> NetworkStorageSession::domCookiesForHost(const String&)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+#endif // !PLATFORM(COCOA)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 

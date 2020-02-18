@@ -55,6 +55,13 @@ HTTPSUpgradeEnabled:
    humanReadableDescription: "Automatic HTTPS upgrade for known supported sites"
    category: experimental
 
+InProcessCookieCacheEnabled:
+   type: bool
+   defaultValue: true
+   humanReadableName: "In-Process Cookie Cache"
+   humanReadableDescription: "In-Process DOM Cookie Cache"
+   category: experimental
+
 ThirdPartyIframeRedirectBlockingEnabled:
    type: bool
    defaultValue: true

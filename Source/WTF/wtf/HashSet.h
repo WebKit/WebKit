@@ -112,6 +112,8 @@ public:
     // them are new to the set. Returns false if the set is unchanged.
     template<typename IteratorType>
     bool add(IteratorType begin, IteratorType end);
+    template<typename IteratorType>
+    bool remove(IteratorType begin, IteratorType end);
 
     bool remove(const ValueType&);
     bool remove(iterator);
@@ -267,6 +269,16 @@ inline bool HashSet<T, U, V>::add(IteratorType begin, IteratorType end)
     bool changed = false;
     for (IteratorType iter = begin; iter != end; ++iter)
         changed |= add(*iter).isNewEntry;
+    return changed;
+}
+
+template<typename T, typename U, typename V>
+template<typename IteratorType>
+inline bool HashSet<T, U, V>::remove(IteratorType begin, IteratorType end)
+{
+    bool changed = false;
+    for (IteratorType iter = begin; iter != end; ++iter)
+        changed |= remove(*iter);
     return changed;
 }
 

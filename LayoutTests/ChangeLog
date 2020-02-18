@@ -1,3 +1,21 @@
+2020-02-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Implement in-WebProcess cookie cache to avoid sync IPC for document.cookie in most cases
+        https://bugs.webkit.org/show_bug.cgi?id=207593
+        <rdar://problem/56027027>
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * http/tests/cookies/document-cookie-after-showModalDialog-expected.txt: Added.
+        * http/tests/cookies/document-cookie-after-showModalDialog.html: Added.
+        * http/tests/cookies/document-cookie-during-iframe-parsing-expected.txt: Added.
+        * http/tests/cookies/document-cookie-during-iframe-parsing.html: Added.
+        * http/tests/cookies/resources/close-modal-dialog.html: Added.
+        * http/tests/cookies/resources/document-cookie-during-iframe-parsing-iframe.html: Added.
+        * http/tests/cookies/resources/set-cookie-and-serve.php: Added.
+
 2020-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Changed results due to ANGLE use

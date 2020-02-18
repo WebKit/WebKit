@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonVM.h"
+#include "CookieJar.h"
 #include "Document.h"
 #include "FontCache.h"
 #include "Frame.h"
@@ -98,6 +99,10 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
     }
 
     CSSValuePool::singleton().drain();
+
+    Page::forEachPage([](auto& page) {
+        page.cookieJar().clearCache();
+    });
 
     for (auto& document : copyToVectorOf<RefPtr<Document>>(Document::allDocuments())) {
         document->styleScope().releaseMemory();

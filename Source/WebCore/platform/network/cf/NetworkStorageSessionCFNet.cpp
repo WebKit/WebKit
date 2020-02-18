@@ -73,11 +73,12 @@ RetainPtr<CFURLStorageSessionRef> NetworkStorageSession::createCFStorageSessionF
     return storageSession;
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage, IsInMemoryCookieStore isInMemoryCookieStore)
     : m_sessionID(sessionID)
     , m_platformSession(WTFMove(platformSession))
+    , m_isInMemoryCookieStore(isInMemoryCookieStore == IsInMemoryCookieStore::Yes)
 {
-    ASSERT(processMayUseCookieAPI() || !platformCookieStorage);
+    ASSERT(processMayUseCookieAPI() || !platformCookieStorage || m_isInMemoryCookieStore);
     m_platformCookieStorage = platformCookieStorage ? WTFMove(platformCookieStorage) : cookieStorage();
 }
 
@@ -88,10 +89,10 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 {
-    if (!processMayUseCookieAPI())
+    if (!processMayUseCookieAPI() && !m_isInMemoryCookieStore)
         return nullptr;
 
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
     if (m_platformCookieStorage)
         return m_platformCookieStorage;

@@ -1,5 +1,61 @@
 2020-02-17  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][Cocoa] Implement in-WebProcess cookie cache to avoid sync IPC for document.cookie in most cases
+        https://bugs.webkit.org/show_bug.cgi?id=207593
+        <rdar://problem/56027027>
+
+        Reviewed by Antti Koivisto.
+
+        See WebCore ChangeLog.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::domCookiesForHost):
+        (WebKit::NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications):
+        (WebKit::NetworkConnectionToWebProcess::cookiesAdded):
+        (WebKit::NetworkConnectionToWebProcess::cookiesDeleted):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * Scripts/webkit/messages.py:
+        * Shared/WebPreferences.yaml:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::cookiesAdded):
+        (WebKit::NetworkProcessConnection::cookiesDeleted):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm: Copied from Source/WebKit/WebProcess/WebPage/WebCookieJar.h.
+        (WebKit::WebCookieCache::inMemoryStorageSession):
+        * WebProcess/WebPage/WebCookieCache.cpp: Added.
+        (WebKit::WebCookieCache::isFunctional):
+        (WebKit::WebCookieCache::cookiesForDOM):
+        (WebKit::WebCookieCache::setCookiesFromDOM):
+        (WebKit::WebCookieCache::cookiesAdded):
+        (WebKit::WebCookieCache::cookiesDeleted):
+        (WebKit::WebCookieCache::clear):
+        (WebKit::WebCookieCache::clearForHost):
+        (WebKit::WebCookieCache::pruneCacheIfNecessary):
+        * WebProcess/WebPage/WebCookieCache.h: Copied from Source/WebKit/WebProcess/WebPage/WebCookieJar.h.
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::isEligibleForCache const):
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookiesAdded):
+        (WebKit::WebCookieJar::cookiesDeleted):
+        (WebKit::WebCookieJar::clearCache):
+        (WebKit::WebCookieJar::clearCacheForHost):
+        * WebProcess/WebPage/WebCookieJar.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::cookieJar):
+
+2020-02-17  Chris Dumez  <cdumez@apple.com>
+
         Defer execution of async scripts until until the document is loaded
         https://bugs.webkit.org/show_bug.cgi?id=207698
         <rdar://problem/57625747>

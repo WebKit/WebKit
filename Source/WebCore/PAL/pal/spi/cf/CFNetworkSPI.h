@@ -391,6 +391,10 @@ WTF_EXTERN_C_END
 
 @interface NSHTTPCookieStorage ()
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
+- (void)_setSubscribedDomainsForCookieChanges:(NSSet<NSString*>* __nullable)domainList;
+- (void)_setCookiesAddedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* addedCookies, NSURL* __nullable urlForAddedCookies))cookiesAddedHandler onQueue:(dispatch_queue_t __nullable)queue;
+- (void)_setCookiesDeletedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable deletedCookies, bool deletedAllCookies))cookiesDeletedHandler onQueue:(dispatch_queue_t __nullable)queue;
+- (NSArray* __nullable)_getCookiesForDomain:(NSString*)domain;
 @end
 
 @interface NSURLResponse ()

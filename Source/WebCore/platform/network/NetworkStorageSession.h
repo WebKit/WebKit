@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,9 @@ typedef struct _SoupCookieJar SoupCookieJar;
 
 #if PLATFORM(COCOA)
 #include "CookieStorageObserver.h"
+OBJC_CLASS NSArray;
+OBJC_CLASS NSHTTPCookie;
+OBJC_CLASS NSMutableSet;
 #endif
 
 namespace WebCore {
@@ -79,6 +82,15 @@ enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserIn
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ShouldAskITP : bool { No, Yes };
 
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+class CookieChangeObserver {
+public:
+    virtual ~CookieChangeObserver() { }
+    virtual void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) = 0;
+    virtual void cookiesDeleted() = 0;
+};
+#endif
+
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -92,9 +104,14 @@ public:
     WEBCORE_EXPORT NSHTTPCookieStorage *nsCookieStorage() const;
 #endif
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT ~NetworkStorageSession();
+#endif
+
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFStringRef identifier);
-    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, RetainPtr<CFURLStorageSessionRef>&&, RetainPtr<CFHTTPCookieStorageRef>&&);
+    enum class IsInMemoryCookieStore : bool { No, Yes };
+    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, RetainPtr<CFURLStorageSessionRef>&&, RetainPtr<CFHTTPCookieStorageRef>&&, IsInMemoryCookieStore = IsInMemoryCookieStore::No);
     WEBCORE_EXPORT explicit NetworkStorageSession(PAL::SessionID);
 
     // May be null, in which case a Foundation default should be used.
@@ -146,6 +163,14 @@ public:
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeSecureCookies, ShouldAskITP) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
 
+    WEBCORE_EXPORT Vector<Cookie> domCookiesForHost(const String& host);
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    WEBCORE_EXPORT void startListeningForCookieChangeNotifications(CookieChangeObserver&, const String& host);
+    WEBCORE_EXPORT void stopListeningForCookieChangeNotifications(CookieChangeObserver&, const HashSet<String>& hosts);
+    WEBCORE_EXPORT bool supportsCookieChangeListenerAPI() const;
+#endif
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void setResourceLoadStatisticsEnabled(bool enabled) { m_isResourceLoadStatisticsEnabled = enabled; }
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<FrameIdentifier>, Optional<PageIdentifier>) const;
@@ -173,11 +198,27 @@ public:
 #endif
 
 private:
+#if PLATFORM(COCOA)
+    enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
+    std::pair<String, bool> cookiesForSession(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, IncludeHTTPOnlyOrNot, IncludeSecureCookies, ShouldAskITP = ShouldAskITP::Yes) const;
+    NSArray *httpCookies(CFHTTPCookieStorageRef) const;
+    NSArray *httpCookiesForURL(CFHTTPCookieStorageRef, NSURL *firstParty, const Optional<SameSiteInfo>&, NSURL *) const;
+    NSArray *cookiesForURL(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP) const;
+    void setHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *cookies, NSURL *, NSURL *mainDocumentURL, const SameSiteInfo&) const;
+    void deleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *) const;
+#endif
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    void registerCookieChangeListenersIfNecessary();
+    void unregisterCookieChangeListenersIfNecessary();
+#endif
+
     PAL::SessionID m_sessionID;
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
     RetainPtr<CFHTTPCookieStorageRef> m_platformCookieStorage;
+    bool m_isInMemoryCookieStore { false };
 #elif USE(SOUP)
     static void cookiesDidChange(NetworkStorageSession*);
 
@@ -188,6 +229,12 @@ private:
     mutable UniqueRef<CookieJarDB> m_cookieDatabase;
 #else
     RefPtr<NetworkingContext> m_context;
+#endif
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    bool m_didRegisterCookieListeners { false };
+    RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
+    HashMap<String, HashSet<CookieChangeObserver*>> m_cookieChangeObservers;
 #endif
 
     CredentialStorage m_credentialStorage;

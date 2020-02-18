@@ -1,3 +1,15 @@
+2020-02-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Implement in-WebProcess cookie cache to avoid sync IPC for document.cookie in most cases
+        https://bugs.webkit.org/show_bug.cgi?id=207593
+        <rdar://problem/56027027>
+
+        Reviewed by Antti Koivisto.
+
+        Add new CFNetwork SPI to CFNetworkSPI.h for open source builds and for using respondsToSelector.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2020-02-17  Peng Liu  <peng.liu6@apple.com>
 
         Fix check-webkit-style errors related to AVFoundationSPI.h

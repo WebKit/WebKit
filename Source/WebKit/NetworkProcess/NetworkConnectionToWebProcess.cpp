@@ -124,6 +124,11 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     for (auto& port : m_processEntangledPorts)
         networkProcess().messagePortChannelRegistry().didCloseMessagePort(port);
 
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    if (auto* networkStorageSession = storageSession())
+        networkStorageSession->stopListeningForCookieChangeNotifications(*this, m_hostsWithCookieListeners);
+#endif
+
 #if USE(LIBWEBRTC)
     if (m_rtcProvider)
         m_rtcProvider->close();
@@ -632,6 +637,48 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& c
         return;
     networkStorageSession->deleteCookie(url, cookieName);
 }
+
+void NetworkConnectionToWebProcess::domCookiesForHost(const String& host, bool subscribeToCookieChangeNotifications, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+{
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return completionHandler({ });
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    if (subscribeToCookieChangeNotifications) {
+        ASSERT(!m_hostsWithCookieListeners.contains(host));
+        m_hostsWithCookieListeners.add(host);
+        networkStorageSession->startListeningForCookieChangeNotifications(*this, host);
+    }
+#else
+    UNUSED_PARAM(subscribeToCookieChangeNotifications);
+#endif
+
+    completionHandler(networkStorageSession->domCookiesForHost(host));
+}
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+
+void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(const HashSet<String>& hosts)
+{
+    bool removed = m_hostsWithCookieListeners.remove(hosts.begin(), hosts.end());
+    ASSERT_UNUSED(removed, removed);
+
+    if (auto* networkStorageSession = storageSession())
+        networkStorageSession->stopListeningForCookieChangeNotifications(*this, hosts);
+}
+
+void NetworkConnectionToWebProcess::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+{
+    connection().send(Messages::NetworkProcessConnection::CookiesAdded(host, cookies), 0);
+}
+
+void NetworkConnectionToWebProcess::cookiesDeleted()
+{
+    connection().send(Messages::NetworkProcessConnection::CookiesDeleted(), 0);
+}
+
+#endif
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,16 @@
 
 #pragma once
 
+#include "WebCookieCache.h"
 #include <WebCore/CookieJar.h>
 
+namespace WebCore {
+struct Cookie;
+}
+
 namespace WebKit {
+
+class WebFrame;
 
 class WebCookieJar final : public WebCore::CookieJar {
 public:
@@ -39,8 +46,18 @@ public:
     std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies) const final;
     bool getRawCookies(const WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName) final;
+
+    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
+    void cookiesDeleted();
+
 private:
     WebCookieJar();
+
+    void clearCache() final;
+    void clearCacheForHost(const String&) final;
+    bool isEligibleForCache(WebFrame&, const URL& firstPartyForCookies, const URL& resourceURL) const;
+
+    mutable WebCookieCache m_cache;
 };
 
 } // namespace WebKit

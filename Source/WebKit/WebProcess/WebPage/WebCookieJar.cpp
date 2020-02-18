@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
 
 namespace WebKit {
@@ -88,6 +89,23 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
 }
 #endif
 
+bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForCookies, const URL& resourceURL) const
+{
+    auto* page = frame.page() ? frame.page()->corePage() : nullptr;
+    if (!page || !page->settings().inProcessCookieCacheEnabled())
+        return false;
+
+    if (!m_cache.isSupported())
+        return false;
+
+    // For now, we only cache cookies for first-party content. Third-party cookie caching is a bit more complicated due to partitioning and storage access.
+    RegistrableDomain resourceDomain { resourceURL };
+    if (resourceDomain.isEmpty())
+        return false;
+
+    return frame.isMainFrame() || RegistrableDomain { firstPartyForCookies } == resourceDomain;
+}
+
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {
     auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
@@ -100,12 +118,17 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
         return { };
 #endif
 
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document);
+    auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
 
+    if (isEligibleForCache(*webFrame, document.firstPartyForCookies(), url))
+        return m_cache.cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies);
+
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url), shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
         return { };
 
     return cookieString;
@@ -123,10 +146,34 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
         return;
 #endif
 
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document);
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString), 0);
+    if (isEligibleForCache(*webFrame, document.firstPartyForCookies(), url))
+        m_cache.setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, cookieString);
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString), 0);
+}
+
+void WebCookieJar::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+{
+    m_cache.cookiesAdded(host, cookies);
+}
+
+void WebCookieJar::cookiesDeleted()
+{
+    m_cache.cookiesDeleted();
+}
+
+void WebCookieJar::clearCache()
+{
+    m_cache.clear();
+}
+
+void WebCookieJar::clearCacheForHost(const String& host)
+{
+    m_cache.clearForHost(host);
 }
 
 bool WebCookieJar::cookiesEnabled(const Document& document) const

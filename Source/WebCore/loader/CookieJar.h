@@ -60,6 +60,10 @@ public:
     virtual bool getRawCookies(const Document&, const URL&, Vector<Cookie>&) const;
     virtual void deleteCookie(const Document&, const URL&, const String& cookieName);
 
+    // Cookie Cache.
+    virtual void clearCache() { }
+    virtual void clearCacheForHost(const String&) { }
+
     virtual ~CookieJar();
 protected:
     static SameSiteInfo sameSiteInfo(const Document&);
