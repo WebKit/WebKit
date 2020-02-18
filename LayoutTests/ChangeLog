@@ -1,3 +1,15 @@
+2020-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Quirk] Add additional escape reason to cover the case when body needs access to both the body and the ICB geometry
+        https://bugs.webkit.org/show_bug.cgi?id=207869
+        <rdar://problem/59531225>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/out-of-flow-html-and-body-stretches-to-viewport-expected.txt: Added.
+        * fast/layoutformattingcontext/out-of-flow-html-and-body-stretches-to-viewport.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Web socket loads should be captured for logging per-page prevalent domains

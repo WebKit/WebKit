@@ -86,6 +86,7 @@ public:
         OutOfFlowBoxNeedsInFlowGeometry,
         FloatBoxNeedsToBeInAbsoluteCoordinates,
         FindFixedHeightAncestorQuirk,
+        DocumentBoxStrechesToViewportQuirk,
         BodyStrechesToViewportQuirk,
         StrokeOverflowNeedsViewportGeometry,
         TableNeedsAccessToTableWrapper

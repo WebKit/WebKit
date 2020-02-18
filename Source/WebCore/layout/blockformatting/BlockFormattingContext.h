@@ -143,7 +143,7 @@ private:
     class Quirks : public FormattingContext::Quirks {
     public:
         bool needsStretching(const Box&) const;
-        ContentHeightAndMargin stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
+        LayoutUnit stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
 
         bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
         bool shouldIgnoreMarginBefore(const Box&) const;

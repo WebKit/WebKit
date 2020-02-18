@@ -270,7 +270,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(c
     if (!quirks.needsStretching(layoutBox))
         return contentHeightAndMargin;
 
-    contentHeightAndMargin = quirks.stretchedInFlowHeight(layoutBox, contentHeightAndMargin);
+    contentHeightAndMargin.contentHeight = quirks.stretchedInFlowHeight(layoutBox, contentHeightAndMargin);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << contentHeightAndMargin.contentHeight << "px) margin(" << contentHeightAndMargin.nonCollapsedMargin.before << "px, " << contentHeightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return contentHeightAndMargin;

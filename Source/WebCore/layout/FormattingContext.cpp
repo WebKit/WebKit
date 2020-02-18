@@ -204,9 +204,15 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
             return false;
         }
 
-        if (*escapeReason == EscapeReason::BodyStrechesToViewportQuirk) {
+        if (*escapeReason == EscapeReason::DocumentBoxStrechesToViewportQuirk) {
             ASSERT(layoutState().inQuirksMode());
             return layoutBox.isInitialContainingBlock();
+        }
+
+        if (*escapeReason == EscapeReason::BodyStrechesToViewportQuirk) {
+            ASSERT(layoutState().inQuirksMode());
+            return layoutBox.isInitialContainingBlock() || layoutBox.isDocumentBox();
+
         }
 
         if (*escapeReason == EscapeReason::StrokeOverflowNeedsViewportGeometry)
