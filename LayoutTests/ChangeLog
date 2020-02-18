@@ -1,3 +1,14 @@
+2020-02-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TreeBuilding] Take createLineBreakBox's return value
+        https://bugs.webkit.org/show_bug.cgi?id=207879
+        <rdar://problem/59537585>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/br-in-inline-content-simple-expected.html: Added.
+        * fast/layoutformattingcontext/br-in-inline-content-simple.html: Added.
+
 2020-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Selection cannot be modified via text interaction in some areas of the compose body field in Gmail
