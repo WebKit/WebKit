@@ -479,7 +479,7 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
 {
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = getVTablePointer(impl.ptr());
+    const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
     void* expectedVTablePointer = __identifier("??_7TestCEReactions@WebCore@@6B@");
 #else

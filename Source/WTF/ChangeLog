@@ -1,3 +1,154 @@
+2020-02-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256791. rdar://problem/59554260
+
+    getVTablePointer() should return a const void*.
+    https://bugs.webkit.org/show_bug.cgi?id=207871
+    <rdar://problem/59525721>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Source/WebCore:
+    
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GenerateImplementation):
+    * bindings/scripts/test/JS/JSInterfaceName.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSMapLike.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSReadOnlySetLike.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSSetLike.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestException.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestIterable.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestNode.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestObj.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestSerialization.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifier.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+    (WebCore::toJSNewlyCreated):
+    
+    Source/WTF:
+    
+    * wtf/PointerPreparations.h:
+    (WTF::getVTablePointer):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256791 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-17  Mark Lam  <mark.lam@apple.com>
+
+            getVTablePointer() should return a const void*.
+            https://bugs.webkit.org/show_bug.cgi?id=207871
+            <rdar://problem/59525721>
+
+            Reviewed by Yusuke Suzuki.
+
+            * wtf/PointerPreparations.h:
+            (WTF::getVTablePointer):
+
 2020-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r256633.

@@ -34,16 +34,16 @@ namespace WTF {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
 
 template<typename T>
-ALWAYS_INLINE void* getVTablePointer(T* o) { return __builtin_get_vtable_pointer(o); }
+ALWAYS_INLINE const void* getVTablePointer(T* o) { return __builtin_get_vtable_pointer(o); }
 
 #else // not COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)
 
 #if CPU(ARM64E)
 template<typename T>
-ALWAYS_INLINE void* getVTablePointer(T* o) { return __builtin_ptrauth_auth(*(reinterpret_cast<void**>(o)), ptrauth_key_cxx_vtable_pointer, 0); }
+ALWAYS_INLINE const void* getVTablePointer(T* o) { return __builtin_ptrauth_auth(*(reinterpret_cast<void**>(o)), ptrauth_key_cxx_vtable_pointer, 0); }
 #else // not CPU(ARM64E)
 template<typename T>
-ALWAYS_INLINE void* getVTablePointer(T* o) { return (*(reinterpret_cast<void**>(o))); }
+ALWAYS_INLINE const void* getVTablePointer(T* o) { return (*(reinterpret_cast<void**>(o))); }
 #endif // not CPU(ARM64E)
 
 #endif // not COMPILER_HAS_CLANG_BUILTIN(__builtin_get_vtable_pointer)

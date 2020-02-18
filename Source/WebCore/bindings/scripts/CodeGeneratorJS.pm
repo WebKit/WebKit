@@ -4881,7 +4881,7 @@ END
         push(@implContent, <<END) if $vtableNameGnu;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = getVTablePointer(impl.ptr());
+    const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
     void* expectedVTablePointer = ${vtableRefWin};
 #else
