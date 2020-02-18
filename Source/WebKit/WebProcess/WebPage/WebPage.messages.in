@@ -118,6 +118,7 @@ messages -> WebPage LegacyReceiver {
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async
     RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response) Async
 GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType command)
+    SetShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
 #endif
 
     SetControlledByAutomation(bool controlled)

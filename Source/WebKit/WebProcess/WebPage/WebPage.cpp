@@ -1070,7 +1070,7 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     result.isContentRichlyEditable = selection.isContentRichlyEditable();
     result.isInPasswordField = selection.isInPasswordField();
     result.hasComposition = editor.hasComposition();
-    result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges();
+    result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges() || !editor.client()->shouldRevealCurrentSelectionAfterInsertion();
 
     if (auto* document = frame.document())
         result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
@@ -5865,6 +5865,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_scaleWasSetByUIProcess = false;
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = Seconds(1.0 / 60);
+    m_shouldRevealCurrentSelectionAfterInsertion = true;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     WebProcess::singleton().eventDispatcher().clearQueuedTouchEventsForPage(*this);

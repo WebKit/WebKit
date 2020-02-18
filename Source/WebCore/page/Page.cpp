@@ -3001,4 +3001,9 @@ bool Page::shouldDisableCorsForRequestTo(const URL& url) const
     });
 }
 
+void Page::revealCurrentSelection()
+{
+    focusController().focusedOrMainFrame().selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded);
+}
+
 } // namespace WebCore

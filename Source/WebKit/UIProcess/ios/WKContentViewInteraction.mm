@@ -5772,7 +5772,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     // selection rect before we can zoom and reveal the selection. Non-selectable elements (e.g. <select>) can be zoomed
     // immediately because they have no selection to reveal.
     BOOL needsEditorStateUpdate = mayContainSelectableText(_focusedElementInformation.elementType);
-    if (!needsEditorStateUpdate)
+    if (needsEditorStateUpdate)
+        _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
+    else
         [self _zoomToRevealFocusedElement];
 
     [self _updateAccessory];
@@ -5844,6 +5846,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [_webView didEndFormControlInteraction];
         _page->setIsShowingInputViewForFocusedElement(false);
     }
+
+    _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(false);
 
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;

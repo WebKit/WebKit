@@ -72,6 +72,7 @@
 #import <WebCore/DragController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
+#import <WebCore/EditorClient.h>
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
@@ -590,8 +591,9 @@ IntRect WebPage::rectForElementAtInteractionLocation() const
 
 void WebPage::updateSelectionAppearance()
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame.editor().ignoreSelectionChanges() && (frame.editor().hasComposition() || !frame.selection().selection().isNone()))
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    auto& editor = frame.editor();
+    if (!editor.ignoreSelectionChanges() && editor.client()->shouldRevealCurrentSelectionAfterInsertion() && (editor.hasComposition() || !frame.selection().selection().isNone()))
         didChangeSelection();
 }
 
@@ -4204,6 +4206,17 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 #endif
 
     completionHandler(context);
+}
+
+void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
+{
+    if (m_shouldRevealCurrentSelectionAfterInsertion == shouldRevealCurrentSelectionAfterInsertion)
+        return;
+    m_shouldRevealCurrentSelectionAfterInsertion = shouldRevealCurrentSelectionAfterInsertion;
+    if (!shouldRevealCurrentSelectionAfterInsertion)
+        return;
+    m_page->revealCurrentSelection();
+    scheduleFullEditorStateUpdate();
 }
 
 #if USE(QUICK_LOOK)

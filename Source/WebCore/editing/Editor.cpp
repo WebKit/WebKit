@@ -1292,12 +1292,17 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
                 TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);
             }
 
-            // Reveal the current selection
-            if (Frame* editedFrame = document->frame())
-                if (Page* page = editedFrame->page()) {
-                    SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
-                    page->focusController().focusedOrMainFrame().selection().revealSelection(revealMode, ScrollAlignment::alignCenterIfNeeded);
+            // Reveal the current selection. Note that focus may have changed after insertion.
+            // FIXME: Selection is allowed even if setIgnoreSelectionChanges(true). Ideally setIgnoreSelectionChanges()
+            // should be moved from Editor to a page-level like object. If it must remain a frame-specific concept
+            // then this code should conditionalize revealing selection on whether the ignoreSelectionChanges() bit
+            // is set for the newly focused frame.
+            if (client() && client()->shouldRevealCurrentSelectionAfterInsertion()) {
+                if (auto* editedFrame = document->frame()) {
+                    if (auto* page = editedFrame->page())
+                        page->revealCurrentSelection();
                 }
+            }
         }
     }
 

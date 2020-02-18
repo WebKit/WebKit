@@ -114,6 +114,11 @@ bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& tar
     return !editableRoot || editableRoot != targetNode.rootEditableElement() || !m_page->isShowingInputViewForFocusedElement();
 }
 
+bool WebEditorClient::shouldRevealCurrentSelectionAfterInsertion() const
+{
+    return m_page->shouldRevealCurrentSelectionAfterInsertion();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

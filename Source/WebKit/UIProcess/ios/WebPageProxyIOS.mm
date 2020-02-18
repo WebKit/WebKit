@@ -958,7 +958,6 @@ void WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement()
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData& userData)
 {
     m_pendingInputModeChange = WTF::nullopt;
-    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = true;
 
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
@@ -973,7 +972,6 @@ void WebPageProxy::elementDidFocus(const FocusedElementInformation& information,
 void WebPageProxy::elementDidBlur()
 {
     m_pendingInputModeChange = WTF::nullopt;
-    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
     m_deferredElementDidFocusArguments = nullptr;
     pageClient().elementDidBlur();
 }
@@ -1513,6 +1511,14 @@ bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
 
     return pageClient().isApplicationVisible();
 }
+
+
+void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::SetShouldRevealCurrentSelectionAfterInsertion(shouldRevealCurrentSelectionAfterInsertion));
+}
+
 
 #if PLATFORM(IOS)
 void WebPageProxy::grantAccessToAssetServices()

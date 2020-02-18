@@ -373,6 +373,10 @@ public:
     bool compositionUsesCustomHighlights() const { return !m_customCompositionHighlights.isEmpty(); }
     const Vector<CompositionHighlight>& customCompositionHighlights() const { return m_customCompositionHighlights; }
 
+    // FIXME: This should be a page-level concept (i.e. on EditorClient) instead of on the Editor, which
+    // is a frame-specific concept, because executing an editing command can run JavaScript that can do
+    // anything, including changing the focused frame. That is, it is not enough to set this setting on
+    // one Editor to disallow selection changes in all frames.
     enum class RevealSelection { No, Yes };
     WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
     bool ignoreSelectionChanges() const { return m_ignoreSelectionChanges; }
