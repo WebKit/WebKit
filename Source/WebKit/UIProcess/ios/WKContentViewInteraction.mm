@@ -5965,7 +5965,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [self showGlobalMenuControllerInRect:menuControllerRect];
 }
 
-- (void)_didReceiveEditorStateUpdateAfterFocus
+- (void)_didUpdateEditorState
 {
     [self _updateInitialWritingDirectionIfNecessary];
 

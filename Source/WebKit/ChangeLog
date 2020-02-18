@@ -1,3 +1,32 @@
+2020-02-18  Daniel Bates  <dabates@apple.com>
+
+        Rename dispatchDidReceiveEditorStateAfterFocus() to dispatchDidUpdateEditorState() to better describe its purpose
+        https://bugs.webkit.org/show_bug.cgi?id=207865
+
+        Reviewed by Wenson Hsieh.
+
+        Although the iOS implementation bails out unless it was called after WebPageProxy::elementDidFocus()
+        this platform-independent function is actually invoked whenever the UI process receives either
+        an editor state update or a layer tree commit. Renaming this function to better describe its multi-
+        function purpose, which is to allow the UI process a chance to run post-editor update logic.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didUpdateEditorState):
+        (WebKit::PageClientImpl::didReceiveEditorStateUpdateAfterFocus): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didUpdateEditorState]):
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dispatchDidUpdateEditorState):
+        (WebKit::WebPageProxy::dispatchDidReceiveEditorStateAfterFocus): Deleted.
+
 2020-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Selection cannot be modified via text interaction in some areas of the compose body field in Gmail

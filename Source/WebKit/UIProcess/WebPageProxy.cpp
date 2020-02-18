@@ -6977,12 +6977,12 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, CallbackID ca
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     updateEditorState(editorState);
-    dispatchDidReceiveEditorStateAfterFocus();
+    dispatchDidUpdateEditorState();
 }
 
 #if !PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::dispatchDidReceiveEditorStateAfterFocus()
+void WebPageProxy::dispatchDidUpdateEditorState()
 {
 }
 

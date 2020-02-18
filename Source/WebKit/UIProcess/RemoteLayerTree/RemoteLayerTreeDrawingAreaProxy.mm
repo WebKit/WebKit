@@ -251,7 +251,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #endif
 
     if (layerTreeTransaction.hasEditorState())
-        m_webPageProxy.dispatchDidReceiveEditorStateAfterFocus();
+        m_webPageProxy.dispatchDidUpdateEditorState();
 
     if (auto milestones = layerTreeTransaction.newlyReachedPaintingMilestones())
         m_webPageProxy.didReachLayoutMilestone(milestones);

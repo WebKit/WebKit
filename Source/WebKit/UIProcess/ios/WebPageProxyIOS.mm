@@ -1158,12 +1158,12 @@ void WebPageProxy::updateEditorState(const EditorState& editorState)
     updateFontAttributesAfterEditorStateChange();
 }
 
-void WebPageProxy::dispatchDidReceiveEditorStateAfterFocus()
+void WebPageProxy::dispatchDidUpdateEditorState()
 {
     if (!m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement || m_editorState.isMissingPostLayoutData)
         return;
 
-    pageClient().didReceiveEditorStateUpdateAfterFocus();
+    pageClient().didUpdateEditorState();
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
 }
 

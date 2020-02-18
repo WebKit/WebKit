@@ -157,7 +157,7 @@ private:
     void updateInputContextAfterBlurringAndRefocusingElement() final;
     void elementDidBlur() override;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
-    void didReceiveEditorStateUpdateAfterFocus() override;
+    void didUpdateEditorState() override;
     bool isFocusingElement() override;
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;

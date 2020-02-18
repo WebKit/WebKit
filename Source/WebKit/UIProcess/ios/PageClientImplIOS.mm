@@ -634,9 +634,9 @@ void PageClientImpl::focusedElementDidChangeInputMode(WebCore::InputMode mode)
     [m_contentView _didUpdateInputMode:mode];
 }
 
-void PageClientImpl::didReceiveEditorStateUpdateAfterFocus()
+void PageClientImpl::didUpdateEditorState()
 {
-    [m_contentView _didReceiveEditorStateUpdateAfterFocus];
+    [m_contentView _didUpdateEditorState];
 }
 
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)

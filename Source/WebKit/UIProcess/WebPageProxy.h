@@ -1534,7 +1534,7 @@ public:
     void editorStateChanged(const EditorState&);
     void updateEditorState(const EditorState&);
     void scheduleFullEditorStateUpdate();
-    void dispatchDidReceiveEditorStateAfterFocus();
+    void dispatchDidUpdateEditorState();
 
 #if HAVE(TOUCH_BAR)
     void touchBarMenuDataRemoved();
@@ -2084,7 +2084,7 @@ private:
     void updateInputContextAfterBlurringAndRefocusingElement();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
-    void didReceiveEditorStateUpdateAfterFocus();
+    void didUpdateEditorState();
 
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
