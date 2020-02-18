@@ -112,7 +112,17 @@ void ScriptRunner::timerFired()
 
     Vector<RefPtr<PendingScript>> scripts;
 
-    if (!m_document.shouldDeferAsynchronousScriptsUntilParsingFinishes())
+    if (m_document.shouldDeferAsynchronousScriptsUntilParsingFinishes()) {
+        Vector<RefPtr<PendingScript>> scriptsToExecuteSoon;
+        // Scripts not added by the parser are executed asynchronously and yet do not have the 'async' attribute set.
+        // We only want to delay scripts that were explicitly marked as 'async' by the developer.
+        m_scriptsToExecuteSoon.removeAllMatching([&](auto& pendingScript) {
+            if (pendingScript->element().hasAsyncAttribute())
+                return false;
+            scripts.append(WTFMove(pendingScript));
+            return true;
+        });
+    } else
         scripts.swap(m_scriptsToExecuteSoon);
 
     size_t numInOrderScriptsToExecute = 0;

@@ -258,7 +258,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     _colorFilterEnabled = NO;
     _incompleteImageBorderEnabled = NO;
-    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = NO;
+    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = YES;
     _drawsBackground = YES;
 
     _editableImagesEnabled = NO;

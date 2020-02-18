@@ -1,3 +1,17 @@
+2020-02-17  Chris Dumez  <cdumez@apple.com>
+
+        Defer execution of async scripts until until the document is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=207698
+        <rdar://problem/57625747>
+
+        Reviewed by Antti Koivisto.
+
+        Defer execution of async scripts until until the document is loaded by default to reduce time
+        to first paint.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
 2020-02-17  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt HAVE(LOOKUP_GESTURE_RECOGNIZER)

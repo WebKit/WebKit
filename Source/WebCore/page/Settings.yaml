@@ -856,7 +856,7 @@ incompleteImageBorderEnabled:
   initial: false
 
 shouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
-  initial: false
+  initial: true
 
 shouldIgnoreMetaViewport:
   initial: false
