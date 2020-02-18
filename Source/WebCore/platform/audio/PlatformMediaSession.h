@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformMediaSession_h
-#define PlatformMediaSession_h
+#pragma once
 
+#include "DocumentIdentifier.h"
 #include "Timer.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
@@ -260,7 +260,7 @@ public:
 
     virtual bool isPlayingOnSecondScreen() const { return false; }
 
-    virtual Document* hostingDocument() const = 0;
+    virtual DocumentIdentifier hostingDocumentIdentifier() const = 0;
     virtual String sourceApplicationIdentifier() const = 0;
 
     virtual bool processingUserGestureForMedia() const = 0;
@@ -270,6 +270,10 @@ public:
     virtual void processIsSuspendedChanged() { }
 
     virtual bool shouldOverridePauseDuringRouteChange() const { return false; }
+
+#if !RELEASE_LOG_DISABLED
+    virtual const Logger& logger() const = 0;
+#endif
 
 protected:
     virtual ~PlatformMediaSessionClient() = default;
@@ -310,5 +314,3 @@ struct LogArgument<WebCore::PlatformMediaSession::RemoteControlCommandType> {
 };
 
 } // namespace WTF
-
-#endif // PlatformMediaSession_h

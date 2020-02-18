@@ -27,6 +27,7 @@
 #define PlatformMediaSessionManager_h
 
 #include "AudioHardwareListener.h"
+#include "DocumentIdentifier.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Timer.h"
@@ -36,8 +37,6 @@
 
 namespace WebCore {
 
-class Document;
-class HTMLMediaElement;
 class PlatformMediaSession;
 class RemoteCommandListener;
 
@@ -88,13 +87,13 @@ public:
     WEBCORE_EXPORT void processWillSuspend();
     WEBCORE_EXPORT void processDidResume();
 
-    void stopAllMediaPlaybackForDocument(const Document&);
+    void stopAllMediaPlaybackForDocument(DocumentIdentifier);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
-    void suspendAllMediaPlaybackForDocument(const Document&);
-    void resumeAllMediaPlaybackForDocument(const Document&);
-    void suspendAllMediaBufferingForDocument(const Document&);
-    void resumeAllMediaBufferingForDocument(const Document&);
+    void suspendAllMediaPlaybackForDocument(DocumentIdentifier);
+    void resumeAllMediaPlaybackForDocument(DocumentIdentifier);
+    void suspendAllMediaBufferingForDocument(DocumentIdentifier);
+    void resumeAllMediaBufferingForDocument(DocumentIdentifier);
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
@@ -145,7 +144,7 @@ protected:
     virtual void removeSession(PlatformMediaSession&);
 
     void forEachSession(const Function<void(PlatformMediaSession&)>&);
-    void forEachDocumentSession(const Document&, const Function<void(PlatformMediaSession&)>&);
+    void forEachDocumentSession(DocumentIdentifier, const Function<void(PlatformMediaSession&)>&);
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }

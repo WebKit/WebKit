@@ -366,9 +366,10 @@ Document* AudioContext::document() const
     return downcast<Document>(m_scriptExecutionContext);
 }
 
-Document* AudioContext::hostingDocument() const
+DocumentIdentifier AudioContext::hostingDocumentIdentifier() const
 {
-    return downcast<Document>(m_scriptExecutionContext);
+    auto* document = downcast<Document>(m_scriptExecutionContext);
+    return document ? document->identifier() : DocumentIdentifier { };
 }
 
 String AudioContext::sourceApplicationIdentifier() const

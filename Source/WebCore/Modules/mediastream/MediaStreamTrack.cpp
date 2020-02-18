@@ -628,6 +628,12 @@ bool MediaStreamTrack::processingUserGestureForMedia() const
     return document() ? document()->processingUserGestureForMedia() : false;
 }
 
+DocumentIdentifier MediaStreamTrack::hostingDocumentIdentifier() const
+{
+    auto* document = downcast<Document>(m_scriptExecutionContext);
+    return document ? document->identifier() : DocumentIdentifier { };
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStreamTrack::logChannel() const
 {

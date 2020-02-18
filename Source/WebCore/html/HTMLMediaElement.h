@@ -204,7 +204,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    Document* hostingDocument() const final { return &document(); }
+    DocumentIdentifier hostingDocumentIdentifier() const final { return document().identifier(); }
 
 // DOM API
 // error state

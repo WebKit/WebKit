@@ -107,7 +107,7 @@ public:
 
     Document* document() const; // ASSERTs if document no longer exists.
 
-    Document* hostingDocument() const final;
+    DocumentIdentifier hostingDocumentIdentifier() const final;
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
     size_t currentSampleFrame() const { return m_destinationNode ? m_destinationNode->currentSampleFrame() : 0; }

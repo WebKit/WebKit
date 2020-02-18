@@ -202,7 +202,7 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
     String sourceApplicationIdentifier() const final;
     bool canProduceAudio() const final;
-    Document* hostingDocument() const final { return document(); }
+    DocumentIdentifier hostingDocumentIdentifier() const final;
     bool processingUserGestureForMedia() const final;
     bool shouldOverridePauseDuringRouteChange() const final { return true; }
 

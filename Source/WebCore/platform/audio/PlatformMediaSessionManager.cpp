@@ -453,9 +453,9 @@ void PlatformMediaSessionManager::audioOutputDeviceChanged()
     updateSessionState();
 }
 
-void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(const Document& document)
+void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)
 {
-    forEachDocumentSession(document, [](auto& session) {
+    forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.pauseSession();
     });
 }
@@ -467,35 +467,35 @@ void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()
     });
 }
 
-void PlatformMediaSessionManager::suspendAllMediaPlaybackForDocument(const Document& document)
+void PlatformMediaSessionManager::suspendAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)
 {
-    forEachDocumentSession(document, [](auto& session) {
+    forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.beginInterruption(PlatformMediaSession::PlaybackSuspended);
     });
 }
 
-void PlatformMediaSessionManager::resumeAllMediaPlaybackForDocument(const Document& document)
+void PlatformMediaSessionManager::resumeAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)
 {
-    forEachDocumentSession(document, [](auto& session) {
+    forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.endInterruption(PlatformMediaSession::MayResumePlaying);
     });
 }
 
-void PlatformMediaSessionManager::suspendAllMediaBufferingForDocument(const Document& document)
+void PlatformMediaSessionManager::suspendAllMediaBufferingForDocument(DocumentIdentifier documentIdentifier)
 {
-    forEachDocumentSession(document, [](auto& session) {
+    forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.suspendBuffering();
     });
 }
 
-void PlatformMediaSessionManager::resumeAllMediaBufferingForDocument(const Document& document)
+void PlatformMediaSessionManager::resumeAllMediaBufferingForDocument(DocumentIdentifier documentIdentifier)
 {
-    forEachDocumentSession(document, [](auto& session) {
+    forEachDocumentSession(documentIdentifier, [](auto& session) {
         session.resumeBuffering();
     });
 }
 
-Vector<WeakPtr<PlatformMediaSession>> PlatformMediaSessionManager::sessionsMatching(const WTF::Function<bool(const PlatformMediaSession&)>& filter) const
+Vector<WeakPtr<PlatformMediaSession>> PlatformMediaSessionManager::sessionsMatching(const Function<bool(const PlatformMediaSession&)>& filter) const
 {
     Vector<WeakPtr<PlatformMediaSession>> matchingSessions;
     for (auto& session : m_sessions) {
@@ -514,10 +514,10 @@ void PlatformMediaSessionManager::forEachMatchingSession(const Function<bool(con
     }
 }
 
-void PlatformMediaSessionManager::forEachDocumentSession(const Document& document, const Function<void(PlatformMediaSession&)>& callback)
+void PlatformMediaSessionManager::forEachDocumentSession(DocumentIdentifier documentIdentifier, const Function<void(PlatformMediaSession&)>& callback)
 {
-    forEachMatchingSession([&document](auto& session) {
-        return session.client().hostingDocument() == &document;
+    forEachMatchingSession([documentIdentifier](auto& session) {
+        return session.client().hostingDocumentIdentifier() == documentIdentifier;
     }, [&callback](auto& session) {
         callback(session);
     });

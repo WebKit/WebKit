@@ -118,7 +118,7 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(client.hostingDocument()->logger())
+    , m_logger(client.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {

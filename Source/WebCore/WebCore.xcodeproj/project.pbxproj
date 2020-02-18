@@ -1101,6 +1101,7 @@
 		41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41815C1C138319830057AAA4 /* WebCoreTestSupport.cpp */; };
 		41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 41815C1D138319830057AAA4 /* WebCoreTestSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		418205471E53E98C00D62207 /* RTCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 418205451E53C8CD00D62207 /* RTCController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41826BF223FB597700B922B1 /* DocumentIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 41826BF123FB597000B922B1 /* DocumentIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4184F5161EAF05A800F18BF0 /* OrientationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 4184F5151EAF059800F18BF0 /* OrientationNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4186BD3E213EE3400001826F /* LibWebRTCUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A049213EDDFD0063FB6B /* LibWebRTCUtils.cpp */; };
 		4186BD3F213EE3430001826F /* LibWebRTCRtpSenderBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A04B213EDDFE0063FB6B /* LibWebRTCRtpSenderBackend.cpp */; };
@@ -1252,7 +1253,6 @@
 		46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */; };
 		46E0C0DE23C006E9005E47AE /* DragEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E0C0DA23C006B3005E47AE /* DragEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E139F823D8B8EB0075848E /* HTTPCookieAcceptPolicyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E139F623D8B8E70075848E /* HTTPCookieAcceptPolicyCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46E1666E1FCC86A200C9710B /* DocumentIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E1666C1FCC868700C9710B /* DocumentIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46E791491F97E01A00199739 /* JSVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E791461F97E01700199739 /* JSVisibilityState.h */; };
 		46EB37CA1F97CCD200B65523 /* JSServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C31F97CCCB00B65523 /* JSServiceWorkerClient.h */; };
 		46EB37CC1F97CCD200B65523 /* JSServiceWorkerClients.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C51F97CCCB00B65523 /* JSServiceWorkerClients.h */; };
@@ -7378,6 +7378,7 @@
 		4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCoreTestSupport.xcconfig; sourceTree = "<group>"; };
 		418205451E53C8CD00D62207 /* RTCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCController.h; sourceTree = "<group>"; };
 		418205481E53EAAD00D62207 /* RTCController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCController.cpp; sourceTree = "<group>"; };
+		41826BF123FB597000B922B1 /* DocumentIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentIdentifier.h; sourceTree = "<group>"; };
 		4184F5151EAF059800F18BF0 /* OrientationNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrientationNotifier.h; sourceTree = "<group>"; };
 		4186BD3B213EDE380001826F /* LibWebRTCRtpReceiverBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpReceiverBackend.h; path = libwebrtc/LibWebRTCRtpReceiverBackend.h; sourceTree = "<group>"; };
 		4186BD3D213EDE390001826F /* LibWebRTCRtpSenderBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpSenderBackend.h; path = libwebrtc/LibWebRTCRtpSenderBackend.h; sourceTree = "<group>"; };
@@ -7742,7 +7743,6 @@
 		46E0C0DC23C006B4005E47AE /* DragEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragEvent.cpp; sourceTree = "<group>"; };
 		46E0C0DD23C006B4005E47AE /* DragEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DragEvent.idl; sourceTree = "<group>"; };
 		46E139F623D8B8E70075848E /* HTTPCookieAcceptPolicyCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPCookieAcceptPolicyCocoa.h; sourceTree = "<group>"; };
-		46E1666C1FCC868700C9710B /* DocumentIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentIdentifier.h; sourceTree = "<group>"; };
 		46E791451F97E01700199739 /* JSVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVisibilityState.cpp; sourceTree = "<group>"; };
 		46E791461F97E01700199739 /* JSVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVisibilityState.h; sourceTree = "<group>"; };
 		46EB37C21F97CCCB00B65523 /* JSServiceWorkerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerClient.cpp; sourceTree = "<group>"; };
@@ -25863,6 +25863,7 @@
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
 				45FEA5CE156DDE8C00654101 /* Decimal.h */,
 				CD83D35A211110820076E11C /* DeferrableTask.h */,
+				41826BF123FB597000B922B1 /* DocumentIdentifier.h */,
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
@@ -28044,7 +28045,6 @@
 				1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */,
 				CD92F5102260FFEE00F87BB3 /* DocumentFullscreen.h */,
 				CD92F50F2260FFEE00F87BB3 /* DocumentFullscreen.idl */,
-				46E1666C1FCC868700C9710B /* DocumentIdentifier.h */,
 				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
 				CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */,
 				CE057FA41220731100A476D5 /* DocumentMarkerController.h */,
@@ -29671,7 +29671,6 @@
 				A8185F4009765766005826D9 /* Document.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragment.h in Headers */,
 				CD92F5132260FFEE00F87BB3 /* DocumentFullscreen.h in Headers */,
-				46E1666E1FCC86A200C9710B /* DocumentIdentifier.h in Headers */,
 				656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */,
 				ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */,
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
@@ -30542,6 +30541,7 @@
 				947949381E0459FA00018D85 /* JSDeprecatedCSSOMValue.h in Headers */,
 				9479493A1E0459FA00018D85 /* JSDeprecatedCSSOMValueList.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
+				41826BF223FB597700B922B1 /* DocumentIdentifier.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				ADDA94C219687AA500453029 /* JSDocumentCustom.h in Headers */,

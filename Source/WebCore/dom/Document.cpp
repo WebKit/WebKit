@@ -1773,31 +1773,31 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
 void Document::stopAllMediaPlayback()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->stopAllMediaPlaybackForDocument(*this);
+        platformMediaSessionManager->stopAllMediaPlaybackForDocument(identifier());
 }
 
 void Document::suspendAllMediaPlayback()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaPlaybackForDocument(*this);
+        platformMediaSessionManager->suspendAllMediaPlaybackForDocument(identifier());
 }
 
 void Document::resumeAllMediaPlayback()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaPlaybackForDocument(*this);
+        platformMediaSessionManager->resumeAllMediaPlaybackForDocument(identifier());
 }
 
 void Document::suspendAllMediaBuffering()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaBufferingForDocument(*this);
+        platformMediaSessionManager->suspendAllMediaBufferingForDocument(identifier());
 }
 
 void Document::resumeAllMediaBuffering()
 {
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaBufferingForDocument(*this);
+        platformMediaSessionManager->resumeAllMediaBufferingForDocument(identifier());
 }
 
 #endif

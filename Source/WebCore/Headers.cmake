@@ -380,7 +380,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Document.h
     dom/DocumentFragment.h
     dom/DocumentFullscreen.h
-    dom/DocumentIdentifier.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
     dom/DocumentStorageAccess.h
@@ -925,6 +924,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/DateComponents.h
     platform/Decimal.h
     platform/DeferrableTask.h
+    platform/DocumentIdentifier.h
     platform/DragData.h
     platform/DragImage.h
     platform/DragItem.h
