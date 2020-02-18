@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    .target {
+        font-size: 32px;
+        width: 300px;
+        text-align: center;
+    }
+
+    .target-container {
+        margin-bottom: 1em;
+    }
+
+    iframe {
+        visibility: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+    description("Verifies that text can be selected using text interaction gestures, even when it is fully covered by a hidden subframe. To manually run the test, tap to focus and double tap again to select 'Banana'; then long press to select 'Apple'.");
+
+    addEventListener("load", async () => {
+        const topTarget = document.getElementById("top");
+        const bottomTarget = document.getElementById("bottom");
+        const bottomTargetRect = bottomTarget.getBoundingClientRect();
+
+        await UIHelper.activateElementAndWaitForInputSession(bottomTarget);
+        await UIHelper.doubleTapAt(bottomTargetRect.left + bottomTargetRect.width / 2, bottomTargetRect.top + bottomTargetRect.height / 2);
+        await new Promise(resolve => shouldBecomeEqual("getSelection().toString()", "'Banana'", resolve));
+
+        document.activeElement.blur();
+        await UIHelper.waitForKeyboardToHide();
+        await UIHelper.waitForDoubleTapDelay();
+        await UIHelper.longPressElement(topTarget);
+        await new Promise(resolve => shouldBecomeEqual("getSelection().toString()", "'Apple'", resolve));
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div class="target-container"><span class="target" id="top">Apple</span></div>
+    <div class="target-container" contenteditable><span class="target" id="bottom">Banana</span></div>
+    <iframe srcdoc="<body style='font-size: 100px; -webkit-user-select: none;'>The quick brown fox jumped over the lazy dog!</body>"></iframe>
+</body>
+</html>

@@ -1,3 +1,17 @@
+2020-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selection cannot be modified via text interaction in some areas of the compose body field in Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=207854
+        <rdar://problem/59218824>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that the hit-testing codepaths exercised by text interaction gestures on iOS
+        successfully ignore a hidden child frame that covers the page.
+
+        * editing/selection/ios/select-text-under-hidden-subframe-expected.txt: Added.
+        * editing/selection/ios/select-text-under-hidden-subframe.html: Added.
+
 2020-02-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Implement in-WebProcess cookie cache to avoid sync IPC for document.cookie in most cases
