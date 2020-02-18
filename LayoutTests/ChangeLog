@@ -1,3 +1,12 @@
+2020-02-18  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] http/wpt/beacon/beacon-quota.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207894
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-18  Chris Dumez  <cdumez@apple.com>
 
         ASSERT_NOT_REACHED() under WebPageProxy::suspendCurrentPageIfPossible()
