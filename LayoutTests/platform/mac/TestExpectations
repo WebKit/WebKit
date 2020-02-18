@@ -1970,3 +1970,4 @@ webkit.org/b/205757 webgl/1.0.3/conformance/textures/texture-upload-size.html [ 
 # The navigator.language tests rely on functionality only available in recent releases of macOS Catalina and onward.
 webkit.org/b/200043 [ Sierra HighSierra Mojave Catalina ] fast/text/international/system-language/navigator-language [ Pass Failure ]
 
+webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass Failure ]
