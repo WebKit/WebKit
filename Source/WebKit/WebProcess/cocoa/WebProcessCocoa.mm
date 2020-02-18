@@ -57,6 +57,7 @@
 #import <WebCore/FontCascade.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -202,6 +203,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(IOS_FAMILY)
     setCurrentUserInterfaceIdiomIsPad(parameters.currentUserInterfaceIdiomIsPad);
+    setLocalizedDeviceModel(parameters.localizedDeviceModel);
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
 #endif
 

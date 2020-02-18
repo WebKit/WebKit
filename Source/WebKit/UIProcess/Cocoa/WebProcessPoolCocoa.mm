@@ -48,6 +48,7 @@
 #import "WebProcessMessages.h"
 #import "WindowServerConnection.h"
 #import <WebCore/Color.h>
+#import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
@@ -408,6 +409,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
+    parameters.localizedDeviceModel = localizedDeviceModel();
 #endif
 
     

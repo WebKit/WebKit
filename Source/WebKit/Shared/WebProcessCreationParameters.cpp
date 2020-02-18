@@ -175,6 +175,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << supportsPictureInPicture;
     encoder << cssValueToSystemColorMap;
     encoder << focusRingColor;
+    encoder << localizedDeviceModel;
 #endif
 
 #if PLATFORM(COCOA)
@@ -474,6 +475,9 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!focusRingColor)
         return false;
     parameters.focusRingColor = WTFMove(*focusRingColor);
+    
+    if (!decoder.decode(parameters.localizedDeviceModel))
+        return false;
 #endif
 
 #if PLATFORM(COCOA)

@@ -47,6 +47,7 @@
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
+#import "LocalizedDeviceModel.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlaybackTargetMock.h"
@@ -2718,7 +2719,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             break;
 
         // The route is a speaker or HDMI out, override the name to be the localized device model.
-        NSString *localizedDeviceModel = [[PAL::getUIDeviceClass() currentDevice] localizedModel];
+        NSString *localizedDeviceModelName = localizedDeviceModel();
 
         // In cases where a route with that name already exists, prefix the name with the model.
         BOOL includeLocalizedDeviceModelName = NO;
@@ -2733,9 +2734,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         if (includeLocalizedDeviceModelName)
-            displayName =  [NSString stringWithFormat:@"%@ %@", localizedDeviceModel, displayName];
+            displayName = [NSString stringWithFormat:@"%@ %@", localizedDeviceModelName, displayName];
         else
-            displayName = localizedDeviceModel;
+            displayName = localizedDeviceModelName;
 
         break;
     }

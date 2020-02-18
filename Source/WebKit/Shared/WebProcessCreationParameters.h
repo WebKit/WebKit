@@ -217,6 +217,7 @@ struct WebProcessCreationParameters {
     bool supportsPictureInPicture { false };
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
+    String localizedDeviceModel;
 #endif
 
 #if PLATFORM(COCOA)

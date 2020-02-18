@@ -399,6 +399,7 @@ platform/ios/LegacyTileGridTile.mm
 platform/ios/LegacyTileLayer.mm
 platform/ios/LegacyTileLayerPool.mm
 platform/ios/LocalCurrentTraitCollection.mm
+platform/ios/LocalizedDeviceModel.mm
 platform/ios/LowPowerModeNotifierIOS.mm
 platform/ios/PasteboardIOS.mm
 platform/ios/PlatformEventFactoryIOS.mm @no-unify

@@ -4796,6 +4796,7 @@
 		E323CFFA1E5AF6AF00F0B4A0 /* JSDOMConvertPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3565B7B1DC2D6C900217DBD /* JSEventCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35802B61DC8435D00A9773C /* DOMJITIDLTypeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35B907F23F60A50000011FF /* LocalizedDeviceModel.h in Headers */ = {isa = PBXBuildFile; fileRef = E35B907C23F60677000011FF /* LocalizedDeviceModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D049931DADC04500718F3C /* NodeConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E37C86501EB63E3F0087C6CA /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39628BF2395728F00658ECD /* DeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628BD2395728E00658ECD /* DeviceOrientationUpdateProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15115,6 +15116,8 @@
 		E334825E1DC93AA0009C9544 /* DOMJITAbstractHeapRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMJITAbstractHeapRepository.h; path = DerivedSources/WebCore/DOMJITAbstractHeapRepository.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventCustom.h; sourceTree = "<group>"; };
 		E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITIDLTypeFilter.h; sourceTree = "<group>"; };
+		E35B907C23F60677000011FF /* LocalizedDeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDeviceModel.h; sourceTree = "<group>"; };
+		E35B907E23F60677000011FF /* LocalizedDeviceModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDeviceModel.mm; sourceTree = "<group>"; };
 		E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
@@ -22871,6 +22874,8 @@
 				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
 				1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */,
 				1C43DE6A22AB4B8A001527D9 /* LocalCurrentTraitCollection.mm */,
+				E35B907C23F60677000011FF /* LocalizedDeviceModel.h */,
+				E35B907E23F60677000011FF /* LocalizedDeviceModel.mm */,
 				46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */,
 				E39628C02395743000658ECD /* MotionManagerClient.h */,
 				E45390190EAFCACA003695C8 /* PasteboardIOS.mm */,
@@ -31351,6 +31356,7 @@
 				F5973DE015CFB2030027F804 /* LocaleCocoa.h in Headers */,
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */,
+				E35B907F23F60A50000011FF /* LocalizedDeviceModel.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				41FCD6BB23CE027700C62567 /* LocalSampleBufferDisplayLayer.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,

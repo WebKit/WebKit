@@ -1,3 +1,22 @@
+2020-02-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Move [UIDevice currentDevice] calls to UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204320
+
+        Reviewed by Darin Adler.
+
+        Get the localized device name in the UI process, and send it to the WebContent process as part of the
+        process creation parameters.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-02-18  Youenn Fablet  <youenn@apple.com>
 
         Use more ObjectIdentifier in WebRTC MDNS register
