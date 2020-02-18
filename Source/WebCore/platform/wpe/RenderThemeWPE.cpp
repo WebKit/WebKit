@@ -47,8 +47,7 @@ static const Color textFieldBorderActiveColor = makeRGB(52, 132, 228);
 static const Color textFieldBorderDisabledColor = makeRGB(213, 208, 204);
 static const Color textFieldBackgroundColor = makeRGB(255, 255, 255);
 static const Color textFieldBackgroundDisabledColor = makeRGB(252, 252, 252);
-static const unsigned arrowSize = 16;
-static const Color arrowColor = makeRGB(46, 52, 54);
+static const unsigned menuListButtonArrowSize = 16;
 static const int menuListButtonFocusOffset = -3;
 static const unsigned menuListButtonPadding = 5;
 static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeWPE.
@@ -152,25 +151,13 @@ bool RenderThemeWPE::paintSearchField(const RenderObject& renderObject, const Pa
     return paintTextField(renderObject, paintInfo, rect);
 }
 
-static void paintArrow(GraphicsContext& graphicsContext, const FloatRect& rect)
-{
-    Path path;
-    path.moveTo({ rect.x() + 3, rect.y() + 6 });
-    path.addLineTo({ rect.x() + 13, rect.y() + 6 });
-    path.addLineTo({ rect.x() + 8, rect.y() + 11 });
-    path.closeSubpath();
-
-    graphicsContext.setFillColor(arrowColor);
-    graphicsContext.fillPath(path);
-}
-
 LengthBox RenderThemeWPE::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.appearance() == NoControlPart)
         return { };
 
-    int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? arrowSize : 0);
-    int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? arrowSize : 0);
+    int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? menuListButtonArrowSize : 0);
+    int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? menuListButtonArrowSize : 0);
 
     return { menuListButtonPadding, rightPadding, menuListButtonPadding, leftPadding };
 }
@@ -193,12 +180,16 @@ bool RenderThemeWPE::paintMenuList(const RenderObject& renderObject, const Paint
     FloatRect fieldRect = rect;
     fieldRect.inflate(menuListButtonBorderSize);
     if (renderObject.style().direction() == TextDirection::LTR)
-        fieldRect.move(fieldRect.width() - (arrowSize + menuListButtonPadding), (fieldRect.height() / 2.) - (arrowSize / 2));
+        fieldRect.move(fieldRect.width() - (menuListButtonArrowSize + menuListButtonPadding), (fieldRect.height() / 2.) - (menuListButtonArrowSize / 2));
     else
-        fieldRect.move(menuListButtonPadding, (fieldRect.height() / 2.) - (arrowSize / 2));
-    fieldRect.setWidth(arrowSize);
-    fieldRect.setHeight(arrowSize);
-    paintArrow(graphicsContext, fieldRect);
+        fieldRect.move(menuListButtonPadding, (fieldRect.height() / 2.) - (menuListButtonArrowSize / 2));
+    fieldRect.setWidth(menuListButtonArrowSize);
+    fieldRect.setHeight(menuListButtonArrowSize);
+    {
+        GraphicsContextStateSaver arrowStateSaver(graphicsContext);
+        graphicsContext.translate(fieldRect.x(), fieldRect.y());
+        ThemeWPE::paintArrow(graphicsContext, ThemeWPE::ArrowDirection::Down);
+    }
 
     if (isFocused(renderObject))
         ThemeWPE::paintFocus(graphicsContext, rect, menuListButtonFocusOffset);

@@ -37,6 +37,8 @@ namespace WebCore {
 
 static const unsigned focusLineWidth = 1;
 static const Color focusColor = makeRGBA(46, 52, 54, 150);
+static const unsigned arrowSize = 16;
+static const Color arrowColor = makeRGB(46, 52, 54);
 static const int buttonFocusOffset = -3;
 static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeWPE.
@@ -52,6 +54,10 @@ static const double toggleSize = 14.;
 static const int toggleFocusOffset = 2;
 static const Color toggleColor = makeRGB(46, 52, 54);
 static const Color toggleDisabledColor = makeRGB(160, 160, 160);
+static const Color spinButtonBorderColor = makeRGB(220, 223, 227);
+static const Color spinButtonBackgroundColor = makeRGB(252, 252, 252);
+static const Color spinButtonBackgroundHoveredColor = makeRGBA(46, 52, 54, 50);
+static const Color spinButtonBackgroundPressedColor = makeRGBA(46, 52, 54, 70);
 
 Theme& Theme::singleton()
 {
@@ -74,6 +80,27 @@ void ThemeWPE::paintFocus(GraphicsContext& graphicsContext, const FloatRect& rec
     graphicsContext.strokePath(path);
 }
 
+void ThemeWPE::paintArrow(GraphicsContext& graphicsContext, ArrowDirection direction)
+{
+    Path path;
+    switch (direction) {
+    case ArrowDirection::Down:
+        path.moveTo({ 3, 6 });
+        path.addLineTo({ 13, 6 });
+        path.addLineTo({ 8, 11 });
+        break;
+    case ArrowDirection::Up:
+        path.moveTo({ 3, 10 });
+        path.addLineTo({ 8, 5 });
+        path.addLineTo({ 13, 10});
+        break;
+    }
+    path.closeSubpath();
+
+    graphicsContext.setFillColor(arrowColor);
+    graphicsContext.fillPath(path);
+}
+
 LengthSize ThemeWPE::controlSize(ControlPart part, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
 {
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
@@ -83,6 +110,14 @@ LengthSize ThemeWPE::controlSize(ControlPart part, const FontCascade& fontCascad
     case CheckboxPart:
     case RadioPart:
         return LengthSize { Length(12, Fixed), Length(12, Fixed) };
+    case InnerSpinButtonPart: {
+        LengthSize spinButtonSize = zoomedSize;
+        if (spinButtonSize.width.isIntrinsicOrAuto())
+            spinButtonSize.width = Length(static_cast<int>(arrowSize), Fixed);
+        if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.pixelSize() > static_cast<int>(arrowSize))
+            spinButtonSize.height = Length(fontCascade.pixelSize(), Fixed);
+        return spinButtonSize;
+    }
     default:
         break;
     }
@@ -104,6 +139,9 @@ void ThemeWPE::paint(ControlPart part, ControlStates& states, GraphicsContext& c
     case ButtonPart:
     case SquareButtonPart:
         paintButton(states, context, zoomedRect, zoomFactor);
+        break;
+    case InnerSpinButtonPart:
+        paintSpinButton(states, context, zoomedRect, zoomFactor);
         break;
     default:
         break;
@@ -231,6 +269,73 @@ void ThemeWPE::paintButton(ControlStates& states, GraphicsContext& graphicsConte
 
     if (states.states() & ControlStates::FocusState)
         paintFocus(graphicsContext, zoomedRect, buttonFocusOffset);
+}
+
+void ThemeWPE::paintSpinButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, float)
+{
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    FloatRect fieldRect = zoomedRect;
+    FloatSize corner(2, 2);
+    Path path;
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-buttonBorderSize);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(spinButtonBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setFillColor(spinButtonBackgroundColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    FloatRect buttonRect = fieldRect;
+    buttonRect.setHeight(fieldRect.height() / 2.0);
+    {
+        if (states.states() & ControlStates::SpinUpState) {
+            path.addRoundedRect(FloatRoundedRect(buttonRect, corner, corner, { }, { }));
+            if (states.states() & ControlStates::PressedState)
+                graphicsContext.setFillColor(spinButtonBackgroundPressedColor);
+            else if (states.states() & ControlStates::HoverState)
+                graphicsContext.setFillColor(spinButtonBackgroundHoveredColor);
+            graphicsContext.fillPath(path);
+            path.clear();
+        }
+
+        GraphicsContextStateSaver buttonStateSaver(graphicsContext);
+        if (buttonRect.height() > arrowSize)
+            graphicsContext.translate(buttonRect.x(), buttonRect.y() + (buttonRect.height() / 2.0) - (arrowSize / 2.));
+        else {
+            graphicsContext.translate(buttonRect.x(), buttonRect.y());
+            graphicsContext.scale(FloatSize::narrowPrecision(buttonRect.width() / arrowSize, buttonRect.height() / arrowSize));
+        }
+        paintArrow(graphicsContext, ArrowDirection::Up);
+    }
+
+    buttonRect.move(0, buttonRect.height());
+    {
+        if (!(states.states() & ControlStates::SpinUpState)) {
+            path.addRoundedRect(FloatRoundedRect(buttonRect, { }, { }, corner, corner));
+            if (states.states() & ControlStates::PressedState)
+                graphicsContext.setFillColor(spinButtonBackgroundPressedColor);
+            else if (states.states() & ControlStates::HoverState)
+                graphicsContext.setFillColor(spinButtonBackgroundHoveredColor);
+            graphicsContext.fillPath(path);
+            path.clear();
+        }
+
+        GraphicsContextStateSaver buttonStateSaver(graphicsContext);
+        if (buttonRect.height() > arrowSize)
+            graphicsContext.translate(buttonRect.x(), buttonRect.y() + (buttonRect.height() / 2.0) - (arrowSize / 2.));
+        else {
+            graphicsContext.translate(buttonRect.x(), buttonRect.y());
+            graphicsContext.scale(FloatSize::narrowPrecision(buttonRect.width() / arrowSize, buttonRect.height() / arrowSize));
+        }
+        paintArrow(graphicsContext, ArrowDirection::Down);
+    }
 }
 
 } // namespace WebCore
