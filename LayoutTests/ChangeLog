@@ -1,3 +1,16 @@
+2020-02-18  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT_NOT_REACHED() under WebPageProxy::suspendCurrentPageIfPossible()
+        https://bugs.webkit.org/show_bug.cgi?id=207868
+        <rdar://problem/59464606>
+
+        Reviewed by John Wilander.
+
+        Add layout test that was hitting the assertion before my change.
+
+        * http/tests/navigation/process-swap-on-client-side-redirect-private-expected.txt: Added.
+        * http/tests/navigation/process-swap-on-client-side-redirect-private.html: Added.
+
 2020-02-18  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r254092?) [ Mac wk1 ] imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html is flaky failing.
