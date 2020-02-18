@@ -1351,3 +1351,4 @@ webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFail
 
 webkit.org/b/205308 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 
+webkit.org/b/206965 storage/indexeddb/intversion-long-queue-private.html [ Pass Failure ]
