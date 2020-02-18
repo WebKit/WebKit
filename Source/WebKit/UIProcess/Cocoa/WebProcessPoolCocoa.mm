@@ -553,9 +553,11 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
-#elif PLATFORM(IOS)
+#elif !PLATFORM(MACCATALYST)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
+#if PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+#endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
 }
 

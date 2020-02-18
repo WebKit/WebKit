@@ -1,5 +1,50 @@
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256225. rdar://problem/59446983
+
+    [watchOS] Notification listener is never unregistered
+    https://bugs.webkit.org/show_bug.cgi?id=207459
+    Source/WebKit:
+    
+    <rdar://problem/58923393>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    On watchOS, the backlight changed notification is registered in WebProcessPool::registerNotificationObservers(),
+    but not unregistered in WebProcessPool::unregisterNotificationObservers().
+    
+    API test: WebKit.BacklightLevelNotificationCrash
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::unregisterNotificationObservers):
+    
+    Tools:
+    
+    Reviewed by Maciej Stachowiak.
+    
+    Add a test which tests that posting a backlight level change notification will not cause a crash.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/BacklightLevelNotification.mm: Added.
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256225 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [watchOS] Notification listener is never unregistered
+            https://bugs.webkit.org/show_bug.cgi?id=207459
+
+            Reviewed by Maciej Stachowiak.
+
+            Add a test which tests that posting a backlight level change notification will not cause a crash.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit/BacklightLevelNotification.mm: Added.
+            (TEST):
+
+2020-02-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256314. rdar://problem/59446974
 
     WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
