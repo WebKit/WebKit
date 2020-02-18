@@ -131,9 +131,13 @@ void ThreadTimers::sharedTimerFiredInternal()
         // Catch the case where the timer asked timers to fire in a nested event loop, or we are over time limit.
         if (!m_firingTimers || timeToQuit < MonotonicTime::now())
             break;
+
+        if (m_shouldBreakFireLoopForRenderingUpdate)
+            break;
     }
 
     m_firingTimers = false;
+    m_shouldBreakFireLoopForRenderingUpdate = false;
 
     updateSharedTimer();
 }
@@ -149,6 +153,13 @@ void ThreadTimers::fireTimersInNestedEventLoop()
     }
 
     updateSharedTimer();
+}
+
+void ThreadTimers::breakFireLoopForRenderingUpdate()
+{
+    if (!m_firingTimers)
+        return;
+    m_shouldBreakFireLoopForRenderingUpdate = true;
 }
 
 } // namespace WebCore

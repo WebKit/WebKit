@@ -39,6 +39,7 @@
 #import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
 #import <WebCore/Frame.h>
@@ -56,7 +57,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <WebCore/WindowEventLoop.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
 #import <wtf/SystemTracing.h>
@@ -960,6 +961,9 @@ void TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver()
     tracePoint(RenderingUpdateRunLoopObserverStart);
     
     m_renderUpdateRunLoopObserver->schedule(CFRunLoopGetCurrent());
+
+    // Avoid running any more tasks before the runloop observer fires.
+    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
 }
 
 bool TiledCoreAnimationDrawingArea::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)

@@ -53,6 +53,8 @@ public:
 
     CustomElementQueue& backupElementQueue();
 
+    WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
+
 private:
     static Ref<WindowEventLoop> create(const String&);
     WindowEventLoop(const String&);
