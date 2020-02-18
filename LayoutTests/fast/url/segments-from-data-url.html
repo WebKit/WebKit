@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script src="resources/utilities.js"></script>
 </head>
 <body>
 <script>
-if (window.internals && internals.settings)
-  internals.settings.setShouldRestrictBaseURLSchemes(true);
-
 description("Test URL segmentation");
 
 cases = [ 
   // [URL, [SCHEME, HOST, PORT, PATH, QUERY, REF]]
   ["http://user:pass@foo:21/bar;par?b#c",    ["http:","foo","21","/bar;par","?b","#c"]],
   ["http:foo.com",                           ["http:","foo.com","","/","",""]],
-  ["\\t   :foo.com   \\n",                   ["file:","","","/.../:foo.com","",""]],
-  [" foo.com  ",                             ["file:","","","/.../foo.com","",""]],
+  ["\\t   :foo.com   \\n",                   [":","","","","",""]],
+  [" foo.com  ",                             [":","","","","",""]],
   ["a:\\t foo.com",                          ["a:","",""," foo.com","",""]],
   ["http://f:21/ b ? d # e ",                ["http:","f","21","/%20b%20","?%20d%20","# e"]],
   ["http://f:/c",                            ["http:","f","","/c","",""]],
@@ -29,26 +26,26 @@ cases = [
   ["http://f:fifty-two/c",                   [":","","","","",""]],
   ["http://f:999999/c",                      [":","","0","","",""]],
   ["http://f: 21 / b ? d # e ",              [":","","","","",""]],
-  ["",                                       ["file:","","","/.../segments-from-data-url.html","",""]],
-  ["  \\t",                                  ["file:","","","/.../segments-from-data-url.html","",""]],
-  [":foo.com/",                              ["file:","","","/.../","",""]],
-  [":foo.com\\\\",                           ["file:","","","/.../","",""]],
-  [":",                                      ["file:","","","/.../:","",""]],
-  [":a",                                     ["file:","","","/.../:a","",""]],
-  [":/",                                     ["file:","","","/.../","",""]],
-  [":\\\\",                                  ["file:","","","/.../","",""]],
-  [":#",                                     ["file:","","","/.../:","",""]],
-  ["#",                                      ["file:","","","/.../segments-from-data-url.html","",""]],
-  ["#/",                                     ["file:","","","/.../segments-from-data-url.html","","#/"]],
-  ["#\\\\",                                  ["file:","","","/.../segments-from-data-url.html","","#\\\\"]],
-  ["#;?",                                    ["file:","","","/.../segments-from-data-url.html","","#;?"]],
-  ["?",                                      ["file:","","","/.../segments-from-data-url.html","",""]],
-  ["/",                                      ["file:","","","/.../","",""]],
-  [":23",                                    ["file:","","","/.../:23","",""]],
-  ["/:23",                                   ["file:","","","/.../:23","",""]],
-  ["//",                                     ["file:","","","/.../","",""]],
-  ["::",                                     ["file:","","","/.../::","",""]],
-  ["::23",                                   ["file:","","","/.../::23","",""]],
+  ["",                                       ["data:","","","text/plain,baseURL","",""]],
+  ["  \\t",                                  ["data:","","","text/plain,baseURL","",""]],
+  [":foo.com/",                              [":","","","","",""]],
+  [":foo.com\\\\",                           [":","","","","",""]],
+  [":",                                      [":","","","","",""]],
+  [":a",                                     [":","","","","",""]],
+  [":/",                                     [":","","","","",""]],
+  [":\\\\",                                  [":","","","","",""]],
+  [":#",                                     [":","","","","",""]],
+  ["#",                                      [":","","","","",""]],
+  ["#/",                                     [":","","","","",""]],
+  ["#\\\\",                                  [":","","","","",""]],
+  ["#;?",                                    [":","","","","",""]],
+  ["?",                                      [":","","","","",""]],
+  ["/",                                      [":","","","","",""]],
+  [":23",                                    [":","","","","",""]],
+  ["/:23",                                   ["data:","","","/:23","",""]],
+  ["//",                                     [":","","","","",""]],
+  ["::",                                     [":","","","","",""]],
+  ["::23",                                   [":","","","","",""]],
   ["foo://",                                 ["foo:","","","//","",""]],
   ["http://a:b@c:29/d",                      ["http:","c","29","/d","",""]],
   ["http::@c:29",                            ["http:","c","29","/","",""]],
@@ -64,11 +61,11 @@ cases = [
   ["foo://///////bar.com/",                  ["foo:","","","/////////bar.com/","",""]],
   ["foo:////://///",                         ["foo:","","","////://///","",""]],
   ["c:/foo",                                 ["c:","","","/foo","",""]],
-  ["//foo/bar",                              ["file:","foo","","/.../bar","",""]],
+  ["//foo/bar",                              [":","","","","",""]],
   ["http://foo/path;a??e#f#g",               ["http:","foo","","/path;a","??e","#f#g"]],
   ["http://foo/abcd?efgh?ijkl",              ["http:","foo","","/abcd","?efgh?ijkl",""]],
   ["http://foo/abcd#foo?bar",                ["http:","foo","","/abcd","","#foo?bar"]],
-  ["[61:24:74]:98",                          ["file:","","","/.../[61:24:74]:98","",""]],
+  ["[61:24:74]:98",                          ["data:","","","text/[61:24:74]:98","",""]],
   ["http://[61:27]:98",                      [":","","0","","",""]],
   ["http:[61:27]/:foo",                      [":","","","","",""]],
   ["http://[1::2]:3:4",                      [":","","","","",""]],
@@ -83,7 +80,6 @@ cases = [
 
 var originalBaseURL = canonicalize(".");
 setBaseURL("data:text/plain,baseURL");
-setShouldEllipsizeFileURLPaths(true);
 
 for (var i = 0; i < cases.length; ++i) {
   shouldBe("segments('" + cases[i][0] + "')",
@@ -92,5 +88,6 @@ for (var i = 0; i < cases.length; ++i) {
 
 setBaseURL(originalBaseURL);
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

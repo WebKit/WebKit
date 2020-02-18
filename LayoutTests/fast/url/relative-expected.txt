@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:asdf as the base URL because it does not have an allowed scheme.
 Test resolution of relative URLs.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -44,7 +38,7 @@ PASS canonicalize('?foo=bar#com') is 'http://host/a?foo=bar#com'
 PASS canonicalize('#ref') is 'http://host/a#ref'
 PASS canonicalize('#') is 'http://host/a#'
 PASS canonicalize('#bye') is 'http://host/a?foo=bar#bye'
-PASS canonicalize('baz.html') is 'file:///.../baz.html'
+FAIL canonicalize('baz.html') should be . Was baz.html.
 PASS canonicalize('data:baz') is 'data:baz'
 PASS canonicalize('data:/base') is 'data:/base'
 PASS canonicalize('http://host/') is 'http://host/'
@@ -52,7 +46,7 @@ PASS canonicalize('http:host') is 'http://host/'
 PASS canonicalize('./asd:fgh') is 'http://foo/asd:fgh'
 PASS canonicalize(':foo') is 'http://foo/:foo'
 PASS canonicalize(' hello world') is 'http://foo/hello%20world'
-PASS canonicalize(':foo') is 'file:///.../:foo'
+FAIL canonicalize(':foo') should be . Was :foo.
 PASS canonicalize(';foo') is 'http://host/;foo'
 PASS canonicalize(';foo') is 'http://host/;foo'
 PASS canonicalize(';/../bar') is 'http://host/bar'
@@ -64,7 +58,6 @@ FAIL canonicalize('//') should be http:. Was //.
 PASS canonicalize('\\/another/path') is 'http://another/path'
 PASS canonicalize('/\\Another\\path') is 'http://another/path'
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

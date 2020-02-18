@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 31: Blocked setting data:/,testFailed()/ as the base URL because it does not have an allowed scheme.
-This tests that setting a base URL to a data URL is denied and hence there is no script execution.
-
-PASS
