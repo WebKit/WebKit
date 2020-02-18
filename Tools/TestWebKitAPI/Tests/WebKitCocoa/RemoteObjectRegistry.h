@@ -49,6 +49,7 @@
 - (void)takeUnsignedLong:(unsigned long)value completionHandler:(void (^)(unsigned long value))completionHandler;
 - (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler;
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
+- (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
 
 @end
 

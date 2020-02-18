@@ -1,3 +1,20 @@
+2020-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Expand WKRemoteObjectCoder supported POD types to encode NSURLResponse types
+        https://bugs.webkit.org/show_bug.cgi?id=207912
+        <rdar://problem/59556922>
+
+        Reviewed by Brian Weinstein.
+
+        This expands on r158806.  There's no reason not to support all NSNumber types, so I did.
+        Covered by API tests.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocationArguments):
+        (-[WKRemoteObjectEncoder encodeValueOfObjCType:at:]):
+        (-[WKRemoteObjectDecoder decodeValueOfObjCType:at:]):
+        (decodeInvocationArguments):
+
 2020-02-18  Daniel Bates  <dabates@apple.com>
 
         Ask the EditorClient whether to reveal the current selection after insertion

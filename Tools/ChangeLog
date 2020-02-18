@@ -1,3 +1,17 @@
+2020-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Expand WKRemoteObjectCoder supported POD types to encode NSURLResponse types
+        https://bugs.webkit.org/show_bug.cgi?id=207912
+        <rdar://problem/59556922>
+
+        Reviewed by Brian Weinstein.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn sendRequest:response:challenge:error:completionHandler:]):
+
 2020-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Web process may crash under ServicesOverlayController::buildPotentialHighlightsIfNeeded

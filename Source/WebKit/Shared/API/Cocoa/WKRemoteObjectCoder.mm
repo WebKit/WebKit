@@ -140,6 +140,24 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
             break;
         }
 
+        // short
+        case 's': {
+            short value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
+        // unsigned short
+        case 'S': {
+            unsigned short value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
         // int
         case 'i': {
             int value;
@@ -161,6 +179,15 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
         // char
         case 'c': {
             char value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
+        // unsigned char
+        case 'C': {
+            unsigned char value;
             [invocation getArgument:&value atIndex:i];
 
             encodeToObjectStream(encoder, @(value));
@@ -310,9 +337,69 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encode
 - (void)encodeValueOfObjCType:(const char *)type at:(const void *)address
 {
     switch (*type) {
+    // double
+    case 'd':
+        encodeToObjectStream(self, @(*static_cast<const double*>(address)));
+        break;
+
+    // float
+    case 'f':
+        encodeToObjectStream(self, @(*static_cast<const float*>(address)));
+        break;
+
+    // short
+    case 's':
+        encodeToObjectStream(self, @(*static_cast<const short*>(address)));
+        break;
+
+    // unsigned short
+    case 'S':
+        encodeToObjectStream(self, @(*static_cast<const unsigned short*>(address)));
+        break;
+
     // int
     case 'i':
         encodeToObjectStream(self, @(*static_cast<const int*>(address)));
+        break;
+
+    // unsigned
+    case 'I':
+        encodeToObjectStream(self, @(*static_cast<const unsigned*>(address)));
+        break;
+
+    // char
+    case 'c':
+        encodeToObjectStream(self, @(*static_cast<const char*>(address)));
+        break;
+
+    // unsigned char
+    case 'C':
+        encodeToObjectStream(self, @(*static_cast<const unsigned char*>(address)));
+        break;
+
+    // bool
+    case 'B':
+        encodeToObjectStream(self, @(*static_cast<const bool*>(address)));
+        break;
+
+    // long
+    case 'l':
+        encodeToObjectStream(self, @(*static_cast<const long*>(address)));
+        break;
+
+    // unsigned long
+    case 'L':
+        encodeToObjectStream(self, @(*static_cast<const unsigned long*>(address)));
+        break;
+
+    // long long
+    case 'q':
+        encodeToObjectStream(self, @(*static_cast<const long long*>(address)));
+        break;
+
+    // unsigned long long
+    case 'Q':
+        encodeToObjectStream(self, @(*static_cast<const unsigned long long*>(address)));
         break;
 
     // Objective-C object.
@@ -424,9 +511,69 @@ static NSString *escapeKey(NSString *key)
 - (void)decodeValueOfObjCType:(const char *)type at:(void *)data
 {
     switch (*type) {
+    // double
+    case 'd':
+        *static_cast<double*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) doubleValue];
+        break;
+
+    // float
+    case 'f':
+        *static_cast<float*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) floatValue];
+        break;
+
+    // short
+    case 's':
+        *static_cast<short*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) shortValue];
+        break;
+
+    // unsigned short
+    case 'S':
+        *static_cast<unsigned short*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) unsignedShortValue];
+        break;
+
     // int
     case 'i':
         *static_cast<int*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) intValue];
+        break;
+
+    // unsigned
+    case 'I':
+        *static_cast<unsigned*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) unsignedIntValue];
+        break;
+
+    // char
+    case 'c':
+        *static_cast<char*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) charValue];
+        break;
+
+    // unsigned char
+    case 'C':
+        *static_cast<unsigned char*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) unsignedCharValue];
+        break;
+
+    // bool
+    case 'B':
+        *static_cast<bool*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) boolValue];
+        break;
+
+    // long
+    case 'l':
+        *static_cast<long*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) longValue];
+        break;
+
+    // unsigned long
+    case 'L':
+        *static_cast<unsigned long*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) unsignedLongValue];
+        break;
+
+    // long long
+    case 'q':
+        *static_cast<long long*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) longLongValue];
+        break;
+
+    // unsigned long long
+    case 'Q':
+        *static_cast<unsigned long long*>(data) = [decodeObjectFromObjectStream(self, { (__bridge CFTypeRef)[NSNumber class] }) unsignedLongLongValue];
         break;
 
     default:
@@ -519,6 +666,20 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             break;
         }
 
+        // short
+        case 's': {
+            short value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) shortValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // unsigned short
+        case 'S': {
+            unsigned short value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) unsignedShortValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
         // int
         case 'i': {
             int value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) intValue];
@@ -536,6 +697,13 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         // char
         case 'c': {
             char value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) charValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // unsigned char
+        case 'C': {
+            unsigned char value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) unsignedCharValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
