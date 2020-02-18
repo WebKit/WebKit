@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: non
-This test overrides the setting shouldRestrictBaseURLSchemes to false and then sets the base URL to a data URL. This is allowed and hence script is executed.
-
-Note that there will be a JavaScript ReferenceError on success.
-
-PASS

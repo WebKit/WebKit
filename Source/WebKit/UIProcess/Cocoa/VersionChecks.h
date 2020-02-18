@@ -81,7 +81,6 @@ enum class SDKVersion : uint32_t {
     FirstWhereWKContentViewDoesNotOverrideKeyCommands = DYLD_IOS_VERSION_13_0,
     FirstThatSupportsOverflowHiddenOnMainFrame = DYLD_IOS_VERSION_13_0,
     FirstWhereSiteSpecificQuirksAreEnabledByDefault = DYLD_IOS_VERSION_13_2,
-    FirstThatRestrictsBaseURLSchemes = DYLD_IOS_VERSION_13_4,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -92,7 +91,6 @@ enum class SDKVersion : uint32_t {
     FirstWithSnapshotAfterScreenUpdates = DYLD_MACOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES,
     FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores = DYLD_MACOS_VERSION_FIRST_WITH_EXCEPTIONS_FOR_RELATED_WEBVIEWS_USING_DIFFERENT_DATA_STORES,
     FirstWhereSiteSpecificQuirksAreEnabledByDefault = DYLD_MACOSX_VERSION_10_15_1,
-    FirstThatRestrictsBaseURLSchemes = DYLD_MACOSX_VERSION_10_15_4,
 #endif
 };
 

@@ -67,7 +67,7 @@ private:
 
     static String initiatorFor(TagId);
 
-    void updatePredictedBaseURL(const HTMLToken&, bool shouldRestrictBaseURLSchemes);
+    void updatePredictedBaseURL(const HTMLToken&);
 
     CSSPreloadScanner m_cssScanner;
     const URL m_documentURL;

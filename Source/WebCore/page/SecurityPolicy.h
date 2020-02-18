@@ -52,8 +52,6 @@ public:
 
     static bool shouldInheritSecurityOriginFromOwner(const URL&);
 
-    static bool isBaseURLSchemeAllowed(const URL&);
-
     enum LocalLoadPolicy {
         AllowLocalLoadsForAll, // No restriction on local loads.
         AllowLocalLoadsForLocalAndSubstituteData,
