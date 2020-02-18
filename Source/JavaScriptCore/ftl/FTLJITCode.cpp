@@ -131,6 +131,14 @@ DFG::CommonData* JITCode::dfgCommon()
     return &common;
 }
 
+void JITCode::shrinkToFit(const ConcurrentJSLocker&)
+{
+    common.shrinkToFit();
+    osrExit.shrinkToFit();
+    osrExitDescriptors.shrinkToFit();
+    lazySlowPaths.shrinkToFit();
+}
+
 void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 {
     common.validateReferences(trackedReferences);

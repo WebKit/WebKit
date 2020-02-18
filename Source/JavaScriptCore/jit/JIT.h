@@ -334,7 +334,6 @@ namespace JSC {
         bool isOperandConstantDouble(int src);
         
         void emitLoadDouble(int index, FPRegisterID value);
-        void emitLoadInt32ToDouble(int index, FPRegisterID value);
 
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         // value register in write barrier is used before any scratch registers

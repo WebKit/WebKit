@@ -83,13 +83,6 @@ void JITFinalizer::finalizeCommon()
 {
     CodeBlock* codeBlock = m_plan.codeBlock();
 
-    // Some JIT finalizers may have added more constants. Shrink-to-fit those things now.
-    {
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        codeBlock->constants().shrinkToFit();
-        codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
-    }
-
 #if ENABLE(FTL_JIT)
     m_jitCode->optimizeAfterWarmUp(codeBlock);
 #endif // ENABLE(FTL_JIT)
