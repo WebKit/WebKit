@@ -122,11 +122,11 @@ Test: ../../resources/webgl_test_files/conformance/state/gl-object-get-calls.htm
 [ 119: PASS ] getVertexAttrib correctly handled invalid parameter enums
 [ 120: PASS ] getError was expected value: INVALID_VALUE : after evaluating: gl.getVertexAttrib(16, gl.CURRENT_VERTEX_ATTRIB)
 [ 121: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
-[ 122: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 122: PASS ] getError was expected value: INVALID_OPERATION :
 [ 123: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
 [ 124: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
 [ 125: PASS ] getError was expected value: NO_ERROR :
 [ 126: PASS ] getError was expected value: NO_ERROR :
 [ 127: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ FAIL ] 2 failures reported
 

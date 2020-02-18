@@ -113,14 +113,14 @@ Test: ../../resources/webgl_test_files/conformance/extensions/webgl-draw-buffers
 [ 110: PASS ] attachment 5 should be 0,255,0,255
 [ 111: PASS ] attachment 6 should be 0,255,0,255
 [ 112: PASS ] attachment 7 should be 0,255,0,255
-[ 113: PASS ] attachment 0 should be 255,0,0,255
-[ 114: FAIL ] attachment 1 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 115: FAIL ] attachment 2 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 116: FAIL ] attachment 3 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 117: FAIL ] attachment 4 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 118: FAIL ] attachment 5 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 119: FAIL ] attachment 6 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
-[ 120: FAIL ] attachment 7 should be 0,255,0,255 at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 113: FAIL ] attachment 0 should be 255,0,0,255 at (0, 0) expected: 255,0,0,255 was 0,255,0,255
+[ 114: PASS ] attachment 1 should be 0,255,0,255
+[ 115: PASS ] attachment 2 should be 0,255,0,255
+[ 116: PASS ] attachment 3 should be 0,255,0,255
+[ 117: PASS ] attachment 4 should be 0,255,0,255
+[ 118: PASS ] attachment 5 should be 0,255,0,255
+[ 119: PASS ] attachment 6 should be 0,255,0,255
+[ 120: PASS ] attachment 7 should be 0,255,0,255
 [ 121: PASS ] attachment 0 should be 255,0,0,255
 [ 122: PASS ] attachment 1 should be 255,0,0,255
 [ 123: PASS ] attachment 2 should be 255,0,0,255
@@ -193,78 +193,110 @@ Test: ../../resources/webgl_test_files/conformance/extensions/webgl-draw-buffers
 [ 190: PASS ] attachment 5 should be 0,0,0,0
 [ 191: PASS ] attachment 6 should be 0,0,0,0
 [ 192: PASS ] attachment 7 should be 0,0,0,0
-[ 193: PASS ] attachment 0 should be 0,255,0,255
+[ 193: PASS ] attachment 0 should be 0,0,0,0
 [ 194: PASS ] attachment 1 should be 0,0,0,0
 [ 195: PASS ] attachment 2 should be 0,0,0,0
 [ 196: PASS ] attachment 3 should be 0,0,0,0
-[ 197: PASS ] attachment 4 should be 0,0,0,0
-[ 198: PASS ] attachment 5 should be 0,0,0,0
-[ 199: PASS ] attachment 6 should be 0,0,0,0
+[ 197: PASS ] attachment 4 should be 0,255,0,255
+[ 198: PASS ] attachment 5 should be 0,255,0,255
+[ 199: PASS ] attachment 6 should be 0,255,0,255
 [ 200: PASS ] attachment 7 should be 0,255,0,255
-[ 201: PASS ] attachment 0 should be 255,0,0,0
+[ 201: PASS ] attachment 0 should be 0,0,0,0
 [ 202: PASS ] attachment 1 should be 0,0,0,0
 [ 203: PASS ] attachment 2 should be 0,0,0,0
 [ 204: PASS ] attachment 3 should be 0,0,0,0
-[ 205: PASS ] attachment 4 should be 0,0,0,0
-[ 206: PASS ] attachment 5 should be 0,0,0,0
-[ 207: PASS ] attachment 6 should be 0,0,0,0
+[ 205: PASS ] attachment 4 should be 255,0,255,0
+[ 206: PASS ] attachment 5 should be 0,255,255,0
+[ 207: PASS ] attachment 6 should be 255,255,255,0
 [ 208: PASS ] attachment 7 should be 0,0,0,255
-[ 209: PASS ] attachment 0 should be 255,0,0,255
-[ 210: PASS ] attachment 1 should be 255,0,0,255
-[ 211: PASS ] attachment 2 should be 255,0,0,255
-[ 212: PASS ] attachment 3 should be 255,0,0,255
-[ 213: PASS ] attachment 4 should be 255,0,0,255
-[ 214: PASS ] attachment 5 should be 255,0,0,255
-[ 215: PASS ] attachment 6 should be 255,0,0,255
-[ 216: PASS ] attachment 7 should be 255,0,0,255
-[ 217: PASS ] attachment 0 should be 255,0,0,255
-[ 218: PASS ] attachment 1 should be 255,0,0,255
-[ 219: PASS ] attachment 2 should be 255,0,0,255
-[ 220: PASS ] attachment 3 should be 255,0,0,255
-[ 221: PASS ] attachment 4 should be 255,0,0,255
-[ 222: PASS ] attachment 5 should be 255,0,0,255
-[ 223: PASS ] attachment 6 should be 255,0,0,255
-[ 224: PASS ] attachment 7 should be 255,0,0,255
-[ 225: PASS ] attachment 0 should be 255,0,0,0
-[ 226: PASS ] attachment 1 should be 0,255,0,0
-[ 227: PASS ] attachment 2 should be 255,255,0,0
-[ 228: PASS ] attachment 3 should be 0,0,255,0
-[ 229: PASS ] attachment 4 should be 255,0,255,0
-[ 230: PASS ] attachment 5 should be 0,255,255,0
-[ 231: PASS ] attachment 6 should be 255,255,255,0
-[ 232: PASS ] attachment 7 should be 0,0,0,255
-[ 233: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.COLOR_ATTACHMENT0 + 0
-[ 234: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.COLOR_ATTACHMENT0 + 1
-[ 235: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.COLOR_ATTACHMENT0 + 2
-[ 236: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.COLOR_ATTACHMENT0 + 3
-[ 237: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.COLOR_ATTACHMENT0 + 4
-[ 238: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.COLOR_ATTACHMENT0 + 5
-[ 239: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.COLOR_ATTACHMENT0 + 6
-[ 240: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.COLOR_ATTACHMENT0 + 7
-[ 241: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.NONE
-[ 242: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.NONE
-[ 243: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.NONE
-[ 244: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.NONE
-[ 245: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.NONE
-[ 246: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.NONE
-[ 247: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.NONE
-[ 248: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.NONE
-[ 249: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
-[ 250: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
-[ 251: PASS ] should be yellow
-[ 252: PASS ] should be yellow
-[ 253: FAIL ] should be clear at (0, 0) expected: 0,0,0,0 was 255,0,0,255
-[ 254: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 255: PASS ] New WebGL context exists
-[ 256: PASS ] getError was expected value: INVALID_ENUM : MAX_COLOR_ATTACHMENTS_WEBGL should not be queryable if extension is disabled
-[ 257: PASS ] getError was expected value: INVALID_ENUM : MAX_DRAW_BUFFERS_WEBGL should not be queryable if extension is disabled
-[ 258: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 259: PASS ] GL_EXT_draw_buffers should not be defined in GLSL
-[ 260: PASS ] #extension GL_EXT_draw_buffers should not be allowed in GLSL
-[ 261: PASS ] should be green
-[ 262: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 263: PASS ] getError was expected value: INVALID_ENUM : should not be able to attach to gl.COLOR_ATTACHMENT1
-[ 264: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 265: PASS ] successfullyParsed is true
-[ FAIL ] 10 failures reported
+[ 209: PASS ] attachment 0 should be 0,255,0,255
+[ 210: PASS ] attachment 1 should be 0,0,0,0
+[ 211: PASS ] attachment 2 should be 0,0,0,0
+[ 212: PASS ] attachment 3 should be 0,0,0,0
+[ 213: PASS ] attachment 4 should be 0,0,0,0
+[ 214: PASS ] attachment 5 should be 0,0,0,0
+[ 215: PASS ] attachment 6 should be 0,0,0,0
+[ 216: PASS ] attachment 7 should be 0,255,0,255
+[ 217: PASS ] attachment 0 should be 255,0,0,0
+[ 218: PASS ] attachment 1 should be 0,0,0,0
+[ 219: PASS ] attachment 2 should be 0,0,0,0
+[ 220: PASS ] attachment 3 should be 0,0,0,0
+[ 221: PASS ] attachment 4 should be 0,0,0,0
+[ 222: PASS ] attachment 5 should be 0,0,0,0
+[ 223: PASS ] attachment 6 should be 0,0,0,0
+[ 224: PASS ] attachment 7 should be 0,0,0,255
+[ 225: PASS ] attachment 0 should be 0,0,0,0
+[ 226: PASS ] attachment 1 should be 0,255,0,255
+[ 227: PASS ] attachment 2 should be 0,255,0,255
+[ 228: PASS ] attachment 3 should be 0,255,0,255
+[ 229: PASS ] attachment 4 should be 0,255,0,255
+[ 230: PASS ] attachment 5 should be 0,255,0,255
+[ 231: PASS ] attachment 6 should be 0,255,0,255
+[ 232: PASS ] attachment 7 should be 0,0,0,0
+[ 233: PASS ] attachment 0 should be 0,0,0,0
+[ 234: PASS ] attachment 1 should be 0,255,0,0
+[ 235: PASS ] attachment 2 should be 255,255,0,0
+[ 236: PASS ] attachment 3 should be 0,0,255,0
+[ 237: PASS ] attachment 4 should be 255,0,255,0
+[ 238: PASS ] attachment 5 should be 0,255,255,0
+[ 239: PASS ] attachment 6 should be 255,255,255,0
+[ 240: PASS ] attachment 7 should be 0,0,0,0
+[ 241: PASS ] attachment 0 should be 255,0,0,255
+[ 242: PASS ] attachment 1 should be 255,0,0,255
+[ 243: PASS ] attachment 2 should be 255,0,0,255
+[ 244: PASS ] attachment 3 should be 255,0,0,255
+[ 245: PASS ] attachment 4 should be 255,0,0,255
+[ 246: PASS ] attachment 5 should be 255,0,0,255
+[ 247: PASS ] attachment 6 should be 255,0,0,255
+[ 248: PASS ] attachment 7 should be 255,0,0,255
+[ 249: PASS ] attachment 0 should be 255,0,0,255
+[ 250: PASS ] attachment 1 should be 255,0,0,255
+[ 251: PASS ] attachment 2 should be 255,0,0,255
+[ 252: PASS ] attachment 3 should be 255,0,0,255
+[ 253: PASS ] attachment 4 should be 255,0,0,255
+[ 254: PASS ] attachment 5 should be 255,0,0,255
+[ 255: PASS ] attachment 6 should be 255,0,0,255
+[ 256: PASS ] attachment 7 should be 255,0,0,255
+[ 257: PASS ] attachment 0 should be 255,0,0,0
+[ 258: PASS ] attachment 1 should be 0,255,0,0
+[ 259: PASS ] attachment 2 should be 255,255,0,0
+[ 260: PASS ] attachment 3 should be 0,0,255,0
+[ 261: PASS ] attachment 4 should be 255,0,255,0
+[ 262: PASS ] attachment 5 should be 0,255,255,0
+[ 263: PASS ] attachment 6 should be 255,255,255,0
+[ 264: PASS ] attachment 7 should be 0,0,0,255
+[ 265: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.COLOR_ATTACHMENT0 + 0
+[ 266: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.COLOR_ATTACHMENT0 + 1
+[ 267: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.COLOR_ATTACHMENT0 + 2
+[ 268: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.COLOR_ATTACHMENT0 + 3
+[ 269: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.COLOR_ATTACHMENT0 + 4
+[ 270: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.COLOR_ATTACHMENT0 + 5
+[ 271: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.COLOR_ATTACHMENT0 + 6
+[ 272: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.COLOR_ATTACHMENT0 + 7
+[ 273: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.NONE
+[ 274: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.NONE
+[ 275: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.NONE
+[ 276: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.NONE
+[ 277: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.NONE
+[ 278: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.NONE
+[ 279: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.NONE
+[ 280: PASS ] gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.NONE
+[ 281: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
+[ 282: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
+[ 283: PASS ] should be yellow
+[ 284: PASS ] should be yellow
+[ 285: FAIL ] should be clear at (0, 0) expected: 0,0,0,0 was 255,0,0,59
+[ 286: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : there should be no errors
+[ 287: PASS ] New WebGL context exists
+[ 288: PASS ] getError was expected value: INVALID_ENUM : MAX_COLOR_ATTACHMENTS_WEBGL should not be queryable if extension is disabled
+[ 289: PASS ] getError was expected value: INVALID_ENUM : MAX_DRAW_BUFFERS_WEBGL should not be queryable if extension is disabled
+[ 290: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 291: PASS ] GL_EXT_draw_buffers should not be defined in GLSL
+[ 292: PASS ] #extension GL_EXT_draw_buffers should not be allowed in GLSL
+[ 293: PASS ] should be green
+[ 294: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 295: PASS ] getError was expected value: INVALID_ENUM : should not be able to attach to gl.COLOR_ATTACHMENT1
+[ 296: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 297: PASS ] successfullyParsed is true
+[ FAIL ] 5 failures reported
 

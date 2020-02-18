@@ -1,3 +1,130 @@
+2020-02-17  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Update WebGL2 results with ANGLE backend
+        https://bugs.webkit.org/show_bug.cgi?id=207872
+
+        Reviewed by Myles Maxfield.
+
+        Now that ANGLE is on by default, update a bunch of expected results.
+        Note that any possible regressions are tracked in:
+        https://bugs.webkit.org/show_bug.cgi?id=207858
+
+        * webgl/2.0.0/conformance/context/context-lost-restored-expected.txt:
+        * webgl/2.0.0/conformance/extensions/ext-sRGB-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-texture-float-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-vertex-array-object-expected.txt:
+        * webgl/2.0.0/conformance/extensions/webgl-depth-texture-expected.txt:
+        * webgl/2.0.0/conformance/extensions/webgl-draw-buffers-expected.txt:
+        * webgl/2.0.0/conformance/extensions/webgl-draw-buffers-framebuffer-unsupported-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shader-struct-scope-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt:
+        * webgl/2.0.0/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt:
+        * webgl/2.0.0/conformance/limits/gl-line-width-expected.txt:
+        * webgl/2.0.0/conformance/misc/object-deletion-behaviour-expected.txt:
+        * webgl/2.0.0/conformance/misc/webgl-specific-expected.txt:
+        * webgl/2.0.0/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002-expected.txt:
+        * webgl/2.0.0/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003-expected.txt:
+        * webgl/2.0.0/conformance/programs/program-test-expected.txt:
+        * webgl/2.0.0/conformance/reading/read-pixels-test-expected.txt:
+        * webgl/2.0.0/conformance/renderbuffers/feedback-loop-expected.txt:
+        * webgl/2.0.0/conformance/rendering/point-no-attributes-expected.txt:
+        * webgl/2.0.0/conformance/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/cube-incomplete-fbo-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops-expected.txt:
+        * webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer-expected.txt:
+        * webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer-offsets-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/bound-buffer-size-change-test-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/buffer-copying-contents-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/buffer-type-restrictions-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/get-buffer-sub-data-expected.txt:
+        * webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer-expected.txt:
+        * webgl/2.0.0/conformance2/context/context-attributes-depth-stencil-antialias-obeyed-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/ext-color-buffer-float-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/promoted-extensions-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-linking-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-invalid-characters-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-mis-matching-uniform-block-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/valid-invariant-expected.txt:
+        * webgl/2.0.0/conformance2/misc/expando-loss-2-expected.txt:
+        * webgl/2.0.0/conformance2/misc/instanceof-test-expected.txt:
+        * webgl/2.0.0/conformance2/misc/object-deletion-behaviour-2-expected.txt:
+        * webgl/2.0.0/conformance2/query/query-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-from-fbo-test-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/attrib-type-match-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-test-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/canvas-resizing-with-pbo-bound-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clear-srgb-color-buffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/framebuffer-unsupported-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/instanced-arrays-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/instanced-rendering-bug-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/rendering-sampling-feedback-loop-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/rgb-format-support-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-get-calls-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_image/tex-3d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba4-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba4-rgba-unsigned_short_4_4_4_4-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-3d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-3d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-3d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-3d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/active-3d-texture-bug-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-storage-2d-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/texture-npot-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object-expected.txt:
+        * webgl/TestExpectations:
+
 2020-02-18  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r256784?) [ iOS wk2 ] fast/canvas/webgl/oes-vertex-array-object.html is failing.

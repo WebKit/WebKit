@@ -116,7 +116,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-data-and-buff
 [ 113: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 114: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 115: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
-[ 116: FAIL ] expected data at 0: 2, got 1
+[ 116: FAIL ] expected data at 0: 2, got 0
 [ 117: FAIL ] expected data at 1: 3, got 0
 [ 118: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 119: PASS ] buffer data uploaded correctly
@@ -129,7 +129,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-data-and-buff
 [ 126: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 127: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 128: FAIL ] expected data at 0: 2, got 0
-[ 129: FAIL ] expected data at 1: 3, got 16368
+[ 129: FAIL ] expected data at 1: 3, got 0
 [ 130: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 131: PASS ] buffer data uploaded correctly
 [ 132: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source of size 0 should succeed
@@ -140,8 +140,8 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-data-and-buff
 [ 137: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 138: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 139: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
-[ 140: FAIL ] expected data at 0: 2, got 1
-[ 141: FAIL ] expected data at 1: 3, got 16368
+[ 140: FAIL ] expected data at 0: 2, got 0
+[ 141: FAIL ] expected data at 1: 3, got 0
 [ 142: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 143: PASS ] buffer data uploaded correctly
 [ 144: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source of size 0 should succeed
@@ -164,7 +164,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-data-and-buff
 [ 161: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 162: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 163: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
-[ 164: FAIL ] expected data at 0: 2, got 1
+[ 164: FAIL ] expected data at 0: 2, got 0
 [ 165: FAIL ] expected data at 1: 3, got 0
 [ 166: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 167: PASS ] buffer data uploaded correctly
@@ -176,7 +176,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-data-and-buff
 [ 173: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 174: PASS ] getError was expected value: INVALID_VALUE : calling bufferSubData when srcOffset + length is larger than source size
 [ 175: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
-[ 176: FAIL ] expected data at 0: 2, got 1.401298464324817e-45
+[ 176: FAIL ] expected data at 0: 2, got 0
 [ 177: FAIL ] expected data at 1: 3, got 0
 [ 178: PASS ] getError was expected value: NO_ERROR : calling bufferSubData with valid sub source should succeed
 [ 179: PASS ] buffer data uploaded correctly

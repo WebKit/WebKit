@@ -1,7 +1,23 @@
-CONSOLE MESSAGE: line 50: TypeError: null is not an object (evaluating 'instance.expando1 = expandoValue')
+CONSOLE MESSAGE: line 55: TypeError: null is not an object (evaluating 'instance.expando1')
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
-[ 1: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 1 failures reported
+[ 1: PASS ] getParameter(SAMPLER_BINDING) returns instance that was bound.
+[ 2: FAIL ] getParameter(SAMPLER_BINDING): Expect basic expando to survive despite GC.
+[ 3: FAIL ] getParameter(SAMPLER_BINDING): Expect subobject expando to survive despite GC.
+[ 4: PASS ] getParameter(SAMPLER_BINDING): Expect extra expando to survive despite GC.
+[ 5: PASS ] [object WebGLSampler] is an instance of WebGLSampler
+[ 6: PASS ] getParameter(TRANSFORM_FEEDBACK_BINDING) returns instance that was bound.
+[ 7: FAIL ] getParameter(TRANSFORM_FEEDBACK_BINDING): Expect basic expando to survive despite GC.
+[ 8: FAIL ] getParameter(TRANSFORM_FEEDBACK_BINDING): Expect subobject expando to survive despite GC.
+[ 9: PASS ] getParameter(TRANSFORM_FEEDBACK_BINDING): Expect extra expando to survive despite GC.
+[ 10: PASS ] [object WebGLTransformFeedback] is an instance of WebGLTransformFeedback
+[ 11: PASS ] getParameter(VERTEX_ARRAY_BINDING) returns instance that was bound.
+[ 12: FAIL ] getParameter(VERTEX_ARRAY_BINDING): Expect basic expando to survive despite GC.
+[ 13: FAIL ] getParameter(VERTEX_ARRAY_BINDING): Expect subobject expando to survive despite GC.
+[ 14: PASS ] getParameter(VERTEX_ARRAY_BINDING): Expect extra expando to survive despite GC.
+[ 15: PASS ] [object WebGLVertexArrayObject] is an instance of WebGLVertexArrayObject
+[ 16: FAIL ] getParameter(TEXTURE_BINDING_3D) returns instance that was bound.
+[ 17: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 8 failures reported
 

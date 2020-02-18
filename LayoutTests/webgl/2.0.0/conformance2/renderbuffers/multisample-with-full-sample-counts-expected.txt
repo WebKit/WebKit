@@ -17,6 +17,22 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/multisample-wi
 [ 14: FAIL ] User buffer has been rendered to red with sample = 7, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
 [ 15: FAIL ] User buffer has been rendered to red with sample = 8, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
 [ 16: FAIL ] User buffer has been rendered to red with sample = 8, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 17: PASS ] successfullyParsed is true
-[ FAIL ] 16 failures reported
+[ 17: FAIL ] Framebuffer incomplete.
+[ 18: FAIL ] Framebuffer incomplete.
+[ 19: FAIL ] Framebuffer incomplete.
+[ 20: FAIL ] Framebuffer incomplete.
+[ 21: FAIL ] Framebuffer incomplete.
+[ 22: FAIL ] Framebuffer incomplete.
+[ 23: FAIL ] Framebuffer incomplete.
+[ 24: FAIL ] Framebuffer incomplete.
+[ 25: FAIL ] Framebuffer incomplete.
+[ 26: FAIL ] Framebuffer incomplete.
+[ 27: FAIL ] Framebuffer incomplete.
+[ 28: FAIL ] Framebuffer incomplete.
+[ 29: FAIL ] Framebuffer incomplete.
+[ 30: FAIL ] Framebuffer incomplete.
+[ 31: FAIL ] Framebuffer incomplete.
+[ 32: FAIL ] Framebuffer incomplete.
+[ 33: PASS ] successfullyParsed is true
+[ FAIL ] 32 failures reported
 
