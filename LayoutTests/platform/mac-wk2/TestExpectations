@@ -929,3 +929,6 @@ webkit.org/b/205301 [ Mojave+ ] inspector/canvas/requestShaderSource-webgpu.html
 webkit.org/b/205886 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure ]
 
 webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html [ Pass Failure Timeout ]
+
+webkit.org/b/207509 [ Debug ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Crash ]
+
