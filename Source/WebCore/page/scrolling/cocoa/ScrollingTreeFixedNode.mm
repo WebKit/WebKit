@@ -77,7 +77,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
                 // Fixed nodes are positioned relative to the containing frame scrolling node.
                 // We bail out after finding one.
-                auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*ancestor).layoutViewportRespectingRubberBanding();
+                auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*ancestor).layoutViewport();
                 return m_constraints.layerPositionForViewportRect(layoutViewport) - overflowScrollDelta;
             }
 
