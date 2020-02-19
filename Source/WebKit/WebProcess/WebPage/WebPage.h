@@ -45,6 +45,7 @@
 #include "MessageSender.h"
 #include "OptionalCallbackID.h"
 #include "Plugin.h"
+#include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "ShareSheetCallbackID.h"
 #include "SharedMemory.h"
@@ -1491,7 +1492,7 @@ private:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, Optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&);
     void continueWillSubmitForm(WebCore::FrameIdentifier, uint64_t listenerID);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);

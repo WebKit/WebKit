@@ -345,7 +345,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     if (!isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameID) || navigationID != m_navigationID) {
-        reply(identifier, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt);
+        reply(PolicyDecision { identifier, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt });
         return;
     }
 

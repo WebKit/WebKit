@@ -252,12 +252,12 @@ void WebFrame::invalidatePolicyListener()
         completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier identifier, PolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
 {
     if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction)
         return;
 
-    ASSERT(identifier == m_policyIdentifier);
+    ASSERT(policyDecision.identifier == m_policyIdentifier);
     m_policyIdentifier = WTF::nullopt;
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
@@ -265,20 +265,20 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyChec
 
     invalidatePolicyListener();
 
-    if (forNavigationAction && m_frameLoaderClient && websitePolicies) {
+    if (forNavigationAction && m_frameLoaderClient && policyDecision.websitePoliciesData) {
         ASSERT(page());
         if (page())
-            page()->setAllowsContentJavaScriptFromMostRecentNavigation(websitePolicies->allowsContentJavaScript);
-        m_frameLoaderClient->applyToDocumentLoader(WTFMove(*websitePolicies));
+            page()->setAllowsContentJavaScriptFromMostRecentNavigation(policyDecision.websitePoliciesData->allowsContentJavaScript);
+        m_frameLoaderClient->applyToDocumentLoader(WTFMove(*policyDecision.websitePoliciesData));
     }
 
-    m_policyDownloadID = downloadID;
-    if (navigationID) {
+    m_policyDownloadID = policyDecision.downloadID;
+    if (policyDecision.navigationID) {
         if (WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_coreFrame->loader().policyDocumentLoader()))
-            documentLoader->setNavigationID(navigationID);
+            documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
-    function(action, identifier);
+    function(policyDecision.policyAction, policyDecision.identifier);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

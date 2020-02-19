@@ -3045,18 +3045,21 @@ void WebPageProxy::centerSelectionInVisibleArea()
 
 class WebPageProxy::PolicyDecisionSender : public RefCounted<PolicyDecisionSender> {
 public:
-    using SendFunction = CompletionHandler<void(PolicyCheckIdentifier, PolicyAction, uint64_t newNavigationID, DownloadID, Optional<WebsitePoliciesData>)>;
+    using SendFunction = CompletionHandler<void(PolicyDecision&&)>;
 
     static Ref<PolicyDecisionSender> create(PolicyCheckIdentifier identifier, SendFunction&& sendFunction)
     {
         return adoptRef(*new PolicyDecisionSender(identifier, WTFMove(sendFunction)));
     }
 
-    template<typename... Args> void send(Args... args)
+    void send(PolicyDecision&& PolicyDecision)
     {
         if (m_sendFunction)
-            m_sendFunction(m_identifier, std::forward<Args>(args)...);
+            m_sendFunction(WTFMove(PolicyDecision));
     }
+
+    PolicyCheckIdentifier identifier() { return m_identifier; }
+    
 private:
     PolicyDecisionSender(PolicyCheckIdentifier identifier, SendFunction sendFunction)
         : m_sendFunction(WTFMove(sendFunction))
@@ -3154,7 +3157,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, Optional<WebsitePoliciesData>&& websitePolicies, Ref<PolicyDecisionSender>&& sender, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
 {
     if (!hasRunningProcess()) {
-        sender->send(PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt);
+        sender->send(PolicyDecision { sender->identifier(), PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt });
         return;
     }
 
@@ -3177,7 +3180,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
         m_decidePolicyForResponseRequest = { };
     }
 
-    sender->send(action, navigation ? navigation->navigationID() : 0, downloadID, WTFMove(websitePolicies));
+    sender->send(PolicyDecision { sender->identifier(), action, navigation ? navigation->navigationID() : 0, downloadID, WTFMove(websitePolicies) });
 }
 
 void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
@@ -4935,8 +4938,8 @@ void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProx
     auto* frame = process->webFrame(frameID);
     MESSAGE_CHECK(process, frame);
 
-    auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = process.copyRef()] (auto... args) {
-        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), webPageID);
+    auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = process.copyRef()] (const auto& PolicyDecision) {
+        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, PolicyDecision), webPageID);
     });
 
     decidePolicyForNavigationAction(process.copyRef(), *frame, WTFMove(frameSecurityOrigin), navigationID, WTFMove(navigationActionData), WTFMove(frameInfoData), originatingPageID,
@@ -4962,7 +4965,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
         RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it is outside the sandbox");
-        sender->send(PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt);
+        sender->send(PolicyDecision { sender->identifier(), PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt });
         return;
     }
 
@@ -5189,7 +5192,7 @@ void WebPageProxy::decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy
         originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, sender.copyRef());
 
     // If the client did not respond synchronously, proceed with the load.
-    sender->send(PolicyAction::Use, navigationID, DownloadID(), WTF::nullopt);
+    sender->send(PolicyDecision { sender->identifier(), PolicyAction::Use, navigationID, DownloadID(), WTF::nullopt });
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, SecurityOriginData&& frameSecurityOrigin, PolicyCheckIdentifier identifier,
@@ -5206,8 +5209,8 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Secur
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
-        auto sender = PolicyDecisionSender::create(identifier, [this, protectedThis = WTFMove(protectedThis), frameID, listenerID] (auto... args) {
-            send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...));
+        auto sender = PolicyDecisionSender::create(identifier, [this, protectedThis = WTFMove(protectedThis), frameID, listenerID] (const auto& PolicyDecision) {
+            send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, PolicyDecision));
         });
 
         receivedPolicyDecision(policyAction, nullptr, WTF::nullopt, WTFMove(sender));
@@ -5255,8 +5258,8 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
-        auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = WTFMove(process)] (auto... args) {
-            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, args...), webPageID);
+        auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = WTFMove(process)] (const auto& PolicyDecision) {
+            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, PolicyDecision), webPageID);
         });
         
         receivedPolicyDecision(policyAction, navigation.get(), WTF::nullopt, WTFMove(sender));
