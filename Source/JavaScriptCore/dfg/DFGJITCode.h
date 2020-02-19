@@ -115,7 +115,7 @@ public:
     
     void validateReferences(const TrackedReferences&) override;
     
-    void shrinkToFit();
+    void shrinkToFit(const ConcurrentJSLocker&) override;
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
 #if ENABLE(FTL_JIT)

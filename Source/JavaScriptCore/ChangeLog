@@ -1,3 +1,68 @@
+2020-02-19  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/59446991
+
+    2020-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] CodeBlock::shrinkToFit should shrink m_constantRegisters and m_constantsSourceCodeRepresentation in 64bit architectures
+            https://bugs.webkit.org/show_bug.cgi?id=207356
+
+            Reviewed by Mark Lam.
+
+            Only 32bit architectures are using m_constantRegisters's address. 64bit architectures are not relying on m_constantRegisters's address.
+            This patches fixes the thing so that CodeBlock::shrinkToFit will shrink m_constantRegisters and m_constantsSourceCodeRepresentation
+            regardless of whether this is EarlyShrink or not. We also move DFG/FTL's LateShrink call to the place after calling DFGCommon reallyAdd
+            since they can add more constant registers.
+
+            Relanding it by fixing dead-lock.
+
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::shrinkToFit):
+            * bytecode/CodeBlock.h:
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::compile):
+            (JSC::DFG::JITCompiler::compileFunction):
+            * dfg/DFGJITFinalizer.cpp:
+            (JSC::DFG::JITFinalizer::finalizeCommon):
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+            * jit/JIT.cpp:
+            (JSC::JIT::link):
+            * jit/JIT.h:
+            * jit/JITInlines.h:
+            (JSC::JIT::emitLoadDouble):
+            (JSC::JIT::emitLoadInt32ToDouble): Deleted.
+
+2020-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG::CommonData::shrinkToFit called before DFG::Plan::reallyAdd is called
+        https://bugs.webkit.org/show_bug.cgi?id=207083
+
+        Reviewed by Mark Lam.
+
+        We are calling DFG::CommonData::shrinkToFit, but calling this too early: we execute
+        DFG::Plan::reallyAdd(DFG::CommonData*) after that, and this adds many entries to
+        DFG::CommonData*. We should call DFG::CommonData::shrinkToFit after calling DFG::Plan::reallyAdd.
+
+        To implement it, we make DFG::JITCode::shrinkToFit virtual function in JSC::JITCode. Then, we
+        can also implement FTL::JITCode::shrinkToFit which was previously not implemented.
+
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::shrinkToFit):
+        * ftl/FTLJITCode.h:
+        * jit/JITCode.cpp:
+        (JSC::JITCode::shrinkToFit):
+        * jit/JITCode.h:
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256498. rdar://problem/59478929

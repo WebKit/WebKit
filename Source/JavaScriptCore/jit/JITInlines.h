@@ -380,6 +380,15 @@ ALWAYS_INLINE void JIT::emitInitRegister(int dst)
 
 #if USE(JSVALUE32_64)
 
+inline void JIT::emitLoadDouble(int index, FPRegisterID value)
+{
+    if (m_codeBlock->isConstantRegisterIndex(index)) {
+        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
+        loadDouble(TrustedImmPtr(&inConstantPool), value);
+    } else
+        loadDouble(addressFor(index), value);
+}
+
 inline void JIT::emitLoadTag(int index, RegisterID tag)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
@@ -633,24 +642,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
 {
     if (!m_codeBlock->isKnownNotImmediate(vReg))
         emitJumpSlowCaseIfNotJSCell(reg);
-}
-
-inline void JIT::emitLoadDouble(int index, FPRegisterID value)
-{
-    if (m_codeBlock->isConstantRegisterIndex(index)) {
-        WriteBarrier<Unknown>& inConstantPool = m_codeBlock->constantRegister(index);
-        loadDouble(TrustedImmPtr(&inConstantPool), value);
-    } else
-        loadDouble(addressFor(index), value);
-}
-
-inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
-{
-    if (m_codeBlock->isConstantRegisterIndex(index)) {
-        ASSERT(isOperandConstantInt(index));
-        convertInt32ToDouble(Imm32(getConstantOperand(index).asInt32()), value);
-    } else
-        convertInt32ToDouble(addressFor(index), value);
 }
 
 ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)
