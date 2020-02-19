@@ -26,25 +26,34 @@
 #pragma once
 
 #include "InstructionStream.h"
+#include "Opcode.h"
 #include <limits.h>
 #include <wtf/FastBitVector.h>
+#include <wtf/PackedIntVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
+class BytecodeGraph;
 class CodeBlock;
 class UnlinkedCodeBlock;
+class UnlinkedCodeBlockGenerator;
 struct Instruction;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
 
 class BytecodeBasicBlock {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
+    WTF_MAKE_FAST_ALLOCATED(BytecodeBasicBlock);
+    WTF_MAKE_NONCOPYABLE(BytecodeBasicBlock);
+    friend class BytecodeGraph;
 public:
+    using BasicBlockVector = Vector<BytecodeBasicBlock, 0, UnsafeVectorOverflow, 16, BytecodeBasicBlockMalloc>;
+    static_assert(maxOpcodeLength <= UINT8_MAX);
     enum SpecialBlockType { EntryBlock, ExitBlock };
-    BytecodeBasicBlock(const InstructionStream::Ref&);
-    BytecodeBasicBlock(SpecialBlockType);
-    void shrinkToFit();
+    inline BytecodeBasicBlock(const InstructionStream::Ref&, unsigned blockIndex);
+    inline BytecodeBasicBlock(SpecialBlockType, unsigned blockIndex);
+    BytecodeBasicBlock(BytecodeBasicBlock&&) = default;
+
 
     bool isEntryBlock() { return !m_leaderOffset && !m_totalLength; }
     bool isExitBlock() { return m_leaderOffset == UINT_MAX && m_totalLength == UINT_MAX; }
@@ -52,53 +61,36 @@ public:
     unsigned leaderOffset() const { return m_leaderOffset; }
     unsigned totalLength() const { return m_totalLength; }
 
-    const Vector<InstructionStream::Offset>& offsets() const { return m_offsets; }
-
-    const Vector<BytecodeBasicBlock*>& successors() const { return m_successors; }
+    const Vector<uint8_t>& delta() const { return m_delta; }
+    const Vector<unsigned>& successors() const { return m_successors; }
 
     FastBitVector& in() { return m_in; }
     FastBitVector& out() { return m_out; }
 
     unsigned index() const { return m_index; }
 
-    static void compute(CodeBlock*, const InstructionStream& instructions, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
-    static void compute(UnlinkedCodeBlock*, const InstructionStream& instructions, Vector<std::unique_ptr<BytecodeBasicBlock>>&);
+    explicit operator bool() const { return true; }
 
 private:
-    template<typename Block> static void computeImpl(Block* codeBlock, const InstructionStream& instructions, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks);
+    // Only called from BytecodeGraph.
+    static BasicBlockVector compute(CodeBlock*, const InstructionStream& instructions);
+    static BasicBlockVector compute(UnlinkedCodeBlockGenerator*, const InstructionStream& instructions);
+    template<typename Block> static BasicBlockVector computeImpl(Block* codeBlock, const InstructionStream& instructions);
+    void shrinkToFit();
 
-    void addSuccessor(BytecodeBasicBlock* block) { m_successors.append(block); }
+    void addSuccessor(BytecodeBasicBlock& block) { m_successors.append(block.index()); }
 
-    void addLength(unsigned);
+    inline void addLength(unsigned);
 
     InstructionStream::Offset m_leaderOffset;
     unsigned m_totalLength;
     unsigned m_index;
 
-    Vector<InstructionStream::Offset> m_offsets;
-    Vector<BytecodeBasicBlock*> m_successors;
+    Vector<uint8_t> m_delta;
+    Vector<unsigned> m_successors;
 
     FastBitVector m_in;
     FastBitVector m_out;
 };
-
-inline BytecodeBasicBlock::BytecodeBasicBlock(const InstructionStream::Ref& instruction)
-    : m_leaderOffset(instruction.offset())
-    , m_totalLength(instruction->size())
-{
-    m_offsets.append(m_leaderOffset);
-}
-
-inline BytecodeBasicBlock::BytecodeBasicBlock(BytecodeBasicBlock::SpecialBlockType blockType)
-    : m_leaderOffset(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
-    , m_totalLength(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
-{
-}
-
-inline void BytecodeBasicBlock::addLength(unsigned bytecodeLength)
-{
-    m_offsets.append(m_leaderOffset + m_totalLength);
-    m_totalLength += bytecodeLength;
-}
 
 } // namespace JSC

@@ -97,12 +97,6 @@ namespace JSC {
 #endif
 
         int32_t offsetForValue(int32_t value, int32_t defaultOffset);
-        void add(int32_t key, int32_t offset)
-        {
-            if (!branchOffsets[key])
-                branchOffsets[key] = offset;
-        }
-
 #if ENABLE(JIT)
         void ensureCTITable()
         {

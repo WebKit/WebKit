@@ -63,10 +63,10 @@ public:
     static void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, FastBitVector& out);
 
     template<typename CodeBlockType, typename Instructions>
-    static bool computeLocalLivenessForBytecodeIndex(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*, BytecodeIndex, FastBitVector& result);
+    static bool computeLocalLivenessForBytecodeIndex(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock&, BytecodeIndex, FastBitVector& result);
 
     template<typename CodeBlockType, typename Instructions>
-    static bool computeLocalLivenessForBlock(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*);
+    static bool computeLocalLivenessForBlock(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock&);
 
     template<typename CodeBlockType, typename Instructions>
     static FastBitVector getLivenessInfoAtBytecodeIndex(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeIndex);

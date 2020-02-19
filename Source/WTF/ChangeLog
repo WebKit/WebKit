@@ -1,3 +1,24 @@
+2020-02-19  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/59447004
+
+    2020-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Introduce UnlinkedCodeBlockGenerator and reduce sizeof(UnlinkedCodeBlock)
+            https://bugs.webkit.org/show_bug.cgi?id=207087
+
+            Reviewed by Tadeu Zagallo.
+
+            Add more useful methods for RefCountedArray.
+
+            * wtf/RefCountedArray.h:
+            (WTF::RefCountedArray::operator=):
+            (WTF::RefCountedArray::isEmpty const):
+            (WTF::RefCountedArray::front):
+            (WTF::RefCountedArray::front const):
+            (WTF::RefCountedArray::last):
+            (WTF::RefCountedArray::last const):
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256629. rdar://problem/59478949
