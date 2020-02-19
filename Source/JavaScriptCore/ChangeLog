@@ -1,3 +1,10 @@
+2020-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed build fix.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+
 2020-02-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256779. rdar://problem/59551695

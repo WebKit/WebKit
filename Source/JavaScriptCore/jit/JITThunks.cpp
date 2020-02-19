@@ -218,7 +218,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
             ASSERT(!*addResult.iterator);
             *addResult.iterator = Weak<NativeExecutable>(nativeExecutable, this);
             ASSERT(*addResult.iterator);
-#if ASSERT_ENABLED
+#if !ASSERT_DISABLED
             auto iterator = m_nativeExecutableSet.find<HostKeySearcher>(hostFunctionKey);
             ASSERT(iterator != m_nativeExecutableSet.end());
             ASSERT(iterator->get() == nativeExecutable);
