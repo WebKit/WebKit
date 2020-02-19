@@ -1,5 +1,23 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256898. rdar://problem/59576798
+
+    Unreviewed build fix.
+    
+    * jit/JITThunks.cpp:
+    (JSC::JITThunks::hostFunctionStub):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-609-branch@256898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+            Unreviewed build fix.
+
+            * jit/JITThunks.cpp:
+            (JSC::JITThunks::hostFunctionStub):
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256665. rdar://problem/59576809
 
     [WASM] Wasm interpreter's calling convention doesn't match Wasm JIT's convention.
