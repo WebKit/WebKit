@@ -2721,6 +2721,12 @@ private:
     bool m_isLayerTreeFrozenDueToSwipeAnimation { false };
     
     String m_overriddenMediaType;
+
+    struct InjectedBundleMessage {
+        String messageName;
+        RefPtr<API::Object> messageBody;
+    };
+    Vector<InjectedBundleMessage> m_pendingInjectedBundleMessages;
         
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     std::unique_ptr<WebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProviderProxy;

@@ -1,5 +1,25 @@
 2020-02-18  Chris Dumez  <cdumez@apple.com>
 
+        Do not eagerly launch WebProcess when WKPagePostMessageToInjectedBundle() is called
+        https://bugs.webkit.org/show_bug.cgi?id=207905
+
+        Reviewed by Alex Christensen.
+
+        Do not eagerly launch WebProcess when WKPagePostMessageToInjectedBundle() is called. It is bad for
+        performance as we cannot leverage the process cache if we don't know the domain of the site that
+        will be loaded.
+
+        Instead we now queue those injected bundle messages until we really need to launch the process.
+
+        No new tests, WebKitTestRunner extensively relies on this private API already, and was the
+        reason we did the eager process launch in the first place (https://trac.webkit.org/changeset/243156).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+        * UIProcess/WebPageProxy.h:
+
+2020-02-18  Chris Dumez  <cdumez@apple.com>
+
         Drop getSandboxExtensionsForBlobFiles() as it is dead code
         https://bugs.webkit.org/show_bug.cgi?id=207909
         <rdar://problem/59562180>

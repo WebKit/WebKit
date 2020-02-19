@@ -776,6 +776,10 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     finishAttachingToWebProcess(reason);
+
+    auto pendingInjectedBundleMessage = WTFMove(m_pendingInjectedBundleMessages);
+    for (auto& message : pendingInjectedBundleMessage)
+        send(Messages::WebPage::PostInjectedBundleMessage(message.messageName, UserData(process().transformObjectsToHandles(message.messageBody.get()).get())));
 }
 
 bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
@@ -6282,8 +6286,10 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
-    // For backward-compatibility, make sure we launch the initial process if the client asks to post a message to its injected bundle before doing a load.
-    launchInitialProcessIfNecessary();
+    if (!hasRunningProcess()) {
+        m_pendingInjectedBundleMessages.append(InjectedBundleMessage { messageName, messageBody });
+        return;
+    }
 
     send(Messages::WebPage::PostInjectedBundleMessage(messageName, UserData(process().transformObjectsToHandles(messageBody).get())));
 }
@@ -9601,7 +9607,8 @@ void WebPageProxy::clearAdClickAttribution(CompletionHandler<void()>&& completio
             return;
         }
         networkProcess->sendWithAsyncReply(Messages::NetworkProcess::ClearAdClickAttribution(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
-    }
+    } else
+        completionHandler();
 }
 
 void WebPageProxy::setAdClickAttributionOverrideTimerForTesting(bool value, CompletionHandler<void()>&& completionHandler)
