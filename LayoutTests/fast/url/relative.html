@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/utilities.js"></script>
 </head>
 <body>
 <script>
+if (window.internals && internals.settings)
+  internals.settings.setShouldRestrictBaseURLSchemes(true);
+
 description("Test resolution of relative URLs.");
 
 cases = [ 
@@ -57,7 +60,7 @@ cases = [
   ["http://host/a?foo=bar#hello", "#bye", "http://host/a?foo=bar#bye"],
   // Non-hierarchical base: no relative handling. Relative input should
   // error, and if a scheme is present, it should be treated as absolute.
-  ["data:foobar", "baz.html", ""],
+  ["data:foobar", "baz.html", "file:///.../baz.html"],
   ["data:foobar", "data:baz", "data:baz"],
   ["data:foobar", "data:/base", "data:/base"],
   // Non-hierarchical base: absolute input should succeed.
@@ -67,7 +70,7 @@ cases = [
   ["http://foo/bar", "./asd:fgh", "http://foo/asd:fgh"],
   ["http://foo/bar", ":foo", "http://foo/:foo"],
   ["http://foo/bar", " hello world", "http://foo/hello%20world"],
-  ["data:asdf", ":foo", ""],
+  ["data:asdf", ":foo", "file:///.../:foo"],
   // We should treat semicolons like any other character in URL resolving
   ["http://host/a", ";foo", "http://host/;foo"],
   ["http://host/a;", ";foo", "http://host/;foo"],
@@ -87,6 +90,7 @@ cases = [
 ];
 
 var originalBaseURL = canonicalize(".");
+setShouldEllipsizeFileURLPaths(true);
 
 for (var i = 0; i < cases.length; ++i) {
   baseURL = cases[i][0];
@@ -99,6 +103,5 @@ for (var i = 0; i < cases.length; ++i) {
 
 setBaseURL(originalBaseURL);
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
