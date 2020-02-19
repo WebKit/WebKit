@@ -4387,17 +4387,6 @@ void FrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlineText
     ++m_textRendererCountForVisuallyNonEmptyCharacters;
 }
 
-static bool elementOverflowRectIsLargerThanThreshold(const Element& element)
-{
-    // Require the document to grow a bit.
-    // Using a value of 48 allows the header on Google's search page to render immediately before search results populate later.
-    static const int documentHeightThreshold = 48;
-    if (auto* elementRenderBox = element.renderBox())
-        return snappedIntRect(elementRenderBox->layoutOverflowRect()).height() >= documentHeightThreshold;
-
-    return false;
-}
-
 void FrameView::updateHasReachedSignificantRenderedTextThreshold()
 {
     if (m_hasReachedSignificantRenderedTextThreshold)
@@ -4430,11 +4419,6 @@ bool FrameView::qualifiesAsSignificantRenderedText() const
     auto* document = frame().document();
     if (!document || document->styleScope().hasPendingSheetsBeforeBody())
         return false;
-
-    auto* documentElement = document->documentElement();
-    if (!documentElement || !elementOverflowRectIsLargerThanThreshold(*documentElement))
-        return false;
-
     return m_hasReachedSignificantRenderedTextThreshold;
 }
 
@@ -4466,9 +4450,6 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return false;
 
     if (!isVisible(frame().document()->body()))
-        return false;
-
-    if (!elementOverflowRectIsLargerThanThreshold(*documentElement))
         return false;
 
     // The first few hundred characters rarely contain the interesting content of the page.
