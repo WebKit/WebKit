@@ -877,7 +877,6 @@ private:
     PlatformMediaSession::MediaType mediaType() const override;
     PlatformMediaSession::MediaType presentationType() const override;
     PlatformMediaSession::DisplayType displayType() const override;
-    PlatformMediaSession::CharacteristicsFlags characteristics() const final;
 
     void suspendPlayback() override;
     void resumeAutoplaying() override;

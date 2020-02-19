@@ -7545,20 +7545,6 @@ PlatformMediaSession::DisplayType HTMLMediaElement::displayType() const
     return PlatformMediaSession::Normal;
 }
 
-PlatformMediaSession::CharacteristicsFlags HTMLMediaElement::characteristics() const
-{
-    if (m_readyState < HAVE_METADATA)
-        return PlatformMediaSession::HasNothing;
-
-    PlatformMediaSession::CharacteristicsFlags state = PlatformMediaSession::HasNothing;
-    if (isVideo() && hasVideo())
-        state |= PlatformMediaSession::HasVideo;
-    if (this->hasAudio())
-        state |= PlatformMediaSession::HasAudio;
-
-    return state;
-}
-
 bool HTMLMediaElement::canProduceAudio() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

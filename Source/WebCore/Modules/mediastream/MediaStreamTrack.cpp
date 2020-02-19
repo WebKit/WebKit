@@ -590,14 +590,6 @@ PlatformMediaSession::MediaType MediaStreamTrack::presentationType() const
     return mediaType();
 }
 
-PlatformMediaSession::CharacteristicsFlags MediaStreamTrack::characteristics() const
-{
-    if (!m_private->isActive())
-        return PlatformMediaSession::HasNothing;
-
-    return m_private->type() == RealtimeMediaSource::Type::Audio ? PlatformMediaSession::HasAudio : PlatformMediaSession::HasVideo;
-}
-
 void MediaStreamTrack::mayResumePlayback(bool)
 {
     // FIXME: should a media stream track pay attention to this directly, or only when attached to a media element?

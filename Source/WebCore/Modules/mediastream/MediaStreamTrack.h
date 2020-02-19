@@ -193,7 +193,6 @@ private:
     // PlatformMediaSessionClient
     PlatformMediaSession::MediaType mediaType() const final;
     PlatformMediaSession::MediaType presentationType() const final;
-    PlatformMediaSession::CharacteristicsFlags characteristics() const final;
     void mayResumePlayback(bool shouldResume) final;
     void suspendPlayback() final;
     bool canReceiveRemoteControlCommands() const final { return false; }

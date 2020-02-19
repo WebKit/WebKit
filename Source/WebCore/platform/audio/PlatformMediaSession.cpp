@@ -276,11 +276,6 @@ PlatformMediaSession::MediaType PlatformMediaSession::presentationType() const
     return m_client.presentationType();
 }
 
-PlatformMediaSession::CharacteristicsFlags PlatformMediaSession::characteristics() const
-{
-    return m_client.characteristics();
-}
-
 #if ENABLE(VIDEO)
 uint64_t PlatformMediaSession::uniqueIdentifier() const
 {
