@@ -111,6 +111,12 @@ webkit.org/b/183365 fast/selectors/selection-window-inactive-text-shadow.html [ 
 webkit.org/b/183365 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/183365 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ ImageOnlyFailure ]
 
+webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
+webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure Timeout ]
+webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Failure ]
+webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
+webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -266,6 +272,22 @@ webkit.org/b/169281 fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ 
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html [ Timeout ]
 webkit.org/b/169281 fullscreen [ Timeout ]
 
+webkit.org/b/158923 media/airplay-allows-buffering.html [ Timeout ]
+webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
+webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
+webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Flaky tests
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

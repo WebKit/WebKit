@@ -1,3 +1,13 @@
+2020-02-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening release build crashes
+        https://bugs.webkit.org/show_bug.cgi?id=207928
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-02-18  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: !m_embeddedObjectsToUpdate->contains(nullptr) in WebCore::FrameView::updateEmbeddedObjects
