@@ -1,3 +1,17 @@
+2020-02-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Changed results due to ANGLE use
+        https://bugs.webkit.org/show_bug.cgi?id=207858
+
+        Unreviewed test gardening.
+
+        Remove conflict markers that were accidentally added as part of r256880,
+        remove duplicated expectation for a test, and move the expectations to the same
+        file as the rest of the ANGLE related failures.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-02-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Replaced elements can also establish formatting contexts.
