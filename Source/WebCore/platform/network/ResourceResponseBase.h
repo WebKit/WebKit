@@ -48,9 +48,7 @@ class ResourceResponseBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
-    static constexpr unsigned bitWidthOfType = 3;
     enum class Tainting : uint8_t { Basic, Cors, Opaque, Opaqueredirect };
-    static constexpr unsigned bitWidthOfTainting = 2;
 
     static bool isRedirectionStatusCode(int code) { return code == 301 || code == 302 || code == 303 || code == 307 || code == 308; }
 

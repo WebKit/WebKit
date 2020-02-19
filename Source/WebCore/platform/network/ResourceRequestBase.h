@@ -201,13 +201,8 @@ public:
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request
     ResourceRequestBase()
-        : m_allowCookies(false)
-        , m_resourceRequestUpdated(false)
-        , m_platformRequestUpdated(true)
-        , m_resourceRequestBodyUpdated(false)
+        : m_platformRequestUpdated(true)
         , m_platformRequestBodyUpdated(true)
-        , m_hiddenFromInspector(false)
-        , m_isTopSite(false)
     {
     }
 
@@ -218,11 +213,7 @@ protected:
         , m_cachePolicy(policy)
         , m_allowCookies(true)
         , m_resourceRequestUpdated(true)
-        , m_platformRequestUpdated(false)
         , m_resourceRequestBodyUpdated(true)
-        , m_platformRequestBodyUpdated(false)
-        , m_hiddenFromInspector(false)
-        , m_isTopSite(false)
     {
     }
 
@@ -249,13 +240,13 @@ protected:
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
     Optional<int> m_inspectorInitiatorNodeIdentifier;
-    bool m_allowCookies : 1;
-    mutable bool m_resourceRequestUpdated : 1;
-    mutable bool m_platformRequestUpdated : 1;
-    mutable bool m_resourceRequestBodyUpdated : 1;
-    mutable bool m_platformRequestBodyUpdated : 1;
-    bool m_hiddenFromInspector : 1;
-    bool m_isTopSite : 1;
+    bool m_allowCookies { false };
+    mutable bool m_resourceRequestUpdated { false };
+    mutable bool m_platformRequestUpdated { false };
+    mutable bool m_resourceRequestBodyUpdated { false };
+    mutable bool m_platformRequestBodyUpdated { false };
+    bool m_hiddenFromInspector { false };
+    bool m_isTopSite { false };
 #if USE(SYSTEM_PREVIEW)
     Optional<SystemPreviewInfo> m_systemPreviewInfo;
 #endif

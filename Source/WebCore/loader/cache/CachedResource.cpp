@@ -129,17 +129,10 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, const
     , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
     , m_initiatorName(request.initiatorName())
-    , m_type(type)
-    , m_preloadResult(PreloadResult::PreloadNotReferenced)
-    , m_responseTainting(ResourceResponse::Tainting::Basic)
     , m_loadPriority(defaultPriorityForResourceType(type))
-    , m_status(Pending)
-    , m_requestedFromNetworkingLayer(false)
-    , m_inCache(false)
-    , m_loading(false)
+    , m_type(type)
     , m_isLinkPreload(request.isLinkPreload())
     , m_hasUnknownEncoding(request.isLinkPreload())
-    , m_switchingClientsToRevalidatedResource(false)
     , m_ignoreForRequestCount(request.ignoreForRequestCount())
 {
     ASSERT(m_sessionID.isValid());
@@ -164,17 +157,8 @@ CachedResource::CachedResource(const URL& url, Type type, const PAL::SessionID& 
     , m_cookieJar(cookieJar)
     , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(CachedResourceRequest::splitFragmentIdentifierFromRequestURL(m_resourceRequest))
-    , m_type(type)
-    , m_preloadResult(PreloadResult::PreloadNotReferenced)
-    , m_responseTainting(ResourceResponse::Tainting::Basic)
     , m_status(Cached)
-    , m_requestedFromNetworkingLayer(false)
-    , m_inCache(false)
-    , m_loading(false)
-    , m_isLinkPreload(false)
-    , m_hasUnknownEncoding(false)
-    , m_switchingClientsToRevalidatedResource(false)
-    , m_ignoreForRequestCount(false)
+    , m_type(type)
 {
     ASSERT(m_sessionID.isValid());
 #ifndef NDEBUG
@@ -328,7 +312,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             failBeforeStarting();
             return;
         }
-        setStatus(Pending);
+        m_status = Pending;
     });
 }
 
@@ -415,7 +399,7 @@ void CachedResource::cancelLoad()
 void CachedResource::finish()
 {
     if (!errorOccurred())
-        setStatus(Cached);
+        m_status = Cached;
 }
 
 void CachedResource::setCrossOrigin()

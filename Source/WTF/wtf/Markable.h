@@ -142,11 +142,6 @@ public:
         return WTF::nullopt;
     }
 
-    Optional<T> asOptional() const
-    {
-        return Optional<T>(*this);
-    }
-
 private:
     T m_value;
 };

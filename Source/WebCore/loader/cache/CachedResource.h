@@ -77,31 +77,26 @@ public:
         Icon,
         Beacon,
         Ping,
+        SVGDocumentResource
 #if ENABLE(XSLT)
-        XSLStyleSheet,
+        , XSLStyleSheet
 #endif
-        LinkPrefetch,
+        , LinkPrefetch
 #if ENABLE(VIDEO_TRACK)
-        TextTrackResource,
+        , TextTrackResource
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
-        ApplicationManifest,
+        , ApplicationManifest
 #endif
-        SVGDocumentResource,
-        LastType = SVGDocumentResource,
     };
-    static constexpr unsigned bitWidthOfType = 5;
-    static_assert(static_cast<unsigned>(Type::LastType) <= ((1U << bitWidthOfType) - 1));
 
-    enum Status : uint8_t {
+    enum Status {
         Unknown,      // let cache decide what to do with it
         Pending,      // only partially loaded
         Cached,       // regular case
         LoadError,
         DecodeError
     };
-    static constexpr unsigned bitWidthOfStatus = 3;
-    static_assert(static_cast<unsigned>(DecodeError) <= ((1ULL << bitWidthOfStatus) - 1));
 
     CachedResource(CachedResourceRequest&&, Type, const PAL::SessionID&, const CookieJar*);
     virtual ~CachedResource();
@@ -147,8 +142,6 @@ public:
         PreloadReferencedWhileLoading,
         PreloadReferencedWhileComplete
     };
-    static constexpr unsigned bitWidthOfPreloadResult = 2;
-
     PreloadResult preloadResult() const { return static_cast<PreloadResult>(m_preloadResult); }
 
     virtual void didAddClient(CachedResourceClient&);
@@ -159,11 +152,7 @@ public:
     unsigned numberOfClients() const { return m_clients.size(); }
 
     Status status() const { return static_cast<Status>(m_status); }
-    void setStatus(Status status)
-    {
-        m_status = status;
-        ASSERT(this->status() == status);
-    }
+    void setStatus(Status status) { m_status = status; }
 
     unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
     unsigned encodedSize() const { return m_encodedSize; }
@@ -364,28 +353,30 @@ private:
     RefPtr<SecurityOrigin> m_origin;
     AtomString m_initiatorName;
 
+    RedirectChainCacheStatus m_redirectChainCacheStatus;
+
     unsigned m_encodedSize { 0 };
     unsigned m_decodedSize { 0 };
     unsigned m_accessCount { 0 };
     unsigned m_handleCount { 0 };
     unsigned m_preloadCount { 0 };
 
-    RedirectChainCacheStatus m_redirectChainCacheStatus;
+    unsigned m_status { Pending }; // Status
 
-    Type m_type : bitWidthOfType;
+    PreloadResult m_preloadResult { PreloadResult::PreloadNotReferenced };
 
-    PreloadResult m_preloadResult : bitWidthOfPreloadResult;
-    ResourceResponse::Tainting m_responseTainting : ResourceResponse::bitWidthOfTainting;
-    ResourceLoadPriority m_loadPriority : bitWidthOfResourceLoadPriority;
+    ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
+    ResourceLoadPriority m_loadPriority;
 
-    Status m_status : bitWidthOfStatus;
-    bool m_requestedFromNetworkingLayer : 1;
-    bool m_inCache : 1;
-    bool m_loading : 1;
-    bool m_isLinkPreload : 1;
-    bool m_hasUnknownEncoding : 1;
-    bool m_switchingClientsToRevalidatedResource : 1;
-    bool m_ignoreForRequestCount : 1;
+    Type m_type; // Type
+
+    bool m_requestedFromNetworkingLayer { false };
+    bool m_inCache { false };
+    bool m_loading { false };
+    bool m_isLinkPreload { false };
+    bool m_hasUnknownEncoding { false };
+    bool m_switchingClientsToRevalidatedResource { false };
+    bool m_ignoreForRequestCount { false };
 
 #ifndef NDEBUG
     bool m_deleted { false };
