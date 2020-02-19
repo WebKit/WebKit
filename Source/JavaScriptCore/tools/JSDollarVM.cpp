@@ -1697,6 +1697,15 @@ static EncodedJSValue JSC_HOST_CALL functionEdenGC(JSGlobalObject* globalObject,
     return JSValue::encode(jsUndefined());
 }
 
+// Runs a full GC, but sweep asynchronously.
+// Usage: $vm.gcSweepAsynchronously()
+static EncodedJSValue JSC_HOST_CALL functionGCSweepAsynchronously(JSGlobalObject* globalObject, CallFrame*)
+{
+    DollarVMAssertScope assertScope;
+    globalObject->vm().heap.collectNow(Async, CollectionScope::Full);
+    return JSValue::encode(jsUndefined());
+}
+
 // Dumps the hashes of all subspaces currently registered with the VM.
 // Usage: $vm.dumpSubspaceHashes()
 static EncodedJSValue JSC_HOST_CALL functionDumpSubspaceHashes(JSGlobalObject* globalObject, CallFrame*)
@@ -2305,6 +2314,19 @@ static EncodedJSValue JSC_HOST_CALL functionCreateObjectDoingSideEffectPutWithou
     return JSValue::encode(result);
 }
 
+static EncodedJSValue JSC_HOST_CALL functionCreateEmptyFunctionWithName(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    const String name = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSFunction::create(vm, globalObject, 1, name, functionCreateEmptyFunctionWithName)));
+}
+
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
@@ -2804,6 +2826,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "noInline", functionNoInline, 1);
 
     addFunction(vm, "gc", functionGC, 0);
+    addFunction(vm, "gcSweepAsynchronously", functionGCSweepAsynchronously, 0);
     addFunction(vm, "edenGC", functionEdenGC, 0);
     addFunction(vm, "dumpSubspaceHashes", functionDumpSubspaceHashes, 0);
 
@@ -2850,6 +2873,7 @@ void JSDollarVM::finishCreation(VM& vm)
 #endif
     addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
     addFunction(vm, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus", functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
+    addFunction(vm, "createEmptyFunctionWithName", functionCreateEmptyFunctionWithName, 1);
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);
     addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 

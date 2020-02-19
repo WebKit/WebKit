@@ -1,5 +1,103 @@
 2020-02-18  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256779. rdar://problem/59551695
+
+    [JSC] JITThunk should be HashSet<Weak<NativeExecutable>> with appropriate GC weakness handling
+    https://bugs.webkit.org/show_bug.cgi?id=207715
+    
+    Reviewed by Darin Adler.
+    
+    JSTests:
+    
+    * stress/stress-jitthunks.js: Added.
+    (let.set newGlobal):
+    (set catch):
+    
+    Source/JavaScriptCore:
+    
+    This patch refines JITThunks GC-aware Weak hash map for NativeExecutable. Previously, we have
+    HashMap<std::tuple<TaggedNativeFunction, TaggedNativeFunction, String>, Weak<NativeExecutable>> table.
+    But this is not good because the first tuple's information is already in NativeExecutable.
+    But we were using this design since Weak<NativeExecutable> can be nullified because of Weak<>. If this
+    happens, we could have invalid Entry in HashMap which does not have corresponding values. This will
+    cause crash when rehasing requires hash code for this entry.
+    
+    But this HashMap is very bad in terms of memory usage. Each entry has 32 bytes, and this table gets enough
+    large. We identified that this table is consuming much memory in Membuster. So it is worth designing
+    carefully crafted data structure which only holds Weak<NativeExecutable> by leveraging the deep interaction
+    with our GC implementation.
+    
+    This patch implements new design of JITThunks, which uses HashSet<Weak<NativeExecutable>> and carefully crafted
+    HashTraits / KeyTraits to handle Weak<> well.
+    
+    1. Each Weak should have finalizer, and this finalizer should remove dead Weak<NativeExecutable> from HashSet.
+    
+        This is ensuring that all the keys in HashSet is, even if Weak<> is saying it is Dead, it still has an way
+        to access content of NativeExecutable if the content is not a JS objects. For example, we can get function
+        pointer from dead Weak<NativeExecutable> if it is not yet finalized. Since we remove all finalized Weak<>
+        from the table, this finalizer mechanism allows us to access function pointers etc. from Weak<NativeExecutable>
+        so long as it is held in this table.
+    
+    2. Getting NativeExecutable* from JITThunks should have special protocol.
+    
+        When getting NativeExecutable* from JITThunks, we do the following,
+    
+        1. First, we check we have an Entry in JITThunks. If it does not exist, we should insert it anyway.
+            1.1. If it exists, we should check whether this Weak<NativeExecutable> is dead or not. It is possible that
+                 dead one is still in the table because "dead" does not mean that it is "finalized". Until finalizing happens (and
+                 it can be delayed by incremental-sweeper), Weak<NativeExecutable> can be dead but still accessible. So the table
+                 is still holding dead one. If we get dead one, we should insert a new one.
+            1.2. If it is not dead, we return it.
+        2. Second, we create a new NativeExecutable and insert it. In that case, it is possible that the table already has Weak<NativeExecutable>,
+           but it is dead. In that case, we need to explicitly replace it with newly created one since old one is holding old content. If we
+           replaced, finalizer of Weak<> will not be invoked since it immediately deallocates Weak<>. So, it does not happen that this newly
+           inserted NativeExecutable* is removed by the finalizer registered by the old Weak<>.
+    
+    This change makes memory usage of JITThunks table 1/4.
+    
+    * heap/Weak.cpp:
+    (JSC::weakClearSlowCase):
+    * heap/Weak.h:
+    (JSC::Weak::Weak):
+    (JSC::Weak::isHashTableEmptyValue const):
+    (JSC::Weak::unsafeImpl const):
+    (WTF::HashTraits<JSC::Weak<T>>::isEmptyValue):
+    * heap/WeakInlines.h:
+    (JSC::Weak<T>::Weak):
+    * jit/JITThunks.cpp:
+    (JSC::JITThunks::JITThunks):
+    (JSC::JITThunks::WeakNativeExecutableHash::hash):
+    (JSC::JITThunks::WeakNativeExecutableHash::equal):
+    (JSC::JITThunks::HostKeySearcher::hash):
+    (JSC::JITThunks::HostKeySearcher::equal):
+    (JSC::JITThunks::NativeExecutableTranslator::hash):
+    (JSC::JITThunks::NativeExecutableTranslator::equal):
+    (JSC::JITThunks::NativeExecutableTranslator::translate):
+    (JSC::JITThunks::finalize):
+    (JSC::JITThunks::hostFunctionStub):
+    (JSC::JITThunks::clearHostFunctionStubs): Deleted.
+    * jit/JITThunks.h:
+    * runtime/NativeExecutable.h:
+    * tools/JSDollarVM.cpp:
+    (JSC::functionGCSweepAsynchronously):
+    (JSC::functionCreateEmptyFunctionWithName):
+    (JSC::JSDollarVM::finishCreation):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256779 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] JITThunk should be HashSet<Weak<NativeExecutable>> with appropriate GC weakness handling
+            https://bugs.webkit.org/show_bug.cgi?id=207715
+
+            Reviewed by Darin Adler.
+
+            * stress/stress-jitthunks.js: Added.
+            (let.set newGlobal):
+            (set catch):
+
+2020-02-18  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256766. rdar://problem/59551706
 
     [Wasm] REGRESSION(r256665): Wasm->JS call IC needs to save memory size register
