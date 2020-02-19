@@ -62,9 +62,24 @@ static const AtomString& resourceType()
     return resource;
 }
 
+static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
+{
+    unsigned urlCacheMemoryCapacity = 0;
+    uint64_t urlCacheDiskCapacity = 0;
+    uint64_t diskFreeSize = 0;
+    if (FileSystem::getVolumeFreeSpace(cachePath, diskFreeSize)) {
+        // As a fudge factor, use 1000 instead of 1024, in case the reported byte
+        // count doesn't align exactly to a megabyte boundary.
+        diskFreeSize /= KB * 1000;
+        calculateURLCacheSizes(cacheModel, diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
+    }
+    return urlCacheDiskCapacity;
+}
+
 RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
 {
-    auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal);
+    auto capacity = computeCapacity(networkProcess.cacheModel(), cachePath);
+    auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal, capacity);
 
     LOG(NetworkCache, "(NetworkProcess) opened cache storage, success %d", !!storage);
 
@@ -125,9 +140,15 @@ Cache::~Cache()
 {
 }
 
-void Cache::setCapacity(size_t maximumSize)
+size_t Cache::capacity() const
 {
-    m_storage->setCapacity(maximumSize);
+    return m_storage->capacity();
+}
+
+void Cache::updateCapacity()
+{
+    auto newCapacity = computeCapacity(m_networkProcess->cacheModel(), m_storage->basePathIsolatedCopy());
+    m_storage->setCapacity(newCapacity);
 }
 
 Key Cache::makeCacheKey(const WebCore::ResourceRequest& request)
