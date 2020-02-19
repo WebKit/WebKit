@@ -1,5 +1,68 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255881. rdar://problem/59576819
+
+    Adopt MTOverrideShouldPlayHDRVideo()
+    https://bugs.webkit.org/show_bug.cgi?id=207275
+    <rdar://problem/58837093>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    * platform/PlatformScreen.h:
+    * platform/mac/PlatformScreenMac.mm:
+    (WebCore::setShouldOverrideScreenSupportsHighDynamicRange):
+    
+    Source/WebCore/PAL:
+    
+    * pal/cocoa/MediaToolboxSoftLink.cpp:
+    * pal/cocoa/MediaToolboxSoftLink.h:
+    
+    Source/WebKit:
+    
+    The WebProcess sandbox can block access to the services necessary for MediaToolbox to determine whether
+    the current display is capable of displaying HDR. Rather than opening up the sandbox, provide the information
+    gathered by the UIProcess by way of MTOverrideShouldPlayHDRVideo().
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::windowScreenDidChange):
+    (WebKit::WebPage::displayID const):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::setScreenProperties): Deleted.
+    * WebProcess/WebProcess.h:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::setScreenProperties):
+    (WebKit::WebProcess::updatePageScreenProperties):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  Jer Noble  <jer.noble@apple.com>
+
+            Adopt MTOverrideShouldPlayHDRVideo()
+            https://bugs.webkit.org/show_bug.cgi?id=207275
+            <rdar://problem/58837093>
+
+            Reviewed by Eric Carlson.
+
+            The WebProcess sandbox can block access to the services necessary for MediaToolbox to determine whether
+            the current display is capable of displaying HDR. Rather than opening up the sandbox, provide the information
+            gathered by the UIProcess by way of MTOverrideShouldPlayHDRVideo().
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::windowScreenDidChange):
+            (WebKit::WebPage::displayID const):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::setScreenProperties): Deleted.
+            * WebProcess/WebProcess.h:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::setScreenProperties):
+            (WebKit::WebProcess::updatePageScreenProperties):
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256432. rdar://problem/59576791
 
     WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should

@@ -156,6 +156,12 @@ void setScreenProperties(const ScreenProperties& properties)
     screenProperties() = properties;
 }
 
+void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange)
+{
+    if (PAL::canLoad_MediaToolbox_MTOverrideShouldPlayHDRVideo())
+        PAL::softLink_MediaToolbox_MTOverrideShouldPlayHDRVideo(shouldOverride, supportsHighDynamicRange);
+}
+
 static ScreenData screenData(PlatformDisplayID screendisplayID)
 {
     RELEASE_ASSERT(!screenProperties().screenDataMap.isEmpty());
