@@ -64,7 +64,7 @@ public:
         Optional<PointInContextRoot> left;
         Optional<PointInContextRoot> right;
     };
-    Constraints constraints(LayoutUnit logicalTop, LayoutUnit logicalBottom) const;
+    Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateHeight) const;
     void append(const Box&);
 
 private:

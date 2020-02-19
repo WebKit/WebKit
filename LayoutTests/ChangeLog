@@ -1,5 +1,16 @@
 2020-02-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floats] FloatingContext::constraints should be able to handle empty candidate ranges (points)
+        https://bugs.webkit.org/show_bug.cgi?id=207937
+        <rdar://problem/59591109>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/floats-shrinking-line-simple-expected.html: Added.
+        * fast/layoutformattingcontext/floats-shrinking-line-simple.html: Added.
+
+2020-02-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Anonymous inline text box container is not the only type of anonymous containers
         https://bugs.webkit.org/show_bug.cgi?id=207945
         <rdar://problem/59592411>

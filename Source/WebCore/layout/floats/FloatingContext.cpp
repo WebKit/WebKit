@@ -272,23 +272,23 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
     return { };
 }
 
-FloatingContext::Constraints FloatingContext::constraints(LayoutUnit logicalTop, LayoutUnit logicalBottom) const
+FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom) const
 {
     if (isEmpty())
         return { };
-
     // 1. Convert vertical position if this floating context is inherited.
-    // 2. Find the inner left/right floats at logicalTop/logicalBottom.
+    // 2. Find the inner left/right floats at candidateTop/candidateBottom.
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
     auto coordinateMappingIsRequired = &floatingState().root() != &root();
-    auto adjustedLogicalTop = logicalTop;
+    auto adjustedCandidateTop = candidateTop;
     LayoutSize adjustingDelta;
     if (coordinateMappingIsRequired) {
-        auto adjustedPosition = mapPointFromFormattingContextRootToFloatingStateRoot({ 0, logicalTop });
-        adjustedLogicalTop = adjustedPosition.y;
-        adjustingDelta = { adjustedPosition.x, adjustedLogicalTop - logicalTop };
+        auto adjustedCandidatePosition = mapPointFromFormattingContextRootToFloatingStateRoot({ 0, candidateTop });
+        adjustedCandidateTop = adjustedCandidatePosition.y;
+        adjustingDelta = { adjustedCandidatePosition.x, adjustedCandidateTop - candidateTop };
     }
-    auto adjustedLogicalBottom = adjustedLogicalTop + (logicalBottom - logicalTop);
+    auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
+    auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
 
     Constraints constraints;
     auto& floats = floatingState().floats();
@@ -301,14 +301,19 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit logicalTop,
         if (constraints.right && !floatItem.isLeftPositioned())
             continue;
 
-        auto rect = floatItem.rectWithMargin();
-        if (rect.top() >= adjustedLogicalBottom || rect.bottom() <= adjustedLogicalTop)
+        auto floatBoxRect = floatItem.rectWithMargin();
+        auto contains = [&] {
+            if (isCandidateEmpty)
+                return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
+            return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
+        };
+        if (!contains())
             continue;
 
         if (floatItem.isLeftPositioned())
-            constraints.left = PointInContextRoot { rect.right(), rect.bottom() };
+            constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
         else
-            constraints.right = PointInContextRoot { rect.left(), rect.bottom() };
+            constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
 
         if (constraints.left && constraints.right)
             break;
