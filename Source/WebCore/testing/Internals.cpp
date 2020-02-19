@@ -550,7 +550,6 @@ void Internals::resetToConsistentState(Page& page)
     rtcProvider.setUseGPUProcess(false);
 #endif
 
-    page.settings().setStorageAccessAPIEnabled(false);
     page.setFullscreenAutoHideDuration(0_s);
     page.setFullscreenInsets({ });
     page.setFullscreenControlsHidden(false);

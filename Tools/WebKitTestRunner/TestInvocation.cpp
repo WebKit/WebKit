@@ -929,12 +929,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetStorageAccessAPIEnabled")) {
-        WKBooleanRef accept = static_cast<WKBooleanRef>(messageBody);
-        WKContextSetStorageAccessAPIEnabled(TestController::singleton().context(), WKBooleanGetValue(accept));
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries")) {
         TestController::singleton().getAllStorageAccessEntries();
         return nullptr;

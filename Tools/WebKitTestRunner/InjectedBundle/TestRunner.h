@@ -460,7 +460,6 @@ public:
     void textFieldDidEndEditingCallback();
 
     // Storage Access API
-    void setStorageAccessAPIEnabled(bool);
     void getAllStorageAccessEntries(JSValueRef callback);
     void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
 

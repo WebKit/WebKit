@@ -1,3 +1,16 @@
+2020-02-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix assertions in storage access API layout tests after r256882.
+
+        Drop dead testRunner code to toggle storage access API feature.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStorageAccessAPIEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Support 2D axis, smooth-motion events

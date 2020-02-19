@@ -2312,15 +2312,6 @@ void TestRunner::textFieldDidEndEditingCallback()
     callTestRunnerCallback(TextFieldDidEndEditingCallbackID);
 }
 
-void TestRunner::setStorageAccessAPIEnabled(bool enabled)
-{
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStorageAccessAPIEnabled"));
-    
-    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(enabled));
-    
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-
 void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
 {
     cacheTestRunnerCallback(AllStorageAccessEntriesCallbackID, callback);
