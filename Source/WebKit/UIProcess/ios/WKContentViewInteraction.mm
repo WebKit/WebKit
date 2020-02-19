@@ -3223,7 +3223,12 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (UIColor *)insertionPointColor
 {
+    // On macCatalyst we need to explicitly return the color we have calculated, rather than rely on textTraits, as on macCatalyst, UIKit ignores text traits.
+#if PLATFORM(MACCATALYST)
+    return [self _cascadeInteractionTintColor];
+#else
     return [self.textInputTraits insertionPointColor];
+#endif
 }
 
 - (UIColor *)selectionBarColor
@@ -3236,22 +3241,22 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [self.textInputTraits selectionHighlightColor];
 }
 
+- (UIColor *)_cascadeInteractionTintColor
+{
+    if (!self.webView.configuration._textInteractionGesturesEnabled)
+        return [UIColor clearColor];
+
+    if (!_page->editorState().isMissingPostLayoutData) {
+        WebCore::Color caretColor = _page->editorState().postLayoutData().caretColor;
+        if (caretColor.isValid())
+            return [UIColor colorWithCGColor:cachedCGColor(caretColor)];
+    }
+    return [self _inheritedInteractionTintColor];
+}
+
 - (void)_updateInteractionTintColor
 {
-    UIColor *tintColor = ^{
-        if (!self.webView.configuration._textInteractionGesturesEnabled)
-            return [UIColor clearColor];
-
-        if (!_page->editorState().isMissingPostLayoutData) {
-            WebCore::Color caretColor = _page->editorState().postLayoutData().caretColor;
-            if (caretColor.isValid())
-                return [UIColor colorWithCGColor:cachedCGColor(caretColor)];
-        }
-        
-        return [self _inheritedInteractionTintColor];    
-    }();
-
-    [_traits _setColorsToMatchTintColor:tintColor];
+    [_traits _setColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
 }
 
 - (void)tintColorDidChange

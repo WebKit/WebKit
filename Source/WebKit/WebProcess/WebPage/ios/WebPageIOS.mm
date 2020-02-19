@@ -280,7 +280,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
         if (m_focusedElement && m_focusedElement->renderer()) {
             auto& renderer = *m_focusedElement->renderer();
             postLayoutData.focusedElementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
-            postLayoutData.caretColor = renderer.style().caretColor();
+            postLayoutData.caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.element());
         }
         if (result.isContentEditable) {
             if (auto editableRootOrFormControl = makeRefPtr(selection.rootEditableElement())) {

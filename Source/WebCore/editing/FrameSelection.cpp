@@ -1768,6 +1768,27 @@ void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& pai
         CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
+Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, Node* node)
+{
+    // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    UNUSED_PARAM(node);
+    return elementStyle.caretColor();
+#else
+    auto* rootEditableElement = node ? node->rootEditableElement() : nullptr;
+    auto* rootEditableStyle = rootEditableElement && rootEditableElement->renderer() ? &rootEditableElement->renderer()->style() : nullptr;
+    // CSS value "auto" is treated as an invalid color.
+    if (!elementStyle.caretColor().isValid() && rootEditableStyle) {
+        auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        auto disappearsIntoBackground = rootEditableBackgroundColor.blend(elementBackgroundColor) == rootEditableBackgroundColor;
+        if (disappearsIntoBackground)
+            return rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+    }
+    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+#endif
+}
+
 void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
@@ -1784,22 +1805,8 @@ void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoi
 
     Color caretColor = Color::black;
     Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
-    if (element && element->renderer()) {
-        auto computeCaretColor = [] (const RenderStyle& elementStyle, const RenderStyle* rootEditableStyle) {
-            // CSS value "auto" is treated as an invalid color.
-            if (!elementStyle.caretColor().isValid() && rootEditableStyle) {
-                auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-                auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-                auto disappearsIntoBackground = rootEditableBackgroundColor.blend(elementBackgroundColor) == rootEditableBackgroundColor;
-                if (disappearsIntoBackground)
-                    return rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
-            }
-            return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
-        };
-        auto* rootEditableElement = node->rootEditableElement();
-        auto* rootEditableStyle = rootEditableElement && rootEditableElement->renderer() ? &rootEditableElement->renderer()->style() : nullptr;
-        caretColor = computeCaretColor(element->renderer()->style(), rootEditableStyle);
-    }
+    if (element && element->renderer())
+        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), node);
 
     context.fillRect(caret, caretColor);
 #else

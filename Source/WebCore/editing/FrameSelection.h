@@ -62,6 +62,8 @@ enum RevealExtentOption {
 class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
     WTF_MAKE_FAST_ALLOCATED;
+public:
+    WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, Node*);
 protected:
     enum CaretVisibility { Visible, Hidden };
     explicit CaretBase(CaretVisibility = Hidden);

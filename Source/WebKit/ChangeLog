@@ -1,3 +1,22 @@
+2020-02-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Ensure that contenteditable carets on macCatalyst are the right color, especially in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=207789
+        <rdar://problem/59429715>
+
+        Reviewed by Tim Horton.
+
+        Because UIKit only uses label color for the caret in macCatalyst, 
+        we need skip text input traits and send the correctly calculated color 
+        to UIKit.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertionPointColor]):
+        (-[WKContentView getInteractionTintColor]):
+        (-[WKContentView _updateInteractionTintColor]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2020-02-19  Cathie Chen  <cathiechen@igalia.com>
 
         Enable AspectRatioOfImgFromWidthAndHeightEnabled by default
