@@ -1070,7 +1070,7 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     result.isContentRichlyEditable = selection.isContentRichlyEditable();
     result.isInPasswordField = selection.isInPasswordField();
     result.hasComposition = editor.hasComposition();
-    result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges() || !editor.client()->shouldRevealCurrentSelectionAfterInsertion();
+    result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges() || (editor.client() && !editor.client()->shouldRevealCurrentSelectionAfterInsertion());
 
     if (auto* document = frame.document())
         result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();

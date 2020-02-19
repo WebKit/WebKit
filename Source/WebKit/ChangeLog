@@ -1,3 +1,17 @@
+2020-02-18  Lauro Moura  <lmoura@igalia.com>
+
+        [WebKit] Avoid segfault if editor client is null
+        https://bugs.webkit.org/show_bug.cgi?id=207925
+
+        Reviewed by Darin Adler.
+
+        Missing check was causing crashes running
+        editing/selection/selection-change-in-disconnected-frame-crash.html in
+        Mojave, iOS and GTK bots.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+
 2020-02-18  Youenn Fablet  <youenn@apple.com>
 
         SWServer::claim should check for the service worker to be active
