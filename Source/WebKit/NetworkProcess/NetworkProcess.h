@@ -287,10 +287,6 @@ public:
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     WebCore::SWServer* swServerForSessionIfExists(PAL::SessionID sessionID) { return m_swServers.get(sessionID); }
     WebCore::SWServer& swServerForSession(PAL::SessionID);
