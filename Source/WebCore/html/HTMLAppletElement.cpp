@@ -96,14 +96,7 @@ RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(RenderStyle&& 
 
 RenderWidget* HTMLAppletElement::renderWidgetLoadingPlugin() const
 {
-    if (!canEmbedJava())
-        return nullptr;
-
-    // Needs to load the plugin immediatedly because this function is called
-    // when JavaScript code accesses the plugin.
-    // FIXME: <rdar://16893708> Check if dispatching events here is safe.
-    document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
-    return renderWidget();
+    return canEmbedJava() ? HTMLPlugInImageElement::renderWidgetLoadingPlugin() : nullptr;
 }
 
 void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)

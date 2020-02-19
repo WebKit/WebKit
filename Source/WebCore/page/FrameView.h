@@ -656,6 +656,8 @@ public:
 
     WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
+    bool inUpdateEmbeddedObjects() const { return m_inUpdateEmbeddedObjects; }
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
@@ -934,6 +936,7 @@ private:
     bool m_inAutoSize { false };
     // True if autosize has been run since m_shouldAutoSize was set.
     bool m_didRunAutosize { false };
+    bool m_inUpdateEmbeddedObjects { false };
 };
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

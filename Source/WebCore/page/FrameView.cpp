@@ -3270,6 +3270,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
 bool FrameView::updateEmbeddedObjects()
 {
+    SetForScope<bool> inUpdateEmbeddedObjects(m_inUpdateEmbeddedObjects, true);
     if (layoutContext().isLayoutNested() || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
         return true;
 

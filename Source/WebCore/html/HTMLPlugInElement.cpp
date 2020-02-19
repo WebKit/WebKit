@@ -157,6 +157,18 @@ Widget* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
     return renderWidget->widget();
 }
 
+RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
+{
+    RefPtr<FrameView> view = document().view();
+    if (!view || (!view->inUpdateEmbeddedObjects() && !view->layoutContext().isInLayout() && !view->isPainting())) {
+        // Needs to load the plugin immediatedly because this function is called
+        // when JavaScript code accesses the plugin.
+        // FIXME: <rdar://16893708> Check if dispatching events here is safe.
+        document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
+    }
+    return renderWidget(); // This will return nullptr if the renderer is not a RenderWidget.
+}
+
 bool HTMLPlugInElement::isPresentationAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr)

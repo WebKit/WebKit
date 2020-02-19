@@ -80,14 +80,9 @@ static inline RenderWidget* findWidgetRenderer(const Node* node)
 
 RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
 {
-    RefPtr<FrameView> view = document().view();
-    if (!view || (!view->layoutContext().isInRenderTreeLayout() && !view->isPainting())) {
-        // Needs to load the plugin immediatedly because this function is called
-        // when JavaScript code accesses the plugin.
-        // FIXME: <rdar://16893708> Check if dispatching events here is safe.
-        document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
-    }
-    return findWidgetRenderer(this);
+    RenderWidget* widget = HTMLPlugInImageElement::renderWidgetLoadingPlugin();
+
+    return widget ? widget : findWidgetRenderer(this);
 }
 
 void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

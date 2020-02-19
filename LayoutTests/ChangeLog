@@ -1,3 +1,17 @@
+2020-02-18  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: !m_embeddedObjectsToUpdate->contains(nullptr) in WebCore::FrameView::updateEmbeddedObjects
+        https://bugs.webkit.org/show_bug.cgi?id=191532
+        <rdar://problem/46151555>
+
+        Reviewed by Darin Adler.
+
+        Add reentrancy protection for FrameView::updateEmbeddedObjects().
+        Move the common code in renderWidgetLoadingPlugin() to inherited class, HTMLPlugInElement.
+
+        * fast/text/textCombine-update-embeddedObj-assert-expected.txt: Added.
+        * fast/text/textCombine-update-embeddedObj-assert.html: Added.
+
 2020-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r256093): fast/events/touch/ios/block-without-overflow-scroll.html is failing

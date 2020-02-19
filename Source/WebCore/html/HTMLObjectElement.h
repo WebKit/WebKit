@@ -59,8 +59,6 @@ public:
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
-    RenderWidget* renderWidgetLoadingPlugin() const final;
-
     int defaultTabIndex() const final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
