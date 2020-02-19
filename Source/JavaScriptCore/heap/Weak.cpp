@@ -36,7 +36,7 @@ void weakClearSlowCase(WeakImpl*& impl)
     ASSERT(impl);
 
     WeakSet::deallocate(impl);
-    impl = 0;
+    impl = nullptr;
 }
 
 } // namespace JSC
