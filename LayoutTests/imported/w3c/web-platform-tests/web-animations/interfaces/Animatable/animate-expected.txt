@@ -132,7 +132,7 @@ PASS Element.animate() correctly sets the id attribute
 PASS Element.animate() correctly sets the Animation's timeline 
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
 PASS Element.animate() calls play on the Animation 
-PASS Element.animate() does NOT trigger a style change event 
+FAIL Element.animate() does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
 PASS CSSPseudoElement.animate() creates an Animation object 
 FAIL CSSPseudoElement.animate() creates an Animation object for ::marker assert_true: expected true got false
 PASS CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object 

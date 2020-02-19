@@ -60,17 +60,15 @@
         }
 
         window.addEventListener('load', () => {
-            requestAnimationFrame(() => {
-                let animator = document.getElementById('target');
-                animator.addEventListener('animationstart', () => {
-                    requestAnimationFrame(() => {
-                        dumpLayers();
-                        if (window.testRunner)
-                            testRunner.notifyDone();
-                    });
+            let animator = document.getElementById('target');
+            animator.addEventListener('animationstart', () => {
+                requestAnimationFrame(() => {
+                    dumpLayers();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 });
-                animator.classList.add('animating');
             });
+            animator.classList.add('animating');
         }, false);
     </script>
 </head>

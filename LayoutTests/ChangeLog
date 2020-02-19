@@ -1,5 +1,27 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/59576808
+
+    2020-02-19  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Ensure CSS Transition and CSS Animation events are queued, sorted and dispatched by their timeline
+            https://bugs.webkit.org/show_bug.cgi?id=207364
+            <rdar://problem/59370413>
+
+            Reviewed by Simon Fraser.
+
+            Fix a couple of tests that made some incorrect assumptions.
+
+            * TestExpectations: imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html is no longer flaky.
+            * compositing/backing/animate-into-view.html: Because the "animationstart" event is now dispatched during the "update animations and send events" procedure, which happens
+            during page rendering _before_ rAF callbacks are serviced, we must remove the rAF callback used prior to adding the "animationstart" event listener or else we would never
+            get it and the test would time out.
+            * webanimations/css-transition-in-flight-reversal-accelerated.html: We must wait for the initial transition to start and then two frames before reversing the transition,
+            to be certain that the animation did start. Indeed, the "transitionstart" event will be fired right before the next rAF callback is called, as the animation starts in that
+            very same frame, and so progress will be 0 and the transition wouldn't be reversable until the next frame when the animation has progress > 0.
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256513. rdar://problem/59576794
 
     REGRESSION (r255037): Zooming in and out on Quip in macOS Safari can cause the content to be offset to the side
