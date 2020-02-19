@@ -1,3 +1,30 @@
+2020-02-18  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/59465474
+
+    2020-02-18  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Ensure CSS Transition and CSS Animation events are queued, sorted and dispatched by their timeline
+            https://bugs.webkit.org/show_bug.cgi?id=207364
+            <rdar://problem/59370413>
+
+            Reviewed by Simon Fraser.
+
+            There are some progressions but also some "regressions". The progressions are real, showing the delivery of all animation events at the correct
+            time. However, the regressions are misleading. The fact that the "style change" tests would work was due to a design issue in the test which would
+            only wait one frame to detect whether a CSS Transition was started after a change made through the Web Animations API. These would work because
+            events were queued in the next frame, but delivered later due to the dedicated per-animation queue used, which meant the test was fooled into
+            thinking the CSS Transition did not start, as expected. Changing those test to use more than one frame to test for the lack of a CSS Transition
+            would have shown the FAIL results.
+
+            However, in order to not regress our WPT score, the issue of "style change" events will be addressed in a follow-up patch.
+
+            * web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative-expected.txt:
+            * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+            * web-platform-tests/web-animations/interfaces/Animation/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-expected.txt:
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256207. rdar://problem/59447263
