@@ -288,6 +288,8 @@ webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Timeout ]
 
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 
+webkit.org/b/134576 media/track/track-cue-rendering.html [ Failure Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
