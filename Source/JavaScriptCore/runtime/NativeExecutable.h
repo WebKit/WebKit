@@ -48,8 +48,8 @@ public:
 
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
-    TaggedNativeFunction function() { return m_function; }
-    TaggedNativeFunction constructor() { return m_constructor; }
+    TaggedNativeFunction function() const { return m_function; }
+    TaggedNativeFunction constructor() const { return m_constructor; }
         
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
