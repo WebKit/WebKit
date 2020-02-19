@@ -1,3 +1,129 @@
+2020-02-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256191. rdar://problem/59447003
+
+    Disallow setting base URL to a data or JavaScript URL
+    https://bugs.webkit.org/show_bug.cgi?id=207136
+    
+    Source/WebCore:
+    
+    Reviewed by Brent Fulgham.
+    
+    Inspired by <https://bugs.chromium.org/p/chromium/issues/detail?id=679318>.
+    
+    Block setting the base URL to a data URL or JavaScript URL as such usage is questionable.
+    This makes WebKit match the behavior of Chrome and Firefox and is in the spirit of the
+    discussion in <https://github.com/whatwg/html/issues/2249>.
+    
+    On Mac and iOS, this restriction is applied only to apps linked against a future SDK to
+    avoid breaking shipped apps.
+    
+    For all other ports, this restriction is enabled by default.
+    
+    Tests: fast/url/relative2.html
+           fast/url/segments-from-data-url2.html
+           http/tests/security/allowed-base-url-data-url-via-setting.html
+           http/tests/security/denied-base-url-data-url.html
+           http/tests/security/denied-base-url-javascript-url.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::processBaseElement): Condition updating the parsed
+    base URL on whether is has an allowed scheme, if restrictions are enabled. Otherwise,
+    do what we do now. If the scheme is disallowed then log a message to the console to
+    explain this to web developers.
+    * html/parser/HTMLPreloadScanner.cpp:
+    (WebCore::TokenPreloadScanner::scan): Pass whether to apply restrictons to the base URL
+    to updatePredictedBaseURL(). This depends on whether the setting is enabled or not.
+    (WebCore::TokenPreloadScanner::updatePredictedBaseURL): Modifed to take a boolean as to
+    whether to apply restrictions. If restrictions are not to be applied do what we do now.
+    Otherwise, only do what we do now if the scheme for the predicated base URL is allowed.
+    * html/parser/HTMLPreloadScanner.h:
+    * page/SecurityPolicy.cpp:
+    (WebCore::SecurityPolicy::isBaseURLSchemeAllowed): Added.
+    * page/SecurityPolicy.h:
+    * page/Settings.yaml: Add a setting to toggle restrictions on the base URL scheme.
+    
+    Source/WebKit:
+    
+    Reviewed by Brent Fulgham.
+    
+    Apply base URL restrictions to apps linked to a future WebKit to avoid breaking existing apps.
+    
+    * Shared/WebPreferences.yaml:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (shouldRestrictBaseURLSchemes): Added.
+    (-[WKWebView _setupPageConfiguration:]): Update settings.
+    * UIProcess/Cocoa/VersionChecks.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    Reviewed by Brent Fulgham.
+    
+    Apply base URL restrictions to apps linked to a future WebKit to avoid breaking existing apps.
+    
+    * Misc/WebKitVersionChecks.h:
+    * WebView/WebView.mm:
+    (shouldRestrictBaseURLSchemes): Added.
+    (-[WebView _commonInitializationWithFrameName:groupName:]): Update settings.
+    
+    Source/WTF:
+    
+    Reviewed by Brent Fulgham.
+    
+    Add some more macro definitions.
+    
+    * wtf/spi/darwin/dyldSPI.h:
+    
+    LayoutTests:
+    
+    RReviewed by Brent Fulgham.
+    
+    Add some tests. Update others to toggle the setting to apply or unapply the new behavior.
+    
+    The test denied-base-url-javascript-url.html is derived from the test base-url-javascript.html,
+    included in <https://chromium.googlesource.com/chromium/src.git/+/c133efa0b915430701930b76a7cfe35608b9a403>.
+    
+    * fast/url/relative-expected.txt:
+    * fast/url/relative.html:
+    * fast/url/relative2-expected.txt: Copied from LayoutTests/fast/url/relative-expected.txt.
+    * fast/url/relative2.html: Copied from LayoutTests/fast/url/relative.html.
+    * fast/url/resources/utilities.js:
+    (setShouldEllipsizeFileURLPaths): Added. Toggles ellipsizing the path portion of a file URL to simplify matching.
+    Otherwise, file URLs could be machine-specific.
+    (canonicalizedPathname): Added.
+    (segments): Modified to optionally call canonicalizedPathname.
+    (canonicalize): Ditto.
+    * fast/url/segments-from-data-url-expected.txt:
+    * fast/url/segments-from-data-url.html:
+    * fast/url/segments-from-data-url2-expected.txt: Copied from LayoutTests/fast/url/segments-from-data-url-expected.txt.
+    * fast/url/segments-from-data-url2.html: Copied from LayoutTests/fast/url/segments-from-data-url.html.
+    * fetch/fetch-url-serialization-expected.txt:
+    * http/tests/plugins/navigation-during-load-embed.html:
+    * http/tests/plugins/navigation-during-load.html:
+    * http/tests/security/allowed-base-url-data-url-via-setting-expected.txt: Added.
+    * http/tests/security/allowed-base-url-data-url-via-setting.html: Added.
+    * http/tests/security/denied-base-url-data-url-expected.txt: Added.
+    * http/tests/security/denied-base-url-data-url.html: Added.
+    * http/tests/security/denied-base-url-javascript-url-expected.txt: Added.
+    * http/tests/security/denied-base-url-javascript-url.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256191 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-10  Daniel Bates  <dabates@apple.com>
+
+            Disallow setting base URL to a data or JavaScript URL
+            https://bugs.webkit.org/show_bug.cgi?id=207136
+
+            Reviewed by Brent Fulgham.
+
+            Apply base URL restrictions to apps linked to a future WebKit to avoid breaking existing apps.
+
+            * Shared/WebPreferences.yaml:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (shouldRestrictBaseURLSchemes): Added.
+            (-[WKWebView _setupPageConfiguration:]): Update settings.
+            * UIProcess/Cocoa/VersionChecks.h:
+
 2020-02-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r255881. rdar://problem/59447271
