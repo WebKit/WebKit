@@ -89,8 +89,7 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
 
         if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isFloatingPositioned()) {
             // Inline-blocks, inline-tables and replaced elements (img, video) can be sized but not yet positioned.
-            if (layoutBox->establishesFormattingContext()) {
-                ASSERT(is<ContainerBox>(*layoutBox));
+            if (is<ContainerBox>(layoutBox) && layoutBox->establishesFormattingContext()) {
                 ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox() || layoutBox->isFloatingPositioned());
                 auto& containerBox = downcast<ContainerBox>(*layoutBox);
                 computeBorderAndPadding(containerBox, horizontalConstraints);
