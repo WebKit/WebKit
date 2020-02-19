@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimation);
 
 Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation, newStyle));
+    auto result = adoptRef(*new CSSAnimation(owningElement, backingAnimation));
     result->initialize(oldStyle, newStyle);
 
     InspectorInstrumentation::didCreateWebAnimation(result.get());
@@ -46,10 +46,9 @@ Ref<CSSAnimation> CSSAnimation::create(Element& owningElement, const Animation& 
     return result;
 }
 
-CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation, const RenderStyle& unanimatedStyle)
+CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation)
     : DeclarativeAnimation(element, backingAnimation)
     , m_animationName(backingAnimation.name())
-    , m_unanimatedStyle(RenderStyle::clonePtr(unanimatedStyle))
 {
 }
 
