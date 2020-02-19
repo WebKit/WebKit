@@ -346,7 +346,7 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
         AffineTransform transform = m_paintInfo->context().getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
         IntSize expandedBoundingBox = expandedIntSize(boundingBox.size());
         IntSize bufferSize(static_cast<int>(ceil(expandedBoundingBox.width() * transform.xScale())), static_cast<int>(ceil(expandedBoundingBox.height() * transform.yScale())));
-        if (bufferSize != imageBuffer->internalSize())
+        if (bufferSize != imageBuffer->backendSize())
             imageBuffer.reset();
     }
 

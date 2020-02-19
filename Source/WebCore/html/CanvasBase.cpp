@@ -191,8 +191,8 @@ std::unique_ptr<ImageBuffer> CanvasBase::setImageBuffer(std::unique_ptr<ImageBuf
         returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
     }
 
-    if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
-        m_size = m_imageBuffer->internalSize();
+    if (m_imageBuffer && m_size != m_imageBuffer->backendSize())
+        m_size = m_imageBuffer->backendSize();
 
     size_t previousMemoryCost = m_imageBufferCost;
     m_imageBufferCost = memoryCost();

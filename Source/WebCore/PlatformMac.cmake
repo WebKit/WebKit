@@ -291,8 +291,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/GraphicsContextGLCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
     platform/graphics/cg/IOSurfacePool.cpp
-    platform/graphics/cg/ImageBufferCG.cpp
-    platform/graphics/cg/ImageBufferDataCG.cpp
+    platform/graphics/cg/ImageBufferCGBackend.cpp
+    platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
+    platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
+    platform/graphics/cg/ImageBufferUtilitiesCG.cpp
     platform/graphics/cg/ImageDecoderCG.cpp
     platform/graphics/cg/ImageSourceCGMac.mm
     platform/graphics/cg/IntPointCG.cpp
@@ -556,7 +558,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/cg/GraphicsContextCG.h
     platform/graphics/cg/IOSurfacePool.h
-    platform/graphics/cg/ImageBufferDataCG.h
+    platform/graphics/cg/ImageBufferCGBackend.h
+    platform/graphics/cg/ImageBufferCGBitmapBackend.h
+    platform/graphics/cg/ImageBufferIOSurfaceBackend.h
     platform/graphics/cg/ImageBufferUtilitiesCG.h
     platform/graphics/cg/PDFDocumentImage.h
     platform/graphics/cg/UTIRegistry.h

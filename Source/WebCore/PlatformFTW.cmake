@@ -84,8 +84,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/GraphicsContextImplDirect2D.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
-    platform/graphics/win/ImageBufferDataDirect2D.cpp
-    platform/graphics/win/ImageBufferDirect2D.cpp
+    platform/graphics/win/ImageBufferDirect2DBackend.cpp
     platform/graphics/win/ImageDecoderDirect2D.cpp
     platform/graphics/win/ImageDirect2D.cpp
     platform/graphics/win/ImageWin.cpp
@@ -201,7 +200,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
     platform/graphics/win/GraphicsContextImplDirect2D.h
-    platform/graphics/win/ImageBufferDataDirect2D.h
     platform/graphics/win/ImageDecoderDirect2D.h
     platform/graphics/win/LocalWindowsContext.h
     platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h

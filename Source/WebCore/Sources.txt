@@ -1869,6 +1869,7 @@ platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
 platform/graphics/Image.cpp
 platform/graphics/ImageBuffer.cpp
+platform/graphics/ImageBufferBackend.cpp
 platform/graphics/ImageDecoder.cpp
 platform/graphics/ImageFrame.cpp
 platform/graphics/ImageSource.cpp

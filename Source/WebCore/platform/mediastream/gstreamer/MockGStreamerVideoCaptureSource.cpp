@@ -58,7 +58,7 @@ public:
 
         int fpsNumerator, fpsDenominator;
         gst_util_double_to_fraction(frameRate(), &fpsNumerator, &fpsDenominator);
-        auto imageSize = imageBuffer->internalSize();
+        auto imageSize = imageBuffer->backendSize();
         auto caps = adoptGRef(gst_caps_new_simple("video/x-raw",
             "format", G_TYPE_STRING, "BGRA",
             "width", G_TYPE_INT, imageSize.width(),

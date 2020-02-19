@@ -83,8 +83,7 @@ if (${USE_DIRECT2D})
         platform/graphics/win/GradientDirect2D.cpp
         platform/graphics/win/GraphicsContextDirect2D.cpp
         platform/graphics/win/GraphicsLayerDirect2D.cpp
-        platform/graphics/win/ImageBufferDataDirect2D.cpp
-        platform/graphics/win/ImageBufferDirect2D.cpp
+        platform/graphics/win/ImageBufferDirect2DBackend.cpp
         platform/graphics/win/ImageDecoderDirect2D.cpp
         platform/graphics/win/ImageDirect2D.cpp
         platform/graphics/win/NativeImageDirect2D.cpp
@@ -132,8 +131,9 @@ else ()
         platform/graphics/cg/GraphicsContextGLCG.cpp
         platform/graphics/cg/GraphicsContextCG.cpp
         platform/graphics/cg/IOSurfacePool.cpp
-        platform/graphics/cg/ImageBufferCG.cpp
-        platform/graphics/cg/ImageBufferDataCG.cpp
+        platform/graphics/cg/ImageBufferCGBackend.cpp
+        platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
+        platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
         platform/graphics/cg/ImageBufferUtilitiesCG.cpp
         platform/graphics/cg/ImageDecoderCG.cpp
         platform/graphics/cg/ImageSourceCGWin.cpp
@@ -176,7 +176,9 @@ else ()
 
         platform/graphics/cg/GraphicsContextCG.h
         platform/graphics/cg/IOSurfacePool.h
-        platform/graphics/cg/ImageBufferDataCG.h
+        platform/graphics/cg/ImageBufferCGBackend.h
+        platform/graphics/cg/ImageBufferCGBitmapBackend.h
+        platform/graphics/cg/ImageBufferIOSurfaceBackend.h
         platform/graphics/cg/ImageBufferUtilitiesCG.h
         platform/graphics/cg/PDFDocumentImage.h
         platform/graphics/cg/UTIRegistry.h

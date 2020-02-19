@@ -254,8 +254,8 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     m_cachedSourceRect = srcRect;
     ++m_cachingCountForTesting;
 
-    IntSize internalSize = m_cachedImageBuffer->internalSize();
-    decodedSizeChanged(internalSize.unclampedArea() * 4);
+    IntSize backendSize = m_cachedImageBuffer->backendSize();
+    decodedSizeChanged(backendSize.unclampedArea() * 4);
 }
 
 ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

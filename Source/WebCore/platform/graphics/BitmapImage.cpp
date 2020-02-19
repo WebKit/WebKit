@@ -165,12 +165,7 @@ NativeImagePtr BitmapImage::nativeImageForCurrentFrameRespectingOrientation(cons
         return image;
 
     buffer->context().drawNativeImage(image, rect.size(), rect, rect, { orientation });
-
-#if USE(CG) || USE(DIRECT2D)
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
-#elif USE(CAIRO)
-    return buffer->nativeImage();
-#endif
 }
 
 #if USE(CG)

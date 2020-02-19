@@ -268,7 +268,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
     }
 
     ASSERT(hasPlatformContext());
-    if (auto surface = buffer.nativeImage())
+    if (auto surface = buffer.copyNativeImage(DontCopyBackingStore))
         Cairo::clipToImageBuffer(*platformContext(), surface.get(), destRect);
 }
 

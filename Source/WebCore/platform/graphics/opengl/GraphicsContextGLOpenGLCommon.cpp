@@ -188,7 +188,7 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBu
         }
     }
 
-    paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->internalSize(), imageBuffer->context());
+    paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->backendSize(), imageBuffer->context());
 
 #if PLATFORM(COCOA) && USE(OPENGL_ES)
     presentRenderbuffer();

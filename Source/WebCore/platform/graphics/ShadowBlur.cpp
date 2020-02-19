@@ -450,7 +450,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext, ImageBuffer&
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    IntSize bufferSize = layerImage.internalSize();
+    IntSize bufferSize = layerImage.backendSize();
     if (bufferSize != layerSize) {
         // The rect passed to clipToImageBuffer() has to be the size of the entire buffer,
         // but we may not have cleared it all, so clip to the filled part first.
