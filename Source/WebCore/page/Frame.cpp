@@ -962,12 +962,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
     m_doc->resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
 
     // Frame::clearTimers() suspended animations and pending relayouts.
-
-    if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = m_doc->existingTimeline())
-            timeline->resumeAnimations();
-    } else
-        animation().resumeAnimationsForDocument(m_doc.get());
+    animation().resumeAnimationsForDocument(m_doc.get());
     if (m_view)
         m_view->layoutContext().scheduleLayout();
 }
