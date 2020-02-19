@@ -337,17 +337,11 @@ void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier
         callback(WTFMove(clientsData));
 }
 
-void WebSWContextManagerConnection::claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
+void WebSWContextManagerConnection::claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& callback)
 {
-    auto requestIdentifier = ++m_previousRequestIdentifier;
-    m_claimRequests.add(requestIdentifier, WTFMove(callback));
-    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::Claim { requestIdentifier, serviceWorkerIdentifier }, 0);
-}
-
-void WebSWContextManagerConnection::claimCompleted(uint64_t claimRequestIdentifier)
-{
-    if (auto callback = m_claimRequests.take(claimRequestIdentifier))
-        callback();
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::Claim { serviceWorkerIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+        callback(result ? result->toException() : ExceptionOr<void> { });
+    });
 }
 
 void WebSWContextManagerConnection::close()

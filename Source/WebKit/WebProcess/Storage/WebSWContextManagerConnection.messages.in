@@ -34,7 +34,6 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     SyncTerminateWorker(WebCore::ServiceWorkerIdentifier identifier) -> () Synchronous
     FindClientByIdentifierCompleted(uint64_t clientIdRequestIdentifier, Optional<WebCore::ServiceWorkerClientData> data, bool hasSecurityError)
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
-    ClaimCompleted(uint64_t claimRequestIdentifier)
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     Close()

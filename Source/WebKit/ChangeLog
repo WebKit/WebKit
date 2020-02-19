@@ -1,3 +1,23 @@
+2020-02-18  Youenn Fablet  <youenn@apple.com>
+
+        SWServer::claim should check for the service worker to be active
+        https://bugs.webkit.org/show_bug.cgi?id=207739
+        <rdar://problem/45441129>
+
+        Reviewed by Alex Christensen.
+
+        Use Async Reply to remove the need for a map and passing integers around.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::claimCompleted): Deleted.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::claim):
+        (WebKit::WebSWContextManagerConnection::claimCompleted): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2020-02-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Allow different back-ends for ImageBuffer

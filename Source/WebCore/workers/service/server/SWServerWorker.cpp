@@ -172,13 +172,6 @@ String SWServerWorker::userAgent() const
     return m_server->serviceWorkerClientUserAgent(origin());
 }
 
-void SWServerWorker::claim()
-{
-    ASSERT(m_server);
-    if (m_server)
-        m_server->claim(*this);
-}
-
 void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::ImportedScript&& script)
 {
     m_scriptResourceMap.set(WTFMove(url), WTFMove(script));
