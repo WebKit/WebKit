@@ -79,6 +79,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageQuotaManager.h>
 #include <wtf/Algorithms.h>
@@ -1299,6 +1300,27 @@ void NetworkProcess::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionI
     }
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+
+void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    NetworkLoadParameters parameters;
+    parameters.request = ResourceRequest { url };
+    if (!userAgent.isEmpty()) {
+        // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
+        // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
+        parameters.request.setHTTPUserAgent(userAgent);
+    }
+    parameters.storedCredentialsPolicy = storedCredentialsPolicy;
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+
+    new PreconnectTask(*this, sessionID, WTFMove(parameters), [](const WebCore::ResourceError&) { });
+#else
+    UNUSED_PARAM(url);
+    UNUSED_PARAM(userAgent);
+    UNUSED_PARAM(storedCredentialsPolicy);
+#endif
+}
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const
 {

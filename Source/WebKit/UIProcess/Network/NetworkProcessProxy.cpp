@@ -1416,6 +1416,13 @@ void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, Compl
     sendWithAsyncReply(Messages::NetworkProcess::GetLocalStorageOriginDetails(sessionID), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    if (!url.isValid() || !url.protocolIsInHTTPFamily() || SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host()))
+        return;
+    send(Messages::NetworkProcess::PreconnectTo(sessionID, url, userAgent, storedCredentialsPolicy), 0);
+}
+
 void NetworkProcessProxy::updateProcessAssertion()
 {
     if (processPool().hasForegroundWebProcesses()) {

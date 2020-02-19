@@ -54,6 +54,7 @@ class ResourceRequest;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
+enum class StoredCredentialsPolicy : uint8_t;
 class SecurityOrigin;
 struct SecurityOriginData;
 struct ClientOrigin;
@@ -104,6 +105,8 @@ public:
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebKit::WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, CompletionHandler<void()>&&);
 
     void getLocalStorageDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
+
+    void preconnectTo(PAL::SessionID, const URL&, const String&, WebCore::StoredCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void clearPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);

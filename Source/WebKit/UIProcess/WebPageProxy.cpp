@@ -169,6 +169,7 @@
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
+#include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/ValidationBubble.h>
@@ -1292,6 +1293,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
     addPlatformLoadParameters(loadParameters);
+
+    preconnectTo(url);
 
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (!process->isLaunching() || !url.isLocalFile())
@@ -4226,6 +4229,15 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
 {
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
+}
+
+void WebPageProxy::preconnectTo(const URL& url)
+{
+    if (!m_websiteDataStore->configuration().allowsServerPreconnect())
+        return;
+
+    if (auto* networkProcess = m_process->processPool().networkProcess())
+        networkProcess->preconnectTo(sessionID(), url, userAgent(), WebCore::StoredCredentialsPolicy::Use);
 }
 
 void WebPageProxy::hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent, WebCore::UsedLegacyTLS)>&& completionHandler)

@@ -724,6 +724,13 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
 
     NetworkResourceLoadParameters parameters;
     parameters.request = WTFMove(request);
+    if (parameters.request.httpUserAgent().isEmpty()) {
+        // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
+        // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
+        String webPageUserAgent = webPage.userAgent(parameters.request.url());
+        if (!webPageUserAgent.isEmpty())
+            parameters.request.setHTTPUserAgent(webPageUserAgent);
+    }
     parameters.webPageProxyID = webPage.webPageProxyIdentifier();
     parameters.webPageID = webPage.identifier();
     parameters.webFrameID = webFrame.frameID();

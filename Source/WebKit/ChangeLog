@@ -1,3 +1,38 @@
+2020-02-18  Ben Nham  <nham@apple.com>
+
+        Set User-Agent in preconnect requests
+        https://bugs.webkit.org/show_bug.cgi?id=207777
+
+        Reviewed by Chris Dumez.
+
+        When using an HTTPS proxy, CFNetwork will not reuse a preconnected socket if the User-Agent
+        on the preconnect request doesn't match the User-Agent of the actual request
+        (<rdar://problem/59434166>). To work around this, this sets the User-Agent on preconnect
+        requests.
+
+        In addition, this patch moves the preconnect request from WebPage::loadRequest in the
+        WebProcess to WebPageProxy::loadRequest in the UIProcess. This is because there can be
+        long sync IPCs that last >100 ms that occur before WebProcess::loadRequest even starts,
+        e.g. https://bugs.webkit.org/show_bug.cgi?id=203165.
+
+        By making both changes, we see a ~2% improvement in PLT5 times.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::preconnectTo):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+
 2020-02-18  Lauro Moura  <lmoura@igalia.com>
 
         [WebKit] Avoid segfault if editor client is null
