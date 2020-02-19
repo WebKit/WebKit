@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DocumentTimeline.h"
 
-#include "AnimationPlaybackEvent.h"
+#include "AnimationEventBase.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DOMWindow.h"
@@ -84,6 +84,7 @@ void DocumentTimeline::detachFromDocument()
     if (m_document)
         m_document->removeTimeline(*this);
 
+    m_pendingAnimationEvents.clear();
     m_currentTimeClearingTaskQueue.close();
     m_elementsWithRunningAcceleratedAnimations.clear();
 
@@ -91,7 +92,7 @@ void DocumentTimeline::detachFromDocument()
     while (!animationsToRemove.isEmpty())
         animationsToRemove.first()->remove();
 
-    unscheduleAnimationResolution();
+    clearTickScheduleTimer();
     m_document = nullptr;
 }
 
@@ -225,7 +226,7 @@ void DocumentTimeline::suspendAnimations()
 
     applyPendingAcceleratedAnimations();
 
-    unscheduleAnimationResolution();
+    clearTickScheduleTimer();
 }
 
 void DocumentTimeline::resumeAnimations()
@@ -318,31 +319,31 @@ void DocumentTimeline::removeAnimation(WebAnimation& animation)
 {
     AnimationTimeline::removeAnimation(animation);
 
-    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        unscheduleAnimationResolution();
+    if (m_animations.isEmpty())
+        clearTickScheduleTimer();
 }
 
 void DocumentTimeline::scheduleAnimationResolution()
 {
-    if (m_isSuspended || m_animationResolutionScheduled || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+    if (m_isSuspended || m_animationResolutionScheduled || !m_document || !m_document->page())
         return;
 
-    if (!m_document || !m_document->page())
+    // We need some relevant animations or pending events to proceed.
+    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return;
-    
+
     m_document->page()->renderingUpdateScheduler().scheduleTimedRenderingUpdate();
     m_animationResolutionScheduled = true;
 }
 
-void DocumentTimeline::unscheduleAnimationResolution()
+void DocumentTimeline::clearTickScheduleTimer()
 {
     m_tickScheduleTimer.stop();
-    m_animationResolutionScheduled = false;
 }
 
 bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const
 {
-    return !m_animations.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
+    return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
 void DocumentTimeline::updateCurrentTime(DOMHighResTimeStamp timestamp)
@@ -350,18 +351,22 @@ void DocumentTimeline::updateCurrentTime(DOMHighResTimeStamp timestamp)
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
     // it has to match the rAF timestamp.
-    if (!m_isSuspended)
+    if (!m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         cacheCurrentTime(timestamp);
 }
 
 void DocumentTimeline::updateAnimationsAndSendEvents()
 {
-    if (m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        return;
 
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
     // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
     m_animationResolutionScheduled = false;
+
+    if (m_isSuspended)
+        return;
+
+    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+        return;
 
     internalUpdateAnimationsAndSendEvents();
     applyPendingAcceleratedAnimations();
@@ -373,6 +378,11 @@ void DocumentTimeline::updateAnimationsAndSendEvents()
 void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
 {
     m_numberOfAnimationTimelineInvalidationsForTesting++;
+
+    // enqueueAnimationEvent() calls scheduleAnimationResolution() to ensure that the "update animations and send events"
+    // procedure is run and enqueued events are dispatched in the next frame. However, events that are enqueued while
+    // this procedure is running should not schedule animation resolution until the event queue has been cleared.
+    m_shouldScheduleAnimationResolutionForNewPendingEvents = false;
 
     // https://drafts.csswg.org/web-animations/#update-animations-and-send-events
 
@@ -412,9 +422,10 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     // 4. Let events to dispatch be a copy of doc's pending animation event queue.
     // 5. Clear doc's pending animation event queue.
     auto pendingAnimationEvents = WTFMove(m_pendingAnimationEvents);
+    m_shouldScheduleAnimationResolutionForNewPendingEvents = true;
 
     // 6. Perform a stable sort of the animation events in events to dispatch as follows.
-    std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), [] (const Ref<AnimationPlaybackEvent>& lhs, const Ref<AnimationPlaybackEvent>& rhs) {
+    std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), [] (const Ref<AnimationEventBase>& lhs, const Ref<AnimationEventBase>& rhs) {
         // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
         // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
         // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: We don't do this.
@@ -428,8 +439,8 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     });
 
     // 7. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
-    for (auto& pendingEvent : pendingAnimationEvents)
-        pendingEvent->target()->dispatchEvent(pendingEvent);
+    for (auto& pendingAnimationEvent : pendingAnimationEvents)
+        pendingAnimationEvent->target()->dispatchEvent(pendingAnimationEvent);
 
     // This will cancel any scheduled invalidation if we end up removing all animations.
     for (auto& animation : animationsToRemove) {
@@ -538,6 +549,10 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
 
 void DocumentTimeline::scheduleNextTick()
 {
+    // If we have pending animation events, we need to schedule an update right away.
+    if (!m_pendingAnimationEvents.isEmpty())
+        scheduleAnimationResolution();
+
     // There is no tick to schedule if we don't have any relevant animations.
     if (m_animations.isEmpty())
         return;
@@ -658,7 +673,7 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
     if (shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         scheduleAnimationResolution();
     else
-        unscheduleAnimationResolution();
+        clearTickScheduleTimer();
 }
 
 void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
@@ -701,9 +716,11 @@ bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& ele
     return m_elementsWithRunningAcceleratedAnimations.contains(&element);
 }
 
-void DocumentTimeline::enqueueAnimationPlaybackEvent(AnimationPlaybackEvent& event)
+void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
 {
     m_pendingAnimationEvents.append(event);
+    if (m_shouldScheduleAnimationResolutionForNewPendingEvents)
+        scheduleAnimationResolution();
 }
 
 Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const
