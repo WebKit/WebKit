@@ -1,3 +1,14 @@
+2020-02-19  Keith Miller  <keith_miller@apple.com>
+
+        Disable Wasm reference types by default
+        https://bugs.webkit.org/show_bug.cgi?id=207952
+
+        Reviewed by Mark Lam.
+
+        * wasm/stress/immutable-globals.js:
+        * wasm/stress/local-ref.js:
+        * wasm/stress/mutable-globals.js:
+
 2020-02-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Computed function properties compute their keys twice

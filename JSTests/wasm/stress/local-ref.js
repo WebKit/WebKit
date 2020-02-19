@@ -1,3 +1,4 @@
+//@ requireOptions("--useWebAssemblyReferences=1")
 import { instantiate } from "../wabt-wrapper.js";
 
 instantiate(`
