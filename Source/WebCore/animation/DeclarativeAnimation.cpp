@@ -27,7 +27,6 @@
 #include "DeclarativeAnimation.h"
 
 #include "Animation.h"
-#include "AnimationEvent.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DocumentTimeline.h"
@@ -35,7 +34,6 @@
 #include "EventNames.h"
 #include "KeyframeEffect.h"
 #include "PseudoElement.h"
-#include "TransitionEvent.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -351,10 +349,9 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
 {
     ASSERT(m_owningElement);
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
-    if (is<CSSAnimation>(this))
-        m_eventQueue->enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
-    else if (is<CSSTransition>(this))
-        m_eventQueue->enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
+    const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId());
+    auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
+    m_eventQueue->enqueueEvent(createEvent(eventType, time, pseudoId, timelineTime));
 }
 
 } // namespace WebCore

@@ -675,7 +675,7 @@ void WebAnimation::willChangeRenderer()
 
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
 {
-    auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
+    auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime, this);
     event->setTarget(this);
 
     if (is<DocumentTimeline>(m_timeline)) {
