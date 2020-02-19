@@ -1369,12 +1369,12 @@ sub determineWinVersion()
     }
 
     my $versionString = `cmd /c ver`;
-    $versionString =~ /(\d)\.(\d)\.(\d+)/;
+    $versionString =~ /(\d+)\.(\d+)\.(\d+)/;
 
     $winVersion = {
         major => $1,
         minor => $2,
-        build => $3,
+        subminor => $3,
     };
 }
 

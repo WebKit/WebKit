@@ -403,6 +403,7 @@ sub configurationForUpload()
         $platform = 'win';
         if (!$version) {
             $version = winVersion();
+            $versionName = "Win$version->{subminor}";
         }
     } elsif (isAppleMacWebKit()) {
         $platform = 'mac';

@@ -1,3 +1,16 @@
+2020-02-19  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Correctly report JSC tests for windows
+        https://bugs.webkit.org/show_bug.cgi?id=207910
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Give Windows a version name.
+        * Scripts/webkitdirs.pm:
+        (determineWinVersion): Correctly parse Windows 10 version numbers, conform to
+        Version dictionary.
+
 2020-02-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix assertions in storage access API layout tests after r256882.
