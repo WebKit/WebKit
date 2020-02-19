@@ -610,6 +610,16 @@ public:
             ::JSC::encode(encoder, buffer[i], vector[i]);
     }
 
+    void encode(Encoder& encoder, const RefCountedArray<SourceType<T>>& vector)
+    {
+        m_size = vector.size();
+        if (!m_size)
+            return;
+        T* buffer = this->template allocate<T>(encoder, m_size);
+        for (unsigned i = 0; i < m_size; ++i)
+            ::JSC::encode(encoder, buffer[i], vector[i]);
+    }
+
     template<typename... Args>
     void decode(Decoder& decoder, Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>& vector, Args... args) const
     {
@@ -620,6 +630,18 @@ public:
         for (unsigned i = 0; i < m_size; ++i)
             ::JSC::decode(decoder, buffer[i], vector[i], args...);
     }
+
+    template<typename... Args>
+    void decode(Decoder& decoder, RefCountedArray<SourceType<T>>& vector, Args... args) const
+    {
+        if (!m_size)
+            return;
+        vector = RefCountedArray<SourceType<T>>(m_size);
+        const T* buffer = this->template buffer<T>();
+        for (unsigned i = 0; i < m_size; ++i)
+            ::JSC::decode(decoder, buffer[i], vector[i], args...);
+    }
+
 
 private:
     unsigned m_size;

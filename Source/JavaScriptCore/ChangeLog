@@ -1,5 +1,274 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/59576778
+
+    2020-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Introduce UnlinkedCodeBlockGenerator and reduce sizeof(UnlinkedCodeBlock)
+            https://bugs.webkit.org/show_bug.cgi?id=207087
+
+            Reviewed by Tadeu Zagallo.
+
+            While UnlinkedCodeBlock is immutable once it is created from BytecodeGenerator, it has many mutable Vectors.
+            This is because we are using UnlinkedCodeBlock as a builder of UnlinkedCodeBlock itself too in BytecodeGenerator.
+            Since Vector takes 16 bytes to allow efficient expansions, it is nice if we can use RefCountedArray instead when
+            we know this Vector is immutable.
+
+            In this patch, we introduce UnlinkedCodeBlockGenerator wrapper. BytecodeGenerator, BytecodeRewriter, BytecodeDumper,
+            and BytecodeGeneratorification interact with UnlinkedCodeBlockGenerator instead of UnlinkedCodeBlock. And UnlinkedCodeBlockGenerator
+            will generate the finalized UnlinkedCodeBlock. This design allows us to use RefCountedArray for data in UnlinkedCodeBlock,
+            which is (1) smaller and (2) doing shrinkToFit operation when creating it from Vector.
+
+            This patch reduces sizeof(UnlinkedCodeBlock) from 256 to 168, 88 bytes reduction.
+
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * Sources.txt:
+            * bytecode/BytecodeBasicBlock.cpp:
+            (JSC::BytecodeBasicBlock::compute):
+            * bytecode/BytecodeBasicBlock.h:
+            * bytecode/BytecodeDumper.cpp:
+            * bytecode/BytecodeGeneratorification.cpp:
+            (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+            (JSC::GeneratorLivenessAnalysis::run):
+            (JSC::BytecodeGeneratorification::run):
+            (JSC::performGeneratorification):
+            * bytecode/BytecodeGeneratorification.h:
+            * bytecode/BytecodeRewriter.h:
+            (JSC::BytecodeRewriter::BytecodeRewriter):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::finishCreation):
+            (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+            (JSC::CodeBlock::setConstantRegisters):
+            (JSC::CodeBlock::handlerForIndex):
+            (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+            * bytecode/CodeBlock.h:
+            (JSC::CodeBlock::numberOfSwitchJumpTables const):
+            (JSC::CodeBlock::numberOfStringSwitchJumpTables const):
+            (JSC::CodeBlock::addSwitchJumpTable): Deleted.
+            (JSC::CodeBlock::addStringSwitchJumpTable): Deleted.
+            * bytecode/HandlerInfo.h:
+            (JSC::HandlerInfoBase::handlerForIndex):
+            * bytecode/JumpTable.h:
+            (JSC::SimpleJumpTable::add): Deleted.
+            * bytecode/PreciseJumpTargets.cpp:
+            (JSC::computePreciseJumpTargets):
+            (JSC::recomputePreciseJumpTargets):
+            (JSC::findJumpTargetsForInstruction):
+            * bytecode/PreciseJumpTargets.h:
+            * bytecode/UnlinkedCodeBlock.cpp:
+            (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+            (JSC::UnlinkedCodeBlock::visitChildren):
+            (JSC::UnlinkedCodeBlock::dumpExpressionRangeInfo):
+            (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeIndex const):
+            (JSC::UnlinkedCodeBlock::handlerForIndex):
+            (JSC::UnlinkedCodeBlock::addExpressionInfo): Deleted.
+            (JSC::UnlinkedCodeBlock::addTypeProfilerExpressionInfo): Deleted.
+            (JSC::UnlinkedCodeBlock::setInstructions): Deleted.
+            (JSC::UnlinkedCodeBlock::applyModification): Deleted.
+            (JSC::UnlinkedCodeBlock::shrinkToFit): Deleted.
+            (JSC::UnlinkedCodeBlock::addOutOfLineJumpTarget): Deleted.
+            * bytecode/UnlinkedCodeBlock.h:
+            (JSC::UnlinkedCodeBlock::expressionInfo):
+            (JSC::UnlinkedCodeBlock::setNumParameters):
+            (JSC::UnlinkedCodeBlock::numberOfIdentifiers const):
+            (JSC::UnlinkedCodeBlock::identifiers const):
+            (JSC::UnlinkedCodeBlock::bitVector):
+            (JSC::UnlinkedCodeBlock::constantRegisters):
+            (JSC::UnlinkedCodeBlock::constantsSourceCodeRepresentation):
+            (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+            (JSC::UnlinkedCodeBlock::numberOfJumpTargets const):
+            (JSC::UnlinkedCodeBlock::numberOfSwitchJumpTables const):
+            (JSC::UnlinkedCodeBlock::numberOfStringSwitchJumpTables const):
+            (JSC::UnlinkedCodeBlock::numberOfFunctionDecls):
+            (JSC::UnlinkedCodeBlock::numberOfExceptionHandlers const):
+            (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets const):
+            (JSC::UnlinkedCodeBlock::createRareDataIfNecessary):
+            (JSC::UnlinkedCodeBlock::addParameter): Deleted.
+            (JSC::UnlinkedCodeBlock::addIdentifier): Deleted.
+            (JSC::UnlinkedCodeBlock::addBitVector): Deleted.
+            (JSC::UnlinkedCodeBlock::addSetConstant): Deleted.
+            (JSC::UnlinkedCodeBlock::addConstant): Deleted.
+            (JSC::UnlinkedCodeBlock::addJumpTarget): Deleted.
+            (JSC::UnlinkedCodeBlock::addSwitchJumpTable): Deleted.
+            (JSC::UnlinkedCodeBlock::addStringSwitchJumpTable): Deleted.
+            (JSC::UnlinkedCodeBlock::addFunctionDecl): Deleted.
+            (JSC::UnlinkedCodeBlock::addFunctionExpr): Deleted.
+            (JSC::UnlinkedCodeBlock::addExceptionHandler): Deleted.
+            (JSC::UnlinkedCodeBlock::addOpProfileControlFlowBytecodeOffset): Deleted.
+            (JSC::UnlinkedCodeBlock::replaceOutOfLineJumpTargets): Deleted.
+            * bytecode/UnlinkedCodeBlockGenerator.cpp: Added.
+            (JSC::UnlinkedCodeBlockGenerator::getLineAndColumn const):
+            (JSC::UnlinkedCodeBlockGenerator::addExpressionInfo):
+            (JSC::UnlinkedCodeBlockGenerator::addTypeProfilerExpressionInfo):
+            (JSC::UnlinkedCodeBlockGenerator::finalize):
+            (JSC::UnlinkedCodeBlockGenerator::handlerForBytecodeIndex):
+            (JSC::UnlinkedCodeBlockGenerator::handlerForIndex):
+            (JSC::UnlinkedCodeBlockGenerator::applyModification):
+            (JSC::UnlinkedCodeBlockGenerator::addOutOfLineJumpTarget):
+            (JSC::UnlinkedCodeBlockGenerator::outOfLineJumpOffset):
+            (JSC::UnlinkedCodeBlockGenerator::dump const):
+            * bytecode/UnlinkedCodeBlockGenerator.h: Added.
+            (JSC::UnlinkedCodeBlockGenerator::UnlinkedCodeBlockGenerator):
+            (JSC::UnlinkedCodeBlockGenerator::vm):
+            (JSC::UnlinkedCodeBlockGenerator::isConstructor const):
+            (JSC::UnlinkedCodeBlockGenerator::constructorKind const):
+            (JSC::UnlinkedCodeBlockGenerator::superBinding const):
+            (JSC::UnlinkedCodeBlockGenerator::scriptMode const):
+            (JSC::UnlinkedCodeBlockGenerator::needsClassFieldInitializer const):
+            (JSC::UnlinkedCodeBlockGenerator::isStrictMode const):
+            (JSC::UnlinkedCodeBlockGenerator::usesEval const):
+            (JSC::UnlinkedCodeBlockGenerator::parseMode const):
+            (JSC::UnlinkedCodeBlockGenerator::isArrowFunction):
+            (JSC::UnlinkedCodeBlockGenerator::derivedContextType const):
+            (JSC::UnlinkedCodeBlockGenerator::evalContextType const):
+            (JSC::UnlinkedCodeBlockGenerator::isArrowFunctionContext const):
+            (JSC::UnlinkedCodeBlockGenerator::isClassContext const):
+            (JSC::UnlinkedCodeBlockGenerator::numCalleeLocals const):
+            (JSC::UnlinkedCodeBlockGenerator::numVars const):
+            (JSC::UnlinkedCodeBlockGenerator::numParameters const):
+            (JSC::UnlinkedCodeBlockGenerator::thisRegister const):
+            (JSC::UnlinkedCodeBlockGenerator::scopeRegister const):
+            (JSC::UnlinkedCodeBlockGenerator::wasCompiledWithDebuggingOpcodes const):
+            (JSC::UnlinkedCodeBlockGenerator::hasCheckpoints const):
+            (JSC::UnlinkedCodeBlockGenerator::hasTailCalls const):
+            (JSC::UnlinkedCodeBlockGenerator::setHasCheckpoints):
+            (JSC::UnlinkedCodeBlockGenerator::setHasTailCalls):
+            (JSC::UnlinkedCodeBlockGenerator::setNumCalleeLocals):
+            (JSC::UnlinkedCodeBlockGenerator::setNumVars):
+            (JSC::UnlinkedCodeBlockGenerator::setThisRegister):
+            (JSC::UnlinkedCodeBlockGenerator::setScopeRegister):
+            (JSC::UnlinkedCodeBlockGenerator::setNumParameters):
+            (JSC::UnlinkedCodeBlockGenerator::metadata):
+            (JSC::UnlinkedCodeBlockGenerator::addOpProfileControlFlowBytecodeOffset):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfJumpTargets const):
+            (JSC::UnlinkedCodeBlockGenerator::addJumpTarget):
+            (JSC::UnlinkedCodeBlockGenerator::jumpTarget const):
+            (JSC::UnlinkedCodeBlockGenerator::lastJumpTarget const):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfSwitchJumpTables const):
+            (JSC::UnlinkedCodeBlockGenerator::addSwitchJumpTable):
+            (JSC::UnlinkedCodeBlockGenerator::switchJumpTable):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfStringSwitchJumpTables const):
+            (JSC::UnlinkedCodeBlockGenerator::addStringSwitchJumpTable):
+            (JSC::UnlinkedCodeBlockGenerator::stringSwitchJumpTable):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfExceptionHandlers const):
+            (JSC::UnlinkedCodeBlockGenerator::exceptionHandler):
+            (JSC::UnlinkedCodeBlockGenerator::addExceptionHandler):
+            (JSC::UnlinkedCodeBlockGenerator::bitVector):
+            (JSC::UnlinkedCodeBlockGenerator::addBitVector):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfConstantIdentifierSets const):
+            (JSC::UnlinkedCodeBlockGenerator::constantIdentifierSets):
+            (JSC::UnlinkedCodeBlockGenerator::addSetConstant):
+            (JSC::UnlinkedCodeBlockGenerator::constantRegister const):
+            (JSC::UnlinkedCodeBlockGenerator::constantRegisters):
+            (JSC::UnlinkedCodeBlockGenerator::getConstant const):
+            (JSC::UnlinkedCodeBlockGenerator::constantsSourceCodeRepresentation):
+            (JSC::UnlinkedCodeBlockGenerator::addConstant):
+            (JSC::UnlinkedCodeBlockGenerator::addFunctionDecl):
+            (JSC::UnlinkedCodeBlockGenerator::addFunctionExpr):
+            (JSC::UnlinkedCodeBlockGenerator::numberOfIdentifiers const):
+            (JSC::UnlinkedCodeBlockGenerator::identifier const):
+            (JSC::UnlinkedCodeBlockGenerator::addIdentifier):
+            (JSC::UnlinkedCodeBlockGenerator::outOfLineJumpOffset):
+            (JSC::UnlinkedCodeBlockGenerator::replaceOutOfLineJumpTargets):
+            (JSC::UnlinkedCodeBlockGenerator::metadataSizeInBytes):
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::generate):
+            (JSC::BytecodeGenerator::BytecodeGenerator):
+            (JSC::BytecodeGenerator::initializeNextParameter):
+            (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+            (JSC::prepareJumpTableForSwitch):
+            (JSC::ForInContext::finalize):
+            (JSC::StructureForInContext::finalize):
+            (JSC::IndexedForInContext::finalize):
+            * bytecompiler/BytecodeGenerator.h:
+            * bytecompiler/BytecodeGeneratorBaseInlines.h:
+            (JSC::BytecodeGeneratorBase<Traits>::newRegister):
+            (JSC::BytecodeGeneratorBase<Traits>::addVar):
+            * runtime/CachedTypes.cpp:
+            (JSC::CachedVector::encode):
+            (JSC::CachedVector::decode const):
+            * wasm/WasmFunctionCodeBlock.h:
+            (JSC::Wasm::FunctionCodeBlock::setNumVars):
+            (JSC::Wasm::FunctionCodeBlock::setNumCalleeLocals):
+
+2020-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove unnecessary allocations in BytecodeBasicBlock
+        https://bugs.webkit.org/show_bug.cgi?id=206986
+
+        Reviewed by Mark Lam.
+
+        We know that BytecodeBasicBlock itself takes 2MB in Gmail. And each BytecodeBasicBlock has Vector<unsigned>
+        and Vector<BytecodeBasicBlock*>.
+
+        BytecodeBasicBlock holds all the offset per bytecode as unsigned in m_offsets. But this offset is
+        only used when reverse iterating a bytecode in a BytecodeBasicBlock. We can hold a length of each
+        bytecode instead, which is much smaller (unsigned v.s. uint8_t).
+
+        Since each BytecodeBasicBlock has index, we should hold successors in Vector<unsigned> instead of Vector<BytecodeBasicBlock*>.
+
+        We are also allocating BytecodeBasicBlock in makeUnique<> and having them in Vector<std::unique_ptr<BytecodeBasicBlock>>.
+        But this is not necessary since only BytecodeBasicBlock::compute can modify this vector. We should generate Vector<BytecodeBasicBlock>
+        from BytecodeBasicBlock::compute.
+
+        We are also planning purging BytecodeBasicBlock in UnlinkedCodeBlock if it is not used so much. But this will be done in a separate patch.
+
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::BytecodeBasicBlock::BytecodeBasicBlock):
+        (JSC::BytecodeBasicBlock::addLength):
+        (JSC::BytecodeBasicBlock::shrinkToFit):
+        (JSC::BytecodeBasicBlock::computeImpl):
+        (JSC::BytecodeBasicBlock::compute):
+        * bytecode/BytecodeBasicBlock.h:
+        (JSC::BytecodeBasicBlock::delta const):
+        (JSC::BytecodeBasicBlock::successors const):
+        (JSC::BytecodeBasicBlock::operator bool const):
+        (JSC::BytecodeBasicBlock::addSuccessor):
+        (JSC::BytecodeBasicBlock::offsets const): Deleted.
+        (JSC::BytecodeBasicBlock:: const): Deleted.
+        (JSC::BytecodeBasicBlock::BytecodeBasicBlock): Deleted.
+        (JSC::BytecodeBasicBlock::addLength): Deleted.
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        * bytecode/BytecodeGraph.h:
+        (JSC::BytecodeGraph::blockContainsBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockForBytecodeOffset):
+        (JSC::BytecodeGraph::findBasicBlockWithLeaderOffset):
+        (JSC::BytecodeGraph::at const):
+        (JSC::BytecodeGraph::operator[] const):
+        (JSC::BytecodeGraph::begin):
+        (JSC::BytecodeGraph::end):
+        (JSC::BytecodeGraph::first):
+        (JSC::BytecodeGraph::last):
+        (JSC::BytecodeGraph::BytecodeGraph):
+        (JSC::BytecodeGraph::begin const): Deleted.
+        (JSC::BytecodeGraph::end const): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeIndex):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeIndex):
+        (JSC::BytecodeLivenessPropagation::runLivenessFixpoint):
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStream::MutableRef::operator-> const):
+        (JSC::InstructionStream::MutableRef::ptr const):
+        (JSC::InstructionStream::MutableRef::unwrap const):
+        * bytecode/Opcode.h:
+        * generator/Section.rb:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256898. rdar://problem/59576798
 
     Unreviewed build fix.

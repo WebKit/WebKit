@@ -72,6 +72,9 @@ public:
     const Vector<uint64_t>& constants() const { return m_constants; }
     const InstructionStream& instructions() const { return *m_instructions; }
 
+    void setNumVars(int numVars) { m_numVars = numVars; }
+    void setNumCalleeLocals(int numCalleeLocals) { m_numCalleeLocals = numCalleeLocals; }
+
     ALWAYS_INLINE uint64_t getConstant(int index) const { return m_constants[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE Type getConstantType(int index) const
     {

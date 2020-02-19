@@ -280,7 +280,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         // initialized the opcodeMap above. This is because getCodePtr()
         // can depend on the opcodeMap.
         uint8_t* exceptionInstructions = reinterpret_cast<uint8_t*>(LLInt::exceptionInstructions());
-        for (int i = 0; i < maxOpcodeLength + 1; ++i)
+        for (unsigned i = 0; i < maxOpcodeLength + 1; ++i)
             exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
 
         return JSValue();

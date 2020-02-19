@@ -99,12 +99,12 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, const InstructionStream& in
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::FollowCodeBlockClaim>(codeBlock, instructions, out);
 }
 
-void computePreciseJumpTargets(UnlinkedCodeBlock* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset, 32>& out)
+void computePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset, 32>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::FollowCodeBlockClaim>(codeBlock, instructions, out);
 }
 
-void recomputePreciseJumpTargets(UnlinkedCodeBlock* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset>& out)
+void recomputePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::ForceCompute>(codeBlock, instructions, out);
 }
@@ -114,7 +114,7 @@ void findJumpTargetsForInstruction(CodeBlock* codeBlock, const InstructionStream
     getJumpTargetsForInstruction(codeBlock, instruction, out);
 }
 
-void findJumpTargetsForInstruction(UnlinkedCodeBlock* codeBlock, const InstructionStream::Ref& instruction, Vector<InstructionStream::Offset, 1>& out)
+void findJumpTargetsForInstruction(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream::Ref& instruction, Vector<InstructionStream::Offset, 1>& out)
 {
     getJumpTargetsForInstruction(codeBlock, instruction, out);
 }
