@@ -1622,6 +1622,7 @@ void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLo
     // Initate the load in WebCore.
     FrameLoadRequest frameLoadRequest(*m_mainFrame->coreFrame(), request, shouldOpenExternalURLsPolicy, substituteData);
     frameLoadRequest.setShouldTreatAsContinuingLoad(shouldTreatAsContinuingLoad);
+    frameLoadRequest.setIsRequestFromClientOrUserInput();
     m_mainFrame->coreFrame()->loader().load(WTFMove(frameLoadRequest));
 }
 

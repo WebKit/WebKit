@@ -236,7 +236,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _convertsPositionStyleOnCopy = NO;
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
-    _allowTopNavigationToDataURLs = YES;
+    _allowTopNavigationToDataURLs = NO;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS_FAMILY)
