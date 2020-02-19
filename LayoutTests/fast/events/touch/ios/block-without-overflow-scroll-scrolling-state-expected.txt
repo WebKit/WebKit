@@ -15,11 +15,11 @@ Verify that the block scrolling on overflow has touch event region with synchron
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 800x200)
-  (synchronous event dispatch region for event touchstart
-    at (0,0) size 800x200)
   (synchronous event dispatch region for event touchforcechange
     at (0,0) size 800x200)
   (synchronous event dispatch region for event touchmove
+    at (0,0) size 800x200)
+  (synchronous event dispatch region for event touchstart
     at (0,0) size 800x200)
   (behavior for fixed 0)
 )

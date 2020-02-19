@@ -338,11 +338,15 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
         }
     }
 
-    if (!m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions.isEmpty()) {
-        for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
+    auto& synchronousDispatchRegionMap = m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
+    if (!synchronousDispatchRegionMap.isEmpty()) {
+        auto eventRegionNames = copyToVector(synchronousDispatchRegionMap.keys());
+        std::sort(eventRegionNames.begin(), eventRegionNames.end(), WTF::codePointCompareLessThan);
+        for (const auto& name : eventRegionNames) {
+            const auto& region = synchronousDispatchRegionMap.get(name);
             TextStream::GroupScope scope(ts);
-            ts << "synchronous event dispatch region for event " << synchronousEventRegion.key;
-            for (auto rect : synchronousEventRegion.value.rects()) {
+            ts << "synchronous event dispatch region for event " << name;
+            for (auto rect : region.rects()) {
                 ts << "\n";
                 ts << indent << rect;
             }
