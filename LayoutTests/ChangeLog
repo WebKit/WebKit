@@ -1,5 +1,14 @@
 2020-02-19  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: (r256805?) [ Mojave wk2 Release ] webrtc/video-replace-muted-track.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=207941
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-02-19  Jason Lawrence  <lawrence.j@apple.com>
+
         REGRESSION: (r256842?) [ Mac wk2 ] http/wpt/crypto/derive-hmac-key-crash.any.html is flaky crashing.
         https://bugs.webkit.org/show_bug.cgi?id=207938
 

@@ -1055,3 +1055,5 @@ webkit.org/b/207864 webgpu/whlsl/do-while-loop-continue.html [ Pass ImageOnlyFai
 webkit.org/b/207894 http/wpt/beacon/beacon-quota.html [ Pass Failure ]
 
 webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash ]
+
+webkit.org/b/207941 [ Mojave Release ] webrtc/video-replace-muted-track.html [ Slow ]
