@@ -319,7 +319,6 @@ void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& top
     bool isNewOrigin = WTF::allOf(m_clientOrigins.values(), [&contextOrigin](auto& origin) {
         return contextOrigin != origin.clientOrigin;
     });
-    auto* contextConnection = isNewOrigin ? server().contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin }) : nullptr;
 
     auto clientOrigin = ClientOrigin { WTFMove(topOrigin), WTFMove(contextOrigin) };
     m_clientOrigins.add(data.identifier, clientOrigin);
@@ -328,9 +327,11 @@ void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& top
     if (!m_isThrottleable)
         updateThrottleState();
 
-    if (contextConnection) {
-        auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
-        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+    if (isNewOrigin) {
+        if (auto* contextConnection = server().contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin })) {
+            auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
+            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
+        }
     }
 }
 
