@@ -63,6 +63,7 @@
 #include "Page.h"
 #include "PannerNode.h"
 #include "PeriodicWave.h"
+#include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
@@ -139,7 +140,7 @@ AudioContext::AudioContext(Document& document)
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-    , m_mediaSession(PlatformMediaSession::create(*this))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
     , m_eventQueue(MainThreadGenericEventQueue::create(*this))
 {
     // According to spec AudioContext must die only after page navigate.
@@ -165,7 +166,7 @@ AudioContext::AudioContext(Document& document, AudioBuffer* renderTarget)
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
     , m_isOfflineContext(true)
-    , m_mediaSession(PlatformMediaSession::create(*this))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
     , m_eventQueue(MainThreadGenericEventQueue::create(*this))
     , m_renderTarget(renderTarget)
 {

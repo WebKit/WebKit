@@ -34,6 +34,7 @@
 #include <pal/system/SystemSleepListener.h>
 #include <wtf/AggregateLogger.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ class PlatformMediaSessionManager
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
+    , public CanMakeWeakPtr<PlatformMediaSessionManager>
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:

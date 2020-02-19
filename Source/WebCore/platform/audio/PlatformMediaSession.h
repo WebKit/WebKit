@@ -41,6 +41,7 @@ namespace WebCore {
 class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
+class PlatformMediaSessionManager;
 enum class DelayCallingUpdateNowPlaying { No, Yes };
 
 class PlatformMediaSession
@@ -54,9 +55,8 @@ class PlatformMediaSession
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionClient&);
+    static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
 
-    PlatformMediaSession(PlatformMediaSessionClient&);
     virtual ~PlatformMediaSession();
 
     enum MediaType {
@@ -199,11 +199,15 @@ public:
     bool shouldOverridePauseDuringRouteChange() const;
 
 protected:
+    PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
     PlatformMediaSessionClient& client() const { return m_client; }
+
+    PlatformMediaSessionManager& manager();
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
 
+    WeakPtr<PlatformMediaSessionManager> m_manager;
     PlatformMediaSessionClient& m_client;
     State m_state;
     State m_stateToRestore;

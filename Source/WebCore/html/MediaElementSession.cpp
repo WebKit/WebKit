@@ -105,12 +105,12 @@ static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& 
 }
 
 MediaElementSession::MediaElementSession(HTMLMediaElement& element)
-    : PlatformMediaSession(element)
+    : PlatformMediaSession(PlatformMediaSessionManager::sharedManager(), element)
     , m_element(element)
     , m_restrictions(NoRestrictions)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_targetAvailabilityChangedTimer(*this, &MediaElementSession::targetAvailabilityChangedTimerFired)
-    , m_hasPlaybackTargets(PlatformMediaSessionManager::sharedManager().hasWirelessTargetsAvailable())
+    , m_hasPlaybackTargets(manager().hasWirelessTargetsAvailable())
 #endif
     , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
     , m_clientDataBufferingTimer(*this, &MediaElementSession::clientDataBufferingTimerFired)
@@ -201,13 +201,13 @@ void MediaElementSession::clientDataBufferingTimerFired()
     updateClientDataBuffering();
 
 #if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+    manager().configureWireLessTargetMonitoring();
 #endif
 
     if (state() != Playing || !m_element.elementIsHidden())
         return;
 
-    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
+    PlatformMediaSessionManager::SessionRestrictions restrictions = manager().restrictions(mediaType());
     if ((restrictions & PlatformMediaSessionManager::BackgroundTabPlaybackRestricted) == PlatformMediaSessionManager::BackgroundTabPlaybackRestricted)
         pauseSession();
 }
@@ -636,7 +636,7 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 
 #if PLATFORM(IOS_FAMILY)
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
-    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+    manager().configureWireLessTargetMonitoring();
 #else
     UNUSED_PARAM(hasListeners);
     m_element.document().playbackTargetPickerClientStateDidChange(*this, m_element.mediaState());

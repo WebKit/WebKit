@@ -45,6 +45,7 @@
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
 #include "Page.h"
+#include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CompletionHandler.h>
@@ -74,7 +75,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
     , m_isCaptureTrack(m_private->isCaptureTrack())
-    , m_mediaSession(PlatformMediaSession::create(*this))
+    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
