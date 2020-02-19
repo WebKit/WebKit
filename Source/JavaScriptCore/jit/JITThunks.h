@@ -35,6 +35,7 @@
 #include "WeakHandleOwner.h"
 #include <tuple>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
@@ -65,47 +66,49 @@ public:
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, Intrinsic, const String& name);
 
-    void clearHostFunctionStubs();
-
 private:
     void finalize(Handle<Unknown>, void* context) override;
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> CTIStubMap;
     CTIStubMap m_ctiStubMap;
 
-    typedef std::tuple<TaggedNativeFunction, TaggedNativeFunction, String> HostFunctionKey;
+    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, String>;
 
-    struct HostFunctionHash {
+    struct WeakNativeExecutableHash {
+        static inline unsigned hash(const Weak<NativeExecutable>&);
+        static inline unsigned hash(NativeExecutable*);
         static unsigned hash(const HostFunctionKey& key)
         {
-            unsigned hash = WTF::pairIntHash(hashPointer(std::get<0>(key)), hashPointer(std::get<1>(key)));
-            if (!std::get<2>(key).isNull())
-                hash = WTF::pairIntHash(hash, DefaultHash<String>::Hash::hash(std::get<2>(key)));
-            return hash;
+            return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key));
         }
-        static bool equal(const HostFunctionKey& a, const HostFunctionKey& b)
-        {
-            return (std::get<0>(a) == std::get<0>(b)) && (std::get<1>(a) == std::get<1>(b)) && (std::get<2>(a) == std::get<2>(b));
-        }
-        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+
+        static inline bool equal(const Weak<NativeExecutable>&, const Weak<NativeExecutable>&);
+        static inline bool equal(const Weak<NativeExecutable>&, const HostFunctionKey&);
+        static inline bool equal(const Weak<NativeExecutable>&, NativeExecutable*);
+        static inline bool equal(NativeExecutable&, NativeExecutable&);
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
 
     private:
         static inline unsigned hashPointer(TaggedNativeFunction p)
         {
             return DefaultHash<TaggedNativeFunction>::Hash::hash(p);
         }
-    };
 
-    struct HostFunctionHashTrait : WTF::GenericHashTraits<HostFunctionKey> {
-        static constexpr bool emptyValueIsZero = true;
-        static EmptyValueType emptyValue() { return std::make_tuple(nullptr, nullptr, String()); }
-
-        static void constructDeletedValue(HostFunctionKey& slot) { std::get<0>(slot) = TaggedNativeFunction(-1); }
-        static bool isDeletedValue(const HostFunctionKey& value) { return std::get<0>(value) == TaggedNativeFunction(-1); }
+        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, const String& name)
+        {
+            // FIXME: Use WTF::computeHash.
+            // https://bugs.webkit.org/show_bug.cgi?id=207835
+            unsigned hash = WTF::pairIntHash(hashPointer(function), hashPointer(constructor));
+            if (!name.isNull())
+                hash = WTF::pairIntHash(hash, DefaultHash<String>::Hash::hash(name));
+            return hash;
+        }
     };
-    
-    typedef HashMap<HostFunctionKey, Weak<NativeExecutable>, HostFunctionHash, HostFunctionHashTrait> HostFunctionStubMap;
-    std::unique_ptr<HostFunctionStubMap> m_hostFunctionStubMap;
+    struct HostKeySearcher;
+    struct NativeExecutableTranslator;
+
+    using WeakNativeExecutableSet = HashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
+    WeakNativeExecutableSet m_nativeExecutableSet;
     Lock m_lock;
 };
 
