@@ -1,3 +1,18 @@
+2020-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Set ccache as compiler launcher, add opt-in sccache support
+        https://bugs.webkit.org/show_bug.cgi?id=207838
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This change allows for more granular control over the compiler
+        launcher configuration. The build host should no longer need to
+        set ccache symbolic links. Additionally optional support for
+        sccache is added, enabled when the WEBKIT_USE_SCCACHE environment
+        variable is set to YES.
+
+        * Source/cmake/WebKitCCache.cmake:
+
 2020-02-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use builtin targets

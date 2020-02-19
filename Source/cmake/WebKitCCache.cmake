@@ -1,8 +1,20 @@
-# Enable ccache by default for the Mac port, if installed.
-# Setting WK_USE_CCACHE=NO in your environment will disable it.
-if (PORT STREQUAL "Mac" AND NOT "$ENV{WK_USE_CCACHE}" STREQUAL "NO")
+# Enable ccache by default, if installed. Setting WK_USE_CCACHE=NO in your
+# environment will disable it.
+if (NOT "$ENV{WK_USE_CCACHE}" STREQUAL "NO")
     find_program(CCACHE_FOUND ccache)
     if (CCACHE_FOUND)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CMAKE_SOURCE_DIR}/Tools/ccache/ccache-wrapper)
+        if (PORT STREQUAL "Mac")
+            set(CCACHE ${CMAKE_SOURCE_DIR}/Tools/ccache/ccache-wrapper)
+        else ()
+            set(CCACHE ${CCACHE_FOUND})
+        endif ()
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE})
+    endif ()
+endif ()
+
+if ("$ENV{WEBKIT_USE_SCCACHE}" STREQUAL "YES")
+    find_program(SCCACHE_FOUND sccache)
+    if (SCCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${SCCACHE_FOUND})
     endif ()
 endif ()
