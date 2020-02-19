@@ -593,8 +593,16 @@ void WebPage::updateSelectionAppearance()
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     auto& editor = frame.editor();
-    if (!editor.ignoreSelectionChanges() && editor.client()->shouldRevealCurrentSelectionAfterInsertion() && (editor.hasComposition() || !frame.selection().selection().isNone()))
-        didChangeSelection();
+    if (editor.ignoreSelectionChanges())
+        return;
+
+    if (editor.client() && !editor.client()->shouldRevealCurrentSelectionAfterInsertion())
+        return;
+
+    if (!editor.hasComposition() && frame.selection().selection().isNone())
+        return;
+
+    didChangeSelection();
 }
 
 static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, WebCore::PointerID pointerId = WebCore::mousePointerID)

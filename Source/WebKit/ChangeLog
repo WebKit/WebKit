@@ -1,3 +1,18 @@
+2020-02-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] fast/dom/focus-shift-crash.html and editing/selection/selection-change-in-disconnected-frame-crash.html crash after r256864
+        https://bugs.webkit.org/show_bug.cgi?id=207939
+
+        Reviewed by Tim Horton.
+
+        Fix two layout tests that began to crash after r256864 due to a missing null check for EditorClient.
+        To make this conditional a bit easier to read, pull out each case where we should avoid calling
+        didChangeSelection() into a separate early return. The EditorClient may be null on iOS in the case where the
+        Frame has been detached from its Page.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionAppearance):
+
 2020-02-19  Kate Cheney  <katherine_cheney@apple.com>
 
         WebPageProxy::PolicyDecisionSender should send a struct instead of many parameters
