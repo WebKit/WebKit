@@ -126,6 +126,8 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 - (CGPoint)interactionLocation;
 - (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 
+- (BOOL)shouldRevealCurrentSelectionAfterInsertion;
+
 #if ENABLE_ORIENTATION_EVENTS
 - (int)deviceOrientation;
 #endif

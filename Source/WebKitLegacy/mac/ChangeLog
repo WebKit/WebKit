@@ -1,3 +1,22 @@
+2020-02-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS][LegacyWebKit] Override EditorClient::shouldRevealCurrentSelectionAfterInsertion()
+        https://bugs.webkit.org/show_bug.cgi?id=207955
+        <rdar://problem/59602916>
+
+        Reviewed by Wenson Hsieh.
+
+        Wire up EditorClient::shouldRevealCurrentSelectionAfterInsertion() in Legacy WebKit. This
+        allows Legacy WebKit clients to toggle whether the current selection is revealed after
+        an insertion, which they may want to do to achieve a desired UI effect.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldRevealCurrentSelectionAfterInsertion const): Added. Ask the _UIKitDelegateForwarder
+        if it responds to -shouldRevealCurrentSelectionAfterInsertion. If it does then return its
+        response. Otherwise, return true to do what we do now: reveal the current selection after
+        an insertion.
+
 2020-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move from "layer flush" terminology to "rendering update"

@@ -252,6 +252,11 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
     return CGPointZero;
 }
 
+- (BOOL)shouldRevealCurrentSelectionAfterInsertion
+{
+    return YES;
+}
+
 - (void)showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(CGRect)elementRect
 {
 }

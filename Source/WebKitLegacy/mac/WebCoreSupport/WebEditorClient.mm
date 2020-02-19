@@ -823,6 +823,13 @@ int WebEditorClient::getPasteboardItemsCount()
     return 0;
 }
 
+bool WebEditorClient::shouldRevealCurrentSelectionAfterInsertion() const
+{
+    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldRevealCurrentSelectionAfterInsertion)])
+        return [[m_webView _UIKitDelegateForwarder] shouldRevealCurrentSelectionAfterInsertion];
+    return true;
+}
+
 RefPtr<WebCore::DocumentFragment> WebEditorClient::documentFragmentFromDelegate(int index)
 {
     if ([[m_webView _editingDelegateForwarder] respondsToSelector:@selector(documentFragmentForPasteboardItemAtIndex:)]) {
