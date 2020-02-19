@@ -1322,6 +1322,12 @@ static bool shouldRequireUserGestureToLoadVideo()
 #endif
 }
 
+static bool shouldRestrictBaseURLSchemes()
+{
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    return shouldRestrictBaseURLSchemes;
+}
+
 #if ENABLE(GAMEPAD)
 static void WebKitInitializeGamepadProviderIfNecessary()
 {
@@ -1486,6 +1492,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->setCanStartMedia([self window]);
     _private->page->settings().setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
     _private->page->settings().setUseLegacyBackgroundSizeShorthandBehavior(shouldUseLegacyBackgroundSizeShorthandBehavior());
+    _private->page->settings().setShouldRestrictBaseURLSchemes(shouldRestrictBaseURLSchemes());
 
 #if !PLATFORM(IOS_FAMILY)
     if (needsOutlookQuirksScript()) {
