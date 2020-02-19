@@ -1,3 +1,29 @@
+2020-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Support 2D axis, smooth-motion events
+        https://bugs.webkit.org/show_bug.cgi?id=207881
+
+        Reviewed by Carlos Garcia Campos.
+
+        WPE's WebEventFactory should also handle axis events that are capable
+        of providing information about axis change in both dimensions. In case
+        of smooth motion, the delta values should be preserved and not
+        transformed into line-steps.
+
+        Similarly, the ScrollGestureController should also adopt the 2D axis
+        event type, producing smooth-motion events when dispatching handling
+        a scroll gesture.
+
+        The changes are guarded and only enabled when building against at least
+        libwpe 1.5.0 since that's when the new API was added.
+
+        * Shared/libwpe/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+        * UIProcess/API/wpe/ScrollGestureController.h:
+        (WebKit::ScrollGestureController::axisEvent):
+
 2020-02-18  Ben Nham  <nham@apple.com>
 
         Set User-Agent in preconnect requests

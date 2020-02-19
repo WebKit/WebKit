@@ -52,11 +52,21 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
                 || deltaTime >= 200;
         }
         if (m_handling) {
+#if WPE_CHECK_VERSION(1, 5, 0)
+            m_axisEvent.base = {
+                static_cast<enum wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth),
+                touchPoint->time, m_start.x, m_start.y,
+                0, 0, 0,
+            };
+            m_axisEvent.x_axis = m_offset.x - touchPoint->x;
+            m_axisEvent.y_axis = -(m_offset.y - touchPoint->y);
+#else
             m_axisEvent = {
                 wpe_input_axis_event_type_motion,
                 touchPoint->time, m_start.x, m_start.y,
                 2, (touchPoint->y - m_offset.y), 0
             };
+#endif
             m_offset.x = touchPoint->x;
             m_offset.y = touchPoint->y;
             return true;
@@ -65,10 +75,18 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
     case wpe_input_touch_event_type_up:
         if (m_handling) {
             m_handling = false;
+#if WPE_CHECK_VERSION(1, 5, 0)
+            m_axisEvent.base = {
+                wpe_input_axis_event_type_null,
+                0, 0, 0, 0, 0, 0
+            };
+            m_axisEvent.x_axis = m_axisEvent.y_axis = 0;
+#else
             m_axisEvent = {
                 wpe_input_axis_event_type_null,
                 0, 0, 0, 0, 0, 0
             };
+#endif
             return true;
         }
         return false;
