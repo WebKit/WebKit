@@ -253,6 +253,7 @@ void MainWindow::resizeSubViews()
 
 LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    LRESULT result = 0;
     RefPtr<MainWindow> thisWindow = reinterpret_cast<MainWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     switch (message) {
     case WM_ACTIVATE:
@@ -265,6 +266,28 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
     case WM_CREATE:
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(reinterpret_cast<LPCREATESTRUCT>(lParam)->lpCreateParams));
         break;
+    case WM_APPCOMMAND: {
+        auto cmd = GET_APPCOMMAND_LPARAM(lParam);
+        switch (cmd) {
+        case APPCOMMAND_BROWSER_BACKWARD:
+            thisWindow->browserWindow()->navigateForwardOrBackward(false);
+            result = 1;
+            break;
+        case APPCOMMAND_BROWSER_FORWARD:
+            thisWindow->browserWindow()->navigateForwardOrBackward(true);
+            result = 1;
+            break;
+        case APPCOMMAND_BROWSER_HOME:
+            break;
+        case APPCOMMAND_BROWSER_REFRESH:
+            thisWindow->browserWindow()->reload();
+            result = 1;
+            break;
+        case APPCOMMAND_BROWSER_STOP:
+            break;
+        }
+        break;
+    }
     case WM_COMMAND: {
         int wmId = LOWORD(wParam);
         int wmEvent = HIWORD(wParam);
@@ -326,7 +349,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             break;
         case IDM_HISTORY_BACKWARD:
         case IDM_HISTORY_FORWARD:
-            thisWindow->browserWindow()->navigateForwardOrBackward(wmId);
+            thisWindow->browserWindow()->navigateForwardOrBackward(wmId == IDM_HISTORY_FORWARD);
             break;
         case IDM_UA_OTHER:
             DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, customUserAgentDialogProc, reinterpret_cast<LPARAM>(thisWindow.get()));
@@ -375,7 +398,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
-    return 0;
+    return result;
 }
 
 static bool menuItemIsChecked(const MENUITEMINFO& info)

@@ -206,10 +206,10 @@ void WebKitBrowserWindow::reload()
     WKPageReload(page);
 }
 
-void WebKitBrowserWindow::navigateForwardOrBackward(UINT menuID)
+void WebKitBrowserWindow::navigateForwardOrBackward(bool forward)
 {
     auto page = WKViewGetPage(m_view.get());
-    if (menuID == IDM_HISTORY_FORWARD)
+    if (forward)
         WKPageGoForward(page);
     else
         WKPageGoBack(page);

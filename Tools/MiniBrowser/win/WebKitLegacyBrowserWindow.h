@@ -78,7 +78,7 @@ private:
     void showLastVisitedSites(IWebView&);
     void launchInspector();
     void openProxySettings();
-    void navigateForwardOrBackward(UINT menuID);
+    void navigateForwardOrBackward(bool forward);
     void navigateToHistory(UINT menuID);
     bool seedInitialDefaultPreferences();
     bool setToDefaultPreferences();

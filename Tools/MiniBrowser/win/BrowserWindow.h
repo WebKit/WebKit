@@ -44,7 +44,7 @@ public:
 
     virtual HRESULT loadURL(const BSTR& passedURL) = 0;
     virtual void reload() = 0;
-    virtual void navigateForwardOrBackward(UINT menuID) = 0;
+    virtual void navigateForwardOrBackward(bool forward) = 0;
     virtual void navigateToHistory(UINT menuID) = 0;
     virtual void setPreference(UINT menuID, bool enable) = 0;
     virtual bool usesLayeredWebView() const { return false; }

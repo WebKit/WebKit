@@ -43,7 +43,7 @@ private:
 
     HRESULT loadURL(const BSTR& url) override;
     void reload() override;
-    void navigateForwardOrBackward(UINT menuID) override;
+    void navigateForwardOrBackward(bool forward) override;
     void navigateToHistory(UINT menuID) override;
     void setPreference(UINT menuID, bool enable) override;
 

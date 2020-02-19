@@ -411,13 +411,13 @@ void WebKitLegacyBrowserWindow::openProxySettings()
 {
 }
 
-void WebKitLegacyBrowserWindow::navigateForwardOrBackward(UINT menuID)
+void WebKitLegacyBrowserWindow::navigateForwardOrBackward(bool forward)
 {
     if (!m_webView)
         return;
 
     BOOL wentBackOrForward = FALSE;
-    if (IDM_HISTORY_FORWARD == menuID)
+    if (forward)
         m_webView->goForward(&wentBackOrForward);
     else
         m_webView->goBack(&wentBackOrForward);
