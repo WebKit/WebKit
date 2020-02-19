@@ -42,6 +42,7 @@
 #include "MediaQueryParser.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SecurityPolicy.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 
@@ -426,7 +427,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
             // The first <base> element is the one that wins.
             if (!m_predictedBaseElementURL.isEmpty())
                 return;
-            updatePredictedBaseURL(token);
+            updatePredictedBaseURL(token, document.settings().shouldRestrictBaseURLSchemes());
             return;
         }
         if (tagId == TagId::Picture) {
@@ -446,11 +447,15 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     }
 }
 
-void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
+void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool shouldRestrictBaseURLSchemes)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    if (auto* hrefAttribute = findAttribute(token.attributes(), hrefAttr->localName().string()))
-        m_predictedBaseElementURL = URL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value))).isolatedCopy();
+    auto* hrefAttribute = findAttribute(token.attributes(), hrefAttr->localName().string());
+    if (!hrefAttribute)
+        return;
+    URL temp { m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value)) };
+    if (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(temp))
+        m_predictedBaseElementURL = temp.isolatedCopy();
 }
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)

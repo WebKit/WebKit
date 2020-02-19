@@ -219,6 +219,10 @@ AllowCrossOriginSubresourcesToAskForCredentials:
   type: bool
   defaultValue: false
 
+ShouldRestrictBaseURLSchemes:
+  type: bool
+  defaultValue: false
+
 AVFoundationEnabled:
   type: bool
   defaultValue: DEFAULT_AVFOUNDATION_ENABLED

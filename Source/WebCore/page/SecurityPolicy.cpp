@@ -145,6 +145,12 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     return url.isEmpty() || equalIgnoringASCIICase(url.string(), WTF::blankURL()) || equalLettersIgnoringASCIICase(url.string(), "about:srcdoc");
 }
 
+bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)
+{
+    // See <https://github.com/whatwg/html/issues/2249>.
+    return !url.protocolIsData() && !WTF::protocolIsJavaScript(url);
+}
+
 void SecurityPolicy::setLocalLoadPolicy(LocalLoadPolicy policy)
 {
     localLoadPolicy = policy;
