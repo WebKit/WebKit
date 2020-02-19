@@ -799,14 +799,14 @@ void FrameView::willRecalcStyle()
     renderView->compositor().willRecalcStyle();
 }
 
-void FrameView::styleDidChange()
+void FrameView::styleAndRenderTreeDidChange()
 {
-    ScrollView::styleDidChange();
-    RenderView* renderView = this->renderView();
+    ScrollView::styleAndRenderTreeDidChange();
+    auto* renderView = this->renderView();
     if (!renderView)
         return;
 
-    RenderLayer* layerTreeMutationRoot = renderView->takeStyleChangeLayerTreeMutationRoot();
+    auto* layerTreeMutationRoot = renderView->takeStyleChangeLayerTreeMutationRoot();
     if (layerTreeMutationRoot && !needsLayout())
         layerTreeMutationRoot->updateLayerPositionsAfterStyleChange();
 }

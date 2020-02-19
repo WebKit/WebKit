@@ -135,8 +135,6 @@ public:
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
     IntSize viewportSizeForCSSViewportUnits() const;
 
     bool hasQuotesNeedingUpdate() const { return m_hasQuotesNeedingUpdate; }

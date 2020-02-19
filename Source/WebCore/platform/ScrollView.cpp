@@ -1515,7 +1515,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollPosition());
 }
 
-void ScrollView::styleDidChange()
+void ScrollView::styleAndRenderTreeDidChange()
 {
     if (m_horizontalScrollbar)
         m_horizontalScrollbar->styleChanged();

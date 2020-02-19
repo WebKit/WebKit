@@ -727,13 +727,6 @@ void RenderView::setIsInWindow(bool isInWindow)
         m_compositor->setIsInWindow(isInWindow);
 }
 
-void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlockFlow::styleDidChange(diff, oldStyle);
-
-    frameView().styleDidChange();
-}
-
 ImageQualityController& RenderView::imageQualityController()
 {
     if (!m_imageQualityController)

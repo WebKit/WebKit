@@ -1995,7 +1995,7 @@ void Document::resolveStyle(ResolveStyleType type)
             RenderTreeUpdater updater(*this);
             updater.commit(WTFMove(styleUpdate));
 
-            frameView.styleDidChange();
+            frameView.styleAndRenderTreeDidChange();
         }
 
         updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
