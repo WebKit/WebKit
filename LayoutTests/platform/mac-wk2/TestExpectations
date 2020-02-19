@@ -1061,3 +1061,5 @@ webkit.org/b/207941 [ Mojave Release ] webrtc/video-replace-muted-track.html [ S
 webkit.org/b/207953 [ Release ] fast/scrolling/latching/scroll-iframe-in-overflow.html [ Pass Failure ]
 
 webkit.org/b/207954 http/tests/inspector/network/har/har-page.html [ Pass Failure ]
+
+webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
