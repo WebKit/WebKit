@@ -1416,6 +1416,14 @@ webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Time
 webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
 
 # skip LFC regression tests on iOS for now.
+<<<<<<< HEAD
 fast/layoutformattingcontext/ [ Skip ]
 
 webkit.org/b/207896 fast/canvas/webgl/oes-vertex-array-object.html [ Pass Failure ]
+=======
+fast/layoutformattingcontext/block-only/ [ Skip ]
+
+webkit.org/b/207858 fast/canvas/webgl/oes-vertex-array-object.html [ Pass Failure ]
+
+webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
+>>>>>>> Changed results due to ANGLE use
