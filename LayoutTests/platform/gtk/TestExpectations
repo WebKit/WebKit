@@ -1717,7 +1717,6 @@ webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
 
-webkit.org/b/134573 media/track/audio-track.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/track-cue-rendering.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass Crash ]
@@ -2449,6 +2448,8 @@ webkit.org/b/198830 [ Release ] media/video-src-set.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/W3C/video/events/event_order_loadedmetadata_loadeddata.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/W3C/video/events/event_playing.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/W3C/video/networkState/networkState_during_loadstart.html [ Pass Crash ]
+
+webkit.org/b/198830 [ Release ] media/track/audio-track.html [ Pass Crash ]
 
 webkit.org/b/207927 [ Release ] media/audio-playback-restriction-removed-muted.html [ Pass Crash ]
 

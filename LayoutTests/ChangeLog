@@ -1,3 +1,17 @@
+2020-02-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Layout Test media/track/audio-track.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=134573
+
+        Unreviewed test gardening.
+
+        This test has not timeout (on its own) since r180689 (Feb 2015) other
+        than 4 timeouts on a bot hiccup up to r2545640 with other media tests.
+        Updating its expectation to reflect the new behavior affected by
+        bug198830.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-19  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] http/tests/inspector/network/har/har-page.html is flaky failing
