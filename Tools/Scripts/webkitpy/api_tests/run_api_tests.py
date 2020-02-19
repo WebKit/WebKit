@@ -41,7 +41,6 @@ _log = logging.getLogger(__name__)
 def main(argv, stdout, stderr):
     options, args = parse_args(argv)
     host = Host()
-    host.initialize_scm()
 
     try:
         options.webkit_test_runner = True

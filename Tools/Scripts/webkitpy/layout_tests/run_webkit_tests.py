@@ -64,7 +64,6 @@ def main(argv, stdout, stderr):
         host = MockHost()
     else:
         host = Host()
-        host.initialize_scm()
 
     if options.lint_test_files:
         from webkitpy.layout_tests.lint_test_expectations import lint
