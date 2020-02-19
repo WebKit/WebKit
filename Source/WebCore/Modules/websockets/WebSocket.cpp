@@ -324,9 +324,9 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    auto reportRegistrableDomain = [url = m_url](ScriptExecutionContext& context) {
+    auto reportRegistrableDomain = [domain = RegistrableDomain(m_url).isolatedCopy()](auto& context) mutable {
         if (auto* frame = downcast<Document>(context).frame())
-            frame->loader().client().addLoadedRegistrableDomain(RegistrableDomain(url));
+            frame->loader().client().addLoadedRegistrableDomain(WTFMove(domain));
     };
     if (is<Document>(context))
         reportRegistrableDomain(context);
