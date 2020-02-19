@@ -35,26 +35,6 @@
 
 namespace JSC { namespace Wasm {
 
-static Vector<GPRReg> getPinnedRegisters(unsigned remainingPinnedRegisters)
-{
-    Vector<GPRReg> registers;
-    jsCallingConvention().calleeSaveRegisters.forEach([&] (Reg reg) {
-        if (!reg.isGPR())
-            return;
-        GPRReg gpr = reg.gpr();
-        if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
-            return;
-        if (RegisterSet::runtimeTagRegisters().get(reg)) {
-            // Since we don't need to, we currently don't pick from the tag registers to allow
-            // JS->Wasm stubs to freely use these registers.
-            return;
-        }
-        --remainingPinnedRegisters;
-        registers.append(gpr);
-    });
-    return registers;
-}
-
 const PinnedRegisterInfo& PinnedRegisterInfo::get()
 {
     static LazyNeverDestroyed<PinnedRegisterInfo> staticPinnedRegisterInfo;
@@ -63,8 +43,6 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         unsigned numberOfPinnedRegisters = 2;
         if (!Context::useFastTLS())
             ++numberOfPinnedRegisters;
-        Vector<GPRReg> pinnedRegs = getPinnedRegisters(numberOfPinnedRegisters);
-
         GPRReg baseMemoryPointer = GPRInfo::regCS3;
         GPRReg sizeRegister = GPRInfo::regCS4;
         GPRReg wasmContextInstancePointer = InvalidGPRReg;
