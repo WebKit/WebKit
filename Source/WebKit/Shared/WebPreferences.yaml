@@ -1544,7 +1544,7 @@ CaptureVideoInGPUProcessEnabled:
 
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Aspect ratio of <img> from width and height"
   humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
   category: experimental
