@@ -1,4 +1,4 @@
 
 
-FAIL Deferred images with loading='lazy' use the original base URL specified at the parse time assert_true: Below-viewport loading=lazy images do not block the window load event expected true got false
+FAIL Deferred images with loading='lazy' use the original base URL specified at the parse time assert_unreached: The image request should not load relative to the current (incorrect) base URL. Reached unreachable code
 

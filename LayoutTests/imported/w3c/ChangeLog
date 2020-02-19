@@ -1,3 +1,28 @@
+2020-02-19  Rob Buis  <rbuis@igalia.com>
+
+        Main implementation for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=200764
+
+        Reviewed by Frédéric Wang.
+
+        When updating WPT tests in a lost minute change I forgot to add webkit-test-runner headers.
+        Remaining failures are tracked in https://bugs.webkit.org/show_bug.cgi?id=207902 and
+        https://bugs.webkit.org/show_bug.cgi?id=207901.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-001.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-001.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-002.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-002.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-2-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-2.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-iframe.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-referrer-policy-applied.sub-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-referrer-policy-applied.sub.html:
+
 2020-02-17  Chris Dumez  <cdumez@apple.com>
 
         Defer execution of async scripts until until the document is loaded

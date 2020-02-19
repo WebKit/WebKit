@@ -1,3 +1,17 @@
+2020-02-19  Rob Buis  <rbuis@igalia.com>
+
+        Main implementation for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=200764
+
+        Reviewed by Frédéric Wang.
+
+        Update test expectations to skip
+        image-loading-lazy-in-cross-origin-ifame-001.sub.html and
+        image-loading-lazy-in-cross-origin-ifame-002.sub.html.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-02-19  Alejandro G. Castro  <alex@igalia.com>
 
         REGRESSION(r188639): Several inspector tests timeout because they are slow after r188639
