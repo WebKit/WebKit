@@ -1617,7 +1617,7 @@ void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
     scrollTo({ x, y }, clamping);
 }
 
-void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping) const
+void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1636,7 +1636,7 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping) const
     document()->updateLayoutIgnorePendingStylesheets();
 
     IntPoint layoutPos(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
-    view->setContentsScrollPosition(layoutPos);
+    view->setContentsScrollPosition(layoutPos, clamping);
 }
 
 bool DOMWindow::allowedToChangeWindowGeometry() const

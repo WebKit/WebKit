@@ -62,8 +62,8 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const Scrol
     const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
     if (overflowStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
-        auto scrollType = overflowStateNode.requestedScrollPositionRepresentsProgrammaticScroll() ? ScrollType::Programmatic : ScrollType::User;
-        scrollTo(overflowStateNode.requestedScrollPosition(), scrollType);
+        const auto& requestedScrollData = overflowStateNode.requestedScrollData();
+        scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
     }
 }
 
@@ -83,7 +83,7 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
     return ScrollingEventResult::DidHandleEvent;
 }
 
-FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp) const
+FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const
 {
     FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
     return ScrollingTreeOverflowScrollingNode::adjustedScrollPosition(scrollPosition, clamp);

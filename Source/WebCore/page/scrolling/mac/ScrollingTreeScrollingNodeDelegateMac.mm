@@ -235,7 +235,7 @@ void ScrollingTreeScrollingNodeDelegateMac::immediateScrollBy(const FloatSize& d
 
 void ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& offset)
 {
-    scrollingNode().scrollBy(offset, ScrollPositionClamp::None);
+    scrollingNode().scrollBy(offset, ScrollClamping::Unclamped);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::stopSnapRubberbandTimer()
