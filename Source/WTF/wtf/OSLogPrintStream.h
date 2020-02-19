@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,38 @@
 
 #pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
+#if OS(DARWIN)
+
+#include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/RecursiveLockAdapter.h>
+#include <wtf/text/CString.h>
+#include <wtf/Vector.h>
+
+#include <os/log.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
-WTF_EXPORT_PRIVATE void setDataFile(const char* path);
-WTF_EXPORT_PRIVATE void setDataFile(std::unique_ptr<PrintStream>&&);
+class WTF_EXPORT_PRIVATE OSLogPrintStream final : public PrintStream {
+public:
+    OSLogPrintStream(os_log_t, os_log_type_t);
+    virtual ~OSLogPrintStream();
+    
+    static std::unique_ptr<OSLogPrintStream> open(const char* subsystem, const char* category, os_log_type_t = OS_LOG_TYPE_DEFAULT);
+    
+    void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
-
-template<typename... Types>
-NEVER_INLINE void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
-
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataLog(values..., "\n");
-}
-
-template<typename... Types>
-ALWAYS_INLINE void dataLogIf(bool shouldLog, const Types&... values)
-{
-    if (UNLIKELY(shouldLog))
-        dataLog(values...);
-}
-
-template<typename... Types>
-ALWAYS_INLINE void dataLogLnIf(bool shouldLog, const Types&... values)
-{
-    if (UNLIKELY(shouldLog))
-        dataLogLn(values...);
-}
+private:
+    os_log_t m_log;
+    os_log_type_t m_logType;
+    Lock m_stringLock;
+    // We need a buffer because os_log doesn't wait for a new line to print the characters.
+    CString m_string;
+    size_t m_offset { 0 };
+};
 
 } // namespace WTF
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogIf;
-using WTF::dataLogLnIf;
-using WTF::dataLogF;
-using WTF::dataLogFString;
+using WTF::OSLogPrintStream;
+
+#endif

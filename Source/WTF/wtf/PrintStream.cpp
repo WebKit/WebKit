@@ -77,13 +77,18 @@ void printInternal(PrintStream& out, const char* string)
 static void printExpectedCStringHelper(PrintStream& out, const char* type, Expected<CString, UTF8ConversionError> expectedCString)
 {
     if (UNLIKELY(!expectedCString)) {
-        if (expectedCString.error() == UTF8ConversionError::OutOfMemory)
-            out.print("(Out of memory while converting ", type, " to utf8)");
-        else
-            out.print("(failed to convert ", type, " to utf8)");
+        if (expectedCString.error() == UTF8ConversionError::OutOfMemory) {
+            printInternal(out, "(Out of memory while converting ");
+            printInternal(out, type);
+            printInternal(out, " to utf8)");
+        } else {
+            printInternal(out, "(failed to convert ");
+            printInternal(out, type);
+            printInternal(out, " to utf8)");
+        }
         return;
     }
-    out.print(expectedCString.value());
+    printInternal(out, expectedCString.value());
 }
 
 void printInternal(PrintStream& out, const StringView& string)
@@ -93,7 +98,7 @@ void printInternal(PrintStream& out, const StringView& string)
 
 void printInternal(PrintStream& out, const CString& string)
 {
-    out.print(string.data());
+    printInternal(out, string.data());
 }
 
 void printInternal(PrintStream& out, const String& string)
@@ -104,7 +109,7 @@ void printInternal(PrintStream& out, const String& string)
 void printInternal(PrintStream& out, const StringImpl* string)
 {
     if (!string) {
-        out.print("(null StringImpl*)");
+        printInternal(out, "(null StringImpl*)");
         return;
     }
     printExpectedCStringHelper(out, "StringImpl*", string->tryGetUtf8());
@@ -167,7 +172,7 @@ void printInternal(PrintStream& out, unsigned long long value)
 
 void printInternal(PrintStream& out, float value)
 {
-    out.print(static_cast<double>(value));
+    printInternal(out, static_cast<double>(value));
 }
 
 void printInternal(PrintStream& out, double value)

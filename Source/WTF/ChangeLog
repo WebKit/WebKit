@@ -1,3 +1,37 @@
+2020-02-18  Keith Miller  <keith_miller@apple.com>
+
+        Add an os_log PrintStream
+        https://bugs.webkit.org/show_bug.cgi?id=207898
+
+        Reviewed by Mark Lam.
+
+        When debugging on iOS writing to a file can be hard (thanks
+        Sandboxing!)  so logging our dataLogs to os_log would make things
+        easier. This patch adds a new subclass of PrintStream,
+        OSLogPrintStream, that converts our file writes to
+        os_log. Unfortunately, os_log doesn't buffer writes so
+        OSLogPrintStream needs to do its own buffering. e.g. if you call
+        `dataLogLn("some text with a ", number, " and a ", string);`
+        os_log will log that as 5 separate logs.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DataLog.cpp:
+        (WTF::setDataFile):
+        * wtf/DataLog.h:
+        * wtf/OSLogPrintStream.cpp: Added.
+        (WTF::OSLogPrintStream::OSLogPrintStream):
+        (WTF::OSLogPrintStream::~OSLogPrintStream):
+        (WTF::OSLogPrintStream::open):
+        (WTF::OSLogPrintStream::vprintf):
+        * wtf/OSLogPrintStream.h: Copied from Source/WTF/wtf/DataLog.h.
+        * wtf/PrintStream.cpp:
+        (WTF::printExpectedCStringHelper):
+        (WTF::printInternal):
+        * wtf/text/CString.cpp:
+        (WTF::CString::grow):
+        * wtf/text/CString.h:
+
 2020-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move from "layer flush" terminology to "rendering update"

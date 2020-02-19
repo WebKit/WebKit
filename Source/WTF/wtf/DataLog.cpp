@@ -166,6 +166,11 @@ void setDataFile(const char* path)
     s_file = new (s_lockedFileData) LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
 }
 
+void setDataFile(std::unique_ptr<PrintStream>&& file)
+{
+    s_file = file.release();
+}
+
 PrintStream& dataFile()
 {
     initializeLogFile();

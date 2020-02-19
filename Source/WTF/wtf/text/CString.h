@@ -84,6 +84,9 @@ public:
     
     WTF_EXPORT_PRIVATE unsigned hash() const;
 
+    // Useful if you want your CString to hold dynamic data.
+    WTF_EXPORT_PRIVATE void grow(size_t newLength);
+
 private:
     void copyBufferIfNeeded();
     void init(const char*, size_t length);

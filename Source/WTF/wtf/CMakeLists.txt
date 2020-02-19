@@ -148,6 +148,7 @@ set(WTF_PUBLIC_HEADERS
     NotFound.h
     NumberOfCores.h
     OSAllocator.h
+    OSLogPrintStream.h
     OSObjectPtr.h
     OSRandomSource.h
     ObjCRuntimeExtras.h
@@ -400,6 +401,7 @@ set(WTF_SOURCES
     MetaAllocator.cpp
     MonotonicTime.cpp
     NumberOfCores.cpp
+    OSLogPrintStream.cpp
     OSRandomSource.cpp
     ObjectIdentifier.cpp
     PageBlock.cpp

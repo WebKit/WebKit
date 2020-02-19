@@ -106,6 +106,15 @@ bool CString::isSafeToSendToAnotherThread() const
     return !m_buffer || m_buffer->hasOneRef();
 }
 
+void CString::grow(size_t newLength)
+{
+    ASSERT(newLength > length());
+
+    auto newBuffer = CStringBuffer::createUninitialized(newLength);
+    memcpy(newBuffer->mutableData(), m_buffer->data(), length() + 1);
+    m_buffer = WTFMove(newBuffer);
+}
+
 bool operator==(const CString& a, const CString& b)
 {
     if (a.isNull() != b.isNull())
