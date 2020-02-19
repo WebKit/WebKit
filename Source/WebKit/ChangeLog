@@ -1,5 +1,40 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256426. rdar://problem/59576790
+
+    [ Mac Debug wk2 ] ASSERTION FAILED: m_wasConstructedOnMainThread == isMainThread()
+    https://bugs.webkit.org/show_bug.cgi?id=207509
+    <rdar://problem/59325466>
+    
+    Reviewed by Chris Dumez.
+    
+    Covered by existing tests.
+    
+    * NetworkProcess/cache/CacheStorageEngine.cpp:
+    (WebKit::CacheStorage::Engine::writeSizeFile):
+    Make sure completion handler is always called on the main thread.
+    Minor refactoring to make things more efficient.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256426 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-11  Youenn Fablet  <youenn@apple.com>
+
+            [ Mac Debug wk2 ] ASSERTION FAILED: m_wasConstructedOnMainThread == isMainThread()
+            https://bugs.webkit.org/show_bug.cgi?id=207509
+            <rdar://problem/59325466>
+
+            Reviewed by Chris Dumez.
+
+            Covered by existing tests.
+
+            * NetworkProcess/cache/CacheStorageEngine.cpp:
+            (WebKit::CacheStorage::Engine::writeSizeFile):
+            Make sure completion handler is always called on the main thread.
+            Minor refactoring to make things more efficient.
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256314. rdar://problem/59576791
 
     WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should

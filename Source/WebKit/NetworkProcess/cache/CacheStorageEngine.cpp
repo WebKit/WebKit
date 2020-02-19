@@ -530,23 +530,25 @@ void Engine::removeFile(const String& filename)
 
 void Engine::writeSizeFile(const String& path, uint64_t size, CompletionHandler<void()>&& completionHandler)
 {
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    if (!shouldPersist())
-        return;
+    ASSERT(RunLoop::isMain());
 
-    m_ioQueue->dispatch([path = path.isolatedCopy(), size, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
+    if (!shouldPersist())
+        return completionHandler();
+
+    m_ioQueue->dispatch([path = path.isolatedCopy(), size, completionHandler = WTFMove(completionHandler)]() mutable {
         LockHolder locker(globalSizeFileLock);
         auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
-        auto closeFileHandler = makeScopeExit([&] {
+
+        if (FileSystem::isHandleValid(fileHandle)) {
+            FileSystem::truncateFile(fileHandle, 0);
+
+            auto value = String::number(size).utf8();
+            FileSystem::writeToFile(fileHandle, value.data(), value.length());
+
             FileSystem::closeFile(fileHandle);
-        });
-        if (!FileSystem::isHandleValid(fileHandle))
-            return;
+        }
 
-        FileSystem::truncateFile(fileHandle, 0);
-        FileSystem::writeToFile(fileHandle, String::number(size).utf8().data(), String::number(size).utf8().length());
-
-        RunLoop::main().dispatch([completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable { });
+        RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
 
