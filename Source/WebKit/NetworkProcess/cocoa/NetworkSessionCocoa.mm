@@ -850,7 +850,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
         // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's
         // NetworkLoadMetrics. For example, PerformanceTiming.
-        copyTimingData([dataTask _timingData], resourceResponse.deprecatedNetworkLoadMetrics());
+        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData([dataTask _timingData]));
 
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {

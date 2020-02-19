@@ -51,7 +51,6 @@ public:
     void appendHTTPHeaderField(const String&);
 
     void setCertificateInfo(CertificateInfo&&);
-    void setDeprecatedNetworkLoadMetrics(NetworkLoadMetrics&&);
 
     bool shouldRedirect();
     bool isMovedPermanently() const;

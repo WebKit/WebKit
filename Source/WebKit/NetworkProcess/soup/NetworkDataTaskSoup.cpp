@@ -356,16 +356,17 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 {
     ASSERT(!m_response.isNull());
 
+    Box<NetworkLoadMetrics> timing = Box<NetworkLoadMetrics>::create();
+    timing->responseStart = m_networkLoadMetrics.responseStart;
+    timing->domainLookupStart = m_networkLoadMetrics.domainLookupStart;
+    timing->domainLookupEnd = m_networkLoadMetrics.domainLookupEnd;
+    timing->connectStart = m_networkLoadMetrics.connectStart;
+    timing->secureConnectionStart = m_networkLoadMetrics.secureConnectionStart;
+    timing->connectEnd = m_networkLoadMetrics.connectEnd;
+    timing->requestStart = m_networkLoadMetrics.requestStart;
+    timing->responseStart = m_networkLoadMetrics.responseStart;
     // FIXME: Remove this once nobody depends on deprecatedNetworkLoadMetrics.
-    NetworkLoadMetrics& deprecatedResponseMetrics = m_response.deprecatedNetworkLoadMetrics();
-    deprecatedResponseMetrics.responseStart = m_networkLoadMetrics.responseStart;
-    deprecatedResponseMetrics.domainLookupStart = m_networkLoadMetrics.domainLookupStart;
-    deprecatedResponseMetrics.domainLookupEnd = m_networkLoadMetrics.domainLookupEnd;
-    deprecatedResponseMetrics.connectStart = m_networkLoadMetrics.connectStart;
-    deprecatedResponseMetrics.secureConnectionStart = m_networkLoadMetrics.secureConnectionStart;
-    deprecatedResponseMetrics.connectEnd = m_networkLoadMetrics.connectEnd;
-    deprecatedResponseMetrics.requestStart = m_networkLoadMetrics.requestStart;
-    deprecatedResponseMetrics.responseStart = m_networkLoadMetrics.responseStart;
+    m_response.setDeprecatedNetworkLoadMetrics(WTFMove(timing));
 
     didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {

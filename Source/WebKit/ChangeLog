@@ -1,5 +1,125 @@
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256632. rdar://problem/59576783
+
+    NetworkLoadMetrics should be shared by multiple ResourceResponse instances
+    https://bugs.webkit.org/show_bug.cgi?id=207747
+    
+    Reviewed by Keith Miller.
+    
+    Source/WebCore:
+    
+    ResourceResponse is value data, and it is copied multiple times in various places, (1) to create a new ResourceResponse
+    which has slightly different fields, or (1) to hold ResourceResponse even after loading finishes. For example, DocumentLoader
+    has Vector<ResourceResponse> to replay response dispatching in the case of loading from BackForwardCache. The problem is
+    that ResourceResponse is very large: 440 bytes.
+    
+    While we sometimes copy ResourceResponse to modify some part of it, NetworkLoadMetrics is immutable. It is set when response is created,
+    and is never changed. And NetworkLoadMetrics is large: sizeof(NetworkLoadMetrics) is 184 bytes. Given that we have multiple
+    copies of ResourceResponse in WebCore, we should share NetworkLoadMetrics by them.
+    
+    This patch puts Box<NetworkLoadMetrics> in ResourceResponse to share it with all copied ResourceResponses. We do not make NetworkLoadMetrics
+    RefCounted<> for now since some legit data structures embed NetworkLoadMetrics. This patch adds ArgumentCoder for Box so that we
+    can encode / decode Box<NetworkLoadMetrics> in ResourceResponse in IPC. To ensure NetworkLoadMetrics in ResourceResponse immutable,
+    we add ResourceResponse::setDeprecatedNetworkLoadMetrics instead of modifying NetworkLoadMetrics already created in ResourceResponse.
+    
+    We also attempt to compact ResourceResponse more by using bit-fields. And removing m_isValid field in ParsedContentRange since
+    this can be represented by the different field. These changes make sizeof(ResourceResponse) from 440 to 248.
+    
+    No behavior change.
+    
+    * inspector/agents/InspectorNetworkAgent.cpp:
+    (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+    (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+    * inspector/agents/InspectorNetworkAgent.h:
+    * loader/DocumentThreadableLoader.cpp:
+    (WebCore::DocumentThreadableLoader::loadRequest):
+    * loader/SubresourceLoader.cpp:
+    (WebCore::SubresourceLoader::didFinishLoading):
+    * page/PerformanceTiming.cpp:
+    (WebCore::PerformanceTiming::domainLookupStart const):
+    (WebCore::PerformanceTiming::domainLookupEnd const):
+    (WebCore::PerformanceTiming::connectStart const):
+    (WebCore::PerformanceTiming::connectEnd const):
+    (WebCore::PerformanceTiming::secureConnectionStart const):
+    (WebCore::PerformanceTiming::requestStart const):
+    (WebCore::PerformanceTiming::responseStart const):
+    * platform/network/NetworkLoadMetrics.h:
+    * platform/network/ParsedContentRange.cpp:
+    (WebCore::areContentRangeValuesValid):
+    (WebCore::parseContentRange):
+    (WebCore::ParsedContentRange::ParsedContentRange):
+    (WebCore::ParsedContentRange::headerValue const):
+    * platform/network/ParsedContentRange.h:
+    (WebCore::ParsedContentRange::isValid const):
+    (WebCore::ParsedContentRange::invalidValue):
+    (WebCore::ParsedContentRange::MarkableTraits::isEmptyValue):
+    (WebCore::ParsedContentRange::MarkableTraits::emptyValue):
+    (WebCore::ParsedContentRange::ParsedContentRange): Deleted.
+    * platform/network/ResourceHandle.h:
+    * platform/network/ResourceResponseBase.cpp:
+    (WebCore::ResourceResponseBase::ResourceResponseBase):
+    (WebCore::ResourceResponseBase::crossThreadData const):
+    (WebCore::ResourceResponseBase::fromCrossThreadData):
+    (WebCore::ResourceResponseBase::compare):
+    * platform/network/ResourceResponseBase.h:
+    (WebCore::ResourceResponseBase::deprecatedNetworkLoadMetricsOrNull const):
+    (WebCore::ResourceResponseBase::setDeprecatedNetworkLoadMetrics):
+    (WebCore::ResourceResponseBase::encode const):
+    (WebCore::ResourceResponseBase::decode):
+    (WebCore::ResourceResponseBase::deprecatedNetworkLoadMetrics const): Deleted.
+    * platform/network/cf/ResourceResponse.h:
+    (WebCore::ResourceResponse::ResourceResponse):
+    * platform/network/cocoa/NetworkLoadMetrics.mm:
+    (WebCore::copyTimingData):
+    * platform/network/curl/CurlResourceHandleDelegate.cpp:
+    (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+    * platform/network/curl/ResourceResponse.h:
+    * platform/network/curl/ResourceResponseCurl.cpp:
+    (WebCore::ResourceResponse::setDeprecatedNetworkLoadMetrics): Deleted.
+    * platform/network/mac/ResourceHandleMac.mm:
+    (WebCore::ResourceHandle::getConnectionTimingData):
+    * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+    (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+    
+    Source/WebKit:
+    
+    Add ArgumentCoder support for Box<T>.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+    * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+    (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+    * Platform/IPC/ArgumentCoders.h:
+    (IPC::ArgumentCoder<Box<T>>::encode):
+    (IPC::ArgumentCoder<Box<T>>::decode):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/ParsedContentRange.cpp:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256632 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            NetworkLoadMetrics should be shared by multiple ResourceResponse instances
+            https://bugs.webkit.org/show_bug.cgi?id=207747
+
+            Reviewed by Keith Miller.
+
+            Add ArgumentCoder support for Box<T>.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+            * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+            (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+            * Platform/IPC/ArgumentCoders.h:
+            (IPC::ArgumentCoder<Box<T>>::encode):
+            (IPC::ArgumentCoder<Box<T>>::decode):
+
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256426. rdar://problem/59576790
 
     [ Mac Debug wk2 ] ASSERTION FAILED: m_wasConstructedOnMainThread == isMainThread()

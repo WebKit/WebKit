@@ -37,10 +37,12 @@ static double timingValue(NSDictionary *timingData, NSString *key)
     return 0.0;
 }
     
-void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics& timing)
+Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData)
 {
     if (!timingData)
-        return;
+        return nullptr;
+
+    Box<NetworkLoadMetrics> timing = Box<NetworkLoadMetrics>::create();
 
     // This is not the navigationStart time in monotonic time, but the other times are relative to this time
     // and only the differences between times are stored.
@@ -54,15 +56,16 @@ void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics& timing)
     double requestStart = timingValue(timingData, @"_kCFNTimingDataRequestStart");
     double responseStart = timingValue(timingData, @"_kCFNTimingDataResponseStart");
 
-    timing.domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - referenceStart);
-    timing.domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - referenceStart);
-    timing.connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - referenceStart);
-    timing.secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - referenceStart);
-    timing.connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - referenceStart);
-    timing.requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - referenceStart);
-    timing.responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - referenceStart);
+    timing->domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - referenceStart);
+    timing->domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - referenceStart);
+    timing->connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - referenceStart);
+    timing->secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - referenceStart);
+    timing->connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - referenceStart);
+    timing->requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - referenceStart);
+    timing->responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - referenceStart);
 
     // NOTE: responseEnd is not populated in this code path.
+    return timing;
 }
     
 }

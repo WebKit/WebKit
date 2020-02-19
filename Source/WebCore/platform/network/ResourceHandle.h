@@ -27,6 +27,7 @@
 
 #include "AuthenticationClient.h"
 #include "StoredCredentialsPolicy.h"
+#include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -131,9 +132,9 @@ public:
 
 #if PLATFORM(COCOA)
 #if USE(CFURLCONNECTION)
-    static void getConnectionTimingData(CFURLConnectionRef, NetworkLoadMetrics&);
+    static Box<NetworkLoadMetrics> getConnectionTimingData(CFURLConnectionRef);
 #else
-    static void getConnectionTimingData(NSURLConnection *, NetworkLoadMetrics&);
+    static Box<NetworkLoadMetrics> getConnectionTimingData(NSURLConnection *);
 #endif
 #endif
 

@@ -630,7 +630,13 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         didReceiveData(identifier, data->data(), data->size());
 
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-        auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.deprecatedNetworkLoadMetrics(), response, securityOrigin());
+        const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
+        Optional<NetworkLoadMetrics> empty;
+        if (!timing) {
+            empty.emplace();
+            timing = &empty.value();
+        }
+        auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, *timing, response, securityOrigin());
         if (options().initiatorContext == InitiatorContext::Worker)
             finishedTimingForWorkerLoad(resourceTiming);
         else {

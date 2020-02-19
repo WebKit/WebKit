@@ -28,6 +28,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include <utility>
+#include <wtf/Box.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/SHA1.h>
@@ -120,6 +121,54 @@ template<typename T> struct ArgumentCoder<Optional<T>> {
             return Optional<Optional<T>>(WTFMove(*value));
         }
         return Optional<Optional<T>>(Optional<T>(WTF::nullopt));
+    }
+};
+
+template<typename T> struct ArgumentCoder<Box<T>> {
+    static void encode(Encoder& encoder, const Box<T>& box)
+    {
+        if (!box) {
+            encoder << false;
+            return;
+        }
+
+        encoder << true;
+        encoder << *box.get();
+    }
+
+    static bool decode(Decoder& decoder, Box<T>& box)
+    {
+        bool isEngaged;
+        if (!decoder.decode(isEngaged))
+            return false;
+
+        if (!isEngaged) {
+            box = nullptr;
+            return true;
+        }
+
+        Box<T> value = Box<T>::create();
+        if (!decoder.decode(*value))
+            return false;
+
+        box = WTFMove(value);
+        return true;
+    }
+
+    static Optional<Box<T>> decode(Decoder& decoder)
+    {
+        Optional<bool> isEngaged;
+        decoder >> isEngaged;
+        if (!isEngaged)
+            return WTF::nullopt;
+        if (*isEngaged) {
+            Optional<T> value;
+            decoder >> value;
+            if (!value)
+                return WTF::nullopt;
+            return Optional<Box<T>>(Box<T>::create(WTFMove(*value)));
+        }
+        return Optional<Box<T>>(Box<T>(nullptr));
     }
 };
 

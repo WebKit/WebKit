@@ -40,7 +40,7 @@ TEST(WebCore, ParsedContentRangeFromString)
     ASSERT_EQ(0, ParsedContentRange("bytes 0-1/2").firstBytePosition());
     ASSERT_EQ(1, ParsedContentRange("bytes 0-1/2").lastBytePosition());
     ASSERT_EQ(2, ParsedContentRange("bytes 0-1/2").instanceLength());
-    ASSERT_EQ(ParsedContentRange::UnknownLength, ParsedContentRange("bytes 0-1/*").instanceLength());
+    ASSERT_EQ(ParsedContentRange::unknownLength, ParsedContentRange("bytes 0-1/*").instanceLength());
 
     // Whitespace errors
     ASSERT_FALSE(ParsedContentRange("bytes  0-1/*").isValid());
@@ -77,7 +77,7 @@ TEST(WebCore, ParsedContentRangeFromString)
 TEST(WebCore, ParsedContentRangeFromValues)
 {
     ASSERT_TRUE(ParsedContentRange(0, 1, 2).isValid());
-    ASSERT_TRUE(ParsedContentRange(0, 1, ParsedContentRange::UnknownLength).isValid());
+    ASSERT_TRUE(ParsedContentRange(0, 1, ParsedContentRange::unknownLength).isValid());
     ASSERT_FALSE(ParsedContentRange().isValid());
     ASSERT_FALSE(ParsedContentRange(1, 0, 2).isValid());
     ASSERT_FALSE(ParsedContentRange(0, 2, 1).isValid());
@@ -91,7 +91,7 @@ TEST(WebCore, ParsedContentRangeFromValues)
 TEST(WebCore, ParsedContentRangeToString)
 {
     ASSERT_STREQ("bytes 0-1/2", ParsedContentRange(0, 1, 2).headerValue().utf8().data());
-    ASSERT_STREQ("bytes 0-1/*", ParsedContentRange(0, 1, ParsedContentRange::UnknownLength).headerValue().utf8().data());
+    ASSERT_STREQ("bytes 0-1/*", ParsedContentRange(0, 1, ParsedContentRange::unknownLength).headerValue().utf8().data());
     ASSERT_STREQ("", ParsedContentRange().headerValue().utf8().data());
 }
 

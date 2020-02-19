@@ -27,6 +27,7 @@
 #pragma once
 
 #include "HTTPHeaderMap.h"
+#include <wtf/Box.h>
 #include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/persistence/PersistentDecoder.h>
@@ -47,6 +48,7 @@ enum class NetworkLoadPriority : uint8_t {
 };
 
 class NetworkLoadMetrics {
+    WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
 public:
     NetworkLoadMetrics()
     {
@@ -184,7 +186,7 @@ public:
 };
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics&);
+WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData);
 #endif
 
 template<class Encoder>
