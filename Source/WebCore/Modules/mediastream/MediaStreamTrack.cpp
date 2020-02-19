@@ -623,11 +623,6 @@ bool MediaStreamTrack::canProduceAudio() const
     return m_private->type() == RealtimeMediaSource::Type::Audio && !ended() && !muted();
 }
 
-bool MediaStreamTrack::processingUserGestureForMedia() const
-{
-    return document() ? document()->processingUserGestureForMedia() : false;
-}
-
 DocumentIdentifier MediaStreamTrack::hostingDocumentIdentifier() const
 {
     auto* document = downcast<Document>(m_scriptExecutionContext);

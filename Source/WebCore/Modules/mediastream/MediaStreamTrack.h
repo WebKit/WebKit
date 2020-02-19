@@ -203,7 +203,6 @@ private:
     String sourceApplicationIdentifier() const final;
     bool canProduceAudio() const final;
     DocumentIdentifier hostingDocumentIdentifier() const final;
-    bool processingUserGestureForMedia() const final;
     bool shouldOverridePauseDuringRouteChange() const final { return true; }
 
 #if !RELEASE_LOG_DISABLED

@@ -891,7 +891,6 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
-    bool processingUserGestureForMedia() const final;
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
 
@@ -900,6 +899,8 @@ private:
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
     void hardwareMutedStateDidChange(AudioSession*) final;
 #endif
+
+    bool processingUserGestureForMedia() const;
 
     bool effectiveMuted() const;
     double effectiveVolume() const;

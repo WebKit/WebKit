@@ -263,8 +263,6 @@ public:
     virtual DocumentIdentifier hostingDocumentIdentifier() const = 0;
     virtual String sourceApplicationIdentifier() const = 0;
 
-    virtual bool processingUserGestureForMedia() const = 0;
-
     virtual bool hasMediaStreamSource() const { return false; }
 
     virtual void processIsSuspendedChanged() { }

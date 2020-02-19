@@ -359,7 +359,6 @@ private:
     String sourceApplicationIdentifier() const override;
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
-    bool processingUserGestureForMedia() const final;
 
     void visibilityStateChanged() final;
 
