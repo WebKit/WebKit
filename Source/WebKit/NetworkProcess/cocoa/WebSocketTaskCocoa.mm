@@ -32,8 +32,12 @@
 #import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 #import <WebCore/WebSocketChannel.h>
 #import <wtf/BlockPtr.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -42,6 +46,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, RetainPtr<NSURLSessi
     , m_task(WTFMove(task))
 {
     readNextMessage();
+    m_channel.didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
 }
 
 WebSocketTask::~WebSocketTask()
@@ -58,6 +63,13 @@ void WebSocketTask::readNextMessage()
             // If closeCode is not zero, we are closing the connection and didClose will be called for us.
             if ([m_task closeCode])
                 return;
+
+            if (!m_receivedDidConnect) {
+                ResourceResponse response { [m_task response] };
+                if (!response.isNull())
+                    m_channel.didReceiveHandshakeResponse(WTFMove(response));
+            }
+
             m_channel.didReceiveMessageError([error localizedDescription]);
             didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
@@ -89,7 +101,9 @@ void WebSocketTask::resume()
 void WebSocketTask::didConnect(const String& protocol)
 {
     // FIXME: support extensions.
+    m_receivedDidConnect = true;
     m_channel.didConnect(protocol, { });
+    m_channel.didReceiveHandshakeResponse(ResourceResponse { [m_task response] });
 }
 
 void WebSocketTask::didClose(unsigned short code, const String& reason)

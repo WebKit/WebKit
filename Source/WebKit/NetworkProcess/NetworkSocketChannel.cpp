@@ -123,6 +123,17 @@ void NetworkSocketChannel::didReceiveMessageError(const String& errorMessage)
     send(Messages::WebSocketChannel::DidReceiveMessageError { errorMessage });
 }
 
+void NetworkSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
+{
+    send(Messages::WebSocketChannel::DidSendHandshakeRequest { request });
+}
+
+void NetworkSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& response)
+{
+    response.sanitizeHTTPHeaderFields(ResourceResponse::SanitizationType::CrossOriginSafe);
+    send(Messages::WebSocketChannel::DidReceiveHandshakeResponse { response });
+}
+
 IPC::Connection* NetworkSocketChannel::messageSenderConnection() const
 {
     return &m_connectionToWebProcess.connection();

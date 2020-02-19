@@ -68,6 +68,7 @@ private:
     NetworkSocketChannel& m_channel;
     RetainPtr<NSURLSessionWebSocketTask> m_task;
     bool m_receivedDidClose { false };
+    bool m_receivedDidConnect { false };
 };
 
 } // namespace WebKit

@@ -67,6 +67,8 @@ private:
     void didReceiveBinaryData(const uint8_t* data, size_t length);
     void didClose(unsigned short code, const String& reason);
     void didReceiveMessageError(const String&);
+    void didSendHandshakeRequest(WebCore::ResourceRequest&&);
+    void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
     void sendString(const String&, CompletionHandler<void()>&&);
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);

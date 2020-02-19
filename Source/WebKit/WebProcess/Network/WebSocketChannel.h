@@ -85,6 +85,8 @@ private:
     void didReceiveBinaryData(IPC::DataReference&&);
     void didClose(unsigned short code, String&&);
     void didReceiveMessageError(String&&);
+    void didSendHandshakeRequest(WebCore::ResourceRequest&&);
+    void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;

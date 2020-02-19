@@ -26,4 +26,7 @@ messages -> WebSocketChannel {
     DidReceiveText(String message)
     DidReceiveBinaryData(IPC::DataReference data)
     DidReceiveMessageError(String errorMessage)
+
+    DidSendHandshakeRequest(WebCore::ResourceRequest request)
+    DidReceiveHandshakeResponse(WebCore::ResourceResponse response)
 }

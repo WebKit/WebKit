@@ -1,3 +1,29 @@
+2020-02-18  Youenn Fablet  <youenn@apple.com>
+
+        Add support for WebInspector WebSocket handshake in the new WebSocket code path
+        https://bugs.webkit.org/show_bug.cgi?id=207913
+
+        Reviewed by Alex Christensen.
+
+        Whenever creating the WebSocketTask, pass the request actually used for handshake to the WebProcess.
+        Whenever being connected, pass the request actually used for handshake to the WebProcess.
+        In case of failure before the web socket is connected, we send the response if we can get a non null from the task.
+
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::didSendHandshakeRequest):
+        (WebKit::NetworkSocketChannel::didReceiveHandshakeResponse):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::WebSocketTask):
+        (WebKit::WebSocketTask::didConnect):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::connect):
+        (WebKit::WebSocketChannel::didConnect):
+        (WebKit::WebSocketChannel::didSendHandshakeRequest):
+        (WebKit::WebSocketChannel::didReceiveHandshakeResponse):
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Network/WebSocketChannel.messages.in:
+
 2020-02-18  Chris Dumez  <cdumez@apple.com>
 
         Do not eagerly launch WebProcess when WKPagePostMessageToInjectedBundle() is called
