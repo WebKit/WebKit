@@ -3076,6 +3076,7 @@ fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
 # Lazy load for iframes is not supported yet.
 webkit.org/b/196698 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/iframe-loading-lazy.html [ Skip ]
+webkit.org/b/196698 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-ifame-001.sub.html [ Skip ]
 
 webkit.org/b/202517 imported/w3c/web-platform-tests/2dcontext/text-styles/2d.text.draw.baseline.ideographic.html [ Skip ]
 
