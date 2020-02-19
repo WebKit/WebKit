@@ -1,3 +1,12 @@
+2020-02-19  Alejandro G. Castro  <alex@igalia.com>
+
+        REGRESSION(r188639): Several inspector tests timeout because they are slow after r188639
+        https://bugs.webkit.org/show_bug.cgi?id=149916
+
+        Unreviewed GTK gardening. Add some more tests as Pass Slow for the inspector bug.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-18  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening release build crashes
