@@ -186,7 +186,6 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(m_logger, m_logIdentifier))
-    , m_boundsChangeListener(adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithParent:this]))
 {
     INFO_LOG(LOGIDENTIFIER);
 }
