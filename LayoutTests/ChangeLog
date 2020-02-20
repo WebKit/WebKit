@@ -1,3 +1,13 @@
+2020-02-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        (r256583) [ iOS ] http/tests/resourceLoadStatistics/prevalent-domains-per-page-database.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=207944
+        <rdar://problem/59592361>
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r256805?) [ Mojave wk2 Release ] webrtc/video-replace-muted-track.html is flaky timing out.

@@ -2772,6 +2772,8 @@ http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-r
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-database.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal-database.html [ Skip ]
+http/tests/resourceLoadStatistics/prevalent-domains-per-page-database.html [ Skip ]
+http/tests/resourceLoadStatistics/prevalent-domains-per-page.html [ Skip ]
 # Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
