@@ -103,6 +103,11 @@ void RenderThemeWPE::updateCachedSystemFontDescription(CSSValueID, FontCascadeDe
     notImplemented();
 }
 
+Color RenderThemeWPE::platformFocusRingColor(OptionSet<StyleColor::Options>) const
+{
+    return ThemeWPE::focusColor();
+}
+
 String RenderThemeWPE::extraDefaultStyleSheet()
 {
     return String(themeAdwaitaUserAgentStyleSheet, sizeof(themeAdwaitaUserAgentStyleSheet));

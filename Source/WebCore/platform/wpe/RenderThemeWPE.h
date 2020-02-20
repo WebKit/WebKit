@@ -47,6 +47,7 @@ private:
     bool supportsFocusRing(const RenderStyle&) const override;
 
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+    Color platformFocusRingColor(OptionSet<StyleColor::Options>) const override;
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 static const unsigned focusLineWidth = 1;
-static const Color focusColor = makeRGBA(46, 52, 54, 150);
+static const Color focusRingColor = makeRGBA(46, 52, 54, 150);
 static const unsigned arrowSize = 16;
 static const Color arrowColor = makeRGB(46, 52, 54);
 static const int buttonFocusOffset = -3;
@@ -65,19 +65,45 @@ Theme& Theme::singleton()
     return theme;
 }
 
+Color ThemeWPE::focusColor()
+{
+    return focusRingColor;
+}
+
 void ThemeWPE::paintFocus(GraphicsContext& graphicsContext, const FloatRect& rect, int offset)
 {
     FloatRect focusRect = rect;
     focusRect.inflate(offset);
+    Path path;
+    path.addRoundedRect(focusRect, { 2, 2 });
+    paintFocus(graphicsContext, path, focusRingColor);
+}
+
+void ThemeWPE::paintFocus(GraphicsContext& graphicsContext, const Path& path, const Color& color)
+{
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    graphicsContext.beginTransparencyLayer(color.alphaAsFloat());
     graphicsContext.setStrokeThickness(focusLineWidth);
     graphicsContext.setLineDash({ focusLineWidth, 2 * focusLineWidth }, 0);
     graphicsContext.setLineCap(SquareCap);
     graphicsContext.setLineJoin(MiterJoin);
-
-    Path path;
-    path.addRoundedRect(focusRect, { 2, 2 });
-    graphicsContext.setStrokeColor(focusColor);
+    graphicsContext.setStrokeColor(color.opaqueColor());
     graphicsContext.strokePath(path);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setCompositeOperation(CompositeOperator::Clear);
+    graphicsContext.fillPath(path);
+    graphicsContext.setCompositeOperation(CompositeOperator::SourceOver);
+    graphicsContext.endTransparencyLayer();
+}
+
+void ThemeWPE::paintFocus(GraphicsContext& graphicsContext, const Vector<FloatRect>& rects, const Color& color)
+{
+    FloatSize corner(2, 2);
+    Path path;
+    for (const auto& rect : rects)
+        path.addRoundedRect(rect, corner);
+    paintFocus(graphicsContext, path, color);
 }
 
 void ThemeWPE::paintArrow(GraphicsContext& graphicsContext, ArrowDirection direction)

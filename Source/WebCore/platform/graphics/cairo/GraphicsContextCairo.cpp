@@ -51,6 +51,9 @@
 #include <cairo-win32.h>
 #endif
 
+#if PLATFORM(WPE)
+#include "ThemeWPE.h"
+#endif
 
 namespace WebCore {
 
@@ -289,6 +292,13 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
     if (paintingDisabled())
         return;
 
+#if PLATFORM(WPE)
+    ThemeWPE::paintFocus(*this, path, color);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(offset);
+    return;
+#else
+
     if (m_impl) {
         m_impl->drawFocusRing(path, width, offset, color);
         return;
@@ -296,12 +306,20 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
 
     ASSERT(hasPlatformContext());
     Cairo::drawFocusRing(*platformContext(), path, width, color);
+#endif
 }
 
 void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
 {
     if (paintingDisabled())
         return;
+
+#if PLATFORM(WPE)
+    ThemeWPE::paintFocus(*this, rects, color);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(offset);
+    return;
+#else
 
     if (m_impl) {
         m_impl->drawFocusRing(rects, width, offset, color);
@@ -310,6 +328,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
 
     ASSERT(hasPlatformContext());
     Cairo::drawFocusRing(*platformContext(), rects, width, color);
+#endif
 }
 
 void GraphicsContext::drawLineForText(const FloatRect& rect, bool printing, bool doubleUnderlines, StrokeStyle)
