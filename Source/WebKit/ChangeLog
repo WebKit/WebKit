@@ -1,3 +1,21 @@
+2020-02-20  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Simplify Cookie class.
+        https://bugs.webkit.org/show_bug.cgi?id=207930
+
+        Reviewed by Don Olmstead.
+
+        Removed redundant CookieJarCurl.cpp and made NetworkDataTaskCurl access CookieJarDB directly.
+        CookieJarCurl was used for supporting file based cookie database but now it is no longer used.
+
+        No new tests. Covered by existing tests.
+
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::appendCookieHeader):
+        (WebKit::NetworkDataTaskCurl::handleCookieHeaders):
+
 2020-02-20  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r255677): Reloading tab with beforeunload prompt closes tab when asking to stay on page

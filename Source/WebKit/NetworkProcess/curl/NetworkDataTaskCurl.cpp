@@ -444,10 +444,8 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
-    const auto* storageSession = m_session->networkStorageSession();
-    const auto& cookieJar = storageSession->cookieStorage();
     auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(*storageSession, request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies).first;
+    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies, ShouldAskITP::Yes).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 }
@@ -456,12 +454,10 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
 {
     static const auto setCookieHeader = "set-cookie: ";
 
-    const auto* storageSession = m_session->networkStorageSession();
-    const auto& cookieJar = storageSession->cookieStorage();
     for (auto header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
             String setCookieString = header.right(header.length() - strlen(setCookieHeader));
-            cookieJar.setCookiesFromHTTPResponse(*storageSession, request.firstPartyForCookies(), response.url, setCookieString);
+            m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
         }
     }
 }

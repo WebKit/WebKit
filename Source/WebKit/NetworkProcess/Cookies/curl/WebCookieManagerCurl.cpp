@@ -53,7 +53,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
     }
 
     m_process.forEachNetworkStorageSession([curlPolicy] (const auto& networkStorageSession) {
-        networkStorageSession.cookieStorage().setCookieAcceptPolicy(networkStorageSession, curlPolicy);
+        networkStorageSession.setCookieAcceptPolicy(curlPolicy);
     });
 }
 

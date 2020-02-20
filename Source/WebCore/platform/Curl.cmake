@@ -5,7 +5,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     platform/network/curl/AuthenticationChallengeCurl.cpp
     platform/network/curl/CertificateInfoCurl.cpp
-    platform/network/curl/CookieJarCurl.cpp
     platform/network/curl/CookieJarDB.cpp
     platform/network/curl/CookieStorageCurl.cpp
     platform/network/curl/CookieUtil.cpp
@@ -41,7 +40,6 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/AuthenticationChallenge.h
     platform/network/curl/CertificateInfo.h
-    platform/network/curl/CookieJarCurl.h
     platform/network/curl/CookieJarDB.h
     platform/network/curl/CookieUtil.h
     platform/network/curl/CurlCacheEntry.h
