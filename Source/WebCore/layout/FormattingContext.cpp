@@ -243,15 +243,18 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
 
         if (*escapeReason == EscapeReason::FindFixedHeightAncestorQuirk) {
             ASSERT(layoutState().inQuirksMode());
-            // Find the first containing block with fixed height quirk. See Quirks::heightValueOfNearestContainingBlockWithFixedHeight
+            // Find the first containing block with fixed height quirk. See Quirks::heightValueOfNearestContainingBlockWithFixedHeight.
+            // This is only to check if the targetFormattingRoot is an ancestor formatting root.
+            if (layoutBox.isInitialContainingBlock())
+                return true;
             auto& targetFormattingRoot = layoutBox.formattingContextRoot();
             auto* ancestorFormattingContextRoot = &root().formattingContextRoot();
             while (true) {
                 if (&targetFormattingRoot == ancestorFormattingContextRoot)
                     return true;
-                if (ancestorFormattingContextRoot->isInitialContainingBlock())
-                    return false;
                 ancestorFormattingContextRoot = &ancestorFormattingContextRoot->formattingContextRoot();
+                if (ancestorFormattingContextRoot->isInitialContainingBlock())
+                    return true;
             }
             return false;
         }
