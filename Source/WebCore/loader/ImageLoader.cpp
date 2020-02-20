@@ -184,7 +184,10 @@ void ImageLoader::updateFromElement()
 
         auto crossOriginAttribute = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
 
-        ResourceRequest resourceRequest(document.completeURL(sourceURI(attr)));
+        // Use url from original request for lazy loads that are no longer in deferred state.
+        URL imageURL = m_lazyImageLoadState == LazyImageLoadState::LoadImmediately
+            ? m_image->url() : document.completeURL(sourceURI(attr));
+        ResourceRequest resourceRequest(imageURL);
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
 
         auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
@@ -586,7 +589,7 @@ void ImageLoader::loadDeferredImage()
 {
     if (m_lazyImageLoadState != LazyImageLoadState::Deferred)
         return;
-    m_lazyImageLoadState = LazyImageLoadState::FullImage;
+    m_lazyImageLoadState = LazyImageLoadState::LoadImmediately;
     updateFromElement();
 }
 

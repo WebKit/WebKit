@@ -84,7 +84,7 @@ protected:
     void notifyFinished(CachedResource&) override;
 
 private:
-    enum class LazyImageLoadState : uint8_t { None, Deferred, FullImage };
+    enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomString&) const = 0;

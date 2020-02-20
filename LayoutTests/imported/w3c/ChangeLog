@@ -1,3 +1,15 @@
+2020-02-20  Rob Buis  <rbuis@igalia.com>
+
+        Lazy load images using base url at parse time
+        https://bugs.webkit.org/show_bug.cgi?id=207902
+
+        Reviewed by Darin Adler.
+
+        Update improved test results.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-2-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-base-url-applied-expected.txt:
+
 2020-02-19  Rob Buis  <rbuis@igalia.com>
 
         Main implementation for lazy image loading
