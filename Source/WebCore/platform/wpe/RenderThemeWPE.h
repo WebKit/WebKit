@@ -47,7 +47,18 @@ private:
     bool supportsFocusRing(const RenderStyle&) const override;
 
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
+
     Color platformFocusRingColor(OptionSet<StyleColor::Options>) const override;
+
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
+
+    Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const override;
+    Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const override;
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) override;

@@ -45,7 +45,6 @@ namespace WebCore {
 
 static const int textFieldBorderSize = 1;
 static const Color textFieldBorderColor = makeRGB(205, 199, 194);
-static const Color textFieldBorderActiveColor = makeRGB(52, 132, 228);
 static const Color textFieldBorderDisabledColor = makeRGB(213, 208, 204);
 static const Color textFieldBackgroundColor = makeRGB(255, 255, 255);
 static const Color textFieldBackgroundDisabledColor = makeRGB(252, 252, 252);
@@ -108,6 +107,46 @@ Color RenderThemeWPE::platformFocusRingColor(OptionSet<StyleColor::Options>) con
     return ThemeWPE::focusColor();
 }
 
+Color RenderThemeWPE::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+{
+    return makeRGB(52, 132, 228);
+}
+
+Color RenderThemeWPE::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+{
+    return platformActiveSelectionBackgroundColor(options);
+}
+
+Color RenderThemeWPE::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+{
+    return makeRGB(255, 255, 255);
+}
+
+Color RenderThemeWPE::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+{
+    return makeRGB(252, 252, 252);
+}
+
+Color RenderThemeWPE::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+{
+    return platformActiveSelectionBackgroundColor(options);
+}
+
+Color RenderThemeWPE::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
+{
+    return platformInactiveSelectionBackgroundColor(options);
+}
+
+Color RenderThemeWPE::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+{
+    return platformActiveSelectionForegroundColor(options);
+}
+
+Color RenderThemeWPE::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options> options) const
+{
+    return platformInactiveSelectionForegroundColor(options);
+}
+
 String RenderThemeWPE::extraDefaultStyleSheet()
 {
     return String(themeAdwaitaUserAgentStyleSheet, sizeof(themeAdwaitaUserAgentStyleSheet));
@@ -147,7 +186,7 @@ bool RenderThemeWPE::paintTextField(const RenderObject& renderObject, const Pain
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
         graphicsContext.setFillColor(textFieldBorderDisabledColor);
     else if (isFocused(renderObject))
-        graphicsContext.setFillColor(textFieldBorderActiveColor);
+        graphicsContext.setFillColor(activeSelectionBackgroundColor({ }));
     else
         graphicsContext.setFillColor(textFieldBorderColor);
     graphicsContext.fillPath(path);
