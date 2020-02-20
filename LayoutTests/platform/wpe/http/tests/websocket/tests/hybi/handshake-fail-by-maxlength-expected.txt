@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
 Connection should fail immediately, rather than succeeding or staying in limbo until timeout, if handshake is longer than 1024 bytes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
