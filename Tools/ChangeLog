@@ -1,3 +1,16 @@
+2020-02-19  Peng Liu  <peng.liu6@apple.com>
+
+        Fix check-webkit-style errors related to AVFoundationSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=207834
+
+        Reviewed by Daniel Bates.
+
+        Revert the change in r256770 regarding the headers ordering.
+        Headers in the same category should be in sorted order (case sensitive, as done by the command-line sort tool or the Xcode sort selection command).
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line):
+
 2020-02-19  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Correctly report JSC tests for windows

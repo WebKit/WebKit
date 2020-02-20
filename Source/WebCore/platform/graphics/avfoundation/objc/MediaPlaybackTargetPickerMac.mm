@@ -29,11 +29,11 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
+#import <WebCore/FloatRect.h>
+#import <WebCore/MediaPlaybackTargetCocoa.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
-#import <WebCore/FloatRect.h>
-#import <WebCore/MediaPlaybackTargetCocoa.h>
 #import <wtf/MainThread.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
