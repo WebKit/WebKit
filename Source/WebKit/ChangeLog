@@ -1,3 +1,16 @@
+2020-02-20  Antti Koivisto  <antti@apple.com>
+
+        [macOS] Disable RunLoop function dispatch when there is a pending rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=207931
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver):
+
+        Don't do anything if the runloop is already scheduled. This frequently happens
+        from inside updateRendering.
+
 2020-02-20  Youenn Fablet  <youenn@apple.com>
 
         [iOS] GPUProcess needs to provide the parent PID before starting camera capture

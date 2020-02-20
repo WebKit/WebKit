@@ -958,6 +958,9 @@ void TiledCoreAnimationDrawingArea::invalidateRenderingUpdateRunLoopObserver()
 
 void TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver()
 {
+    if (m_renderUpdateRunLoopObserver->isScheduled())
+        return;
+
     tracePoint(RenderingUpdateRunLoopObserverStart);
     
     m_renderUpdateRunLoopObserver->schedule(CFRunLoopGetCurrent());

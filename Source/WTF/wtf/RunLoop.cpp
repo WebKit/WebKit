@@ -91,23 +91,10 @@ void RunLoop::performWork()
     // By only handling up to the number of functions that were in the queue when performWork() is called
     // we guarantee to occasionally return from the run loop so other event sources will be allowed to spin.
 
-    size_t functionsToHandle = 0;
-    {
-        Function<void ()> function;
-        {
-            auto locker = holdLock(m_functionQueueLock);
-            functionsToHandle = m_functionQueue.size();
+    size_t functionsToHandle = 1;
+    bool hasNonEmptySuspendedQueue = false;
 
-            if (m_functionQueue.isEmpty())
-                return;
-
-            function = m_functionQueue.takeFirst();
-        }
-
-        function();
-    }
-
-    for (size_t functionsHandled = 1; functionsHandled < functionsToHandle; ++functionsHandled) {
+    for (size_t functionsHandled = 0; functionsHandled < functionsToHandle; ++functionsHandled) {
         Function<void ()> function;
         {
             auto locker = holdLock(m_functionQueueLock);
@@ -118,11 +105,25 @@ void RunLoop::performWork()
             if (m_functionQueue.isEmpty())
                 break;
 
+            if (m_isFunctionDispatchSuspended) {
+                hasNonEmptySuspendedQueue = true;
+                break;
+            }
+
+            if (!functionsHandled)
+                functionsToHandle = m_functionQueue.size();
+
             function = m_functionQueue.takeFirst();
         }
         
         function();
     }
+
+    // Suspend only for a single cycle.
+    m_isFunctionDispatchSuspended = false;
+
+    if (hasNonEmptySuspendedQueue)
+        wakeUp();
 }
 
 void RunLoop::dispatch(Function<void ()>&& function)
@@ -132,6 +133,16 @@ void RunLoop::dispatch(Function<void ()>&& function)
         m_functionQueue.append(WTFMove(function));
     }
 
+    wakeUp();
+}
+
+void RunLoop::suspendFunctionDispatchForCurrentCycle()
+{
+    if (m_isFunctionDispatchSuspended)
+        return;
+
+    m_isFunctionDispatchSuspended = true;
+    // Wake up even if there is nothing to do to disable suspension.
     wakeUp();
 }
 

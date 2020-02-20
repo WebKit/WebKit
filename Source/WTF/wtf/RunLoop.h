@@ -73,6 +73,8 @@ public:
     WTF_EXPORT_PRIVATE void stop();
     WTF_EXPORT_PRIVATE void wakeUp();
 
+    WTF_EXPORT_PRIVATE void suspendFunctionDispatchForCurrentCycle();
+
     enum class CycleResult { Continue, Stop };
     WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode);
 
@@ -182,6 +184,7 @@ private:
 
     Lock m_functionQueueLock;
     Deque<Function<void()>> m_functionQueue;
+    bool m_isFunctionDispatchSuspended { false };
 
 #if USE(WINDOWS_EVENT_LOOP)
     static LRESULT CALLBACK RunLoopWndProc(HWND, UINT, WPARAM, LPARAM);
