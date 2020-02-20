@@ -1,3 +1,12 @@
+2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r256805?) [ Mojave wk2 Release ] webrtc/video-replace-muted-track.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=207941
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-20  Truitt Savell  <tsavell@apple.com>
 
         Regression: fast/hidpi/image-* are failing consistently on iOS EWS
