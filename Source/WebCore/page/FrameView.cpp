@@ -2854,7 +2854,7 @@ void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 
 void FrameView::loadProgressingStatusChanged()
 {
-    if (!m_contentQualifiesAsVisuallyNonEmpty && frame().loader().isComplete())
+    if (m_firstVisuallyNonEmptyLayoutMilestoneIsPending && frame().loader().isComplete())
         fireLayoutRelatedMilestonesIfNeeded();
     updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
