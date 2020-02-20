@@ -1,3 +1,33 @@
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/59611919
+
+    2020-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Compact StructureTransitionTable
+            https://bugs.webkit.org/show_bug.cgi?id=207616
+
+            Reviewed by Mark Lam.
+
+            Some of StructureTransitionTable are shown as very large HashMap and we can compact it by encoding key.
+            We leverage 48bit pointers and 8byte alignment of UniquedStringImpl* to encode other parameters into it.
+
+            * runtime/Structure.cpp:
+            (JSC::StructureTransitionTable::contains const):
+            (JSC::StructureTransitionTable::get const):
+            (JSC::StructureTransitionTable::add):
+            * runtime/Structure.h:
+            * runtime/StructureTransitionTable.h:
+            (JSC::StructureTransitionTable::Hash::Key::Key):
+            (JSC::StructureTransitionTable::Hash::Key::isHashTableDeletedValue const):
+            (JSC::StructureTransitionTable::Hash::Key::impl const):
+            (JSC::StructureTransitionTable::Hash::Key::isAddition const):
+            (JSC::StructureTransitionTable::Hash::Key::attributes const):
+            (JSC::StructureTransitionTable::Hash::Key::operator==):
+            (JSC::StructureTransitionTable::Hash::Key::operator!=):
+            (JSC::StructureTransitionTable::Hash::hash):
+            (JSC::StructureTransitionTable::Hash::equal):
+
 2020-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed build fix.
