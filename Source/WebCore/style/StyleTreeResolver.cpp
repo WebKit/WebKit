@@ -306,7 +306,7 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
     auto* oldStyle = element.renderOrDisplayContentsStyle();
-
+    
     OptionSet<AnimationImpact> animationImpact;
 
     // New code path for CSS Animations and CSS Transitions.

@@ -769,20 +769,6 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
     setBlendingKeyframes(keyframeList);
 }
 
-bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
-{
-    if (!m_blendingKeyframes.isEmpty())
-        return m_blendingKeyframes.properties().contains(property);
-
-    for (auto& keyframe : m_parsedKeyframes) {
-        for (auto keyframeProperty : keyframe.unparsedStyle.keys()) {
-            if (keyframeProperty == property)
-                return true;
-        }
-    }
-    return false;
-}
-
 bool KeyframeEffect::forceLayoutIfNeeded()
 {
     if (!m_needsForcedLayout || !m_target)
@@ -804,7 +790,6 @@ bool KeyframeEffect::forceLayoutIfNeeded()
 void KeyframeEffect::clearBlendingKeyframes()
 {
     m_blendingKeyframesSource = BlendingKeyframesSource::WebAnimation;
-    m_unanimatedStyle = nullptr;
     m_blendingKeyframes.clear();
 }
 
@@ -923,12 +908,12 @@ void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderSt
 {
     ASSERT(is<DeclarativeAnimation>(animation()));
     if (is<CSSAnimation>(animation()))
-        computeCSSAnimationBlendingKeyframes(newStyle);
+        computeCSSAnimationBlendingKeyframes();
     else if (is<CSSTransition>(animation()))
         computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
 }
 
-void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle)
+void KeyframeEffect::computeCSSAnimationBlendingKeyframes()
 {
     ASSERT(is<CSSAnimation>(animation()));
 
@@ -937,7 +922,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(backingAnimation.name());
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, &unanimatedStyle, keyframeList);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, &cssAnimation->unanimatedStyle(), keyframeList);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList.keyframes()) {
@@ -1103,9 +1088,6 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
 
     if (!computedTiming.progress)
         return;
-
-    if (!m_unanimatedStyle)
-        m_unanimatedStyle = RenderStyle::clonePtr(targetStyle);
 
     setAnimatedPropertiesInStyle(targetStyle, computedTiming.progress.value());
 }

@@ -1,3 +1,7 @@
+2020-02-19  Alan Coon  <alancoon@apple.com>
+
+        Revert r256963. rdar://problem/59478837
+
 2020-02-19  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/59478837

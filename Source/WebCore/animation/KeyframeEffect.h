@@ -144,7 +144,6 @@ public:
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
-    bool animatesProperty(CSSPropertyID) const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
@@ -154,8 +153,6 @@ public:
     enum class Accelerated : uint8_t { Yes, No };
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
-
-    const RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
 private:
     KeyframeEffect(Element*);
@@ -176,7 +173,7 @@ private:
     void computeStackingContextImpact();
     void clearBlendingKeyframes();
     void updateBlendingKeyframes(RenderStyle&);
-    void computeCSSAnimationBlendingKeyframes(const RenderStyle&);
+    void computeCSSAnimationBlendingKeyframes();
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
@@ -192,8 +189,6 @@ private:
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
-
-    std::unique_ptr<const RenderStyle> m_unanimatedStyle;
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
     BlendingKeyframesSource m_blendingKeyframesSource { BlendingKeyframesSource::WebAnimation };
