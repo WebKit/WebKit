@@ -1277,46 +1277,49 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 - (NSAttributedString*)doAXAttributedStringForTextMarkerRange:(id)textMarkerRange spellCheck:(BOOL)spellCheck
 {
-    if (!self.axBackingObject)
-        return nil;
-    
-    RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
-    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-    TextIterator it(range.get());
-    while (!it.atEnd()) {
-        // locate the node and starting offset for this range
-        Node& node = it.range()->startContainer();
-        ASSERT(&node == &it.range()->endContainer());
-        int offset = it.range()->startOffset();
-        
-        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.text().length()) {
-            // Add the text of the list marker item if necessary.
-            String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
-            if (!listMarkerText.isEmpty())
-                AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
-            AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);
-        } else {
-            Node* replacedNode = node.traverseToChildAt(offset);
-            NSString *attachmentString = nsStringForReplacedNode(replacedNode);
-            if (attachmentString) {
-                NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);
-                
-                // append the placeholder string
-                [[attrString mutableString] appendString:attachmentString];
-                
-                // remove all inherited attributes
-                [attrString setAttributes:nil range:attrStringRange];
-                
-                // add the attachment attribute
-                AccessibilityObject* obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
-                AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
-            }
-        }
-        it.advance();
-    }
+    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&textMarkerRange, &spellCheck, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSAttributedString * {
+        auto* backingObject = protectedSelf.get().axBackingObject;
+        if (!backingObject)
+            return nil;
 
-    return [attrString autorelease];
+        RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
+        NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
+        TextIterator it(range.get());
+        while (!it.atEnd()) {
+            // locate the node and starting offset for this range
+            Node& node = it.range()->startContainer();
+            ASSERT(&node == &it.range()->endContainer());
+            int offset = it.range()->startOffset();
+
+            // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+            if (it.text().length()) {
+                // Add the text of the list marker item if necessary.
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
+                if (!listMarkerText.isEmpty())
+                    AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
+                AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);
+            } else {
+                Node* replacedNode = node.traverseToChildAt(offset);
+                NSString *attachmentString = nsStringForReplacedNode(replacedNode);
+                if (attachmentString) {
+                    NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);
+
+                    // append the placeholder string
+                    [[attrString mutableString] appendString:attachmentString];
+
+                    // remove all inherited attributes
+                    [attrString setAttributes:nil range:attrStringRange];
+
+                    // add the attachment attribute
+                    AccessibilityObject* obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
+                    AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
+                }
+            }
+            it.advance();
+        }
+
+        return [attrString autorelease];
+    });
 }
 
 static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
