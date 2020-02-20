@@ -142,7 +142,7 @@ void RunLoop::suspendFunctionDispatchForCurrentCycle()
         return;
 
     m_isFunctionDispatchSuspended = true;
-    // Wake up even if there is nothing to do to disable suspension.
+    // Wake up (even if there is nothing to do) to disable suspension.
     wakeUp();
 }
 
