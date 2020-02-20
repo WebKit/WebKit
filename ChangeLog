@@ -1,3 +1,16 @@
+2020-02-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Not set ccache compiler prefix if ccache its already the compiler binary in path.
+        https://bugs.webkit.org/show_bug.cgi?id=208007
+
+        Reviewed by Tim Horton.
+
+        Detect if the compiler binary already points to the ccache binary and in that case don't
+        set the ccache compiler prefix. Also export CCACHE_SLOPPINESS=time_macros if its not
+        defined to other thing on the environment and add a some logging of related messages.
+
+        * Source/cmake/WebKitCCache.cmake:
+
 2020-02-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebP targets
