@@ -408,7 +408,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
-    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(logger(), logIdentifier()))
+    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravity::ResizeAspect)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
@@ -1119,7 +1119,6 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "width = ", frame.size().width(), ", height = ", frame.size().height());
     m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
 }
 
@@ -1589,13 +1588,17 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
         createImageGenerator();
     ASSERT(m_imageGenerator);
 
+#if !RELEASE_LOG_DISABLED
     MonotonicTime start = MonotonicTime::now();
+#endif
 
     [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
     RetainPtr<CGImageRef> rawImage = adoptCF([m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), sRGBColorSpaceRef()));
 
+#if !RELEASE_LOG_DISABLED
     INFO_LOG(LOGIDENTIFIER, "creating image took ", (MonotonicTime::now() - start).seconds());
+#endif
 
     return image;
 }
@@ -2042,7 +2045,9 @@ void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* 
 
 void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 {
+#if !RELEASE_LOG_DISABLED
     size_t count = m_audioTracks.size();
+#endif
 
     Vector<String> characteristics = player()->preferredAudioCharacteristics();
     if (!m_audibleGroup) {
@@ -2058,12 +2063,16 @@ void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
     for (auto& track : m_audioTracks)
         track->resetPropertiesFromTrack();
 
-    ALWAYS_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_audioTracks.size());
+#if !RELEASE_LOG_DISABLED
+    INFO_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_audioTracks.size());
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 {
+#if !RELEASE_LOG_DISABLED
     size_t count = m_videoTracks.size();
+#endif
 
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeVideo, m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
 
@@ -2078,7 +2087,9 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
     for (auto& track : m_audioTracks)
         track->resetPropertiesFromTrack();
 
-    ALWAYS_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_videoTracks.size());
+#if !RELEASE_LOG_DISABLED
+    INFO_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_videoTracks.size());
+#endif
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
@@ -2250,11 +2261,15 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
         m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 
+#if !RELEASE_LOG_DISABLED
     MonotonicTime start = MonotonicTime::now();
+#endif
 
     m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
 
+#if !RELEASE_LOG_DISABLED
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
+#endif
 #endif // HAVE(CORE_VIDEO)
 }
 
@@ -3470,6 +3485,7 @@ NSArray* playerKVOProperties()
 #endif
             }
 
+#if !RELEASE_LOG_DISABLED
             if (player->logger().willLog(player->logChannel(), WTFLogLevel::Debug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
                 auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", player->logIdentifier());
 
@@ -3483,6 +3499,7 @@ NSArray* playerKVOProperties()
                 } else
                     player->logger().debug(player->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "'");
             }
+#endif
         });
     });
 }

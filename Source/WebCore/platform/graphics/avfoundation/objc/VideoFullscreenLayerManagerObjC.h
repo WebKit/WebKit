@@ -31,7 +31,6 @@
 #include "VideoFullscreenLayerManager.h"
 #include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
-#include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
@@ -39,10 +38,10 @@ OBJC_CLASS AVPlayerLayer;
 
 namespace WebCore {
 
-class VideoFullscreenLayerManagerObjC final : public VideoFullscreenLayerManager , public LoggerHelper {
+class VideoFullscreenLayerManagerObjC final : public VideoFullscreenLayerManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    VideoFullscreenLayerManagerObjC(const Logger&, const void*);
+    VideoFullscreenLayerManagerObjC();
 
     PlatformLayer *videoInlineLayer() const final { return m_videoInlineLayer.get(); }
     PlatformLayer *videoFullscreenLayer() const final { return m_videoFullscreenLayer.get(); }
@@ -58,14 +57,6 @@ public:
     void syncTextTrackBounds() final;
 
 private:
-    const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
-    const char* logClassName() const final { return "VideoFullscreenLayerManagerObjC"; }
-    WTFLogChannel& logChannel() const final;
-
-    Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
-
     RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
     RetainPtr<WebVideoContainerLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
