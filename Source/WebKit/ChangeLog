@@ -1,3 +1,18 @@
+2020-02-20  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r255677): Reloading tab with beforeunload prompt closes tab when asking to stay on page
+        https://bugs.webkit.org/show_bug.cgi?id=208015
+        <rdar://problem/59591630>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we only restart the tryClose timer after the beforeunload prompt if the timer was actually
+        active before the prompt (i.e. tryClose was actually called). On Reload, tryClose is not called
+        but beforeunload prompt may still happen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+
 2020-02-20  Antti Koivisto  <antti@apple.com>
 
         [macOS] Disable RunLoop function dispatch when there is a pending rendering update
