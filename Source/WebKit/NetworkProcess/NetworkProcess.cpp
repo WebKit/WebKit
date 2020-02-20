@@ -1304,6 +1304,11 @@ void NetworkProcess::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionI
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
 #if ENABLE(SERVER_PRECONNECT)
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    if (supplement<LegacyCustomProtocolManager>()->supportsScheme(url.protocol().toString()))
+        return;
+#endif
+
     NetworkLoadParameters parameters;
     parameters.request = ResourceRequest { url };
     if (!userAgent.isEmpty()) {
