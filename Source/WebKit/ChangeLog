@@ -1,39 +1,180 @@
-2020-02-19  Russell Epstein  <repstein@apple.com>
+2020-02-19  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r256432. rdar://problem/59446974
+        Cherry-pick r255037. rdar://problem/59446986
 
-    WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
-    https://bugs.webkit.org/show_bug.cgi?id=207537
+    Fixed elements no longer stay fixed with elastic overscroll
+    https://bugs.webkit.org/show_bug.cgi?id=206227
+    rdar://problem/58707084
     
-    Reviewed by Chris Dumez.
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+    their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+    some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+    in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+    layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
+    
+    The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+    didn't work for main frame scrolling because of scroll position clamping in various places,
+    so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
+    
+    "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+    which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
+    
+    Internals::unconstrainedScrollTo() needs one weird hack to trigger a layout (and thus a scrolling tree commit),
+    because the layout is normally triggered by a layout viewport change, but when rubber-banding we clamp the layoutViewport
+    used for layout, so those layouts are never triggered.
+    
+    Tests: tiled-drawing/scrolling/fixed/fixed-during-rubberband.html
+           tiled-drawing/scrolling/sticky/sticky-during-rubberband.html
+    
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * dom/Element.cpp:
+    (WebCore::Element::scrollTo):
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::scrollTo const):
+    * page/FrameView.cpp:
+    (WebCore::FrameView::setScrollPosition):
+    (WebCore::FrameView::requestScrollPositionUpdate):
+    * page/FrameView.h:
+    * page/scrolling/AsyncScrollingCoordinator.cpp:
+    (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+    * page/scrolling/AsyncScrollingCoordinator.h:
+    * page/scrolling/ScrollingCoordinator.cpp:
+    * page/scrolling/ScrollingCoordinator.h:
+    (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+    * page/scrolling/ScrollingStateScrollingNode.cpp:
+    (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+    (WebCore::ScrollingStateScrollingNode::setRequestedScrollData):
+    (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+    (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition): Deleted.
+    * page/scrolling/ScrollingStateScrollingNode.h:
+    (WebCore::RequestedScrollData::operator== const):
+    (WebCore::ScrollingStateScrollingNode::requestedScrollData const):
+    (WebCore::ScrollingStateScrollingNode::requestedScrollPosition const): Deleted.
+    (WebCore::ScrollingStateScrollingNode::requestedScrollPositionRepresentsProgrammaticScroll const): Deleted.
+    * page/scrolling/ScrollingTree.h:
+    (WebCore::ScrollingTree::scrollingTreeNodeRequestsScroll):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition const):
+    (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportRespectingRubberBanding const):
+    * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::commitStateAfterChildren):
+    (WebCore::ScrollingTreeScrollingNode::adjustedScrollPosition const):
+    (WebCore::ScrollingTreeScrollingNode::scrollBy):
+    (WebCore::ScrollingTreeScrollingNode::scrollTo):
+    (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+    * page/scrolling/ScrollingTreeScrollingNode.h:
+    * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+    (WebCore::ScrollingTreeFixedNode::applyLayerPositions):
+    * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+    (WebCore::ScrollingTreeStickyNode::computeLayerPosition const):
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+    (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition const):
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+    * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+    (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren):
+    (WebCore::ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition const):
+    * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+    (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints):
+    * platform/ScrollTypes.cpp: Added.
+    (WebCore::operator<<):
+    * platform/ScrollTypes.h:
+    * platform/ScrollView.cpp:
+    (WebCore::ScrollView::setContentsScrollPosition):
+    (WebCore::ScrollView::setScrollPosition):
+    * platform/ScrollView.h:
+    * platform/ScrollableArea.cpp:
+    (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+    * platform/ScrollableArea.h:
+    (WebCore::ScrollableArea::requestScrollPositionUpdate):
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::scrollToOffset):
+    * testing/Internals.cpp:
+    (WebCore::Internals::unconstrainedScrollTo):
     
     Source/WebKit:
     
-    Covered by added API test.
+    Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+    their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+    some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+    in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+    layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
     
-    * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
-    (WebKit::WebSWServerConnection::registerServiceWorkerClient):
-    Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
+    The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+    didn't work for main frame scrolling because of scroll position clamping in various places,
+    so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
     
-    Tools:
+    "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+    which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
     
-    * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+    * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+    (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+    (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+    (ArgumentCoder<RequestedScrollData>::encode):
+    (ArgumentCoder<RequestedScrollData>::decode):
+    (WebKit::dump):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+    (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+    * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+    * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+    (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+    * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+    (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+    * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+    (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
     
+    LayoutTests:
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256432 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    * tiled-drawing/scrolling/fixed/fixed-during-rubberband-expected.html: Added.
+    * tiled-drawing/scrolling/fixed/fixed-during-rubberband.html: Added.
+    * tiled-drawing/scrolling/sticky/sticky-during-rubberband-expected.html: Added.
+    * tiled-drawing/scrolling/sticky/sticky-during-rubberband.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255037 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2020-02-12  Youenn Fablet  <youenn@apple.com>
+    2020-02-19  Russell Epstein  <repstein@apple.com>
 
-            WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
-            https://bugs.webkit.org/show_bug.cgi?id=207537
+            Cherry-pick r256432. rdar://problem/59446974
 
-            Reviewed by Chris Dumez.
+        WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
+        https://bugs.webkit.org/show_bug.cgi?id=207537
 
-            Covered by added API test.
+        Reviewed by Chris Dumez.
 
-            * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
-            (WebKit::WebSWServerConnection::registerServiceWorkerClient):
-            Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
+        Source/WebKit:
+
+        Covered by added API test.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
+
+        Tools:
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256432 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2020-02-12  Youenn Fablet  <youenn@apple.com>
+
+                WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
+                https://bugs.webkit.org/show_bug.cgi?id=207537
+
+                Reviewed by Chris Dumez.
+
+                Covered by added API test.
+
+                * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+                (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+                Fix use after move so that we can get the context connection and send the IPC message to UIProcess as expected.
 
 2020-02-19  Russell Epstein  <repstein@apple.com>
 
@@ -391,6 +532,44 @@
             <rdar://problem/59043436>
 
             Reviewed by Brent Fulgham.
+2020-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements no longer stay fixed with elastic overscroll
+        https://bugs.webkit.org/show_bug.cgi?id=206227
+        rdar://problem/58707084
+
+        Reviewed by Antti Koivisto.
+
+        Intended behavior on iOS and macOS is for position:fixed and sticky elements to maintain
+        their position relative to the view bounds when rubber-banding ("overscrolling"). This broke
+        some time back. This change restores the correct behavior with the call to layoutViewportRespectingRubberBanding()
+        in ScrollingTreeFixedNode::applyLayerPositions() and ScrollingTreeStickyNode::computeLayerPosition().
+        layoutViewportRespectingRubberBanding() computes a layout viewport without clamping.
+
+        The rest of the changes are to support testing. internals.unconstrainedScrollTo()
+        didn't work for main frame scrolling because of scroll position clamping in various places,
+        so propagate ScrollClamping in more places (and replace the redundant ScrollPositionClamp with ScrollClamping).
+
+        "requested scroll position" updates now carry along both clamping and "is programmatic" data, wrapped in a struct
+        which is passed around the scrolling tree. This allows us to not clamp the scroll position (for testing) in more places.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<RequestedScrollData>::encode):
+        (ArgumentCoder<RequestedScrollData>::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeRequestsScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 
             * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
             (WebKit::WebProcessPool::initializeClassesForParameterCoding):

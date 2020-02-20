@@ -228,11 +228,11 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction == ScrollingLayerPositionAction::Sync));
 }
 
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, bool representsProgrammaticScroll)
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, ScrollType scrollType, ScrollClamping)
 {
     if (scrolledNodeID == rootScrollingNodeID() && m_requestedScrollInfo) {
         m_requestedScrollInfo->requestsScrollPositionUpdate = true;
-        m_requestedScrollInfo->requestIsProgrammaticScroll = representsProgrammaticScroll;
+        m_requestedScrollInfo->requestIsProgrammaticScroll = scrollType == ScrollType::Programmatic;
         m_requestedScrollInfo->requestedScrollPosition = scrollPosition;
     }
 }

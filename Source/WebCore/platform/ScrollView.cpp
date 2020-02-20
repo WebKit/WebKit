@@ -211,13 +211,13 @@ IntPoint ScrollView::contentsScrollPosition() const
     return scrollPosition();
 }
 
-void ScrollView::setContentsScrollPosition(const IntPoint& position)
+void ScrollView::setContentsScrollPosition(const IntPoint& position, ScrollClamping clamping)
 {
 #if PLATFORM(IOS_FAMILY)
     if (platformWidget())
         setActualScrollPosition(position);
 #endif
-    setScrollPosition(position);
+    setScrollPosition(position, clamping);
 }
 
 FloatRect ScrollView::exposedContentRect() const
@@ -518,7 +518,7 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
+void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
 
@@ -530,12 +530,12 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
         return;
     }
 
-    ScrollPosition newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
+    ScrollPosition newScrollPosition = (!delegatesScrolling() && clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
 
     if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && newScrollPosition == this->scrollPosition())
         return;
 
-    if (requestScrollPositionUpdate(newScrollPosition))
+    if (requestScrollPositionUpdate(newScrollPosition, currentScrollType(), clamping))
         return;
 
     updateScrollbars(newScrollPosition);

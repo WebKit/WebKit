@@ -60,8 +60,8 @@ public:
     FloatSize scrollDeltaSinceLastCommit() const { return m_currentScrollPosition - m_lastCommittedScrollPosition; }
 
     // These are imperative; they adjust the scrolling layers.
-    void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
-    void scrollBy(const FloatSize&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
+    void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
+    void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);
 
     void wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport = { }, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);
     
@@ -99,7 +99,7 @@ protected:
 
     FloatPoint clampScrollPosition(const FloatPoint&) const;
     
-    virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges) const;
+    virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
 
     virtual void currentScrollPositionChanged();
     virtual void updateViewportForCurrentScrollPosition(Optional<FloatRect> = { }) { }
