@@ -1,3 +1,14 @@
+2020-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Out-of-flow] FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositioned should ignore inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=207994
+        <rdar://problem/59618280>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling-expected.html: Added.
+        * fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html: Added.
+
 2020-02-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening of Web inspector tests.

@@ -227,9 +227,9 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
     LayoutUnit top;
-    if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+    if (layoutBox.previousInFlowSibling() && layoutBox.previousInFlowSibling()->isBlockLevelBox()) {
         // Add sibling offset
-        auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(*previousInFlowSibling, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
+        auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(*layoutBox.previousInFlowSibling(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         top += previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.nonCollapsedMarginAfter();
     } else {
         ASSERT(layoutBox.parent());
