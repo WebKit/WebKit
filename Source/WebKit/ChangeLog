@@ -1,5 +1,34 @@
 2020-02-19  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r257013. rdar://problem/59614282
+
+    Crash in WebPageProxy::didStartProvisionalLoadForFrameShared
+    https://bugs.webkit.org/show_bug.cgi?id=207973
+    
+    Reviewed by Chris Dumez.
+    
+    Use RefPtr to store Frame*.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257013 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in WebPageProxy::didStartProvisionalLoadForFrameShared
+            https://bugs.webkit.org/show_bug.cgi?id=207973
+
+            Reviewed by Chris Dumez.
+
+            Use RefPtr to store Frame*.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+
+2020-02-19  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256859. rdar://problem/59576018
 
     [macOS] Web process may crash under ServicesOverlayController::buildPotentialHighlightsIfNeeded
