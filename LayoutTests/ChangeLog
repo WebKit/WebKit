@@ -1,3 +1,12 @@
+2020-02-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, mark several WPT's CSS animation tests as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=207988
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-19  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: roundedIntPoint(LayoutPoint(rendererMappedResult)) == result in WebCore::RenderGeometryMap::mapToContainer

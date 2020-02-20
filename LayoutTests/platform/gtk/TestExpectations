@@ -2575,6 +2575,36 @@ webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-image-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-x-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-position-y-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-size-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-color-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-source-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation.html [ Failure Pass ]
+webkit.org/b/207987 imported/w3c/web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation.html [ Failure Pass ]
+
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/height-interpolation.html [ Failure Pass ]
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/max-height-interpolation.html [ Failure Pass ]
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/max-width-interpolation.html [ Failure Pass ]
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/min-height-interpolation.html [ Failure Pass ]
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/min-width-interpolation.html [ Failure Pass ]
+webkit.org/b/207990 imported/w3c/web-platform-tests/css/css-sizing/animation/width-interpolation.html [ Failure Pass ]
+
+webkit.org/b/207991 imported/w3c/web-platform-tests/css/css-multicol/animation/column-count-interpolation.html [ Failure Pass ]
+webkit.org/b/207991 imported/w3c/web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation.html [ Failure Pass ]
+webkit.org/b/207991 imported/w3c/web-platform-tests/css/css-multicol/animation/column-width-interpolation.html [ Failure Pass ]
+
+webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animations/text-shadow-interpolation.html [ Failure Pass ]
+webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animations/z-index-interpolation.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
