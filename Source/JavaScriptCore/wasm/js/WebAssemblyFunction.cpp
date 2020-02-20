@@ -161,7 +161,8 @@ bool WebAssemblyFunction::useTagRegisters() const
 
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
-    return Wasm::PinnedRegisterInfo::get().toSave(instance()->memoryMode());
+    // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
+    return Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
 }
 
 RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
