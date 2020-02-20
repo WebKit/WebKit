@@ -1,3 +1,16 @@
+2020-02-19  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: roundedIntPoint(LayoutPoint(rendererMappedResult)) == result in WebCore::RenderGeometryMap::mapToContainer
+        https://bugs.webkit.org/show_bug.cgi?id=151030
+        <rdar://problem/27711142>
+
+        Reviewed by Darin Adler.
+
+        Track if m_accumulatedOffset ever becomes saturated, and if so, do not assert on unexpected rendererMappedResult.
+
+        * fast/layers/geometry-map-saturated-offset-assert-expected.txt: Added.
+        * fast/layers/geometry-map-saturated-offset-assert.html: Added.
+
 2020-02-19  Youenn Fablet  <youenn@apple.com>
 
         Add support for AudioSession handling in GPUProcess for capture

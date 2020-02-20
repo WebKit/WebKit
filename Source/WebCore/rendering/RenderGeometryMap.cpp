@@ -109,7 +109,7 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
     if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer))) {
         result = p + roundedIntSize(m_accumulatedOffset);
         // Should convert to a LayoutPoint because of the uniqueness of LayoutUnit::round
-        ASSERT(roundedIntPoint(LayoutPoint(rendererMappedResult)) == result);
+        ASSERT(m_accumulatedOffsetMightBeSaturated || roundedIntPoint(LayoutPoint(rendererMappedResult)) == result);
     } else {
         TransformState transformState(TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
@@ -265,8 +265,12 @@ void RenderGeometryMap::popMappingsToAncestor(const RenderLayer* ancestorLayer)
 void RenderGeometryMap::stepInserted(const RenderGeometryMapStep& step)
 {
     // RenderView's offset, is only applied when we have fixed-positions.
-    if (!step.m_renderer->isRenderView())
+    if (!step.m_renderer->isRenderView()) {
         m_accumulatedOffset += step.m_offset;
+#if ASSERT_ENABLED
+        m_accumulatedOffsetMightBeSaturated |= m_accumulatedOffset.mightBeSaturated();
+#endif
+    }
 
     if (step.m_isNonUniform)
         ++m_nonUniformStepsCount;
@@ -281,8 +285,12 @@ void RenderGeometryMap::stepInserted(const RenderGeometryMapStep& step)
 void RenderGeometryMap::stepRemoved(const RenderGeometryMapStep& step)
 {
     // RenderView's offset, is only applied when we have fixed-positions.
-    if (!step.m_renderer->isRenderView())
+    if (!step.m_renderer->isRenderView()) {
         m_accumulatedOffset -= step.m_offset;
+#if ASSERT_ENABLED
+        m_accumulatedOffsetMightBeSaturated |= m_accumulatedOffset.mightBeSaturated();
+#endif
+    }
 
     if (step.m_isNonUniform) {
         ASSERT(m_nonUniformStepsCount);
