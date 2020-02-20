@@ -1421,3 +1421,5 @@ fast/layoutformattingcontext/ [ Skip ]
 webkit.org/b/208010 crypto/subtle/rsa-indexeddb.html [ Slow ]
 
 webkit.org/b/208018 [ Release ] perf/clone-with-focus.html [ Pass Failure ]
+
+webkit.org/b/207943 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
