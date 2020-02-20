@@ -1,3 +1,13 @@
+2020-02-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Computed Properties with increment sometimes produces incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=170934
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/computed-property-increment.js: Added.
+        * test262/expectations.yaml: Mark two test cases as passing.
+
 2020-02-19  Keith Miller  <keith_miller@apple.com>
 
         Disable Wasm reference types by default

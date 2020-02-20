@@ -2808,9 +2808,6 @@ test/language/expressions/new/non-ctor-err-realm.js:
 test/language/expressions/object/__proto__-permitted-dup.js:
   default: 'SyntaxError: Attempted to redefine __proto__ property.'
   strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'
-test/language/expressions/object/computed-property-evaluation-order.js:
-  default: 'Test262Error: Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«2», «1») to be true'
 test/language/expressions/object/covered-ident-name-prop-name-literal-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"

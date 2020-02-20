@@ -713,41 +713,47 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
 {
+    bool shouldSetFunctionName = generator.shouldSetFunctionName(node.m_assign);
+
+    RefPtr<RegisterID> propertyName;
+    if (!node.name()) {
+        propertyName = generator.newTemporary();
+        if (shouldSetFunctionName)
+            generator.emitToPropertyKey(propertyName.get(), generator.emitNode(node.m_expression));
+        else
+            generator.emitNode(propertyName.get(), node.m_expression);
+    }
+
     RefPtr<RegisterID> value = generator.emitNode(node.m_assign);
     if (node.needsSuperBinding())
         emitPutHomeObject(generator, value.get(), newObj);
 
     if (node.isClassProperty()) {
         ASSERT(node.needsSuperBinding());
-        RefPtr<RegisterID> propertyNameRegister;
         if (node.name())
-            propertyNameRegister = generator.emitLoad(nullptr, *node.name());
-        else
-            propertyNameRegister = generator.emitNode(node.m_expression);
+            propertyName = generator.emitLoad(nullptr, *node.name());
 
-        if (generator.shouldSetFunctionName(node.m_assign)) {
-            propertyNameRegister = generator.emitToPropertyKey(generator.newTemporary(), propertyNameRegister.get());
-            generator.emitSetFunctionName(value.get(), propertyNameRegister.get());
-        }
-        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
+        if (shouldSetFunctionName)
+            generator.emitSetFunctionName(value.get(), propertyName.get());
+        generator.emitCallDefineProperty(newObj, propertyName.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
         return;
     }
+
     if (const auto* identifier = node.name()) {
+        ASSERT(!propertyName);
         Optional<uint32_t> optionalIndex = parseIndex(*identifier);
         if (!optionalIndex) {
             generator.emitDirectPutById(newObj, *identifier, value.get(), node.putType());
             return;
         }
 
-        RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
-        generator.emitDirectPutByVal(newObj, index.get(), value.get());
+        propertyName = generator.emitLoad(nullptr, jsNumber(optionalIndex.value()));
+        generator.emitDirectPutByVal(newObj, propertyName.get(), value.get());
         return;
     }
-    RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
-    if (generator.shouldSetFunctionName(node.m_assign)) {
-        propertyName = generator.emitToPropertyKey(generator.newTemporary(), propertyName.get());
+
+    if (shouldSetFunctionName)
         generator.emitSetFunctionName(value.get(), propertyName.get());
-    }
     generator.emitDirectPutByVal(newObj, propertyName.get(), value.get());
 }
 
