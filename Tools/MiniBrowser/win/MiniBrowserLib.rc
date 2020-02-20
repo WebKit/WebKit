@@ -97,7 +97,7 @@ BEGIN
             MENUITEM "Other",                       IDM_UA_OTHER
         END
         MENUITEM "Proxy Settings...",           IDM_PROXY_SETTINGS
-        MENUITEM "Set Default URL to Current URL",  IDM_SET_DEFAULT_URL
+        MENUITEM "Set Default URL to Current URL", IDM_SET_DEFAULT_URL
         MENUITEM SEPARATOR
         MENUITEM "Disable Images",              IDM_DISABLE_IMAGES
         MENUITEM "Disable Styles",              IDM_DISABLE_STYLES
@@ -391,6 +391,14 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

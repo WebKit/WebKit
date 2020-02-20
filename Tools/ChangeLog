@@ -1,3 +1,23 @@
+2020-02-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Add prettier toolbar button icons
+        https://bugs.webkit.org/show_bug.cgi?id=207999
+
+        Reviewed by Ross Kirsling.
+
+        Use a custom toolbar button icons instead of system stock icons.
+
+        Fixed a bug toolbar button dropdown arrows always looked being
+        hovered. TBSTYLE_FLAT should be given.
+
+        Removed the window border line of Progress Indicator.
+
+        * MiniBrowser/win/MainWindow.cpp:
+        (MainWindow::createToolbar):
+        * MiniBrowser/win/MiniBrowserLib.rc:
+        * MiniBrowser/win/MiniBrowserLibResource.h:
+        * MiniBrowser/win/toolbar.bmp: Added.
+
 2020-02-20  Aakash Jain  <aakash_jain@apple.com>
 
         Update run-webkit-tests help description for skip-failing-tests

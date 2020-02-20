@@ -59,6 +59,7 @@
 #define IDD_PROXY                       178
 #define IDD_SERVER_TRUST                179
 #define IDR_ACCELERATORS_PRE            180
+#define IDB_TOOLBAR                     181
 #define IDC_EMPTY_URL_CACHE             1000
 #define IDC_RETURN_FREE_MEMORY          1001
 #define IDC_EMPTY_WEBCORE_CACHE         1002
@@ -135,7 +136,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        181
+#define _APS_NEXT_RESOURCE_VALUE        182
 #define _APS_NEXT_COMMAND_VALUE         32783
 #define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           110

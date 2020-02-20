@@ -48,9 +48,9 @@ float deviceScaleFactorForWindow(HWND);
 
 static const wchar_t* kMiniBrowserRegistryKey = L"Software\\WebKit\\MiniBrowser";
 
-static constexpr int kToolbarImageSize = 24;
+static constexpr int kToolbarImageSize = 32;
 static constexpr int kToolbarURLBarIndex = 4;
-static constexpr int kToolbarProgressIndicatorIndex = 6;
+static constexpr int kToolbarProgressIndicatorIndex = 5;
 
 static WNDPROC DefEditProc = nullptr;
 
@@ -120,31 +120,29 @@ Ref<MainWindow> MainWindow::create()
 void MainWindow::createToolbar(HINSTANCE hInstance)
 {
     m_hToolbarWnd = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, 
-        WS_CHILD | WS_BORDER | TBSTYLE_LIST | TBSTYLE_TOOLTIPS, 0, 0, 0, 0, 
+        WS_CHILD | WS_BORDER | TBSTYLE_FLAT | TBSTYLE_LIST | TBSTYLE_TOOLTIPS, 0, 0, 0, 0, 
         m_hMainWnd, nullptr, hInstance, nullptr);
         
     if (!m_hToolbarWnd)
         return;
 
     const int ImageListID = 0;
-    const int numButtons = 3;
+    const int numButtons = 4;
 
     HIMAGELIST hImageList;
-    hImageList = ImageList_Create(kToolbarImageSize, kToolbarImageSize, ILC_COLOR16 | ILC_MASK, numButtons, 0);
+    hImageList = ImageList_LoadImage(hInstance, MAKEINTRESOURCE(IDB_TOOLBAR), kToolbarImageSize, 0, CLR_DEFAULT, IMAGE_BITMAP, 0);
 
     SendMessage(m_hToolbarWnd, TB_SETIMAGELIST, ImageListID, reinterpret_cast<LPARAM>(hImageList));
-    SendMessage(m_hToolbarWnd, TB_LOADIMAGES, IDB_HIST_LARGE_COLOR, reinterpret_cast<LPARAM>(HINST_COMMCTRL));
     SendMessage(m_hToolbarWnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS | TBSTYLE_EX_MIXEDBUTTONS);
 
     const DWORD buttonStyles = BTNS_AUTOSIZE;
 
     TBBUTTON tbButtons[] = {
-        { MAKELONG(HIST_BACK,  ImageListID), IDM_HISTORY_BACKWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Back" },
-        { MAKELONG(HIST_FORWARD, ImageListID), IDM_HISTORY_FORWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Forward"},
-        { I_IMAGENONE, IDM_RELOAD, TBSTATE_ENABLED, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"↺"},
-        { I_IMAGENONE, IDM_GO_HOME, TBSTATE_ENABLED, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"⌂"},
+        { MAKELONG(0, ImageListID), IDM_HISTORY_BACKWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Back" },
+        { MAKELONG(1, ImageListID), IDM_HISTORY_FORWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Forward"},
+        { MAKELONG(2, ImageListID), IDM_RELOAD, TBSTATE_ENABLED, buttonStyles, { }, 0, (INT_PTR)L"Reload"},
+        { MAKELONG(3, ImageListID), IDM_GO_HOME, TBSTATE_ENABLED, buttonStyles, { }, 0, (INT_PTR)L"Home"},
         { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // URL bar
-        { MAKELONG(HIST_ADDTOFAVORITES, ImageListID), IDM_ABOUT, 0, buttonStyles, { }, 0, (INT_PTR)L"Add to Bookmarks"},
         { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // Progress indicator
     };
     ASSERT(tbButtons[kToolbarURLBarIndex].fsStyle == BTNS_SEP);
@@ -152,11 +150,10 @@ void MainWindow::createToolbar(HINSTANCE hInstance)
 
     SendMessage(m_hToolbarWnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
     SendMessage(m_hToolbarWnd, TB_ADDBUTTONS, _countof(tbButtons), reinterpret_cast<LPARAM>(&tbButtons));
-    SendMessage(m_hToolbarWnd, TB_AUTOSIZE, 0, 0);
     ShowWindow(m_hToolbarWnd, true);
 
     m_hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 0, 0, 0, 0, m_hToolbarWnd, 0, hInstance, 0);
-    m_hProgressIndicator = CreateWindow(L"STATIC", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, m_hToolbarWnd, 0, hInstance, 0);
+    m_hProgressIndicator = CreateWindow(L"STATIC", 0, WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE, 0, 0, 0, 0, m_hToolbarWnd, 0, hInstance, 0);
 
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC));
     SetWindowLongPtr(m_hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
