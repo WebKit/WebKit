@@ -58,7 +58,7 @@ JITCode* JITCode::dfg()
     return this;
 }
 
-void JITCode::shrinkToFit()
+void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
     common.shrinkToFit();
     osrEntry.shrinkToFit();

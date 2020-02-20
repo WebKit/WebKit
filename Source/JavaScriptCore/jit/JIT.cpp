@@ -927,7 +927,10 @@ CompilationResult JIT::link()
         static_cast<double>(result.size()) /
         static_cast<double>(m_codeBlock->instructionsSize()));
 
-    m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
+    {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
+    }
     m_codeBlock->setJITCode(
         adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT)));
 
