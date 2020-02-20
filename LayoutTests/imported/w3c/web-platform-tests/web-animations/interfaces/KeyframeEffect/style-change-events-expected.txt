@@ -1,13 +1,13 @@
 
 PASS All property keys are recognized 
-FAIL KeyframeEffect.getTiming does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.getComputedTiming does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.updateTiming does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.target does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.iterationComposite does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.composite does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.getKeyframes does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.setKeyframes does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.KeyframeEffect constructor does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
-FAIL KeyframeEffect.KeyframeEffect copy constructor does NOT trigger a style change event assert_false: A transition should NOT have been triggered expected false got true
+PASS KeyframeEffect.getTiming does NOT trigger a style change event 
+PASS KeyframeEffect.getComputedTiming does NOT trigger a style change event 
+PASS KeyframeEffect.updateTiming does NOT trigger a style change event 
+PASS KeyframeEffect.target does NOT trigger a style change event 
+PASS KeyframeEffect.iterationComposite does NOT trigger a style change event 
+PASS KeyframeEffect.composite does NOT trigger a style change event 
+PASS KeyframeEffect.getKeyframes does NOT trigger a style change event 
+PASS KeyframeEffect.setKeyframes does NOT trigger a style change event 
+PASS KeyframeEffect.KeyframeEffect constructor does NOT trigger a style change event 
+PASS KeyframeEffect.KeyframeEffect copy constructor does NOT trigger a style change event 
 
