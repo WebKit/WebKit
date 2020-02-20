@@ -807,6 +807,10 @@ void FrameView::styleAndRenderTreeDidChange()
     if (!renderView)
         return;
 
+    if (!m_contentQualifiesAsVisuallyNonEmpty) {
+        // Let's check whether the newly constructed content qualifies as non-empty now.
+        m_contentQualifiesAsVisuallyNonEmpty = qualifiesAsVisuallyNonEmpty();
+    }
     auto* layerTreeMutationRoot = renderView->takeStyleChangeLayerTreeMutationRoot();
     if (layerTreeMutationRoot && !needsLayout())
         layerTreeMutationRoot->updateLayerPositionsAfterStyleChange();
@@ -5137,8 +5141,10 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
     }
 
     if (m_firstVisuallyNonEmptyLayoutMilestoneIsPending) {
-        if (!m_contentQualifiesAsVisuallyNonEmpty && qualifiesAsVisuallyNonEmpty()) {
-            m_contentQualifiesAsVisuallyNonEmpty = true;
+        if (!m_contentQualifiesAsVisuallyNonEmpty)
+            m_contentQualifiesAsVisuallyNonEmpty = qualifiesAsVisuallyNonEmpty();
+
+        if (m_contentQualifiesAsVisuallyNonEmpty) {
             m_firstVisuallyNonEmptyLayoutMilestoneIsPending = false;
 
             addPaintPendingMilestones(DidFirstMeaningfulPaint);
