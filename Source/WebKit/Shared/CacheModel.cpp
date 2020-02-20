@@ -185,17 +185,17 @@ void calculateURLCacheSizes(CacheModel cacheModel, uint64_t diskFreeSize, unsign
 
         // Disk cache capacity (in bytes)
         if (diskFreeSize >= 16384)
-            urlCacheDiskCapacity = 500 * MB;
+            urlCacheDiskCapacity = 1 * GB;
         else if (diskFreeSize >= 8192)
-            urlCacheDiskCapacity = 250 * MB;
+            urlCacheDiskCapacity = 500 * MB;
         else if (diskFreeSize >= 4096)
-            urlCacheDiskCapacity = 125 * MB;
+            urlCacheDiskCapacity = 250 * MB;
         else if (diskFreeSize >= 2048)
-            urlCacheDiskCapacity = 100 * MB;
+            urlCacheDiskCapacity = 200 * MB;
         else if (diskFreeSize >= 1024)
-            urlCacheDiskCapacity = 75 * MB;
+            urlCacheDiskCapacity = 150 * MB;
         else
-            urlCacheDiskCapacity = 50 * MB;
+            urlCacheDiskCapacity = 100 * MB;
 
         break;
     }

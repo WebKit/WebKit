@@ -584,8 +584,8 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
     ASSERT(!m_cacheEntryForValidation);
 
     if (m_bufferedDataForCache) {
-        // Prevent memory growth in case of streaming data.
-        const size_t maximumCacheBufferSize = 10 * 1024 * 1024;
+        // Prevent memory growth in case of streaming data and limit size of entries in the cache.
+        const size_t maximumCacheBufferSize = m_cache->capacity() / 8;
         if (m_bufferedDataForCache->size() + buffer->size() <= maximumCacheBufferSize)
             m_bufferedDataForCache->append(buffer.get());
         else
