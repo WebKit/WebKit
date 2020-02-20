@@ -1,3 +1,15 @@
+2020-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        NSUserDefaultsSPI.h is copied to an incorrect path
+        https://bugs.webkit.org/show_bug.cgi?id=207977
+        rdar://problem/59609174
+
+        Reviewed by Per Arne Vollan.
+
+        * PAL.xcodeproj/project.pbxproj: Change the header from Private to Project - these
+        headers are copied into the right location by a script phase, so Xcode shouldn't
+        do it itself.
+
 2020-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r257029.
