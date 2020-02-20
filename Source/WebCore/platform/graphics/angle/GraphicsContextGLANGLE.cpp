@@ -1940,11 +1940,14 @@ void GraphicsContextGLOpenGL::endTransformFeedback()
 
 void GraphicsContextGLOpenGL::transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode)
 {
-    auto convertedVaryings = varyings.map([](const String& varying) -> const char* {
-        return varying.utf8().data();
+    Vector<CString> convertedVaryings = varyings.map([](const String& varying) {
+        return varying.utf8();
+    });
+    Vector<const char*> pointersToVaryings = convertedVaryings.map([](const CString& varying) {
+        return varying.data();
     });
     makeContextCurrent();
-    gl::TransformFeedbackVaryings(program, varyings.size(), convertedVaryings.data(), bufferMode);
+    gl::TransformFeedbackVaryings(program, pointersToVaryings.size(), pointersToVaryings.data(), bufferMode);
 }
 
 void GraphicsContextGLOpenGL::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo& info)

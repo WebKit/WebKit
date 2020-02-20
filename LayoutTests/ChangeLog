@@ -1,3 +1,14 @@
+2020-02-19  Justin Fan  <justin_fan@apple.com>
+
+        GraphicsContextGLOpenGL::transformFeedbackVaryings passes deallocated memory to gl::TransformFeedbackVaryings
+        https://bugs.webkit.org/show_bug.cgi?id=207526
+
+        Reviewed by Brent Fulgham.
+
+        Unskip known WebGL 2.0.0 conformance suite progressions.
+
+        * TestExpectations:
+
 2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 Release ] perf/clone-with-focus.html is flaky failing.
