@@ -1064,6 +1064,4 @@ webkit.org/b/207954 http/tests/inspector/network/har/har-page.html [ Pass Failur
 
 webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
 
-webkit.org/b/208004 http/tests/inspector/network/resource-sizes-disk-cache.html [ Pass Failure ]
-
 webkit.org/b/208005 webgpu/whlsl/zero-initialize-values.html [ Pass ImageOnlyFailure ]
