@@ -58,10 +58,8 @@ class PixelBufferConformerCV;
 class VideoFullscreenLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public CanMakeWeakPtr<MediaPlayerPrivateMediaStreamAVFObjC>, public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
-#if !RELEASE_LOG_DISABLED
+class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
     , private LoggerHelper
-#endif
 {
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
@@ -89,12 +87,10 @@ public:
     PlatformLayer* displayLayer();
     PlatformLayer* backgroundLayer();
 
-#if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
-#endif
 
 private:
     // MediaPlayerPrivateInterface
@@ -261,12 +257,16 @@ private:
     PlaybackState m_playbackState { PlaybackState::None };
     MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
     CGAffineTransform m_videoTransform;
-    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
 
-#if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-#endif
+    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+
+    // SampleBufferDisplayLayer::Client
+    void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) final;
+
+    RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
     bool m_videoMirrored { false };
     bool m_playing { false };
