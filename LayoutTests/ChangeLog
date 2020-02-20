@@ -1,3 +1,21 @@
+2020-02-19  Sunny He  <sunny_he@apple.com>
+
+        Fix crash when Node::normalize() triggers mutation event that modifies child order
+        https://bugs.webkit.org/show_bug.cgi?id=207875
+        <rdar://58976682>
+
+        Reviewed by Ryosuke Niwa.
+
+        When Node::normalize() merges two text nodes, it calls appendData
+        before textNodesMerged. If there is a mutator event registered, it
+        will fire on the call to appendData, potentially changing the child
+        order and causing a nullptr crash due to incorrect sibling pointers.
+        Reverse the order of these calls to ensure order gets correctly
+        updated.
+
+        * fast/dom/Node/normalize-mutation-event-expected.txt: Added.
+        * fast/dom/Node/normalize-mutation-event.html: Added.
+
 2020-02-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update baselines of websocket tests
