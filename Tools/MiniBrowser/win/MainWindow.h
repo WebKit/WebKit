@@ -45,6 +45,7 @@ public:
     BrowserWindow* browserWindow() const { return m_browserWindow.get(); }
 
     void loadURL(std::wstring);
+    void goHome();
 
     static bool isInstance(HWND);
     
@@ -57,6 +58,7 @@ private:
     static size_t s_numInstances;
 
     MainWindow();
+    void setDefaultURLToCurrentURL();
     bool toggleMenuItem(UINT menuID);
     void onURLBarEnter();
     void updateDeviceScaleFactor();

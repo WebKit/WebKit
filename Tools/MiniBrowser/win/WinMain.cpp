@@ -31,7 +31,6 @@
 #include "stdafx.h"
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
-#include "MiniBrowserReplace.h"
 #include <wtf/win/SoftLinking.h>
 
 #if USE(CF)
@@ -99,7 +98,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (options.requestedURL.length())
         mainWindow.loadURL(options.requestedURL.GetBSTR());
     else
-        mainWindow.browserWindow()->loadURL(_bstr_t(defaultURL).GetBSTR());
+        mainWindow.goHome();
 
 #pragma warning(disable:4509)
 

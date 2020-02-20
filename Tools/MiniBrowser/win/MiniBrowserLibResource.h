@@ -126,6 +126,8 @@
 #define IDM_PROXY_SETTINGS              32778
 #define IDM_RELOAD                      32779
 #define IDM_CLOSE_WINDOW                32780
+#define IDM_GO_HOME                     32781
+#define IDM_SET_DEFAULT_URL             32782
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -134,7 +136,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        181
-#define _APS_NEXT_COMMAND_VALUE         32785
+#define _APS_NEXT_COMMAND_VALUE         32783
 #define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

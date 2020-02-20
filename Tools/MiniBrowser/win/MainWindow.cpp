@@ -46,6 +46,8 @@ namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
 }
 
+static const wchar_t* kMiniBrowserRegistryKey = L"Software\\WebKit\\MiniBrowser";
+
 static constexpr int kToolbarImageSize = 24;
 static constexpr int kToolbarURLBarIndex = 4;
 static constexpr int kToolbarProgressIndicatorIndex = 6;
@@ -140,7 +142,7 @@ void MainWindow::createToolbar(HINSTANCE hInstance)
         { MAKELONG(HIST_BACK,  ImageListID), IDM_HISTORY_BACKWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Back" },
         { MAKELONG(HIST_FORWARD, ImageListID), IDM_HISTORY_FORWARD, TBSTATE_ENABLED, buttonStyles | BTNS_DROPDOWN, { }, 0, (INT_PTR)L"Forward"},
         { I_IMAGENONE, IDM_RELOAD, TBSTATE_ENABLED, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"↺"},
-        { I_IMAGENONE, IDM_RELOAD, 0, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"⌂"},
+        { I_IMAGENONE, IDM_GO_HOME, TBSTATE_ENABLED, buttonStyles | BTNS_SHOWTEXT, { }, 0, (INT_PTR)L"⌂"},
         { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // URL bar
         { MAKELONG(HIST_ADDTOFAVORITES, ImageListID), IDM_ABOUT, 0, buttonStyles, { }, 0, (INT_PTR)L"Add to Bookmarks"},
         { 0, 0, TBSTATE_ENABLED, BTNS_SEP, { }, 0, 0}, // Progress indicator
@@ -278,6 +280,7 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             result = 1;
             break;
         case APPCOMMAND_BROWSER_HOME:
+            thisWindow->goHome();
             break;
         case APPCOMMAND_BROWSER_REFRESH:
             thisWindow->browserWindow()->reload();
@@ -329,6 +332,9 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
             break;
+        case IDM_GO_HOME:
+            thisWindow->goHome();
+            break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
             break;
@@ -340,6 +346,9 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             break;
         case IDM_PROXY_SETTINGS:
             thisWindow->browserWindow()->openProxySettings();
+            break;
+        case IDM_SET_DEFAULT_URL:
+            thisWindow->setDefaultURLToCurrentURL();
             break;
         case IDM_CACHES:
             if (!::IsWindow(thisWindow->m_hCacheWnd)) {
@@ -423,6 +432,16 @@ static void turnOffOtherUserAgents(HMENU menu)
         info.fState = MFS_UNCHECKED;
         ::SetMenuItemInfo(menu, menuToClear, FALSE, &info);
     }
+}
+
+void MainWindow::setDefaultURLToCurrentURL()
+{
+    wchar_t url[INTERNET_MAX_URL_LENGTH];
+    GetWindowText(m_hURLBarWnd, url, INTERNET_MAX_URL_LENGTH);
+    auto length = wcslen(url);
+    if (!length)
+        return;
+    RegSetKeyValue(HKEY_CURRENT_USER, kMiniBrowserRegistryKey, L"DefaultURL", REG_SZ, url, (length + 1) * sizeof(wchar_t));
 }
 
 bool MainWindow::toggleMenuItem(UINT menuID)
@@ -587,12 +606,21 @@ void MainWindow::loadURL(std::wstring url)
     SetFocus(m_browserWindow->hwnd());
 }
 
+void MainWindow::goHome()
+{
+    std::wstring defaultURL = L"https://www.webkit.org/";
+    wchar_t url[INTERNET_MAX_URL_LENGTH];
+    DWORD urlLength = sizeof(url);
+    if (!RegGetValue(HKEY_CURRENT_USER, kMiniBrowserRegistryKey, L"DefaultURL", RRF_RT_REG_SZ, nullptr, &url, &urlLength))
+        defaultURL = url;
+    loadURL(defaultURL);
+}
+
 void MainWindow::onURLBarEnter()
 {
-    wchar_t strPtr[INTERNET_MAX_URL_LENGTH];
-    GetWindowText(m_hURLBarWnd, strPtr, INTERNET_MAX_URL_LENGTH);
-    strPtr[INTERNET_MAX_URL_LENGTH - 1] = 0;
-    loadURL(strPtr);
+    wchar_t url[INTERNET_MAX_URL_LENGTH];
+    GetWindowText(m_hURLBarWnd, url, INTERNET_MAX_URL_LENGTH);
+    loadURL(url);
 }
 
 void MainWindow::updateDeviceScaleFactor()

@@ -26,6 +26,4 @@
 
 // This file is to make it easier for users to manage changes to the internals of MiniBrowser
 
-static const wchar_t* defaultURL = L"https://www.webkit.org/";
-
 static void processCrashReport(const wchar_t* fileName) { ::MessageBox(0, fileName, L"Crash Report", MB_OK); }
