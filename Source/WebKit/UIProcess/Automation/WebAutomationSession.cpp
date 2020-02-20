@@ -389,12 +389,6 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle,
 
         if (!(y = optionalOriginObject->getNumber<float>("y"_s)))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
-
-        if (x.value() < 0)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'x' parameter had an invalid value.");
-
-        if (y.value() < 0)
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'y' parameter had an invalid value.");
     }
 
     Optional<float> width;
