@@ -151,8 +151,6 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(ProcessIdentifier id
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 {
 #if ENABLE(MEDIA_STREAM)
-    // FIXME: Enable the audio session check by implementing an AudioSession for the GPUProcess.
-    MockAudioSharedUnit::singleton().setDisableAudioSessionCheck(isEnabled);
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
 #endif
 }

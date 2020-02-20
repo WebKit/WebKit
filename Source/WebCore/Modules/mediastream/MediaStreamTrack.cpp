@@ -75,7 +75,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
     , m_isCaptureTrack(m_private->isCaptureTrack())
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -85,6 +84,9 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
         return;
 
     allCaptureTracks().add(this);
+
+    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+        PlatformMediaSessionManager::sharedManager().addAudioCaptureSource(*this);
 
     if (auto document = this->document()) {
         if (document->page() && document->page()->mutedState())
@@ -100,6 +102,9 @@ MediaStreamTrack::~MediaStreamTrack()
         return;
 
     allCaptureTracks().remove(this);
+
+    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 }
 
 const AtomString& MediaStreamTrack::kind() const
@@ -536,9 +541,6 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::configureTrackRendering()
 {
-    if (m_mediaSession && m_private->type() == RealtimeMediaSource::Type::Audio)
-        m_mediaSession->canProduceAudioChanged();
-
     if (auto document = this->document())
         document->updateIsPlayingMedia();
 
@@ -580,46 +582,10 @@ Document* MediaStreamTrack::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-PlatformMediaSession::MediaType MediaStreamTrack::mediaType() const
+bool MediaStreamTrack::isCapturingAudio() const
 {
-    return (isCaptureTrack() && canProduceAudio()) ? PlatformMediaSession::MediaStreamCapturingAudio : PlatformMediaSession::None;
-}
-
-PlatformMediaSession::MediaType MediaStreamTrack::presentationType() const
-{
-    return mediaType();
-}
-
-void MediaStreamTrack::mayResumePlayback(bool)
-{
-    // FIXME: should a media stream track pay attention to this directly, or only when attached to a media element?
-}
-
-void MediaStreamTrack::suspendPlayback()
-{
-    // FIXME: should a media stream track pay attention to this directly, or only when attached to a media element?
-}
-
-String MediaStreamTrack::sourceApplicationIdentifier() const
-{
-    auto* document = this->document();
-    if (document && document->frame()) {
-        if (auto* networkingContext = document->frame()->loader().networkingContext())
-            return networkingContext->sourceApplicationIdentifier();
-    }
-
-    return emptyString();
-}
-
-bool MediaStreamTrack::canProduceAudio() const
-{
-    return m_private->type() == RealtimeMediaSource::Type::Audio && !ended() && !muted();
-}
-
-DocumentIdentifier MediaStreamTrack::hostingDocumentIdentifier() const
-{
-    auto* document = downcast<Document>(m_scriptExecutionContext);
-    return document ? document->identifier() : DocumentIdentifier { };
+    ASSERT(isCaptureTrack() && m_private->type() == RealtimeMediaSource::Type::Audio);
+    return !ended() && !muted();
 }
 
 #if !RELEASE_LOG_DISABLED

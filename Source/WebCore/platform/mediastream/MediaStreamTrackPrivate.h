@@ -140,6 +140,7 @@ private:
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void audioUnitWillStart() final;
 
     void updateReadyState();
 

@@ -106,6 +106,7 @@ mhtml
 # Some media stream tests crash because of OS issues, so skip all but one while we investigate.
 fast/mediastream [ Skip ]
 fast/mediastream/getUserMedia-default.html [ Pass ]
+fast/mediastream/captureInGPUProcess.html [ Pass ]
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

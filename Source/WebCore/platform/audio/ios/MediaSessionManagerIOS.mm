@@ -98,18 +98,9 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static MediaSessionManageriOS* platformMediaSessionManager = nullptr;
-
-PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
+std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {
-    if (!platformMediaSessionManager)
-        platformMediaSessionManager = new MediaSessionManageriOS;
-    return *platformMediaSessionManager;
-}
-
-PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists()
-{
-    return platformMediaSessionManager;
+    return std::unique_ptr<MediaSessionManageriOS>(new MediaSessionManageriOS);
 }
 
 MediaSessionManageriOS::MediaSessionManageriOS()
@@ -143,11 +134,11 @@ void MediaSessionManageriOS::resetRestrictions()
 
     if (ramSize() < systemMemoryRequiredForVideoInBackgroundTabs) {
         ALWAYS_LOG(LOGIDENTIFIER, "restricting video in background tabs because system memory = ", ramSize());
-        addRestriction(PlatformMediaSession::Video, BackgroundTabPlaybackRestricted);
+        addRestriction(PlatformMediaSession::MediaType::Video, BackgroundTabPlaybackRestricted);
     }
 
-    addRestriction(PlatformMediaSession::Video, BackgroundProcessPlaybackRestricted);
-    addRestriction(PlatformMediaSession::VideoAudio, ConcurrentPlaybackNotPermitted | BackgroundProcessPlaybackRestricted | SuspendedUnderLockPlaybackRestricted);
+    addRestriction(PlatformMediaSession::MediaType::Video, BackgroundProcessPlaybackRestricted);
+    addRestriction(PlatformMediaSession::MediaType::VideoAudio, ConcurrentPlaybackNotPermitted | BackgroundProcessPlaybackRestricted | SuspendedUnderLockPlaybackRestricted);
 }
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()

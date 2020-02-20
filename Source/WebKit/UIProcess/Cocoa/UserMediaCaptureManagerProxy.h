@@ -35,6 +35,10 @@
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <wtf/UniqueRef.h>
 
+namespace WebCore {
+class PlatformMediaSessionManager;
+}
+
 namespace WebKit {
 
 class SharedMemory;
@@ -49,6 +53,7 @@ public:
         virtual void addMessageReceiver(IPC::StringReference, IPC::MessageReceiver&) = 0;
         virtual void removeMessageReceiver(IPC::StringReference) = 0;
         virtual IPC::Connection& connection() = 0;
+        virtual WebCore::PlatformMediaSessionManager& sessionManager() = 0;
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();

@@ -347,8 +347,8 @@ private:
     void derefUnfinishedSourceNodes();
 
     // PlatformMediaSessionClient
-    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::WebAudio; }
-    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::WebAudio; }
+    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::MediaType::WebAudio; }
     void mayResumePlayback(bool shouldResume) override;
     void suspendPlayback() override;
     bool canReceiveRemoteControlCommands() const override { return false; }

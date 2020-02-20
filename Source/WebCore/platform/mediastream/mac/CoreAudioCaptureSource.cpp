@@ -803,6 +803,13 @@ void CoreAudioCaptureSource::delaySamples(Seconds seconds)
     unit().delaySamples(seconds);
 }
 
+void CoreAudioCaptureSource::audioUnitWillStart()
+{
+    forEachObserver([](auto& observer) {
+        observer.audioUnitWillStart();
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -6916,7 +6916,7 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
     if (PlatformMediaSessionManager::sharedManager().processIsSuspended())
         return SleepType::None;
 
-    bool shouldBeAbleToSleep = mediaType() != PlatformMediaSession::VideoAudio;
+    bool shouldBeAbleToSleep = mediaType() != PlatformMediaSession::MediaType::VideoAudio;
 #if ENABLE(MEDIA_STREAM)
     // Remote media stream video tracks may have their corresponding audio tracks being played outside of the media element. Let's ensure to not IDLE the screen in that case.
     // FIXME: We should check that audio is being/to be played. Ideally, we would come up with a media stream agnostic heuristisc.
@@ -7517,8 +7517,8 @@ PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 {
     if (m_player && m_readyState >= HAVE_METADATA) {
         if (hasVideo() && hasAudio() && !muted())
-            return PlatformMediaSession::VideoAudio;
-        return hasVideo() ? PlatformMediaSession::Video : PlatformMediaSession::Audio;
+            return PlatformMediaSession::MediaType::VideoAudio;
+        return hasVideo() ? PlatformMediaSession::MediaType::Video : PlatformMediaSession::MediaType::Audio;
     }
 
     return presentationType();
@@ -7527,9 +7527,9 @@ PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 PlatformMediaSession::MediaType HTMLMediaElement::presentationType() const
 {
     if (hasTagName(HTMLNames::videoTag))
-        return muted() ? PlatformMediaSession::Video : PlatformMediaSession::VideoAudio;
+        return muted() ? PlatformMediaSession::MediaType::Video : PlatformMediaSession::MediaType::VideoAudio;
 
-    return PlatformMediaSession::Audio;
+    return PlatformMediaSession::MediaType::Audio;
 }
 
 PlatformMediaSession::DisplayType HTMLMediaElement::displayType() const

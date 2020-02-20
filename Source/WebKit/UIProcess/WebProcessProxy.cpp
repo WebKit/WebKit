@@ -59,6 +59,7 @@
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
@@ -159,6 +160,7 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { m_process.addMessageReceiver(messageReceiverName, receiver); }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { m_process.removeMessageReceiver(messageReceiverName); }
     IPC::Connection& connection() final { return *m_process.connection(); }
+    PlatformMediaSessionManager& sessionManager() final { return PlatformMediaSessionManager::sharedManager(); }
 
     WebProcessProxy& m_process;
 };

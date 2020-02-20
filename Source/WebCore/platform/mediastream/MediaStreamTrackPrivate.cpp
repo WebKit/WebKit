@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "Logging.h"
+#include "PlatformMediaSessionManager.h"
 #include <wtf/UUID.h>
 
 #if PLATFORM(COCOA)
@@ -300,6 +301,12 @@ void MediaStreamTrackPrivate::updateReadyState()
     forEachObserver([this](auto& observer) {
         observer.readyStateChanged(*this);
     });
+}
+
+void MediaStreamTrackPrivate::audioUnitWillStart()
+{
+    if (!m_isEnded)
+        PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -30,6 +30,7 @@
 
 #include "AudioSession.h"
 #include "CoreAudioCaptureSource.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
 #include "PlatformMediaSessionManager.h"
 
@@ -93,12 +94,10 @@ void BaseAudioSharedUnit::startProducingData()
 
 OSStatus BaseAudioSharedUnit::startUnit()
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!m_disableAudioSessionCheck) {
-        PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
-        ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
-    }
-#endif
+    forEachClient([](auto& client) {
+        client.audioUnitWillStart();
+    });
+    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
 
     if (auto error = startInternal()) {
         captureFailed();

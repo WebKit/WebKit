@@ -76,8 +76,6 @@ public:
 
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
 
-    void setDisableAudioSessionCheck(bool value) { m_disableAudioSessionCheck = value; };
-
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
     bool hasClients() const { return !m_clients.isEmpty(); }
@@ -105,7 +103,6 @@ private:
 
     HashSet<CoreAudioCaptureSource*> m_clients;
     mutable RecursiveLock m_clientsLock;
-    bool m_disableAudioSessionCheck { false };
 };
 
 } // namespace WebCore

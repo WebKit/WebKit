@@ -59,13 +59,12 @@ public:
 
     virtual ~PlatformMediaSession();
 
-    enum MediaType {
+    enum class MediaType {
         None = 0,
         Video,
         VideoAudio,
         Audio,
         WebAudio,
-        MediaStreamCapturingAudio,
     };
     MediaType mediaType() const;
     MediaType presentationType() const;
@@ -189,6 +188,12 @@ public:
 
     bool canPlayConcurrently(const PlatformMediaSession&) const;
     bool shouldOverridePauseDuringRouteChange() const;
+
+    class AudioCaptureSource : public CanMakeWeakPtr<AudioCaptureSource> {
+    public:
+        virtual ~AudioCaptureSource() = default;
+        virtual bool isCapturingAudio() const = 0;
+    };
 
 protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);

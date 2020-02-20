@@ -45,28 +45,19 @@ static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
 
 #if PLATFORM(MAC)
-static MediaSessionManagerCocoa* platformMediaSessionManager = nullptr;
-
-PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
+std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {
-    if (!platformMediaSessionManager)
-        platformMediaSessionManager = new MediaSessionManagerCocoa;
-    return *platformMediaSessionManager;
+    return makeUnique<MediaSessionManagerCocoa>();
 }
-
-PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists()
-{
-    return platformMediaSessionManager;
-}
-#endif
+#endif // !PLATFORM(MAC)
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
-    int videoCount = count(PlatformMediaSession::Video);
-    int videoAudioCount = count(PlatformMediaSession::VideoAudio);
-    int audioCount = count(PlatformMediaSession::Audio);
-    int webAudioCount = count(PlatformMediaSession::WebAudio);
-    int captureCount = count(PlatformMediaSession::MediaStreamCapturingAudio);
+    int videoCount = count(PlatformMediaSession::MediaType::Video);
+    int videoAudioCount = count(PlatformMediaSession::MediaType::VideoAudio);
+    int audioCount = count(PlatformMediaSession::MediaType::Audio);
+    int webAudioCount = count(PlatformMediaSession::MediaType::WebAudio);
+    int captureCount = countActiveAudioCaptureSources();
     ALWAYS_LOG(LOGIDENTIFIER, "types: "
         "AudioCapture(", captureCount, "), "
         "Video(", videoCount, "), "
@@ -99,7 +90,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     bool hasAudibleAudioOrVideoMediaType = false;
     forEachSession([&hasAudibleAudioOrVideoMediaType] (auto& session) mutable {
         auto type = session.mediaType();
-        if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
+        if ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
             hasAudibleAudioOrVideoMediaType = true;
         if (session.isPlayingToWirelessPlaybackTarget())
             hasAudibleAudioOrVideoMediaType = true;

@@ -60,6 +60,7 @@
 #include "WebProcessMessages.h"
 
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,6 +78,7 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }
+    PlatformMediaSessionManager& sessionManager() final { return m_process.sessionManager(); }
 
     GPUConnectionToWebProcess& m_process;
 };
@@ -272,6 +274,13 @@ const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
     return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);
 }
 #endif
+
+PlatformMediaSessionManager& GPUConnectionToWebProcess::sessionManager()
+{
+    if (!m_sessionManager)
+        m_sessionManager = PlatformMediaSessionManager::create();
+    return *m_sessionManager;
+}
 
 } // namespace WebKit
 

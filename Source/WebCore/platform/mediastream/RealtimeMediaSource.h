@@ -83,6 +83,7 @@ public:
         virtual void sourceStopped() { }
         virtual void sourceMutedChanged() { }
         virtual void sourceSettingsChanged() { }
+        virtual void audioUnitWillStart() { }
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() { return false; }

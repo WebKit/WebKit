@@ -34,6 +34,7 @@
 #include <pal/system/SystemSleepListener.h>
 #include <wtf/AggregateLogger.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -54,6 +55,7 @@ class PlatformMediaSessionManager
 public:
     WEBCORE_EXPORT static PlatformMediaSessionManager* sharedManagerIfExists();
     WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
+    WEBCORE_EXPORT static std::unique_ptr<PlatformMediaSessionManager> create();
 
     static void updateNowPlayingInfoIfNecessary();
 
@@ -138,6 +140,9 @@ public:
 
     bool processIsSuspended() const { return m_processIsSuspended; }
 
+    WEBCORE_EXPORT void addAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
+    WEBCORE_EXPORT void removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
+
 protected:
     friend class PlatformMediaSession;
     explicit PlatformMediaSessionManager();
@@ -163,6 +168,8 @@ protected:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    int countActiveAudioCaptureSources();
+
 private:
     friend class Internals;
 
@@ -183,7 +190,7 @@ private:
 
     Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
 
-    SessionRestrictions m_restrictions[PlatformMediaSession::MediaStreamCapturingAudio + 1];
+    SessionRestrictions m_restrictions[static_cast<unsigned>(PlatformMediaSession::MediaType::WebAudio) + 1];
     mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
@@ -203,6 +210,8 @@ private:
 #if USE(AUDIO_SESSION)
     bool m_becameActive { false };
 #endif
+
+    WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
 
 #if !RELEASE_LOG_DISABLED
     Ref<AggregateLogger> m_logger;

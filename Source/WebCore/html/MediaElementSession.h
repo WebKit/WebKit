@@ -153,9 +153,9 @@ public:
 
     static bool isMediaElementSessionMediaType(MediaType type)
     {
-        return type == Video
-            || type == Audio
-            || type == VideoAudio;
+        return type == MediaType::Video
+            || type == MediaType::Audio
+            || type == MediaType::VideoAudio;
     }
 
 #if !RELEASE_LOG_DISABLED

@@ -123,7 +123,6 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager& manager,
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
-    ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= MediaStreamCapturingAudio);
     manager.addSession(*this);
 }
 
@@ -351,7 +350,7 @@ PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
 
 bool PlatformMediaSession::activeAudioSessionRequired() const
 {
-    if (mediaType() == PlatformMediaSession::None)
+    if (mediaType() == PlatformMediaSession::MediaType::None)
         return false;
     if (state() != PlatformMediaSession::State::Playing)
         return false;

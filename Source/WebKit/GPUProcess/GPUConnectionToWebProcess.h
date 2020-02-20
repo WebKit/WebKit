@@ -36,6 +36,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 
+namespace WebCore {
+class PlatformMediaSessionManager;
+}
+
 namespace WebKit {
 
 class GPUProcess;
@@ -69,6 +73,8 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory() const;
 #endif
+
+    WebCore::PlatformMediaSessionManager& sessionManager();
 
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
@@ -111,6 +117,7 @@ private:
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;
 #endif
+    std::unique_ptr<WebCore::PlatformMediaSessionManager> m_sessionManager;
 };
 
 } // namespace WebKit

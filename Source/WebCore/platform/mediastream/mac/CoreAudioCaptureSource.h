@@ -89,6 +89,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }
 
     void initializeToStartProducingData();
+    void audioUnitWillStart();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "CoreAudioCaptureSource"; }

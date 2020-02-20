@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -43,28 +44,46 @@
 namespace WebKit {
 using namespace WebCore;
 
-class UserMediaCaptureManagerProxy::SourceProxy : public RealtimeMediaSource::Observer, public SharedRingBufferStorage::Client {
+class UserMediaCaptureManagerProxy::SourceProxy
+    : public RealtimeMediaSource::Observer
+    , public SharedRingBufferStorage::Client
+    , public PlatformMediaSession::AudioCaptureSource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, Ref<RealtimeMediaSource>&& source)
+    SourceProxy(RealtimeMediaSourceIdentifier id, PlatformMediaSessionManager& sessionManager, Ref<IPC::Connection>&& connection, Ref<RealtimeMediaSource>&& source)
         : m_id(id)
+        , m_sessionManager(makeWeakPtr(sessionManager))
         , m_connection(WTFMove(connection))
         , m_source(WTFMove(source))
         , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
     {
         m_source->addObserver(*this);
+
+        if (m_source->type() == RealtimeMediaSource::Type::Audio)
+            sessionManager.addAudioCaptureSource(*this);
     }
 
     ~SourceProxy()
     {
         storage().invalidate();
         m_source->removeObserver(*this);
+
+        if (m_source->type() == RealtimeMediaSource::Type::Audio && m_sessionManager)
+            m_sessionManager->removeAudioCaptureSource(*this);
     }
 
     RealtimeMediaSource& source() { return m_source; }
     SharedRingBufferStorage& storage() { return static_cast<SharedRingBufferStorage&>(m_ringBuffer.storage()); }
     CAAudioStreamDescription& description() { return m_description; }
     int64_t numberOfFrames() { return m_numberOfFrames; }
+
+    bool isCapturingAudio() const final { return !m_isEnded && m_source->isProducingData(); }
+
+    void audioUnitWillStart() final
+    {
+        if (!m_isEnded && m_sessionManager)
+            m_sessionManager->sessionCanProduceAudioChanged();
+    }
 
     void start()
     {
@@ -145,6 +164,7 @@ private:
     }
 
     RealtimeMediaSourceIdentifier m_id;
+    WeakPtr<PlatformMediaSessionManager> m_sessionManager;
     Ref<IPC::Connection> m_connection;
     Ref<RealtimeMediaSource> m_source;
     CARingBuffer m_ringBuffer;
@@ -192,7 +212,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         auto source = sourceOrError.source();
         settings = source->settings();
         ASSERT(!m_proxies.contains(id));
-        m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
+        m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->sessionManager(), m_connectionProxy->connection(), WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
     completionHandler(succeeded, invalidConstraints, WTFMove(settings));
@@ -248,7 +268,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
     ASSERT(m_proxies.contains(clonedID));
     ASSERT(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID))
-        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), proxy->source().clone()));
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->sessionManager(), m_connectionProxy->connection(), proxy->source().clone()));
 }
 
 void UserMediaCaptureManagerProxy::requestToEnd(RealtimeMediaSourceIdentifier sourceID)

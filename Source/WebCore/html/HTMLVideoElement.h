@@ -127,7 +127,7 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void setDisplayMode(DisplayMode) final;
 
-    PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::Video; }
+    PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::Video; }
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 

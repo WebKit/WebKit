@@ -3914,26 +3914,24 @@ void Internals::applicationDidEnterBackground(bool suspendedUnderLock) const
 static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTypeString)
 {
     if (equalLettersIgnoringASCIICase(mediaTypeString, "video"))
-        return PlatformMediaSession::Video;
+        return PlatformMediaSession::MediaType::Video;
     if (equalLettersIgnoringASCIICase(mediaTypeString, "audio"))
-        return PlatformMediaSession::Audio;
+        return PlatformMediaSession::MediaType::Audio;
     if (equalLettersIgnoringASCIICase(mediaTypeString, "videoaudio"))
-        return PlatformMediaSession::VideoAudio;
+        return PlatformMediaSession::MediaType::VideoAudio;
     if (equalLettersIgnoringASCIICase(mediaTypeString, "webaudio"))
-        return PlatformMediaSession::WebAudio;
-    if (equalLettersIgnoringASCIICase(mediaTypeString, "mediastreamcapturingaudio"))
-        return PlatformMediaSession::MediaStreamCapturingAudio;
+        return PlatformMediaSession::MediaType::WebAudio;
 
-    return PlatformMediaSession::None;
+    return PlatformMediaSession::MediaType::None;
 }
 
 ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaTypeString, StringView restrictionsString)
 {
-    PlatformMediaSession::MediaType mediaType = mediaTypeFromString(mediaTypeString);
-    if (mediaType == PlatformMediaSession::None)
+    auto mediaType = mediaTypeFromString(mediaTypeString);
+    if (mediaType == PlatformMediaSession::MediaType::None)
         return Exception { InvalidAccessError };
 
-    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType);
+    auto restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType);
     PlatformMediaSessionManager::sharedManager().removeRestriction(mediaType, restrictions);
 
     restrictions = PlatformMediaSessionManager::NoRestrictions;
@@ -3959,7 +3957,7 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
 ExceptionOr<String> Internals::mediaSessionRestrictions(const String& mediaTypeString) const
 {
     PlatformMediaSession::MediaType mediaType = mediaTypeFromString(mediaTypeString);
-    if (mediaType == PlatformMediaSession::None)
+    if (mediaType == PlatformMediaSession::MediaType::None)
         return Exception { InvalidAccessError };
 
     PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType);
