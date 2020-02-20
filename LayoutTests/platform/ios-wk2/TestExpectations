@@ -1363,8 +1363,6 @@ webkit.org/b/206946 http/tests/security/cookies/third-party-cookie-blocking-main
 
 webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
 
-webkit.org/b/206993 [ Release ]  fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/207153 animations/animation-callback-timestamp.html [ Pass Failure ]
 
 webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
@@ -1378,8 +1376,6 @@ webkit.org/b/207197 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pas
 webkit.org/b/206627 storage/websql [ Skip ]
 
 webkit.org/b/207077 [ Debug ] imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html [ Pass Failure ]
-
-webkit.org/b/207038 [ Release ] fast/hidpi/image-srcset-svg-canvas-2x.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html [ Pass Failure ]
 
@@ -1425,3 +1421,5 @@ webkit.org/b/208018 [ Release ] perf/clone-with-focus.html [ Pass Failure ]
 webkit.org/b/207943 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
 
 webkit.org/b/208030 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
+
+webkit.org/b/207038 compositing/webgl/webgl-reflection.html [ Pass Failure ]
