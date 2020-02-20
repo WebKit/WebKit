@@ -137,12 +137,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_playing(0)
     , m_seeking(false)
     , m_loadingProgressed(false)
-    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
-    , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
-#if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
-#endif
+    , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>(m_logger, m_logIdentifier))
+    , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier);
@@ -1225,12 +1223,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<
     return true;
 }
 
-#if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const
 {
     return LogMediaSource;
 }
-#endif
 
 }
 
