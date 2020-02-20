@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableServiceControls=true ] -->
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    addEventListener("load", () => {
+        const frame = document.querySelector("iframe");
+        const frameSet = document.createElement("frameset");
+        const frameDocument = frame.contentDocument;
+
+        frameDocument.getSelection().selectAllChildren(frameDocument.body);
+        frameSet.onblur = () => document.body.appendChild(frame);
+        frame.focus();
+    });
+</script>
+</head>
+<body>
+    <p>This test passes if it does not crash.</p>
+    <iframe srcdoc="<body>Hello</body>"></iframe>
+</body>
+</html>

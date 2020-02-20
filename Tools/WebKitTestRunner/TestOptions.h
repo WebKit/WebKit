@@ -88,6 +88,7 @@ struct TestOptions {
     bool checkForWorldLeaks { false };
     bool shouldIgnoreMetaViewport { false };
     bool shouldShowSpellCheckingDots { false };
+    bool enableServiceControls { false };
     bool enableEditableImages { false };
     bool editable { false };
     bool enableUndoManagerAPI { false };
@@ -147,6 +148,7 @@ struct TestOptions {
             || runSingly != options.runSingly
             || checkForWorldLeaks != options.checkForWorldLeaks
             || shouldShowSpellCheckingDots != options.shouldShowSpellCheckingDots
+            || enableServiceControls != options.enableServiceControls
             || shouldIgnoreMetaViewport != options.shouldIgnoreMetaViewport
             || enableEditableImages != options.enableEditableImages
             || editable != options.editable
