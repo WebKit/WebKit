@@ -1840,8 +1840,8 @@ void WebViewImpl::updateContentInsetsIfAutomatic()
 
     NSWindow *window = [m_view window];
     if ((window.styleMask & NSWindowStyleMaskFullSizeContentView) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
-        NSRect contentLayoutRect = [m_view convertRect:window.contentLayoutRect fromView:nil];
-        CGFloat newTopContentInset = NSMaxY(contentLayoutRect) - NSHeight(contentLayoutRect);
+        NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:window.contentLayoutRect fromView:nil];
+        CGFloat newTopContentInset = std::max<CGFloat>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
         if (m_page->topContentInset() != newTopContentInset)
             setTopContentInset(newTopContentInset);
     } else

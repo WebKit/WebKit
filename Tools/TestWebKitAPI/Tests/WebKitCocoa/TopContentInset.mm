@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -52,7 +53,7 @@ static bool receivedFullscreenChangeMessage;
 
 namespace TestWebKitAPI {
 
-TEST(Fullscreen, TopContentInset)
+TEST(TopContentInset, Fullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
@@ -81,6 +82,52 @@ TEST(Fullscreen, TopContentInset)
     [webView mouseDown:event];
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
     ASSERT_EQ(10, webView.get()._topContentInset);
+}
+
+TEST(TopContentInset, AutomaticAdjustment)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView loadHTMLString:@"" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    ASSERT_GT(webView.get()._topContentInset, 10);
+}
+
+TEST(TopContentInset, AutomaticAdjustmentDisabled)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView loadHTMLString:@"" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    ASSERT_EQ(webView.get()._topContentInset, 0);
+}
+
+TEST(TopContentInset, AutomaticAdjustmentDoesNotAffectInsetViews)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(100, 100, 200, 200) configuration:configuration.get()]);
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView loadHTMLString:@"" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    ASSERT_EQ(webView.get()._topContentInset, 0);
 }
 
 } // namespace TestWebKitAPI
