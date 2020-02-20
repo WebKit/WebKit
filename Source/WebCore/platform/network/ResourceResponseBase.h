@@ -31,6 +31,7 @@
 #include "HTTPHeaderMap.h"
 #include "NetworkLoadMetrics.h"
 #include "ParsedContentRange.h"
+#include <wtf/Box.h>
 #include <wtf/Markable.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -42,6 +43,8 @@ class ResourceResponse;
 bool isScriptAllowedByNosniff(const ResourceResponse&);
 
 enum class UsedLegacyTLS : bool { No, Yes };
+static constexpr unsigned bitWidthOfUsedLegacyTLS = 1;
+static_assert(static_cast<unsigned>(UsedLegacyTLS::Yes) <= ((1U << bitWidthOfUsedLegacyTLS) - 1));
 
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
@@ -68,7 +71,7 @@ public:
         String httpStatusText;
         String httpVersion;
         HTTPHeaderMap httpHeaderFields;
-        NetworkLoadMetrics networkLoadMetrics;
+        Optional<NetworkLoadMetrics> networkLoadMetrics;
         Type type;
         Tainting tainting;
         bool isRedirected;
@@ -150,6 +153,9 @@ public:
     const ParsedContentRange& contentRange() const;
 
     enum class Source : uint8_t { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker, ApplicationCache, InspectorOverride };
+    static constexpr unsigned bitWidthOfSource = 4;
+    static_assert(static_cast<unsigned>(Source::InspectorOverride) <= ((1U << bitWidthOfSource) - 1));
+
     WEBCORE_EXPORT Source source() const;
     void setSource(Source source)
     {
@@ -160,7 +166,16 @@ public:
     // FIXME: This should be eliminated from ResourceResponse.
     // Network loading metrics should be delivered via didFinishLoad
     // and should not be part of the ResourceResponse.
-    NetworkLoadMetrics& deprecatedNetworkLoadMetrics() const { return m_networkLoadMetrics; }
+    const NetworkLoadMetrics* deprecatedNetworkLoadMetricsOrNull() const
+    {
+        if (m_networkLoadMetrics)
+            return m_networkLoadMetrics.get();
+        return nullptr;
+    }
+    void setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>&& metrics)
+    {
+        m_networkLoadMetrics = WTFMove(metrics);
+    }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
@@ -222,7 +237,7 @@ protected:
     AtomString m_httpStatusText;
     AtomString m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
-    mutable NetworkLoadMetrics m_networkLoadMetrics;
+    Box<NetworkLoadMetrics> m_networkLoadMetrics;
 
     mutable Optional<CertificateInfo> m_certificateInfo;
 
@@ -241,18 +256,17 @@ private:
     mutable bool m_haveParsedLastModifiedHeader : 1;
     mutable bool m_haveParsedContentRangeHeader : 1;
     bool m_isRedirected : 1;
+    bool m_isRangeRequested : 1;
 protected:
     bool m_isNull : 1;
-
+    unsigned m_initLevel : 3; // Controlled by ResourceResponse.
+    mutable UsedLegacyTLS m_usedLegacyTLS : bitWidthOfUsedLegacyTLS;
 private:
-    Source m_source { Source::Unknown };
-    Type m_type { Type::Default };
-    Tainting m_tainting { Tainting::Basic };
-    bool m_isRangeRequested { false };
-
+    Tainting m_tainting : bitWidthOfTainting;
+    Source m_source : bitWidthOfSource;
+    Type m_type : bitWidthOfType;
 protected:
     short m_httpStatusCode { 0 };
-    mutable UsedLegacyTLS m_usedLegacyTLS { UsedLegacyTLS::No };
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
@@ -276,7 +290,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
 
     // We don't want to put the networkLoadMetrics info
     // into the disk cache, because we will never use the old info.
-    if (Encoder::isIPCEncoder)
+    if constexpr (Encoder::isIPCEncoder)
         encoder << m_networkLoadMetrics;
 
     encoder << m_httpStatusCode;
@@ -285,7 +299,8 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_tainting);
     encoder << m_isRedirected;
-    encoder << m_usedLegacyTLS;
+    UsedLegacyTLS usedLegacyTLS = m_usedLegacyTLS;
+    encoder << usedLegacyTLS;
     encoder << m_isRangeRequested;
 }
 
@@ -318,24 +333,34 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(response.m_httpHeaderFields))
         return false;
     // The networkLoadMetrics info is only send over IPC and not stored in disk cache.
-    if (Decoder::isIPCDecoder && !decoder.decode(response.m_networkLoadMetrics))
-        return false;
+    if constexpr (Decoder::isIPCDecoder) {
+        if (!decoder.decode(response.m_networkLoadMetrics))
+            return false;
+    }
     if (!decoder.decode(response.m_httpStatusCode))
         return false;
     if (!decoder.decode(response.m_certificateInfo))
         return false;
-    if (!decoder.decodeEnum(response.m_source))
+    Source source = Source::Unknown;
+    if (!decoder.decodeEnum(source))
         return false;
-    if (!decoder.decodeEnum(response.m_type))
+    response.m_source = source;
+    Type type = Type::Default;
+    if (!decoder.decodeEnum(type))
         return false;
-    if (!decoder.decodeEnum(response.m_tainting))
+    response.m_type = type;
+    Tainting tainting = Tainting::Basic;
+    if (!decoder.decodeEnum(tainting))
         return false;
+    response.m_tainting = tainting;
     bool isRedirected = false;
     if (!decoder.decode(isRedirected))
         return false;
     response.m_isRedirected = isRedirected;
-    if (!decoder.decode(response.m_usedLegacyTLS))
+    UsedLegacyTLS usedLegacyTLS = UsedLegacyTLS::No;
+    if (!decoder.decode(usedLegacyTLS))
         return false;
+    response.m_usedLegacyTLS = usedLegacyTLS;
     bool isRangeRequested = false;
     if (!decoder.decode(isRangeRequested))
         return false;

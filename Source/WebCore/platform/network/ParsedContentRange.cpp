@@ -39,11 +39,13 @@ static bool areContentRangeValuesValid(int64_t firstBytePosition, int64_t lastBy
     // or whose instance-length value is less than or equal to its last-byte-pos value, is invalid.
     if (firstBytePosition < 0)
         return false;
+    ASSERT(firstBytePosition >= 0);
 
     if (lastBytePosition < firstBytePosition)
         return false;
+    ASSERT(lastBytePosition >= 0);
 
-    if (instanceLength == ParsedContentRange::UnknownLength)
+    if (instanceLength == ParsedContentRange::unknownLength)
         return true;
 
     return lastBytePosition < instanceLength;
@@ -96,7 +98,7 @@ static bool parseContentRange(const String& headerValue, int64_t& firstBytePosit
 
     String instanceString = headerValue.substring(instanceLengthSeparatorToken + 1);
     if (instanceString == "*")
-        instanceLength = ParsedContentRange::UnknownLength;
+        instanceLength = ParsedContentRange::unknownLength;
     else {
         if (!instanceString.isAllSpecialCharacters<isASCIIDigit>())
             return false;
@@ -111,7 +113,8 @@ static bool parseContentRange(const String& headerValue, int64_t& firstBytePosit
 
 ParsedContentRange::ParsedContentRange(const String& headerValue)
 {
-    m_isValid = parseContentRange(headerValue, m_firstBytePosition, m_lastBytePosition, m_instanceLength);
+    if (!parseContentRange(headerValue, m_firstBytePosition, m_lastBytePosition, m_instanceLength))
+        m_instanceLength = invalidLength;
 }
 
 ParsedContentRange::ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength)
@@ -119,14 +122,15 @@ ParsedContentRange::ParsedContentRange(int64_t firstBytePosition, int64_t lastBy
     , m_lastBytePosition(lastBytePosition)
     , m_instanceLength(instanceLength)
 {
-    m_isValid = areContentRangeValuesValid(m_firstBytePosition, m_lastBytePosition, m_instanceLength);
+    if (!areContentRangeValuesValid(m_firstBytePosition, m_lastBytePosition, m_instanceLength))
+        m_instanceLength = invalidLength;
 }
 
 String ParsedContentRange::headerValue() const
 {
-    if (!m_isValid)
+    if (!isValid())
         return String();
-    if (m_instanceLength == UnknownLength)
+    if (m_instanceLength == unknownLength)
         return makeString("bytes ", m_firstBytePosition, '-', m_lastBytePosition, "/*");
     return makeString("bytes ", m_firstBytePosition, '-', m_lastBytePosition, '/', m_instanceLength);
 }

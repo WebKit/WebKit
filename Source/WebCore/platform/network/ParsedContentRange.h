@@ -23,37 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ParsedContentRange_h
-#define ParsedContentRange_h
+#pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
 class ParsedContentRange {
 public:
-    WEBCORE_EXPORT explicit ParsedContentRange(const String&);
-    ParsedContentRange() { }
-    WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
+    static constexpr int64_t invalidLength = std::numeric_limits<int64_t>::min();
+    static constexpr int64_t unknownLength = std::numeric_limits<int64_t>::max();
 
-    bool isValid() const { return m_isValid; }
+    WEBCORE_EXPORT explicit ParsedContentRange(const String&);
+    WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
+    ParsedContentRange() = default;
+
+    bool isValid() const { return m_instanceLength != invalidLength; }
     int64_t firstBytePosition() const { return m_firstBytePosition; }
     int64_t lastBytePosition() const { return m_lastBytePosition; }
     int64_t instanceLength() const { return m_instanceLength; }
 
+    static ParsedContentRange invalidValue()
+    {
+        return ParsedContentRange();
+    }
+
     WEBCORE_EXPORT String headerValue() const;
 
-    enum { UnknownLength = std::numeric_limits<int64_t>::max() };
+    struct MarkableTraits {
+        static bool isEmptyValue(const ParsedContentRange& range)
+        {
+            return !range.isValid();
+        }
+
+        static ParsedContentRange emptyValue()
+        {
+            return ParsedContentRange::invalidValue();
+        }
+    };
 
 private:
-    template<typename T> static bool isPositive(T);
-
     int64_t m_firstBytePosition { 0 };
     int64_t m_lastBytePosition { 0 };
-    int64_t m_instanceLength { UnknownLength };
-    bool m_isValid { false };
+    int64_t m_instanceLength { invalidLength };
 };
 
 }
-
-#endif
