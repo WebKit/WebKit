@@ -1,3 +1,36 @@
+2020-02-19  Jon Davis  <jond@apple.com>
+
+        Fixed object trees using the wrong theme of type icon
+        https://bugs.webkit.org/show_bug.cgi?id=207980
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property.boolean > .icon):
+        (.object-tree-property.function > .icon):
+        (.object-tree-property.number > .icon):
+        (.object-tree-property.bigint > .icon):
+        (.object-tree-property.object > .icon):
+        (.object-tree-property.object.null > .icon):
+        (.object-tree-property.object.node > .icon):
+        (.object-tree-property.regex > .icon):
+        (.object-tree-property.string > .icon):
+        (.object-tree-property.symbol > .icon):
+        (.object-tree-property.accessor > .icon,):
+        (.object-tree-property.had-error > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.boolean > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.function > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.number > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.bigint > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object.null > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.object.node > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.regex > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.string > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.symbol > .icon):
+        (@media (prefers-color-scheme: dark) .object-tree-property.accessor > .icon,):
+        (@media (prefers-color-scheme: dark) .object-tree-property.had-error > .icon):
+
 2020-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add "outline focused element" debug setting

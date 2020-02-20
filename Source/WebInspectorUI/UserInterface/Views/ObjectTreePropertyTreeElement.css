@@ -29,52 +29,52 @@
 }
 
 .object-tree-property.boolean > .icon {
-    content: url(../Images/TypeIcons.svg#TypeBoolean-dark);
+    content: url(../Images/TypeIcons.svg#TypeBoolean-light);
 }
 
 .object-tree-property.function > .icon {
-    content: url(../Images/TypeIcons.svg#Function-dark);
+    content: url(../Images/TypeIcons.svg#Function-light);
 }
 
 .object-tree-property.number > .icon {
-    content: url(../Images/TypeIcons.svg#TypeNumber-dark);
+    content: url(../Images/TypeIcons.svg#TypeNumber-light);
 }
 
 .object-tree-property.bigint > .icon {
-    content: url(../Images/TypeIcons.svg#TypeBigInt-dark);
+    content: url(../Images/TypeIcons.svg#TypeBigInt-light);
 }
 
 .object-tree-property.object > .icon {
-    content: url(../Images/TypeIcons.svg#TypeObject-dark);
+    content: url(../Images/TypeIcons.svg#TypeObject-light);
 }
 
 .object-tree-property.object.null > .icon {
-    content: url(../Images/TypeIcons.svg#TypeNull-dark);
+    content: url(../Images/TypeIcons.svg#TypeNull-light);
 }
 
 .object-tree-property.object.node > .icon {
-    content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .object-tree-property.regex > .icon {
-    content: url(../Images/TypeIcons.svg#TypeRegex-dark);
+    content: url(../Images/TypeIcons.svg#TypeRegex-light);
 }
 
 .object-tree-property.string > .icon {
-    content: url(../Images/TypeIcons.svg#TypeString-dark);
+    content: url(../Images/TypeIcons.svg#TypeString-light);
 }
 
 .object-tree-property.symbol > .icon {
-    content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
+    content: url(../Images/TypeIcons.svg#TypeSymbol-light);
 }
 
 .object-tree-property.accessor > .icon,
 .object-tree-property.undefined > .icon {
-    content: url(../Images/TypeIcons.svg#TypeUndefined-dark);
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light);
 }
 
 .object-tree-property.had-error > .icon {
-    content: url(../Images/TypeIcons.svg#TypeUndefined-dark) !important;
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light) !important;
 }
 
 .object-tree-property .property-name,
@@ -176,51 +176,51 @@
     }
 
     .object-tree-property.boolean > .icon {
-        content: url(../Images/TypeIcons.svg#TypeBoolean-light);
+        content: url(../Images/TypeIcons.svg#TypeBoolean-dark);
     }
 
     .object-tree-property.function > .icon {
-        content: url(../Images/TypeIcons.svg#Function-light);
+        content: url(../Images/TypeIcons.svg#Function-dark);
     }
 
     .object-tree-property.number > .icon {
-        content: url(../Images/TypeIcons.svg#TypeNumber-light);
+        content: url(../Images/TypeIcons.svg#TypeNumber-dark);
     }
 
     .object-tree-property.bigint > .icon {
-        content: url(../Images/TypeIcons.svg#TypeBigInt-light);
+        content: url(../Images/TypeIcons.svg#TypeBigInt-dark);
     }
 
     .object-tree-property.object > .icon {
-        content: url(../Images/TypeIcons.svg#TypeObject-light);
+        content: url(../Images/TypeIcons.svg#TypeObject-dark);
     }
 
     .object-tree-property.object.null > .icon {
-        content: url(../Images/TypeIcons.svg#TypeNull-light);
+        content: url(../Images/TypeIcons.svg#TypeNull-dark);
     }
 
     .object-tree-property.object.node > .icon {
-        content: url(../Images/TypeIcons.svg#DOMElement-light);
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
     }
 
     .object-tree-property.regex > .icon {
-        content: url(../Images/TypeIcons.svg#TypeRegex-light);
+        content: url(../Images/TypeIcons.svg#TypeRegex-dark);
     }
 
     .object-tree-property.string > .icon {
-        content: url(../Images/TypeIcons.svg#TypeString-light);
+        content: url(../Images/TypeIcons.svg#TypeString-dark);
     }
 
     .object-tree-property.symbol > .icon {
-        content: url(../Images/TypeIcons.svg#TypeSymbol-light);
+        content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
     }
 
     .object-tree-property.accessor > .icon,
     .object-tree-property.undefined > .icon {
-        content: url(../Images/TypeIcons.svg#TypeUndefined-light);
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark);
     }
 
     .object-tree-property.had-error > .icon {
-        content: url(../Images/TypeIcons.svg#TypeUndefined-light) !important;
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark) !important;
     }
 }
