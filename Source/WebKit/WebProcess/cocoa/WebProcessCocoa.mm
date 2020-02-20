@@ -413,17 +413,15 @@ void WebProcess::releaseProcessWasResumedAssertions()
 #if PLATFORM(IOS_FAMILY)
 static NSString *webProcessLoaderAccessibilityBundlePath()
 {
-    NSString *accessibilityBundlesPath = nil;
 #if HAVE(ACCESSIBILITY_BUNDLES_PATH)
-    accessibilityBundlesPath = (__bridge NSString *)_AXSAccessibilityBundlesPath();
+    return (__bridge NSString *)CFAutorelease(_AXSCopyPathForAccessibilityBundle(CFSTR("WebProcessLoader")));
 #else
-    accessibilityBundlesPath = (__bridge NSString *)GSSystemRootDirectory();
+    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
-    accessibilityBundlesPath = [accessibilityBundlesPath stringByAppendingPathComponent:@"System/iOSSupport"];
+    path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
 #endif
-    accessibilityBundlesPath = [accessibilityBundlesPath stringByAppendingPathComponent:@"System/Library/AccessibilityBundles"];
+    return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
 #endif // HAVE(ACCESSIBILITY_BUNDLES_PATH)
-    return [accessibilityBundlesPath stringByAppendingPathComponent:@"WebProcessLoader.axbundle"];
 }
 #endif
 

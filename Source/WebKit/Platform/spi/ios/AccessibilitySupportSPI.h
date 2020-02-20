@@ -43,7 +43,7 @@ extern Boolean _AXSKeyRepeatEnabled();
 extern Boolean _AXSApplicationAccessibilityEnabled();
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 #if HAVE(ACCESSIBILITY_BUNDLES_PATH)
-extern CFStringRef _AXSAccessibilityBundlesPath();
+extern CFStringRef _AXSCopyPathForAccessibilityBundle(CFStringRef bundle);
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)
