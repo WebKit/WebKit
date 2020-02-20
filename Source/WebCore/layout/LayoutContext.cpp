@@ -92,6 +92,9 @@ void LayoutContext::layoutWithPreparedRootGeometry(InvalidationState& invalidati
 void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattingContextRoot, InvalidationState& invalidationState)
 {
     RELEASE_ASSERT(formattingContextRoot.establishesFormattingContext());
+    if (!formattingContextRoot.hasChild())
+        return;
+
     auto formattingContext = createFormattingContext(formattingContextRoot, layoutState());
     auto& displayBox = layoutState().displayBoxForLayoutBox(formattingContextRoot);
 
