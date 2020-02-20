@@ -638,7 +638,6 @@ public:
 #define DEFINE_BITFIELD(type, lowerName, upperName, width, offset) \
     static constexpr uint32_t s_##lowerName##Shift = offset;\
     static constexpr uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
-    static constexpr uint32_t s_bitWidthOf##upperName = width;\
     type lowerName() const { return static_cast<type>((m_bitField >> offset) & s_##lowerName##Mask); }\
     void set##upperName(type newValue) \
     {\
@@ -662,8 +661,6 @@ public:
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
     DEFINE_BITFIELD(bool, isAddingPropertyForTransition, IsAddingPropertyForTransition, 1, 28);
     DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
-
-    static_assert(s_bitWidthOfAttributesInPrevious <= sizeof(TransitionPropertyAttributes) * 8);
 
 private:
     friend class LLIntOffsetsExtractor;
