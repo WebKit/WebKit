@@ -2720,7 +2720,6 @@ private:
 #if USE(DIRECT2D)
     COMPtr<ID3D11Device1> m_device;
 #endif
-    bool m_sessionStateWasRestoredByAPIRequest { false };
     bool m_isQuotaIncreaseDenied { false };
     bool m_isLayerTreeFrozenDueToSwipeAnimation { false };
     

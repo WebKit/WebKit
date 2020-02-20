@@ -3400,13 +3400,15 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
     bool hasBackForwardList = !!sessionState.backForwardListState.currentIndex;
 
     if (hasBackForwardList) {
-        m_sessionStateWasRestoredByAPIRequest = true;
+        // If there isn't a running process yet the RestoreSession message below is just ignored, and
+        // session is restored when the web process is created via creation parameters which is not
+        // considered an API request. So, we launch the initial process here before restoring the
+        // session to ensure the session is restored in the web process via RestoreSession IPC message
+        // which is considered an API request. See https://bugs.webkit.org/show_bug.cgi?id=198561.
+        launchInitialProcessIfNecessary();
 
         m_backForwardList->restoreFromState(WTFMove(sessionState.backForwardListState));
-
-        // If the process is not launched yet, the session will be restored when sending the WebPageCreationParameters;
-        if (hasRunningProcess())
-            send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()));
+        send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()));
 
         auto transaction = m_pageLoadState.transaction();
         m_pageLoadState.setCanGoBack(transaction, m_backForwardList->backItem());
@@ -7584,7 +7586,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.gapBetweenPages = m_gapBetweenPages;
     parameters.paginationLineGridEnabled = m_paginationLineGridEnabled;
     parameters.userAgent = userAgent();
-    parameters.itemStatesWereRestoredByAPIRequest = m_sessionStateWasRestoredByAPIRequest;
     parameters.itemStates = m_backForwardList->itemStates();
     parameters.userContentControllerID = m_userContentController->identifier();
     parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
