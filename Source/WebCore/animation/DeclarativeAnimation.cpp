@@ -42,7 +42,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
 
 DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
     : WebAnimation(owningElement.document())
-    , m_eventQueue(MainThreadGenericEventQueue::create(owningElement))
     , m_owningElement(&owningElement)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
@@ -63,10 +62,8 @@ void DeclarativeAnimation::tick()
     // canceled using the Web Animations API and it should be disassociated from its owner element.
     // From this point on, this animation is like any other animation and should not appear in the
     // maps containing running CSS Transitions and CSS Animations for a given element.
-    if (wasRelevant && playState() == WebAnimation::PlayState::Idle) {
+    if (wasRelevant && playState() == WebAnimation::PlayState::Idle)
         disassociateFromOwningElement();
-        m_eventQueue->close();
-    }
 }
 
 bool DeclarativeAnimation::canHaveGlobalPosition()
@@ -88,17 +85,6 @@ void DeclarativeAnimation::disassociateFromOwningElement()
     if (auto* animationTimeline = timeline())
         animationTimeline->removeDeclarativeAnimationFromListsForOwningElement(*this, *m_owningElement);
     m_owningElement = nullptr;
-}
-
-bool DeclarativeAnimation::needsTick() const
-{
-    return WebAnimation::needsTick() || m_eventQueue->hasPendingEvents();
-}
-
-void DeclarativeAnimation::remove()
-{
-    m_eventQueue->close();
-    WebAnimation::remove();
 }
 
 void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation)
@@ -351,7 +337,9 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId());
     auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
-    m_eventQueue->enqueueEvent(createEvent(eventType, time, pseudoId, timelineTime));
+    auto event = createEvent(eventType, time, pseudoId, timelineTime);
+    event->setTarget(m_owningElement);
+    enqueueAnimationEvent(WTFMove(event));
 }
 
 } // namespace WebCore

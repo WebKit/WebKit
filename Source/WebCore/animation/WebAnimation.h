@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class AnimationEffect;
-class AnimationPlaybackEvent;
+class AnimationEventBase;
 class AnimationTimeline;
 class Document;
 class Element;
@@ -116,7 +116,7 @@ public:
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
 
-    virtual bool needsTick() const;
+    bool needsTick() const;
     virtual void tick();
     Seconds timeToNextTick() const;
     virtual void resolve(RenderStyle&);
@@ -135,7 +135,7 @@ public:
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
     bool isReplaceable() const;
-    virtual void remove();
+    void remove();
     void enqueueAnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>);
 
     uint64_t globalPosition() const { return m_globalPosition; }
@@ -154,6 +154,8 @@ public:
 
 protected:
     explicit WebAnimation(Document&);
+
+    void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
 
 private:
     enum class DidSeek : uint8_t { Yes, No };
@@ -201,6 +203,7 @@ private:
     bool m_finishNotificationStepsMicrotaskPending;
     bool m_isRelevant;
     bool m_shouldSkipUpdatingFinishedStateWhenResolving;
+    bool m_hasScheduledEventsDuringTick { false };
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
