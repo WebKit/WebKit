@@ -138,7 +138,7 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
 #import <UIKit/_UILookupGestureRecognizer.h>
 #endif
 
@@ -787,7 +787,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
-#if PLATFORM(MACCATALYST)    
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -953,7 +953,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
-#if PLATFORM(MACCATALYST)    
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [_lookupGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
@@ -1076,7 +1076,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
-#if PLATFORM(MACCATALYST)
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 #if ENABLE(POINTER_EVENTS)
@@ -1106,7 +1106,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
-#if PLATFORM(MACCATALYST)
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 #if ENABLE(POINTER_EVENTS)
@@ -1513,8 +1513,13 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
+    if (gestureRecognizer == _lookupGestureRecognizer)
+        return YES;
+#endif
+
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    if (gestureRecognizer != _lookupGestureRecognizer && (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch))
+    if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
 #endif
 
@@ -7993,7 +7998,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #endif // PLATFORM(WATCHOS)
 
-#if PLATFORM(MACCATALYST)
+#if HAVE(LOOKUP_GESTURE_RECOGNIZER)
 - (void)_lookupGestureRecognized:(UIGestureRecognizer *)gestureRecognizer
 {
     NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:self];
