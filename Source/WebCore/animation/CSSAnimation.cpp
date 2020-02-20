@@ -27,6 +27,7 @@
 #include "CSSAnimation.h"
 
 #include "Animation.h"
+#include "AnimationEvent.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "RenderStyle.h"
@@ -125,6 +126,11 @@ ExceptionOr<void> CSSAnimation::bindingsPause()
 {
     m_stickyPaused = true;
     return DeclarativeAnimation::bindingsPause();
+}
+
+Ref<AnimationEventBase> CSSAnimation::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime)
+{
+    return AnimationEvent::create(eventType, m_animationName, elapsedTime, pseudoId, timelineTime, this);
 }
 
 } // namespace WebCore
