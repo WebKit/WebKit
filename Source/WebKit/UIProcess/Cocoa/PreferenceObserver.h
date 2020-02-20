@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import <pal/spi/cocoa/UserDefaultsSPI.h>
+#import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
