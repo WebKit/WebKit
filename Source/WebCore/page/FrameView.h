@@ -396,7 +396,7 @@ public:
 
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
-    bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
+    bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
     WEBCORE_EXPORT bool qualifiesAsVisuallyNonEmpty() const;
 
     WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
@@ -920,7 +920,8 @@ private:
 
     bool m_isPainting { false };
 
-    bool m_isVisuallyNonEmpty { false };
+    bool m_contentQualifiesAsVisuallyNonEmpty { false };
+    bool m_firstVisuallyNonEmptyLayoutMilestoneIsPending { true };
 
     bool m_renderedSignificantAmountOfText { false };
     bool m_hasReachedSignificantRenderedTextThreshold { false };

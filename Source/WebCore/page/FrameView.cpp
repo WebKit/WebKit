@@ -264,7 +264,8 @@ void FrameView::reset()
 void FrameView::resetLayoutMilestones()
 {
     m_firstLayoutCallbackPending = false;
-    m_isVisuallyNonEmpty = false;
+    m_firstVisuallyNonEmptyLayoutMilestoneIsPending = true;
+    m_contentQualifiesAsVisuallyNonEmpty = false;
     m_hasReachedSignificantRenderedTextThreshold = false;
     m_renderedSignificantAmountOfText = false;
     m_visuallyNonEmptyCharacterCount = 0;
@@ -2849,7 +2850,7 @@ void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 
 void FrameView::loadProgressingStatusChanged()
 {
-    if (!m_isVisuallyNonEmpty && frame().loader().isComplete())
+    if (!m_contentQualifiesAsVisuallyNonEmpty && frame().loader().isComplete())
         fireLayoutRelatedMilestonesIfNeeded();
     updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
@@ -5135,11 +5136,15 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
             page->startCountingRelevantRepaintedObjects();
     }
 
-    if (!m_isVisuallyNonEmpty && qualifiesAsVisuallyNonEmpty()) {
-        m_isVisuallyNonEmpty = true;
-        addPaintPendingMilestones(DidFirstMeaningfulPaint);
-        if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
-            milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
+    if (m_firstVisuallyNonEmptyLayoutMilestoneIsPending) {
+        if (!m_contentQualifiesAsVisuallyNonEmpty && qualifiesAsVisuallyNonEmpty()) {
+            m_contentQualifiesAsVisuallyNonEmpty = true;
+            m_firstVisuallyNonEmptyLayoutMilestoneIsPending = false;
+
+            addPaintPendingMilestones(DidFirstMeaningfulPaint);
+            if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
+                milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
+        }
     }
 
     if (!m_renderedSignificantAmountOfText && qualifiesAsSignificantRenderedText()) {
