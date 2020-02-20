@@ -52,6 +52,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << gapBetweenPages;
     encoder << paginationLineGridEnabled;
     encoder << userAgent;
+    encoder << itemStatesWereRestoredByAPIRequest;
     encoder << itemStates;
     encoder << userContentControllerID;
     encoder << visitedLinkTableID;
@@ -205,6 +206,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!userAgent)
         return WTF::nullopt;
     parameters.userAgent = WTFMove(*userAgent);
+
+    Optional<bool> itemStatesWereRestoredByAPIRequest;
+    decoder >> itemStatesWereRestoredByAPIRequest;
+    if (!itemStatesWereRestoredByAPIRequest)
+        return WTF::nullopt;
+    parameters.itemStatesWereRestoredByAPIRequest = *itemStatesWereRestoredByAPIRequest;
 
     Optional<Vector<BackForwardListItemState>> itemStates;
     decoder >> itemStates;

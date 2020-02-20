@@ -97,6 +97,7 @@ struct WebPageCreationParameters {
     
     String userAgent;
 
+    bool itemStatesWereRestoredByAPIRequest { false };
     Vector<BackForwardListItemState> itemStates;
 
     UserContentControllerIdentifier userContentControllerID;
