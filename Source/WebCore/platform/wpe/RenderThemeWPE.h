@@ -61,6 +61,10 @@ private:
     Seconds animationDurationForProgressBar(RenderProgress&) const override;
     IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
+
+    bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
+    bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
 };
 
 } // namespace WebCore

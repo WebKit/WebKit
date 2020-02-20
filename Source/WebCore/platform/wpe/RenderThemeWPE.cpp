@@ -29,6 +29,7 @@
 #include "Color.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "NotImplemented.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
@@ -58,6 +59,17 @@ static const Seconds progressAnimationFrameRate = 33_ms; // 30fps.
 static const unsigned progressBarSize = 6;
 static const Color progressBarBorderColor = makeRGB(205, 199, 194);
 static const Color progressBarBackgroundColor = makeRGB(225, 222, 219);
+static const unsigned sliderTrackSize = 6;
+static const int sliderTrackBorderSize = 1;
+static const Color sliderTrackBorderColor = makeRGB(205, 199, 194);
+static const Color sliderTrackBackgroundColor = makeRGB(225, 222, 219);
+static const int sliderTrackFocusOffset = 2;
+static const int sliderThumbSize = 20;
+static const int sliderThumbBorderSize = 1;
+static const Color sliderThumbBorderColor = makeRGB(205, 199, 194);
+static const Color sliderThumbBackgroundColor = makeRGB(244, 242, 241);
+static const Color sliderThumbBackgroundHoveredColor = makeRGB(248, 248, 247);
+static const Color sliderThumbBackgroundDisabledColor = makeRGB(244, 242, 241);
 
 RenderTheme& RenderTheme::singleton()
 {
@@ -76,10 +88,9 @@ bool RenderThemeWPE::supportsFocusRing(const RenderStyle& style) const
     case MenulistPart:
     case RadioPart:
     case CheckboxPart:
-        return true;
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return false;
+        return true;
     default:
         break;
     }
@@ -281,5 +292,117 @@ bool RenderThemeWPE::paintProgressBar(const RenderObject& renderObject, const Pa
     return false;
 }
 
+bool RenderThemeWPE::paintSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    ControlPart part = renderObject.style().appearance();
+    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
+
+    FloatRect fieldRect = rect;
+    if (part == SliderHorizontalPart) {
+        fieldRect.move(0, rect.height() / 2 - (sliderTrackSize / 2));
+        fieldRect.setHeight(6);
+    } else {
+        fieldRect.move(rect.width() / 2 - (sliderTrackSize / 2), 0);
+        fieldRect.setWidth(6);
+    }
+
+    FloatSize corner(3, 3);
+    Path path;
+    path.addRoundedRect(fieldRect, corner);
+    fieldRect.inflate(-sliderTrackBorderSize);
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    graphicsContext.setFillColor(sliderTrackBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    path.addRoundedRect(fieldRect, corner);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setFillColor(sliderTrackBackgroundColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    fieldRect.inflate(sliderTrackBorderSize);
+    LayoutPoint thumbLocation;
+    if (is<HTMLInputElement>(renderObject.node())) {
+        auto& input = downcast<HTMLInputElement>(*renderObject.node());
+        if (auto* element = input.sliderThumbElement())
+            thumbLocation = element->renderBox()->location();
+    }
+    FloatRect rangeRect = fieldRect;
+    FloatRoundedRect::Radii corners;
+    if (part == SliderHorizontalPart) {
+        if (renderObject.style().direction() == TextDirection::RTL) {
+            rangeRect.move(thumbLocation.x(), 0);
+            rangeRect.setWidth(rangeRect.width() - thumbLocation.x());
+            corners.setTopRight(corner);
+            corners.setBottomRight(corner);
+        } else {
+            rangeRect.setWidth(thumbLocation.x());
+            corners.setTopLeft(corner);
+            corners.setBottomLeft(corner);
+        }
+    } else {
+        rangeRect.setHeight(thumbLocation.y());
+        corners.setTopLeft(corner);
+        corners.setTopRight(corner);
+    }
+
+    path.addRoundedRect(FloatRoundedRect(rangeRect, corners));
+    graphicsContext.setFillRule(WindRule::NonZero);
+    graphicsContext.setFillColor(activeSelectionBackgroundColor({ }));
+    graphicsContext.fillPath(path);
+
+    if (isFocused(renderObject))
+        ThemeWPE::paintFocus(graphicsContext, fieldRect, sliderTrackFocusOffset);
+
+    return false;
+}
+
+void RenderThemeWPE::adjustSliderThumbSize(RenderStyle& style, const Element*) const
+{
+    ControlPart part = style.appearance();
+    if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
+        return;
+
+    style.setWidth(Length(sliderThumbSize, Fixed));
+    style.setHeight(Length(sliderThumbSize, Fixed));
+}
+
+bool RenderThemeWPE::paintSliderThumb(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    ASSERT(renderObject.style().appearance() == SliderThumbHorizontalPart || renderObject.style().appearance() == SliderThumbVerticalPart);
+
+    FloatRect fieldRect = rect;
+    Path path;
+    path.addEllipse(fieldRect);
+    fieldRect.inflate(-sliderThumbBorderSize);
+    path.addEllipse(fieldRect);
+    graphicsContext.setFillRule(WindRule::EvenOdd);
+    if (isEnabled(renderObject) && isPressed(renderObject))
+        graphicsContext.setFillColor(activeSelectionBackgroundColor({ }));
+    else
+        graphicsContext.setFillColor(sliderThumbBorderColor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    path.addEllipse(fieldRect);
+    graphicsContext.setFillRule(WindRule::NonZero);
+    if (!isEnabled(renderObject))
+        graphicsContext.setFillColor(sliderThumbBackgroundDisabledColor);
+    else if (isHovered(renderObject))
+        graphicsContext.setFillColor(sliderThumbBackgroundHoveredColor);
+    else
+        graphicsContext.setFillColor(sliderThumbBackgroundColor);
+    graphicsContext.fillPath(path);
+
+    return false;
+}
 
 } // namespace WebCore
