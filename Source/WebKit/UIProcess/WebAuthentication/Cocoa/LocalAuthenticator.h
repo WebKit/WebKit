@@ -56,8 +56,8 @@ private:
     explicit LocalAuthenticator(UniqueRef<LocalConnection>&&);
 
     void makeCredential() final;
-    void continueMakeCredentialAfterUserConsented(LocalConnection::UserConsent);
-    void continueMakeCredentialAfterAttested(SecKeyRef, NSArray *certificates, NSError *);
+    void continueMakeCredentialAfterUserConsented(SecAccessControlRef, LocalConnection::UserConsent, LAContext *);
+    void continueMakeCredentialAfterAttested(SecKeyRef, Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *);
 
     void getAssertion() final;
     void continueGetAssertionAfterUserConsented(LocalConnection::UserConsent, LAContext *, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& userhandle);

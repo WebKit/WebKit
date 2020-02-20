@@ -51,7 +51,7 @@ public:
         Yes
     };
 
-    using AttestationCallback = CompletionHandler<void(SecKeyRef, NSArray *, NSError *)>;
+    using AttestationCallback = CompletionHandler<void(NSArray *, NSError *)>;
     using UserConsentCallback = CompletionHandler<void(UserConsent)>;
     using UserConsentContextCallback = CompletionHandler<void(UserConsent, LAContext *)>;
 
@@ -59,9 +59,9 @@ public:
     virtual ~LocalConnection() = default;
 
     // Overrided by MockLocalConnection.
-    virtual void getUserConsent(const String& reason, UserConsentCallback&&) const;
     virtual void getUserConsent(const String& reason, SecAccessControlRef, UserConsentContextCallback&&) const;
-    virtual void getAttestation(const String& rpId, const String& username, const Vector<uint8_t>& hash, AttestationCallback&&) const;
+    virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
+    virtual void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const;
     virtual NSDictionary *selectCredential(const NSArray *) const;
 };
 

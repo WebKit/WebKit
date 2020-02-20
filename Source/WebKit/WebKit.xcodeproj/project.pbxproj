@@ -1123,7 +1123,6 @@
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
 		57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */; };
 		57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */; };
-		57DCEDAB214C60090016B847 /* DeviceIdentitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */; };
 		57DCEDAC214C60270016B847 /* LocalAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDA12149C1E20016B847 /* LocalAuthenticator.h */; };
 		57DCEDAD214C602C0016B847 /* LocalConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCEDA7214A568B0016B847 /* LocalConnection.h */; };
 		57DCEDAE214C60330016B847 /* LocalService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED9A2148B0830016B847 /* LocalService.h */; };
@@ -3868,7 +3867,6 @@
 		57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationRequestData.h; sourceTree = "<group>"; };
 		57DCEDA7214A568B0016B847 /* LocalConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalConnection.h; sourceTree = "<group>"; };
 		57DCEDA8214A568B0016B847 /* LocalConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalConnection.mm; sourceTree = "<group>"; };
-		57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIdentitySPI.h; sourceTree = "<group>"; };
 		57DCEDC1214F114C0016B847 /* MockLocalService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalService.h; sourceTree = "<group>"; };
 		57DCEDC2214F114C0016B847 /* MockLocalService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockLocalService.mm; sourceTree = "<group>"; };
 		57DCEDC5214F18300016B847 /* MockLocalConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockLocalConnection.h; sourceTree = "<group>"; };
@@ -6814,7 +6812,6 @@
 			children = (
 				1A5705101BE410E500874AF1 /* BlockSPI.h */,
 				37C21CAD1E994C0C0029D5F9 /* CorePredictionSPI.h */,
-				57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */,
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
@@ -10245,7 +10242,6 @@
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				99036AE923A970870000B06A /* DebuggableInfoData.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
-				57DCEDAB214C60090016B847 /* DeviceIdentitySPI.h in Headers */,
 				07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */,
 				2D0C56FD229F1DEA00BD33E7 /* DeviceManagementSoftLink.h in Headers */,
 				2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */,

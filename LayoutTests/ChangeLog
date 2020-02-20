@@ -1,3 +1,15 @@
+2020-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Replace DeviceIdentity.framework
+        https://bugs.webkit.org/show_bug.cgi?id=207985
+        <rdar://problem/59369223>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+
 2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/tests/workers/service/registration-clear-redundant-worker.html is flaky timing out.

@@ -1,3 +1,44 @@
+2020-02-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Replace DeviceIdentity.framework
+        https://bugs.webkit.org/show_bug.cgi?id=207985
+        <rdar://problem/59369223>
+
+        Reviewed by Brent Fulgham.
+
+        This patch replaces the DeviceIdentity.framework with a new framework that better suits our needs.
+        The new experimental authentication logic is handled by WebKtAdditions. Please refer to the radar
+        for detailed information.
+
+        Besides the replacement, this patch also:
+        1) changes how user consent is obtained to avoid multiple prompts for biometric input.
+        2) removes keychain workarounds for DeviceIdentity given the credential private key is now under our possession.
+        3) removes everything that is related to DeviceIdentity.
+
+        Covered by new tests within existing test files.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/Cocoa/DeviceIdentitySPI.h: Removed.
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::toNSData):
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+        (WebKit::LocalConnection::getAttestation const):
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::createCredentialPrivateKey const):
+        (WebKit::MockLocalConnection::getAttestation const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-02-20  Eric Liang  <ericliang@apple.com>
 
         AX: Adopt _AXSCopyPathForAccessibilityBundle for WebKit

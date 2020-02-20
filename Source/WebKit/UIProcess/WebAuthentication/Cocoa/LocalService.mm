@@ -31,6 +31,10 @@
 #import "LocalAuthenticator.h"
 #import "LocalConnection.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalServiceAdditions.h>
+#endif
+
 #import "LocalAuthenticationSoftLink.h"
 
 namespace WebKit {
@@ -40,7 +44,6 @@ LocalService::LocalService(Observer& observer)
 {
 }
 
-// FIXME(rdar://problem/51048542)
 bool LocalService::isAvailable()
 {
     auto context = adoptNS([allocLAContextInstance() init]);
@@ -49,6 +52,11 @@ bool LocalService::isAvailable()
         LOG_ERROR("Couldn't find local authenticators: %@", error);
         return false;
     }
+
+#if defined(LOCALSERVICE_ADDITIONS)
+LOCALSERVICE_ADDITIONS
+#endif
+
     return true;
 }
 
