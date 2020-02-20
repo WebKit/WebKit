@@ -34,7 +34,6 @@
 #include <mutex>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
-#include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
@@ -48,11 +47,7 @@ static const char versionDirectoryPrefix[] = "Version ";
 static const char recordsDirectoryName[] = "Records";
 static const char blobsDirectoryName[] = "Blobs";
 static const char blobSuffix[] = "-blob";
-
-static inline size_t maximumInlineBodySize()
-{
-    return WTF::pageSize();
-}
+constexpr size_t maximumInlineBodySize { 16 * 1024 };
 
 static double computeRecordWorth(FileTimes);
 
@@ -296,7 +291,7 @@ static size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount)
 {
     auto inlineBodyCount = recordCount - std::min(blobCount, recordCount);
     auto headerSizes = recordCount * 4096;
-    auto inlineBodySizes = (maximumInlineBodySize() / 2) * inlineBodyCount;
+    auto inlineBodySizes = (maximumInlineBodySize / 2) * inlineBodyCount;
     return headerSizes + inlineBodySizes;
 }
 
@@ -804,7 +799,7 @@ void Storage::dispatchPendingWriteOperations()
 
 bool Storage::shouldStoreBodyAsBlob(const Data& bodyData)
 {
-    return bodyData.size() > maximumInlineBodySize();
+    return bodyData.size() > maximumInlineBodySize;
 }
 
 void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperationPtr)
