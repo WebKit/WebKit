@@ -1,3 +1,35 @@
+2020-02-20  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256806. rdar://problem/59576023
+
+    Add and adopt HAVE(LOOKUP_GESTURE_RECOGNIZER)
+    https://bugs.webkit.org/show_bug.cgi?id=207876
+    
+    Reviewed by Wenson Hsieh.
+    
+    * wtf/Platform.h:
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setupInteraction]):
+    (-[WKContentView cleanupInteraction]):
+    (-[WKContentView _removeDefaultGestureRecognizers]):
+    (-[WKContentView _addDefaultGestureRecognizers]):
+    (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+    For symmetry's sake, introduce a HAVE for this gesture.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256806 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-17  Tim Horton  <timothy_horton@apple.com>
+
+            Add and adopt HAVE(LOOKUP_GESTURE_RECOGNIZER)
+            https://bugs.webkit.org/show_bug.cgi?id=207876
+
+            Reviewed by Wenson Hsieh.
+
+            * wtf/Platform.h:
+            For symmetry's sake, introduce a HAVE for this gesture.
+
 2020-02-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256191. rdar://problem/59447003
