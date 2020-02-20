@@ -1,3 +1,13 @@
+2020-02-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening of Web inspector tests.
+
+        Unreviewed gardening.
+
+        Mark all Web test inspector tests as slow Debug and some timing out.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, mark several WPT's CSS animation tests as flaky
