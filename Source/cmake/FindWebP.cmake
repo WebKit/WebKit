@@ -1,10 +1,4 @@
-# - Try to find WebP.
-# Once done, this will define
-#
-#  WEBP_FOUND - system has WebP.
-#  WEBP_INCLUDE_DIRS - the WebP. include directories
-#  WEBP_LIBRARIES - link these to use WebP.
-#
+# Copyright (C) 2020 Sony Interactive Entertainment Inc.
 # Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
 # Copyright (C) 2013 Igalia S.L.
 #
@@ -29,39 +23,144 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#[=======================================================================[.rst:
+FindWebP
+--------------
+
+Find WebP headers and libraries.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``WebP::libwebp``
+  The WebP library, if found.
+
+``WebP::demux``
+  The WebP demux library, if found.
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables in your project:
+
+``WebP_FOUND``
+  true if (the requested version of) WebP is available.
+``WebP_VERSION``
+  the version of WebP.
+``WebP_LIBRARIES``
+  the libraries to link against to use WebP.
+``WebP_INCLUDE_DIRS``
+  where to find the WebP headers.
+``WebP_COMPILE_OPTIONS``
+  this should be passed to target_compile_options(), if the
+  target is not used for linking
+
+#]=======================================================================]
+
 find_package(PkgConfig)
 pkg_check_modules(PC_WEBP QUIET libwebp)
+set(WebP_COMPILE_OPTIONS ${PC_WEBP_CFLAGS_OTHER})
+set(WebP_VERSION ${PC_WEBP_CFLAGS_VERSION})
 
-# Look for the header file.
-find_path(WEBP_INCLUDE_DIR
+find_path(WebP_INCLUDE_DIR
     NAMES webp/decode.h
     HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
 )
-list(APPEND WEBP_INCLUDE_DIRS ${WEBP_INCLUDE_DIR})
-mark_as_advanced(WEBP_INCLUDE_DIRS)
 
-# Look for the library.
-find_library(
-    WEBP_LIBRARY
-    NAMES webp
+find_library(WebP_LIBRARY
+    NAMES ${WebP_NAMES} webp
     HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
 )
-list(APPEND WEBP_LIBRARIES ${WEBP_LIBRARY})
 
-find_path(WEBP_DEMUX_INCLUDE_DIR
-    NAMES webp/demux.h
-    HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
-)
-list(APPEND WEBP_INCLUDE_DIRS ${WEBP_DEMUX_INCLUDE_DIR})
+# There's nothing in the WebP headers that could be used to detect the exact
+# WebP version being used so don't attempt to do so. A version can only be found
+# through pkg-config
+if ("${WebP_FIND_VERSION}" VERSION_GREATER "${WebP_VERSION}")
+    if (WebP_VERSION)
+        message(FATAL_ERROR "Required version (" ${WebP_FIND_VERSION} ") is higher than found version (" ${WebP_VERSION} ")")
+    else ()
+        message(WARNING "Cannot determine WebP version without pkg-config")
+    endif ()
+endif ()
 
-find_library(WEBP_DEMUX_LIBRARY
-    NAMES webpdemux
-    HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
-)
-list(APPEND WEBP_LIBRARIES ${WEBP_DEMUX_LIBRARY})
+# Find components
+if (WebP_INCLUDE_DIR AND WebP_LIBRARY)
+    set(_WebP_REQUIRED_LIBS_FOUND ON)
+    set(WebP_LIBS_FOUND "WebP (required): ${WebP_LIBRARY}")
+else ()
+    set(_WebP_REQUIRED_LIBS_FOUND OFF)
+    set(WebP_LIBS_NOT_FOUND "WebP (required)")
+endif ()
 
-mark_as_advanced(WEBP_DEMUX_INCLUDE_DIR WEBP_DEMUX_LIBRARY WEBP_INCLUDE_DIR WEBP_LIBRARY WEBP_LIBRARIES)
+if ("demux" IN_LIST WebP_FIND_COMPONENTS)
+    find_library(WebP_DEMUX_LIBRARY
+        NAMES ${WebP_DEMUX_NAMES} webpdemux
+        HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
+    )
+
+    if (WebP_DEMUX_LIBRARY)
+        if (WebP_FIND_REQUIRED_demux)
+            list(APPEND WebP_LIBS_FOUND "demux (required): ${WebP_DEMUX_LIBRARY}")
+        else ()
+           list(APPEND WebP_LIBS_FOUND "demux (optional): ${WebP_DEMUX_LIBRARY}")
+        endif ()
+    else ()
+        if (WebP_FIND_REQUIRED_demux)
+           set(_WebP_REQUIRED_LIBS_FOUND OFF)
+           list(APPEND WebP_LIBS_NOT_FOUND "demux (required)")
+        else ()
+           list(APPEND WebP_LIBS_NOT_FOUND "demux (optional)")
+        endif ()
+    endif ()
+endif ()
+
+if (NOT WebP_FIND_QUIETLY)
+    if (WebP_LIBS_FOUND)
+        message(STATUS "Found the following WebP libraries:")
+        foreach (found ${WebP_LIBS_FOUND})
+            message(STATUS " ${found}")
+        endforeach ()
+    endif ()
+    if (WebP_LIBS_NOT_FOUND)
+        message(STATUS "The following WebP libraries were not found:")
+        foreach (found ${WebP_LIBS_NOT_FOUND})
+            message(STATUS " ${found}")
+        endforeach ()
+    endif ()
+endif ()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(WebP REQUIRED_VARS WEBP_INCLUDE_DIRS WEBP_LIBRARIES
-                                  FOUND_VAR WEBP_FOUND)
+find_package_handle_standard_args(WebP
+    FOUND_VAR WebP_FOUND
+    REQUIRED_VARS WebP_INCLUDE_DIR WebP_LIBRARY _WebP_REQUIRED_LIBS_FOUND
+    VERSION_VAR WebP_VERSION
+)
+
+if (WebP_LIBRARY AND NOT TARGET WebP::libwebp)
+    add_library(WebP::libwebp UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(WebP::libwebp PROPERTIES
+        IMPORTED_LOCATION "${WebP_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${WebP_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${WebP_INCLUDE_DIR}"
+    )
+endif ()
+
+if (WebP_DEMUX_LIBRARY AND NOT TARGET WebP::demux)
+    add_library(WebP::demux UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(WebP::demux PROPERTIES
+        IMPORTED_LOCATION "${WebP_DEMUX_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${WebP_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${WebP_INCLUDE_DIR}"
+    )
+endif ()
+
+mark_as_advanced(
+    WebP_INCLUDE_DIR
+    WebP_LIBRARY
+    WebP_DEMUX_LIBRARY
+)
+
+if (WebP_FOUND)
+    set(WebP_LIBRARIES ${WebP_LIBRARY} ${WebP_DEMUX_LIBRARY})
+    set(WebP_INCLUDE_DIRS ${WebP_INCLUDE_DIR})
+endif ()

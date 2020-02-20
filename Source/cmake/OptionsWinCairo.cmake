@@ -26,8 +26,8 @@ if (OpenJPEG_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENJPEG ON)
 endif ()
 
-find_package(WebP 1.0.0)
-if (WEBP_FOUND)
+find_package(WebP COMPONENTS demux)
+if (WebP_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
 endif ()
 

@@ -104,7 +104,7 @@ find_package(OpenSSL REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
-find_package(WebP REQUIRED)
+find_package(WebP REQUIRED COMPONENTS demux)
 find_package(WPE REQUIRED)
 find_package(ZLIB REQUIRED)
 

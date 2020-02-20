@@ -234,8 +234,8 @@ find_package(ZLIB 1.2.11 REQUIRED)
 find_package(LibPSL 0.20.2 REQUIRED)
 
 # FIXME: We should add the following, too.
-# find_package(WebP 1.0.0)
-# if (WEBP_FOUND)
+# find_package(WebP REQUIRED COMPONENTS demux)
+# if (WebP_FOUND)
 #     SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
 # endif ()
 
