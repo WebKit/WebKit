@@ -1,3 +1,12 @@
+2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac Debug wk2 ] ASSERTION FAILED: m_wasConstructedOnMainThread == isMainThread()
+        https://bugs.webkit.org/show_bug.cgi?id=207509
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Replace DeviceIdentity.framework
