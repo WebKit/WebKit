@@ -219,10 +219,6 @@ AllowCrossOriginSubresourcesToAskForCredentials:
   type: bool
   defaultValue: false
 
-AllowTopNavigationToDataURLs:
-  type: bool
-  defaultValue: false
-
 ShouldRestrictBaseURLSchemes:
   type: bool
   defaultValue: false
