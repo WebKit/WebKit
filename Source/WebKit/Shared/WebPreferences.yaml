@@ -1456,7 +1456,7 @@ ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   defaultValue: DEFAULT_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION_ENABLED
   humanReadableName: "Swap Processes on Cross-Site Navigation"
-  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
+  humanReadableDescription: "Swap WebContent Processes on cross-site navigations"
   category: experimental
   webcoreBinding: none
 
@@ -1527,8 +1527,8 @@ GenericCueAPIEnabled:
 CaptureVideoInUIProcessEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Capture video in UIProcess"
-  humanReadableDescription: "Enable video capture in UIProcess"
+  humanReadableName: "Capture video in UI Process"
+  humanReadableDescription: "Enable video capture in UI Process"
   category: experimental
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -1536,8 +1536,8 @@ CaptureVideoInUIProcessEnabled:
 CaptureVideoInGPUProcessEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Capture video in GPUProcess"
-  humanReadableDescription: "Enable video capture in GPUProcess"
+  humanReadableName: "Capture video in GPU Process"
+  humanReadableDescription: "Enable video capture in GPU Process"
   category: internal
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -1726,8 +1726,8 @@ LayoutFormattingContextIntegrationEnabled:
 CaptureAudioInUIProcessEnabled:
   type: bool
   defaultValue: DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS
-  humanReadableName: "Capture audio in UIProcess"
-  humanReadableDescription: "Enable audio capture in UIProcess"
+  humanReadableName: "Capture Audio in UI Process"
+  humanReadableDescription: "Enable audio capture in UI Process"
   category: internal
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -1735,8 +1735,8 @@ CaptureAudioInUIProcessEnabled:
 CaptureAudioInGPUProcessEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Capture audio in GPUProcess"
-  humanReadableDescription: "Capture audio in GPUProcess"
+  humanReadableName: "Capture Audio in GPU Process"
+  humanReadableDescription: "Enable audio capture in GPU Process"
   category: internal
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
@@ -1744,8 +1744,8 @@ CaptureAudioInGPUProcessEnabled:
 RestrictedHTTPResponseAccess:
   type: bool
   defaultValue: true
-  humanReadableName: "Filter HTTP Response for WebProcesses"
-  humanReadableDescription: "Enable HTTP Response filtering for WebProcesses"
+  humanReadableName: "Filter HTTP Response for Web Processes"
+  humanReadableDescription: "Enable HTTP Response filtering for Web Processes"
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
 
@@ -1920,8 +1920,8 @@ UseGPUProcessForMedia:
     type: bool
     defaultValue: false
     condition: ENABLE(GPU_PROCESS)
-    humanReadableName: "Media in GPU process"
-    humanReadableDescription: "Do all media loading and playback in the GPU process"
+    humanReadableName: "Media in GPU Process"
+    humanReadableDescription: "Do all media loading and playback in the GPU Process"
     category: internal
     webcoreName: useGPUProcessForMedia
 
