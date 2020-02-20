@@ -98,6 +98,9 @@ void LineLayout::updateStyle()
 
 void LineLayout::layout()
 {
+    if (!rootLayoutBox().hasInFlowOrFloatingChild())
+        return;
+
     prepareLayoutState();
     prepareFloatingState();
 
