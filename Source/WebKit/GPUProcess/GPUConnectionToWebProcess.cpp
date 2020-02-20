@@ -79,6 +79,7 @@ private:
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }
     PlatformMediaSessionManager& sessionManager() final { return m_process.sessionManager(); }
+    void willStartCameraCapture() final { sessionManager().prepareToSendUserMediaPermissionRequest(); }
 
     GPUConnectionToWebProcess& m_process;
 };

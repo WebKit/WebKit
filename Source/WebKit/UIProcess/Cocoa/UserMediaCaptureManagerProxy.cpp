@@ -193,8 +193,10 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     case WebCore::CaptureDevice::DeviceType::Camera:
         sourceOrError = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().createVideoCaptureSource(device, WTFMove(hashSalt), &constraints);
-        if (sourceOrError)
+        if (sourceOrError) {
             sourceOrError.captureSource->monitorOrientation(m_orientationNotifier);
+            m_connectionProxy->willStartCameraCapture();
+        }
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:

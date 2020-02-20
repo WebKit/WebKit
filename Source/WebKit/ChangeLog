@@ -1,3 +1,19 @@
+2020-02-20  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] GPUProcess needs to provide the parent PID before starting camera capture
+        https://bugs.webkit.org/show_bug.cgi?id=208009
+
+        Reviewed by Eric Carlson.
+
+        Like we do when capturing in WebProcess, we need to provide the parent PID before starting camera capture.
+        Implement this in GPU process whenever creating a camera source.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        (WebKit::UserMediaCaptureManagerProxy::ConnectionProxy::willStartCameraCapture):
+
 2020-02-20  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView with non-zero origin has the wrong top content inset with NSWindowStyleMaskFullSizeContentView
