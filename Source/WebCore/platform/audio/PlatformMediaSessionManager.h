@@ -26,12 +26,9 @@
 #ifndef PlatformMediaSessionManager_h
 #define PlatformMediaSessionManager_h
 
-#include "AudioHardwareListener.h"
 #include "DocumentIdentifier.h"
 #include "PlatformMediaSession.h"
-#include "RemoteCommandListener.h"
 #include "Timer.h"
-#include <pal/system/SystemSleepListener.h>
 #include <wtf/AggregateLogger.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -43,13 +40,10 @@ class PlatformMediaSession;
 class RemoteCommandListener;
 
 class PlatformMediaSessionManager
-    : private RemoteCommandListenerClient
-    , private PAL::SystemSleepListener::Client
-    , private AudioHardwareListener::Client
+    : public CanMakeWeakPtr<PlatformMediaSessionManager>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
-    , public CanMakeWeakPtr<PlatformMediaSessionManager>
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -128,7 +122,7 @@ public:
 #endif
     virtual bool hasWirelessTargetsAvailable() { return false; }
 
-    void setCurrentSession(PlatformMediaSession&);
+    virtual void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession() const;
 
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
@@ -145,16 +139,14 @@ public:
 
 protected:
     friend class PlatformMediaSession;
-    explicit PlatformMediaSessionManager();
+    PlatformMediaSessionManager();
 
-    void addSession(PlatformMediaSession&);
+    virtual void addSession(PlatformMediaSession&);
     virtual void removeSession(PlatformMediaSession&);
 
     void forEachSession(const Function<void(PlatformMediaSession&)>&);
     void forEachDocumentSession(DocumentIdentifier, const Function<void(PlatformMediaSession&)>&);
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
-
-    AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
 #if USE(AUDIO_SESSION)
@@ -169,32 +161,23 @@ protected:
 #endif
 
     int countActiveAudioCaptureSources();
+    bool hasNoSession() const;
+
+    WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
+    bool computeSupportsSeeking() const;
+
+    WEBCORE_EXPORT void processSystemWillSleep();
+    WEBCORE_EXPORT void processSystemDidWake();
 
 private:
     friend class Internals;
 
     virtual void updateSessionState() { }
 
-    // RemoteCommandListenerClient
-    WEBCORE_EXPORT void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;
-    WEBCORE_EXPORT bool supportsSeeking() const override;
-
-    // AudioHardwareListenerClient
-    void audioHardwareDidBecomeActive() override { }
-    void audioHardwareDidBecomeInactive() override { }
-    void audioOutputDeviceChanged() override;
-
-    // PAL::SystemSleepListener
-    void systemWillSleep() override;
-    void systemDidWake() override;
-
     Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
 
     SessionRestrictions m_restrictions[static_cast<unsigned>(PlatformMediaSession::MediaType::WebAudio) + 1];
     mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
-    std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
-    std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
-    RefPtr<AudioHardwareListener> m_audioHardwareListener;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;

@@ -68,9 +68,8 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 }
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
-    : m_systemSleepListener(PAL::SystemSleepListener::create(*this))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(AggregateLogger::create(this))
+    : m_logger(AggregateLogger::create(this))
 #endif
 {
     resetRestrictions();
@@ -159,17 +158,16 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
     if (m_interrupted)
         session.setState(PlatformMediaSession::Interrupted);
 
-    if (!m_remoteCommandListener)
-        m_remoteCommandListener = RemoteCommandListener::create(*this);
-
-    if (!m_audioHardwareListener)
-        m_audioHardwareListener = AudioHardwareListener::create(*this);
-
 #if !RELEASE_LOG_DISABLED
     m_logger->addLogger(session.logger());
 #endif
 
     updateSessionState();
+}
+
+bool PlatformMediaSessionManager::hasNoSession() const
+{
+    return m_sessions.isEmpty() || std::all_of(m_sessions.begin(), m_sessions.end(), std::logical_not<void>());
 }
 
 void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
@@ -182,13 +180,10 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
 
     m_sessions.remove(index);
 
-    if (m_sessions.isEmpty() || std::all_of(m_sessions.begin(), m_sessions.end(), std::logical_not<void>())) {
-        m_remoteCommandListener = nullptr;
-        m_audioHardwareListener = nullptr;
 #if USE(AUDIO_SESSION)
+    if (hasNoSession())
         maybeDeactivateAudioSession();
 #endif
-    }
 
 #if !RELEASE_LOG_DISABLED
     m_logger->removeLogger(session.logger());
@@ -302,8 +297,6 @@ void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& sessio
 
     m_sessions.remove(index);
     m_sessions.insert(0, makeWeakPtr(session));
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->updateSupportedCommands();
     
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", index, " to 0");
 }
@@ -429,7 +422,7 @@ void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
     updateSessionState();
 }
 
-void PlatformMediaSessionManager::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
+void PlatformMediaSessionManager::processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
 {
     PlatformMediaSession* activeSession = currentSession();
     if (!activeSession || !activeSession->canReceiveRemoteControlCommands())
@@ -437,7 +430,7 @@ void PlatformMediaSessionManager::didReceiveRemoteControlCommand(PlatformMediaSe
     activeSession->didReceiveRemoteControlCommand(command, argument);
 }
 
-bool PlatformMediaSessionManager::supportsSeeking() const
+bool PlatformMediaSessionManager::computeSupportsSeeking() const
 {
     PlatformMediaSession* activeSession = currentSession();
     if (!activeSession)
@@ -445,7 +438,7 @@ bool PlatformMediaSessionManager::supportsSeeking() const
     return activeSession->supportsSeeking();
 }
 
-void PlatformMediaSessionManager::systemWillSleep()
+void PlatformMediaSessionManager::processSystemWillSleep()
 {
     if (m_interrupted)
         return;
@@ -455,7 +448,7 @@ void PlatformMediaSessionManager::systemWillSleep()
     });
 }
 
-void PlatformMediaSessionManager::systemDidWake()
+void PlatformMediaSessionManager::processSystemDidWake()
 {
     if (m_interrupted)
         return;
@@ -463,11 +456,6 @@ void PlatformMediaSessionManager::systemDidWake()
     forEachSession([] (auto& session) {
         session.endInterruption(PlatformMediaSession::MayResumePlaying);
     });
-}
-
-void PlatformMediaSessionManager::audioOutputDeviceChanged()
-{
-    updateSessionState();
 }
 
 void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(DocumentIdentifier documentIdentifier)

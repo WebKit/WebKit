@@ -51,6 +51,11 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 }
 #endif // !PLATFORM(MAC)
 
+MediaSessionManagerCocoa::MediaSessionManagerCocoa()
+    : m_systemSleepListener(PAL::SystemSleepListener::create(*this))
+{
+}
+
 void MediaSessionManagerCocoa::updateSessionState()
 {
     int videoCount = count(PlatformMediaSession::MediaType::Video);
@@ -76,7 +81,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         // causes media LayoutTests to fail on 10.8.
 
         size_t bufferSize;
-        if (audioHardwareListener() && audioHardwareListener()->outputDeviceSupportsLowPowerMode())
+        if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
             bufferSize = kLowPowerVideoBufferSize;
         else
             bufferSize = kWebAudioBufferSize;
@@ -146,10 +151,35 @@ void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(const PlatformMediaS
     scheduleUpdateNowPlayingInfo();
 }
 
+void MediaSessionManagerCocoa::addSession(PlatformMediaSession& session)
+{
+    if (!m_remoteCommandListener)
+        m_remoteCommandListener = RemoteCommandListener::create(*this);
+
+    if (!m_audioHardwareListener)
+        m_audioHardwareListener = AudioHardwareListener::create(*this);
+
+    PlatformMediaSessionManager::addSession(session);
+}
+
 void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::removeSession(session);
+
+    if (hasNoSession()) {
+        m_remoteCommandListener = nullptr;
+        m_audioHardwareListener = nullptr;
+    }
+
     scheduleUpdateNowPlayingInfo();
+}
+
+void MediaSessionManagerCocoa::setCurrentSession(PlatformMediaSession& session)
+{
+    PlatformMediaSessionManager::setCurrentSession(session);
+
+    if (m_remoteCommandListener)
+        m_remoteCommandListener->updateSupportedCommands();
 }
 
 void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
