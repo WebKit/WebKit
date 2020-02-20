@@ -79,6 +79,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderStateMachine.h>
+#import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
@@ -1429,6 +1430,24 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     WebCore::Color qColor = color ? WebCore::Color(color) : WebCore::Color::black;
     WebCore::Frame *frame = core(self);
     frame->selection().setCaretColor(qColor);
+}
+
+- (CGColorRef)caretColor
+{
+    auto* frame = core(self);
+    if (!frame)
+        return nil;
+    auto* document = frame->document();
+    if (!document)
+        return nil;
+    auto* focusedElement = document->focusedElement();
+    if (!focusedElement)
+        return nil;
+    auto* renderer = focusedElement->renderer();
+    if (!renderer)
+        return nil;
+    auto color = WebCore::CaretBase::computeCaretColor(renderer->style(), renderer->element());
+    return color.isValid() ? cachedCGColor(color) : nil;
 }
 
 - (NSView *)documentView

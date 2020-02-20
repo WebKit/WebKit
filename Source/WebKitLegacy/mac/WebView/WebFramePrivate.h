@@ -142,7 +142,7 @@ typedef enum {
 - (void)setSelectionChangeCallbacksDisabled:(BOOL)flag;
 - (NSRect)caretRect;
 - (NSRect)rectForScrollToVisible; // return caretRect if selection is caret, selectionRect otherwise
-- (void)setCaretColor:(CGColorRef)color;
+@property (nonatomic, readwrite) CGColorRef caretColor;
 - (NSView *)documentView;
 - (int)layoutCount;
 - (BOOL)isTelephoneNumberParsingAllowed;
