@@ -1,3 +1,17 @@
+2020-02-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WPE::libwpe target
+        https://bugs.webkit.org/show_bug.cgi?id=207970
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the WPE::libwpe target.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+        * wpe/backends/CMakeLists.txt:
+
 2020-02-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MiniBrowser] Add 'Go Home' menu item and toolbar button

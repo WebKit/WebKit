@@ -13,16 +13,15 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
 
 set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
-    ${WPE_INCLUDE_DIRS}
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
 set(MiniBrowser_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
+    WPE::libwpe
     WPEToolingBackends
     WebKit
     ${ATK_LIBRARIES}
-    ${WPE_LIBRARIES}
+    ${JavaScriptCore_LIBRARY_NAME}
     ${WPEBACKEND_FDO_LIBRARIES}
 )
 

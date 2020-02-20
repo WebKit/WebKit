@@ -433,7 +433,6 @@ if (USE_WPE_RENDERER)
         "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     )
     list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${WPE_INCLUDE_DIRS}
         ${WPEBACKEND_FDO_INCLUDE_DIRS}
     )
 endif ()
@@ -461,7 +460,7 @@ list(APPEND WebKit_LIBRARIES
 
 if (USE_WPE_RENDERER)
     list(APPEND WebKit_LIBRARIES
-      ${WPE_LIBRARIES}
+      WPE::libwpe
       ${WPEBACKEND_FDO_LIBRARIES}
     )
 endif ()

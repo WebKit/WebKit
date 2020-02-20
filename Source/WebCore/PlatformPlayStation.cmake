@@ -83,10 +83,6 @@ set(WebCore_USER_AGENT_SCRIPTS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.js
 )
 
-list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${WPE_INCLUDE_DIRS}
-)
-
 list(APPEND WebCore_LIBRARIES
-    ${WPE_LIBRARIES}
+    WPE::libwpe
 )

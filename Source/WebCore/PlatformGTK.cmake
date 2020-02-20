@@ -98,7 +98,7 @@ list(APPEND WebCore_LIBRARIES
 
 if (USE_WPE_RENDERER)
     list(APPEND WebCore_LIBRARIES
-        ${WPE_LIBRARIES}
+        WPE::libwpe
     )
 endif ()
 
@@ -114,12 +114,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}
 )
-
-if (USE_WPE_RENDERER)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${WPE_INCLUDE_DIRS}
-    )
-endif ()
 
 if (USE_OPENGL)
     list(APPEND WebCore_SOURCES
