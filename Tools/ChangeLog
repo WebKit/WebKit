@@ -1,3 +1,14 @@
+2020-02-20  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Correctly report JSC tests for windows (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=207910
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/run-javascriptcore-tests:
+        (configurationForUpload): Use the major version instead of the sub-minor version
+        for version name.
+
 2020-02-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WPE::libwpe target
