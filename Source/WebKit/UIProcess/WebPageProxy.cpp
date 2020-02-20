@@ -4272,7 +4272,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 {
     PageClientProtector protector(pageClient());
 
-    WebFrameProxy* frame = process->webFrame(frameID);
+    auto frame = makeRefPtr(process->webFrame(frameID));
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK_URL(process, url);
 
