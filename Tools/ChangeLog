@@ -1,5 +1,28 @@
 2020-02-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        check-webkit-style: Check if *_EXPORT and *_EXPORT_PRIVATE macros are used under corresponding directories
+        https://bugs.webkit.org/show_bug.cgi?id=207380
+
+        Reviewed by Jonathan Bedard.
+
+        Added a new rule 'build/export_macro'.
+
+        Removed a obsolete rule 'readability/webkit_export' which was used
+        only by Chromium port (r148185).
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.export_macro):
+        (check_function_definition):
+        (_unix_path): Added.
+        (is_generated_file): Use _unix_path.
+        (check_has_config_header): Ditto.
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_export_macro_check):
+        (WebKitStyleTest.test_webkit_export_check): Deleted.
+
+2020-02-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][MiniBrowser] Add prettier toolbar button icons
         https://bugs.webkit.org/show_bug.cgi?id=207999
 

@@ -142,6 +142,20 @@ _NO_CONFIG_H_PATH_PATTERNS = [
     '^Source/bmalloc/',
 ]
 
+_EXPORT_MACRO_SPEC = {
+    'BEXPORT': 'Source/bmalloc',
+    'JS_EXPORT': 'Source/JavaScriptCore/API',
+    'JS_EXPORT_PRIVATE': 'Source/JavaScriptCore',
+    'PAL_EXPORT': 'Source/WebCore/PAL',
+    'WEBCORE_TESTSUPPORT_EXPORT': 'Source/WebCore/testing',
+    # Excludes PAL and testing directories
+    'WEBCORE_EXPORT': 'Source/WebCore/(?!(PAL|testing))',
+    'WK_EXPORT': 'Source/WebKit',
+    'WTF_EXPORT_PRIVATE': 'Source/WTF',
+}
+
+_EXPORT_MACROS = sorted(_EXPORT_MACRO_SPEC.keys())
+
 def iteratively_replace_matches_with_char(pattern, char_replacement, s):
     """Returns the string with replacement done.
 
@@ -581,9 +595,11 @@ class _FunctionState(object):
         return bool(search(r'\bvirtual\b', self.modifiers_and_return_type()))
 
     def export_macro(self):
-        export_match = match(
-            r'\b(WTF_EXPORT|WTF_EXPORT_PRIVATE|PAL_EXPORT|JS_EXPORT_PRIVATE|WEBCORE_EXPORT)\b', self.modifiers_and_return_type())
-        return export_match.group(1) if export_match else None
+        for m in _EXPORT_MACROS:
+            export_match = match(r'\b' + m + r'\b', self.modifiers_and_return_type())
+            if export_match:
+                return export_match.group(0)
+        return None
 
     def parameter_list(self):
         if not self._parameter_list:
@@ -1821,6 +1837,12 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
                   'macro from the class and apply it to each appropriate method, or move '
                   'the inline function definition out-of-line.' %
                   class_state.classinfo_stack[-1].export_macro)
+    elif function_state.export_macro():
+        export_macro = function_state.export_macro()
+        path = _EXPORT_MACRO_SPEC[export_macro]
+        if not match(path, _unix_path(filename)):
+            error(line_number, 'build/export_macro', 5,
+                  '%s should only appear in directories matching %s.' % (export_macro, path))
 
 
 def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
@@ -3834,16 +3856,21 @@ for _header, _templates in _HEADERS_CONTAINING_TEMPLATES:
              _header))
 
 
+def _unix_path(file_path):
+    if os.path.sep == '/':
+        return file_path
+    return file_path.replace(os.path.sep, '/')
+
+
 def is_generated_file(file_path):
     """Check if the file is auto-generated."""
-    # Convert file paths using unix path separator for normalization.
-    file_path = file_path.replace(os.path.sep, '/')
+    file_path = _unix_path(file_path)
     return file_path in _AUTO_GENERATED_FILES
 
 
 def check_has_config_header(file_path):
     """Check if the module uses config.h"""
-    file_path = file_path.replace(os.path.sep, '/')
+    file_path = _unix_path(file_path)
     for pattern in _NO_CONFIG_H_PATH_PATTERNS:
         if re.match(pattern, file_path):
             return False
@@ -4151,6 +4178,7 @@ class CppChecker(object):
         'build/class',
         'build/deprecated',
         'build/endif_comment',
+        'build/export_macro',
         'build/forward_decl',
         'build/header_guard',
         'build/header_guard_missing',
@@ -4187,7 +4215,6 @@ class CppChecker(object):
         'readability/streams',
         'readability/todo',
         'readability/utf8',
-        'readability/webkit_export',
         'runtime/arrays',
         'runtime/bitfields',
         'runtime/casting',

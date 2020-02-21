@@ -37,6 +37,7 @@
 
 import codecs
 import os
+import os.path
 import random
 import re
 import unittest
@@ -5705,17 +5706,18 @@ class WebKitStyleTest(CppStyleTestBase):
                          'One space before end of line comments'
                          '  [whitespace/comments] [5]')
 
-    def test_webkit_export_check(self):
-        webkit_export_error_rules = ('-', '+readability/webkit_export')
-        self.assertEqual('',
-            self.perform_lint(
-                '{}\n'
-                'WEBKIT_EXPORT\n'
-                'virtual\n'
-                'int\n'
-                'foo() = 0;\n',
-                'test.h',
-                webkit_export_error_rules))
+    def test_export_macro_check(self):
+        export_error_rules = ('-', '+build/export_macro')
+        self.assertEqual(
+            '', self.perform_lint(
+                'WEBCORE_EXPORT int x();',
+                os.path.join('Source', 'WebCore', 'x.h'),
+                export_error_rules))
+        self.assertNotEqual(
+            '', self.perform_lint(
+                'WEBCORE_TESTSUPPORT_EXPORT int x();',
+                os.path.join('Source', 'WebCore', 'x.h'),
+                export_error_rules))
 
     def test_member_initialization_list(self):
         self.assert_lint('explicit MyClass(Document* doc) : MySuperClass() { }',
