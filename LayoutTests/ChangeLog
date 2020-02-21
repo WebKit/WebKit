@@ -1,3 +1,19 @@
+2020-02-21  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in RenderStyle::isFlippedBlocksWritingMode when fragment flow gains a new in-flow descendant
+        https://bugs.webkit.org/show_bug.cgi?id=207296
+        <rdar://problem/49687828>
+
+        Reviewed by Antti Koivisto.
+
+        When a multi-column fragment flow gains a new in-flow descendant, we need to call
+        multiColumnDescendantInserted so RenderMultiColumnSet would be created for the new
+        descendant.
+
+        * TestExpectations:
+        * fast/multicol/fragflow-gains-new-in-flow-descendant-crash-expected.txt: Added.
+        * fast/multicol/fragflow-gains-new-in-flow-descendant-crash.html: Added.
+
 2020-02-20  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band metadata cues when loading media in the GPU Process
