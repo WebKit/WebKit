@@ -1,3 +1,16 @@
+2020-02-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build step to set cq- flag on bugzilla patch
+        https://bugs.webkit.org/show_bug.cgi?id=208021
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin.set_cq_minus_flag_on_patch):
+        (SetCommitQueueMinusFlagOnPatch):
+        (SetCommitQueueMinusFlagOnPatch.start):
+        (SetCommitQueueMinusFlagOnPatch.getResultSummary):
+
 2020-02-20  Matt Lewis  <jlewis3@apple.com>
 
         Stub repositories fail to upload some results due to missing head svn revision

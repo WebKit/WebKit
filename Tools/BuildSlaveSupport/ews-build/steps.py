@@ -447,6 +447,19 @@ class BugzillaMixin(object):
             return FAILURE
         return SUCCESS
 
+    def set_cq_minus_flag_on_patch(self, patch_id):
+        patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
+        flags = [{'name': 'commit-queue', 'status': '-'}]
+        try:
+            response = requests.put(patch_url, json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            if response.status_code not in [200, 201]:
+                self._addToLog('stdio', 'Unable to set cq- flag on patch {}. Unexpected response code from bugzilla: {}'.format(patch_id, response.status_code))
+                return FAILURE
+        except Exception as e:
+            self._addToLog('stdio', 'Error in setting cq- flag on patch {}'.format(patch_id))
+            return FAILURE
+        return SUCCESS
+
     def close_bug(self, bug_id):
         bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
         try:
@@ -568,6 +581,21 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
             self._addToLog('stdio', 'Patch is marked cq+.\n')
         self.finished(SUCCESS)
         return None
+
+
+class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
+    name = 'set-cq-minus-flag-on-patch'
+
+    def start(self):
+        patch_id = self.getProperty('patch_id', '')
+        rc = self.set_cq_minus_flag_on_patch(patch_id)
+        self.finished(rc)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {u'step': u'Set cq- flag on patch'}
+        return {u'step': u'Failed to set cq- flag on patch'}
 
 
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
