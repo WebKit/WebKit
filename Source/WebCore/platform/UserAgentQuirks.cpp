@@ -36,7 +36,8 @@ namespace WebCore {
 
 static bool isGoogle(const URL& url)
 {
-    String baseDomain = topPrivatelyControlledDomain(url.host().toString());
+    String domain = url.host().toString();
+    String baseDomain = topPrivatelyControlledDomain(domain);
 
     // Our Google UA is *very* complicated to get right. Read
     // https://webkit.org/b/142074 carefully before changing. Test that 3D
@@ -47,9 +48,11 @@ static bool isGoogle(const URL& url)
         return true;
     if (baseDomain == "gstatic.com")
         return true;
-    if (baseDomain == "googleapis.com")
-        return true;
     if (baseDomain == "googleusercontent.com")
+        return true;
+    // googleapis.com is in the public suffix list, which is confusing. E.g.
+    // fonts.googleapis.com is actually a base domain.
+    if (domain.endsWith(".googleapis.com"))
         return true;
 
     return false;
