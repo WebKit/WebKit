@@ -421,11 +421,11 @@ public:
 
     // This value is 2^49, used to encode doubles such that the encoded value will begin
     // with a 15-bit pattern within the range 0x0002..0xFFFC.
-    static constexpr size_t DoubleEncodeOffsetBit = 49;
+    static constexpr size_t DoubleEncodeOffsetBit = 48;
     static constexpr int64_t DoubleEncodeOffset = 1ll << DoubleEncodeOffsetBit;
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
-    static constexpr int64_t NumberTag = 0xfffe000000000000ll;
+    static constexpr int64_t NumberTag = 0xffff000000000000ll;
 
     // All non-numeric (bool, null, undefined) immediates have bit 2 set.
     static constexpr int32_t OtherTag       = 0x2;
