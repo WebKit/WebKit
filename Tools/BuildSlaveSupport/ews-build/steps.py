@@ -583,13 +583,47 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
         return None
 
 
+class ValidateChangeLogAndReviewer(shell.ShellCommand):
+    name = 'validate-changelog-and-reviewer'
+    descriptionDone = ['Validated ChangeLog and Reviewer']
+    command = ['python', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive']
+    haltOnFailure = False
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=3 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'ChangeLog validation failed'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE:
+            log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+            self.setProperty('bugzilla_comment_text', log_text)
+            self.setProperty('build_finish_summary', 'ChangeLog validation failed')
+            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        return rc
+
+
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
     name = 'set-cq-minus-flag-on-patch'
 
     def start(self):
         patch_id = self.getProperty('patch_id', '')
+        build_finish_summary = self.getProperty('build_finish_summary', None)
+
         rc = self.set_cq_minus_flag_on_patch(patch_id)
         self.finished(rc)
+        if build_finish_summary:
+            self.build.buildFinished([build_finish_summary], FAILURE)
         return None
 
     def getResultSummary(self):

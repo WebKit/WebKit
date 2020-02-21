@@ -1,5 +1,18 @@
 2020-02-21  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Add build step to Validate ChangeLog for commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=208064
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidateChangeLogAndReviewer): Build step to validate ChangeLog.
+        (ValidateChangeLogAndReviewer.start):
+        (ValidateChangeLogAndReviewer.evaluateCommand): If the validation fails, comment on bug and mark patch as cq-.
+        (SetCommitQueueMinusFlagOnPatch.start): End the build (after marking the patch cq-) if build_finish_summary property is set.
+
+2020-02-21  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Add build step to set cq- flag on bugzilla patch
         https://bugs.webkit.org/show_bug.cgi?id=208021
 
