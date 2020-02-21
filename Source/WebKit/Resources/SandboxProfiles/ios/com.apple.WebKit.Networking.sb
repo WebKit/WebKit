@@ -486,7 +486,6 @@
     (sysctl-name "kern.ngroups")
     (sysctl-name "kern.osrelease")
     (sysctl-name "kern.ostype")
-    (sysctl-name "kern.osversion")
     (sysctl-name "kern.saved_ids")
     (sysctl-name "kern.usrstack")
     (sysctl-name "kern.usrstack64")
@@ -507,7 +506,9 @@
 
 (allow mach-lookup (with report) (with telemetry)
        (global-name "com.apple.system.logger"))
-(allow file-read-metadata network-outbound  (with report) (with telemetry)
+
+;; Needed by WebKit LOG macros and ASL logging.
+(allow file-read-metadata network-outbound
        (literal "/private/var/run/syslog"))
 
 (allow mach-lookup (with report) (with telemetry)
@@ -569,6 +570,7 @@
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
         "kern.osvariant_status" ;; Needed for bundle loading
+        "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.tcsm_available" ;; Needed for IndexedDB support
         "vm.footprint_suspend"))

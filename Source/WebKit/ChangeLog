@@ -1,3 +1,17 @@
+2020-02-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove telemetry from sandbox rules needed for basic WebKit logging
+        https://bugs.webkit.org/show_bug.cgi?id=208073
+        <rdar://problem/59658551>
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we see the specific uses for the 'kern.osversion' sysctl and the need
+        for network-outbound connections for syslog, we can remove the telemetry.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-02-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r255533) Null Deref of _sessionWrapper under [WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]
