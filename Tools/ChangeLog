@@ -1,3 +1,14 @@
+2020-02-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Improve user agent quirk for Google Docs and Google Drive
+        https://bugs.webkit.org/show_bug.cgi?id=206506
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::assertUserAgentForURLHasFirefoxBrowserQuirk):
+        (TestWebKitAPI::TEST):
+
 2020-02-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         check-webkit-style: Check if *_EXPORT and *_EXPORT_PRIVATE macros are used under corresponding directories

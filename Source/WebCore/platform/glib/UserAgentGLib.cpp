@@ -92,6 +92,11 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
         uaString.append(platformVersionForUAString());
     }
 
+    if (quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
+        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsFirefoxBrowser));
+        return uaString.toString();
+    }
+
     uaString.appendLiteral(") AppleWebKit/");
     uaString.append(versionForUAString());
     uaString.appendLiteral(" (KHTML, like Gecko) ");

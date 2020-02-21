@@ -42,6 +42,16 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Firefox"));
 }
 
+static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
+{
+    String uaString = standardUserAgentForURL(URL({ }, url));
+
+    EXPECT_FALSE(uaString.contains("Chrome"));
+    EXPECT_FALSE(uaString.contains("Safari"));
+    EXPECT_FALSE(uaString.contains("Chromium"));
+    EXPECT_TRUE(uaString.contains("Firefox"));
+}
+
 static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
 {
     String uaString = standardUserAgentForURL(URL({ }, url));
@@ -81,10 +91,14 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
 
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://accounts.youtube.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://drive.google.com/");
+
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://calendar.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://plus.google.com/");
+    assertUserAgentForURLHasLinuxPlatformQuirk("http://drive.google.com/");
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://finance.yahoo.com/");
@@ -92,7 +106,6 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://www.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://web.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://www.chase.com/");
-    assertUserAgentForURLHasMacPlatformQuirk("http://docs.google.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://drive.google.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://paypal.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.live.com/");
