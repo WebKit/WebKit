@@ -613,6 +613,9 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (auto* networkDataTask = [self existingTask:task])
         return static_cast<NetworkSessionCocoa*>(networkDataTask->networkSession());
 
+    if (!_sessionWrapper)
+        return nullptr;
+
     if (auto downloadID = _sessionWrapper->downloadMap.get(task.taskIdentifier)) {
         if (auto download = _session->networkProcess().downloadManager().download(downloadID))
             return static_cast<NetworkSessionCocoa*>(_session->networkProcess().networkSession(download->sessionID()));
