@@ -83,7 +83,6 @@ private:
     void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&&);
     void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&&);
-    void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, CompletionHandler<void(int64_t)>&&);
     void getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void getPasteboardUniqueName(CompletionHandler<void(String&&)>&&);
     void getPasteboardColor(const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&&);

@@ -113,11 +113,6 @@ void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName
     completionHandler(WTFMove(handle), size);
 }
 
-void WebPasteboardProxy::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, CompletionHandler<void(int64_t)>&& completionHandler)
-{
-    completionHandler(PlatformPasteboard(toPasteboard).copy(fromPasteboard));
-}
-
 void WebPasteboardProxy::getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     completionHandler(PlatformPasteboard(pasteboardName).changeCount());
