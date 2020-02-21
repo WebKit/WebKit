@@ -950,3 +950,5 @@ http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
 
 webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
+
+webkit.org/b/208059 [ Debug ] legacy-animation-engine/compositing/transitions/add-remove-transition.html [ Pass Failure ]
