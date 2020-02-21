@@ -156,11 +156,13 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 {
-    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || LegacyGlobalSettings::singleton().cacheModel() != CacheModel::PrimaryWebBrowser) {
+    if (!processPool.configuration().processSwapsOnNavigation() || !processPool.configuration().usesWebProcessCache() || LegacyGlobalSettings::singleton().cacheModel() != CacheModel::PrimaryWebBrowser || processPool.configuration().usesSingleWebProcess()) {
         if (!processPool.configuration().processSwapsOnNavigation())
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because process swap on navigation is disabled", 0);
         else if (!processPool.configuration().usesWebProcessCache())
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled by client", 0);
+        else if (processPool.configuration().usesSingleWebProcess())
+            WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because process-per-tab was disabled", 0);
         else
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because cache model is not PrimaryWebBrowser", 0);
         m_capacity = 0;
