@@ -1,5 +1,24 @@
 2020-02-21  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/59680475
+
+    2020-02-21  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r255533) Null Deref of _sessionWrapper under [WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]
+            https://bugs.webkit.org/show_bug.cgi?id=208029
+            <rdar://problem/59404381>
+
+            Reviewed by Tim Horton.
+
+            r255533 started dereferencing _sessionWrapper without null check in didReceiveChallenge. All other delegates
+            in this file null check _sessionWrapper before using it because it is a weak pointer. Add a null check to
+            avoid crashing.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
+2020-02-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r257106. rdar://problem/59676866
 
     Add fidelity.com to the desktop class quirks list
