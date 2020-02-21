@@ -3351,6 +3351,10 @@ webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html
 
 webkit.org/b/206676 imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Pass Failure ]
 
+# wpt intersection-observer failures
+webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Timeout ]
+webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Timeout ]
+
 # wpt css-backgrounds failures
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-4.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-6.html [ ImageOnlyFailure ]

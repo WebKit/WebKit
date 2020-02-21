@@ -1,3 +1,103 @@
+2020-02-21  Frederic Wang  <fwang@igalia.com>
+
+        Update WPT tests for Intersection Observer
+        https://bugs.webkit.org/show_bug.cgi?id=208053
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/intersection-observer/bounding-box.html:
+        * web-platform-tests/intersection-observer/client-rect.html:
+        * web-platform-tests/intersection-observer/containing-block.html:
+        * web-platform-tests/intersection-observer/cross-origin-iframe.sub-expected.txt: Added.
+        * web-platform-tests/intersection-observer/cross-origin-iframe.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.html.
+        * web-platform-tests/intersection-observer/disconnect.html:
+        * web-platform-tests/intersection-observer/display-none.html:
+        * web-platform-tests/intersection-observer/document-scrolling-element-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/document-scrolling-element-root.html: Added.
+        * web-platform-tests/intersection-observer/edge-inclusive-intersection.html:
+        * web-platform-tests/intersection-observer/empty-root-margin.html:
+        * web-platform-tests/intersection-observer/iframe-no-root-with-wrapping-scroller-expected.txt: Added.
+        * web-platform-tests/intersection-observer/iframe-no-root-with-wrapping-scroller.html: Copied from LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root.html.
+        * web-platform-tests/intersection-observer/iframe-no-root.html:
+        * web-platform-tests/intersection-observer/initial-observation-with-threshold.html:
+        * web-platform-tests/intersection-observer/inline-client-rect.html:
+        * web-platform-tests/intersection-observer/isIntersecting-change-events.html:
+        * web-platform-tests/intersection-observer/isIntersecting-threshold-expected.txt: Added.
+        * web-platform-tests/intersection-observer/isIntersecting-threshold.html: Added.
+        * web-platform-tests/intersection-observer/multiple-targets.html:
+        * web-platform-tests/intersection-observer/multiple-thresholds.html:
+        * web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub-expected.txt: Added.
+        * web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub.html: Added.
+        * web-platform-tests/intersection-observer/observer-attributes.html:
+        * web-platform-tests/intersection-observer/observer-exceptions.html:
+        * web-platform-tests/intersection-observer/observer-in-iframe.html:
+        * web-platform-tests/intersection-observer/observer-without-js-reference.html:
+        * web-platform-tests/intersection-observer/remove-element.html:
+        * web-platform-tests/intersection-observer/resources/cross-origin-child-iframe.sub.html: Added.
+        * web-platform-tests/intersection-observer/resources/cross-origin-subframe.html:
+        * web-platform-tests/intersection-observer/resources/intersection-observer-test-utils.js:
+        (waitForNotification):
+        (waitForFrame):
+        (runTestCycle):
+        (checkJsonEntry):
+        * web-platform-tests/intersection-observer/resources/nested-cross-origin-child-iframe.sub.html: Added.
+        * web-platform-tests/intersection-observer/resources/nested-cross-origin-grand-child-iframe.html: Added.
+        * web-platform-tests/intersection-observer/resources/same-origin-grand-child-iframe.html: Added.
+        * web-platform-tests/intersection-observer/resources/scaled-target-subframe.html: Added.
+        * web-platform-tests/intersection-observer/resources/v2-subframe.html: Added.
+        * web-platform-tests/intersection-observer/resources/w3c-import.log:
+        * web-platform-tests/intersection-observer/root-margin-rounding-expected.txt: Added.
+        * web-platform-tests/intersection-observer/root-margin-rounding.html: Added.
+        * web-platform-tests/intersection-observer/root-margin.html:
+        * web-platform-tests/intersection-observer/rtl-clipped-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/rtl-clipped-root.html: Added.
+        * web-platform-tests/intersection-observer/same-document-no-root.html:
+        * web-platform-tests/intersection-observer/same-document-root.html:
+        * web-platform-tests/intersection-observer/same-document-zero-size-target.html:
+        * web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub-expected.txt: Added.
+        * web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub.html: Added.
+        * web-platform-tests/intersection-observer/shadow-content.html:
+        * web-platform-tests/intersection-observer/target-in-different-window.html:
+        * web-platform-tests/intersection-observer/text-target.html:
+        * web-platform-tests/intersection-observer/timestamp.html:
+        * web-platform-tests/intersection-observer/unclipped-root.html:
+        * web-platform-tests/intersection-observer/v2/animated-occlusion-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/animated-occlusion.html: Added.
+        * web-platform-tests/intersection-observer/v2/blur-filter-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/blur-filter.html: Added.
+        * web-platform-tests/intersection-observer/v2/box-shadow-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/box-shadow.html: Added.
+        * web-platform-tests/intersection-observer/v2/cross-origin-effects.sub-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/delay-test-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/delay-test.html: Added.
+        * web-platform-tests/intersection-observer/v2/drop-shadow-filter-vertical-rl-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/drop-shadow-filter-vertical-rl.html: Added.
+        * web-platform-tests/intersection-observer/v2/iframe-target-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/iframe-target.html: Added.
+        * web-platform-tests/intersection-observer/v2/inline-occlusion-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/inline-occlusion.html: Added.
+        * web-platform-tests/intersection-observer/v2/position-relative-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/position-relative.html: Added.
+        * web-platform-tests/intersection-observer/v2/scaled-target-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/scaled-target.html: Added.
+        * web-platform-tests/intersection-observer/v2/simple-effects-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/simple-effects.html: Added.
+        * web-platform-tests/intersection-observer/v2/simple-occlusion-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/simple-occlusion-svg-foreign-object-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/simple-occlusion-svg-foreign-object.html: Added.
+        * web-platform-tests/intersection-observer/v2/simple-occlusion.html: Added.
+        * web-platform-tests/intersection-observer/v2/text-editor-occlusion-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/text-editor-occlusion.html: Added.
+        * web-platform-tests/intersection-observer/v2/text-shadow-expected.txt: Added.
+        * web-platform-tests/intersection-observer/v2/text-shadow.html: Added.
+        * web-platform-tests/intersection-observer/v2/w3c-import.log: Added.
+        * web-platform-tests/intersection-observer/w3c-import.log:
+        * web-platform-tests/intersection-observer/zero-area-element-hidden.html:
+        * web-platform-tests/intersection-observer/zero-area-element-visible.html:
+        * web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html: Added.
+        * web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html: Added.
+
 2020-02-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Value sanitization for input[type=text] should not truncate a value at a control character

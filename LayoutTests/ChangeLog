@@ -1,3 +1,17 @@
+2020-02-21  Frederic Wang  <fwang@igalia.com>
+
+        Update WPT tests for Intersection Observer
+        https://bugs.webkit.org/show_bug.cgi?id=208053
+
+        Reviewed by Daniel Bates.
+
+        Add iOS expectations and skip new tests timing out.
+
+        * TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.sub-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-with-wrapping-scroller-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub-expected.txt: Remamed from platform/ios/imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub.txt.
+
 2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] legacy-animation-engine/compositing/transitions/add-remove-transition.html is flaky failing.
