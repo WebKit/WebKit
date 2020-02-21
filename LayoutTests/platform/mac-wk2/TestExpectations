@@ -1063,3 +1063,5 @@ webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html 
 webkit.org/b/208005 webgpu/whlsl/zero-initialize-values.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208014 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Pass Crash ]
+
+webkit.org/b/208062 http/wpt/fetch/disable-speculative-for-reload.html [ Pass Failure ]
