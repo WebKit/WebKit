@@ -1,3 +1,16 @@
+2020-02-20  Sihui Liu  <sihui_liu@apple.com>
+
+        WebIDBServer resume should return early if suspend does not happen
+        https://bugs.webkit.org/show_bug.cgi?id=208027
+        <rdar://problem/59617654>
+
+        Reviewed by Geoffrey Garen.
+
+        We should not try releasing a lock that is not held.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::resume):
+
 2020-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         NetworkCache should use 4KB threshold for mmap-ed files instead of 16KB
