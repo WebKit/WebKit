@@ -33,6 +33,7 @@
 
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/WebKitLegacy.h>
 
 @implementation TextInputController
 

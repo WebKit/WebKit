@@ -1,3 +1,26 @@
+2020-02-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Build DumpRenderTree and WebKitTestRunner for macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=208068
+        <rdar://problem/59676596>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/ios/TextInputControllerIOS.m: Import WebKitLegacy explicitly.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Use cocoatouch instead of SDK.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: Ditto.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig: Ditto.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeLibrary.xcconfig: Ditto.
+        * DumpRenderTree/mac/Configurations/TestNetscapePlugIn.xcconfig: Ditto.
+        * DumpRenderTree/mac/EditingDelegate.mm: Import WebKitLegacy explicitly.
+        * DumpRenderTree/mac/EventSendingController.h: Ditto.
+        * DumpRenderTree/mac/ObjCPlugin.m: Ditto.
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm: Ditto.
+        * Makefile: Add DumpRenderTree and WebKitTestRunner.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Use cocoatouch instead of SDK.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: Ditto.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Ditto.
+
 2020-02-21  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build step to Validate ChangeLog for commit-queue

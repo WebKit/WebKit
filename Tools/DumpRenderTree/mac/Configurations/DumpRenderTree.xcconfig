@@ -23,9 +23,10 @@
 
 #include "BaseTarget.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) $(PLATFORM_OTHER_LDFLAGS) $(ASAN_OTHER_LDFLAGS);
-PLATFORM_OTHER_LDFLAGS[sdk=iphone*] = -framework JavaScriptCore;
-PLATFORM_OTHER_LDFLAGS[sdk=macosx*] = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebKit;
+OTHER_LDFLAGS = $(inherited) $(ASAN_OTHER_LDFLAGS) $(OTHER_LDFLAGS_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS_cocoatouch = -framework JavaScriptCore;
+OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebKit;
+
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 STRIP_STYLE = debugging;
 PRODUCT_NAME = DumpRenderTree;

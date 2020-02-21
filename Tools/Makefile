@@ -17,7 +17,7 @@ ifeq (,$(DO_NOT_BUILD_IMAGE_DIFF))
 endif
 
 ifeq (iosmac,$(SDK_VARIANT))
-	MODULES = ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+	MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 endif
 
 all:

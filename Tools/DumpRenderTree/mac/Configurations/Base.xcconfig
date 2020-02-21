@@ -39,9 +39,6 @@ CLANG_CXX_LANGUAGE_STANDARD = gnu++1z;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_OBJC_WEAK = YES;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(PLATFORM_HEADER_SEARCH_PATHS);
-PLATFORM_HEADER_SEARCH_PATHS[sdk=iphone*] = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport $(SRCROOT)/../../Source/WebKit/Platform/spi/ios;
-PLATFORM_HEADER_SEARCH_PATHS[sdk=macosx*] = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
 GCC_NO_COMMON_BLOCKS = YES;
 ENABLE_STRICT_OBJC_MSGSEND=YES;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) U_DISABLE_RENAMING=1 U_SHOW_CPLUSPLUS_API=0;
@@ -113,3 +110,16 @@ OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
 
 WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework;
 WEBKIT_FRAMEWORK_RESOURCES_PATH[sdk=macosx*] = WebKit.framework/Versions/A/Resources;
+
+WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
+WK_COCOA_TOUCH_iphoneos = cocoatouch;
+WK_COCOA_TOUCH_maccatalyst = cocoatouch;
+WK_COCOA_TOUCH_iphonesimulator = cocoatouch;
+WK_COCOA_TOUCH_watchos = cocoatouch;
+WK_COCOA_TOUCH_watchsimulator = cocoatouch;
+WK_COCOA_TOUCH_appletvos = cocoatouch;
+WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
+
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
+HEADER_SEARCH_PATHS_ = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
+HEADER_SEARCH_PATHS_cocoatouch = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport $(SRCROOT)/../../Source/WebKit/Platform/spi/ios;

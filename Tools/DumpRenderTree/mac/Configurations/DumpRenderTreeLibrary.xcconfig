@@ -30,5 +30,6 @@ SKIP_INSTALL = YES;
 
 OTHER_LDFLAGS = ;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityUIElementMac.mm DumpRenderTreeFileDraggingSource.m PixelDumpSupportMac.mm;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = AccessibilityUIElementIOS.mm AccessibilityControllerIOS.mm PixelDumpSupportIOS.mm DumpRenderTreeBrowserView.mm;
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
+EXCLUDED_SOURCE_FILE_NAMES_ = AccessibilityUIElementIOS.mm AccessibilityControllerIOS.mm PixelDumpSupportIOS.mm DumpRenderTreeBrowserView.mm;
+EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = AccessibilityControllerMac.mm AccessibilityUIElementMac.mm DumpRenderTreeFileDraggingSource.m PixelDumpSupportMac.mm;
