@@ -179,6 +179,8 @@ public:
     void processDidResume();
     void resume();
 
+    CacheModel cacheModel() const { return m_cacheModel; }
+
     // Diagnostic messages logging.
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
@@ -404,7 +406,7 @@ private:
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 
-    void setCacheModel(CacheModel, String overrideCacheStorageDirectory);
+    void setCacheModel(CacheModel);
     void setCacheModelSynchronouslyForTesting(CacheModel, CompletionHandler<void()>&&);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
