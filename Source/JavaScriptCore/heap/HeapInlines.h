@@ -188,7 +188,7 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
     ASSERT(!Thread::mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth--;
     
-    if (UNLIKELY(m_didDeferGCWork)) {
+    if (UNLIKELY(m_didDeferGCWork) || Options::forceDidDeferGCWork()) {
         decrementDeferralDepthAndGCIfNeededSlow();
         
         // Here are the possible relationships between m_deferralDepth and m_didDeferGCWork.

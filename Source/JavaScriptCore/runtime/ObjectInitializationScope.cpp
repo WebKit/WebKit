@@ -104,7 +104,7 @@ void ObjectInitializationScope::verifyPropertiesAreInitialized(JSObject* object)
 
     for (int64_t i = 0; i < static_cast<int64_t>(structure->outOfLineCapacity()); i++) {
         // We rely on properties past the last offset be zero for concurrent GC.
-        if (i + firstOutOfLineOffset > structure->lastOffset())
+        if (i + firstOutOfLineOffset > structure->maxOffset())
             ASSERT(isSafeEmptyValueForGCScanning(butterfly->propertyStorage()[-i - 1].get()));
         else if (isScribbledValue(butterfly->propertyStorage()[-i - 1].get())) {
             dataLogLn("Found scribbled property at i = ", -i - 1);

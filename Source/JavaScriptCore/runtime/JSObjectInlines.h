@@ -216,16 +216,16 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
     PropertyOffset result;
     structure->addPropertyWithoutTransition(
         vm, propertyName, attributes,
-        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newLastOffset) {
-            unsigned newOutOfLineCapacity = Structure::outOfLineCapacity(newLastOffset);
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
+            unsigned newOutOfLineCapacity = Structure::outOfLineCapacity(newMaxOffset);
             if (newOutOfLineCapacity != oldOutOfLineCapacity) {
                 Butterfly* butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
                 nukeStructureAndSetButterfly(vm, structureID, butterfly);
-                structure->setLastOffset(newLastOffset);
+                structure->setMaxOffset(vm, newMaxOffset);
                 WTF::storeStoreFence();
                 setStructureIDDirectly(structureID);
             } else
-                structure->setLastOffset(newLastOffset);
+                structure->setMaxOffset(vm, newMaxOffset);
 
             // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
             // is running at the same time we put without transitioning.

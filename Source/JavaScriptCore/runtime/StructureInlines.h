@@ -163,28 +163,40 @@ template<typename Functor>
 void Structure::forEachPropertyConcurrently(const Functor& functor)
 {
     Vector<Structure*, 8> structures;
-    Structure* structure;
+    Structure* tableStructure;
     PropertyTable* table;
     
-    findStructuresAndMapForMaterialization(structures, structure, table);
+    findStructuresAndMapForMaterialization(structures, tableStructure, table);
+
+    HashSet<UniquedStringImpl*> seenProperties;
+
+    for (auto* structure : structures) {
+        if (!structure->m_transitionPropertyName || seenProperties.contains(structure->m_transitionPropertyName.get()))
+            continue;
+
+        seenProperties.add(structure->m_transitionPropertyName.get());
+
+        if (structure->isPropertyDeletionTransition())
+            continue;
+
+        if (!functor(PropertyMapEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
+            if (table)
+                tableStructure->m_lock.unlock();
+            return;
+        }
+    }
     
     if (table) {
         for (auto& entry : *table) {
+            if (seenProperties.contains(entry.key))
+                continue;
+
             if (!functor(entry)) {
-                structure->m_lock.unlock();
+                tableStructure->m_lock.unlock();
                 return;
             }
         }
-        structure->m_lock.unlock();
-    }
-    
-    for (unsigned i = structures.size(); i--;) {
-        structure = structures[i];
-        if (!structure->m_nameInPrevious)
-            continue;
-        
-        if (!functor(PropertyMapEntry(structure->m_nameInPrevious.get(), structure->m_offset, structure->attributesInPrevious())))
-            return;
+        tableStructure->m_lock.unlock();
     }
 }
 
@@ -364,21 +376,22 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTabl
     auto fail = [&] (const char* description) {
         dataLog("Detected offset inconsistency: ", description, "!\n");
         dataLog("this = ", RawPointer(this), "\n");
-        dataLog("m_offset = ", m_offset, "\n");
+        dataLog("transitionOffset = ", transitionOffset(), "\n");
+        dataLog("maxOffset = ", maxOffset(), "\n");
         dataLog("m_inlineCapacity = ", m_inlineCapacity, "\n");
         dataLog("propertyTable = ", RawPointer(propertyTable), "\n");
-        dataLog("numberOfSlotsForLastOffset = ", numberOfSlotsForLastOffset(m_offset, m_inlineCapacity), "\n");
+        dataLog("numberOfSlotsForMaxOffset = ", numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity), "\n");
         dataLog("totalSize = ", totalSize, "\n");
         dataLog("inlineOverflowAccordingToTotalSize = ", inlineOverflowAccordingToTotalSize, "\n");
-        dataLog("numberOfOutOfLineSlotsForLastOffset = ", numberOfOutOfLineSlotsForLastOffset(m_offset), "\n");
+        dataLog("numberOfOutOfLineSlotsForMaxOffset = ", numberOfOutOfLineSlotsForMaxOffset(maxOffset()), "\n");
         detailsFunc();
         UNREACHABLE_FOR_PLATFORM();
     };
     
-    if (numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) != totalSize)
-        fail("numberOfSlotsForLastOffset doesn't match totalSize");
-    if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForLastOffset(m_offset))
-        fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForLastOffset");
+    if (numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity) != totalSize)
+        fail("numberOfSlotsForMaxOffset doesn't match totalSize");
+    if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForMaxOffset(maxOffset()))
+        fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForMaxOffset");
 
     return true;
 }
@@ -450,48 +463,61 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
 
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
-
     m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
+
+    auto result = table->add(PropertyMapEntry(rep, newOffset, attributes));
+    ASSERT_UNUSED(result, result.second);
+    ASSERT_UNUSED(result, result.first.first->offset == newOffset);
+    auto newMaxOffset = std::max(newOffset, maxOffset());
     
-    PropertyOffset newLastOffset = m_offset;
-    table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
+    func(locker, newOffset, newMaxOffset);
     
-    func(locker, newOffset, newLastOffset);
-    
-    ASSERT(m_offset == newLastOffset);
+    ASSERT(maxOffset() == newMaxOffset);
 
     checkConsistency();
     return newOffset;
 }
 
-template<typename Func>
-inline PropertyOffset Structure::remove(PropertyName propertyName, const Func& func)
+template<Structure::ShouldPin shouldPin, typename Func>
+inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const Func& func)
 {
-    ConcurrentJSLocker locker(m_lock);
-    
+    PropertyTable* table = ensurePropertyTable(vm);
+    GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+
+    switch (shouldPin) {
+    case ShouldPin::Yes:
+        pin(locker, vm, table);
+        break;
+    case ShouldPin::No:
+        setPropertyTable(vm, table);
+        break;
+    }
+
+    ASSERT(JSC::isValidOffset(get(vm, propertyName)));
+
     checkConsistency();
 
     auto rep = propertyName.uid();
-    
-    // We ONLY remove from uncacheable dictionaries, which will have a pinned property table.
-    // The only way for them not to have a table is if they are empty.
-    PropertyTable* table = propertyTableOrNull();
-
-    if (!table)
-        return invalidOffset;
 
     PropertyTable::find_iterator position = table->find(rep);
     if (!position.first)
         return invalidOffset;
+
+    setIsQuickPropertyAccessAllowedForEnumeration(false);
     
     PropertyOffset offset = position.first->offset;
 
     table->remove(position);
     table->addDeletedOffset(offset);
 
-    checkConsistency();
+    PropertyOffset newMaxOffset = maxOffset();
 
-    func(locker, offset);
+    func(locker, offset, newMaxOffset);
+
+    ASSERT(maxOffset() == newMaxOffset);
+    ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
+
+    checkConsistency();
     return offset;
 }
 
@@ -502,13 +528,13 @@ inline PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyNa
 }
 
 template<typename Func>
-inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyName propertyName, const Func& func)
+inline PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, PropertyName propertyName, const Func& func)
 {
     ASSERT(isUncacheableDictionary());
     ASSERT(isPinnedPropertyTable());
     ASSERT(propertyTableOrNull());
     
-    return remove(propertyName, func);
+    return remove<ShouldPin::Yes>(vm, propertyName, func);
 }
 
 ALWAYS_INLINE void Structure::setPrototypeWithoutTransition(VM& vm, JSValue prototype)
