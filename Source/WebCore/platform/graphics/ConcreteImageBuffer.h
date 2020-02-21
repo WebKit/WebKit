@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
+#include "ImageData.h"
 
 namespace WebCore {
 
