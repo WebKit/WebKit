@@ -1,3 +1,20 @@
+2020-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix media related sandbox issues in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=208033
+
+        Reviewed by Eric Carlson.
+
+        The mach lookup sandbox extension to 'com.apple.tccd' needs to be created with the method SandboxExtension::createHandleForMachLookup.
+        The file read-write sandbox extension to the media cache directory needs to be created with the parent folder of the actual cache folder,
+        since the media frameworks also seem to access files there.
+
+        No new tests, covered by existing tests.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::singleton):
+        (WebKit::gpuProcessSessionParameters):
+
 2020-02-20  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU process] Synchronize the properties of video layers in the GPU process with the hosting layer in the web process
