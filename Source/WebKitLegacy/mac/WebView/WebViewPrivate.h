@@ -1087,6 +1087,7 @@ typedef struct WebEdgeInsets {
 
 @interface WebView (WebViewIOSAdditions)
 - (NSArray<DOMElement *> *)_editableElementsInRect:(CGRect)rect;
+- (void)revealCurrentSelection;
 @end
 
 #endif

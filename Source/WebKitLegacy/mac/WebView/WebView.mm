@@ -10212,6 +10212,12 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     return result.autorelease();
 }
 
+- (void)revealCurrentSelection
+{
+    if (auto* page = core(self))
+        page->revealCurrentSelection();
+}
+
 @end
 
 #endif

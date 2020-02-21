@@ -1,3 +1,18 @@
+2020-02-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS][Legacy WebKit] Expose SPI for Page::revealCurrentSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=207960
+        <rdar://problem/59604163>
+
+        Reviewed by Wenson Hsieh.
+
+        Together with <https://bugs.webkit.org/show_bug.cgi?id=207955> this allows a client to reveal
+        the current selection when it's ready to do so.
+
+        * WebView/WebView.mm:
+        (-[WebView revealCurrentSelection]): Added.
+        * WebView/WebViewPrivate.h:
+
 2020-02-20  Megan Gardner  <megan_gardner@apple.com>
 
         Expose caret color for clients
