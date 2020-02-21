@@ -1,3 +1,12 @@
+2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mojave ] webaudio/audioparam-exponentialRampToValueAtTime.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=208061
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         [Web Animations] Repeated animations on pseudo elements will fail to run after a while
