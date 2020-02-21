@@ -29,28 +29,26 @@
 
 #include "SerializedPlatformDataCue.h"
 
-#if USE(FOUNDATION) && !defined(__OBJC__)
-typedef struct objc_object *id;
-#endif
-
 namespace WebCore {
 
 class SerializedPlatformDataCueMac final : public SerializedPlatformDataCue {
 public:
-    virtual ~SerializedPlatformDataCueMac();
-    static Ref<SerializedPlatformDataCue> create(id);
+    SerializedPlatformDataCueMac(SerializedPlatformDataCueValue&&);
+    virtual ~SerializedPlatformDataCueMac() = default;
 
     JSC::JSValue deserialize(JSC::JSGlobalObject*) const final;
     RefPtr<ArrayBuffer> data() const final;
-
     bool isEqual(const SerializedPlatformDataCue&) const final;
+    PlatformType platformType() const final { return PlatformType::ObjC; }
+    bool encodingRequiresPlatformData() const final { return true; }
 
-    PlatformType platformType() const final { return SerializedPlatformDataCue::ObjC; }
+    WEBCORE_EXPORT SerializedPlatformDataCueValue encodableValue() const final;
 
     id nativeValue() const { return m_nativeValue.get(); }
 
+    WEBCORE_EXPORT static NSArray *allowedClassesForNativeValues();
+
 private:
-    explicit SerializedPlatformDataCueMac(id nativeValue);
 
     RetainPtr<id> m_nativeValue;
 };

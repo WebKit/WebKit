@@ -96,25 +96,25 @@ void RemoteTextTrackProxy::languageChanged(const AtomString&)
     configurationChanged();
 }
 
-void RemoteTextTrackProxy::addDataCue(const MediaTime&, const MediaTime&, const void*, unsigned)
+void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddDataCue(m_identifier, start, end, IPC::DataReference(reinterpret_cast<const uint8_t*>(data), length)), m_player.idendifier());
 }
 
 #if ENABLE(DATACUE_VALUE)
-void RemoteTextTrackProxy::addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&)
+void RemoteTextTrackProxy::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddDataCueWithType(m_identifier, start, end, cueData->encodableValue(), type), m_player.idendifier());
 }
 
-void RemoteTextTrackProxy::updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&)
+void RemoteTextTrackProxy::updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue& cueData)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::UpdateDataCue(m_identifier, start, end, cueData.encodableValue()), m_player.idendifier());
 }
 
-void RemoteTextTrackProxy::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&)
+void RemoteTextTrackProxy::removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue& cueData)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveDataCue(m_identifier, start, end, cueData.encodableValue()), m_player.idendifier());
 }
 #endif
 

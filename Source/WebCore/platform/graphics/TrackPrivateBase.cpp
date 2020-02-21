@@ -33,9 +33,10 @@
 
 namespace WebCore {
 
+#if !RELEASE_LOG_DISABLED
+
 static uint64_t s_uniqueId = 0;
 
-#if !RELEASE_LOG_DISABLED
 void TrackPrivateBase::setLogger(const Logger& logger, const void* logIdentifier)
 {
     m_logger = &logger;

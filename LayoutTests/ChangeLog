@@ -1,3 +1,13 @@
+2020-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Support in-band metadata cues when loading media in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=207904
+        <rdar://problem/59561647>
+
+        Reviewed by Dean Jackson.
+
+        * gpu-process/TestExpectations:
+
 2020-02-20  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/wpt/cache-storage/cache-put-keys.https.any.worker.html is flaky failing.

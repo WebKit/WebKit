@@ -32,6 +32,11 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 
+namespace WebCore {
+class GenericCueData;
+class ISOWebVTTCue;
+}
+
 namespace WebKit {
 
 class MediaPlayerPrivateRemote;
@@ -44,21 +49,21 @@ public:
         return adoptRef(*new TextTrackPrivateRemote(player, idendifier, WTFMove(configuration)));
     }
 
-    void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned);
+    void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
-    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
-    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
+    void addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&, String&&);
+    void updateDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);
+    void removeDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);
 #endif
 
-    void addGenericCue(GenericCueData&);
-    void updateGenericCue(GenericCueData&);
-    void removeGenericCue(GenericCueData&);
+    void addGenericCue(WebCore::GenericCueData&);
+    void updateGenericCue(WebCore::GenericCueData&);
+    void removeGenericCue(WebCore::GenericCueData&);
 
     void parseWebVTTFileHeader(String&&);
     void parseWebVTTCueData(const IPC::DataReference&);
-    void parseWebVTTCueDataStruct(ISOWebVTTCue&&);
+    void parseWebVTTCueDataStruct(WebCore::ISOWebVTTCue&&);
 
     void updateConfiguration(TextTrackPrivateRemoteConfiguration&&);
 

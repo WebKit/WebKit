@@ -24,8 +24,8 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
-    CreateMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, struct WebKit::RemoteMediaPlayerProxyConfiguration proxyConfiguration) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Synchronous
-    DeleteMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id)
+    CreateMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id, enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, struct WebKit::RemoteMediaPlayerProxyConfiguration proxyConfiguration) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+     DeleteMediaPlayer(WebKit::MediaPlayerPrivateRemoteIdentifier id)
 
     GetSupportedTypes(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) -> (Vector<String> types) Synchronous
     SupportsTypeAndCodecs(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, struct WebCore::MediaEngineSupportParameters type) -> (enum:uint8_t WebCore::MediaPlayerEnums::SupportsType support) Synchronous

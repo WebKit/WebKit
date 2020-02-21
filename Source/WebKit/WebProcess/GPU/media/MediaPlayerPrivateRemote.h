@@ -40,12 +40,14 @@
 
 namespace WebCore {
 class ISOWebVTTCue;
+class SerializedPlatformDataCueValue;
 }
 
 namespace WebKit {
 
 class AudioTrackPrivateRemote;
 class TextTrackPrivateRemote;
+class UserData;
 class VideoTrackPrivateRemote;
 struct TextTrackPrivateRemoteConfiguration;
 struct TrackPrivateRemoteConfiguration;
@@ -59,13 +61,15 @@ class MediaPlayerPrivateRemote final
 #endif
 {
 public:
-    static std::unique_ptr<MediaPlayerPrivateRemote> create(WebCore::MediaPlayer* player, WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
+    static std::unique_ptr<MediaPlayerPrivateRemote> create(WebCore::MediaPlayer* player, WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, MediaPlayerPrivateRemoteIdentifier identifier, RemoteMediaPlayerManager& manager)
     {
-        return makeUnique<MediaPlayerPrivateRemote>(player, remoteEngineIdentifier, identifier, manager, configuration);
+        return makeUnique<MediaPlayerPrivateRemote>(player, remoteEngineIdentifier, identifier, manager);
     }
 
-    MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&, const RemoteMediaPlayerConfiguration&);
+    MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, MediaPlayerPrivateRemoteIdentifier, RemoteMediaPlayerManager&);
     ~MediaPlayerPrivateRemote();
+
+    void setConfiguration(RemoteMediaPlayerConfiguration&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -103,6 +107,13 @@ public:
     void parseWebVTTFileHeader(TrackPrivateRemoteIdentifier, String&&);
     void parseWebVTTCueData(TrackPrivateRemoteIdentifier, IPC::DataReference&&);
     void parseWebVTTCueDataStruct(TrackPrivateRemoteIdentifier, WebCore::ISOWebVTTCue&&);
+
+    void addDataCue(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
+#if ENABLE(DATACUE_VALUE)
+    void addDataCueWithType(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&, String&&);
+    void updateDataCue(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
+    void removeDataCue(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
+#endif
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(RemoteMediaResourceIdentifier);

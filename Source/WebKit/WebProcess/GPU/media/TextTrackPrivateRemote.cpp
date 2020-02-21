@@ -88,29 +88,6 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
     m_isDefault = configuration.isDefault;
 }
 
-void TextTrackPrivateRemote::addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned)
-{
-    notImplemented();
-}
-
-#if ENABLE(DATACUE_VALUE)
-void TextTrackPrivateRemote::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&)
-{
-    notImplemented();
-}
-
-void TextTrackPrivateRemote::updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&)
-{
-    notImplemented();
-}
-
-void TextTrackPrivateRemote::removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&)
-{
-    notImplemented();
-}
-
-#endif
-
 void TextTrackPrivateRemote::addGenericCue(GenericCueData&)
 {
     notImplemented();
@@ -148,6 +125,35 @@ void TextTrackPrivateRemote::parseWebVTTCueDataStruct(ISOWebVTTCue&& cueData)
         client->parseWebVTTCueData(WTFMove(cueData));
 }
 
+void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&& data)
+{
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->addDataCue(WTFMove(start), WTFMove(end), reinterpret_cast<const char*>(data.data()), data.size());
+}
+
+#if ENABLE(DATACUE_VALUE)
+void TextTrackPrivateRemote::addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue, String&& type)
+{
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->addDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)), type);
+}
+
+void TextTrackPrivateRemote::updateDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue)
+{
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->updateDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)));
+}
+
+void TextTrackPrivateRemote::removeDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue)
+{
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->removeDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)));
+}
+#endif
 
 } // namespace WebKit
 

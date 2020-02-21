@@ -229,6 +229,8 @@ media/track/track-in-band.html [ Pass ]
 http/tests/media/track/track-webvtt-slow-loading.html [ Pass ]
 http/tests/media/track/track-webvtt-slow-loading-2.html [ Pass ]
 http/tests/media/hls/hls-webvtt-tracks.html [ Pass ]
+http/tests/media/track-in-band-hls-metadata.html [ Pass ]
+http/tests/media/track-in-band-hls-metadata-crash.html [ Pass ]
 
 accessibility/media-element.html [ Skip ]
 fast/block/float/list-marker-is-float-crash.html [ Skip ]

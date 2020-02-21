@@ -51,7 +51,8 @@ class WebProcess;
 struct TrackPrivateRemoteConfiguration;
 
 class RemoteMediaPlayerManager
-    : public WebProcessSupplement {
+    : public WebProcessSupplement
+    , public CanMakeWeakPtr<RemoteMediaPlayerManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteMediaPlayerManager(WebProcess&);

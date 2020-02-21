@@ -1764,6 +1764,7 @@ platform/ScrollableArea.cpp
 platform/Scrollbar.cpp
 platform/ScrollbarTheme.cpp
 platform/ScrollbarThemeComposite.cpp
+platform/SerializedPlatformDataCue.cpp
 platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp
 platform/SharedStringHash.cpp

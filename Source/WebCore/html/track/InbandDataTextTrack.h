@@ -55,7 +55,9 @@ private:
     void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;
 
-    HashMap<RefPtr<SerializedPlatformDataCue>, RefPtr<DataCue>> m_incompleteCueMap;
+    RefPtr<DataCue> findIncompleteCue(const SerializedPlatformDataCue&);
+
+    Vector<RefPtr<DataCue>> m_incompleteCueMap;
 #endif
 };
 

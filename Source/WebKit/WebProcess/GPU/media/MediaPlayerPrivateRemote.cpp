@@ -67,19 +67,24 @@ using namespace WebCore;
 } while (0)
 #endif
 
-MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager, const RemoteMediaPlayerConfiguration& configuration)
+MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerPrivateRemoteIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
     : m_player(player)
     , m_mediaResourceLoader(player->createResourceLoader())
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
-    , m_configuration(configuration)
 #if !RELEASE_LOG_DISABLED
     , m_logger(&player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
 {
     INFO_LOG(LOGIDENTIFIER);
+}
+
+void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration)
+{
+    m_configuration = WTFMove(configuration);
+    m_player->mediaEngineUpdated();
 }
 
 MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
@@ -483,6 +488,40 @@ void MediaPlayerPrivateRemote::parseWebVTTCueDataStruct(TrackPrivateRemoteIdenti
     if (const auto& track = m_textTracks.get(identifier))
         track->parseWebVTTCueDataStruct(WTFMove(data));
 }
+
+void MediaPlayerPrivateRemote::addDataCue(TrackPrivateRemoteIdentifier identifier, MediaTime&& start, MediaTime&& end, IPC::DataReference&& data)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->addDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
+}
+
+#if ENABLE(DATACUE_VALUE)
+void MediaPlayerPrivateRemote::addDataCueWithType(TrackPrivateRemoteIdentifier identifier, MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& data, String&& type)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->addDataCueWithType(WTFMove(start), WTFMove(end), WTFMove(data), WTFMove(type));
+}
+
+void MediaPlayerPrivateRemote::updateDataCue(TrackPrivateRemoteIdentifier identifier, MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& data)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->updateDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
+}
+
+void MediaPlayerPrivateRemote::removeDataCue(TrackPrivateRemoteIdentifier identifier, MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& data)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (const auto& track = m_textTracks.get(identifier))
+        track->removeDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
+}
+#endif
 
 void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {

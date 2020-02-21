@@ -37,6 +37,7 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SerializedPlatformDataCueMac.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MachSendRight.h>
 
@@ -667,6 +668,29 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
     return true;
 }
 
+#endif
+
+#if ENABLE(VIDEO)
+void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const WebCore::SerializedPlatformDataCueValue& value)
+{
+    ASSERT(value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
+    if (value.platformType() == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
+        encodeObject(encoder, value.nativeValue());
+}
+
+Optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+{
+    ASSERT(platformType == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
+
+    if (platformType != WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
+        return WTF::nullopt;
+
+    auto object = decodeObject(decoder, WebCore::SerializedPlatformDataCueMac::allowedClassesForNativeValues());
+    if (!object)
+        return WTF::nullopt;
+
+    return WebCore::SerializedPlatformDataCueValue { platformType, object.value().get() };
+}
 #endif
 
 } // namespace IPC

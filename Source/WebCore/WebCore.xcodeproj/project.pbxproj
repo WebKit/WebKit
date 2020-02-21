@@ -135,10 +135,11 @@
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };
+		076D1C1F23F6EB5B00D95B06 /* SerializedPlatformDataCueValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 076D1C1D23F6D9D800D95B06 /* SerializedPlatformDataCueValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */; };
 		077AF14018F4AE400001ED61 /* SerializedPlatformDataCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF13E18F4AE400001ED61 /* SerializedPlatformDataCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		077AF14318F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h */; };
+		077AF14318F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077B64131B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B64111B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077B64171B95F703003E9AD5 /* MediaPlaybackTargetMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 077B64151B95F703003E9AD5 /* MediaPlaybackTargetMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0783228318013ED800999E0C /* MediaStreamAudioSource.h */; };
@@ -5473,6 +5474,7 @@
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
 		076970851463AD8700F502CF /* TextTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackList.h; sourceTree = "<group>"; };
+		076D1C1D23F6D9D800D95B06 /* SerializedPlatformDataCueValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformDataCueValue.h; sourceTree = "<group>"; };
 		076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackPrivateBase.cpp; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
@@ -5490,6 +5492,7 @@
 		07846340145B151A00A58DF1 /* JSTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackEvent.cpp; sourceTree = "<group>"; };
 		07846341145B151A00A58DF1 /* JSTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackEvent.h; sourceTree = "<group>"; };
 		07846384145B1B8E00A58DF1 /* JSTrackCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackCustom.h; sourceTree = "<group>"; };
+		078633D723FE09640087AE21 /* SerializedPlatformDataCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedPlatformDataCue.cpp; sourceTree = "<group>"; };
 		0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackSupportedConstraints.cpp; sourceTree = "<group>"; };
 		0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaTrackSupportedConstraints.h; sourceTree = "<group>"; };
 		078E094817D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioDestinationNode.cpp; sourceTree = "<group>"; };
@@ -25994,7 +25997,9 @@
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
+				078633D723FE09640087AE21 /* SerializedPlatformDataCue.cpp */,
 				077AF13E18F4AE400001ED61 /* SerializedPlatformDataCue.h */,
+				076D1C1D23F6D9D800D95B06 /* SerializedPlatformDataCueValue.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				834DFACE1F7DAE5700C2725B /* SharedStringHash.cpp */,
@@ -32254,6 +32259,7 @@
 				E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */,
 				077AF14018F4AE400001ED61 /* SerializedPlatformDataCue.h in Headers */,
 				077AF14318F4B1BB0001ED61 /* SerializedPlatformDataCueMac.h in Headers */,
+				076D1C1F23F6EB5B00D95B06 /* SerializedPlatformDataCueValue.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,

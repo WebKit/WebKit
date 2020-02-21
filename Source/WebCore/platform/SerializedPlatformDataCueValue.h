@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,46 @@
 
 #if ENABLE(VIDEO)
 
-#include "SerializedPlatformDataCueValue.h"
-#include <JavaScriptCore/JSCInlines.h>
-#include <wtf/RefCounted.h>
+#include <wtf/IsoMalloc.h>
+#include <wtf/RetainPtr.h>
+
+#if !defined(__OBJC__)
+typedef struct objc_object *id;
+#endif
+
+#if PLATFORM(COCOA)
+using PlatformNativeValue = id;
+#else
+using PlatformNativeValue = void*;
+#endif
 
 namespace WebCore {
 
-class SerializedPlatformDataCue : public RefCounted<SerializedPlatformDataCue> {
+class SerializedPlatformDataCueValue {
+    WTF_MAKE_ISO_ALLOCATED(SerializedPlatformDataCueValue);
 public:
-    WEBCORE_EXPORT static Ref<SerializedPlatformDataCue> create(SerializedPlatformDataCueValue&&);
-
-    virtual ~SerializedPlatformDataCue() = default;
-
-    virtual JSC::JSValue deserialize(JSC::JSGlobalObject*) const { return JSC::jsNull(); }
-    virtual RefPtr<JSC::ArrayBuffer> data() const { return { }; }
-    virtual bool isEqual(const SerializedPlatformDataCue&) const { return false; }
-
     enum class PlatformType {
         None,
         ObjC,
     };
-    virtual PlatformType platformType() const { return PlatformType::None; }
 
-    virtual bool encodingRequiresPlatformData() const { return false; }
+    SerializedPlatformDataCueValue(PlatformType platformType, PlatformNativeValue nativeValue)
+        : m_nativeValue(nativeValue)
+        , m_type(platformType)
+    {
+    }
+    SerializedPlatformDataCueValue() = default;
+    ~SerializedPlatformDataCueValue() = default;
 
-    virtual SerializedPlatformDataCueValue encodableValue() const { return { }; }
+    PlatformType platformType() const { return m_type; }
+
+    PlatformNativeValue nativeValue() const { return m_nativeValue; }
+
+    bool encodingRequiresPlatformData() const { return m_type == PlatformType::ObjC; }
 
 protected:
-    SerializedPlatformDataCue() = default;
+    PlatformNativeValue m_nativeValue { nullptr };
+    PlatformType m_type { PlatformType::None };
 };
 
 } // namespace WebCore

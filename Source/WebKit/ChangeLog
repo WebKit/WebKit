@@ -1,3 +1,48 @@
+2020-02-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Support in-band metadata cues when loading media in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=207904
+        <rdar://problem/59561647>
+
+        Reviewed by Dean Jackson.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::addDataCue):
+        (WebKit::RemoteTextTrackProxy::updateDataCue):
+        (WebKit::RemoteTextTrackProxy::removeDataCue):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode):
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decodePlatformData):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::setConfiguration):
+        (WebKit::MediaPlayerPrivateRemote::addDataCue):
+        (WebKit::MediaPlayerPrivateRemote::addDataCueWithType):
+        (WebKit::MediaPlayerPrivateRemote::updateDataCue):
+        (WebKit::MediaPlayerPrivateRemote::removeDataCue):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::addGenericCue):
+        (WebKit::TextTrackPrivateRemote::updateGenericCue):
+        (WebKit::TextTrackPrivateRemote::removeGenericCue):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTFileHeader):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTCueData):
+        (WebKit::TextTrackPrivateRemote::parseWebVTTCueDataStruct):
+        (WebKit::TextTrackPrivateRemote::addDataCue):
+        (WebKit::TextTrackPrivateRemote::addDataCueWithType):
+        (WebKit::TextTrackPrivateRemote::updateDataCue):
+        (WebKit::TextTrackPrivateRemote::removeDataCue):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+
 2020-02-20  John Wilander  <wilander@apple.com>
 
         Add fidelity.com to the desktop class quirks list

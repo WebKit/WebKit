@@ -48,21 +48,19 @@ static JSValue *jsValueWithArrayInContext(NSArray *, JSContext *);
 static JSValue *jsValueWithDictionaryInContext(NSDictionary *, JSContext *);
 static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *, JSContext *);
 static JSValue *jsValueWithValueInContext(id, JSContext *);
+static NSDictionary *NSDictionaryWithAVMetadataItem(AVMetadataItem *);
 #endif
 
-SerializedPlatformDataCueMac::SerializedPlatformDataCueMac(id nativeValue)
+Ref<SerializedPlatformDataCue> SerializedPlatformDataCue::create(SerializedPlatformDataCueValue&& value)
+{
+    return adoptRef(*new SerializedPlatformDataCueMac(WTFMove(value)));
+}
+
+SerializedPlatformDataCueMac::SerializedPlatformDataCueMac(SerializedPlatformDataCueValue&& value)
     : SerializedPlatformDataCue()
-    , m_nativeValue(nativeValue)
+    , m_nativeValue(value.nativeValue())
 {
-}
-
-SerializedPlatformDataCueMac::~SerializedPlatformDataCueMac()
-{
-}
-
-Ref<SerializedPlatformDataCue> SerializedPlatformDataCueMac::create(id nativeValue)
-{
-    return adoptRef(*new SerializedPlatformDataCueMac(nativeValue));
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(value.platformType() == SerializedPlatformDataCueValue::PlatformType::ObjC);
 }
 
 RefPtr<ArrayBuffer> SerializedPlatformDataCueMac::data() const
@@ -89,7 +87,7 @@ JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexi
 
 bool SerializedPlatformDataCueMac::isEqual(const SerializedPlatformDataCue& other) const
 {
-    if (other.platformType() != SerializedPlatformDataCue::ObjC)
+    if (other.platformType() != PlatformType::ObjC)
         return false;
 
     const SerializedPlatformDataCueMac* otherObjC = toSerializedPlatformDataCueMac(&other);
@@ -107,8 +105,22 @@ SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(SerializedPlatformD
 
 const SerializedPlatformDataCueMac* toSerializedPlatformDataCueMac(const SerializedPlatformDataCue* rep)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(rep->platformType() == SerializedPlatformDataCue::ObjC);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(rep->platformType() == SerializedPlatformDataCue::PlatformType::ObjC);
     return static_cast<const SerializedPlatformDataCueMac*>(rep);
+}
+
+NSArray *SerializedPlatformDataCueMac::allowedClassesForNativeValues()
+{
+    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses(@[ [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] ]);
+    return allowedClasses.get().get();
+}
+
+SerializedPlatformDataCueValue SerializedPlatformDataCueMac::encodableValue() const
+{
+    if ([m_nativeValue.get() isKindOfClass:PAL::getAVMetadataItemClass()])
+        return { SerializedPlatformDataCueValue::PlatformType::ObjC, NSDictionaryWithAVMetadataItem(m_nativeValue.get()) };
+
+    return { SerializedPlatformDataCueValue::PlatformType::ObjC, m_nativeValue.get() };
 }
 
 #if JSC_OBJC_API_ENABLED
@@ -194,6 +206,11 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
 
 static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSContext *context)
 {
+    return jsValueWithDictionaryInContext(NSDictionaryWithAVMetadataItem(item), context);
+}
+
+static NSDictionary *NSDictionaryWithAVMetadataItem(AVMetadataItem *item)
+{
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
     NSDictionary *extras = [item extraAttributes];
@@ -230,7 +247,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSConte
     if (item.value)
         [dictionary setObject:item.value forKey:@"data"];
 
-    return jsValueWithDictionaryInContext(dictionary, context);
+    return dictionary;
 }
 #endif
 

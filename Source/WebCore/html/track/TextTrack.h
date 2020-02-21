@@ -96,6 +96,8 @@ public:
     TextTrackCueList* cues();
     TextTrackCueList* activeCues() const;
 
+    TextTrackCueList* cuesInternal() const { return m_cues.get(); }
+
     void clearClient() override { m_client = nullptr; }
     TextTrackClient* client() { return m_client; }
 

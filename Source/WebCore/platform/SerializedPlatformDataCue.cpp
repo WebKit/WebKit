@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SerializedPlatformDataCue.h"
 
-#if ENABLE(VIDEO)
-
-#include "SerializedPlatformDataCueValue.h"
-#include <JavaScriptCore/JSCInlines.h>
-#include <wtf/RefCounted.h>
+#if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
 
 namespace WebCore {
 
-class SerializedPlatformDataCue : public RefCounted<SerializedPlatformDataCue> {
-public:
-    WEBCORE_EXPORT static Ref<SerializedPlatformDataCue> create(SerializedPlatformDataCueValue&&);
-
-    virtual ~SerializedPlatformDataCue() = default;
-
-    virtual JSC::JSValue deserialize(JSC::JSGlobalObject*) const { return JSC::jsNull(); }
-    virtual RefPtr<JSC::ArrayBuffer> data() const { return { }; }
-    virtual bool isEqual(const SerializedPlatformDataCue&) const { return false; }
-
-    enum class PlatformType {
-        None,
-        ObjC,
-    };
-    virtual PlatformType platformType() const { return PlatformType::None; }
-
-    virtual bool encodingRequiresPlatformData() const { return false; }
-
-    virtual SerializedPlatformDataCueValue encodableValue() const { return { }; }
-
-protected:
-    SerializedPlatformDataCue() = default;
-};
+#if !PLATFORM(COCOA)
+Ref<SerializedPlatformDataCue> SerializedPlatformDataCue::create(SerializedPlatformDataCueValue&&)
+{
+    return adoptRef(*new SerializedPlatformDataCue());
+}
+#endif
 
 } // namespace WebCore
 

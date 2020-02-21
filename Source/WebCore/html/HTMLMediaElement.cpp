@@ -1332,7 +1332,7 @@ void HTMLMediaElement::selectMediaResource()
             mode = Attribute;
             ASSERT(m_player);
             if (!m_player) {
-                ERROR_LOG(logSiteIdentifier, " has srcAttr but m_player is not created");
+                ERROR_LOG(logSiteIdentifier, "has srcAttr but m_player is not created");
                 return;
             }
         } else if (auto firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
@@ -3473,11 +3473,13 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
     if (!success) {
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
+        ERROR_LOG(LOGIDENTIFIER, "rejecting promise: ", success.value());
         promise.reject(NotAllowedError);
         return;
     }
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED) {
+        ERROR_LOG(LOGIDENTIFIER, "rejecting promise because of error");
         promise.reject(NotSupportedError, "The operation is not supported.");
         return;
     }
@@ -3495,6 +3497,7 @@ void HTMLMediaElement::play()
 
     auto success = m_mediaSession->playbackPermitted();
     if (!success) {
+        ERROR_LOG(LOGIDENTIFIER, "playback not permitted: ", success.value());
         if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
         return;
@@ -5094,7 +5097,8 @@ void HTMLMediaElement::scheduleMediaEngineWasUpdated()
 
 void HTMLMediaElement::mediaEngineWasUpdated()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     beginProcessingMediaPlayerCallback();
     updateRenderer();
     endProcessingMediaPlayerCallback();
@@ -5129,7 +5133,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER, m_player->engineDescription());
 
 #if ENABLE(MEDIA_SOURCE)
     m_droppedVideoFrames = 0;

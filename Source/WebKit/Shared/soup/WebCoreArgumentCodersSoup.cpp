@@ -263,5 +263,18 @@ bool ArgumentCoder<FontHandle>::decodePlatformData(Decoder&, FontHandle&)
     return false;
 }
 
+#if ENABLE(VIDEO)
+void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const SerializedPlatformDataCueValue& value)
+{
+    ASSERT_NOT_REACHED();
+}
+
+Optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+{
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
+}
+#endif
+
 }
 

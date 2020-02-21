@@ -144,7 +144,6 @@ void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& pa
 
 std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlayer(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
 {
-    auto id = MediaPlayerPrivateRemoteIdentifier::generate();
 
     RemoteMediaPlayerProxyConfiguration proxyConfiguration;
     proxyConfiguration.referrer = player->referrer();
@@ -159,15 +158,19 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.shouldUsePersistentCache = player->shouldUsePersistentCache();
     proxyConfiguration.isVideo = player->isVideoPlayer();
 
+    auto identifier = MediaPlayerPrivateRemoteIdentifier::generate();
     RemoteMediaPlayerConfiguration playerConfiguration;
-    bool sendSucceeded = gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(id, remoteEngineIdentifier, proxyConfiguration), Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer::Reply(playerConfiguration), 0);
-    if (!sendSucceeded) {
-        WTFLogAlways("Failed to create remote media player.");
-        return nullptr;
-    }
+    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), [this, weakThis = makeWeakPtr(this), identifier](auto&& playerConfiguration) {
+        if (!weakThis)
+            return;
 
-    auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, id, *this, playerConfiguration);
-    m_players.add(id, makeWeakPtr(*remotePlayer));
+        if (const auto& player = m_players.get(identifier))
+            player->setConfiguration(WTFMove(playerConfiguration));
+    }, 0);
+
+    auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
+    m_players.add(identifier, makeWeakPtr(*remotePlayer));
+
     return remotePlayer;
 }
 

@@ -50,10 +50,12 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     ParseWebVTTCueData(WebKit::TrackPrivateRemoteIdentifier trackID, IPC::DataReference data)
     ParseWebVTTCueDataStruct(WebKit::TrackPrivateRemoteIdentifier trackID, WebCore::ISOWebVTTCue cueData)
 
-    ## AddDataCue(MediaTime start, MediaTime end, IPC::DataReference data)
-    ## AddDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCue data, String type)
-    ## UpdateDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCue data)
-    ## RemoveDataCue(MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCue data)
+    AddDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, IPC::DataReference data)
+#if ENABLE(DATACUE_VALUE)
+    AddDataCueWithType(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData, String type)
+    UpdateDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+    RemoveDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+#endif
 
     ## AddGenericCue(WebCore::GenericCueData cue)
     ## UpdateGenericCue(WebCore::GenericCueData cue)

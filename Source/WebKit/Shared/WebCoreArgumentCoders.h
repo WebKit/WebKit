@@ -37,6 +37,7 @@
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/WorkerType.h>
@@ -818,6 +819,15 @@ template<> struct ArgumentCoder<WebCore::SerializedAttachmentData> {
 };
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(VIDEO)
+template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
+    static void encode(Encoder&, const WebCore::SerializedPlatformDataCueValue&);
+    static Optional<WebCore::SerializedPlatformDataCueValue> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const WebCore::SerializedPlatformDataCueValue&);
+    static Optional<WebCore::SerializedPlatformDataCueValue> decodePlatformData(Decoder&, WebCore::SerializedPlatformDataCueValue::PlatformType);
+};
+#endif
 
 } // namespace IPC
 

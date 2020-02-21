@@ -109,6 +109,8 @@ public:
     void play() final { }
     void pause() final { }
 
+    String engineDescription() const final { return "NullMediaPlayer"; }
+
     PlatformLayer* platformLayer() const final { return nullptr; }
 
     FloatSize naturalSize() const final { return FloatSize(); }

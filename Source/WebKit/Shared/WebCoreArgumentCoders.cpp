@@ -75,6 +75,7 @@
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
+#include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerData.h>
@@ -3173,5 +3174,33 @@ Optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentDa
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(VIDEO)
+void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& encoder, const SerializedPlatformDataCueValue& value)
+{
+    bool hasPlatformData = value.encodingRequiresPlatformData();
+    encoder << hasPlatformData;
+
+    encoder.encodeEnum(value.platformType());
+    if (hasPlatformData)
+        encodePlatformData(encoder, value);
+}
+
+Optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decode(IPC::Decoder& decoder)
+{
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
+        return WTF::nullopt;
+
+    WebCore::SerializedPlatformDataCueValue::PlatformType type;
+    if (!decoder.decodeEnum(type))
+        return WTF::nullopt;
+
+    if (hasPlatformData)
+        return decodePlatformData(decoder, type);
+
+    return {{ }};
+}
+#endif
 
 } // namespace IPC
