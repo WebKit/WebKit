@@ -27,6 +27,8 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
+#import <QuartzCore/CALayer.h>
+
 namespace WebKit {
 class MediaPlayerPrivateRemote;
 }
