@@ -30,6 +30,8 @@ namespace WebCore {
 enum class RenderingMode : uint8_t {
     Accelerated,
     Unaccelerated,
+    DisplayListAccelerated,
+    DisplayListUnaccelerated,
 };
 
 } // namespace WebCore

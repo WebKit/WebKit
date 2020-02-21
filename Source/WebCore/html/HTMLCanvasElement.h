@@ -161,7 +161,7 @@ private:
 
     bool m_ignoreReset { false };
 
-    bool m_usesDisplayListDrawing { false };
+    Optional<bool> m_usesDisplayListDrawing;
     bool m_tracksDisplayListReplay { false };
 
     std::unique_ptr<CanvasRenderingContext> m_context;

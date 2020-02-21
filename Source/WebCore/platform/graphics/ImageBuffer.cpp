@@ -48,6 +48,14 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, Renderin
         if (!imageBuffer)
             imageBuffer = UnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
         break;
+            
+    case RenderingMode::DisplayListAccelerated:
+        imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
+        FALLTHROUGH;
+    case RenderingMode::DisplayListUnaccelerated:
+        if (!imageBuffer)
+            imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
+        break;
     }
 
     return imageBuffer;
@@ -64,6 +72,14 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const Gr
     case RenderingMode::Unaccelerated:
         if (!imageBuffer)
             imageBuffer = UnacceleratedImageBuffer::create(size, context);
+        break;
+            
+    case RenderingMode::DisplayListAccelerated:
+        imageBuffer = DisplayListAcceleratedImageBuffer::create(size, context);
+        FALLTHROUGH;
+    case RenderingMode::DisplayListUnaccelerated:
+        if (!imageBuffer)
+            imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, context);
         break;
     }
 

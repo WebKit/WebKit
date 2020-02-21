@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConcreteImageBuffer.h"
+#include "DisplayListImageBuffer.h"
 
 #if USE(CG)
 #include "ImageBufferCGBitmapBackend.h"
@@ -61,5 +62,7 @@ using AcceleratedImageBufferBackend = UnacceleratedImageBufferBackend;
 
 using UnacceleratedImageBuffer = ConcreteImageBuffer<UnacceleratedImageBufferBackend>;
 using AcceleratedImageBuffer = ConcreteImageBuffer<AcceleratedImageBufferBackend>;
+using DisplayListUnacceleratedImageBuffer = DisplayList::ImageBuffer<UnacceleratedImageBufferBackend>;
+using DisplayListAcceleratedImageBuffer = DisplayList::ImageBuffer<AcceleratedImageBufferBackend>;
 
 } // namespace WebCore

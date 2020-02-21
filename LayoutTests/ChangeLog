@@ -1,3 +1,17 @@
+2020-02-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Create a new ImageBuffer type for drawing on a DisplayList
+        https://bugs.webkit.org/show_bug.cgi?id=207109
+
+        Reviewed by Simon Fraser.
+
+        The extra commands are recorded by CanvasBase::setImageBuffer() which
+        used to issue these GraphicsContext commands directly to the backend.
+        With this patch, DisplayList::ImageBuffer does not allow access to the
+        backend context. So all the GraphicsContext commands has to be recorded.
+
+        * displaylists/canvas-display-list-expected.txt:
+
 2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r256764?) [ Mac wk1 Release ] legacy-animation-engine/fast/animation/animation-mixed-transform-crash.html is flaky failing.

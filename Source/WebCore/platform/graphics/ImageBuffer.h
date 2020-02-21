@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace DisplayList {
+class DrawingContext;
+}
+
 class ImageBuffer {
 public:
     // Will return a null pointer on allocation failure.
@@ -56,6 +60,9 @@ public:
 
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() = 0;
+
+    virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
+    virtual void flushDrawingContext() { }
 
     virtual AffineTransform baseTransform() const = 0;
     virtual IntSize logicalSize() const = 0;

@@ -33,20 +33,22 @@ namespace WebCore {
 template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
-    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
+    template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
+    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, resolutionScale, colorSpace, hostWindow);
         if (!backend)
             return nullptr;
-        return std::unique_ptr<ConcreteImageBuffer>(new ConcreteImageBuffer(WTFMove(backend)));
+        return std::unique_ptr<ImageBufferType>(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
-    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, const GraphicsContext& context)
+    template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
+    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, context);
         if (!backend)
             return nullptr;
-        return std::unique_ptr<ConcreteImageBuffer>(new ConcreteImageBuffer(WTFMove(backend)));
+        return std::unique_ptr<ImageBufferType>(new ImageBufferType(WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
 protected:
@@ -67,6 +69,7 @@ protected:
 
     void flushContext() override
     {
+        flushDrawingContext();
         m_backend->flushContext();
     }
 
@@ -80,46 +83,55 @@ protected:
 
     NativeImagePtr copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override
     {
+        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
         return m_backend->copyNativeImage(copyBehavior);
     }
 
     RefPtr<Image> copyImage(BackingStoreCopy copyBehavior = CopyBackingStore, PreserveResolution preserveResolution = PreserveResolution::No) const override
     {
+        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
         return m_backend->copyImage(copyBehavior, preserveResolution);
     }
 
     void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
+        flushDrawingContext();
         m_backend->draw(destContext, destRect, srcRect, options);
     }
 
     void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options) override
     {
+        flushDrawingContext();
         m_backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
     }
 
     NativeImagePtr sinkIntoNativeImage() override
     {
+        flushDrawingContext();
         return m_backend->sinkIntoNativeImage();
     }
 
     RefPtr<Image> sinkIntoImage(PreserveResolution preserveResolution = PreserveResolution::No) override
     {
+        flushDrawingContext();
         return m_backend->sinkIntoImage(preserveResolution);
     }
 
     void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
+        flushDrawingContext();
         m_backend->drawConsuming(destContext, destRect, srcRect, options);
     }
 
     void convertToLuminanceMask() override
     {
+        flushDrawingContext();
         m_backend->convertToLuminanceMask();
     }
 
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace) override
     {
+        flushDrawingContext();
         m_backend->transformColorSpace(srcColorSpace, destColorSpace);
     }
 

@@ -33,6 +33,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
+#include "DisplayListDrawingContext.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -348,9 +349,6 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type)
     }
 
     m_context = CanvasRenderingContext2D::create(*this, document().inQuirksMode());
-
-    downcast<CanvasRenderingContext2D>(*m_context).setUsesDisplayListDrawing(m_usesDisplayListDrawing);
-    downcast<CanvasRenderingContext2D>(*m_context).setTracksDisplayListReplay(m_tracksDisplayListReplay);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
@@ -822,38 +820,41 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 
 void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
 {
-    if (usesDisplayListDrawing == m_usesDisplayListDrawing)
-        return;
-    
     m_usesDisplayListDrawing = usesDisplayListDrawing;
-
-    if (is<CanvasRenderingContext2D>(m_context.get()))
-        downcast<CanvasRenderingContext2D>(*m_context).setUsesDisplayListDrawing(m_usesDisplayListDrawing);
 }
 
 void HTMLCanvasElement::setTracksDisplayListReplay(bool tracksDisplayListReplay)
 {
-    if (tracksDisplayListReplay == m_tracksDisplayListReplay)
-        return;
-
     m_tracksDisplayListReplay = tracksDisplayListReplay;
 
-    if (is<CanvasRenderingContext2D>(m_context.get()))
-        downcast<CanvasRenderingContext2D>(*m_context).setTracksDisplayListReplay(m_tracksDisplayListReplay);
+    if (!buffer())
+        return;
+
+    auto& buffer = *this->buffer();
+    if (buffer.drawingContext())
+        buffer.drawingContext()->setTracksDisplayListReplay(m_tracksDisplayListReplay);
 }
 
 String HTMLCanvasElement::displayListAsText(DisplayList::AsTextFlags flags) const
 {
-    if (is<CanvasRenderingContext2D>(m_context.get()))
-        return downcast<CanvasRenderingContext2D>(*m_context).displayListAsText(flags);
+    if (!buffer())
+        return String();
+
+    auto& buffer = *this->buffer();
+    if (buffer.drawingContext())
+        return buffer.drawingContext()->displayList().asText(flags);
 
     return String();
 }
 
 String HTMLCanvasElement::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
 {
-    if (is<CanvasRenderingContext2D>(m_context.get()))
-        return downcast<CanvasRenderingContext2D>(*m_context).replayDisplayListAsText(flags);
+    if (!buffer())
+        return String();
+
+    auto& buffer = *this->buffer();
+    if (buffer.drawingContext() && buffer.drawingContext()->replayedDisplayList())
+        return buffer.drawingContext()->replayedDisplayList()->asText(flags);
 
     return String();
 }
@@ -889,10 +890,21 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!width() || !height())
         return;
 
-    RenderingMode renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
+
+    // FIXME: Add a new setting for DisplayList drawing on canvas.
+    bool usesDisplayListDrawing = m_usesDisplayListDrawing.valueOr(document().settings().displayListDrawingEnabled());
+
+    RenderingMode renderingMode;
+    if (usesDisplayListDrawing)
+        renderingMode = shouldAccelerate(size()) ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
+    else
+        renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+
     setImageBuffer(ImageBuffer::create(size(), renderingMode, 1, ColorSpace::SRGB, hostWindow));
+
+    if (buffer() && buffer()->drawingContext())
+        buffer()->drawingContext()->setTracksDisplayListReplay(m_tracksDisplayListReplay);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && m_context->is2d()) {

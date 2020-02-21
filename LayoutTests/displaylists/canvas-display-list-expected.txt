@@ -1,7 +1,11 @@
  
+(save
+  (restore-index 0))
 (set-state
-  (change-flags 256)
-  (fill-color #C80000))
+  (change-flags 1050912)
+  (stroke-thickness 1.00)
+  (fill-color #C80000)
+  (shadows-ignore-transforms 1))
 (fill-rect
   (extent at (10,10) size 55x50)
   (rect at (10,10) size 55x50))
