@@ -250,7 +250,8 @@ static const Vector<String>& mediaRelatedMachServices()
         "com.apple.coremedia.samplebufferaudiorenderer.xpc", "com.apple.coremedia.samplebufferrendersynchronizer.xpc",
         "com.apple.coremedia.sandboxserver.xpc", "com.apple.coremedia.sts",
         "com.apple.coremedia.systemcontroller.xpc", "com.apple.coremedia.videoqueue",
-        "com.apple.airplay.apsynccontroller.xpc", "com.apple.audio.AURemoteIOServer"
+        "com.apple.coremedia.visualcontext.xpc", "com.apple.airplay.apsynccontroller.xpc",
+        "com.apple.audio.AURemoteIOServer"
 #endif
 #if PLATFORM(MAC)
         "com.apple.coremedia.endpointstream.xpc", "com.apple.coremedia.endpointplaybacksession.xpc",

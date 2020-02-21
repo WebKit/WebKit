@@ -1,3 +1,20 @@
+2020-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Issue extension of CoreMedia service to the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=208066
+        <rdar://problem/35864528>
+
+        Reviewed by Geoffrey Garen.
+
+        This service should also be added to the sandbox of the GPU process.
+
+        No new tests, covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+
 2020-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Large form controls are rendered at the wrong NSControlSize

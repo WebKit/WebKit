@@ -152,6 +152,7 @@
            (global-name "com.apple.coremedia.samplebufferrendersynchronizer.xpc")
            (global-name "com.apple.coremedia.sandboxserver.xpc")
            (global-name "com.apple.coremedia.systemcontroller.xpc")
+           (global-name "com.apple.coremedia.visualcontext.xpc")
            (global-name "com.apple.coremedia.volumecontroller.xpc"))
 
     (allow mach-lookup (with report) (with telemetry)
