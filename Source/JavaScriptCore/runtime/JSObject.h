@@ -941,7 +941,7 @@ protected:
     
     Structure* visitButterflyImpl(SlotVisitor&);
     
-    void markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor&, Butterfly*, Structure*, PropertyOffset lastOffset);
+    void markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor&, Butterfly*, Structure*, PropertyOffset maxOffset);
 
     // Call this if you know that the object is in a mode where it has array
     // storage. This will assert otherwise.

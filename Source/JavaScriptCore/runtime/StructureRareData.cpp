@@ -57,7 +57,8 @@ void StructureRareData::destroy(JSCell* cell)
 
 StructureRareData::StructureRareData(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureRareDataStructure.get())
-    , m_giveUpOnObjectToStringValueCache(false)
+    , m_maxOffset(invalidOffset)
+    , m_transitionOffset(invalidOffset)
 {
     if (previous)
         m_previous.set(vm, this, previous);
@@ -70,7 +71,7 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_previous);
-    visitor.append(thisObject->m_objectToStringValue);
+    visitor.appendUnbarriered(thisObject->objectToStringValue());
     visitor.append(thisObject->m_cachedPropertyNameEnumerator);
     auto* cachedOwnKeys = thisObject->m_cachedOwnKeys.unvalidatedGet();
     if (cachedOwnKeys != cachedOwnKeysSentinel())
@@ -93,7 +94,7 @@ private:
 
 void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, Structure* ownStructure, JSString* value, PropertySlot toStringTagSymbolSlot)
 {
-    if (m_giveUpOnObjectToStringValueCache)
+    if (canCacheObjectToStringValue())
         return;
 
     ObjectPropertyConditionSet conditionSet;
@@ -117,7 +118,7 @@ void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM&
         return;
 
     if (!conditionSet.isValid()) {
-        m_giveUpOnObjectToStringValueCache = true;
+        giveUpOnObjectToStringValueCache();
         return;
     }
 
@@ -130,11 +131,11 @@ void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM&
 
             // The equivalence condition won't be watchable if we have already seen a replacement.
             if (!equivCondition.isWatchable()) {
-                m_giveUpOnObjectToStringValueCache = true;
+                giveUpOnObjectToStringValueCache();
                 return;
             }
         } else if (!condition.isWatchable()) {
-            m_giveUpOnObjectToStringValueCache = true;
+            giveUpOnObjectToStringValueCache();
             return;
         }
     }
@@ -155,7 +156,8 @@ void StructureRareData::clearObjectToStringValue()
 {
     m_objectToStringAdaptiveWatchpointSet.clear();
     m_objectToStringAdaptiveInferredValueWatchpoint.reset();
-    m_objectToStringValue.clear();
+    if (!canCacheObjectToStringValue())
+        m_objectToStringValue.clear();
 }
 
 void StructureRareData::finalizeUnconditionally(VM& vm)

@@ -67,6 +67,9 @@ public:
 
     JSString* objectToStringValue() const;
     void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
+    void giveUpOnObjectToStringValueCache() { m_objectToStringValue.setWithoutWriteBarrier(objectToStringCacheGiveUpMarker()); }
+    bool canCacheObjectToStringValue() { return m_objectToStringValue.unvalidatedGet() == objectToStringCacheGiveUpMarker(); }
+    static JSString* objectToStringCacheGiveUpMarker() { return bitwise_cast<JSString*>(static_cast<uintptr_t>(1)); }
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
@@ -113,7 +116,9 @@ private:
     Bag<ObjectToStringAdaptiveStructureWatchpoint> m_objectToStringAdaptiveWatchpointSet;
     std::unique_ptr<ObjectToStringAdaptiveInferredPropertyValueWatchpoint> m_objectToStringAdaptiveInferredValueWatchpoint;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
-    bool m_giveUpOnObjectToStringValueCache;
+
+    PropertyOffset m_maxOffset;
+    PropertyOffset m_transitionOffset;
 };
 
 } // namespace JSC

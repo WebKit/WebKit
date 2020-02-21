@@ -92,7 +92,7 @@ static inline void getClassPropertyNames(JSGlobalObject* globalObject, const Cla
     }
 }
 
-ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset lastOffset)
+ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
 {
     // We call this when we found everything without races.
     ASSERT(structure);
@@ -113,13 +113,13 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisito
         preCapacity = 0;
     
     HeapCell* base = bitwise_cast<HeapCell*>(
-        butterfly->base(preCapacity, Structure::outOfLineCapacity(lastOffset)));
+        butterfly->base(preCapacity, Structure::outOfLineCapacity(maxOffset)));
     
     ASSERT(Heap::heap(base) == visitor.heap());
     
     visitor.markAuxiliary(base);
     
-    unsigned outOfLineSize = Structure::outOfLineSize(lastOffset);
+    unsigned outOfLineSize = Structure::outOfLineSize(maxOffset);
     visitor.appendValuesHidden(butterfly->propertyStorage() - outOfLineSize, outOfLineSize);
 }
 
@@ -138,7 +138,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     
     Butterfly* butterfly;
     Structure* structure;
-    PropertyOffset lastOffset;
+    PropertyOffset maxOffset;
 
     auto visitElements = [&] (IndexingType indexingMode) {
         switch (indexingMode) {
@@ -159,9 +159,9 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     if (visitor.mutatorIsStopped()) {
         butterfly = this->butterfly();
         structure = this->structure(vm);
-        lastOffset = structure->lastOffset();
+        maxOffset = structure->maxOffset();
         
-        markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);
+        markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, maxOffset);
         visitElements(structure->indexingMode());
 
         return structure;
@@ -174,7 +174,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     //
     //     object->structure = nuke(object->structure)
     //     object->butterfly = newButterfly
-    //     structure->m_offset = newLastOffset
+    //     structure->m_offset = newMaxOffset
     //     object->structure = newStructure
     //
     // It's OK to skip this when reallocating the butterfly in a way that does not affect the m_offset.
@@ -230,143 +230,143 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     // the collector reads the size early and late as well. Lets consider the interleaving of the
     // mutator changing the size without changing the structure:
     //
-    //     NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure
+    //     NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure
     //
     // Meanwhile the collector does:
     //
-    //     ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate
+    //     ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate
     //
     // The collector can detect races by not only comparing the early structure to the late structure
     // (which will be the same before and after the algorithm runs) but also by comparing the early and
-    // late lastOffsets.  Note: the IGNORE proofs do not cite all of the reasons why the collector will
+    // late maxOffsets. Note: the IGNORE proofs do not cite all of the reasons why the collector will
     // ignore the case, since we only need to identify one to say that we're in the ignore case.
     //
-    // NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, trivially
-    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
-    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, the ReadStructureEarly sees the same structure as after and everything else runs after.
-    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, as above and the ReadLastOffsetEarly sees the lastOffset after.
-    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: AFTER, as above and the ReadButterfly sees the right butterfly after.
-    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
-    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure: BEFORE, trivially
+    // NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate: AFTER, trivially
+    // NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureEarly RestoreStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureEarly ReadMaxOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureEarly ReadMaxOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeMaxOffset RestoreStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeMaxOffset ReadMaxOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeButterfly ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure early
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate: AFTER, the ReadStructureEarly sees the same structure as after and everything else runs after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: AFTER, as above and the ReadMaxOffsetEarly sees the maxOffset after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: AFTER, as above and the ReadButterfly sees the right butterfly after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeButterfly ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadButterfly RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ChangeMaxOffset ReadButterfly ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly NukeStructure ReadButterfly ReadStructureLate ReadMaxOffsetLate ChangeButterfly ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure ReadStructureLate ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureLate RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeMaxOffset ReadStructureLate ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly NukeStructure ReadStructureLate ReadMaxOffsetLate ChangeButterfly ChangeMaxOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure ReadMaxOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeMaxOffset ReadMaxOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ReadMaxOffsetLate ChangeMaxOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate NukeStructure ReadMaxOffsetLate ChangeButterfly ChangeMaxOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
+    // ReadStructureEarly ReadMaxOffsetEarly ReadButterfly ReadStructureLate ReadMaxOffsetLate NukeStructure ChangeButterfly ChangeMaxOffset RestoreStructure: BEFORE, trivially
     //
     // Whew.
     //
@@ -392,7 +392,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     if (isNuked(structureID))
         return nullptr;
     structure = vm.getStructure(structureID);
-    lastOffset = structure->lastOffset();
+    maxOffset = structure->maxOffset();
     IndexingType indexingMode = structure->indexingMode();
     Dependency indexingModeDependency = Dependency::fence(indexingMode);
     Locker<JSCellLock> locker(NoLockingNecessary);
@@ -415,10 +415,10 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
         return structure;
     if (butterflyDependency.consume(this)->structureID() != structureID)
         return nullptr;
-    if (butterflyDependency.consume(structure)->lastOffset() != lastOffset)
+    if (butterflyDependency.consume(structure)->maxOffset() != maxOffset)
         return nullptr;
     
-    markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);
+    markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, maxOffset);
     ASSERT(indexingMode == structure->indexingMode());
     visitElements(indexingMode);
     
@@ -2001,12 +2001,22 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
     if (propertyIsPresent) {
         if (attributes & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
             return false;
+        DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
 
-        PropertyOffset offset;
+        PropertyOffset offset = invalidOffset;
         if (structure->isUncacheableDictionary())
-            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const ConcurrentJSLocker&, PropertyOffset) { });
-        else
-            thisObject->setStructure(vm, Structure::removePropertyTransition(vm, structure, propertyName, offset));
+            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset) { });
+        else {
+            structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
+            if (thisObject->m_butterfly && !structure->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
+                thisObject->nukeStructureAndSetButterfly(vm, thisObject->structureID(), nullptr);
+                offset = invalidOffset;
+                ASSERT(structure->maxOffset() == invalidOffset);
+            }
+            thisObject->setStructure(vm, structure);
+        }
+
+        ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
 
         if (offset != invalidOffset)
             thisObject->locationForOffset(offset)->clear();
