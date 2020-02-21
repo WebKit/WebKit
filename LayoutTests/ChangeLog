@@ -1,3 +1,19 @@
+2020-02-20  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/59576775
+
+    2020-02-20  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Style changes due to Web Animations should not trigger CSS Transitions
+            https://bugs.webkit.org/show_bug.cgi?id=207760
+            <rdar://problem/59458111>
+
+            Reviewed by Simon Fraser.
+
+            Mark that a couple of tests are no longer flaky.
+
+            * TestExpectations:
+
 2020-02-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256859. rdar://problem/59612087

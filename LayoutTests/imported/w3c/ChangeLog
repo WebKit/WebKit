@@ -1,3 +1,22 @@
+2020-02-20  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/59576775
+
+    2020-02-20  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Style changes due to Web Animations should not trigger CSS Transitions
+            https://bugs.webkit.org/show_bug.cgi?id=207760
+            <rdar://problem/59458111>
+
+            Reviewed by Simon Fraser.
+
+            Mark Web Platform Tests progressions.
+
+            * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+            * web-platform-tests/web-animations/interfaces/Animation/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+
 2020-02-19  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/59576808
