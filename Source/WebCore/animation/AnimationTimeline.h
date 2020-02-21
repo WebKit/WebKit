@@ -59,12 +59,17 @@ public:
 
     enum class Ordering : uint8_t { Sorted, Unsorted };
     Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering ordering = Ordering::Unsorted) const;
+
     void elementWasRemoved(Element&);
     void removeAnimationsForElement(Element&);
+
     void willChangeRendererForElement(Element&);
+    void willDestroyRendererForElement(Element&);
     void cancelDeclarativeAnimationsForElement(Element&);
+
     virtual void animationWasAddedToElement(WebAnimation&, Element&);
     virtual void animationWasRemovedFromElement(WebAnimation&, Element&);
+
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, Element&);
 
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);

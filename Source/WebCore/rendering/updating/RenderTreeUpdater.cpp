@@ -570,7 +570,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             case TeardownType::RendererUpdateCancelingAnimations:
                 if (timeline) {
                     if (document.renderTreeBeingDestroyed())
-                        timeline->elementWasRemoved(element);
+                        timeline->willDestroyRendererForElement(element);
                     else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
                         timeline->cancelDeclarativeAnimationsForElement(element);
                 }

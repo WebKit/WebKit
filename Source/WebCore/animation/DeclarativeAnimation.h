@@ -29,6 +29,7 @@
 #include "AnimationEffectPhase.h"
 #include "WebAnimation.h"
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
 
     bool isDeclarativeAnimation() const final { return true; }
 
-    Element* owningElement() const { return m_owningElement; }
+    Element* owningElement() const;
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
     void cancelFromStyle();
@@ -87,7 +88,7 @@ private:
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 
-    Element* m_owningElement;
+    WeakPtr<Element> m_owningElement;
     Ref<Animation> m_backingAnimation;
     double m_previousIteration;
 };

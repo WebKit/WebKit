@@ -43,13 +43,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
 
 DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
     : WebAnimation(owningElement.document())
-    , m_owningElement(&owningElement)
+    , m_owningElement(makeWeakPtr(owningElement))
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
 {
 }
 
 DeclarativeAnimation::~DeclarativeAnimation()
 {
+}
+
+Element* DeclarativeAnimation::owningElement() const
+{
+    return m_owningElement.get();
 }
 
 void DeclarativeAnimation::tick()
@@ -334,12 +339,14 @@ void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
 
 void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds elapsedTime)
 {
-    ASSERT(m_owningElement);
+    if (!m_owningElement)
+        return;
+
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     const auto& pseudoId = PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId());
     auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
     auto event = createEvent(eventType, time, pseudoId, timelineTime);
-    event->setTarget(m_owningElement);
+    event->setTarget(m_owningElement.get());
     enqueueAnimationEvent(WTFMove(event));
 }
 

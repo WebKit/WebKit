@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            width: 20px;
+            height: 20px;
+            margin: 3px;
+            display: inline-block;
+            background-color: silver;
+        }
+        
+        body.changed .box::before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            animation: fade 0.1s;
+        }
+        
+        @keyframes fade {
+            from { background-color: red; }
+            to   { background-color: green; }
+        }
+    </style>
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+        
+        const numElements = 10;
+        let animationsStartedThisFrame = 0;
+
+        function makeElement(container)
+        {
+            let div = document.createElement('div');
+            div.className = 'box';
+            container.appendChild(div);
+            
+            div.addEventListener('animationstart', (e) => {
+                ++animationsStartedThisFrame;
+            }, false);
+
+            div.addEventListener('animationend', (e) => {
+                startNextIterationSoon();
+            }, false);
+        }
+        
+        function checkStartedAnimationsCount()
+        {
+            shouldBe('animationsStartedThisFrame', 'numElements');
+        }
+        
+        let nextIterationStarted = false;
+        function startAnimationSet()
+        {
+            nextIterationStarted = false;
+            animationsStartedThisFrame = 0;
+
+            document.body.classList.add('changed');
+            requestAnimationFrame(checkStartedAnimationsCount);
+        }
+        
+        const numTrials = 10;
+        let trialCount = 0;
+
+        function startNextIterationSoon()
+        {
+            if (nextIterationStarted)
+                return;
+
+            nextIterationStarted = true;
+
+            if (trialCount++ == numTrials) {
+                finishJSTest();
+                return;
+            }
+
+            document.body.classList.remove('changed');
+            document.body.offsetWidth; // Hack.
+            requestAnimationFrame(startAnimationSet);
+        }
+        
+        function doTest()
+        {
+            description('Tests that animations on pseudo-elements do not eventually stop working.');
+
+            let container = document.getElementById('container');
+            for (let i = 0; i < numElements; ++i)
+                makeElement(container);
+
+            requestAnimationFrame(startNextIterationSoon);
+        }
+        
+        window.addEventListener('load', doTest, false);
+        var successfullyParsed = true;
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

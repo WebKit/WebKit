@@ -2272,6 +2272,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     RefPtr<Frame> frame = document().frame();
     if (auto* timeline = document().existingTimeline())
         timeline->elementWasRemoved(*this);
+
     if (frame)
         frame->animation().cancelAnimations(*this);
 
