@@ -59,14 +59,8 @@ bool AVStreamDataParserMIMETypeCache::canDecodeTypeInternal(const ContentType& t
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());
 
-    String outputCodecs = type.parameter(ContentType::codecsParameter());
-    ASSERT(!outputCodecs.isEmpty());
-    if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
-        outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
-
-    String extendedType = makeString(type.containerType(), "; codecs=\"", outputCodecs, "\"");
     if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(canParseExtendedMIMEType:)])
-        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:extendedType];
+        return [PAL::getAVStreamDataParserClass() canParseExtendedMIMEType:type.raw()];
 
     // FIXME(rdar://50502771) AVStreamDataParser does not have an -canParseExtendedMIMEType: method on this system,
     //  so just replace the container type with a valid one from AVAssetMIMETypeCache and ask that cache if it
