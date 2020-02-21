@@ -82,7 +82,7 @@
 {
     CALayerHost *layerHost = [CALayerHost layer];
 #ifndef NDEBUG
-    [layerHost setName:@"WebVideoHostingLayer"];
+    [layerHost setName:@"Hosting layer"];
 #endif
     layerHost.contextId = contextID;
     return layerHost;

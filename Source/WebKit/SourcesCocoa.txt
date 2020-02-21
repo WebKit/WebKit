@@ -57,10 +57,11 @@ NetworkProcess/webrtc/NetworkRTCResolver.cpp
 NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
 NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
+GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 GPUProcess/ios/GPUProcessIOS.mm
 GPUProcess/mac/GPUProcessMac.mm
+GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
-GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 
 Platform/cf/ModuleCF.cpp
 
@@ -553,6 +554,8 @@ WebProcess/cocoa/VideoFullscreenManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
+
+WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 

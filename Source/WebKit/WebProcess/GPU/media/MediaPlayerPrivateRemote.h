@@ -38,6 +38,10 @@
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
 class ISOWebVTTCue;
 class SerializedPlatformDataCueValue;
@@ -91,6 +95,9 @@ public:
     void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
     void sizeChanged(WebCore::FloatSize);
     void firstVideoFrameAvailable();
+#if PLATFORM(COCOA)
+    void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+#endif
 
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
@@ -236,13 +243,7 @@ private:
     unsigned long long totalBytes() const final;
     bool didLoadingProgress() const final;
 
-    // In the Cocoa WebKit port, MediaPlayerPrivateAVFoundationObjC::setSize() does nothing,
-    // so the Web process does not need to send IPC messages to call it in the GPU process.
-    // Other WebKit ports may need to do that.
-    void setSize(const WebCore::IntSize&) final { }
-
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
-
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     bool copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGLOpenGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) final;
     WebCore::NativeImagePtr nativeImageForCurrentTime() final;
@@ -359,7 +360,7 @@ private:
 
     WebCore::MediaPlayer* m_player { nullptr };
     RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
-    RetainPtr<PlatformLayer> m_videoLayer;
+    RetainPtr<PlatformLayer> m_videoInlineLayer;
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     MediaPlayerPrivateRemoteIdentifier m_id;

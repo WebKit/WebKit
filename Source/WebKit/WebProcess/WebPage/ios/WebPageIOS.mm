@@ -117,6 +117,7 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderImage.h>
+#import <WebCore/RenderLayer.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RuntimeApplicationChecks.h>

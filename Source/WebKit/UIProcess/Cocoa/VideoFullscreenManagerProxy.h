@@ -190,7 +190,7 @@ private:
     uint64_t m_controlsManagerContextId { 0 };
     HashMap<uint64_t, int> m_clientCounts;
 };
-    
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

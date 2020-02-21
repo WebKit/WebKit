@@ -34,6 +34,7 @@
 #include "RemoteMediaPlayerProxyMessages.h"
 #include "SandboxExtension.h"
 #include "TextTrackPrivateRemote.h"
+#include "VideoLayerRemote.h"
 #include "VideoTrackPrivateRemote.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -42,6 +43,7 @@
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <wtf/HashMap.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
@@ -95,17 +97,16 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
 {
-    auto layoutRect = m_player->playerContentBoxRect();
     auto scale = m_player->playerContentsScale();
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, layoutRect, scale), [weakThis = makeWeakPtr(*this), this](auto contextId) mutable {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale), [weakThis = makeWeakPtr(*this), this](auto contextId) mutable {
         if (!weakThis)
             return;
 
         if (!contextId)
             return;
 
-        m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(contextId.value());
+        m_videoInlineLayer = createVideoLayerRemote(this, contextId.value());
     }, m_id);
 }
 
@@ -310,6 +311,7 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
 {
+    INFO_LOG(LOGIDENTIFIER);
     m_player->firstVideoFrameAvailable();
 }
 
@@ -586,7 +588,7 @@ void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 
 PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 {
-    return m_videoLayer.get();
+    return m_videoInlineLayer.get();
 }
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -709,6 +711,13 @@ unsigned long long MediaPlayerPrivateRemote::totalBytes() const
     notImplemented();
     return 0;
 }
+
+#if PLATFORM(COCOA)
+void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const IntSize& size, const WTF::MachSendRight& machSendRight)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, machSendRight), m_id);
+}
+#endif
 
 void MediaPlayerPrivateRemote::paint(GraphicsContext&, const FloatRect&)
 {

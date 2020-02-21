@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerProxy NotRefCounted {
-    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::LayoutRect layoutRect, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> layerHostingContextId) Async
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> layerHostingContextId) Async
 
     Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
     CancelLoad()
@@ -57,6 +57,10 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier trackID, bool enabled)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier trackID, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
+#if PLATFORM(COCOA)
+    SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+#endif
+
     # Paint
     # PaintCurrentFrameInContext
 
@@ -81,7 +85,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     ApplicationWillResignActive()
     ApplicationDidBecomeActive()
-
 }
 
 #endif

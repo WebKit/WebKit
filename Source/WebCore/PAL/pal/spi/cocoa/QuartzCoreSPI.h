@@ -60,6 +60,7 @@ typedef struct _CARenderContext CARenderContext;
 
 @interface CAContext ()
 + (NSArray *)allContexts;
++ (CAContext *)currentContext;
 + (CAContext *)localContext;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
 #if PLATFORM(MAC)

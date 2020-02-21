@@ -46,6 +46,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
 class AudioTrackPrivate;
 class VideoTrackPrivate;
@@ -76,7 +80,7 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, WebCore::LayoutRect, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&&)>&&);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&&)>&&);
     void prepareForRendering();
 
     void load(URL&&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
@@ -108,6 +112,10 @@ public:
     void audioTrackSetEnabled(TrackPrivateRemoteIdentifier, bool);
     void videoTrackSetSelected(TrackPrivateRemoteIdentifier, bool);
     void textTrackSetMode(TrackPrivateRemoteIdentifier, WebCore::InbandTextTrackPrivate::Mode);
+
+#if PLATFORM(COCOA)
+    void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessVideoPlaybackDisabled(bool);
@@ -178,7 +186,6 @@ private:
     bool mediaPlayerIsFullscreen() const final;
     bool mediaPlayerIsFullscreenPermitted() const final;
     bool mediaPlayerIsVideo() const final;
-    WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
     float mediaPlayerContentsScale() const final;
     void mediaPlayerPause() final;
     void mediaPlayerPlay() final;

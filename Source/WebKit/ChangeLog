@@ -1,3 +1,52 @@
+2020-02-20  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU process] Synchronize the properties of video layers in the GPU process with the hosting layer in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=206132
+
+        Reviewed by Jer Noble.
+
+        MediaPlayerPrivateRemote creates WKVideoLayerRemote whose sublayer is created by LayerHostingContext::createPlatformLayerForHostingContext().
+        The WKVideoLayerRemote will be used by the renderer to manage the video element in the Web process. When its size is changed by the renderer,
+        it applies a transform without changing its actual size, and sends a message to MediaPlayerPrivateProxy in the GPU process
+        to change the size of the container layer. After that, WKVideoLayerRemote will set its size to the correct one in the Web process side.
+        We need to use a MachSendRight to synchronize the transactions in the Web process and the GPU process.
+
+        We have to use such a process to change the appearance of WKVideoLayerRemote in order to guarantee the smoothness when a user
+        change the size of a video element.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::load):
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerContentBoxRect const): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::firstVideoFrameAvailable):
+        (WebKit::MediaPlayerPrivateRemote::platformLayer const):
+        (WebKit::MediaPlayerPrivateRemote::setVideoInlineSizeFenced):
+        (WebKit::MediaPlayerPrivateRemote::paint):
+        (WebKit::MediaPlayerPrivateRemote::paintCurrentFrameInContext):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/VideoLayerRemote.h: Added.
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.h: Added.
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm: Added.
+        (-[WKVideoLayerRemote init]):
+        (-[WKVideoLayerRemote dealloc]):
+        (-[WKVideoLayerRemote mediaPlayerPrivateRemote]):
+        (-[WKVideoLayerRemote setMediaPlayerPrivateRemote:]):
+        (-[WKVideoLayerRemote videoSublayer]):
+        (-[WKVideoLayerRemote setVideoSublayer:]):
+        (-[WKVideoLayerRemote layoutSublayers]):
+        (-[WKVideoLayerRemote resolveBounds]):
+        (WebKit::createVideoLayerRemote):
+        * WebProcess/WebPage/ios/WebPageIOS.mm: Fixed a unified build failure.
+
 2020-02-20  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band metadata cues when loading media in the GPU Process

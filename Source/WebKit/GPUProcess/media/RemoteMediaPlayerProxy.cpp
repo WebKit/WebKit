@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioTrackProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -100,19 +101,18 @@ void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&
         else
             WTFLogAlways("Unable to create sandbox extension for media url.\n");
     }
-
+    
     m_player->load(url, contentType, keySystem);
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, LayoutRect layoutRect, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& contextId)>&& completionHandler)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& contextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
     m_player->setPreservesPitch(preservesPitch);
     m_player->prepareForRendering();
-    m_videoContentBoxRect = layoutRect;
     m_videoContentScale = videoContentScale;
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     completionHandler(m_layerHostingContext->contextID());
@@ -468,6 +468,7 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
+    // Initially the size of the platformLayer will be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
     m_layerHostingContext->setRootLayer(m_player->platformLayer());
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
@@ -544,11 +545,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreenPermitted() const
 {
     notImplemented();
     return false;
-}
-
-LayoutRect RemoteMediaPlayerProxy::mediaPlayerContentBoxRect() const
-{
-    return m_videoContentBoxRect;
 }
 
 float RemoteMediaPlayerProxy::mediaPlayerContentsScale() const
