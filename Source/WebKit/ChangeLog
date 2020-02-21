@@ -1,3 +1,40 @@
+2020-02-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256932. rdar://problem/59618845
+
+    Disable the process cache when process-per-tab is disabled in the debug menu
+    https://bugs.webkit.org/show_bug.cgi?id=207949
+    <rdar://problem/57094837>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Disable the process cache when process-per-tab is disabled in the debug menu. The process cache is a
+    process-swap-on-navigation optimization and process-swap-on-navigation is already disabled when
+    process-per-tab is disabled. The process cache is not useful with such configuration and actually
+    leads to crashes too.
+    
+    * UIProcess/WebProcessCache.cpp:
+    (WebKit::WebProcessCache::updateCapacity):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256932 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-19  Chris Dumez  <cdumez@apple.com>
+
+            Disable the process cache when process-per-tab is disabled in the debug menu
+            https://bugs.webkit.org/show_bug.cgi?id=207949
+            <rdar://problem/57094837>
+
+            Reviewed by Geoffrey Garen.
+
+            Disable the process cache when process-per-tab is disabled in the debug menu. The process cache is a
+            process-swap-on-navigation optimization and process-swap-on-navigation is already disabled when
+            process-per-tab is disabled. The process cache is not useful with such configuration and actually
+            leads to crashes too.
+
+            * UIProcess/WebProcessCache.cpp:
+            (WebKit::WebProcessCache::updateCapacity):
+
 2020-02-20  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256806. rdar://problem/59576023
