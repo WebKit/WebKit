@@ -1,3 +1,17 @@
+2020-02-20  John Wilander  <wilander@apple.com>
+
+        Add fidelity.com to the desktop class quirks list
+        https://bugs.webkit.org/show_bug.cgi?id=208037
+        <rdar://problem/59480381>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. This patch just adds a domain name to a quirks function.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+            fidelity.com and its subdomains now return false.
+
 2020-02-20  Sihui Liu  <sihui_liu@apple.com>
 
         WebIDBServer resume should return early if suspend does not happen
