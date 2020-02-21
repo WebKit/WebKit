@@ -1,3 +1,16 @@
+2020-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback in webkit.org/b/207352
+        https://bugs.webkit.org/show_bug.cgi?id=207352
+
+        Reviewed by Brian Weinstein.
+
+        Use m_mainFrame instead of going through Page, and also append the string "\n\n" instead of appending the
+        newline character twice.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getContentsAsString):
+
 2020-02-21  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU process] Synchronize the properties of video layers in the GPU process with the hosting layer in the web process

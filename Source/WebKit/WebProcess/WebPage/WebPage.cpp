@@ -3446,12 +3446,10 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
     }
     case ContentAsStringIncludesChildFrames::Yes: {
         StringBuilder builder;
-        for (RefPtr<Frame> frame = &corePage()->mainFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
             if (auto* webFrame = WebFrame::fromCoreFrame(*frame)) {
-                if (!builder.isEmpty()) {
-                    builder.append('\n');
-                    builder.append('\n');
-                }
+                if (!builder.isEmpty())
+                    builder.appendLiteral("\n\n");
 
                 builder.append(webFrame->contentsAsString());
             }
