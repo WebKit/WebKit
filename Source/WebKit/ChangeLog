@@ -1,5 +1,59 @@
 2020-02-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256933. rdar://problem/59618839
+
+    [iOS] Safari sometimes crashes under ViewGestureController::beginSwipeGesture
+    https://bugs.webkit.org/show_bug.cgi?id=207929
+    <rdar://problem/59493326>
+    
+    Reviewed by Tim Horton.
+    
+    Make ViewGestureController::beginSwipeGesture robust in the case where the target back/forward item no longer
+    exists. This means that a back/forward target item existed when UIKit called into us in canSwipeInDirection, but
+    this item was removed by the time beginSwipeGesture is called.
+    
+    A couple of conditions could make this possible, such as handling incoming synchronous IPC in the UI process
+    that could change the back/forward list before sending outgoing IPC to the web process; alternately, an SPI
+    client could be overriding -_webViewDidBeginNavigationGesture: to run some logic that removes the would-be
+    target back/forward item.
+    
+    To protect against these scenarios, null-check targetItem before attempting to dereference it; if it is null,
+    then reset some state that might've been set as a result of beginning the swipe (that is, m_activeGestureType
+    and m_currentGestureID) and then immediately bail before attempting to install the snapshot view and proceed
+    with the swipe.
+    
+    * UIProcess/ios/ViewGestureControllerIOS.mm:
+    (WebKit::ViewGestureController::beginSwipeGesture):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256933 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Safari sometimes crashes under ViewGestureController::beginSwipeGesture
+            https://bugs.webkit.org/show_bug.cgi?id=207929
+            <rdar://problem/59493326>
+
+            Reviewed by Tim Horton.
+
+            Make ViewGestureController::beginSwipeGesture robust in the case where the target back/forward item no longer
+            exists. This means that a back/forward target item existed when UIKit called into us in canSwipeInDirection, but
+            this item was removed by the time beginSwipeGesture is called.
+
+            A couple of conditions could make this possible, such as handling incoming synchronous IPC in the UI process
+            that could change the back/forward list before sending outgoing IPC to the web process; alternately, an SPI
+            client could be overriding -_webViewDidBeginNavigationGesture: to run some logic that removes the would-be
+            target back/forward item.
+
+            To protect against these scenarios, null-check targetItem before attempting to dereference it; if it is null,
+            then reset some state that might've been set as a result of beginning the swipe (that is, m_activeGestureType
+            and m_currentGestureID) and then immediately bail before attempting to install the snapshot view and proceed
+            with the swipe.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+
+2020-02-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r257013. rdar://problem/59614284
 
     Crash in WebPageProxy::didStartProvisionalLoadForFrameShared
