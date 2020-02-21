@@ -30,6 +30,8 @@
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
+#include "MediaControlElements.h"
 #include "NotImplemented.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
@@ -37,6 +39,7 @@
 #include "RenderProgress.h"
 #include "RenderStyle.h"
 #include "ThemeWPE.h"
+#include "TimeRanges.h"
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/StringBuilder.h>
@@ -69,6 +72,11 @@ static const Color sliderThumbBorderColor = makeRGB(205, 199, 194);
 static const Color sliderThumbBackgroundColor = makeRGB(244, 242, 241);
 static const Color sliderThumbBackgroundHoveredColor = makeRGB(248, 248, 247);
 static const Color sliderThumbBackgroundDisabledColor = makeRGB(244, 242, 241);
+#if ENABLE(VIDEO)
+static const Color mediaSliderTrackBackgroundcolor = makeRGB(77, 77, 77);
+static const Color mediaSliderTrackBufferedColor = makeRGB(173, 173, 173);
+static const Color mediaSliderTrackActiveColor = makeRGB(252, 252, 252);
+#endif
 
 RenderTheme& RenderTheme::singleton()
 {
@@ -153,9 +161,9 @@ String RenderThemeWPE::extraDefaultStyleSheet()
 }
 
 #if ENABLE(VIDEO)
-String RenderThemeWPE::mediaControlsStyleSheet()
+String RenderThemeWPE::extraMediaControlsStyleSheet()
 {
-    return String(mediaControlsBaseUserAgentStyleSheet, sizeof(mediaControlsBaseUserAgentStyleSheet));
+    return String(mediaControlsAdwaitaUserAgentStyleSheet, sizeof(mediaControlsAdwaitaUserAgentStyleSheet));
 }
 
 String RenderThemeWPE::mediaControlsScript()
@@ -163,6 +171,7 @@ String RenderThemeWPE::mediaControlsScript()
     StringBuilder scriptBuilder;
     scriptBuilder.appendCharacters(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
     scriptBuilder.appendCharacters(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript));
     return scriptBuilder.toString();
 }
 #endif
@@ -448,5 +457,85 @@ bool RenderThemeWPE::paintSliderThumb(const RenderObject& renderObject, const Pa
 
     return false;
 }
+
+#if ENABLE(VIDEO)
+bool RenderThemeWPE::paintMediaSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    auto mediaElement = parentMediaElement(renderObject);
+    if (!mediaElement)
+        return false;
+
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    FloatRect trackRect = rect;
+    FloatSize corner(2, 2);
+    Path path;
+    path.addRoundedRect(trackRect, corner);
+    graphicsContext.setFillColor(mediaSliderTrackBackgroundcolor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    graphicsContext.setFillColor(mediaSliderTrackBufferedColor);
+
+    float mediaDuration = mediaElement->duration();
+    RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
+    for (unsigned index = 0; index < timeRanges->length(); ++index) {
+        float start = timeRanges->start(index).releaseReturnValue();
+        float end = timeRanges->end(index).releaseReturnValue();
+        float startRatio = start / mediaDuration;
+        float lengthRatio = (end - start) / mediaDuration;
+        if (!lengthRatio)
+            continue;
+
+        FloatRect rangeRect = rect;
+        rangeRect.setWidth(lengthRatio * rect.width());
+        if (index)
+            rangeRect.move(startRatio * rect.width(), 0);
+
+        path.addRoundedRect(rangeRect, corner);
+        graphicsContext.fillPath(path);
+        path.clear();
+    }
+
+    FloatRect playedRect = rect;
+    playedRect.setWidth((mediaElement->currentTime() / mediaDuration) * rect.width());
+    graphicsContext.setFillColor(mediaSliderTrackActiveColor);
+    path.addRoundedRect(playedRect, corner);
+    graphicsContext.fillPath(path);
+
+    return false;
+}
+
+bool RenderThemeWPE::paintMediaVolumeSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    auto mediaElement = parentMediaElement(renderObject);
+    if (!mediaElement)
+        return false;
+
+    auto& graphicsContext = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(graphicsContext);
+
+    FloatRect trackRect = rect;
+    FloatSize corner(2, 2);
+    Path path;
+    path.addRoundedRect(trackRect, corner);
+    graphicsContext.setFillColor(mediaSliderTrackBackgroundcolor);
+    graphicsContext.fillPath(path);
+    path.clear();
+
+    float volume = mediaElement->muted() ? 0.0f : mediaElement->volume();
+    if (volume) {
+        FloatRect volumeRect = rect;
+        volumeRect.setHeight(volumeRect.height() * volume);
+        volumeRect.move(0, rect.height() - volumeRect.height());
+        path.addRoundedRect(volumeRect, corner);
+        graphicsContext.setFillColor(mediaSliderTrackActiveColor);
+        graphicsContext.fillPath(path);
+    }
+
+    return false;
+}
+#endif // ENABLE(VIDEO)
 
 } // namespace WebCore

@@ -35,7 +35,7 @@ public:
 
     String extraDefaultStyleSheet() override;
 #if ENABLE(VIDEO)
-    String mediaControlsStyleSheet() override;
+    String extraMediaControlsStyleSheet() override;
     String mediaControlsScript() override;
 #endif
 
@@ -77,6 +77,12 @@ private:
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
+
+#if ENABLE(VIDEO)
+    bool paintMediaSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
+    bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
+#endif
+
 };
 
 } // namespace WebCore

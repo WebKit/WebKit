@@ -91,6 +91,7 @@ Controller.prototype = {
         thumbnailTrack: 'thumbnail-track',
         volumeBox: 'volume-box',
         noVideo: 'no-video',
+        noDuration: 'no-duration',
         down: 'down',
         out: 'out',
     },
