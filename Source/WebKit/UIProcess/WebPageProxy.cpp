@@ -7021,17 +7021,6 @@ void WebPageProxy::applicationManifestCallback(const Optional<WebCore::Applicati
 }
 #endif
 
-#if PLATFORM(COCOA)
-void WebPageProxy::machSendRightCallback(const MachSendRight& sendRight, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<MachSendRightCallback>(callbackID);
-    if (!callback)
-        return;
-
-    callback->performCallbackWithReturnValue(sendRight);
-}
-#endif
-
 inline API::DiagnosticLoggingClient* WebPageProxy::effectiveDiagnosticLoggingClient(ShouldSample shouldSample)
 {
     // Diagnostic logging is disabled for ephemeral sessions for privacy reasons.

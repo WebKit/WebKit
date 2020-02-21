@@ -403,7 +403,6 @@ struct ElementDidFocusArguments {
 
 #if PLATFORM(COCOA)
 using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
-typedef GenericCallback<const WTF::MachSendRight&> MachSendRightCallback;
 typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
 #endif
 
@@ -2018,9 +2017,6 @@ private:
     void editingRangeCallback(const EditingRange&, CallbackID);
 #if ENABLE(APPLICATION_MANIFEST)
     void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
-#endif
-#if PLATFORM(COCOA)
-    void machSendRightCallback(const WTF::MachSendRight&, CallbackID);
 #endif
     void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, CallbackID);
 #if PLATFORM(MAC)
