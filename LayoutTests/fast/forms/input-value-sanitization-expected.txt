@@ -17,6 +17,11 @@ PASS input.value is "50"
 Text:
 PASS input.value is " foo bar "
 PASS document.getSelection().toString() is " foo bar "
+PASS input.value is "foo\u0000bar"
+PASS input.value is "foo\bbar"
+PASS input.value is "foo\tbar"
+PASS input.value is "foo\u000bbar"
+PASS input.value is "foo\fbar"
 PASS successfullyParsed is true
 
 TEST COMPLETE

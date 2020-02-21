@@ -463,23 +463,14 @@ void TextFieldInputType::createDataListDropdownIndicator()
 }
 #endif
 
-// FIXME: The name of this function doesn't make clear the two jobs it does:
-// 1) Limits the string to a particular number of grapheme clusters.
-// 2) Truncates the string at the first character which is a control character other than tab.
-// FIXME: TextFieldInputType::sanitizeValue doesn't need a limit on grapheme clusters. A limit on code units would do.
-// FIXME: Where does the "truncate at first control character" rule come from?
 static String limitLength(const String& string, unsigned maxNumGraphemeClusters)
 {
     StringView stringView { string };
-    unsigned firstNonTabControlCharacterIndex = stringView.find([] (UChar character) {
-        return character < ' ' && character != '\t';
-    });
-    unsigned limitedLength;
-    if (stringView.is8Bit())
-        limitedLength = std::min(firstNonTabControlCharacterIndex, maxNumGraphemeClusters);
-    else
-        limitedLength = numCodeUnitsInGraphemeClusters(stringView.substring(0, firstNonTabControlCharacterIndex), maxNumGraphemeClusters);
-    return string.left(limitedLength);
+
+    if (!stringView.is8Bit())
+        maxNumGraphemeClusters = numCodeUnitsInGraphemeClusters(stringView, maxNumGraphemeClusters);
+
+    return string.left(maxNumGraphemeClusters);
 }
 
 static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)

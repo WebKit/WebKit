@@ -1,3 +1,31 @@
+2020-02-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Value sanitization for input[type=text] should not truncate a value at a control character
+        https://bugs.webkit.org/show_bug.cgi?id=207900
+
+        Reviewed by Darin Adler.
+
+        Rebaseline the tests. Below its a summary of the number of FAIL and PASS lines changed for each test:
+
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-csiso2022jp-expected.txt:
+          FAIL from 7312 to 374
+          PASS from 17 to 6955
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-han-expected.txt:
+          FAIL from 21216 to 477
+          PASS from 53 to 20792
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-hangul-expected.txt:
+          FAIL from 11155 to 0
+          PASS from 28 to 11183
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-errors-misc-expected.txt:
+          FAIL from 3422 to 46
+          PASS from 9 to 3385
+        * web-platform-tests/encoding/legacy-mb-japanese/iso-2022-jp/iso2022jp-encode-form-expected.txt:
+          FAIL from 7375 to 374
+          PASS from 17 to 7018
+        * web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+          FAIL from 20 to 10
+          PASS from 22 to 32
+
 2020-02-20  Rob Buis  <rbuis@igalia.com>
 
         Lazy load images using base url at parse time

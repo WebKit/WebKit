@@ -12,10 +12,8 @@
         var DEFAULT_LINE_1 = "line\t(1 of 2)\r\nline\t(2 of 2)";
         var EXPECTED_LINE_1 = "line\t(1 of 2) line\t(2 of 2)";
 
-        // FIXME: Is this really expected behavior to truncate the string at a null byte?
-        // It doesn't match Firefox 4 and common sense.
         var DEFAULT_LINE_2 = "null\0char";
-        var EXPECTED_LINE_2 = "null";
+        var EXPECTED_LINE_2 = "null\0char";
 
         var DEFAULT_LINE_3 = "line with trailing newlines\r\n\r\n";
         var EXPECTED_LINE_3 = "line with trailing newlines";
