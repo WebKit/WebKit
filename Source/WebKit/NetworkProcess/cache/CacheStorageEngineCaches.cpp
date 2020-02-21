@@ -150,7 +150,8 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
         return;
     }
 
-    auto storage = Storage::open(m_rootPath, Storage::Mode::AvoidRandomness);
+    size_t capacity = std::numeric_limits<size_t>::max(); // We use a per-origin quota instead of a global capacity.
+    auto storage = Storage::open(m_rootPath, Storage::Mode::AvoidRandomness, capacity);
     if (!storage) {
         RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed opening storage");
         callback(Error::WriteDisk);
