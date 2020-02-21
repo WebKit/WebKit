@@ -92,7 +92,7 @@ void RunLoop::performWork()
     // we guarantee to occasionally return from the run loop so other event sources will be allowed to spin.
 
     size_t functionsToHandle = 1;
-    bool hasNonEmptySuspendedQueue = false;
+    bool didSuspendFunctions = false;
 
     for (size_t functionsHandled = 0; functionsHandled < functionsToHandle; ++functionsHandled) {
         Function<void ()> function;
@@ -106,7 +106,7 @@ void RunLoop::performWork()
                 break;
 
             if (m_isFunctionDispatchSuspended) {
-                hasNonEmptySuspendedQueue = true;
+                didSuspendFunctions = true;
                 break;
             }
 
@@ -121,8 +121,9 @@ void RunLoop::performWork()
 
     // Suspend only for a single cycle.
     m_isFunctionDispatchSuspended = false;
+    m_hasSuspendedFunctions = didSuspendFunctions;
 
-    if (hasNonEmptySuspendedQueue)
+    if (m_hasSuspendedFunctions)
         wakeUp();
 }
 
@@ -138,7 +139,8 @@ void RunLoop::dispatch(Function<void ()>&& function)
 
 void RunLoop::suspendFunctionDispatchForCurrentCycle()
 {
-    if (m_isFunctionDispatchSuspended)
+    // Don't suspend if there are already suspended functions to avoid unexecuted function pile-up.
+    if (m_isFunctionDispatchSuspended || m_hasSuspendedFunctions)
         return;
 
     m_isFunctionDispatchSuspended = true;
