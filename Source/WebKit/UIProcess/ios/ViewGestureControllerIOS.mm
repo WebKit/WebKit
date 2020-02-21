@@ -182,11 +182,17 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
     m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : &m_webPageProxy;
 
+    auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
+    auto targetItem = makeRefPtr(direction == SwipeDirection::Back ? backForwardList.backItem() : backForwardList.forwardItem());
+    if (!targetItem) {
+        RELEASE_LOG_ERROR(ViewGestures, "Failed to find %s item when beginning swipe.", direction == SwipeDirection::Back ? "back" : "forward");
+        didEndGesture();
+        return;
+    }
+
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
     if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)
         m_webPageProxy.navigationGestureDidBegin();
-
-    auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
 
     // Copy the snapshot from this view to the one that owns the back forward list, so that
     // swiping forward will have the correct snapshot.
@@ -194,8 +200,6 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         if (auto* currentViewHistoryItem = m_webPageProxy.backForwardList().currentItem())
             backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
     }
-
-    RefPtr<WebBackForwardListItem> targetItem = direction == SwipeDirection::Back ? backForwardList.backItem() : backForwardList.forwardItem();
 
     CGRect liveSwipeViewFrame = [m_liveSwipeView frame];
 
