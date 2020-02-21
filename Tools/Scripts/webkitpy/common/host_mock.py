@@ -36,13 +36,15 @@ from webkitpy.common.watchlist.watchlist_mock import MockWatchList
 
 # New-style ports need to move down into webkitpy.common.
 from webkitpy.port.factory import PortFactory
-from webkitpy.port.test import add_unit_tests_to_mock_filesystem
+from webkitpy.port.test import add_unit_tests_to_mock_filesystem, add_checkout_information_json_to_mock_filesystem
 
 
 class MockHost(MockSystemHost):
-    def __init__(self, log_executive=False, executive_throws_when_run=None, initialize_scm_by_default=True, web=None):
+    def __init__(self, log_executive=False, executive_throws_when_run=None, initialize_scm_by_default=True, web=None, create_stub_repository_files=False):
         MockSystemHost.__init__(self, log_executive, executive_throws_when_run)
         add_unit_tests_to_mock_filesystem(self.filesystem)
+        if create_stub_repository_files:
+            add_checkout_information_json_to_mock_filesystem(self.filesystem)
         self.web = web or MockWeb()
 
         self._checkout = MockCheckout()

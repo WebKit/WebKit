@@ -282,6 +282,7 @@ layer at (0,0) size 800x34
 
 LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
 PERF_TEST_DIR = '/test.checkout/PerformanceTests'
+TEST_DIR = '/mock-checkout'
 
 
 # Here we synthesize an in-memory filesystem from the test list
@@ -363,6 +364,12 @@ Bug(test) passes/skipped/skip.html [ Skip ]
 
     # Clear the list of written files so that we can watch what happens during testing.
     filesystem.clear_written_files()
+
+
+def add_checkout_information_json_to_mock_filesystem(filesystem):
+    if not filesystem.exists(TEST_DIR):
+        filesystem.maybe_make_directory(TEST_DIR)
+    filesystem.write_text_file(TEST_DIR + '/checkout_information.json', '{ "branch": "trunk", "id": "2738499" }')
 
 
 class TestPort(Port):

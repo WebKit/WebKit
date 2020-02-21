@@ -147,7 +147,7 @@ class InterpretTestFailuresTest(unittest.TestCase):
 
 class SummarizedResultsTest(unittest.TestCase):
     def setUp(self):
-        host = MockHost(initialize_scm_by_default=False)
+        host = MockHost(initialize_scm_by_default=False, create_stub_repository_files=True)
         self.port = host.port_factory.get(port_name='test', options=MockOptions(http=True, pixel_tests=False, world_leaks=False))
 
     def test_no_svn_revision(self):
