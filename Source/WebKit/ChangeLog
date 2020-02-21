@@ -1,5 +1,69 @@
 2020-02-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256859. rdar://problem/59612087
+
+    [macOS] Web process may crash under ServicesOverlayController::buildPotentialHighlightsIfNeeded
+    https://bugs.webkit.org/show_bug.cgi?id=207899
+    <rdar://problem/55658207>
+    
+    Reviewed by Tim Horton and Simon Fraser.
+    
+    Source/WebCore:
+    
+    Mitigates a null pointer crash in ServicesOverlayController::buildPotentialHighlightsIfNeeded(), wherein the
+    focused frame may not have a FrameView when the ServicesOverlayController's selection invalidation timer fires.
+    This is possible if, while being focused, the newly focused subframe is unparented and reparented, which causes
+    it to momentarily have a null view. During this time, if a selection change had occurred earlier in the runloop,
+    it will schedule the page overlay controller invalidation timer, which will fire and discover that the currently
+    focused frame no longer has a FrameView.
+    
+    Test: editing/selection/selection-change-in-disconnected-frame-crash.html
+    
+    * page/mac/ServicesOverlayController.mm:
+    (WebCore::ServicesOverlayController::buildSelectionHighlight):
+    
+    Source/WebKit:
+    
+    Add another missing null check on iOS, for the case where FrameView is null.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::platformEditorState const):
+    
+    Tools:
+    
+    Make it possible to run tests on macOS with services controls enabled, via a new TestOptions flag.
+    
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::updateTestOptionsFromTestHeader):
+    * WebKitTestRunner/TestOptions.h:
+    (WTR::TestOptions::hasSameInitializationOptions const):
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::platformCreateWebView):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that we don't crash under this circumstance.
+    
+    * editing/selection/selection-change-in-disconnected-frame-crash-expected.txt: Added.
+    * editing/selection/selection-change-in-disconnected-frame-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256859 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS] Web process may crash under ServicesOverlayController::buildPotentialHighlightsIfNeeded
+            https://bugs.webkit.org/show_bug.cgi?id=207899
+            <rdar://problem/55658207>
+
+            Reviewed by Tim Horton and Simon Fraser.
+
+            Add another missing null check on iOS, for the case where FrameView is null.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::platformEditorState const):
+
+2020-02-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256790. rdar://problem/59575905
 
     Data detectors do not trigger on macCatalyst

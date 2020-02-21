@@ -544,7 +544,9 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!mainFrameView)
             return;
 
-        FrameView* viewForRange = selectionRange->ownerDocument().view();
+        RefPtr<FrameView> viewForRange = selectionRange->ownerDocument().view();
+        if (!viewForRange)
+            return;
 
         for (auto& rect : m_currentSelectionRects) {
             IntRect currentRect = snappedIntRect(rect);

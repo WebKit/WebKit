@@ -208,6 +208,11 @@ bool WebPage::isTransparentOrFullyClipped(const Element& element) const
 void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
     FrameView* view = frame.view();
+    if (!view) {
+        result.isMissingPostLayoutData = true;
+        return;
+    }
+
     if (frame.editor().hasComposition()) {
         RefPtr<Range> compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
@@ -227,7 +232,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     // to avoid the need to force a synchronous layout here to compute these entries. If we
     // have a composition or are using a hardware keyboard then we send the full editor state
     // immediately so that the UIProcess can update UI, including the position of the caret.
-    bool needsLayout = !frame.view() || frame.view()->needsLayout();
+    bool needsLayout = view->needsLayout();
     bool requiresPostLayoutData = frame.editor().hasComposition();
 #if !PLATFORM(MACCATALYST)
     requiresPostLayoutData |= m_keyboardIsAttached;
