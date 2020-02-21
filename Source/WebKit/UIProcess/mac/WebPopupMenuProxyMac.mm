@@ -34,6 +34,7 @@
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
 #import "WebPopupItem.h"
+#import <pal/spi/mac/NSCellSPI.h>
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/ProcessPrivilege.h>
@@ -161,6 +162,11 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     case WebCore::PopupMenuStyle::PopupMenuSizeMini:
         controlSize = NSControlSizeMini;
         break;
+#if HAVE(LARGE_CONTROL_SIZE)
+    case PopupMenuStyle::PopupMenuSizeLarge:
+        controlSize = NSControlSizeLarge;
+        break;
+#endif
     }
 
     Ref<WebPopupMenuProxyMac> protect(*this);

@@ -1030,6 +1030,10 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
 NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
     int fontSize = style.computedFontPixelSize();
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
+        return NSControlSizeLarge;
+#endif
     if (fontSize >= 16)
         return NSControlSizeRegular;
     if (fontSize >= 11)
@@ -1039,6 +1043,13 @@ NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 
 NSControlSize RenderThemeMac::controlSizeForCell(NSCell*, const IntSize* sizes, const IntSize& minSize, float zoomLevel) const
 {
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (ThemeMac::supportsLargeFormControls()
+        && minSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomLevel))
+        return NSControlSizeLarge;
+#endif
+
     if (minSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomLevel)
         && minSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomLevel))
         return NSControlSizeRegular;
@@ -1105,6 +1116,10 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
     int fontSize = style.computedFontPixelSize();
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
+        return NSControlSizeLarge;
+#endif
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
         return NSControlSizeRegular;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
@@ -1218,34 +1233,37 @@ void RenderThemeMac::adjustTextAreaStyle(RenderStyle&, const Element*) const
 
 const int* RenderThemeMac::popupButtonMargins() const
 {
-    static const int margins[3][4] =
+    static const int margins[4][4] =
     {
         { 0, 3, 1, 3 },
         { 0, 3, 2, 3 },
-        { 0, 1, 0, 1 }
+        { 0, 1, 0, 1 },
+        { 0, 3, 1, 3 },
     };
     return margins[[popupButton() controlSize]];
 }
 
 const IntSize* RenderThemeMac::popupButtonSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
+    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 24) };
     return sizes;
 }
 
 const int* RenderThemeMac::popupButtonPadding(NSControlSize size, bool isRTL) const
 {
-    static const int paddingLTR[3][4] =
+    static const int paddingLTR[4][4] =
     {
         { 2, 26, 3, 8 },
         { 2, 23, 3, 8 },
-        { 2, 22, 3, 10 }
+        { 2, 22, 3, 10 },
+        { 2, 26, 3, 8 },
     };
-    static const int paddingRTL[3][4] =
+    static const int paddingRTL[4][4] =
     {
         { 2, 8, 3, 26 },
         { 2, 8, 3, 23 },
-        { 2, 8, 3, 22 }
+        { 2, 8, 3, 22 },
+        { 2, 8, 3, 26 },
     };
     return isRTL ? paddingRTL[size] : paddingLTR[size];
 }
@@ -1388,14 +1406,15 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& rende
 
 const IntSize* RenderThemeMac::progressBarSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12) };
+    static const IntSize sizes[4] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12), IntSize(0, 20) };
     return sizes;
 }
 
 const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
 {
-    static const int margins[3][4] =
+    static const int margins[4][4] =
     {
+        { 0, 0, 1, 0 },
         { 0, 0, 1, 0 },
         { 0, 0, 1, 0 },
         { 0, 0, 1, 0 },
@@ -1455,7 +1474,13 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
-    if (controlSize == NSControlSizeRegular)
+
+    bool shouldUseLargeProgressBarIfPossible = controlSize == NSControlSizeRegular;
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (ThemeMac::supportsLargeFormControls())
+        shouldUseLargeProgressBarIfPossible |= controlSize == NSControlSizeLarge;
+#endif
+    if (shouldUseLargeProgressBarIfPossible)
         trackInfo.kind = renderProgress.position() < 0 ? kThemeLargeIndeterminateBar : kThemeLargeProgressBar;
     else
         trackInfo.kind = renderProgress.position() < 0 ? kThemeMediumIndeterminateBar : kThemeMediumProgressBar;
@@ -1681,7 +1706,7 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
 
 static const IntSize* menuListButtonSizes()
 {
-    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
+    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 24) };
     return sizes;
 }
 
@@ -1753,6 +1778,10 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& s
         return PopupMenuStyle::PopupMenuSizeSmall;
     case NSControlSizeMini:
         return PopupMenuStyle::PopupMenuSizeMini;
+#if HAVE(LARGE_CONTROL_SIZE)
+    case NSControlSizeLarge:
+        return ThemeMac::supportsLargeFormControls() ? PopupMenuStyle::PopupMenuSizeLarge : PopupMenuStyle::PopupMenuSizeNormal;
+#endif
     default:
         return PopupMenuStyle::PopupMenuSizeNormal;
     }
@@ -1798,7 +1827,7 @@ void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell
 
 const IntSize* RenderThemeMac::menuListSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(9, 0), IntSize(5, 0), IntSize(0, 0) };
+    static const IntSize sizes[4] = { IntSize(9, 0), IntSize(5, 0), IntSize(0, 0), IntSize(13, 0) };
     return sizes;
 }
 
@@ -1981,7 +2010,7 @@ void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
 
 const IntSize* RenderThemeMac::searchFieldSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(0, 22), IntSize(0, 19), IntSize(0, 17) };
+    static const IntSize sizes[4] = { IntSize(0, 22), IntSize(0, 19), IntSize(0, 17), IntSize(0, 22) };
     return sizes;
 }
 
@@ -2082,7 +2111,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
 
 const IntSize* RenderThemeMac::cancelButtonSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(22, 22), IntSize(19, 19), IntSize(15, 15) };
+    static const IntSize sizes[4] = { IntSize(22, 22), IntSize(19, 19), IntSize(15, 15), IntSize(22, 22) };
     return sizes;
 }
 
@@ -2097,7 +2126,7 @@ void RenderThemeMac::adjustSearchFieldCancelButtonStyle(RenderStyle& style, cons
 const int resultsArrowWidth = 5;
 const IntSize* RenderThemeMac::resultsButtonSizes() const
 {
-    static const IntSize sizes[3] = { IntSize(19, 22), IntSize(17, 19), IntSize(17, 15) };
+    static const IntSize sizes[4] = { IntSize(19, 22), IntSize(17, 19), IntSize(17, 15), IntSize(19, 22) };
     return sizes;
 }
 

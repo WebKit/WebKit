@@ -1,3 +1,16 @@
+2020-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Large form controls are rendered at the wrong NSControlSize
+        https://bugs.webkit.org/show_bug.cgi?id=208043
+        <rdar://problem/59659134>
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::show):
+
 2020-02-21  Daniel Bates  <dabates@apple.com>
 
         [iOS][Legacy WebKit] Expose SPI for Page::revealCurrentSelection()

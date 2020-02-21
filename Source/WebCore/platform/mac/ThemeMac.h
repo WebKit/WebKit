@@ -33,6 +33,9 @@ namespace WebCore {
 
 class ThemeMac final : public ThemeCocoa {
 public:
+#if HAVE(LARGE_CONTROL_SIZE)
+    static bool supportsLargeFormControls();
+#endif
     static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);
     static bool drawCellOrFocusRingWithViewIntoContext(NSCell *, GraphicsContext&, const FloatRect&, NSView *, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor);

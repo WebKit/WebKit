@@ -25,6 +25,12 @@
 
 #if USE(APPKIT)
 
+#import <AppKit/AppKit.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/NSAppearance_Private.h>
+#endif
+
 @interface NSAppearance ()
 
 - (void)_drawInRect:(NSRect)rect context:(CGContextRef)context options:(NSDictionary *)options;

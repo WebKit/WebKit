@@ -39,7 +39,10 @@ public:
     enum PopupMenuSize {
         PopupMenuSizeNormal,
         PopupMenuSizeSmall,
-        PopupMenuSizeMini
+        PopupMenuSizeMini,
+#if HAVE(LARGE_CONTROL_SIZE)
+        PopupMenuSizeLarge,
+#endif
     };
 
     PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, bool visible, bool isDisplayNone, bool hasDefaultAppearance, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, PopupMenuSize menuSize = PopupMenuSizeNormal)

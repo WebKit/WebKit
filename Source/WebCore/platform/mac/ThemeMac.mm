@@ -40,6 +40,7 @@
 #import "ScrollView.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
@@ -119,6 +120,10 @@ static BOOL themeWindowHasKeyAppearance;
 
 namespace WebCore {
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ThemeMacAdditions.mm>
+#endif
+
 enum {
     topMargin,
     rightMargin,
@@ -137,6 +142,10 @@ Theme& Theme::singleton()
 static NSControlSize controlSizeForFont(const FontCascade& font)
 {
     int fontSize = font.pixelSize();
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
+        return NSControlSizeLarge;
+#endif
     if (fontSize >= 16)
         return NSControlSizeRegular;
     if (fontSize >= 11)
@@ -144,7 +153,7 @@ static NSControlSize controlSizeForFont(const FontCascade& font)
     return NSControlSizeMini;
 }
 
-static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 3>& sizes)
+static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
 {
     IntSize controlSize = sizes[nsControlSize];
     if (zoomFactor != 1.0f)
@@ -157,13 +166,19 @@ static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const Lengt
     return result;
 }
 
-static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 3>& sizes)
+static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
 {
     return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
 
-static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
+static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (ThemeMac::supportsLargeFormControls()
+        && minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomFactor)
+        && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomFactor))
+        return NSControlSizeLarge;
+#endif
     if (minZoomedSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomFactor)
         && minZoomedSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomFactor))
         return NSControlSizeRegular;
@@ -173,7 +188,7 @@ static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 3>& sizes,
     return NSControlSizeMini;
 }
 
-static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, const IntSize& minZoomedSize, float zoomFactor)
+static void setControlSize(NSCell* cell, const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
     ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
@@ -258,20 +273,21 @@ static FloatRect inflateRect(const FloatRect& zoomedRect, const IntSize& zoomedS
 
 // Checkboxes and radio buttons
 
-static const std::array<IntSize, 3>& checkboxSizes()
+static const std::array<IntSize, 4>& checkboxSizes()
 {
-    static const std::array<IntSize, 3> sizes = { { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10) } };
+    static const std::array<IntSize, 4> sizes = { { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10), IntSize(16, 16) } };
     return sizes;
 }
 
 static const int* checkboxMargins(NSControlSize controlSize)
 {
-    static const int margins[3][4] =
+    static const int margins[4][4] =
     {
         // top right bottom left
         { 2, 2, 2, 2 },
         { 2, 1, 2, 1 },
         { 0, 0, 1, 0 },
+        { 2, 2, 2, 2 },
     };
     return margins[controlSize];
 }
@@ -288,20 +304,31 @@ static LengthSize checkboxSize(const FontCascade& font, const LengthSize& zoomed
 
 // Radio Buttons
 
-static const std::array<IntSize, 3>& radioSizes()
+static const std::array<IntSize, 4>& radioSizes()
 {
-    static const std::array<IntSize, 3> sizes = { { IntSize(16, 16), IntSize(12, 12), IntSize(10, 10) } };
+    static std::array<IntSize, 4> sizes;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+#if HAVE(LARGE_CONTROL_SIZE)
+        if (ThemeMac::supportsLargeFormControls()) {
+            sizes = { { IntSize(14, 14), IntSize(12, 12), IntSize(10, 10), IntSize(16, 16) } };
+            return;
+        }
+#endif
+        sizes = { { IntSize(16, 16), IntSize(12, 12), IntSize(10, 10), IntSize(0, 0) } };
+    });
     return sizes;
 }
 
 static const int* radioMargins(NSControlSize controlSize)
 {
-    static const int margins[3][4] =
+    static const int margins[4][4] =
     {
         // top right bottom left
         { 1, 0, 1, 2 },
         { 1, 1, 2, 1 },
         { 0, 0, 1, 1 },
+        { 1, 0, 1, 2 },
     };
     return margins[controlSize];
 }
@@ -466,19 +493,23 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
 // Buttons
 
 // Buttons really only constrain height. They respect width.
-static const std::array<IntSize, 3>& buttonSizes()
+static const std::array<IntSize, 4>& buttonSizes()
 {
-    static const std::array<IntSize, 3> sizes = { { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) } };
+    static const std::array<IntSize, 4> sizes = { { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 28) } };
     return sizes;
 }
 
 static const int* buttonMargins(NSControlSize controlSize)
 {
-    static const int margins[3][4] =
+    // FIXME: These values may need to be reevaluated. They appear to have been originally chosen
+    // to reflect the size of shadows around native form controls on macOS, but as of macOS 10.15,
+    // these margins extend well past the boundaries of a native button cell's shadows.
+    static const int margins[4][4] =
     {
         { 4, 6, 7, 6 },
         { 4, 5, 6, 5 },
         { 0, 1, 1, 1 },
+        { 4, 6, 7, 6 },
     };
     return margins[controlSize];
 }
@@ -498,7 +529,7 @@ static NSButtonCell *leakButtonCell(ButtonCellType type)
 static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlStates& states, const IntSize& zoomedSize, float zoomFactor)
 {
     // Set the control size based off the rectangle we're painting into.
-    const std::array<IntSize, 3>& sizes = buttonSizes();
+    const std::array<IntSize, 4>& sizes = buttonSizes();
     switch (part) {
     case SquareButtonPart:
         [cell setBezelStyle:NSBezelStyleShadowlessSquare];
@@ -509,7 +540,12 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlS
         break;
 #endif
     default:
-        NSBezelStyle style = (zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) ? NSBezelStyleShadowlessSquare : NSBezelStyleRounded;
+#if HAVE(LARGE_CONTROL_SIZE)
+        auto largestControlSize = ThemeMac::supportsLargeFormControls() ? NSControlSizeLarge : NSControlSizeRegular;
+#else
+        auto largestControlSize = NSControlSizeRegular;
+#endif
+        NSBezelStyle style = (zoomedSize.height() > buttonSizes()[largestControlSize].height() * zoomFactor) ? NSBezelStyleShadowlessSquare : NSBezelStyleRounded;
         [cell setBezelStyle:style];
         break;
     }
@@ -593,9 +629,9 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
 
 // Stepper
 
-static const std::array<IntSize, 3>& stepperSizes()
+static const std::array<IntSize, 4>& stepperSizes()
 {
-    static const std::array<IntSize, 3> sizes = { { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15) } };
+    static const std::array<IntSize, 4> sizes = { { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15), IntSize(19, 27) } };
     return sizes;
 }
 
@@ -604,6 +640,10 @@ static const std::array<IntSize, 3>& stepperSizes()
 static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 {
     int fontSize = font.pixelSize();
+#if HAVE(LARGE_CONTROL_SIZE)
+    if (fontSize >= 23 && ThemeMac::supportsLargeFormControls())
+        return NSControlSizeLarge;
+#endif
     if (fontSize >= 18)
         return NSControlSizeRegular;
     if (fontSize >= 13)
