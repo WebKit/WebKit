@@ -761,6 +761,8 @@ enum {
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
     CustomMenuActionCallbackID,
+    GetWebViewCategoryCallbackID,
+    DidSetInAppBrowserPrivacyEnabledCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -2902,6 +2904,49 @@ void TestRunner::setOffscreenCanvasEnabled(bool enabled)
     WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("OffscreenCanvasEnabled"));
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
+}
+
+void TestRunner::getWebViewCategory(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetWebViewCategoryCallbackID, callback);
+    
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetWebViewCategory"));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
+}
+
+void TestRunner::callDidReceiveWebViewCategoryCallback(String category)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    auto resultString = makeString("\"", category, "\"");
+    
+    JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(resultString.utf8().data())).get());
+
+    callTestRunnerCallback(GetWebViewCategoryCallbackID, 1, &result);
+}
+
+bool TestRunner::hasAppBoundSession()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("HasAppBoundSession"));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
+void TestRunner::setInAppBrowserPrivacyEnabled(bool value, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(DidSetInAppBrowserPrivacyEnabledCallbackID, completionHandler);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetInAppBrowserPrivacyEnabled"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::callDidSetInAppBrowserPrivacyEnabledCallback()
+{
+    callTestRunnerCallback(DidSetInAppBrowserPrivacyEnabledCallbackID);
 }
 
 } // namespace WTR

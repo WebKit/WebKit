@@ -87,6 +87,8 @@ public:
     void didSetHasHadUserInteraction();
     void didReceiveAllStorageAccessEntries(Vector<String>& domains);
     void didReceivePrevalentDomains(Vector<String>&& domains);
+    void didReceiveWebViewCategory(String&);
+    void didSetInAppBrowserPrivacyEnabled();
 
     void didRemoveAllSessionCredentials();
     

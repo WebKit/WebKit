@@ -293,6 +293,8 @@ public:
     static WTF::String defaultJavaScriptConfigurationDirectory();
 
     void resetQuota(CompletionHandler<void()>&&);
+    void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
+    void setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&&);
 
 private:
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);

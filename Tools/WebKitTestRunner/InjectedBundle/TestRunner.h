@@ -463,6 +463,10 @@ public:
     void getAllStorageAccessEntries(JSValueRef callback);
     void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
 
+    
+    void getWebViewCategory(JSValueRef callback);
+    void callDidReceiveWebViewCategoryCallback(String);
+
     // Open panel
     void setOpenPanelFiles(JSValueRef);
     void setOpenPanelFilesMediaIcon(JSValueRef);
@@ -494,6 +498,9 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned);
     bool isMockRealtimeMediaSourceCenterEnabled();
+    bool hasAppBoundSession();
+    void setInAppBrowserPrivacyEnabled(bool, JSValueRef);
+    void callDidSetInAppBrowserPrivacyEnabledCallback();
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);

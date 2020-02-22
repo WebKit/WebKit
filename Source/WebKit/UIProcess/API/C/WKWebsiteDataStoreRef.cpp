@@ -527,6 +527,13 @@ void WKWebsiteDataStoreStatisticsHasIsolatedSession(WKWebsiteDataStoreRef dataSt
 #endif
 }
 
+void WKWebsiteDataStoreHasAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreHasAppBoundSessionFunction callback)
+{
+    WebKit::toImpl(dataStoreRef)->hasAppBoundSession([context, callback](bool hasAppBoundSession) {
+        callback(hasAppBoundSession, context);
+    });
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTestingFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -694,5 +701,12 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
     WebKit::toImpl(dataStoreRef)->resetQuota([context, callback] {
         if (callback)
             callback(context);
+    });
+}
+
+void WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction completionHandler)
+{
+    WebKit::toImpl(dataStoreRef)->setInAppBrowserPrivacyEnabled(enabled, [context, completionHandler] {
+        completionHandler(context);
     });
 }

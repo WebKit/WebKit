@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyMessagesReplies.h"
@@ -91,8 +92,8 @@ public:
     LayerHostingContextID contextIDForVisibilityPropagation() const { return m_contextIDForVisibilityPropagation; }
 #endif
 
-    void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, Optional<WebsitePoliciesData>&& = WTF::nullopt);
+    void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, NavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& = WTF::nullopt);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, NavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
     void cancel();
 

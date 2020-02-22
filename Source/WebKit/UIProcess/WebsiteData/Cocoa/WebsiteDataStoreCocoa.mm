@@ -145,6 +145,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
+    bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
+    
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
@@ -178,6 +180,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->testSpeedMultiplier(),
         m_configuration->suppressesConnectionTerminationOnSystemChange(),
         m_configuration->allowsServerPreconnect(),
+        isInAppBrowserPrivacyEnabled
     };
     networkingHasBegun();
 

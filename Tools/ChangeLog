@@ -1,3 +1,50 @@
+2020-02-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domains should have separate Network Sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208026
+        <rdar://problem/59434006>
+
+        Reviewed by Brent Fulgham.
+
+        This patch is mostly test infrastructure involving 3 functions.
+        One sets in-app browser privacy as enabled in the network process
+        manually for the test. One ensures that setting the WebView category
+        works properly, and the last one checks for an app-bound session for
+        an app-bound navigation.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::getWebViewCategory):
+        (WTR::TestRunner::callDidReceiveWebViewCategoryCallback):
+        (WTR::TestRunner::hasAppBoundSession):
+        (WTR::TestRunner::setInAppBrowserPrivacyEnabled):
+        (WTR::TestRunner::callDidSetInAppBrowserPrivacyEnabledCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        Clearing the bundleID should happen right before setting a new one, 
+        otherwise it clears the ID after it is set and returns a null ID.
+
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::getWebViewCategory):
+        (WTR::InAppBrowserPrivacyCallbackContext::InAppBrowserPrivacyCallbackContext):
+        (WTR::inAppBrowserPrivacyBooleanResultCallback):
+        (WTR::inAppBrowserPrivacyVoidResultCallback):
+        (WTR::TestController::hasAppBoundSession):
+        (WTR::TestController::setInAppBrowserPrivacyEnabled):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didSetInAppBrowserPrivacyEnabled):
+        (WTR::TestInvocation::didReceivePrevalentDomains):
+        (WTR::TestInvocation::didReceiveWebViewCategory):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::getWebViewCategory):
+
 2020-02-21  Jonathan Bedard  <jbedard@apple.com>
 
         Build DumpRenderTree and WebKitTestRunner for macCatalyst

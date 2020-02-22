@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkActivityTracker.h"
+#include "PolicyDecision.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/FrameIdentifier.h>
@@ -61,6 +62,7 @@ public:
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     Optional<NetworkActivityTracker> networkActivityTracker;
+    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
 };
 
 } // namespace WebKit

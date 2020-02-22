@@ -117,6 +117,8 @@ typedef void (*WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction)(void* func
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction);
 typedef void (*WKWebsiteDataStoreStatisticsHasIsolatedSessionFunction)(bool hasIsolatedSession, void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreStatisticsHasIsolatedSession(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasIsolatedSessionFunction callback);
+typedef void (*WKWebsiteDataStoreHasAppBoundSessionFunction)(bool hasAppBoundSession, void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreHasAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreHasAppBoundSessionFunction callback);
 typedef void (*WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTestingFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTestingFunction completionHandler);
 typedef void (*WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTestingFunction)(void* functionContext);
@@ -156,6 +158,9 @@ WK_EXPORT void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteD
 
 typedef void (*WKWebsiteDataStoreResetQuotaCallback)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreResetQuotaCallback callback);
+
+typedef void (*WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction completionHandler);
 
 #ifdef __cplusplus
 }

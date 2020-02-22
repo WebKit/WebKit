@@ -103,6 +103,7 @@ struct NetworkSessionCreationParameters {
     unsigned testSpeedMultiplier { 1 };
     bool suppressesConnectionTerminationOnSystemChange { false };
     bool allowsServerPreconnect { true };
+    bool isInAppBrowserPrivacyEnabled { false };
 };
 
 } // namespace WebKit

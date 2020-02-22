@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkLoadParameters.h"
+#include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "UserContentControllerIdentifier.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
@@ -73,6 +74,8 @@ public:
     URL mainDocumentURL;
     Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
+    
+    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
 };
 
 } // namespace WebKit

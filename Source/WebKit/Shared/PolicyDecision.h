@@ -31,8 +31,11 @@
 
 namespace WebKit {
 
+enum class NavigatingToAppBoundDomain { Yes, No };
+
 struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
+    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };
     DownloadID downloadID { 0 };
@@ -42,6 +45,7 @@ struct PolicyDecision {
     void encode(Encoder& encoder) const
     {
         encoder << identifier;
+        encoder << isNavigatingToAppBoundDomain;
         encoder << policyAction;
         encoder << navigationID;
         encoder << downloadID;
@@ -54,6 +58,11 @@ struct PolicyDecision {
         Optional<WebCore::PolicyCheckIdentifier> decodedIdentifier;
         decoder >> decodedIdentifier;
         if (!decodedIdentifier)
+            return WTF::nullopt;
+        
+        Optional<NavigatingToAppBoundDomain> decodedIsNavigatingToAppBoundDomain;
+        decoder >> decodedIsNavigatingToAppBoundDomain;
+        if (!decodedIsNavigatingToAppBoundDomain)
             return WTF::nullopt;
 
         Optional<WebCore::PolicyAction> decodedPolicyAction;
@@ -76,9 +85,20 @@ struct PolicyDecision {
         if (!decodedWebsitePoliciesData)
             return WTF::nullopt;
 
-        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData) }};
-
+        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedIsNavigatingToAppBoundDomain), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData) }};
     }
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::NavigatingToAppBoundDomain> {
+    using values = EnumValues<
+        WebKit::NavigatingToAppBoundDomain,
+        WebKit::NavigatingToAppBoundDomain::Yes,
+        WebKit::NavigatingToAppBoundDomain::No
+    >;
+};
+
+}

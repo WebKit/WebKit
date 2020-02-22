@@ -1447,6 +1447,27 @@ void NetworkProcessProxy::resetQuota(PAL::SessionID sessionID, CompletionHandler
     sendWithAsyncReply(Messages::NetworkProcess::ResetQuota(sessionID), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::hasAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::HasAppBoundSession(sessionID), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::setInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::SetInAppBrowserPrivacyEnabled(sessionID, value), WTFMove(completionHandler));
+}
+
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

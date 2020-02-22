@@ -101,6 +101,9 @@ public:
     bool shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
 #endif
+    
+    virtual bool hasAppBoundSession() const { return false; }
+    virtual void setInAppBrowserPrivacyEnabled(bool) { }
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void dumpAdClickAttribution(CompletionHandler<void(String)>&&);

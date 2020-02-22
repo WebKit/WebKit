@@ -216,6 +216,9 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceError&&);
 
+    void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void setInAppBrowserPrivacyEnabled(PAL::SessionID, bool, CompletionHandler<void()>&&);
+    
 private:
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "Networking"_s; }

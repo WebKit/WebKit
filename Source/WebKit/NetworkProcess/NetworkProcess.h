@@ -342,6 +342,8 @@ public:
     Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
 
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
+    void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&) const;
+    void setInAppBrowserPrivacyEnabled(PAL::SessionID, bool enable, CompletionHandler<void()>&&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);

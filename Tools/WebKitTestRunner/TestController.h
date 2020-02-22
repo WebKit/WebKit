@@ -260,6 +260,8 @@ public:
     void getAllStorageAccessEntries();
     void getPrevalentDomains();
     void clearPrevalentDomains();
+    void getWebViewCategory();
+    void setInAppBrowserPrivacyEnabled(bool);
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
@@ -298,6 +300,7 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
+    bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);
     

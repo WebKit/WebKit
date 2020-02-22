@@ -804,6 +804,10 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_createdOtherPage = false;
     }
 
+#if PLATFORM(COCOA)
+    clearApplicationBundleIdentifierTestingOverride();
+#endif
+
     createWebViewWithOptions(options);
 
     if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
@@ -1086,10 +1090,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
 
     setHidden(false);
-
-#if PLATFORM(COCOA)
-    clearApplicationBundleIdentifierTestingOverride();
-#endif
 
     if (!platformResetStateToConsistentValues(options))
         return false;
@@ -3124,6 +3124,10 @@ void TestController::clearPrevalentDomains()
 {
 }
 
+void TestController::getWebViewCategory()
+{
+}
+
 #endif
 
 struct ClearServiceWorkerRegistrationsCallbackContext {
@@ -3711,6 +3715,49 @@ void TestController::setMockCameraOrientation(uint64_t orientation)
 bool TestController::isMockRealtimeMediaSourceCenterEnabled() const
 {
     return WKPageIsMockRealtimeMediaSourceCenterEnabled(m_mainWebView->page());
+}
+
+struct InAppBrowserPrivacyCallbackContext {
+    explicit InAppBrowserPrivacyCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+    bool done { false };
+    bool result { false };
+};
+
+static void inAppBrowserPrivacyBooleanResultCallback(bool result, void* userData)
+{
+    auto* context = static_cast<InAppBrowserPrivacyCallbackContext*>(userData);
+    context->result = result;
+    context->done = true;
+    context->testController.notifyDone();
+}
+
+static void inAppBrowserPrivacyVoidResultCallback(void* userData)
+{
+    auto* context = static_cast<InAppBrowserPrivacyCallbackContext*>(userData);
+    context->done = true;
+    context->testController.notifyDone();
+}
+
+bool TestController::hasAppBoundSession()
+{
+    InAppBrowserPrivacyCallbackContext context(*this);
+    WKWebsiteDataStoreHasAppBoundSession(TestController::websiteDataStore(), &context, inAppBrowserPrivacyBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
+
+void TestController::setInAppBrowserPrivacyEnabled(bool value)
+{
+    InAppBrowserPrivacyCallbackContext context(*this);
+    WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(TestController::websiteDataStore(), value, &context, inAppBrowserPrivacyVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetInAppBrowserPrivacyEnabled();
 }
 
 #if !PLATFORM(COCOA)

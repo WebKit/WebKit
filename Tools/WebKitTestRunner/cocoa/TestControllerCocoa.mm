@@ -356,6 +356,32 @@ void TestController::clearPrevalentDomains()
     [globalWebViewConfiguration.websiteDataStore _clearPrevalentDomainsFor:parentView->platformView()];
 }
 
+void TestController::getWebViewCategory()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+
+    [globalWebViewConfiguration.websiteDataStore _getWebViewCategoryFor:parentView->platformView() completionHandler:^(_WKWebViewCategory webViewCategory) {
+        String category;
+        switch (webViewCategory) {
+        case _WKWebViewCategoryAppBoundDomain:
+            category = "AppBoundDomain";
+            break;
+        case _WKWebViewCategoryHybridApp:
+            category = "HybridApp";
+            break;
+        case _WKWebViewCategoryInAppBrowser:
+            category = "InAppBrowser";
+            break;
+        case _WKWebViewCategoryWebBrowser:
+            category = "WebBrowser";
+            break;
+        }
+        m_currentInvocation->didReceiveWebViewCategory(category);
+    }];
+}
+
 void TestController::injectUserScript(WKStringRef script)
 {
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource: toWTFString(script) injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);

@@ -1062,6 +1062,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
     , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)
     , m_dataConnectionServiceType(parameters.dataConnectionServiceType)
+    , m_isInAppBrowserPrivacyEnabled(parameters.isInAppBrowserPrivacyEnabled)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
@@ -1189,7 +1190,7 @@ void NetworkSessionCocoa::initializeEphemeralStatelessSession()
     m_ephemeralStatelessSession.initialize(configuration, *this, WebCore::StoredCredentialsPolicy::EphemeralStateless);
 }
 
-SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = networkStorageSession()) {
@@ -1199,6 +1200,9 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::Resour
     } else
         ASSERT_NOT_REACHED();
 #endif
+
+    if (m_isInAppBrowserPrivacyEnabled && isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes)
+        return appBoundSession(storedCredentialsPolicy);
 
     switch (storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
@@ -1210,6 +1214,32 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::Resour
             initializeEphemeralStatelessSession();
         return m_ephemeralStatelessSession;
     }
+}
+
+SessionWrapper& NetworkSessionCocoa::appBoundSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    if (!m_appBoundSession) {
+        m_appBoundSession = makeUnique<IsolatedSession>();
+        m_appBoundSession->sessionWithCredentialStorage.initialize(m_sessionWithCredentialStorage.session.get().configuration, *this, WebCore::StoredCredentialsPolicy::Use);
+        m_appBoundSession->sessionWithoutCredentialStorage.initialize(m_sessionWithoutCredentialStorage.session.get().configuration, *this, WebCore::StoredCredentialsPolicy::DoNotUse);
+    }
+
+    auto& sessionWrapper = [&] (auto storedCredentialsPolicy) -> SessionWrapper& {
+        switch (storedCredentialsPolicy) {
+        case WebCore::StoredCredentialsPolicy::Use:
+            LOG(NetworkSession, "Using app-bound NSURLSession with credential storage.");
+            return m_appBoundSession->sessionWithCredentialStorage;
+        case WebCore::StoredCredentialsPolicy::DoNotUse:
+            LOG(NetworkSession, "Using app-bound NSURLSession without credential storage.");
+            return m_appBoundSession->sessionWithoutCredentialStorage;
+        case WebCore::StoredCredentialsPolicy::EphemeralStateless:
+            if (!m_ephemeralStatelessSession.session)
+                initializeEphemeralStatelessSession();
+            return m_ephemeralStatelessSession;
+        }
+    } (storedCredentialsPolicy);
+
+    return sessionWrapper;
 }
 
 SessionWrapper& NetworkSessionCocoa::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain)
@@ -1285,6 +1315,13 @@ void NetworkSessionCocoa::invalidateAndCancel()
         [session->sessionWithoutCredentialStorage.delegate sessionInvalidated];
     }
     m_isolatedSessions.clear();
+
+    if (m_appBoundSession) {
+        [m_appBoundSession->sessionWithCredentialStorage.session invalidateAndCancel];
+        [m_appBoundSession->sessionWithCredentialStorage.delegate sessionInvalidated];
+        [m_appBoundSession->sessionWithoutCredentialStorage.session invalidateAndCancel];
+        [m_appBoundSession->sessionWithoutCredentialStorage.delegate sessionInvalidated];
+    }
 }
 
 void NetworkSessionCocoa::clearCredentials()
@@ -1298,6 +1335,7 @@ void NetworkSessionCocoa::clearCredentials()
     m_statelessSession = [NSURLSession sessionWithConfiguration:m_statelessSession.get().configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
     for (auto& entry : m_isolatedSessions.values())
         entry.session = [NSURLSession sessionWithConfiguration:entry.session.get().configuration delegate:static_cast<id>(entry.delegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+    m_appBoundSession.session = [NSURLSession sessionWithConfiguration:m_appBoundSession.session.get().configuration delegate:static_cast<id>(m_appBoundSession.delegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 #endif
 }
 

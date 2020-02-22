@@ -1,3 +1,26 @@
+2020-02-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domains should have separate Network Sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208026
+        <rdar://problem/59434006>
+
+        Reviewed by Brent Fulgham.
+
+        Added two tests. One to test the proper categorization of app-bound
+        navigation, and one to check that switching sessions occurs when
+        navigating to an app-bound domain.
+
+        Since these tests use ITP to set user interaction, they should only
+        be run on iOS and mac-wk2.
+
+        * TestExpectations:
+        * http/tests/in-app-browser-privacy/app-bound-domain-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-domain.html: Added.
+        * http/tests/in-app-browser-privacy/switch-session-on-navigation-to-app-bound-domain-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/switch-session-on-navigation-to-app-bound-domain.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/tests/workers/service/Client-properties-auxiliary.html is flaky timing out.

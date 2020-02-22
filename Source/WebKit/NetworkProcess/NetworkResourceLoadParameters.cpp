@@ -119,6 +119,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << mainDocumentURL;
     encoder << userContentControllerIdentifier;
 #endif
+    
+    encoder << isNavigatingToAppBoundDomain;
 }
 
 Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
@@ -293,6 +295,12 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
         return WTF::nullopt;
     result.userContentControllerIdentifier = *userContentControllerIdentifier;
 #endif
+
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
+    decoder >> isNavigatingToAppBoundDomain;
+    if (!isNavigatingToAppBoundDomain)
+        return WTF::nullopt;
+    result.isNavigatingToAppBoundDomain = *isNavigatingToAppBoundDomain;
 
     return result;
 }

@@ -1,3 +1,147 @@
+2020-02-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domains should have separate Network Sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208026
+        <rdar://problem/59434006>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/in-app-browser-privacy/app-bound-domain.html
+               http/tests/in-app-browser-privacy/switch-session-on-navigation-to-app-bound-domain.html
+
+        Supports network session switching for navigations to app-bound
+        domains. This requires updating the WebPage when a navigation occurs
+        to check whether it is to an app-bound destination. In case of a
+        process swap, this has to be done both in PolicyDecisionSender and
+        in the ProvisionalPageProxy::loadData and ProvisionalPageProxy::loadRequest
+        functions.
+
+        This patch also must send the In-App Browser privacy flag to the
+        Network process.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        Passes the isNavigatingToAppBoundDomain flag to the NetworkSession.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::hasAppBoundSession const):
+        (WebKit::NetworkProcess::setInAppBrowserPrivacyEnabled):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::hasAppBoundSession const):
+        (WebKit::NetworkSession::setInAppBrowserPrivacyEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreHasAppBoundSession):
+        (WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getWebViewCategoryFor:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasAppBoundSession):
+        (WebKit::NetworkProcessProxy::setInAppBrowserPrivacyEnabled):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasAppBoundSession const):
+        (WebKit::WebsiteDataStore::setInAppBrowserPrivacyEnabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        A large portion of this patch is three functions for testing, one sets 
+        the in-app browser privacy flag for the test case, one checks for an app-bound session, and one
+        checks to make sure the category was correctly set to app-bound domain.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        Passes the In-app browser privacy flag value from NSUserDefaults to the network session.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::appBoundSession):
+        (WebKit::NetworkSessionCocoa::hasAppBoundSession const):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel):
+        (WebKit::NetworkSessionCocoa::clearCredentials):
+        Creates a new session (or returns the existing app-bound session) if
+        the navigation is app-bound. This is the main change in this patch.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        In the case of a process swap, we must add the
+        isNavigatingToAppBoundDomain boolean in LoadParameters to ensure it gets sent to
+        the new WebPage via the ProvisionalPageProxy.
+
+        (WebKit::WebPageProxy::PolicyDecisionSender::send):
+        Fixes a capitalization error.
+
+        (WebKit::WebPageProxy::isAppBoundDomain):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isNavigatingToAppBoundDomain):
+        These functions determine if the category is app-bound and update the
+        isNavigatingToAppBoundDomain boolean accordingly.
+
+        * Shared/PolicyDecision.h:
+        (WebKit::PolicyDecision::encode const):
+        (WebKit::PolicyDecision::decode):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        For a non-process swap case, we can send the
+        isNavigatingToAppBoundDomain value in the
+        PolicyDecision struct.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        Sends the isNavigatingToAppBoundDomain boolean to the NetworkProcess
+        with the NetworkResourceLoadParameters.
+
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isNavigatingToAppBoundDomain):
+        The boolean value for isNavigatingToAppBoundDomain is stored
+        in the webPage so WebLoaderStrategy can access it to send to the
+        NetworkProcess.
+
 2020-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         Remove telemetry from sandbox rules needed for basic WebKit logging

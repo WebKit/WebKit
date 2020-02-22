@@ -2603,4 +2603,23 @@ void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<
     completionHandler();
 }
 
+void NetworkProcess::hasAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    bool result = false;
+    if (auto* networkSession = this->networkSession(sessionID))
+        result = networkSession->hasAppBoundSession();
+    completionHandler(result);
+}
+
+void NetworkProcess::setInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool enable, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        networkSession->setInAppBrowserPrivacyEnabled(enable);
+        completionHandler();
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler();
+    }
+}
+
 } // namespace WebKit

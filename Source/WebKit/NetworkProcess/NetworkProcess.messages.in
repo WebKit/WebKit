@@ -168,4 +168,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
 
     ResetQuota(PAL::SessionID sessionID) -> () Async
+    
+    HasAppBoundSession(PAL::SessionID sessionID) -> (bool hasAppBoundSession) Async
+    SetInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool value) -> () Async
 }

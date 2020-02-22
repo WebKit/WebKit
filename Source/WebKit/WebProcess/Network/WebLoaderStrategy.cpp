@@ -326,14 +326,17 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
+    
+    auto* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : nullptr;
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
+    if (webPage)
+        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (document) {
         loadParameters.mainDocumentURL = document->topDocument().url();
         // FIXME: Instead of passing userContentControllerIdentifier, the NetworkProcess should be able to get it using webPageId.
-        auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frame()->loader().client());
-        auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-        auto* webPage = webFrame ? webFrame->page() : nullptr;
         if (webPage)
             loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
     }
@@ -601,6 +604,10 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
     loadParameters.originalRequestHeaders = originalRequestHeaders;
+    
+    if (webPage)
+        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
+
     addParametersFromFrame(webFrame->coreFrame(), loadParameters);
 
     data.shrink(0);
@@ -668,13 +675,16 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
     addParametersFromFrame(&frame, loadParameters);
-
+    
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
+    if (webPage)
+        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
+    
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();
     // FIXME: Instead of passing userContentControllerIdentifier, we should just pass webPageId to NetworkProcess.
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
     if (webPage)
         loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
 #endif

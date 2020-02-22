@@ -2255,4 +2255,28 @@ WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 }
 #endif
 
+void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& completionHandler) const
+{
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->hasAppBoundSession(m_sessionID, WTFMove(completionHandler));
+            ASSERT(processPools().size() == 1);
+            break;
+        }
+    }
+    ASSERT(!completionHandler);
+}
+
+void WebsiteDataStore::setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->setInAppBrowserPrivacyEnabled(m_sessionID, enabled, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+            break;
+        }
+    }
+}
+
 }
