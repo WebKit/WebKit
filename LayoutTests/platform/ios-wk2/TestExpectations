@@ -1423,3 +1423,5 @@ webkit.org/b/207943 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyF
 webkit.org/b/208030 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
 
 webkit.org/b/207038 compositing/webgl/webgl-reflection.html [ Pass Failure ]
+
+webkit.org/b/208081 http/tests/workers/service/Client-properties-auxiliary.html [ Pass Timeout ]

@@ -1,5 +1,14 @@
 2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ iOS wk2 ] http/tests/workers/service/Client-properties-auxiliary.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=208081
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac Debug ] legacy-animation-engine/animations/animation-welcome-safari.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=208077
 
