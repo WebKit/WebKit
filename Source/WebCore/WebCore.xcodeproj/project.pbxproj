@@ -10729,6 +10729,7 @@
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
 		9380F47209A11AB4001FDB34 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		9380F47709A11ACC001FDB34 /* WidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetMac.mm; sourceTree = "<group>"; };
+		9381B94123F9B0E0007118B4 /* RadioNodeList.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RadioNodeList.idl; sourceTree = "<group>"; };
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
 		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSHTMLElementWrapperFactory.h; path = DerivedSources/WebCore/JSHTMLElementWrapperFactory.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -22149,6 +22150,7 @@
 				F55B3D981251F12D003EF269 /* RadioInputType.h */,
 				B658FFA31522EFAA00DD5595 /* RadioNodeList.cpp */,
 				B658FFA41522EFAA00DD5595 /* RadioNodeList.h */,
+				9381B94123F9B0E0007118B4 /* RadioNodeList.idl */,
 				F55B3D991251F12D003EF269 /* RangeInputType.cpp */,
 				F55B3D9A1251F12D003EF269 /* RangeInputType.h */,
 				F55B3D9B1251F12D003EF269 /* ResetInputType.cpp */,

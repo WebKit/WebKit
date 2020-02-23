@@ -31,6 +31,6 @@
     readonly attribute unsigned long length;
 
     getter Element? (unsigned long index);
-    [ImplementedAs=namedItemOrItems] getter (HTMLCollection or Element)? namedItem(DOMString name);
-    [ImplementedAs=namedOrIndexedItemOrItems] legacycaller (HTMLCollection or Element)? item(optional DOMString nameOrIndex);
+    [ImplementedAs=namedItemOrItems] getter (HTMLCollection or Element)? namedItem([RequiresExistingAtomString] DOMString name);
+    [ImplementedAs=namedOrIndexedItemOrItems] legacycaller (HTMLCollection or Element)? item(optional [AtomString] DOMString nameOrIndex);
 };

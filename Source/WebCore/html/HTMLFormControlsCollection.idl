@@ -22,5 +22,5 @@
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLFormControlsCollection : HTMLCollection {
     getter HTMLElement? (unsigned long index);
-    [ImplementedAs=namedItemOrItems] getter (RadioNodeList or Element)? namedItem(DOMString name); // shadows inherited namedItem()
+    [ImplementedAs=namedItemOrItems] getter (RadioNodeList or Element)? namedItem([RequiresExistingAtomString] DOMString name); // shadows inherited namedItem()
 };

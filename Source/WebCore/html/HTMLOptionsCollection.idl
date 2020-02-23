@@ -32,5 +32,5 @@
 
     // FIXME: Can these just be inherited from HTMLCollection like in the spec?
     getter HTMLOptionElement? item(unsigned long index);
-    getter HTMLOptionElement? namedItem(DOMString name);
+    getter HTMLOptionElement? namedItem([RequiresExistingAtomString] DOMString name);
 };

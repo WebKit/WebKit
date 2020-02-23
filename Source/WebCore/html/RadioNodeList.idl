@@ -27,6 +27,4 @@
     JSGenerateToJSObject,
 ] interface RadioNodeList : NodeList {
     attribute DOMString value;
-
-    getter HTMLElement (unsigned long index);
 };

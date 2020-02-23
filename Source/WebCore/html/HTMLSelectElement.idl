@@ -36,7 +36,7 @@
     /* [SameObject] */ readonly attribute HTMLOptionsCollection options;
     [CEReactions] attribute unsigned long length;
     getter HTMLOptionElement? item(unsigned long index); // FIXME: The spec has this returning Element?.
-    HTMLOptionElement? namedItem(DOMString name);
+    HTMLOptionElement? namedItem([RequiresExistingAtomString] DOMString name);
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
     [CEReactions, MayThrowException] void remove(); // ChildNode overload
     [CEReactions] void remove(long index);
