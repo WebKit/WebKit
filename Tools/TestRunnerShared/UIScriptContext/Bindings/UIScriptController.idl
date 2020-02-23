@@ -298,7 +298,7 @@ interface UIScriptController {
     readonly attribute object selectionCaretViewRect;
     readonly attribute object selectionRangeViewRects;
     readonly attribute object calendarType;
-    void setDefaultCalendarType(DOMString calendarIdentifier);
+    void setDefaultCalendarType(DOMString calendarIdentifier, DOMString localeIdentifier);
     readonly attribute object inputViewBounds;
 
     void setKeyboardInputModeIdentifier(DOMString identifier);

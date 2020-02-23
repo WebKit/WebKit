@@ -1,3 +1,48 @@
+2020-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html is failing in iOS 13.4 beta
+        https://bugs.webkit.org/show_bug.cgi?id=208096
+        <rdar://problem/59632008>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In the iOS 13.4 beta, the fix for <rdar://problem/56422337> changed -[UIDatePicker setCalendar:], such that
+        if the new calendar locale matches that of the current calendar's locale (and several other properties of the
+        new NSCalendar are also unchanged), then the UIDatePicker's calendar will also avoid changing.
+
+        In our layout tests, the mechanism we use to simulate the user changing their preferred calendar is no longer
+        compatible with the above change since the swizzled NSCalendar instance does not have a locale set, so it will
+        default to the same locale as the one used in the original NSCalendar. This means the call to -setCalendar: ends
+        up being a no-op, so the test fails to override the simulated Japanese calendar type with a Gregorian calendar
+        in the credit card expiry field.
+
+        To fix this, additionally specify a calendar locale identifier when generating the mock NSCalendar.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setDefaultCalendarType):
+        * WebKitTestRunner/TestController.h:
+
+        Change m_overriddenCalendarIdentifier to m_overriddenCalendarAndLocaleIdentifiers, a pair of calendar
+        identifier and calendar locale identifier.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::swizzledCalendar):
+        (WTR::TestController::overriddenCalendarIdentifier const):
+        (WTR::TestController::overriddenCalendarLocaleIdentifier const):
+
+        Clean these up by returning the `NSString *` instead of making another `RetainPtr`.
+
+        (WTR::TestController::setDefaultCalendarType):
+
+        Plumb the new calendar's locale identifier through this method.
+
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::getOverriddenCalendarIdentifier const): Deleted.
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setDefaultCalendarType):
+
 2020-02-21  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domains should have separate Network Sessions

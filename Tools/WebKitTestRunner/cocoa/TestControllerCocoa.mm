@@ -213,17 +213,24 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
 
 static NSCalendar *swizzledCalendar()
 {
-    return [NSCalendar calendarWithIdentifier:TestController::singleton().getOverriddenCalendarIdentifier().get()];
-}
-    
-RetainPtr<NSString> TestController::getOverriddenCalendarIdentifier() const
-{
-    return m_overriddenCalendarIdentifier;
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:TestController::singleton().overriddenCalendarIdentifier()];
+    calendar.locale = [NSLocale localeWithLocaleIdentifier:TestController::singleton().overriddenCalendarLocaleIdentifier()];
+    return calendar;
 }
 
-void TestController::setDefaultCalendarType(NSString *identifier)
+NSString *TestController::overriddenCalendarIdentifier() const
 {
-    m_overriddenCalendarIdentifier = identifier;
+    return m_overriddenCalendarAndLocaleIdentifiers.first.get();
+}
+
+NSString *TestController::overriddenCalendarLocaleIdentifier() const
+{
+    return m_overriddenCalendarAndLocaleIdentifiers.second.get();
+}
+
+void TestController::setDefaultCalendarType(NSString *identifier, NSString *localeIdentifier)
+{
+    m_overriddenCalendarAndLocaleIdentifiers = { identifier, localeIdentifier };
     if (!m_calendarSwizzler)
         m_calendarSwizzler = makeUnique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
 }
@@ -260,7 +267,7 @@ void TestController::clearApplicationBundleIdentifierTestingOverride()
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
     m_calendarSwizzler = nullptr;
-    m_overriddenCalendarIdentifier = nil;
+    m_overriddenCalendarAndLocaleIdentifiers = { nil, nil };
     
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();

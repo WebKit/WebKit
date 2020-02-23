@@ -200,7 +200,7 @@ public:
     virtual void setTimePickerValue(long hour, long minute) { notImplemented(); }
     virtual bool isShowingDataListSuggestions() const { notImplemented(); return false; }
     virtual JSObjectRef calendarType() const { notImplemented(); return nullptr; }
-    virtual void setDefaultCalendarType(JSStringRef calendarIdentifier) { notImplemented(); }
+    virtual void setDefaultCalendarType(JSStringRef calendarIdentifier, JSStringRef localeIdentifier) { notImplemented(); }
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
     virtual void activateDataListSuggestion(unsigned, JSValueRef) { notImplemented(); }
 

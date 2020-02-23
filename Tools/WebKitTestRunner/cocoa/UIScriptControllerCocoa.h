@@ -44,7 +44,7 @@ public:
     void overridePreference(JSStringRef, JSStringRef) override;
     void findString(JSStringRef, unsigned long, unsigned long) override;
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const override;
-    void setDefaultCalendarType(JSStringRef) override;
+    void setDefaultCalendarType(JSStringRef calendarIdentifier, JSStringRef localeIdentifier) override;
     JSRetainPtr<JSStringRef> lastUndoLabel() const override;
     JSRetainPtr<JSStringRef> firstRedoLabel() const override;
     NSUndoManager *platformUndoManager() const override;

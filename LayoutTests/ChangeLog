@@ -1,3 +1,17 @@
+2020-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html is failing in iOS 13.4 beta
+        https://bugs.webkit.org/show_bug.cgi?id=208096
+        <rdar://problem/59632008>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adjust the layout test to also set the mock calendar's locale.
+
+        * fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.setDefaultCalendarType):
+
 2020-02-21  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domains should have separate Network Sessions

@@ -789,12 +789,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static setDefaultCalendarType(calendarIdentifier)
+    static setDefaultCalendarType(calendarIdentifier, localeIdentifier)
     {
         if (!this.isWebKit2())
             return Promise.resolve();
 
-        return new Promise(resolve => testRunner.runUIScript(`uiController.setDefaultCalendarType('${calendarIdentifier}')`, resolve));
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setDefaultCalendarType('${calendarIdentifier}', '${localeIdentifier}')`, resolve));
 
     }
 
