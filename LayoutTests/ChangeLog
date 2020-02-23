@@ -1,3 +1,15 @@
+2020-02-22  Darin Adler  <darin@apple.com>
+
+        Fix HTMLDataListElement.options to include even options that are not suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=208102
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/datalist/datalist-expected.txt: Updated expectations.
+        * fast/forms/datalist/datalist.html: Updated test since the options collection
+        includes all options that are descendants, even ones that are not sugggestions.
+        The web platform tests already had this right; we had a failing test there.
+
 2020-02-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, emit new baselines for WebGL tests

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
@@ -2104,6 +2104,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 }
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
 {
     if (!document().view())
@@ -2136,20 +2137,24 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
         parameters.anchorRectInRootView = IntRect();
     parameters.currentValue = value();
     parameters.isAnchorElementRTL = computedStyle()->direction() == TextDirection::RTL;
+
 #if ENABLE(DATALIST_ELEMENT)
     if (auto dataList = this->dataList()) {
-        Ref<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; RefPtr<HTMLOptionElement> option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
-            if (!isValidValue(option->value()))
+        for (auto& option : dataList->suggestions()) {
+            auto label = option.label();
+            auto value = option.value();
+            if (!isValidValue(value))
                 continue;
-            parameters.suggestionValues.append(sanitizeValue(option->value()));
-            parameters.localizedSuggestionValues.append(localizeValue(option->value()));
-            parameters.suggestionLabels.append(option->value() == option->label() ? String() : option->label());
+            parameters.suggestionValues.append(sanitizeValue(value));
+            parameters.localizedSuggestionValues.append(localizeValue(value));
+            parameters.suggestionLabels.append(value == label ? String() : label);
         }
     }
 #endif
+
     return true;
 }
+
 #endif
 
 void HTMLInputElement::capsLockStateMayHaveChanged()

@@ -3,8 +3,8 @@ Test for the datalist element.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS datalist.options.length is 4
-PASS datalist.options.length is 3
+PASS datalist.options.length is 5
+PASS datalist.options.length is 5
 PASS successfullyParsed is true
 
 TEST COMPLETE

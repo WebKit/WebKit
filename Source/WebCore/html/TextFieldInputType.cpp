@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -858,6 +858,8 @@ IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
 
 Vector<String> TextFieldInputType::suggestions()
 {
+    // FIXME: Suggestions are "typing completions" and so should probably use the findPlainText algorithm rather than the simplistic "ignoring ASCII case" rules.
+
     Vector<String> suggestions;
     Vector<String> matchesContainingValue;
 
@@ -867,12 +869,11 @@ Vector<String> TextFieldInputType::suggestions()
         return m_cachedSuggestions.second;
 
     if (auto dataList = element()->dataList()) {
-        Ref<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; auto* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
-            if (!element()->isValidValue(option->value()))
+        for (auto& option : dataList->suggestions()) {
+            String value = option.value();
+            if (!element()->isValidValue(value))
                 continue;
-
-            String value = sanitizeValue(option->value());
+            value = sanitizeValue(value);
             if (elementValue.isEmpty())
                 suggestions.append(value);
             else if (value.startsWithIgnoringASCIICase(elementValue))

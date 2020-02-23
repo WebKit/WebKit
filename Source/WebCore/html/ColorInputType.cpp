@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,7 +38,6 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
-#include "ElementChildIterator.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
@@ -287,13 +286,9 @@ Vector<Color> ColorInputType::suggestedColors() const
 #if ENABLE(DATALIST_ELEMENT)
     ASSERT(element());
     if (auto dataList = element()->dataList()) {
-        Ref<HTMLCollection> options = dataList->options();
-        unsigned length = options->length();
-        suggestions.reserveInitialCapacity(length);
-        for (unsigned i = 0; i != length; ++i) {
-            auto value = downcast<HTMLOptionElement>(*options->item(i)).value();
-            if (isValidSimpleColor(value))
-                suggestions.uncheckedAppend(Color(value));
+        for (auto& option : dataList->suggestions()) {
+            if (auto color = parseSimpleColorValue(option.value()))
+                suggestions.uncheckedAppend(*color);
         }
     }
 #endif

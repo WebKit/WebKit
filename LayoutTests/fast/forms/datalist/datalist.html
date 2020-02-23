@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -17,18 +17,20 @@
 </datalist>
 
 <script>
+
 description('Test for the datalist element.');
 
 var datalist = document.getElementById('dl1');
-// An option element with empty value is not included.
-shouldBe('datalist.options.length', '4');
 
+// An option element with empty value is not a suggestion, but still is included in the options collection.
+shouldBe('datalist.options.length', '5');
+
+// A disabled option element is no longer a suggestion, but still is included in the options collection.
 document.getElementById('o4').disabled = true;
-// A disabled option element is not included.
-shouldBe('datalist.options.length', '3');
-// After datalist is implemented, the expected text should not contain the
-// text in the datalist element.
+shouldBe('datalist.options.length', '5');
+
+// Also, the expected text should not contain the text in the datalist element.
+
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
