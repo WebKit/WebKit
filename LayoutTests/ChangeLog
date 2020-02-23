@@ -1,3 +1,12 @@
+2020-02-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Mark several async loading tests as failure
+        https://bugs.webkit.org/show_bug.cgi?id=208105
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Fix HTMLDataListElement.options to include even options that are not suggestions

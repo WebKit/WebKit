@@ -1325,6 +1325,15 @@ webkit.org/b/207625 compositing/backing/backing-store-attachment-animating-outsi
 webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 webkit.org/b/207625 legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
 
+# Failing since deferred async loading enabled until document is loaded enabled.
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-modifications.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
