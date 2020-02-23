@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 22: WebGL: INVALID_OPERATION: drawArrays: attempt to access out of bounds arrays
+PASS. You didn't crash.
+

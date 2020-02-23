@@ -1,3 +1,24 @@
+2020-02-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, emit new baselines for WebGL tests
+        https://bugs.webkit.org/show_bug.cgi?id=208103
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/draw-elements-out-of-bounds-uint-index-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/readPixels-float-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/webgl-drawarrays-crash-2-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/webgl-drawarrays-crash-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt: Added.
+        * platform/gtk/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt: Added.
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Put more of the datalist element implementation inside ENABLE(DATALIST_ELEMENT)
