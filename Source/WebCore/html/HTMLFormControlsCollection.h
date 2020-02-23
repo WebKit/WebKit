@@ -63,7 +63,7 @@ private:
 
 inline HTMLElement* HTMLFormControlsCollection::item(unsigned offset) const
 {
-    return downcast<HTMLElement>(CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::item(offset));
+    return downcast<HTMLElement>(CachedHTMLCollection::item(offset));
 }
 
 } // namespace WebCore

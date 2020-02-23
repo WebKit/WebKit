@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,78 +29,38 @@
 
 namespace WebCore {
 
+template<typename> class ElementChildRange;
+
+// Range for iterating through child elements.
+template <typename ElementType> ElementChildRange<ElementType> childrenOfType(ContainerNode&);
+template <typename ElementType> ElementChildRange<const ElementType> childrenOfType(const ContainerNode&);
+
 template <typename ElementType>
 class ElementChildIterator : public ElementIterator<ElementType> {
 public:
-    typedef ElementType value_type;
-    typedef ptrdiff_t difference_type;
-    typedef ElementType* pointer;
-    typedef ElementType& reference;
-    typedef std::forward_iterator_tag iterator_category;
-
-    ElementChildIterator(const ContainerNode& parent);
+    ElementChildIterator() = default;
     ElementChildIterator(const ContainerNode& parent, ElementType* current);
     ElementChildIterator& operator--();
     ElementChildIterator& operator++();
 };
 
 template <typename ElementType>
-class ElementChildConstIterator : public ElementConstIterator<ElementType> {
+class ElementChildRange {
 public:
-    typedef const ElementType value_type;
-    typedef ptrdiff_t difference_type;
-    typedef const ElementType* pointer;
-    typedef const ElementType& reference;
-    typedef std::forward_iterator_tag iterator_category;
+    ElementChildRange(const ContainerNode& parent);
 
-    ElementChildConstIterator(const ContainerNode& parent);
-    ElementChildConstIterator(const ContainerNode& parent, const ElementType* current);
-    ElementChildConstIterator& operator--();
-    ElementChildConstIterator& operator++();
-};
+    ElementChildIterator<ElementType> begin() const;
+    static constexpr std::nullptr_t end() { return nullptr; }
+    ElementChildIterator<ElementType> beginAt(ElementType&) const;
 
-template <typename ElementType>
-class ElementChildIteratorAdapter {
-public:
-    ElementChildIteratorAdapter(ContainerNode& parent);
-
-    ElementChildIterator<ElementType> begin();
-    ElementChildIterator<ElementType> end();
-    ElementChildIterator<ElementType> beginAt(ElementType&);
-
-    ElementType* first();
-    ElementType* last();
-
-private:
-    ContainerNode& m_parent;
-};
-
-template <typename ElementType>
-class ElementChildConstIteratorAdapter {
-public:
-    ElementChildConstIteratorAdapter(const ContainerNode& parent);
-
-    ElementChildConstIterator<ElementType> begin() const;
-    ElementChildConstIterator<ElementType> end() const;
-    ElementChildConstIterator<ElementType> beginAt(const ElementType&) const;
-
-    const ElementType* first() const;
-    const ElementType* last() const;
+    ElementType* first() const;
+    ElementType* last() const;
 
 private:
     const ContainerNode& m_parent;
 };
 
-template <typename ElementType> ElementChildIteratorAdapter<ElementType> childrenOfType(ContainerNode&);
-template <typename ElementType> ElementChildConstIteratorAdapter<ElementType> childrenOfType(const ContainerNode&);
-
 // ElementChildIterator
-
-template <typename ElementType>
-inline ElementChildIterator<ElementType>::ElementChildIterator(const ContainerNode& parent)
-    : ElementIterator<ElementType>(&parent)
-{
-}
 
 template <typename ElementType>
 inline ElementChildIterator<ElementType>::ElementChildIterator(const ContainerNode& parent, ElementType* current)
@@ -111,132 +71,62 @@ inline ElementChildIterator<ElementType>::ElementChildIterator(const ContainerNo
 template <typename ElementType>
 inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator--()
 {
-    return static_cast<ElementChildIterator<ElementType>&>(ElementIterator<ElementType>::traversePreviousSibling());
+    ElementIterator<ElementType>::traversePreviousSibling();
+    return *this;
 }
 
 template <typename ElementType>
 inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator++()
 {
-    return static_cast<ElementChildIterator<ElementType>&>(ElementIterator<ElementType>::traverseNextSibling());
+    ElementIterator<ElementType>::traverseNextSibling();
+    return *this;
 }
 
-// ElementChildConstIterator
+// ElementChildRange
 
 template <typename ElementType>
-inline ElementChildConstIterator<ElementType>::ElementChildConstIterator(const ContainerNode& parent)
-    : ElementConstIterator<ElementType>(&parent)
-{
-}
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType>::ElementChildConstIterator(const ContainerNode& parent, const ElementType* current)
-    : ElementConstIterator<ElementType>(&parent, current)
-{
-}
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType>& ElementChildConstIterator<ElementType>::operator--()
-{
-    return static_cast<ElementChildConstIterator<ElementType>&>(ElementConstIterator<ElementType>::traversePreviousSibling());
-}
-
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType>& ElementChildConstIterator<ElementType>::operator++()
-{
-    return static_cast<ElementChildConstIterator<ElementType>&>(ElementConstIterator<ElementType>::traverseNextSibling());
-}
-
-// ElementChildIteratorAdapter
-
-template <typename ElementType>
-inline ElementChildIteratorAdapter<ElementType>::ElementChildIteratorAdapter(ContainerNode& parent)
+inline ElementChildRange<ElementType>::ElementChildRange(const ContainerNode& parent)
     : m_parent(parent)
 {
 }
 
 template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::begin()
+inline ElementChildIterator<ElementType> ElementChildRange<ElementType>::begin() const
 {
     return ElementChildIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(m_parent));
 }
 
 template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::end()
-{
-    return ElementChildIterator<ElementType>(m_parent);
-}
-
-template <typename ElementType>
-inline ElementType* ElementChildIteratorAdapter<ElementType>::first()
+inline ElementType* ElementChildRange<ElementType>::first() const
 {
     return Traversal<ElementType>::firstChild(m_parent);
 }
 
 template <typename ElementType>
-inline ElementType* ElementChildIteratorAdapter<ElementType>::last()
+inline ElementType* ElementChildRange<ElementType>::last() const
 {
     return Traversal<ElementType>::lastChild(m_parent);
 }
 
 template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::beginAt(ElementType& child)
+inline ElementChildIterator<ElementType> ElementChildRange<ElementType>::beginAt(ElementType& child) const
 {
     ASSERT(child.parentNode() == &m_parent);
     return ElementChildIterator<ElementType>(m_parent, &child);
 }
 
-// ElementChildConstIteratorAdapter
-
-template <typename ElementType>
-inline ElementChildConstIteratorAdapter<ElementType>::ElementChildConstIteratorAdapter(const ContainerNode& parent)
-    : m_parent(parent)
-{
-}
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::begin() const
-{
-    return ElementChildConstIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(m_parent));
-}
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::end() const
-{
-    return ElementChildConstIterator<ElementType>(m_parent);
-}
-
-template <typename ElementType>
-inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::first() const
-{
-    return Traversal<ElementType>::firstChild(m_parent);
-}
-
-template <typename ElementType>
-inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() const
-{
-    return Traversal<ElementType>::lastChild(m_parent);
-}
-
-template <typename ElementType>
-inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::beginAt(const ElementType& child) const
-{
-    ASSERT(child.parentNode() == &m_parent);
-    return ElementChildConstIterator<ElementType>(m_parent, &child);
-}
-
 // Standalone functions
 
 template <typename ElementType>
-inline ElementChildIteratorAdapter<ElementType> childrenOfType(ContainerNode& parent)
+inline ElementChildRange<ElementType> childrenOfType(ContainerNode& parent)
 {
-    return ElementChildIteratorAdapter<ElementType>(parent);
+    return ElementChildRange<ElementType>(parent);
 }
 
 template <typename ElementType>
-inline ElementChildConstIteratorAdapter<ElementType> childrenOfType(const ContainerNode& parent)
+inline ElementChildRange<const ElementType> childrenOfType(const ContainerNode& parent)
 {
-    return ElementChildConstIteratorAdapter<ElementType>(parent);
+    return ElementChildRange<const ElementType>(parent);
 }
 
 } // namespace WebCore

@@ -390,7 +390,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ElementChildIterator.h
     dom/ElementContext.h
     dom/ElementData.h
-    dom/ElementDescendantIterator.h
     dom/ElementIdentifier.h
     dom/ElementIterator.h
     dom/ElementIteratorAssertions.h

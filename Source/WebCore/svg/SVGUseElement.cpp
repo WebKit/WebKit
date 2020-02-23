@@ -331,8 +331,7 @@ static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
     ASSERT(!subtree.isConnected());
 
     Vector<Element*> disallowedElements;
-    auto descendants = descendantsOfType<Element>(subtree);
-    for (auto it = descendants.begin(), end = descendants.end(); it != end; ) {
+    for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
         if (isDisallowedElement(*it)) {
             disallowedElements.append(&*it);
             it.traverseNextSkippingChildren();
@@ -452,9 +451,9 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
 void SVGUseElement::expandUseElementsInShadowTree() const
 {
     auto descendants = descendantsOfType<SVGUseElement>(*userAgentShadowRoot());
-    for (auto it = descendants.begin(), end = descendants.end(); it != end; ) {
+    for (auto it = descendants.begin(); it; ) {
         SVGUseElement& originalClone = *it;
-        it = end; // Efficiently quiets assertions due to the outstanding iterator.
+        it.dropAssertions();
 
         auto* target = originalClone.findTarget();
 
@@ -485,9 +484,9 @@ void SVGUseElement::expandUseElementsInShadowTree() const
 void SVGUseElement::expandSymbolElementsInShadowTree() const
 {
     auto descendants = descendantsOfType<SVGSymbolElement>(*userAgentShadowRoot());
-    for (auto it = descendants.begin(), end = descendants.end(); it != end; ) {
+    for (auto it = descendants.begin(); it; ) {
         SVGSymbolElement& originalClone = *it;
-        it = end; // Efficiently quiets assertions due to the outstanding iterator.
+        it.dropAssertions();
 
         // Spec: The referenced 'symbol' and its contents are deep-cloned into the generated tree,
         // with the exception that the 'symbol' is replaced by an 'svg'. This generated 'svg' will

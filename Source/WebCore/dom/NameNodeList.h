@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007-2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,24 +24,17 @@
 #pragma once
 
 #include "LiveNodeList.h"
-#include <wtf/Forward.h>
-#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-// NodeList which lists all Nodes in a Element with a given "name" attribute
 class NameNodeList final : public CachedLiveNodeList<NameNodeList> {
     WTF_MAKE_ISO_ALLOCATED(NameNodeList);
 public:
-    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomString& name)
-    {
-        return adoptRef(*new NameNodeList(rootNode, name));
-    }
-
+    static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomString& name);
     virtual ~NameNodeList();
 
-    bool elementMatches(Element&) const override;
-    bool isRootedAtDocument() const override { return false; }
+    bool elementMatches(Element&) const final;
+    bool isRootedAtDocument() const final { return false; }
 
 private:
     NameNodeList(ContainerNode& rootNode, const AtomString& name);

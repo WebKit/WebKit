@@ -175,8 +175,7 @@ void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* f
 {
     Vector<Element*, 20> parentStack;
     Element* previousElement = &root;
-    auto descendants = descendantsOfType<Element>(root);
-    for (auto it = descendants.begin(), end = descendants.end(); it != end;) {
+    for (auto it = descendantsOfType<Element>(root).begin(); it; ) {
         auto& descendant = *it;
         auto* parent = descendant.parentElement();
         if (parentStack.isEmpty() || parentStack.last() != parent) {
@@ -275,12 +274,10 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
             invalidateIfNeeded(*sibling, nullptr);
         break;
-    case MatchElement::AnySibling: {
-        auto parentChildren = childrenOfType<Element>(*element.parentNode());
-        for (auto& parentChild : parentChildren)
+    case MatchElement::AnySibling:
+        for (auto& parentChild : childrenOfType<Element>(*element.parentNode()))
             invalidateIfNeeded(parentChild, nullptr);
         break;
-    }
     case MatchElement::ParentSibling:
         for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
             auto siblingChildren = childrenOfType<Element>(*sibling);

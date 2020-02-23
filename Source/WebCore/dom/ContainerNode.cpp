@@ -923,7 +923,7 @@ Element* ContainerNode::lastElementChild() const
 unsigned ContainerNode::childElementCount() const
 {
     auto children = childrenOfType<Element>(*this);
-    return std::distance(children.begin(), children.end());
+    return std::distance(children.begin(), { });
 }
 
 ExceptionOr<void> ContainerNode::append(Vector<NodeOrString>&& vector)
