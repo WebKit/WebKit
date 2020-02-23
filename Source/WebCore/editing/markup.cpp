@@ -75,7 +75,6 @@
 #include "SocketProvider.h"
 #include "StyleProperties.h"
 #include "TextIterator.h"
-#include "TypedElementDescendantIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <wtf/StdLibExtras.h>

@@ -27,7 +27,6 @@
 #include "GenericCachedHTMLCollection.h"
 
 #include "HTMLAppletElement.h"
-#include "HTMLDataListElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"

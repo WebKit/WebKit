@@ -27,10 +27,11 @@
 
 #if ENABLE(DATALIST_ELEMENT)
 
-#include "IntRect.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class IntRect;
 
 class DataListSuggestionsClient {
 public:

@@ -38,7 +38,6 @@
 #include "CSSValueKeywords.h"
 #include "DOMRect.h"
 #include "Event.h"
-#include "HTMLCollection.h"
 #include "HTMLDivElement.h"
 #include "HTMLStyleElement.h"
 #include "Logging.h"

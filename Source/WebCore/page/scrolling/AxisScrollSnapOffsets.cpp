@@ -27,7 +27,6 @@
 #include "AxisScrollSnapOffsets.h"
 
 #include "ElementChildIterator.h"
-#include "HTMLCollection.h"
 #include "HTMLElement.h"
 #include "Length.h"
 #include "Logging.h"

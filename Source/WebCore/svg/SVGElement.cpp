@@ -27,20 +27,18 @@
 #include "SVGElement.h"
 
 #include "CSSPropertyParser.h"
-#include "DeprecatedCSSOMValue.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementChildIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "RenderObject.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
+#include "SVGForeignObjectElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"
 #include "SVGNames.h"
@@ -53,13 +51,10 @@
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
 #include "XMLNames.h"
-#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
-
 
 namespace WebCore {
 
@@ -208,7 +203,7 @@ bool SVGElement::isOutermostSVGSVGElement() const
     // If we're living in a shadow tree, we're a <svg> element that got created as replacement
     // for a <symbol> element or a cloned <svg> element in the referenced tree. In that case
     // we're always an inner <svg> element.
-    if (isInShadowTree() && parentOrShadowHostElement() && parentOrShadowHostElement()->isSVGElement())
+    if (isInShadowTree() && is<SVGElement>(parentOrShadowHostElement()))
         return false;
 
     // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
@@ -216,11 +211,11 @@ bool SVGElement::isOutermostSVGSVGElement() const
         return true;
 
     // We act like an outermost SVG element, if we're a direct child of a <foreignObject> element.
-    if (parentNode()->hasTagName(SVGNames::foreignObjectTag))
+    if (is<SVGForeignObjectElement>(*parentNode()))
         return true;
 
     // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
-    return !parentNode()->isSVGElement();
+    return !is<SVGElement>(*parentNode());
 }
 
 void SVGElement::reportAttributeParsingError(SVGParsingError error, const QualifiedName& name, const AtomString& value)
@@ -779,7 +774,7 @@ bool SVGElement::rendererIsNeeded(const RenderStyle& style)
     // Spec: SVG allows inclusion of elements from foreign namespaces anywhere
     // with the SVG content. In general, the SVG user agent will include the unknown
     // elements in the DOM but will otherwise ignore unknown elements.
-    if (!parentOrShadowHostElement() || parentOrShadowHostElement()->isSVGElement())
+    if (!parentOrShadowHostElement() || is<SVGElement>(*parentOrShadowHostElement()))
         return StyledElement::rendererIsNeeded(style);
 
     return false;
@@ -916,18 +911,10 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
         m_elementsWithRelativeLengths.remove(element);
     }
 
-    if (!element->isSVGGraphicsElement())
-        return;
-
-    // Find first styled parent node, and notify it that we've changed our relative length state.
-    auto node = makeRefPtr(parentNode());
-    while (node) {
-        if (!node->isSVGElement())
-            break;
-
-        // Register us in the parent element map.
-        downcast<SVGElement>(*node).updateRelativeLengthsInformation(hasRelativeLengths, this);
-        break;
+    if (is<SVGGraphicsElement>(*element)) {
+        auto parent = makeRefPtr(parentNode());
+        if (is<SVGElement>(parent))
+            downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, this);
     }
 }
 

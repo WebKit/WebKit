@@ -183,8 +183,7 @@ inline void Resolver::State::setParentStyle(std::unique_ptr<RenderStyle> parentS
 
 static inline bool isAtShadowBoundary(const Element& element)
 {
-    auto* parentNode = element.parentNode();
-    return parentNode && parentNode->isShadowRoot();
+    return is<ShadowRoot>(element.parentNode());
 }
 
 BuilderContext Resolver::builderContext(const State& state)
