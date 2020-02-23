@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class DataListSuggestionsClient;
@@ -38,19 +37,20 @@ namespace WebKit {
 
 class WebPage;
 
-class WebDataListSuggestionPicker : public WebCore::DataListSuggestionPicker {
+class WebDataListSuggestionPicker final : public WebCore::DataListSuggestionPicker {
 public:
-    WebDataListSuggestionPicker(WebPage*, WebCore::DataListSuggestionsClient*);
-    virtual ~WebDataListSuggestionPicker();
+    WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
 
-    void handleKeydownWithIdentifier(const String&) override;
     void didSelectOption(const String&);
     void didCloseSuggestions();
-    void close() override;
-    void displayWithActivationType(WebCore::DataListSuggestionActivationType) override;
+
 private:
-    WebCore::DataListSuggestionsClient* m_dataListSuggestionsClient;
-    WebPage* m_page;
+    void handleKeydownWithIdentifier(const String&) final;
+    void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
+    void close() final;
+
+    WebCore::DataListSuggestionsClient& m_client;
+    WebPage& m_page;
 };
 
 } // namespace WebKit

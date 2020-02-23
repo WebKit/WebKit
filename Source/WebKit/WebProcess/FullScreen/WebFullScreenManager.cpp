@@ -34,31 +34,25 @@
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include <WebCore/Color.h>
-#include <WebCore/Element.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
-#include <WebCore/Page.h>
-#include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
-#include <WebCore/RenderObject.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TypedElementDescendantIterator.h>
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
 #endif
 
 namespace WebKit {
-using namespace WebCore;
 
-static IntRect screenRectOfContents(Element* element)
+static IntRect screenRectOfContents(WebCore::Element* element)
 {
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
-        FloatQuad contentsBox = static_cast<FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
+        WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
         contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
         return element->renderer()->view().frameView().contentsToScreen(contentsBox.enclosingBoundingBox());
     }
@@ -91,12 +85,12 @@ void WebFullScreenManager::videoControlsManagerDidChange()
     LOG(Fullscreen, "WebFullScreenManager %p videoControlsManagerDidChange()", this);
 
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
-    if (!m_element || !is<HTMLVideoElement>(currentPlaybackControlsElement)) {
+    if (!m_element || !is<WebCore::HTMLVideoElement>(currentPlaybackControlsElement)) {
         setPIPStandbyElement(nullptr);
         return;
     }
 
-    setPIPStandbyElement(downcast<HTMLVideoElement>(currentPlaybackControlsElement));
+    setPIPStandbyElement(downcast<WebCore::HTMLVideoElement>(currentPlaybackControlsElement));
 #endif
 }
 

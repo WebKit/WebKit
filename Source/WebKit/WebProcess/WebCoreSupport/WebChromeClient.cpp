@@ -78,7 +78,6 @@
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Icon.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/Page.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
@@ -795,7 +794,7 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
 
 std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
-    return makeUnique<WebDataListSuggestionPicker>(&m_page, &client);
+    return makeUnique<WebDataListSuggestionPicker>(m_page, client);
 }
 
 #endif

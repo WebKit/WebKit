@@ -1,3 +1,34 @@
+2020-02-22  Darin Adler  <darin@apple.com>
+
+        Fix some include mistakes and make some coding style tweaks to WebKit and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=208099
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp: Removed some unneeded includes.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Removed some unneeded includes.
+        (WebKit::WebChromeClient::createDataListSuggestionPicker): Pass references.
+
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp:
+        (WebKit::WebDataListSuggestionPicker::WebDataListSuggestionPicker): Take references
+        instead of pointers, since they must both be non-null.
+        (WebKit::WebDataListSuggestionPicker::handleKeydownWithIdentifier): Updated
+        to use reference.
+        (WebKit::WebDataListSuggestionPicker::didSelectOption): Ditto.
+        (WebKit::WebDataListSuggestionPicker::didCloseSuggestions): Ditto.
+        (WebKit::WebDataListSuggestionPicker::close): Ditto.
+        (WebKit::WebDataListSuggestionPicker::displayWithActivationType): Ditto.
+
+        * WebProcess/WebCoreSupport/WebDataListSuggestionPicker.h: Marked the class
+        final, made more functions private, use references instead of pointers,
+        renamed m_dataListSuggestionsClient to m_client since there is only one
+        client we are dealing with in this class.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActiveDataListSuggestionPicker): Take reference.
+        * WebProcess/WebPage/WebPage.h: Updated for the above.
+
 2020-02-22  Jer Noble  <jer.noble@apple.com>
 
         Stop using QTKit for rendering WK1 video fullscreen controls

@@ -29,12 +29,13 @@
  */
 
 #import "config.h"
+#import "AccessibilityNotificationHandler.h"
+
+#import "AccessibilityCommonMac.h"
+#import "AccessibilityUIElement.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 #import "JSWrapper.h"
-#import "AccessibilityNotificationHandler.h"
-#import "AccessibilityUIElement.h"
-
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
@@ -44,19 +45,6 @@
 
 @interface NSObject (WebAccessibilityObjectWrapperAdditions)
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost;
-@end
-
-@interface NSString (JSStringRefAdditions)
-- (JSRetainPtr<JSStringRef>)createJSStringRef;
-@end
-
-@implementation NSString (JSStringRefAdditions)
-
-- (JSRetainPtr<JSStringRef>)createJSStringRef
-{
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
-}
-
 @end
 
 @implementation AccessibilityNotificationHandler

@@ -417,7 +417,7 @@ public:
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker*);
+    void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
     void didSelectDataListOption(const String&);
     void didCloseSuggestions();
 #endif

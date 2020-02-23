@@ -4104,9 +4104,9 @@ void WebPage::didChooseColor(const WebCore::Color& color)
 
 #if ENABLE(DATALIST_ELEMENT)
 
-void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker* dataListSuggestionPicker)
+void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker& dataListSuggestionPicker)
 {
-    m_activeDataListSuggestionPicker = makeWeakPtr(dataListSuggestionPicker);
+    m_activeDataListSuggestionPicker = makeWeakPtr(&dataListSuggestionPicker);
 }
 
 void WebPage::didSelectDataListOption(const String& selectedOption)

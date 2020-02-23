@@ -25,21 +25,9 @@
 
 #import "DOMHTMLFieldSetElement.h"
 
-#import "DOMHTMLCollectionInternal.h"
 #import "DOMHTMLFormElementInternal.h"
-#import "DOMInternal.h"
-#import "DOMNodeInternal.h"
-#import "ExceptionHandlers.h"
-#import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLFieldSetElement.h>
-#import <WebCore/HTMLFormElement.h>
-#import <WebCore/HTMLNames.h>
 #import <WebCore/JSExecState.h>
-#import <WebCore/ThreadCheck.h>
-#import <WebCore/ValidityState.h>
-#import <WebCore/WebScriptObjectPrivate.h>
-#import <wtf/GetPtr.h>
-#import <wtf/URL.h>
 
 #define IMPL static_cast<WebCore::HTMLFieldSetElement*>(reinterpret_cast<WebCore::Node*>(_internal))
 

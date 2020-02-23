@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,47 +35,45 @@
 #include <WebCore/DataListSuggestionsClient.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage* page, DataListSuggestionsClient* client)
-    : m_dataListSuggestionsClient(client)
+WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage& page, WebCore::DataListSuggestionsClient& client)
+    : m_client(client)
     , m_page(page)
 {
 }
 
-WebDataListSuggestionPicker::~WebDataListSuggestionPicker() { }
-
-void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const WTF::String& key)
+void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), m_page->identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), m_page.identifier());
 }
 
-void WebDataListSuggestionPicker::didSelectOption(const WTF::String& selectedOption)
+void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)
 {
-    m_dataListSuggestionsClient->didSelectDataListOption(selectedOption);
+    m_client.didSelectDataListOption(selectedOption);
 }
 
 void WebDataListSuggestionPicker::didCloseSuggestions()
 {
-    m_dataListSuggestionsClient->didCloseSuggestions();
+    m_client.didCloseSuggestions();
 }
 
 void WebDataListSuggestionPicker::close()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDataListSuggestions(), m_page->identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDataListSuggestions(), m_page.identifier());
 }
 
-void WebDataListSuggestionPicker::displayWithActivationType(DataListSuggestionActivationType type)
+void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSuggestionActivationType type)
 {
-    if (!m_dataListSuggestionsClient->suggestions().size()) {
+    auto suggestions = m_client.suggestions();
+    if (suggestions.isEmpty()) {
         close();
         return;
     }
 
-    m_page->setActiveDataListSuggestionPicker(this);
+    m_page.setActiveDataListSuggestionPicker(*this);
 
-    DataListSuggestionInformation info = { type, m_dataListSuggestionsClient->suggestions(), m_dataListSuggestionsClient->elementRectInRootViewCoordinates() };
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowDataListSuggestions(info), m_page->identifier());
+    WebCore::DataListSuggestionInformation info { type, WTFMove(suggestions), m_client.elementRectInRootViewCoordinates() };
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowDataListSuggestions(info), m_page.identifier());
 }
 
 } // namespace WebKit
