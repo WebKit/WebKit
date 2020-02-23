@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(AVKIT)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
@@ -41,10 +41,6 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS WebAVPlayerController;
-OBJC_CLASS AVPlayerViewController;
-OBJC_CLASS UIViewController;
-OBJC_CLASS UIWindow;
-OBJC_CLASS UIView;
 
 namespace WebCore {
 class IntRect;
@@ -92,5 +88,4 @@ protected:
 
 }
 
-#endif
-
+#endif // HAVE(AVKIT)

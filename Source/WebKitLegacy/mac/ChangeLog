@@ -1,3 +1,76 @@
+2020-02-22  Jer Noble  <jer.noble@apple.com>
+
+        Stop using QTKit for rendering WK1 video fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=207795
+        <rdar://problem/48894915>
+
+        Reviewed by Jon Lee.
+
+        Switch to using AVPlayerView instead of QTHUD to render our fullscreen controls.
+
+        In addition, switch to a modern NSWindow fullscreen API, with custom, smooth animations which 
+        move the fullscreen window to a separate space. This requires subclassing AVPlayerView so that
+        fullscreen toggling will signal to the controller, so that our fullscreen button and the inline
+        version of same don't get out of sync. Because AVPlayerView requires an AVPlayer in order to
+        display the video layer, and we won't necessarily have an AVPlayer for MSE-backed videos, instead
+        install a custom overlay view inside the AVPlayerView in which to host the fullscreen video layer.
+
+        * WebView/WebVideoFullscreenController.h:
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebOverlayLayer layoutSublayers]):
+        (WebAVPlayerView_delegate):
+        (WebAVPlayerView_setDelegate):
+        (WebAVPlayerView_isFullScreen):
+        (WebAVPlayerView_enterFullScreen):
+        (WebAVPlayerView_exitFullScreen):
+        (allocWebAVPlayerViewInstance):
+        (-[WebVideoFullscreenController init]):
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController fullscreenWindow]):
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController setVideoElement:]):
+        (-[WebVideoFullscreenController enterFullscreen:]):
+        (-[WebVideoFullscreenController exitFullscreen]):
+        (-[WebVideoFullscreenController applicationDidResignActive:]):
+        (-[WebVideoFullscreenController _requestExit]):
+        (-[WebVideoFullscreenController _requestEnter]):
+        (-[WebVideoFullscreenController cancelOperation:]):
+        (-[WebVideoFullscreenController playerViewIsFullScreen:]):
+        (-[WebVideoFullscreenController playerViewRequestEnterFullscreen:]):
+        (-[WebVideoFullscreenController playerViewRequestExitFullscreen:]):
+        (-[WebVideoFullscreenController customWindowsToEnterFullScreenForWindow:]):
+        (-[WebVideoFullscreenController window:startCustomAnimationToEnterFullScreenWithDuration:]):
+        (-[WebVideoFullscreenController customWindowsToExitFullScreenForWindow:]):
+        (-[WebVideoFullscreenController window:startCustomAnimationToExitFullScreenWithDuration:]):
+        (-[WebVideoFullscreenController windowDidEnterFullScreen:]):
+        (-[WebVideoFullscreenController windowWillExitFullScreen:]):
+        (-[WebVideoFullscreenController windowDidExitFullScreen:]):
+        (-[WebVideoFullscreenController clearFadeAnimation]): Deleted.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Deleted.
+        (-[WebVideoFullscreenController windowDidEnterFullscreen]): Deleted.
+        (frameExpandedToRatioOfFrame): Deleted.
+        (createBackgroundFullscreenWindow): Deleted.
+        (-[WebVideoFullscreenController setupFadeAnimationIfNeededAndFadeIn:]): Deleted.
+        (-[WebVideoFullscreenController applicationDidChangeScreenParameters:]): Deleted.
+        (-[WebVideoFullscreenController updateMenuAndDockForFullscreen]): Deleted.
+        (-[WebVideoFullscreenController requestExitFullscreenWithAnimation:]): Deleted.
+        (-[WebVideoFullscreenController requestExitFullscreen]): Deleted.
+        (-[WebVideoFullscreenController fadeHUDIn]): Deleted.
+        (-[WebVideoFullscreenController observeValueForKeyPath:ofObject:change:context:]): Deleted.
+        (-[WebVideoFullscreenController rateChanged:]): Deleted.
+        (-[WebVideoFullscreenWindow initWithContentRect:styleMask:backing:defer:]): Deleted.
+        (-[WebVideoFullscreenWindow dealloc]): Deleted.
+        (-[WebVideoFullscreenWindow resignFirstResponder]): Deleted.
+        (-[WebVideoFullscreenWindow canBecomeKeyWindow]): Deleted.
+        (-[WebVideoFullscreenWindow mouseDown:]): Deleted.
+        (-[WebVideoFullscreenWindow cancelOperation:]): Deleted.
+        (-[WebVideoFullscreenWindow animatedResizeDidEnd]): Deleted.
+        (-[WebVideoFullscreenWindow animateFromRect:toRect:withSubAnimation:controllerAction:]): Deleted.
+        (-[WebVideoFullscreenWindow animationDidEnd:]): Deleted.
+        (-[WebVideoFullscreenWindow mouseMoved:]): Deleted.
+        * WebView/WebVideoFullscreenHUDWindowController.h: Removed.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Removed.
+
 2020-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Large form controls are rendered at the wrong NSControlSize

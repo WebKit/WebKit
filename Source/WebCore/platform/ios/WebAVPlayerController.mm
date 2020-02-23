@@ -27,7 +27,7 @@
 #import "config.h"
 #import "WebAVPlayerController.h"
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#if HAVE(AVKIT)
 
 #import "Logging.h"
 #import "PlaybackSessionInterfaceAVKit.h"
@@ -397,6 +397,16 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     [self seekToEnd:sender];
 }
 
+- (BOOL)canSeekFrameBackward
+{
+    return YES;
+}
+
+- (BOOL)canSeekFrameForward
+{
+    return YES;
+}
+
 - (BOOL)hasMediaSelectionOptions
 {
     return [self hasAudioMediaSelectionOptions] || [self hasLegibleMediaSelectionOptions];
@@ -650,5 +660,5 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // HAVE(AVKIT)
 

@@ -4131,6 +4131,7 @@
 		CDAB6D2917C7DE6C00C60B34 /* MediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2717C7DE6C00C60B34 /* MediaControlsHost.h */; };
 		CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2C17C814EE00C60B34 /* JSMediaControlsHost.h */; };
 		CDAB6D3117C9259500C60B34 /* UserAgentScripts.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2F17C9259500C60B34 /* UserAgentScripts.h */; };
+		CDB6354923F6023A00C0F9DE /* WebAVPlayerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDB7045A1F7465A1003923DF /* CDMFairPlayStreaming.h in Headers */ = {isa = PBXBuildFile; fileRef = CDB704581F7465A1003923DF /* CDMFairPlayStreaming.h */; };
 		CDB7045B1F7465A1003923DF /* CDMFairPlayStreaming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB704591F7465A1003923DF /* CDMFairPlayStreaming.cpp */; };
 		CDBEAEAC19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDBEAEAA19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm */; };
@@ -32913,6 +32914,7 @@
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */,
 				574F55E1204F3B23002948C6 /* WebAuthenticationConstants.h in Headers */,
 				57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */,
+				CDB6354923F6023A00C0F9DE /* WebAVPlayerController.h in Headers */,
 				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
 				A5B81CB51FAA44620037D1E6 /* WebConsoleAgent.h in Headers */,
 				9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */,

@@ -27,28 +27,113 @@
 
 #if ENABLE(VIDEO) && PLATFORM(MAC)
 
-#import "WebVideoFullscreenHUDWindowController.h"
-#import "WebWindowAnimation.h"
 #import <AVFoundation/AVPlayer.h>
-#import <AVFoundation/AVPlayerLayer.h>
-#import <Carbon/Carbon.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionModelMediaElement.h>
+#import <WebCore/WebAVPlayerController.h>
+#import <WebCore/WebCoreFullScreenWindow.h>
+#import <objc/message.h>
 #import <objc/runtime.h>
-#import <pal/system/SleepDisabler.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/RetainPtr.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
+
+SOFTLINK_AVKIT_FRAMEWORK()
+SOFT_LINK_CLASS(AVKit, AVPlayerView)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-@interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate> {
-    SEL _controllerActionOnAnimationEnd;
-    WebWindowScaleAnimation *_fullscreenAnimation; // (retain)
-}
-- (void)animateFromRect:(NSRect)startRect toRect:(NSRect)endRect withSubAnimation:(NSAnimation *)subAnimation controllerAction:(SEL)controllerAction;
+@interface AVPlayerView (SecretStuff)
+@property (nonatomic, assign) BOOL showsAudioOnlyIndicatorView;
 @end
 
-@interface WebVideoFullscreenController () <WebVideoFullscreenHUDWindowControllerDelegate>
+@interface WebOverlayLayer : CALayer
+@end
+
+@implementation WebOverlayLayer
+- (void)layoutSublayers
+{
+    for (CALayer* layer in self.sublayers)
+        layer.frame = self.bounds;
+}
+@end
+
+@class WebAVPlayerView;
+
+@protocol WebAVPlayerViewDelegate
+- (BOOL)playerViewIsFullScreen:(WebAVPlayerView*)playerView;
+- (void)playerViewRequestEnterFullscreen:(WebAVPlayerView*)playerView;
+- (void)playerViewRequestExitFullscreen:(WebAVPlayerView*)playerView;
+@end
+
+@interface WebAVPlayerView : AVPlayerView
+@property (weak) id<WebAVPlayerViewDelegate> delegate;
+@end
+
+static id<WebAVPlayerViewDelegate> WebAVPlayerView_delegate(id aSelf, SEL)
+{
+    void* delegate = nil;
+    object_getInstanceVariable(aSelf, "_webDelegate", &delegate);
+    return static_cast<id<WebAVPlayerViewDelegate>>(delegate);
+}
+
+static void WebAVPlayerView_setDelegate(id aSelf, SEL, id<WebAVPlayerViewDelegate> delegate)
+{
+    object_setInstanceVariable(aSelf, "_webDelegate", delegate);
+}
+
+static BOOL WebAVPlayerView_isFullScreen(id aSelf, SEL)
+{
+    WebAVPlayerView *playerView = aSelf;
+    return [playerView.delegate playerViewIsFullScreen:playerView];
+}
+
+static void WebAVPlayerView_enterFullScreen(id aSelf, SEL, id sender)
+{
+    WebAVPlayerView *playerView = aSelf;
+    [playerView.delegate playerViewRequestEnterFullscreen:playerView];
+}
+
+static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
+{
+    WebAVPlayerView *playerView = aSelf;
+    [playerView.delegate playerViewRequestExitFullscreen:playerView];
+}
+
+static WebAVPlayerView *allocWebAVPlayerViewInstance()
+{
+    static Class theClass = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ASSERT(getAVPlayerViewClass());
+        Class aClass = objc_allocateClassPair(getAVPlayerViewClass(), "WebAVPlayerView", 0);
+        theClass = aClass;
+        class_addMethod(theClass, @selector(setDelegate:), (IMP)WebAVPlayerView_setDelegate, "v@:@");
+        class_addMethod(theClass, @selector(delegate), (IMP)WebAVPlayerView_delegate, "@@:");
+        class_addMethod(theClass, @selector(isFullScreen), (IMP)WebAVPlayerView_isFullScreen, "B@:");
+        class_addMethod(theClass, @selector(enterFullScreen:), (IMP)WebAVPlayerView_enterFullScreen, "v@:@");
+        class_addMethod(theClass, @selector(exitFullScreen:), (IMP)WebAVPlayerView_exitFullScreen, "v@:@");
+
+        class_addIvar(theClass, "_webDelegate", sizeof(id), log2(sizeof(id)), "@");
+        class_addIvar(theClass, "_webIsFullScreen", sizeof(BOOL), log2(sizeof(BOOL)), "B");
+
+        objc_registerClassPair(theClass);
+    });
+    return (WebAVPlayerView *)[theClass alloc];
+}
+
+@interface WebVideoFullscreenController () <WebAVPlayerViewDelegate, NSWindowDelegate> {
+    RefPtr<WebCore::PlaybackSessionModelMediaElement> _playbackModel;
+    RefPtr<WebCore::PlaybackSessionInterfaceAVKit> _playbackInterface;
+    RetainPtr<NSView> _contentOverlay;
+    BOOL _isFullScreen;
+}
+@property (readonly) WebCoreFullScreenWindow* fullscreenWindow;
+@property (readonly) WebAVPlayerView* playerView;
 @end
 
 @implementation WebVideoFullscreenController
@@ -56,41 +141,55 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
-    NSWindow *window = [[WebVideoFullscreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+    NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable) backing:NSBackingStoreBuffered defer:NO];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
+    window.delegate = self;
     self = [super initWithWindow:window];
     [window release];
     if (!self)
         return nil;
+    _playbackModel = WebCore::PlaybackSessionModelMediaElement::create();
+    _playbackInterface = WebCore::PlaybackSessionInterfaceAVKit::create(*_playbackModel);
+    _contentOverlay = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
+    _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
+    _contentOverlay.get().layer = [[[WebOverlayLayer alloc] init] autorelease];
+    [_contentOverlay setWantsLayer:YES];
+    [_contentOverlay setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [self windowDidLoad];
+
     return self;
-    
 }
 - (void)dealloc
 {
     ASSERT(!_backgroundFullscreenWindow);
     ASSERT(!_fadeAnimation);
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    _playerView.delegate = nil;
+    _playbackModel = nil;
     [super dealloc];
 }
 
-- (WebVideoFullscreenWindow *)fullscreenWindow
+- (WebCoreFullScreenWindow *)fullscreenWindow
 {
-    return (WebVideoFullscreenWindow *)[super window];
+    return (WebCoreFullScreenWindow *)[super window];
 }
 
 - (void)windowDidLoad
 {
     auto window = [self fullscreenWindow];
-    auto contentView = [window contentView];
 
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
 
-    [contentView setLayer:[CALayer layer]];
-    [contentView setWantsLayer:YES];
+    _playerView = [allocWebAVPlayerViewInstance() initWithFrame:window.contentLayoutRect];
+    _playerView.controlsStyle = AVPlayerViewControlsStyleNone;
+    _playerView.showsFullScreenToggleButton = YES;
+    _playerView.showsAudioOnlyIndicatorView = NO;
+    _playerView.delegate = self;
+    window.contentView = _playerView;
+    [_contentOverlay setFrame:_playerView.contentOverlayView.bounds];
+    [_playerView.contentOverlayView addSubview:_contentOverlay.get()];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 }
 
 - (NakedPtr<WebCore::HTMLVideoElement>)videoElement
@@ -107,75 +206,27 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     if (![self isWindowLoaded])
         return;
-    auto corePlayer = videoElement->player();
-    if (!corePlayer)
+
+    _playbackModel->setMediaElement(videoElement);
+    self.playerView.playerController = (AVPlayerController*)_playbackInterface->playerController();
+}
+
+- (void)enterFullscreen:(NSScreen *)screen
+{
+    if (!_videoElement)
         return;
-    auto player = corePlayer->objCAVFoundationAVPlayer();
-    if (!player)
-        return;
-
-    auto contentView = [[self fullscreenWindow] contentView];
-
-    auto layer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
-    [layer setPlayer:player];
-
-    [contentView setLayer:layer.get()];
-
-    // FIXME: The windowDidLoad method already called this, so it should
-    // not be necessary to do it again here.
-    [contentView setWantsLayer:YES];
-
-    // FIXME: This can be called multiple times, and won't necessarily be
-    // balanced by calls to windowDidExitFullscreen in some cases, so it
-    // would be better to change things so the observer is reliably added
-    // only once and guaranteed removed even in unusual edge cases.
-    [player addObserver:self forKeyPath:@"rate" options:0 context:nullptr];
+    [NSAnimationContext beginGrouping];
+    _videoElement->setVideoFullscreenLayer(_contentOverlay.get().layer, [self, protectedSelf = retainPtr(self)] {
+        [self.fullscreenWindow setFrame:self.videoElementRect display:YES];
+        [self.fullscreenWindow makeKeyAndOrderFront:self];
+        [self.fullscreenWindow enterFullScreenMode:self];
+        [NSAnimationContext endGrouping];
+    });
 }
 
-- (CGFloat)clearFadeAnimation
+- (void)exitFullscreen
 {
-    [_fadeAnimation stopAnimation];
-    CGFloat previousAlpha = [_fadeAnimation currentAlpha];
-    [_fadeAnimation setWindow:nil];
-    [_fadeAnimation release];
-    _fadeAnimation = nil;
-    return previousAlpha;
-}
-
-- (void)windowDidExitFullscreen
-{
-    CALayer *layer = [[[self window] contentView] layer];
-    if ([layer isKindOfClass:PAL::getAVPlayerLayerClass()])
-        [[(AVPlayerLayer *)layer player] removeObserver:self forKeyPath:@"rate"];
-
-    [self clearFadeAnimation];
-    [[self window] close];
-    [self setWindow:nil];
-    [self updateMenuAndDockForFullscreen];   
-    [_hudController setDelegate:nil];
-    [_hudController release];
-    _hudController = nil;
-    [_backgroundFullscreenWindow close];
-    [_backgroundFullscreenWindow release];
-    _backgroundFullscreenWindow = nil;
-    
-    [self autorelease]; // Associated -retain is in -exitFullscreen.
-    _isEndingFullscreen = NO;
-}
-
-- (void)windowDidEnterFullscreen
-{
-    [self clearFadeAnimation];
-
-    ASSERT(!_hudController);
-    _hudController = [[WebVideoFullscreenHUDWindowController alloc] init];
-    [_hudController setDelegate:self];
-
-    [self updateMenuAndDockForFullscreen];
-    [NSCursor setHiddenUntilMouseMoves:YES];
-    
-    // Give the HUD keyboard focus initially
-    [_hudController fadeWindowIn];
+    [self.fullscreenWindow exitFullScreenMode:self];
 }
 
 - (NSRect)videoElementRect
@@ -184,324 +235,107 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 }
 
 - (void)applicationDidResignActive:(NSNotification*)notification
-{   
+{
     UNUSED_PARAM(notification);
     NSWindow* fullscreenWindow = [self fullscreenWindow];
 
     // Replicate the QuickTime Player (X) behavior when losing active application status:
-    // Is the fullscreen screen the main screen? (Note: this covers the case where only a 
-    // single screen is available.)  Is the fullscreen screen on the current space? IFF so, 
-    // then exit fullscreen mode.    
+    // Is the fullscreen screen the main screen? (Note: this covers the case where only a
+    // single screen is available.)  Is the fullscreen screen on the current space? IFF so,
+    // then exit fullscreen mode.
     if (fullscreenWindow.screen == [NSScreen screens][0] && fullscreenWindow.onActiveSpace)
-        [self requestExitFullscreenWithAnimation:NO];
+        [self _requestExit];
 }
-
-
-// MARK: -
-// MARK: Exposed Interface
-
-static NSRect frameExpandedToRatioOfFrame(NSRect frameToExpand, NSRect frame)
-{
-    // Keep a constrained aspect ratio for the destination window
-    NSRect result = frameToExpand;
-    CGFloat newRatio = frame.size.width / frame.size.height;
-    CGFloat originalRatio = frameToExpand.size.width / frameToExpand.size.height;
-    if (newRatio > originalRatio) {
-        CGFloat newWidth = newRatio * frameToExpand.size.height;
-        CGFloat diff = newWidth - frameToExpand.size.width;
-        result.size.width = newWidth;
-        result.origin.x -= diff / 2;
-    } else {
-        CGFloat newHeight = frameToExpand.size.width / newRatio;
-        CGFloat diff = newHeight - frameToExpand.size.height;
-        result.size.height = newHeight;
-        result.origin.y -= diff / 2;
-    }
-    return result;
-}
-
-static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
-{
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-    [window setOpaque:YES];
-    [window setBackgroundColor:[NSColor blackColor]];
-    [window setLevel:level];
-    [window setReleasedWhenClosed:NO];
-    return window;
-}
-
-- (void)setupFadeAnimationIfNeededAndFadeIn:(BOOL)fadeIn
-{
-    CGFloat initialAlpha = fadeIn ? 0 : 1;
-    if (_fadeAnimation) {
-        // Make sure we support queuing animation if the previous one isn't over yet
-        initialAlpha = [self clearFadeAnimation];
-    }
-    if (!_forceDisableAnimation)
-        _fadeAnimation = [[WebWindowFadeAnimation alloc] initWithDuration:0.2 window:_backgroundFullscreenWindow initialAlpha:initialAlpha finalAlpha:fadeIn ? 1 : 0];
-}
-
-- (void)enterFullscreen:(NSScreen *)screen
-{
-    if (!screen)
-        screen = [NSScreen mainScreen];
-
-    NSRect endFrame = [screen frame];
-    NSRect frame = frameExpandedToRatioOfFrame([self videoElementRect], endFrame);
-
-    // Create a black window if needed
-    if (!_backgroundFullscreenWindow)
-        _backgroundFullscreenWindow = createBackgroundFullscreenWindow([screen frame], [[self window] level]-1);
-    else
-        [_backgroundFullscreenWindow setFrame:[screen frame] display:NO];
-
-    [self setupFadeAnimationIfNeededAndFadeIn:YES];
-    if (_forceDisableAnimation) {
-        // This will disable scale animation
-        frame = NSZeroRect;
-    }
-    [[self fullscreenWindow] animateFromRect:frame toRect:endFrame withSubAnimation:_fadeAnimation controllerAction:@selector(windowDidEnterFullscreen)];
-
-    [_backgroundFullscreenWindow orderWindow:NSWindowBelow relativeTo:[[self fullscreenWindow] windowNumber]];
-}
-
-- (void)exitFullscreen
-{
-    if (_isEndingFullscreen)
-        return;
-    _isEndingFullscreen = YES;
-    [_hudController closeWindow];
-
-    NSRect endFrame = [self videoElementRect];
-
-    [self setupFadeAnimationIfNeededAndFadeIn:NO];
-    if (_forceDisableAnimation) {
-        // This will disable scale animation
-        endFrame = NSZeroRect;
-    }
-    
-    // We have to retain ourselves because we want to be alive for the end of the animation.
-    // If our owner releases us we could crash if this is not the case.
-    // Balanced in windowDidExitFullscreen
-    [self retain];    
-
-    NSRect startFrame = [[self window] frame];
-    endFrame = frameExpandedToRatioOfFrame(endFrame, startFrame);
-
-    [[self fullscreenWindow] animateFromRect:startFrame toRect:endFrame withSubAnimation:_fadeAnimation controllerAction:@selector(windowDidExitFullscreen)];
-}
-
-- (void)applicationDidChangeScreenParameters:(NSNotification*)notification
-{
-    UNUSED_PARAM(notification);
-    // The user may have changed the main screen by moving the menu bar, or they may have changed
-    // the Dock's size or location, or they may have changed the fullscreen screen's dimensions.  
-    // Update our presentation parameters, and ensure that the full screen window occupies the 
-    // entire screen:
-    [self updateMenuAndDockForFullscreen];
-    [[self window] setFrame:[[[self window] screen] frame] display:YES];
-}
-
-- (void)updateMenuAndDockForFullscreen
-{
-    // NSApplicationPresentationOptions is available on > 10.6 only:
-    NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
-    NSScreen* fullscreenScreen = [[self window] screen];
-
-    if (!_isEndingFullscreen) {
-        // Auto-hide the menu bar if the fullscreenScreen contains the menu bar:
-        // NOTE: if the fullscreenScreen contains the menu bar but not the dock, we must still 
-        // auto-hide the dock, or an exception will be thrown.
-        if ([[NSScreen screens] objectAtIndex:0] == fullscreenScreen)
-            options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
-        // Check if the current screen contains the dock by comparing the screen's frame to its
-        // visibleFrame; if a dock is present, the visibleFrame will differ. If the current screen
-        // contains the dock, hide it.
-        else if (!NSEqualRects([fullscreenScreen frame], [fullscreenScreen visibleFrame]))
-            options |= NSApplicationPresentationAutoHideDock;
-    }
-
-    NSApp.presentationOptions = options;
-}
-
-// MARK: -
-// MARK: Window callback
 
 - (void)_requestExit
 {
+    [self.fullscreenWindow exitFullScreenMode:self];
+}
+
+- (void)_requestEnter
+{
     if (_videoElement)
-        _videoElement->exitFullscreen();
-    _forceDisableAnimation = NO;
-}
-
-- (void)requestExitFullscreenWithAnimation:(BOOL)animation
-{
-    if (_isEndingFullscreen)
-        return;
-
-    _forceDisableAnimation = !animation;
-    [self performSelector:@selector(_requestExit) withObject:nil afterDelay:0];
-
-}
-
-- (void)requestExitFullscreen
-{
-    [self requestExitFullscreenWithAnimation:YES];
-}
-
-- (void)fadeHUDIn
-{
-    [_hudController fadeWindowIn];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(change);
-    UNUSED_PARAM(context);
-
-    if ([keyPath isEqualTo:@"rate"])
-        [self rateChanged:nil];
-}
-
-- (void)rateChanged:(NSNotification *)unusedNotification
-{
-    UNUSED_PARAM(unusedNotification);
-    [_hudController updateRate];
-}
-
-@end
-
-@implementation WebVideoFullscreenWindow
-
-- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
-{
-    UNUSED_PARAM(aStyle);
-    self = [super initWithContentRect:contentRect styleMask:NSBorderlessWindowMask backing:bufferingType defer:flag];
-    if (!self)
-        return nil;
-    [self setOpaque:NO];
-    [self setBackgroundColor:[NSColor clearColor]];
-    [self setIgnoresMouseEvents:NO];
-    [self setAcceptsMouseMovedEvents:YES];
-    return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(!_fullscreenAnimation);
-    [super dealloc];
-}
-
-- (BOOL)resignFirstResponder
-{
-    return NO;
-}
-
-- (BOOL)canBecomeKeyWindow
-{
-    return NO;
-}
-
-- (void)mouseDown:(NSEvent *)event
-{
-    UNUSED_PARAM(event);
+        _videoElement->enterFullscreen();
 }
 
 - (void)cancelOperation:(id)sender
 {
-    UNUSED_PARAM(sender);
-    [[self windowController] requestExitFullscreen];
+    [self _requestExit];
 }
 
-- (void)animatedResizeDidEnd
+- (BOOL)playerViewIsFullScreen:(WebAVPlayerView*)playerView
 {
-    if (_controllerActionOnAnimationEnd)
-        [[self windowController] performSelector:_controllerActionOnAnimationEnd];
-    _controllerActionOnAnimationEnd = NULL;
+    return _isFullScreen;
 }
 
-//
-// This function will animate a change of frame rectangle
-// We support queuing animation, that means that we'll correctly
-// interrupt the running animation, and queue the next one.
-//
-- (void)animateFromRect:(NSRect)startRect toRect:(NSRect)endRect withSubAnimation:(NSAnimation *)subAnimation controllerAction:(SEL)controllerAction
+- (void)playerViewRequestEnterFullscreen:(AVPlayerView*)playerView
 {
-    _controllerActionOnAnimationEnd = controllerAction;
+    [self _requestEnter];
+}
 
-    BOOL wasAnimating = NO;
-    if (_fullscreenAnimation) {
-        wasAnimating = YES;
+- (void)playerViewRequestExitFullscreen:(AVPlayerView*)playerView
+{
+    [self _requestExit];
+}
 
-        // Interrupt any running animation.
-        [_fullscreenAnimation stopAnimation];
+- (nullable NSArray<NSWindow *> *)customWindowsToEnterFullScreenForWindow:(NSWindow *)window
+{
+    return @[self.fullscreenWindow];
+}
 
-        // Save the current rect to ensure a smooth transition.
-        startRect = [_fullscreenAnimation currentFrame];
-        [_fullscreenAnimation release];
-        _fullscreenAnimation = nil;
-    }
-    
-    if (NSIsEmptyRect(startRect) || NSIsEmptyRect(endRect)) {
-        // Fakely end the subanimation.
-        [subAnimation setCurrentProgress:1];
-        // And remove the weak link to the window.
-        [subAnimation stopAnimation];
+- (void)window:(NSWindow *)window startCustomAnimationToEnterFullScreenWithDuration:(NSTimeInterval)duration
+{
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        context.allowsImplicitAnimation = YES;
+        context.duration = duration;
+        [window setFrame:window.screen.frame display:YES];
+    } completionHandler:NULL];
+}
 
-        [self setFrame:endRect display:NO];
-        [self makeKeyAndOrderFront:self];
-        [self animatedResizeDidEnd];
+- (nullable NSArray<NSWindow *> *)customWindowsToExitFullScreenForWindow:(NSWindow *)window
+{
+    return @[self.fullscreenWindow];
+}
+
+- (void)window:(NSWindow *)window startCustomAnimationToExitFullScreenWithDuration:(NSTimeInterval)duration
+{
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        context.allowsImplicitAnimation = YES;
+        context.duration = duration;
+        [window setFrame:self.videoElementRect display:YES];
+    } completionHandler:NULL];
+}
+
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
+{
+    _playerView.controlsStyle = AVPlayerViewControlsStyleFloating;
+    [_playerView willChangeValueForKey:@"isFullScreen"];
+    _isFullScreen = YES;
+    [_playerView didChangeValueForKey:@"isFullScreen"];
+}
+
+- (void)windowWillExitFullScreen:(NSNotification *)notification
+{
+    _playerView.controlsStyle = AVPlayerViewControlsStyleNone;
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification
+{
+    [_playerView willChangeValueForKey:@"isFullScreen"];
+    _isFullScreen = NO;
+    [_playerView didChangeValueForKey:@"isFullScreen"];
+
+    if (!_videoElement) {
+        [self.fullscreenWindow close];
         return;
     }
 
-    if (!wasAnimating) {
-        // We'll downscale the window during the animation based on the higher resolution rect
-        BOOL higherResolutionIsEndRect = startRect.size.width < endRect.size.width && startRect.size.height < endRect.size.height;
-        [self setFrame:higherResolutionIsEndRect ? endRect : startRect display:NO];
-    }
-    
-    ASSERT(!_fullscreenAnimation);
-    _fullscreenAnimation = [[WebWindowScaleAnimation alloc] initWithHintedDuration:0.2 window:self initalFrame:startRect finalFrame:endRect];
-    [_fullscreenAnimation setSubAnimation:subAnimation];
-    [_fullscreenAnimation setDelegate:self];
-    
-    // Make sure the animation has scaled the window before showing it.
-    [_fullscreenAnimation setCurrentProgress:0];
-    [self makeKeyAndOrderFront:self];
-
-    [_fullscreenAnimation startAnimation];
-}
-
-- (void)animationDidEnd:(NSAnimation *)animation
-{
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(animationDidEnd:) withObject:animation waitUntilDone:NO];
-        return;
-    }
-    if (animation != _fullscreenAnimation)
-        return;
-
-    // The animation is not really over and was interrupted
-    // Don't send completion events.
-    if ([animation currentProgress] < 1.0)
-        return;
-
-    // Ensure that animation (and subanimation) don't keep
-    // the weak reference to the window ivar that may be destroyed from
-    // now on.
-    [_fullscreenAnimation setWindow:nil];
-
-    [_fullscreenAnimation autorelease];
-    _fullscreenAnimation = nil;
-
-    [self animatedResizeDidEnd];
-}
-
-- (void)mouseMoved:(NSEvent *)event
-{
-    UNUSED_PARAM(event);
-    [[self windowController] fadeHUDIn];
+    [NSAnimationContext beginGrouping];
+    _videoElement->setVideoFullscreenLayer(nil, [self, protectedSelf = retainPtr(self)] {
+        [self.fullscreenWindow close];
+        [NSAnimationContext endGrouping];
+    });
+    _videoElement->exitFullscreen();
 }
 
 @end

@@ -5793,7 +5793,7 @@ void HTMLMediaElement::mediaVolumeDidChange()
 
 void HTMLMediaElement::visibilityStateChanged()
 {
-    bool elementIsHidden = document().hidden() && m_videoFullscreenMode != VideoFullscreenModePictureInPicture;
+    bool elementIsHidden = document().hidden() && m_videoFullscreenMode == VideoFullscreenModeNone;
     if (elementIsHidden == m_elementIsHidden)
         return;
 

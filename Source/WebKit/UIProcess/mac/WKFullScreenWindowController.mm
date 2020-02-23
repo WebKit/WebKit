@@ -47,6 +47,7 @@
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NakedRef.h>
@@ -94,11 +95,6 @@ enum FullScreenState : NSInteger {
     WaitingToExitFullScreen,
     ExitingFullScreen,
 };
-
-@interface NSWindow (WebNSWindowFullScreenDetails)
-- (void)exitFullScreenMode:(id)sender;
-- (void)enterFullScreenMode:(id)sender;
-@end
 
 @interface WKFullScreenWindowController (Private) <NSAnimationDelegate>
 - (void)_replaceView:(NSView *)view with:(NSView *)otherView;

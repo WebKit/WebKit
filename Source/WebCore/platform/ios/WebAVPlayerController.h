@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#if HAVE(AVKIT)
 
 #import <pal/spi/cocoa/AVKitSPI.h>
 
@@ -36,7 +36,7 @@ class PlaybackSessionInterfaceAVKit;
 @property (retain) NSString *localizedDisplayName;
 @end
 
-@interface WebAVPlayerController : NSObject {
+WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
     BOOL _pictureInPictureInterrupted;
@@ -52,6 +52,9 @@ class PlaybackSessionInterfaceAVKit;
 @property (readonly) BOOL canSeekToBeginning;
 @property (readonly) BOOL canSeekToEnd;
 @property (readonly) BOOL isScrubbing;
+@property (readonly) BOOL canSeekFrameBackward;
+@property (readonly) BOOL canSeekFrameForward;
+@property (readonly) BOOL hasContentChapters;
 
 @property BOOL canPlay;
 @property (getter=isPlaying) BOOL playing;
@@ -100,4 +103,3 @@ class PlaybackSessionInterfaceAVKit;
 @end
 
 #endif
-
