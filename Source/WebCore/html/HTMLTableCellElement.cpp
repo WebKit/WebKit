@@ -131,9 +131,9 @@ void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomS
 
 const StyleProperties* HTMLTableCellElement::additionalPresentationAttributeStyle() const
 {
-    if (RefPtr<HTMLTableElement> table = findParentTable())
+    if (auto table = findParentTable())
         return table->additionalCellStyle();
-    return 0;
+    return nullptr;
 }
 
 bool HTMLTableCellElement::isURLAttribute(const Attribute& attribute) const

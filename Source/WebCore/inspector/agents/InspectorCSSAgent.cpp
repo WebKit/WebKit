@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -509,20 +509,18 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
         // Inherited styles.
         if (!includeInherited || *includeInherited) {
             auto entries = JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>::create();
-            Element* parentElement = element->parentElement();
-            while (parentElement) {
-                auto& parentStyleResolver = parentElement->styleResolver();
-                auto parentMatchedRules = parentStyleResolver.styleRulesForElement(parentElement, Style::Resolver::AllCSSRules);
+            for (auto& ancestor : ancestorsOfType<Element>(*element)) {
+                auto& parentStyleResolver = ancestor.styleResolver();
+                auto parentMatchedRules = parentStyleResolver.styleRulesForElement(&ancestor, Style::Resolver::AllCSSRules);
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
-                    .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, *parentElement, PseudoId::None))
+                    .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, ancestor, PseudoId::None))
                     .release();
-                if (is<StyledElement>(*parentElement) && downcast<StyledElement>(*parentElement).cssomStyle().length()) {
-                    auto& styleSheet = asInspectorStyleSheet(downcast<StyledElement>(*parentElement));
+                if (is<StyledElement>(ancestor) && downcast<StyledElement>(ancestor).cssomStyle().length()) {
+                    auto& styleSheet = asInspectorStyleSheet(downcast<StyledElement>(ancestor));
                     entry->setInlineStyle(styleSheet.buildObjectForStyle(styleSheet.styleForId(InspectorCSSId(styleSheet.id(), 0))));
                 }
 
                 entries->addItem(WTFMove(entry));
-                parentElement = parentElement->parentElement();
             }
 
             inheritedEntries = WTFMove(entries);

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2010, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-class HTMLDataListElement;
 class HTMLSelectElement;
 
 class HTMLOptionElement final : public HTMLElement {
@@ -49,9 +48,6 @@ public:
     WEBCORE_EXPORT bool selected();
     WEBCORE_EXPORT void setSelected(bool);
 
-#if ENABLE(DATALIST_ELEMENT)
-    WEBCORE_EXPORT HTMLDataListElement* ownerDataListElement() const;
-#endif
     WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
 
     WEBCORE_EXPORT String label() const;

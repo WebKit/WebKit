@@ -52,7 +52,7 @@ private:
 };
 
 inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
-    : CachedHTMLCollection<ClassCollection, CollectionTypeTraits<ByClass>::traversalType>(rootNode, type)
+    : CachedHTMLCollection(rootNode, type)
     , m_classNames(classNames, rootNode.document().inQuirksMode())
     , m_originalClassNames(classNames)
 {

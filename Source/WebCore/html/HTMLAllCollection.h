@@ -54,7 +54,7 @@ public:
 
 private:
     HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)
-        : CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants>(document, type)
+        : CachedHTMLCollection(document, type)
         , m_name(name)
     {
         ASSERT(type == DocumentAllNamedItems);

@@ -71,7 +71,7 @@ public:
 
         Type type = Type::Include;
         RefPtr<Element> matchingElement;
-        for (auto& element : elementLineage(startingElement.get())) {
+        for (auto& element : lineageOfType<Element>(*startingElement)) {
             if (auto typeOrNullopt = typeForElement(element)) {
                 type = *typeOrNullopt;
                 matchingElement = &element;
@@ -79,7 +79,7 @@ public:
             }
         }
 
-        for (auto& element : elementLineage(startingElement.get())) {
+        for (auto& element : lineageOfType<Element>(*startingElement)) {
             m_cache.set(element, type);
             if (&element == matchingElement)
                 break;

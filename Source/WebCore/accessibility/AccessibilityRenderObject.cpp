@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+* Copyright (C) 2008-2020 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -2375,21 +2375,19 @@ AXCoreObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaEl
     if (!area)
         return nullptr;
 
-    AccessibilityObject* parent = nullptr;
-    for (Element* mapParent = area->parentElement(); mapParent; mapParent = mapParent->parentElement()) {
-        if (is<HTMLMapElement>(*mapParent)) {
-            parent = accessibilityParentForImageMap(downcast<HTMLMapElement>(mapParent));
-            break;
-        }
-    }
+    auto* mapParent = ancestorsOfType<HTMLMapElement>(*area).first();
+    if (!mapParent)
+        return nullptr;
+
+    auto* parent = accessibilityParentForImageMap(mapParent);
     if (!parent)
         return nullptr;
-    
+
     for (const auto& child : parent->children()) {
         if (child->elementRect().contains(point))
             return child.get();
     }
-    
+
     return nullptr;
 }
 

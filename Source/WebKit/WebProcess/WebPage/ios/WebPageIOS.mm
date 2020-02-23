@@ -2514,11 +2514,12 @@ void WebPage::requestAutocorrectionContext()
     send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
 }
 
-static HTMLAnchorElement* containingLinkElement(Element* element)
+static HTMLAnchorElement* containingLinkAnchorElement(Element& element)
 {
-    for (auto& currentElement : elementLineage(element)) {
-        if (currentElement.isLink() && is<HTMLAnchorElement>(currentElement))
-            return downcast<HTMLAnchorElement>(&currentElement);
+    // FIXME: There is code in the drag controller that supports any link, even if it's not an HTMLAnchorElement. Why is this different?
+    for (auto& currentElement : lineageOfType<HTMLAnchorElement>(element)) {
+        if (currentElement.isLink())
+            return &currentElement;
     }
     return nullptr;
 }
@@ -2688,7 +2689,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 {
     Element* linkElement = nullptr;
     if (element.renderer() && element.renderer()->isRenderImage())
-        linkElement = containingLinkElement(&element);
+        linkElement = containingLinkAnchorElement(element);
     else if (element.isLink())
         linkElement = &element;
 
@@ -2957,7 +2958,7 @@ void WebPage::performActionOnElement(uint32_t action)
         if (is<RenderImage>(*element.renderer())) {
             URL url;
             String title;
-            if (auto* linkElement = containingLinkElement(&element)) {
+            if (auto* linkElement = containingLinkAnchorElement(element)) {
                 url = linkElement->href();
                 title = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
                 if (!title.length())

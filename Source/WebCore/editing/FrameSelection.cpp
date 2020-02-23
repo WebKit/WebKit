@@ -2353,20 +2353,16 @@ static HTMLFormElement* scanForForm(Element* start)
 {
     if (!start)
         return nullptr;
-
-    auto descendants = descendantsOfType<HTMLElement>(start->document());
-    for (auto it = descendants.from(*start), end = descendants.end(); it != end; ++it) {
-        HTMLElement& element = *it;
+    for (auto& element : descendantsOfType<HTMLElement>(start->document())) {
         if (is<HTMLFormElement>(element))
             return &downcast<HTMLFormElement>(element);
         if (is<HTMLFormControlElement>(element))
             return downcast<HTMLFormControlElement>(element).form();
         if (is<HTMLFrameElementBase>(element)) {
-            Document* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument();
-            if (!contentDocument)
-                continue;
-            if (HTMLFormElement* frameResult = scanForForm(contentDocument->documentElement()))
-                return frameResult;
+            if (auto* contentDocument = downcast<HTMLFrameElementBase>(element).contentDocument()) {
+                if (auto* frameResult = scanForForm(contentDocument->documentElement()))
+                    return frameResult;
+            }
         }
     }
     return nullptr;

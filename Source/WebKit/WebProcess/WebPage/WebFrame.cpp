@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Editor.h>
+#include <WebCore/ElementChildIterator.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/Frame.h>
@@ -71,7 +72,6 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/JSFile.h>
 #include <WebCore/JSRange.h>
-#include <WebCore/NodeTraversal.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -666,17 +666,8 @@ bool WebFrame::containsAnyFormElements() const
     if (!m_coreFrame)
         return false;
     
-    Document* document = m_coreFrame->document();
-    if (!document)
-        return false;
-
-    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(*node)) {
-        if (!is<Element>(*node))
-            continue;
-        if (is<HTMLFormElement>(*node))
-            return true;
-    }
-    return false;
+    auto* document = m_coreFrame->document();
+    return document && childrenOfType<HTMLFormElement>(*document).first();
 }
 
 bool WebFrame::containsAnyFormControls() const
@@ -684,14 +675,12 @@ bool WebFrame::containsAnyFormControls() const
     if (!m_coreFrame)
         return false;
     
-    Document* document = m_coreFrame->document();
+    auto* document = m_coreFrame->document();
     if (!document)
         return false;
 
-    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(*node)) {
-        if (!is<Element>(*node))
-            continue;
-        if (is<HTMLInputElement>(*node) || is<HTMLSelectElement>(*node) || is<HTMLTextAreaElement>(*node))
+    for (auto& child : childrenOfType<Element>(*document)) {
+        if (is<HTMLTextFormControlElement>(child) || is<HTMLSelectElement>(child))
             return true;
     }
     return false;

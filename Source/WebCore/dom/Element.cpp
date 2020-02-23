@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -60,7 +60,6 @@
 #include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLLabelElement.h"
@@ -3401,26 +3400,14 @@ unsigned Element::rareDataChildIndex() const
 
 AtomString Element::computeInheritedLanguage() const
 {
-    if (const ElementData* elementData = this->elementData()) {
-        if (const Attribute* attribute = elementData->findLanguageAttribute())
-            return attribute->value();
-    }
-
     // The language property is inherited, so we iterate over the parents to find the first language.
-    const Node* currentNode = this;
-    while ((currentNode = currentNode->parentNode())) {
-        if (is<Element>(*currentNode)) {
-            if (const ElementData* elementData = downcast<Element>(*currentNode).elementData()) {
-                if (const Attribute* attribute = elementData->findLanguageAttribute())
-                    return attribute->value();
-            }
-        } else if (is<Document>(*currentNode)) {
-            // checking the MIME content-language
-            return downcast<Document>(*currentNode).contentLanguage();
+    for (auto& element : lineageOfType<Element>(*this)) {
+        if (auto* elementData = element.elementData()) {
+            if (auto* attribute = elementData->findLanguageAttribute())
+                return attribute->value();
         }
     }
-
-    return nullAtom();
+    return document().contentLanguage();
 }
 
 Locale& Element::locale() const

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -764,34 +764,24 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
     return ancestor && ancestor->isTextField() ? downcast<HTMLTextFormControlElement>(ancestor.get()) : nullptr;
 }
 
-static const Element* parentHTMLElement(const Element* element)
-{
-    while (element) {
-        element = element->parentElement();
-        if (element && element->isHTMLElement())
-            return element;
-    }
-    return 0;
-}
-
 String HTMLTextFormControlElement::directionForFormData() const
 {
-    for (const Element* element = this; element; element = parentHTMLElement(element)) {
-        const AtomString& dirAttributeValue = element->attributeWithoutSynchronization(dirAttr);
-        if (dirAttributeValue.isNull())
-            continue;
-
-        if (equalLettersIgnoringASCIICase(dirAttributeValue, "rtl") || equalLettersIgnoringASCIICase(dirAttributeValue, "ltr"))
-            return dirAttributeValue;
-
-        if (equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
-            bool isAuto;
-            TextDirection textDirection = static_cast<const HTMLElement*>(element)->directionalityIfhasDirAutoAttribute(isAuto);
-            return textDirection == TextDirection::RTL ? "rtl" : "ltr";
+    auto direction = [this] {
+        for (auto& element : lineageOfType<HTMLElement>(*this)) {
+            auto& value = element.attributeWithoutSynchronization(dirAttr);
+            if (equalLettersIgnoringASCIICase(value, "rtl"))
+                return TextDirection::RTL;
+            if (equalLettersIgnoringASCIICase(value, "ltr"))
+                return TextDirection::LTR;
+            if (equalLettersIgnoringASCIICase(value, "auto")) {
+                bool isAuto;
+                return element.directionalityIfhasDirAutoAttribute(isAuto);
+            }
         }
-    }
+        return TextDirection::LTR;
+    }();
 
-    return "ltr";
+    return direction == TextDirection::LTR ? "ltr"_s : "rtl"_s;
 }
 
 ExceptionOr<void> HTMLTextFormControlElement::setMaxLength(int maxLength)

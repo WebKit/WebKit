@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -66,15 +66,10 @@ Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)
 
 static inline RenderWidget* findWidgetRenderer(const Node* node)
 {
-    if (!node->renderer()) {
-        do {
-            node = node->parentNode();
-        } while (node && !is<HTMLObjectElement>(*node));
-    }
-
+    if (!node->renderer())
+        node = ancestorsOfType<HTMLObjectElement>(*node).first();
     if (node && is<RenderWidget>(node->renderer()))
         return downcast<RenderWidget>(node->renderer());
-
     return nullptr;
 }
 

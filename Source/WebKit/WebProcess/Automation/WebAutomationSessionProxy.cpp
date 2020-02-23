@@ -559,12 +559,11 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     // §13. Element State.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-container.
     if (is<WebCore::HTMLOptionElement>(element)) {
-        auto& optionElement = downcast<WebCore::HTMLOptionElement>(element);
 #if ENABLE(DATALIST_ELEMENT)
-        if (auto* parentElement = optionElement.ownerDataListElement())
+        if (auto* parentElement = WebCore::ancestorsOfType<WebCore::HTMLDataListElement>(element).first())
             return parentElement;
 #endif
-        if (auto* parentElement = optionElement.ownerSelectElement())
+        if (auto* parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
             return parentElement;
 
         return nullptr;

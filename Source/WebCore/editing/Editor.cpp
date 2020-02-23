@@ -49,6 +49,7 @@
 #include "DocumentMarkerController.h"
 #include "Editing.h"
 #include "EditorClient.h"
+#include "ElementIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "File.h"
@@ -61,7 +62,7 @@
 #include "GraphicsContext.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
-#include "HTMLCollection.h"
+#include "HTMLBodyElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
@@ -3431,23 +3432,18 @@ void Editor::textDidChangeInTextArea(Element* e)
 
 void Editor::applyEditingStyleToBodyElement() const
 {
-    auto collection = document().getElementsByTagName(HTMLNames::bodyTag->localName());
-    unsigned length = collection->length();
-    for (unsigned i = 0; i < length; ++i)
-        applyEditingStyleToElement(collection->item(i));
-}
+    // FIXME: Not clear it's valuable to do this to all body elements rather than just doing it on the single one returned by Document::body.
+    Vector<Ref<HTMLBodyElement>> bodies;
+    for (auto& body : descendantsOfType<HTMLBodyElement>(document()))
+        bodies.append(body);
 
-void Editor::applyEditingStyleToElement(Element* element) const
-{
-    ASSERT(!element || is<StyledElement>(*element));
-    if (!is<StyledElement>(element))
-        return;
-
-    // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
-    auto& style = downcast<StyledElement>(*element).cssomStyle();
-    style.setPropertyInternal(CSSPropertyWordWrap, "break-word", false);
-    style.setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false);
-    style.setPropertyInternal(CSSPropertyLineBreak, "after-white-space", false);
+    for (auto& body : bodies) {
+        // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
+        auto& style = body->cssomStyle();
+        style.setPropertyInternal(CSSPropertyWordWrap, "break-word", false);
+        style.setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false);
+        style.setPropertyInternal(CSSPropertyLineBreak, "after-white-space", false);
+    }
 }
 
 bool Editor::findString(const String& target, FindOptions options)

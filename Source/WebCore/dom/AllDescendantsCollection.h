@@ -42,7 +42,7 @@ public:
 
 protected:
     AllDescendantsCollection(ContainerNode& rootNode, CollectionType type)
-        : CachedHTMLCollection<AllDescendantsCollection, CollectionTypeTraits<AllDescendants>::traversalType>(rootNode, type)
+        : CachedHTMLCollection(rootNode, type)
     { }
 };
 

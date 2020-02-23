@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -1114,7 +1114,7 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
     RefPtr<Node> node = inspectedNode;
     setSearchingForNode(ignored, false, nullptr, false);
 
-    if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
+    if (!node->isElementNode() && !node->isDocumentNode())
         node = node->parentNode();
     m_nodeToFocus = node;
 
@@ -1159,7 +1159,7 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
 void InspectorDOMAgent::highlightMousedOverNode()
 {
     Node* node = m_mousedOverNode.get();
-    while (node && node->nodeType() == Node::TEXT_NODE)
+    if (node && node->isTextNode())
         node = node->parentNode();
     if (node && m_inspectModeHighlightConfig)
         m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);

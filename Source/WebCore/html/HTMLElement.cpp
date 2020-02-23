@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
@@ -44,7 +44,6 @@
 #include "HTMLBDIElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
-#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFieldSetElement.h"
@@ -60,6 +59,7 @@
 #include "NodeTraversal.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
@@ -767,12 +767,14 @@ FormAssociatedElement* HTMLElement::asFormAssociatedElement()
     return nullptr;
 }
 
-static inline bool elementAffectsDirectionality(const Node& node)
+static bool elementAffectsDirectionality(const HTMLElement& element)
 {
-    if (!is<HTMLElement>(node))
-        return false;
-    const HTMLElement& element = downcast<HTMLElement>(node);
     return is<HTMLBDIElement>(element) || element.hasAttributeWithoutSynchronization(dirAttr);
+}
+
+static bool elementAffectsDirectionality(const Node& node)
+{
+    return is<HTMLElement>(node) && elementAffectsDirectionality(downcast<HTMLElement>(node));
 }
 
 static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)
@@ -885,10 +887,10 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
     setHasDirAutoFlagRecursively(child, false);
     if (!renderer() || renderer()->style().direction() == textDirection)
         return;
-    for (auto& elementToAdjust : elementLineage(this)) {
-        if (elementAffectsDirectionality(elementToAdjust)) {
-            elementToAdjust.invalidateStyleForSubtree();
-            return;
+    for (auto& element : lineageOfType<HTMLElement>(*this)) {
+        if (elementAffectsDirectionality(element)) {
+            element.invalidateStyleForSubtree();
+            break;
         }
     }
 }

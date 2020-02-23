@@ -6,6 +6,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include "config.h"
 #include "SVGRenderSupport.h"
 
+#include "ElementAncestorIterator.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -481,6 +483,7 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
 }
 
 #if ENABLE(CSS_COMPOSITING)
+
 bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
     return style.svgStyle().isolatesBlending() || style.hasFilter() || style.hasBlendMode() || style.opacity() < 1.0f;
@@ -491,20 +494,16 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
     ASSERT(renderer.element());
     ASSERT(renderer.element()->isSVGElement());
 
-    bool maskedAncestorShouldIsolateBlending = renderer.style().hasBlendMode();
-    for (auto* ancestor = renderer.element()->parentElement(); ancestor && ancestor->isSVGElement(); ancestor = ancestor->parentElement()) {
-        if (!downcast<SVGElement>(*ancestor).isSVGGraphicsElement())
-            continue;
-
-        const auto* style = ancestor->computedStyle();
+    for (auto& ancestor : ancestorsOfType<SVGGraphicsElement>(*renderer.element())) {
+        auto* style = ancestor.computedStyle();
         if (!style || !isolatesBlending(*style))
             continue;
-
-        if (ancestor->computedStyle()->svgStyle().hasMasker())
-            downcast<SVGGraphicsElement>(*ancestor).setShouldIsolateBlending(maskedAncestorShouldIsolateBlending);
-
+        if (style->svgStyle().hasMasker())
+            ancestor.setShouldIsolateBlending(renderer.style().hasBlendMode());
         return;
     }
 }
+
 #endif
+
 }

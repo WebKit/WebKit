@@ -645,15 +645,6 @@ AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 
 #endif
 
-HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node* node)
-{
-    for (; node; node = node->parentNode()) {
-        if (is<HTMLFormControlElement>(*node))
-            return downcast<HTMLFormControlElement>(node);
-    }
-    return nullptr;
-}
-
 String HTMLFormControlElement::autocomplete() const
 {
     return autofillData().idlExposedValue;

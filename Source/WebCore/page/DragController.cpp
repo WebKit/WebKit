@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1260,6 +1260,15 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     client().beginDrag(WTFMove(dragItem), frame, mouseDownPointInRootViewCoordinates, mouseDraggedPointInRootViewCoordinates, dataTransfer, dragSourceAction);
 }
 
+static RefPtr<Element> containingLinkElement(Element& element)
+{
+    for (auto& currentElement : lineageOfType<Element>(element)) {
+        if (currentElement.isLink())
+            return &currentElement;
+    }
+    return nullptr;
+}
+
 void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedAttachmentInfo&& promisedAttachmentInfo)
 {
     m_didInitiateDrag = true;
@@ -1296,18 +1305,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
             item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
         }
 
-        RefPtr<Element> link;
-        if (element->isLink())
-            link = element;
-        else {
-            for (auto& currentElement : elementLineage(element.get())) {
-                if (currentElement.isLink()) {
-                    link = &currentElement;
-                    break;
-                }
-            }
-        }
-        if (link) {
+        if (auto link = containingLinkElement(*element)) {
             auto titleAttribute = link->attributeWithoutSynchronization(HTMLNames::titleAttr);
             item.title = titleAttribute.isEmpty() ? link->innerText() : titleAttribute.string();
             item.url = frame.document()->completeURL(stripLeadingAndTrailingHTMLSpaces(link->getAttribute(HTMLNames::hrefAttr)));

@@ -435,7 +435,6 @@ public:
     void computeAndSetTypingStyle(EditingStyle& , EditAction = EditAction::Unspecified);
     WEBCORE_EXPORT void computeAndSetTypingStyle(StyleProperties& , EditAction = EditAction::Unspecified);
     WEBCORE_EXPORT void applyEditingStyleToBodyElement() const;
-    void applyEditingStyleToElement(Element*) const;
 
     WEBCORE_EXPORT IntRect firstRectForRange(Range*) const;
 

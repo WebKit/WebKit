@@ -473,7 +473,7 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return NoBorders;
 }
 
-Ref<StyleProperties> HTMLTableElement::createSharedCellStyle()
+Ref<StyleProperties> HTMLTableElement::createSharedCellStyle() const
 {
     auto style = MutableStyleProperties::create();
 
@@ -514,7 +514,7 @@ Ref<StyleProperties> HTMLTableElement::createSharedCellStyle()
     return style;
 }
 
-const StyleProperties* HTMLTableElement::additionalCellStyle()
+const StyleProperties* HTMLTableElement::additionalCellStyle() const
 {
     if (!m_sharedCellStyle)
         m_sharedCellStyle = createSharedCellStyle();
@@ -538,11 +538,10 @@ static StyleProperties* leakGroupBorderStyle(int rows)
     return &style.leakRef();
 }
 
-const StyleProperties* HTMLTableElement::additionalGroupStyle(bool rows)
+const StyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) const
 {
     if (m_rulesAttr != GroupsRules)
-        return 0;
-
+        return nullptr;
     if (rows) {
         static StyleProperties* rowBorderStyle = leakGroupBorderStyle(true);
         return rowBorderStyle;

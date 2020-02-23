@@ -40,7 +40,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlsCollection);
 
 HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
-    : CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>(ownerNode, FormControls)
+    : CachedHTMLCollection(ownerNode, FormControls)
     , m_cachedElement(nullptr)
     , m_cachedElementOffsetInArray(0)
 {
@@ -111,7 +111,7 @@ HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) co
 
 HTMLFormElement& HTMLFormControlsCollection::ownerNode() const
 {
-    return downcast<HTMLFormElement>(CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::ownerNode());
+    return downcast<HTMLFormElement>(CachedHTMLCollection::ownerNode());
 }
 
 void HTMLFormControlsCollection::updateNamedElementCache() const
@@ -158,7 +158,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
 void HTMLFormControlsCollection::invalidateCacheForDocument(Document& document)
 {
-    CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::invalidateCacheForDocument(document);
+    CachedHTMLCollection::invalidateCacheForDocument(document);
     m_cachedElement = nullptr;
     m_cachedElementOffsetInArray = 0;
 }

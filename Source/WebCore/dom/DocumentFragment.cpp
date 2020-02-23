@@ -24,7 +24,7 @@
 #include "DocumentFragment.h"
 
 #include "Document.h"
-#include "ElementDescendantIterator.h"
+#include "ElementIterator.h"
 #include "HTMLDocumentParser.h"
 #include "Page.h"
 #include "XMLDocumentParser.h"
@@ -103,7 +103,7 @@ Element* DocumentFragment::getElementById(const AtomString& id) const
         return treeScope().getElementById(id);
 
     // Otherwise, fall back to iterating all of the element descendants.
-    for (auto& element : elementDescendants(*this)) {
+    for (auto& element : descendantsOfType<Element>(*this)) {
         if (element.getIdAttribute() == id)
             return const_cast<Element*>(&element);
     }

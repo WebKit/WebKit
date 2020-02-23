@@ -92,7 +92,7 @@ const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle
 {
     if (!hasTagName(colgroupTag))
         return nullptr;
-    if (RefPtr<HTMLTableElement> table = findParentTable())
+    if (auto table = findParentTable())
         return table->additionalGroupStyle(false);
     return nullptr;
 }
