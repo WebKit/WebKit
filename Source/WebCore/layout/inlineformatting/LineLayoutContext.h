@@ -69,7 +69,7 @@ private:
         CommittedContentCount committedCount { };
         Optional <LineContent::PartialContent> partialContent { };
     };
-    Result tryAddingFloatItem(LineBuilder&, const InlineItem& floatItem);
+    Result tryAddingFloatContent(LineBuilder&, const LineCandidate&);
     Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
     size_t rebuildLine(LineBuilder&, const InlineItemRange& layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
