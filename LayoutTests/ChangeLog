@@ -1,3 +1,60 @@
+2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r257089. rdar://problem/59676917
+
+    NetworkCache should use 4KB threshold for mmap-ed files instead of 16KB
+    https://bugs.webkit.org/show_bug.cgi?id=207882
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    We found that a lot of Vectors in Membuster is holding resource content. This is because we have 16KB threshold for mmap-ed files.
+    If a file is smaller than 16KB, it is copied to Vector instead. But this is costly in terms of memory. If we use mmap-ed files,
+    it becomes named-pages instead of anonymous-pages. File-backed non-dirty named-pages have a lot of benefit.
+    
+    1. The application is offering a hint that pages are file-backed. This means that OS can purge them at any time since the content can be recovered
+       from the disk. This is cheaper than swapping / compressing anonymous pages since just discarding works.
+    2. The application is offering a hint that pages have spatial locality. Purging pages in one named-pages region is better compared to purging
+       the same # of anonymous pages randomly. Anonymous pages are split by malloc implementation and access pattern of pages in one VA is random. On
+       the other hand, named-pages are accessed together because it is file, and file typically has sequential locality. And recovery of named pages are
+       also cheap compared to anonymous pages since OS can prefetch pages once access happens because of sequential locality of files. This tendency makes
+       OS like purging named pages instead of anonymous pages. In WebKit use case, this works perfectly. CachedResource typically has decoded content. So
+       typically WebProcess does not access SharedBuffer after the content is decoded.
+    
+    This patch reduces the threshold from 16KB to page size (4KB in macOS, 16KB in iOS). This is pre-2015 behavior.
+    This offers 2.56% progression with 98% probability in Membuster.
+    
+    * NetworkProcess/cache/NetworkCacheStorage.cpp:
+    (WebKit::NetworkCache::maximumInlineBodySize):
+    (WebKit::NetworkCache::estimateRecordsSize):
+    (WebKit::NetworkCache::Storage::shouldStoreBodyAsBlob):
+    
+    LayoutTests:
+    
+    The test is assuming that 12KB file is served via non-mmap-file.
+    This assumption is flaky and broken by this change. For now, we pick smaller
+    file to meet this assumption.
+    
+    * http/tests/inspector/network/resource-sizes-disk-cache-expected.txt:
+    * http/tests/inspector/network/resource-sizes-disk-cache.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257089 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            NetworkCache should use 4KB threshold for mmap-ed files instead of 16KB
+            https://bugs.webkit.org/show_bug.cgi?id=207882
+
+            Reviewed by Alex Christensen.
+
+            The test is assuming that 12KB file is served via non-mmap-file.
+            This assumption is flaky and broken by this change. For now, we pick smaller
+            file to meet this assumption.
+
+            * http/tests/inspector/network/resource-sizes-disk-cache-expected.txt:
+            * http/tests/inspector/network/resource-sizes-disk-cache.html:
+
 2020-02-20  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/59576775

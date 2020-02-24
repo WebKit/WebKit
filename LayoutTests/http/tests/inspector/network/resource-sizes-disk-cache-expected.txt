@@ -8,7 +8,7 @@ Test for Resource size values (transfer size, decoded size, header size, request
 PASS: statusCode should be 200.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(disk-cache).
-size: 12940
+size: 529
 requestBodyTransferSize: 0
 responseBodyTransferSize: 0
 estimatedNetworkEncodedSize: 0
