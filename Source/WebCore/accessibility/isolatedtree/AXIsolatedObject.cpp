@@ -481,12 +481,12 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
     AXID cellID = Accessibility::retrieveValueFromMainThread<AXID>([&columnIndex, &rowIndex, this] () -> AXID {
         if (auto* object = associatedAXObject()) {
             if (auto cell = object->cellForColumnAndRow(columnIndex, rowIndex))
-                return cell->ojbectID();
+                return cell->objectID();
         }
         return InvalidAXID;
     });
 
-    return tree()->nodeForID(cellID);
+    return tree()->nodeForID(cellID).get();
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
