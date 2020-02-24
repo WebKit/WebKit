@@ -590,6 +590,15 @@ WebRTCVP8CodecEnabled:
   humanReadableDescription: "Enable WebRTC VP8 codec"
   category: internal
 
+WebRTCPlatformCodecsInGPUProcessEnabled:
+  type: bool
+  defaultValue: DEFAULT_WEBRTC_CODECS_IN_GPUPROCESS
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC Platform Codecs in GPU Process"
+  humanReadableDescription: "Enable WebRTC Platform Codecs in GPU Process"
+  category: experimental
+
 WebRTCDTMFEnabled:
   type: bool
   defaultValue: true

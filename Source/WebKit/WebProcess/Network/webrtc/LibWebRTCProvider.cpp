@@ -34,6 +34,7 @@
 
 #include "LibWebRTCNetwork.h"
 #include "WebProcess.h"
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/pc/peer_connection_factory.h>
 
@@ -141,7 +142,7 @@ std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFac
 #if ENABLE(GPU_PROCESS)
     // We only support efficient sending of video frames with IOSURFACE
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
-    LibWebRTCCodecs::setCallbacks(m_useGPUProcess);
+    LibWebRTCCodecs::setCallbacks(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled());
 #endif
 #endif
     return LibWebRTCProviderCocoa::createDecoderFactory();

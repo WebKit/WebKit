@@ -547,7 +547,6 @@ void Internals::resetToConsistentState(Page& page)
     rtcProvider.disableNonLocalhostConnections();
     RuntimeEnabledFeatures::sharedFeatures().setWebRTCVP8CodecEnabled(true);
     page.settings().setWebRTCEncryptionEnabled(true);
-    rtcProvider.setUseGPUProcess(false);
 #endif
 
     page.setFullscreenAutoHideDuration(0_s);
@@ -1578,7 +1577,6 @@ void Internals::setUseGPUProcessForWebRTC(bool useGPUProcess)
     if (!document || !document->page())
         return;
 
-    document->page()->libWebRTCProvider().setUseGPUProcess(useGPUProcess);
     document->page()->mediaRecorderProvider().setUseGPUProcess(useGPUProcess);
 #endif
 }
