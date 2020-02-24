@@ -2625,6 +2625,17 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
 
+webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/inspector/network/resource-response-source-disk-cache.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/inspector/network/resource-sizes-disk-cache.html [ Failure Pass ]
+webkit.org/b/208139 http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
