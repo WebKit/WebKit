@@ -32,8 +32,17 @@
 #import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
 #import <PepperUICore/PUICTableViewCell.h>
 
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+#import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>
+#endif
+
 @interface WKQuickboardListItemCell : PUICQuickboardListItemCell
 @end
+
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+@interface WKQuickboardListCollectionViewItemCell : PUICQuickboardListCollectionViewItemCell
+@end
+#endif
 
 @class WKQuickboardListViewController;
 

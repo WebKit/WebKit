@@ -53,6 +53,24 @@ static const CGFloat itemCellBaselineToBottom = 8;
 
 @end
 
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+
+@implementation WKQuickboardListCollectionViewItemCell
+
+- (CGFloat)topToLabelBaselineSpecValue
+{
+    return itemCellTopToLabelBaseline;
+}
+
+- (CGFloat)baselineToBottomSpecValue
+{
+    return itemCellBaselineToBottom;
+}
+
+@end
+
+#endif // HAVE(QUICKBOARD_COLLECTION_VIEWS)
+
 @interface WKQuickboardListViewController () <PUICQuickboardLanguageControllerDelegate>
 @end
 
@@ -133,6 +151,8 @@ static const CGFloat itemCellBaselineToBottom = 8;
     [self reloadHeaderContentView];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
+
 - (PUICActionController *)actionController
 {
     if (![self.delegate allowsLanguageSelectionMenuForListViewController:self])
@@ -142,6 +162,8 @@ static const CGFloat itemCellBaselineToBottom = 8;
     auto actionGroup = adoptNS([[PUICActionGroup alloc] initWithActionItems:@[ languageSelectionActionItem ] actionStyle:PUICActionStyleAutomatic]);
     return [[[PUICActionController alloc] initWithActionGroup:actionGroup.get()] autorelease];
 }
+
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #pragma mark - PUICQuickboardLanguageControllerDelegate
 

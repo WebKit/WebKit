@@ -1,5 +1,41 @@
 2020-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [watchOS] Adopt UICollectionView-based SPI on PUICQuickboardListViewController
+        https://bugs.webkit.org/show_bug.cgi?id=208137
+        <rdar://problem/57756279>
+
+        Reviewed by Tim Horton.
+
+        Fixes deprecation warnings due to the main content area of PUICQuickboardListViewController becoming backed by a
+        UICollectionView rather than a UITableView. See below for more details.
+
+        * UIProcess/ios/forms/WKQuickboardListViewController.h:
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        (-[WKQuickboardListCollectionViewItemCell topToLabelBaselineSpecValue]):
+        (-[WKQuickboardListCollectionViewItemCell baselineToBottomSpecValue]):
+
+        Add WKQuickboardListCollectionViewItemCell, a PUICQuickboardListCollectionViewItemCell subclass which will
+        replace WKQuickboardListItemCell.
+
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        (-[WKSelectMenuCollectionViewItemCell initWithFrame:]):
+        (-[WKSelectMenuCollectionViewItemCell imageView]):
+
+        Similarly, add WKSelectMenuCollectionViewItemCell, a collection view cell which replaces WKSelectMenuItemCell.
+
+        (-[WKSelectMenuListViewController didSelectListItem:]):
+        (-[WKSelectMenuListViewController didSelectListItemAtIndexPath:]):
+
+        Reimplement -didSelectListItem: using -didSelectListItemAtIndexPath:. The latter handles model updates when
+        the user interacts with select options in the Quickboard view controller that is collection-view-backed.
+
+        (-[WKSelectMenuListViewController listItemCellClass]):
+        (-[WKSelectMenuListViewController listItemCellReuseIdentifier]):
+        (-[WKSelectMenuListViewController itemCellForListItem:forIndexPath:]):
+        (-[WKSelectMenuListViewController collectionViewSectionIsRadioSection:]):
+
+2020-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         REGRESSION (r248481): drag animation of a link starts from the incorrect location
         https://bugs.webkit.org/show_bug.cgi?id=208113
         <rdar://problem/59448696>
