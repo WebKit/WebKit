@@ -61,7 +61,9 @@ class VisiblePosition;
 
 @property (nonatomic, assign) WebCore::AXID identifier;
 
-- (BOOL)updateObjectBackingStore;
+// Updates the underlying object and accessibility hierarchy , and returns the
+// corresponding AXCoreObject.
+- (WebCore::AXCoreObject*)updateObjectBackingStore;
 
 // This can be either an AccessibilityObject or an AXIsolatedObject
 - (WebCore::AXCoreObject*)axBackingObject;

@@ -335,7 +335,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     [self detachAXObject];
 }
 
-- (BOOL)updateObjectBackingStore
+- (WebCore::AXCoreObject*)updateObjectBackingStore
 {
     // Calling updateBackingStore() can invalidate this element so self must be retained.
     // If it does become invalidated, self.axBackingObject will be nil.
@@ -343,13 +343,11 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     CFAutorelease((__bridge CFTypeRef)self);
 
     if (!self.axBackingObject)
-        return NO;
-    
+        return nil;
+
     self.axBackingObject->updateBackingStore();
-    if (!self.axBackingObject)
-        return NO;
-    
-    return YES;
+
+    return self.axBackingObject;
 }
 
 - (id)attachmentView
