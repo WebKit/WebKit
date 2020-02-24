@@ -1391,10 +1391,6 @@ static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceReq
             return false;
     }
 
-    // FIXME: Remove this quirk when <rdar://problem/59480381> is complete.
-    if (equalLettersIgnoringASCIICase(host, "fidelity.com") || host.endsWithIgnoringASCIICase(".fidelity.com"))
-        return false;
-
     return true;
 }
 
