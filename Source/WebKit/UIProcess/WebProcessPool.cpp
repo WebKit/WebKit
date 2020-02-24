@@ -1607,7 +1607,7 @@ void WebProcessPool::setCacheModel(CacheModel cacheModel)
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
     if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel, { }), 0);
+        m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel), 0);
 }
 
 void WebProcessPool::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
