@@ -148,6 +148,7 @@
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 #include "PlatformDisplayLibWPE.h"
 #include <gst/gl/egl/gsteglimage.h>
+#include <gst/gl/egl/gstglmemoryegl.h>
 #include <wpe/extensions/video-plane-display-dmabuf.h>
 #endif
 
@@ -207,14 +208,28 @@ public:
         m_flags = flags | (m_hasAlphaChannel ? TextureMapperGL::ShouldBlend : 0);
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+        m_dmabufFD = -1;
+        gsize offset;
         GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
-        if (gst_is_gl_memory(memory)) {
-            GstGLMemory* glMemory = GST_GL_MEMORY_CAST(memory);
-            GRefPtr<GstEGLImage> eglImage = adoptGRef(gst_egl_image_from_texture(GST_GL_BASE_MEMORY_CAST(memory)->context, glMemory, nullptr));
-            gsize offset;
-            if (eglImage && gst_egl_image_export_dmabuf(eglImage.get(), &m_dmabufFD, &m_dmabufStride, &offset))
-                return;
+        if (gst_is_gl_memory_egl(memory)) {
+            GstGLMemoryEGL* eglMemory = (GstGLMemoryEGL*) memory;
+            gst_egl_image_export_dmabuf(eglMemory->image, &m_dmabufFD, &m_dmabufStride, &offset);
+        } else if (gst_is_gl_memory(memory)) {
+            GRefPtr<GstEGLImage> eglImage = adoptGRef(gst_egl_image_from_texture(GST_GL_BASE_MEMORY_CAST(memory)->context, GST_GL_MEMORY_CAST(memory), nullptr));
+
+            if (eglImage)
+                gst_egl_image_export_dmabuf(eglImage.get(), &m_dmabufFD, &m_dmabufStride, &offset);
         }
+
+        if (hasDMABuf() && m_dmabufStride == -1) {
+            m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), GST_MAP_READ);
+            if (m_isMapped)
+                m_dmabufStride = GST_VIDEO_INFO_PLANE_STRIDE(&m_videoFrame.info, 0);
+        }
+
+        if (hasDMABuf() && m_dmabufStride)
+            return;
+
         static std::once_flag s_onceFlag;
         std::call_once(s_onceFlag, [] {
             GST_WARNING("Texture export to DMABuf failed, falling back to internal rendering");
@@ -256,9 +271,6 @@ public:
     {
         if (m_dmabufFD <= 0)
             return;
-
-        if (m_dmabufStride == -1)
-            m_dmabufStride = GST_VIDEO_INFO_PLANE_STRIDE(&m_videoFrame.info, 0);
 
         wpe_video_plane_display_dmabuf_source_update(videoPlaneDisplayDmaBufSource, m_dmabufFD, rect.x(), rect.y(), m_size.width(), m_size.height(), m_dmabufStride, [](void* data) {
             gst_buffer_unref(GST_BUFFER_CAST(data));
