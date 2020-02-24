@@ -48,7 +48,7 @@ class IOChannel;
 class Storage : public ThreadSafeRefCounted<Storage, WTF::DestructionThread::Main> {
 public:
     enum class Mode { Normal, AvoidRandomness };
-    static RefPtr<Storage> open(const String& cachePath, Mode);
+    static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);
 
     struct Record {
         Key key;
@@ -120,7 +120,7 @@ public:
     void writeWithoutWaiting() { m_initialWriteDelay = 0_s; };
 
 private:
-    Storage(const String& directoryPath, Mode, Salt);
+    Storage(const String& directoryPath, Mode, Salt, size_t capacity);
 
     String recordDirectoryPathForKey(const Key&) const;
     String recordPathForKey(const Key&) const;
