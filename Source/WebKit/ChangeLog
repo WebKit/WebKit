@@ -1,3 +1,52 @@
+2020-02-24  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
+
+        Provide alternate way to name Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=205224
+        rdar://57038084
+
+        Reviewed by Alex Christensen.
+
+        Test: TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm
+
+        Add the ability to set _processDisplayName on WKWebViewConfiguration to allow the name of the web
+        content process that appears in Activity Monitor to be set to a custom string.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::lsDisplayName const):
+        (API::PageConfiguration::setlsDisplayName):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getDisplayNameWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _lsDisplayName]):
+        (-[WKWebViewConfiguration _setlsDisplayName:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::getDisplayName):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getDisplayName):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lsDisplayName):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::m_overriddenMediaType): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::updateActivePages):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateActivePages):
+
 2020-02-24  Youenn Fablet  <youenn@apple.com>
 
         Protect WebProcessPool from null weak pointers in m_serviceWorkerProcesses map

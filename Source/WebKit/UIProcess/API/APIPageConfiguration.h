@@ -138,6 +138,9 @@ public:
     const Vector<WTF::String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
 
+    const WTF::String& processDisplayName() const { return m_processDisplayName; }
+    void setProcessDisplayName(const WTF::String& name) { m_processDisplayName = name; }
+
     WebKit::WebViewCategory webViewCategory() const { return m_webViewCategory; }
     void setWebViewCategory(WebKit::WebViewCategory category) { m_webViewCategory = category; }
 
@@ -178,6 +181,7 @@ private:
 
     HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
     Vector<WTF::String> m_corsDisablingPatterns;
+    WTF::String m_processDisplayName;
     WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
 };
 

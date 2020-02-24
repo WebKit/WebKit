@@ -450,6 +450,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_textAutoSizingAdjustmentTimer(*this, &WebPage::textAutoSizingAdjustmentTimerFired)
 #endif
     , m_overriddenMediaType(parameters.overriddenMediaType)
+    , m_processDisplayName(parameters.processDisplayName)
 {
     ASSERT(m_identifier);
 
@@ -1497,7 +1498,7 @@ void WebPage::close()
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_identifier);
 
-    WebProcess::singleton().updateActivePages();
+    WebProcess::singleton().updateActivePages(m_processDisplayName);
 
     if (isRunningModal)
         RunLoop::main().stop();
@@ -5907,7 +5908,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_loadCommitTime = WallTime::now();
 #endif
 
-    WebProcess::singleton().updateActivePages();
+    WebProcess::singleton().updateActivePages(m_processDisplayName);
 
     updateMainFrameScrollOffsetPinning();
 
@@ -6980,6 +6981,11 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 }
 
 #if !PLATFORM(COCOA)
+void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
 void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 {
 }

@@ -1200,6 +1200,16 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
     _pageConfiguration->setWebViewCategory(toWebKitWebViewCategory(category));
 }
 
+- (NSString *)_processDisplayName
+{
+    return _pageConfiguration->processDisplayName();
+}
+
+- (void)_setProcessDisplayName:(NSString *)lsDisplayName
+{
+    _pageConfiguration->setProcessDisplayName(lsDisplayName);
+}
+
 @end
 
 @implementation WKWebViewConfiguration (WKDeprecated)

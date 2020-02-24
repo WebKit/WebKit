@@ -1,3 +1,15 @@
+2020-02-24  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
+
+        Provide alternate way to name Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=205224
+        rdar://57038084
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2020-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Link to result archives

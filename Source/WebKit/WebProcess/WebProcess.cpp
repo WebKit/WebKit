@@ -1439,7 +1439,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 {
 }
 
-void WebProcess::updateActivePages()
+void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 }
 

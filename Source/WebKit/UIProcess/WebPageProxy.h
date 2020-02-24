@@ -1683,6 +1683,8 @@ public:
     const String& overriddenMediaType() const { return m_overriddenMediaType; }
     void setOverriddenMediaType(const String&);
 
+    void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
+
     void setOrientationForMediaCapture(uint64_t);
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }

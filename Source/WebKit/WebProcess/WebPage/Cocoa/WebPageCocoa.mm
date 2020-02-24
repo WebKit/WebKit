@@ -33,6 +33,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebPaymentCoordinator.h"
 #import "WebRemoteObjectRegistry.h"
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -282,6 +283,15 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
     CGPDFContextClose(pdfContext.get());
 
     return data;
+}
+
+void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
+{
+#if PLATFORM(MAC)
+    completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get());
+#else
+    completionHandler({ });
+#endif
 }
 
 } // namespace WebKit

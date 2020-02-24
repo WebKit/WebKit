@@ -252,7 +252,7 @@ public:
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
 
-    void updateActivePages();
+    void updateActivePages(const String& overrideDisplayName);
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState::Flag> changed);
 

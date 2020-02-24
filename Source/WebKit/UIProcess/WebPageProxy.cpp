@@ -7592,6 +7592,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 {
     WebPageCreationParameters parameters;
 
+    parameters.processDisplayName = configuration().processDisplayName();
+
     parameters.viewSize = pageClient().viewSize();
     parameters.activityState = m_activityState;
     parameters.drawingAreaType = drawingArea.type();
@@ -9896,6 +9898,11 @@ bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
     return false;
 }
 #endif
+
+void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
+{
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler), m_webPageID);
+}
 
 void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 {

@@ -209,6 +209,7 @@ struct WebPageCreationParameters {
 
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
+    String processDisplayName;
 
     bool shouldCaptureAudioInUIProcess { false };
     bool shouldCaptureAudioInGPUProcess { false };

@@ -138,6 +138,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << oldPageID;
     encoder << overriddenMediaType;
     encoder << corsDisablingPatterns;
+    encoder << processDisplayName;
 
     encoder << shouldCaptureAudioInUIProcess;
     encoder << shouldCaptureAudioInGPUProcess;
@@ -441,6 +442,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.corsDisablingPatterns = WTFMove(*corsDisablingPatterns);
 
+    Optional<String> processDisplayName;
+    decoder >> processDisplayName;
+    if (!processDisplayName)
+        return WTF::nullopt;
+    parameters.processDisplayName = WTFMove(*processDisplayName);
+    
     if (!decoder.decode(parameters.shouldCaptureAudioInUIProcess))
         return WTF::nullopt;
 

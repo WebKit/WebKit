@@ -2742,6 +2742,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
 }
 
+- (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler
+{
+    _page->getProcessDisplayName([handler = makeBlockPtr(completionHandler)](auto&& name) {
+        handler(name);
+    });
+}
+
 - (void)_setMinimumEffectiveDeviceWidth:(CGFloat)minimumEffectiveDeviceWidth
 {
 #if PLATFORM(IOS_FAMILY)
