@@ -252,6 +252,7 @@ struct WKAutoCorrectionData {
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
     RetainPtr<UIView> _contextMenuHintContainerView;
+    RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
 #if ENABLE(AIRPLAY_PICKER)
@@ -486,7 +487,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)_updateInputContextAfterBlurringAndRefocusingElement;
 - (void)_elementDidBlur;
-- (void)_hideContextMenuHintContainer;
+- (void)_hideTargetedPreviewContainerViews;
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode;
 - (void)_didUpdateEditorState;
 - (void)_hardwareKeyboardAvailabilityChanged;

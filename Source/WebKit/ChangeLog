@@ -1,3 +1,65 @@
+2020-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r248481): drag animation of a link starts from the incorrect location
+        https://bugs.webkit.org/show_bug.cgi?id=208113
+        <rdar://problem/59448696>
+
+        Reviewed by Tim Horton.
+
+        For both dragging and context menu interactions, UIKit asks us for targeted previews, which are hosted under
+        container views provided by WebKit. These container views must be in the hierarchy (i.e. they must have a
+        UIWindow); otherwise, UIKit incorrectly computes some geometry when animating the previews. Prior to the fix for
+        <rdar://problem/57172514>, this caused targeted drag previews to animate in from a seemingly random location;
+        however, UIKit worked around this by falling back to the same codepath used for remotely hosted views, which
+        uses the last known touch location as an approximation of where to start the drag preview animation. This mostly
+        makes the bug go away, but the delta between the touch location and the actual location of the dragged element
+        in the page still causes some very minor visual differences.
+
+        Due to r248481, a separate UIView (_contextMenuHintContainerView) under the content view is used when generating
+        targeted previews for both drag and drop and context menu hints. This view is removed when the context menu
+        interaction ends; however, when starting a drag, the context menu interaction ends right before the drag session
+        actually begins, which means that when UIKit actually starts to animate the drag preview, the container view has
+        already been unparented.
+
+        To address this, introduce a separate _dragPreviewContainerView alongside _contextMenuHintContainerView, and use
+        this new view when generating targeted previews for dragging. This view is generated lazily and cleaned up
+        (unparented and cleared out) when the drag interaction has ended, in -cleanUpDragSourceSessionState.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Add _dragPreviewContainerView.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+        (-[WKContentView containerForDragPreviews]):
+        (-[WKContentView containerForContextMenuHintPreviews]):
+
+        Split -containerViewForTargetedPreviews into -containerForDragPreviews and -containerForContextMenuHintPreviews,
+        and use them as appropriate.
+
+        (-[WKContentView _hideTargetedPreviewContainerViews]):
+
+        Renamed from _hideContextMenuHintContainer, since it hides both types of targeted preview containers now.
+
+        (-[WKContentView cleanUpDragSourceSessionState]):
+
+        Clear out and remove _dragPreviewContainerView here.
+
+        (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):
+        (-[WKContentView dragInteraction:previewForLiftingItem:session:]):
+
+        Use -containerForDragPreviews when creating previews for dragging.
+
+        (-[WKContentView _createTargetedContextMenuHintPreviewIfPossible]):
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+
+        Use -containerForContextMenuHintPreviews when creating previews for the context menu hint.
+
+        (-[WKContentView containerViewForTargetedPreviews]): Deleted.
+        (-[WKContentView _hideContextMenuHintContainer]): Deleted.
+        (-[WKContentView _createTargetedPreviewIfPossible]): Deleted.
+
 2020-02-24  Rob Buis  <rbuis@igalia.com>
 
         Verify Prefetch and credential behavior
