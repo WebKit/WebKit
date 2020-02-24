@@ -33,6 +33,7 @@
 #include "Microtasks.h"
 #include "MutationObserver.h"
 #include "SecurityOrigin.h"
+#include "ThreadGlobalData.h"
 
 namespace WebCore {
 

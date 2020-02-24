@@ -39,6 +39,7 @@
 #include "CSSValueKeywords.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "ElementAncestorIterator.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "HTMLHeadElement.h"

@@ -35,6 +35,7 @@
 #include "AXObjectCache.h"
 #include "ElementChildIterator.h"
 #include "EventNames.h"
+#include "HTMLCollection.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"

@@ -28,6 +28,7 @@
 #include "HTMLOptionElement.h"
 
 #include "Document.h"
+#include "ElementAncestorIterator.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"

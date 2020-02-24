@@ -33,6 +33,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
+#include "HTMLCollection.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "Length.h"

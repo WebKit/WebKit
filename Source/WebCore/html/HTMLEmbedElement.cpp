@@ -25,6 +25,7 @@
 #include "HTMLEmbedElement.h"
 
 #include "CSSPropertyNames.h"
+#include "ElementAncestorIterator.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"

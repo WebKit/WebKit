@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include "Color.h"
 #include "Theme.h"
 
 namespace WebCore {
+
+class Path;
 
 class ThemeWPE final : public Theme {
 public:

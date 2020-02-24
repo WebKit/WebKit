@@ -48,7 +48,7 @@
 
 namespace WebKit {
 
-static IntRect screenRectOfContents(WebCore::Element* element)
+static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 {
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
@@ -189,7 +189,7 @@ void WebFullScreenManager::didExitFullScreen()
     LOG(Fullscreen, "WebFullScreenManager %p didExitFullScreen() - element %p", this, m_element.get());
 
     ASSERT(m_element);
-    setFullscreenInsets(FloatBoxExtent());
+    setFullscreenInsets(WebCore::FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
     m_element->document().fullscreenManager().didExitFullscreen();
 }

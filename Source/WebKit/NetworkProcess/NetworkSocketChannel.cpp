@@ -30,6 +30,7 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebSocketChannelMessages.h"
 #include "WebSocketTask.h"
 

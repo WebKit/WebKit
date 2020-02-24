@@ -29,6 +29,7 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
+#include "ImageData.h"
 #include "PlatformImageBuffer.h"
 
 namespace WebCore {

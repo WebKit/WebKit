@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FilterEffect.h"
 
+#include "Color.h"
 #include "Filter.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"

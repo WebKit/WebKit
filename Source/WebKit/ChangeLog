@@ -1,3 +1,16 @@
+2020-02-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes late February 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=208111
+
+        Unreviewed build fix.
+
+        * NetworkProcess/NetworkSocketChannel.cpp: Add missing include.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::screenRectOfContents): Add missing namespace to usage of WebCore::IntRect.
+        (WebKit::WebFullScreenManager::didExitFullScreen): Add missing namespace to usage of
+        WebCore::FloatBoxExtent.
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Fix some include mistakes and make some coding style tweaks to WebKit and WebKitTestRunner

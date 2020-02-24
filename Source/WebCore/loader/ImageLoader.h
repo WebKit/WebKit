@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class Document;
 class Element;
 class ImageLoader;
 class RenderImageResource;
