@@ -755,7 +755,11 @@ private:
 
     void setTransitionPropertyName(const AbstractLocker&, UniquedStringImpl* transitionPropertyName)
     {
+#if CPU(ADDRESS64)
         m_maxOffsetAndTransitionPropertyName.setPointer(transitionPropertyName);
+#else
+        m_transitionPropertyName = transitionPropertyName;
+#endif
     }
 
     typedef enum { 
