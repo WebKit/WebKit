@@ -1,3 +1,21 @@
+2020-02-24  Tim Horton  <timothy_horton@apple.com>
+
+        Context menu platter animation is wrong occasionally when invoking it repeatedly and rapidly
+        https://bugs.webkit.org/show_bug.cgi?id=208147
+        <rdar://problem/54436720>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+        If a new context menu interaction has started, don't remove the hint
+        container view out from under it when the previous animation finishes,
+        or the presentation animation will go crazy (in a variety of humorous
+        and unpredictable ways), because UIKit can't do coordinate conversion
+        through an unparented view.
+
+        Eventually the final animation will complete and unparent the view.
+
 2020-02-24  Youenn Fablet  <youenn@apple.com>
 
         Add a runtime flag dedicated to WebRTC codecs in GPUProcess

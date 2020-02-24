@@ -8965,8 +8965,14 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     _contextMenuElementInfo = nullptr;
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
-        if (auto strongSelf = weakSelf.get())
-            [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+        // If a new _contextMenuElementInfo is installed, we've started another interaction,
+        // and removing the hint container view will cause the animation to break.
+        if (strongSelf->_contextMenuElementInfo)
+            return;
+        [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
     }];
 }
 
