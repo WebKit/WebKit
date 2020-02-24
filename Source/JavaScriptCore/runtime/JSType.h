@@ -26,8 +26,9 @@ enum JSType : uint8_t {
     // The CellType value must come before any JSType that is a JSCell.
     CellType,
     StringType,
-    SymbolType,
     BigIntType,
+    LastMaybeFalsyCellPrimitive = BigIntType,
+    SymbolType,
 
     StructureRareDataType,
     GetterSetterType,

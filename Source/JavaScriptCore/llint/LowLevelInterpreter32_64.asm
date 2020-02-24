@@ -1672,7 +1672,7 @@ end)
 putByValOp(put_by_val_direct, OpPutByValDirect, macro (a, b) end)
 
 
-macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, conditionOp)
+macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, conditionOp, notUsed)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
         get(m_condition, t1)
         loadConstantOrVariablePayload(size, t1, BooleanTag, t0, .slow)

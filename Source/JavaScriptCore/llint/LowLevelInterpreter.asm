@@ -1730,11 +1730,11 @@ equalityComparisonOp(neq, OpNeq,
 
 
 compareUnsignedOp(below, OpBelow,
-        macro (left, right, result) cib left, right, result end)
+    macro (left, right, result) cib left, right, result end)
 
 
 compareUnsignedOp(beloweq, OpBeloweq,
-        macro (left, right, result) cibeq left, right, result end)
+    macro (left, right, result) cibeq left, right, result end)
 
 
 llintOpWithJump(op_jmp, OpJmp, macro (size, get, jump, dispatch)
@@ -1742,14 +1742,18 @@ llintOpWithJump(op_jmp, OpJmp, macro (size, get, jump, dispatch)
 end)
 
 
-llintJumpTrueOrFalseOp(
-    jtrue, OpJtrue,
-    macro (value, target) btinz value, 1, target end)
+llintJumpTrueOrFalseOp(jtrue, OpJtrue, 
+    # Misc primitive
+    macro (value, target) btinz value, 1, target end,
+    # Truthy Cell
+    macro (dispatch) end)
 
 
-llintJumpTrueOrFalseOp(
-    jfalse, OpJfalse,
-    macro (value, target) btiz value, 1, target end)
+llintJumpTrueOrFalseOp(jfalse, OpJfalse,
+    # Misc primitive
+    macro (value, target) btiz value, 1, target end,
+    # Truthy Cell
+    macro (dispatch) dispatch() end)
 
 
 compareJumpOp(
