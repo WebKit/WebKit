@@ -521,7 +521,7 @@ Ref<KeyframeEffect> KeyframeEffect::create(const Element& target)
 }
 
 KeyframeEffect::KeyframeEffect(Element* target)
-    : m_target(target)
+    : m_target(makeWeakPtr(target))
 {
 }
 
@@ -1065,10 +1065,10 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
-    if (m_target == newTarget)
+    if (m_target.get() == newTarget.get())
         return;
 
-    auto previousTarget = std::exchange(m_target, WTFMove(newTarget));
+    auto previousTarget = std::exchange(m_target, makeWeakPtr(newTarget.get()));
 
     if (auto* effectAnimation = animation())
         effectAnimation->effectTargetDidChange(previousTarget.get(), m_target.get());

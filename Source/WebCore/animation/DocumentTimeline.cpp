@@ -64,15 +64,13 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     : AnimationTimeline()
     , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
-    , m_document(&document)
+    , m_document(makeWeakPtr(document))
     , m_originTime(originTime)
 {
-    if (m_document) {
-        m_document->addTimeline(*this);
-        if (auto* page = m_document->page()) {
-            if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
-                suspendAnimations();
-        }
+    document.addTimeline(*this);
+    if (auto* page = document.page()) {
+        if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
+            suspendAnimations();
     }
 }
 
