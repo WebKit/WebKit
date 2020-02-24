@@ -102,8 +102,9 @@ void WebIDBServer::suspend(ShouldForceStop shouldForceStop)
 void WebIDBServer::resume()
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(m_isSuspended);
-    ASSERT(m_server->lock().isHeld());
+
+    if (!m_isSuspended)
+        return;
 
     m_isSuspended = false;
     m_server->lock().unlock();

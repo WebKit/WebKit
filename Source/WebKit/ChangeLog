@@ -1,5 +1,36 @@
 2020-02-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r257103. rdar://problem/59676894
+
+    WebIDBServer resume should return early if suspend does not happen
+    https://bugs.webkit.org/show_bug.cgi?id=208027
+    <rdar://problem/59617654>
+    
+    Reviewed by Geoffrey Garen.
+    
+    We should not try releasing a lock that is not held.
+    
+    * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+    (WebKit::WebIDBServer::resume):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257103 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-20  Sihui Liu  <sihui_liu@apple.com>
+
+            WebIDBServer resume should return early if suspend does not happen
+            https://bugs.webkit.org/show_bug.cgi?id=208027
+            <rdar://problem/59617654>
+
+            Reviewed by Geoffrey Garen.
+
+            We should not try releasing a lock that is not held.
+
+            * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+            (WebKit::WebIDBServer::resume):
+
+2020-02-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r257077. rdar://problem/59676884
 
     REGRESSION (r255677): Reloading tab with beforeunload prompt closes tab when asking to stay on page
