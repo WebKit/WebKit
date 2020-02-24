@@ -1,3 +1,16 @@
+2020-02-24  Youenn Fablet  <youenn@apple.com>
+
+        Protect from null session in NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=208127
+        rdar://problem/57937917
+
+        Reviewed by Chris Dumez.
+
+        In case of a data task whose session is destroyed, do not follow redirection early on.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2020-02-24  Rob Buis  <rbuis@igalia.com>
 
         Handle page closure for stale-while-revalidate revalidations
