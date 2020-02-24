@@ -83,7 +83,6 @@ public:
         bool lineIsEmpty { true };
     };
     Result shouldWrapInlineContent(const RunList& candidateRuns, InlineLayoutUnit candidateContentLogicalWidth, const LineStatus&);
-    bool shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty);
 
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 

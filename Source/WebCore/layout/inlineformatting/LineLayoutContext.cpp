@@ -388,9 +388,10 @@ void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigne
 LineLayoutContext::Result LineLayoutContext::tryAddingFloatItem(LineBuilder& line, const InlineItem& floatItem)
 {
     auto logicalWidth = inlineItemWidth(floatItem, { });
-
+    auto availableWidth = line.availableWidth() + line.trimmableTrailingWidth();
     auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-    if (LineBreaker().shouldWrapFloatBox(logicalWidth, line.availableWidth() + line.trimmableTrailingWidth(), lineIsConsideredEmpty))
+
+    if (logicalWidth > availableWidth && !lineIsConsideredEmpty)
         return { LineBreaker::IsEndOfLine::Yes };
     // This float can sit on the current line.
     auto& floatBox = floatItem.layoutBox();

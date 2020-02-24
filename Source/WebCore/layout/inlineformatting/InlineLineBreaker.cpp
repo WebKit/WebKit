@@ -213,11 +213,6 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candida
     return { Result::Action::Keep, IsEndOfLine::No };
 }
 
-bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineLayoutUnit availableWidth, bool lineIsEmpty)
-{
-    return !lineIsEmpty && floatLogicalWidth > availableWidth;
-}
-
 Optional<WrappedTextContent> LineBreaker::wrapTextContent(const RunList& runs, const LineStatus& lineStatus) const
 {
     auto isContentSplitAllowed = [] (auto& run) {
