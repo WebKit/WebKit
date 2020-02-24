@@ -289,17 +289,21 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
             ASSERT(lineCandidate.inlineContent.runs().isEmpty());
         } else {
             auto& inlineContent = lineCandidate.inlineContent;
-            if (!inlineContent.runs().isEmpty()) {
-                // Now check if we can put this content on the current line.
-                auto result = tryAddingInlineItems(lineBreaker, line, layoutRange, lineCandidate);
-                committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;  
-                if (result.isEndOfLine == LineBreaker::IsEndOfLine::Yes) {
-                    // We can't place any more items on the current line.
-                    return close(line, layoutRange, committedInlineItemCount, result.partialContent);
-                }
-            } else if (auto* trailingLineBreak = inlineContent.trailingLineBreak()) {
-                line.append(*trailingLineBreak, 0);
-                return close(line, layoutRange, ++committedInlineItemCount, { });
+            // Now check if we can put this content on the current line.
+            auto result = tryAddingInlineItems(lineBreaker, line, layoutRange, lineCandidate);
+            committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
+            auto inlineContentIsFullyCommitted = inlineContent.runs().size() == result.committedCount.value && !result.partialContent;
+            auto isEndOfLine = result.isEndOfLine == LineBreaker::IsEndOfLine::Yes;
+
+            if (inlineContentIsFullyCommitted && inlineContent.trailingLineBreak()) {
+                // Fully commited (or empty) content followed by a line break means "end of line".
+                line.append(*inlineContent.trailingLineBreak(), { });
+                ++committedInlineItemCount;
+                isEndOfLine = true;
+            }
+            if (isEndOfLine) {
+                // We can't place any more items on the current line.
+                return close(line, layoutRange, committedInlineItemCount, result.partialContent);
             }
         }
         currentItemIndex = layoutRange.start + committedInlineItemCount;
@@ -407,19 +411,22 @@ LineLayoutContext::Result LineLayoutContext::tryAddingFloatItem(LineBuilder& lin
 
 LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& lineBreaker, LineBuilder& line, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
+    auto& inlineContent = lineCandidate.inlineContent;
+    auto& candidateRuns = inlineContent.runs();
+
+    if (candidateRuns.isEmpty())
+        return { LineBreaker::IsEndOfLine::No };
+
     auto shouldDisableHyphenation = [&] {
         auto& style = root().style();
         unsigned limitLines = style.hyphenationLimitLines() == RenderStyle::initialHyphenationLimitLines() ? std::numeric_limits<unsigned>::max() : style.hyphenationLimitLines();
         return m_successiveHyphenatedLineCount >= limitLines;
     };
-    // Check if this new content fits.
-    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trimmableTrailingWidth(), line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty(line) };
-
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
 
-    auto& inlineContent = lineCandidate.inlineContent;
-    auto& candidateRuns = inlineContent.runs();
+    // Check if this new content fits.
+    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trimmableTrailingWidth(), line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty(line) };
     auto result = lineBreaker.shouldWrapInlineContent(candidateRuns, inlineContent.logicalWidth(), lineStatus);
     if (result.lastWrapOpportunityItem)
         m_lastWrapOpportunityItem = result.lastWrapOpportunityItem;
@@ -427,23 +434,18 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
         // This continuous content can be fully placed on the current line.
         for (auto& run : candidateRuns)
             line.append(run.inlineItem, run.logicalWidth);
-        // Consume trailing line break as well.
-        if (auto* lineBreakItem = inlineContent.trailingLineBreak()) {
-            line.append(*lineBreakItem, 0);
-            return { LineBreaker::IsEndOfLine::Yes, { candidateRuns.size() + 1, false } };
-        }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
     if (result.action == LineBreaker::Result::Action::Push) {
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
         // This continuous content can't be placed on the current line. Nothing to commit at this time.
-        return { result.isEndOfLine };
+        return { LineBreaker::IsEndOfLine::Yes };
     }
     if (result.action == LineBreaker::Result::Action::RevertToLastWrapOpportunity) {
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
         // Not only this content can't be placed on the current line, but we even need to revert the line back to an earlier position.
         ASSERT(m_lastWrapOpportunityItem);
-        return { result.isEndOfLine, { rebuildLine(line, layoutRange), true } };
+        return { LineBreaker::IsEndOfLine::Yes, { rebuildLine(line, layoutRange), true } };
     }
     if (result.action == LineBreaker::Result::Action::Split) {
         ASSERT(result.isEndOfLine == LineBreaker::IsEndOfLine::Yes);
@@ -455,12 +457,12 @@ LineLayoutContext::Result LineLayoutContext::tryAddingInlineItems(LineBreaker& l
         auto trailingRunIndex = result.partialTrailingContent->trailingRunIndex;
         auto committedInlineItemCount = trailingRunIndex + 1;
         if (!result.partialTrailingContent->partialRun)
-            return { result.isEndOfLine, { committedInlineItemCount, false } };
+            return { LineBreaker::IsEndOfLine::Yes, { committedInlineItemCount, false } };
 
         auto partialRun = *result.partialTrailingContent->partialRun;
         auto& trailingInlineTextItem = downcast<InlineTextItem>(candidateRuns[trailingRunIndex].inlineItem);
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
-        return { result.isEndOfLine, { committedInlineItemCount, false }, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
+        return { LineBreaker::IsEndOfLine::Yes, { committedInlineItemCount, false }, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
     }
     ASSERT_NOT_REACHED();
     return { LineBreaker::IsEndOfLine::No };
