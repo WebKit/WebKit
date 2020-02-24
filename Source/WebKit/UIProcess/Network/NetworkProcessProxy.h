@@ -249,10 +249,6 @@ private:
     void contentExtensionRules(UserContentControllerIdentifier);
 #endif
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& paths, Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFilesAsyncReply&&);
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
     void workerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier);

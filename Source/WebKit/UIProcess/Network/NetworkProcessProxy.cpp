@@ -1240,19 +1240,6 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 }
 #endif
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(const Vector<String>& paths, Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles::AsyncReply&& reply)
-{
-    SandboxExtension::HandleArray extensions;
-    extensions.allocate(paths.size());
-    for (size_t i = 0; i < paths.size(); ++i) {
-        // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
-        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
-    }
-    reply(WTFMove(extensions));
-}
-#endif
-
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {

@@ -1,5 +1,38 @@
 2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r256881. rdar://problem/59654289
+
+    Drop getSandboxExtensionsForBlobFiles() as it is dead code
+    https://bugs.webkit.org/show_bug.cgi?id=207909
+    <rdar://problem/59562180>
+    
+    Reviewed by Per Arne Vollan.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    * NetworkProcess/NetworkProcess.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/Network/NetworkProcessProxy.messages.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Chris Dumez  <cdumez@apple.com>
+
+            Drop getSandboxExtensionsForBlobFiles() as it is dead code
+            https://bugs.webkit.org/show_bug.cgi?id=207909
+            <rdar://problem/59562180>
+
+            Reviewed by Per Arne Vollan.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            * NetworkProcess/NetworkProcess.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/Network/NetworkProcessProxy.messages.in:
+
+2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r256857. rdar://problem/59654274
 
     NetworkDataTask should not expect its session wrapper to be always live

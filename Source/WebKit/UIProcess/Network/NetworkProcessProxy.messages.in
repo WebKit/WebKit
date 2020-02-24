@@ -57,10 +57,6 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
 
     RetrieveCacheStorageParameters(PAL::SessionID sessionID)
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    GetSandboxExtensionsForBlobFiles(Vector<String> paths) -> (WebKit::SandboxExtension::HandleArray extensions) Async
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
     WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
