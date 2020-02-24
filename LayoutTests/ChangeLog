@@ -1,3 +1,16 @@
+2020-02-24  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION: (r256619) [ Mac wk1 Release ] legacy-animation-engine/fast/animation/animation-mixed-transform-crash.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208019
+        rdar://59676811
+
+        Reviewed by Antti Koivisto.
+
+        Since this test should be using the legacy animation engine, ensure that it does.
+
+        * legacy-animation-engine/fast/animation/animation-mixed-transform-crash.html:
+        * platform/mac-wk1/TestExpectations
+
 2020-02-24  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations and baselines
