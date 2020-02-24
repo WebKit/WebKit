@@ -60,17 +60,17 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
     // The contiguous disclosed rows will be the rows in the table that 
     // have an aria-level of plus 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
+    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposable())
         return;
-    
+
     // Search for rows that match the correct level. 
     // Only take the subsequent rows from this one that are +1 from this row's level.
     int index = rowIndex();
     if (index < 0)
         return;
-    
+
     unsigned level = hierarchicalLevel();
-    auto& allRows = downcast<AccessibilityTable>(*parent).rows();
+    auto allRows = parent->rows();
     int rowCount = allRows.size();
     for (int k = index + 1; k < rowCount; ++k) {
         auto* row = allRows[k].get();
@@ -87,27 +87,27 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
+    if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposable())
         return nullptr;
-    
+
     // If the level is 1 or less, than nothing discloses this row.
     unsigned level = hierarchicalLevel();
     if (level <= 1)
         return nullptr;
-    
+
     // Search for the previous row that matches the correct level.
     int index = rowIndex();
-    auto& allRows = downcast<AccessibilityTable>(parent)->rows();
+    auto allRows = parent->rows();
     int rowCount = allRows.size();
     if (index >= rowCount)
         return nullptr;
-    
+
     for (int k = index - 1; k >= 0; --k) {
         auto* row = allRows[k].get();
         if (row->hierarchicalLevel() == level - 1)
             return row;
     }
-    
+
     return nullptr;
 }
     
@@ -125,7 +125,7 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
         // Unless the row is a native tr element.
         if (is<AccessibilityTable>(*parent)) {
             AccessibilityTable& tableParent = downcast<AccessibilityTable>(*parent);
-            if (tableParent.isExposableThroughAccessibility() && (tableParent.isAriaTable() || node()->hasTagName(HTMLNames::trTag)))
+            if (tableParent.isExposable() && (tableParent.isAriaTable() || node()->hasTagName(HTMLNames::trTag)))
                 return &tableParent;
         }
     }

@@ -56,7 +56,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // including rows and interactive rowgroups. In addition, poorly-formed grids may contain elements
     // which pass the tests for inclusion.
     for (auto* parent = parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
-        if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
+        if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposable())
             return downcast<AccessibilityTable>(parent);
     }
 
@@ -72,7 +72,7 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
     if (is<AccessibilityTableRow>(*parent)) {
         // We already got a table row, use its API.
         rowRange.first = downcast<AccessibilityTableRow>(*parent).rowIndex();
-    } else if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility()) {
+    } else if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposable()) {
         // We reached the parent table, so we need to inspect its
         // children to determine the row index for the cell in it.
         unsigned columnCount = downcast<AccessibilityTable>(*parent).columnCount();
@@ -139,7 +139,7 @@ void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& 
         return;
 
     if (!is<AccessibilityTableRow>(*parent)
-        && !(is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility()))
+        && !(is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposable()))
         return;
 
     const AccessibilityChildrenVector& siblings = parent->children();

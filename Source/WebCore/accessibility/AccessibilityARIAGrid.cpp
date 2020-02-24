@@ -103,7 +103,7 @@ void AccessibilityARIAGrid::addChildren()
 {
     ASSERT(!m_haveChildren); 
     
-    if (!isExposableThroughAccessibility()) {
+    if (!isExposable()) {
         AccessibilityRenderObject::addChildren();
         return;
     }
@@ -145,8 +145,8 @@ void AccessibilityARIAGrid::addChildren()
         if (!column.accessibilityIsIgnored())
             m_children.append(&column);
     }
-    
-    AccessibilityObject* headerContainerObject = headerContainer();
+
+    auto* headerContainerObject = headerContainer();
     if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
         m_children.append(headerContainerObject);
 }

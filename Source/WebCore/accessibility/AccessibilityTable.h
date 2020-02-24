@@ -29,11 +29,11 @@
 #pragma once
 
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityTableCell.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AccessibilityTableCell;
 class HTMLTableElement;
 class RenderTableSection;
     
@@ -46,36 +46,36 @@ public:
 
     AccessibilityRole roleValue() const final;
     virtual bool isAriaTable() const { return false; }
-    
+
     void addChildren() override;
     void clearChildren() final;
-    
-    const AccessibilityChildrenVector& columns();
-    const AccessibilityChildrenVector& rows();
-    
-    virtual bool supportsSelectedRows() { return false; }
-    unsigned columnCount();
-    unsigned rowCount();
-    int tableLevel() const final;
-    
-    String title() const final;
-    
-    // all the cells in the table
-    void cells(AccessibilityChildrenVector&);
-    AccessibilityTableCell* cellForColumnAndRow(unsigned column, unsigned row);
-    
-    void columnHeaders(AccessibilityChildrenVector&);
-    void rowHeaders(AccessibilityChildrenVector&);
-    void visibleRows(AccessibilityChildrenVector&);
-    
-    // an object that contains, as children, all the objects that act as headers
-    AccessibilityObject* headerContainer();
 
-    // isExposableThroughAccessibility() is whether it is exposed as an AccessibilityTable to the platform.
-    bool isExposableThroughAccessibility() const;
-    
-    int axColumnCount() const;
-    int axRowCount() const;
+    AccessibilityChildrenVector columns() override;
+    AccessibilityChildrenVector rows() override;
+
+    unsigned columnCount() override;
+    unsigned rowCount() override;
+    int tableLevel() const final;
+
+    String title() const final;
+
+    // all the cells in the table
+    AccessibilityChildrenVector cells() override;
+    AccessibilityTableCell* cellForColumnAndRow(unsigned column, unsigned row) override;
+
+    AccessibilityChildrenVector columnHeaders() override;
+    AccessibilityChildrenVector rowHeaders() override;
+    AccessibilityChildrenVector visibleRows() override;
+
+    // Returns an object that contains, as children, all the objects that act as headers.
+    AXCoreObject* headerContainer() override;
+
+    bool isTable() const override { return true; }
+    // Returns whether it is exposed as an AccessibilityTable to the platform.
+    bool isExposable() const override;
+
+    int axColumnCount() const override;
+    int axRowCount() const override;
 
 protected:
     explicit AccessibilityTable(RenderObject*);
@@ -84,12 +84,13 @@ protected:
     AccessibilityChildrenVector m_columns;
 
     RefPtr<AccessibilityObject> m_headerContainer;
-    bool m_isExposableThroughAccessibility;
+    bool m_isExposable;
 
     bool hasARIARole() const;
 
-    // isTable is whether it's an AccessibilityTable object.
-    bool isTable() const final { return true; }
+    // Used in type checking function is<AccessibilityTable>.
+    bool isAccessibilityTableInstance() const final { return true; }
+
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
     bool isDataTable() const final;
@@ -105,4 +106,4 @@ private:
 
 } // namespace WebCore 
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTable, isTable())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTable, isAccessibilityTableInstance())

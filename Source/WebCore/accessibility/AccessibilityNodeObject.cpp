@@ -1739,7 +1739,7 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
     if (is<AccessibilityList>(*obj))
         return false;
 
-    if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposableThroughAccessibility())
+    if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposable())
         return false;
 
     if (obj->isTree() || obj->isCanvas())

@@ -57,8 +57,7 @@ GPtrArray* webkitAccessibleTableCellGetColumnHeaderCells(AtkTableCell* cell)
     if (!is<AccessibilityTableCell>(axObject))
         return nullptr;
 
-    AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-    downcast<AccessibilityTableCell>(*axObject).columnHeaders(columnHeaders);
+    auto columnHeaders = downcast<AccessibilityTableCell>(*axObject).columnHeaders();
 
     return convertToGPtrArray(columnHeaders);
 }
@@ -72,8 +71,7 @@ GPtrArray* webkitAccessibleTableCellGetRowHeaderCells(AtkTableCell* cell)
     if (!is<AccessibilityTableCell>(axObject))
         return nullptr;
 
-    AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-    downcast<AccessibilityTableCell>(*axObject).rowHeaders(rowHeaders);
+    auto rowHeaders = downcast<AccessibilityTableCell>(*axObject).rowHeaders();
 
     return convertToGPtrArray(rowHeaders);
 }

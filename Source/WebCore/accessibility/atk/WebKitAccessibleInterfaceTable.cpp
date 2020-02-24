@@ -66,8 +66,7 @@ static gint cellIndex(AccessibilityTableCell* axCell, AccessibilityTable* axTabl
 {
     // Calculate the cell's index as if we had a traditional Gtk+ table in
     // which cells are all direct children of the table, arranged row-first.
-    AccessibilityObject::AccessibilityChildrenVector allCells;
-    axTable->cells(allCells);
+    auto allCells = axTable->cells();
     AccessibilityObject::AccessibilityChildrenVector::iterator position;
     position = std::find(allCells.begin(), allCells.end(), axCell);
     if (position == allCells.end())
@@ -79,8 +78,7 @@ static AccessibilityTableCell* cellAtIndex(AtkTable* table, gint index)
 {
     AccessibilityObject* accTable = core(table);
     if (is<AccessibilityTable>(*accTable)) {
-        AccessibilityObject::AccessibilityChildrenVector allCells;
-        downcast<AccessibilityTable>(*accTable).cells(allCells);
+        auto allCells = downcast<AccessibilityTable>(*accTable).cells();
         if (0 <= index && static_cast<unsigned>(index) < allCells.size())
             return downcast<AccessibilityTableCell>(allCells[index].get());
     }
@@ -208,8 +206,7 @@ static AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint col
 
     AccessibilityObject* accTable = core(table);
     if (is<AccessibilityTable>(*accTable)) {
-        AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-        downcast<AccessibilityTable>(*accTable).columnHeaders(columnHeaders);
+        auto columnHeaders = downcast<AccessibilityTable>(*accTable).columnHeaders();
 
         for (const auto& columnHeader : columnHeaders) {
             std::pair<unsigned, unsigned> columnRange;
@@ -228,8 +225,7 @@ static AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
 
     AccessibilityObject* accTable = core(table);
     if (is<AccessibilityTable>(*accTable)) {
-        AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-        downcast<AccessibilityTable>(*accTable).rowHeaders(rowHeaders);
+        auto rowHeaders = downcast<AccessibilityTable>(*accTable).rowHeaders();
 
         for (const auto& rowHeader : rowHeaders) {
             std::pair<unsigned, unsigned> rowRange;

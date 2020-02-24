@@ -132,9 +132,19 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 {
-    if (!axID)
-        return nullptr;
-    return m_readerThreadNodeMap.get(axID);
+    return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
+}
+
+Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) const
+{
+    Vector<RefPtr<AXCoreObject>> result(axIDs.size());
+
+    for (const auto& axID : axIDs) {
+        if (auto object = nodeForID(axID))
+            result.uncheckedAppend(object);
+    }
+
+    return result;
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedUIElement()

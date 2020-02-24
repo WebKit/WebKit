@@ -60,6 +60,7 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedUIElement();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
+    Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
 
     struct NodeChange {
         Ref<AXIsolatedObject> m_isolatedObject;

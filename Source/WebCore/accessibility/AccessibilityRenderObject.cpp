@@ -3471,7 +3471,7 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
     }
 
     // Get all the rows.
-    auto rowsIteration = [&](auto& rows) {
+    auto rowsIteration = [&](const auto& rows) {
         for (auto& row : rows) {
             if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
                 result.append(row);
@@ -3486,7 +3486,7 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
         rowsIteration(allRows);
     } else if (is<AccessibilityTable>(*this)) {
         auto& thisTable = downcast<AccessibilityTable>(*this);
-        if (thisTable.isExposableThroughAccessibility() && thisTable.supportsSelectedRows())
+        if (thisTable.isExposable() && thisTable.supportsSelectedRows())
             rowsIteration(thisTable.rows());
     }
 }

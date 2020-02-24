@@ -113,6 +113,7 @@ public:
     bool isAccessibilityScrollView() const override { return false; }
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
+    bool isAccessibilityTableInstance() const override { return false; }
 
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
@@ -148,8 +149,25 @@ public:
     bool isOrderedList() const override { return false; }
     bool isDescriptionList() const override { return false; }
 
+    // Table support.
     bool isTable() const override { return false; }
+    bool isExposable() const override { return true; }
     bool isDataTable() const override { return false; }
+    int tableLevel() const override { return 0; }
+    bool supportsSelectedRows() const override { return false; }
+    AccessibilityChildrenVector columns() override { return AccessibilityChildrenVector(); }
+    AccessibilityChildrenVector rows() override { return AccessibilityChildrenVector(); }
+    unsigned columnCount() override { return 0; }
+    unsigned rowCount() override { return 0; }
+    AccessibilityChildrenVector cells() override { return AccessibilityChildrenVector(); }
+    AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override { return nullptr; }
+    AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
+    AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
+    AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
+    AXCoreObject* headerContainer() override { return nullptr; }
+    int axColumnCount() const override { return 0; }
+    int axRowCount() const override { return 0; }
+
     bool isTableRow() const override { return false; }
     bool isTableColumn() const override { return false; }
     bool isTableCell() const override { return false; }
@@ -240,7 +258,6 @@ public:
 
     unsigned blockquoteLevel() const override;
     int headingLevel() const override { return 0; }
-    int tableLevel() const override { return 0; }
     AccessibilityButtonState checkboxOrRadioValue() const override;
     String valueDescription() const override { return String(); }
     float valueForRange() const override { return 0.0f; }

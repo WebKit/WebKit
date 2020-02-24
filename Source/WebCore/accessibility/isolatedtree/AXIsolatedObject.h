@@ -98,6 +98,8 @@ private:
         ARIATreeRows,
         ARIARoleAttribute,
         ARIAOwnsElements,
+        AXColumnCount,
+        AXRowCount,
         BlockquoteLevel,
         BoundingBoxRect,
         CanHaveSelectedChildren,
@@ -112,9 +114,13 @@ private:
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
         CaretBrowsingEnabled,
 #endif
+        Cells,
         ClassList,
         ClickPoint,
         ColorValue,
+        Columns,
+        ColumnCount,
+        ColumnHeaders,
         ComputedLabel,
         ComputedRoleString,
         CurrentState,
@@ -134,6 +140,7 @@ private:
         HasARIAValueNow,
         HasChildren,
         HasPopup,
+        HeaderContainer,
         HeadingLevel,
         HelpText,
         HierarchicalLevel,
@@ -153,9 +160,11 @@ private:
         IsChecked,
         IsCollapsed,
         IsControl,
+        IsDataTable,
         IsDescriptionList,
         IsEnabled,
         IsExpanded,
+        IsExposable,
         IsFieldset,
         IsFileUploadButton,
         IsFocused,
@@ -222,6 +231,7 @@ private:
         IsShowingValidationMessage,
         IsSlider,
         IsStyleFormatGroup,
+        IsTable,
         IsTableCell,
         IsTableColumn,
         IsTableRow,
@@ -269,6 +279,9 @@ private:
         RoleValue,
         RolePlatformString,
         RoleDescription,
+        Rows,
+        RowCount,
+        RowHeaders,
         SelectedChildren,
         SelectedRadioButton,
         SelectedTabItem,
@@ -291,6 +304,7 @@ private:
         SupportsPressAction,
         SupportsRangeValue,
         SupportsRequiredAttribute,
+        SupportsSelectedRows,
         SupportsSetSize,
         TabChildren,
         TableLevel,
@@ -305,6 +319,7 @@ private:
         ValidationMessage,
         VerticalScrollBar,
         VisibleChildren,
+        VisibleRows,
     };
     
     typedef std::pair<AXID, AXID> AccessibilityIsolatedTreeMathMultiscriptPair;
@@ -317,7 +332,7 @@ private:
     using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, AXID, IntPoint, OptionSet<SpeakAs>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
-    void setObjectVectorProperty(AXPropertyName, AccessibilityChildrenVector&);
+    void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
 
     bool boolAttributeValue(AXPropertyName) const;
     const String stringAttributeValue(AXPropertyName) const;
@@ -364,7 +379,25 @@ private:
     bool isOrderedList() const override { return boolAttributeValue(AXPropertyName::IsOrderedList); }
     bool isDescriptionList() const override { return boolAttributeValue(AXPropertyName::IsDescriptionList); }
 
-    bool isTable() const override { return false; }
+    // Table support.
+    bool isTable() const override { return boolAttributeValue(AXPropertyName::IsTable); }
+    bool isExposable() const override { return boolAttributeValue(AXPropertyName::IsExposable); }
+    bool isDataTable() const override { return boolAttributeValue(AXPropertyName::IsDataTable); }
+    int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
+    bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
+    AccessibilityChildrenVector columns() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
+    AccessibilityChildrenVector rows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
+    unsigned columnCount() override { return unsignedAttributeValue(AXPropertyName::ColumnCount); }
+    unsigned rowCount() override { return unsignedAttributeValue(AXPropertyName::RowCount); }
+    AccessibilityChildrenVector cells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
+    AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override;
+    AccessibilityChildrenVector columnHeaders() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ColumnHeaders)); }
+    AccessibilityChildrenVector rowHeaders() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::RowHeaders)); }
+    AccessibilityChildrenVector visibleRows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleRows)); }
+    AXCoreObject* headerContainer() override { return objectAttributeValue(AXPropertyName::HeaderContainer); }
+    int axColumnCount() const override { return intAttributeValue(AXPropertyName::AXColumnCount); }
+    int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
+
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }
     bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
@@ -404,7 +437,6 @@ private:
     String validationMessage() const override { return stringAttributeValue(AXPropertyName::ValidationMessage); }
     unsigned blockquoteLevel() const override { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     int headingLevel() const override { return intAttributeValue(AXPropertyName::HeadingLevel); }
-    int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const override { return static_cast<AccessibilityButtonState>(intAttributeValue(AXPropertyName::AccessibilityButtonState)); }
     String valueDescription() const override { return stringAttributeValue(AXPropertyName::ValueDescription); }
     float valueForRange() const override { return floatAttributeValue(AXPropertyName::ValueForRange); }
@@ -656,6 +688,7 @@ private:
     bool isAccessibilityScrollView() const override;
     bool isAccessibilitySVGRoot() const override;
     bool isAccessibilitySVGElement() const override;
+    bool isAccessibilityTableInstance() const override;
     bool isAttachmentElement() const override;
     bool isNativeImage() const override;
     bool isImageButton() const override;
@@ -667,7 +700,6 @@ private:
     bool isSliderThumb() const override;
     bool isInputSlider() const override;
     bool isLabel() const override;
-    bool isDataTable() const override;
     bool isImageMapLink() const override;
     bool isNativeSpinButton() const override;
     bool isSpinButtonPart() const override;

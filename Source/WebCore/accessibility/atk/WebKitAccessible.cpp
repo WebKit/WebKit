@@ -426,7 +426,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
             attributeSet = addToAtkAttributeSet(attributeSet, "multiscript-type", "post");
     }
 
-    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility()) {
+    if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposable()) {
         auto& table = downcast<AccessibilityTable>(*coreObject);
         int rowCount = table.axRowCount();
         if (rowCount)

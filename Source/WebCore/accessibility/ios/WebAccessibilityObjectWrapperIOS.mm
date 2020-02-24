@@ -1193,7 +1193,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     // Find if the parent table for the table cell.
     if (AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [] (const AXCoreObject& object) {
-        return is<AccessibilityTable>(object) && downcast<AccessibilityTable>(object).isExposableThroughAccessibility();
+        return is<AccessibilityTable>(object) && downcast<AccessibilityTable>(object).isExposable();
     }))
         return static_cast<AccessibilityTable*>(parent);
     return nil;
@@ -1230,12 +1230,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     std::pair<unsigned, unsigned> columnRange;
     tableCell->rowIndexRange(rowRange);
     tableCell->columnIndexRange(columnRange);
-    
-    AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-    AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-    table->rowHeaders(rowHeaders);
-    table->columnHeaders(columnHeaders);
-    
+
+    auto rowHeaders = table->rowHeaders();
+    auto columnHeaders = table->columnHeaders();
+
     NSMutableArray *headers = [NSMutableArray array];
     
     unsigned columnRangeIndex = static_cast<unsigned>(columnRange.first);

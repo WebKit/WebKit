@@ -144,7 +144,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::ValidationMessage, object.validationMessage());
     setProperty(AXPropertyName::BlockquoteLevel, object.blockquoteLevel());
     setProperty(AXPropertyName::HeadingLevel, object.headingLevel());
-    setProperty(AXPropertyName::TableLevel, object.tableLevel());
     setProperty(AXPropertyName::AccessibilityButtonState, static_cast<int>(object.checkboxOrRadioValue()));
     setProperty(AXPropertyName::ValueDescription, object.valueDescription());
     setProperty(AXPropertyName::ValueForRange, object.valueForRange());
@@ -217,6 +216,26 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus());
     setProperty(AXPropertyName::LiveRegionRelevant, object.liveRegionRelevant());
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
+
+    if (object.isTable()) {
+        setProperty(AXPropertyName::IsTable, object.isTable());
+        setProperty(AXPropertyName::IsExposable, object.isExposable());
+        setProperty(AXPropertyName::IsDataTable, object.isDataTable());
+        setProperty(AXPropertyName::TableLevel, object.tableLevel());
+        setProperty(AXPropertyName::SupportsSelectedRows, object.supportsSelectedRows());
+        setObjectVectorProperty(AXPropertyName::Columns, object.columns());
+        setObjectVectorProperty(AXPropertyName::Rows, object.rows());
+        setProperty(AXPropertyName::ColumnCount, object.columnCount());
+        setProperty(AXPropertyName::RowCount, object.rowCount());
+        setObjectVectorProperty(AXPropertyName::Cells, object.cells());
+        setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
+        setObjectVectorProperty(AXPropertyName::RowHeaders, object.rowHeaders());
+        setObjectVectorProperty(AXPropertyName::VisibleRows, object.visibleRows());
+        setProperty(AXPropertyName::HeaderContainer, object.headerContainer());
+        setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
+        setProperty(AXPropertyName::AXRowCount, object.axRowCount());
+    }
+
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
 
@@ -378,17 +397,16 @@ void AXIsolatedObject::setObjectProperty(AXPropertyName propertyName, AXCoreObje
         setProperty(propertyName, nullptr, true);
 }
 
-void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children)
+void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, const AccessibilityChildrenVector& children)
 {
-    size_t childrenSize = children.size();
-    if (!childrenSize)
+    if (!children.size())
         return;
-    
-    Vector<AXID> childrenVector;
-    childrenVector.reserveCapacity(childrenSize);
-    for (auto childObject : children)
-        childrenVector.uncheckedAppend(childObject->objectID());
-    setProperty(propertyName, childrenVector);
+
+    Vector<AXID> childIDs(children.size());
+    for (auto child : children)
+        childIDs.uncheckedAppend(child->objectID());
+
+    setProperty(propertyName, childIDs);
 }
 
 void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
@@ -456,6 +474,19 @@ bool AXIsolatedObject::isDetachedFromParent()
     if (auto root = tree()->rootNode())
         return root->objectID() != m_id;
     return false;
+}
+
+AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsigned rowIndex)
+{
+    AXID cellID = Accessibility::retrieveValueFromMainThread<AXID>([&columnIndex, &rowIndex, this] () -> AXID {
+        if (auto* object = associatedAXObject()) {
+            if (auto cell = object->cellForColumnAndRow(columnIndex, rowIndex))
+                return cell->ojbectID();
+        }
+        return InvalidAXID;
+    });
+
+    return tree()->nodeForID(cellID);
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -786,12 +817,7 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 
 void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children) const
 {
-    Vector<AXID> childIDs = vectorAttributeValue<AXID>(propertyName);
-    children.reserveCapacity(childIDs.size());
-    for (const auto& childID : childIDs) {
-        if (auto object = tree()->nodeForID(childID))
-            children.uncheckedAppend(object);
-    }
+    children = tree()->objectsForIDs(vectorAttributeValue<AXID>(propertyName));
 }
 
 void AXIsolatedObject::updateBackingStore()
@@ -902,6 +928,12 @@ bool AXIsolatedObject::isAccessibilitySVGElement() const
     return false;
 }
 
+bool AXIsolatedObject::isAccessibilityTableInstance() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool AXIsolatedObject::isAttachmentElement() const
 {
     ASSERT_NOT_REACHED();
@@ -963,12 +995,6 @@ bool AXIsolatedObject::isInputSlider() const
 }
 
 bool AXIsolatedObject::isLabel() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isDataTable() const
 {
     ASSERT_NOT_REACHED();
     return false;

@@ -488,6 +488,7 @@ public:
     virtual bool isAccessibilityScrollView() const = 0;
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
+    virtual bool isAccessibilityTableInstance() const = 0;
 
     virtual bool isAttachmentElement() const = 0;
     virtual bool isHeading() const = 0;
@@ -528,11 +529,31 @@ public:
     virtual bool isOrderedList() const = 0;
     virtual bool isDescriptionList() const = 0;
 
+    // Table support.
     virtual bool isTable() const = 0;
+    virtual bool isExposable() const = 0;
     virtual bool isDataTable() const = 0;
+    virtual int tableLevel() const = 0;
+    virtual bool supportsSelectedRows() const = 0;
+    virtual AccessibilityChildrenVector columns() = 0;
+    virtual AccessibilityChildrenVector rows() = 0;
+    virtual unsigned columnCount() = 0;
+    virtual unsigned rowCount() = 0;
+    // All the cells in the table.
+    virtual AccessibilityChildrenVector cells() = 0;
+    virtual AXCoreObject* cellForColumnAndRow(unsigned column, unsigned row) = 0;
+    virtual AccessibilityChildrenVector columnHeaders() = 0;
+    virtual AccessibilityChildrenVector rowHeaders() = 0;
+    virtual AccessibilityChildrenVector visibleRows() = 0;
+    // Returns an object that contains, as children, all the objects that act as headers.
+    virtual AXCoreObject* headerContainer() = 0;
+    virtual int axColumnCount() const = 0;
+    virtual int axRowCount() const = 0;
+
     virtual bool isTableRow() const = 0;
     virtual bool isTableColumn() const = 0;
     virtual bool isTableCell() const = 0;
+
     virtual bool isFieldset() const = 0;
     virtual bool isGroup() const = 0;
     virtual bool isARIATreeGridRow() const = 0;
@@ -648,7 +669,6 @@ public:
 
     virtual unsigned blockquoteLevel() const = 0;
     virtual int headingLevel() const = 0;
-    virtual int tableLevel() const = 0;
     virtual AccessibilityButtonState checkboxOrRadioValue() const = 0;
     virtual String valueDescription() const = 0;
     virtual float valueForRange() const = 0;

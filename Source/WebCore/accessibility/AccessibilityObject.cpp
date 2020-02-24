@@ -510,7 +510,7 @@ static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreOb
 {
     // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    const auto& searchChildren = is<AccessibilityTable>(*object) && downcast<AccessibilityTable>(*object).isExposableThroughAccessibility() ? downcast<AccessibilityTable>(*object).rows() : object->children();
+    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->children();
 
     size_t childrenSize = searchChildren.size();
 
@@ -3723,10 +3723,10 @@ static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, Acce
             && !axObject->hasSameStyle(criteria.startObject->renderer());
     case AccessibilitySearchKey::TableSameLevel:
         return criteria.startObject
-            && is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility()
-            && downcast<AccessibilityTable>(*axObject).tableLevel() == criteria.startObject->tableLevel();
+            && axObject->isTable() && axObject->isExposable()
+            && axObject->tableLevel() == criteria.startObject->tableLevel();
     case AccessibilitySearchKey::Table:
-        return is<AccessibilityTable>(*axObject) && downcast<AccessibilityTable>(*axObject).isExposableThroughAccessibility();
+        return axObject->isTable() && axObject->isExposable();
     case AccessibilitySearchKey::TextField:
         return axObject->isTextControl();
     case AccessibilitySearchKey::Underline:

@@ -49,10 +49,10 @@ public:
     virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const;
     // fills in the start location and column span of cell
     virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const;
-    
-    void columnHeaders(AccessibilityChildrenVector&);
-    void rowHeaders(AccessibilityChildrenVector&);
-    
+
+    AccessibilityChildrenVector columnHeaders() override;
+    AccessibilityChildrenVector rowHeaders() override;
+
     int axColumnIndex() const;
     int axRowIndex() const;
     int axColumnSpan() const;

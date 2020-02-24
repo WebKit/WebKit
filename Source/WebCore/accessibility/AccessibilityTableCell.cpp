@@ -101,7 +101,7 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
             // we don't want to choose another ancestor table as this cell's table.
             if (is<AccessibilityTable>(*parent)) {
                 auto& parentTable = downcast<AccessibilityTable>(*parent);
-                if (parentTable.isExposableThroughAccessibility())
+                if (parentTable.isExposable())
                     return &parentTable;
                 if (parentTable.node())
                     break;
@@ -119,7 +119,7 @@ bool AccessibilityTableCell::isTableCell() const
     // This used to check if the unignoredParent was a row, but that exploded performance if
     // this was in nested tables. This check should be just as good.
     AccessibilityObject* parentTable = this->parentTable();
-    return is<AccessibilityTable>(parentTable) && downcast<AccessibilityTable>(*parentTable).isExposableThroughAccessibility();
+    return is<AccessibilityTable>(parentTable) && downcast<AccessibilityTable>(*parentTable).isExposable();
 }
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
@@ -243,17 +243,18 @@ bool AccessibilityTableCell::supportsExpandedTextValue() const
     return isTableHeaderCell() && hasAttribute(abbrAttr);
 }
     
-void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
+AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders()
 {
+    AccessibilityChildrenVector headers;
     AccessibilityTable* parent = parentTable();
     if (!parent)
-        return;
+        return headers;
 
     // Choose columnHeaders as the place where the "headers" attribute is reported.
     ariaElementsFromAttribute(headers, headersAttr);
     // If the headers attribute returned valid values, then do not further search for column headers.
     if (!headers.isEmpty())
-        return;
+        return headers;
     
     std::pair<unsigned, unsigned> rowRange;
     rowIndexRange(rowRange);
@@ -275,13 +276,16 @@ void AccessibilityTableCell::columnHeaders(AccessibilityChildrenVector& headers)
         else if (tableCell->isColumnHeaderCell())
             headers.append(tableCell);
     }
+
+    return headers;
 }
     
-void AccessibilityTableCell::rowHeaders(AccessibilityChildrenVector& headers)
+AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 {
+    AccessibilityChildrenVector headers;
     AccessibilityTable* parent = parentTable();
     if (!parent)
-        return;
+        return headers;
 
     std::pair<unsigned, unsigned> rowRange;
     rowIndexRange(rowRange);
@@ -300,6 +304,8 @@ void AccessibilityTableCell::rowHeaders(AccessibilityChildrenVector& headers)
         else if (tableCell->isRowHeaderCell())
             headers.append(tableCell);
     }
+
+    return headers;
 }
 
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const

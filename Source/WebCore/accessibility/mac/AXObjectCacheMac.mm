@@ -303,7 +303,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
             macNotification = @"AXInvalidStatusChanged";
             break;
         case AXSelectedChildrenChanged:
-            if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposableThroughAccessibility())
+            if (obj->isTable() && obj->isExposable())
                 macNotification = NSAccessibilitySelectedRowsChangedNotification;
             else
                 macNotification = NSAccessibilitySelectedChildrenChangedNotification;
