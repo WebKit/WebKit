@@ -2366,13 +2366,6 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
     completionHandler();
 }
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&& completionHandler)
-{
-    parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles(filenames), WTFMove(completionHandler));
-}
-#endif // ENABLE(SANDBOX_EXTENSIONS)
-
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcess::forEachSWServer(const Function<void(SWServer&)>& callback)
 {
