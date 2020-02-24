@@ -32,6 +32,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "LegacySchemeRegistry.h"
+#include "Page.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
@@ -126,6 +127,13 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.mode = FetchOptions::Mode::Cors;
     else if (sameOriginFlag == SameOriginFlag::Yes)
         options.mode = FetchOptions::Mode::SameOrigin;
+
+    if (options.mode != FetchOptions::Mode::NoCors) {
+        if (auto* page = document.page()) {
+            if (page->shouldDisableCorsForRequestTo(request.url()))
+                options.mode = FetchOptions::Mode::NoCors;
+        }
+    }
 
     if (crossOriginAttribute.isNull()) {
         CachedResourceRequest cachedRequest { WTFMove(request), WTFMove(options) };

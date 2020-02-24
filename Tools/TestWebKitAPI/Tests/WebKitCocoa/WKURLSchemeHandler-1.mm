@@ -882,6 +882,60 @@ TEST(URLSchemeHandler, DisableCORS)
     EXPECT_FALSE(corsfailure);
 }
 
+TEST(URLSchemeHandler, DisableCORSScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { "fetch('loadSuccess')" } }
+    });
+
+    bool loadSuccess = false;
+    bool loadFail = false;
+    bool done = false;
+
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"cors"];
+
+    [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            NSData *data = [[NSString stringWithFormat:@"<script type='text/javascript' crossorigin='anonymous' onerror='fetch(\"loadFail\")' src='http://127.0.0.1:%d/'></script>", server.port()] dataUsingEncoding:NSUTF8StringEncoding];
+            
+            [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil] autorelease]];
+            [task didReceiveData:data];
+            [task didFinish];
+        } else if ([task.request.URL.path isEqualToString:@"/loadSuccess"]) {
+            loadSuccess = true;
+            done = true;
+        } else if ([task.request.URL.path isEqualToString:@"/loadFail"]) {
+            loadFail = true;
+            done = true;
+        } else
+            ASSERT_NOT_REACHED();
+    }];
+
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"cors://host1/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+    }
+    EXPECT_FALSE(loadSuccess);
+    EXPECT_TRUE(loadFail);
+    
+    loadSuccess = false;
+    loadFail = false;
+    done = false;
+
+    configuration._corsDisablingPatterns = @[@"*://*/*"];
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"cors://host1/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+    }
+    EXPECT_TRUE(loadSuccess);
+    EXPECT_FALSE(loadFail);
+}
+
 #endif // HAVE(NETWORK_FRAMEWORK)
 
 @interface FrameSchemeHandler : NSObject <WKURLSchemeHandler>

@@ -1,3 +1,13 @@
+2020-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViewConfiguration._corsDisablingPatterns should also disable CORS for non-DocumentThreadableLoader loading
+        https://bugs.webkit.org/show_bug.cgi?id=208035
+        <rdar://problem/58011337>
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Fix some include mistakes and make some coding style tweaks to WebKit and WebKitTestRunner
