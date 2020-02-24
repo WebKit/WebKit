@@ -1,5 +1,38 @@
 2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r257106. rdar://problem/59676862
+
+    Add fidelity.com to the desktop class quirks list
+    https://bugs.webkit.org/show_bug.cgi?id=208037
+    <rdar://problem/59480381>
+    
+    Reviewed by Brent Fulgham.
+    
+    No new tests. This patch just adds a domain name to a quirks function.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::desktopClassBrowsingRecommendedForRequest):
+        fidelity.com and its subdomains now return false.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257106 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-20  John Wilander  <wilander@apple.com>
+
+            Add fidelity.com to the desktop class quirks list
+            https://bugs.webkit.org/show_bug.cgi?id=208037
+            <rdar://problem/59480381>
+
+            Reviewed by Brent Fulgham.
+
+            No new tests. This patch just adds a domain name to a quirks function.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::desktopClassBrowsingRecommendedForRequest):
+                fidelity.com and its subdomains now return false.
+
+2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r257089. rdar://problem/59676917
 
     NetworkCache should use 4KB threshold for mmap-ed files instead of 16KB
