@@ -230,7 +230,7 @@ static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation, bool dataTaskIsForMainResourceNavigationForAnyFrame, Optional<NetworkActivityTracker> networkActivityTracker)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
-    , m_sessionWrapper(static_cast<NetworkSessionCocoa&>(session).sessionWrapperForTask(requestWithCredentials, storedCredentialsPolicy))
+    , m_sessionWrapper(makeWeakPtr(static_cast<NetworkSessionCocoa&>(session).sessionWrapperForTask(requestWithCredentials, storedCredentialsPolicy)))
     , m_frameID(frameID)
     , m_pageID(pageID)
     , m_isForMainResourceNavigationForAnyFrame(dataTaskIsForMainResourceNavigationForAnyFrame)
@@ -277,12 +277,12 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
-    m_task = [m_sessionWrapper.session dataTaskWithRequest:nsRequest];
+    m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest];
 
     BEGIN_SIGNPOST(m_task, "%{public}s pri: %f preconnect: %d", url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), shouldPreconnectOnly == PreconnectOnly::Yes);
 
-    RELEASE_ASSERT(!m_sessionWrapper.dataTaskMap.contains([m_task taskIdentifier]));
-    m_sessionWrapper.dataTaskMap.add([m_task taskIdentifier], this);
+    RELEASE_ASSERT(!m_sessionWrapper->dataTaskMap.contains([m_task taskIdentifier]));
+    m_sessionWrapper->dataTaskMap.add([m_task taskIdentifier], this);
     LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 
     if (shouldPreconnectOnly == PreconnectOnly::Yes) {
@@ -318,11 +318,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
 {
-    if (!m_task || !m_session)
+    if (!m_task || !m_sessionWrapper)
         return;
 
-    RELEASE_ASSERT(m_sessionWrapper.dataTaskMap.get([m_task taskIdentifier]) == this);
-    m_sessionWrapper.dataTaskMap.remove([m_task taskIdentifier]);
+    RELEASE_ASSERT(m_sessionWrapper->dataTaskMap.get([m_task taskIdentifier]) == this);
+    m_sessionWrapper->dataTaskMap.remove([m_task taskIdentifier]);
 }
 
 void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)

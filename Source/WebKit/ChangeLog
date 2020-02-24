@@ -1,3 +1,42 @@
+2020-02-24  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256857. rdar://problem/59654285
+
+    NetworkDataTask should not expect its session wrapper to be always live
+    https://bugs.webkit.org/show_bug.cgi?id=207903
+    rdar://problem/59291486
+    
+    Reviewed by Alex Christensen.
+    
+    NetworkDataTaskCocoa should take a weak pointer to its session wrapper.
+    If the session wrapper is still valid, then we can remove the task from the session wrapper map.
+    We cannot guarantee session wrapper is valid since NetworkDataTask is ref counted.
+    
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+    (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256857 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Youenn Fablet  <youenn@apple.com>
+
+            NetworkDataTask should not expect its session wrapper to be always live
+            https://bugs.webkit.org/show_bug.cgi?id=207903
+            rdar://problem/59291486
+
+            Reviewed by Alex Christensen.
+
+            NetworkDataTaskCocoa should take a weak pointer to its session wrapper.
+            If the session wrapper is still valid, then we can remove the task from the session wrapper map.
+            We cannot guarantee session wrapper is valid since NetworkDataTask is ref counted.
+
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+
 2020-02-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256933. rdar://problem/59618839
