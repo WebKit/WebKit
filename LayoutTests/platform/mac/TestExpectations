@@ -2041,3 +2041,5 @@ webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/208061 [ Mojave ] webaudio/audioparam-exponentialRampToValueAtTime.html [ Pass Crash ]
 
 webkit.org/b/208077 [ Debug ] legacy-animation-engine/animations/animation-welcome-safari.html [ Pass Failure ]
+
+webkit.org/b/207858 [ Mojave ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-webgl-canvas-rgba5551.html [ Pass Failure ]
