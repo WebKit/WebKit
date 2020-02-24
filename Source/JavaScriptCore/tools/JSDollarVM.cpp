@@ -81,6 +81,8 @@ public:
 
     void updateVMStackLimits() { return m_vm.updateStackLimits(); };
 
+    static EncodedJSValue JSC_HOST_CALL functionGetStructureTransitionList(JSGlobalObject*, CallFrame*);
+
 private:
     VM& m_vm;
 };
@@ -2791,6 +2793,63 @@ static EncodedJSValue JSC_HOST_CALL functionMake16BitStringIfPossible(JSGlobalOb
     return JSValue::encode(jsString(vm, String::adopt(WTFMove(buffer))));
 }
 
+EncodedJSValue JSC_HOST_CALL JSDollarVMHelper::functionGetStructureTransitionList(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSObject* obj = callFrame->argument(0).toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!obj)
+        return JSValue::encode(jsNull());
+    Vector<Structure*, 8> structures;
+
+    for (auto* structure = obj->structure(); structure; structure = structure->previousID())
+        structures.append(structure);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (size_t i = 0; i < structures.size(); ++i) {
+        auto* structure = structures[structures.size() - i - 1];
+        result->push(globalObject, JSValue(structure->id()));
+        RETURN_IF_EXCEPTION(scope, { });
+        result->push(globalObject, JSValue(structure->transitionOffset()));
+        RETURN_IF_EXCEPTION(scope, { });
+        result->push(globalObject, JSValue(structure->maxOffset()));
+        RETURN_IF_EXCEPTION(scope, { });
+        if (structure->m_transitionPropertyName)
+            result->push(globalObject, jsString(vm, String(*structure->m_transitionPropertyName)));
+        else
+            result->push(globalObject, jsNull());
+        RETURN_IF_EXCEPTION(scope, { });
+        result->push(globalObject, JSValue(structure->isPropertyDeletionTransition()));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(result);
+}
+
+static EncodedJSValue JSC_HOST_CALL functionGetConcurrently(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSObject* obj = callFrame->argument(0).toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!obj)
+        return JSValue::encode(jsNull());
+    String property = callFrame->argument(1).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto name = PropertyName(Identifier::fromString(vm, property));
+    auto offset = obj->structure()->getConcurrently(name.uid());
+    if (offset != invalidOffset)
+        ASSERT(JSValue::encode(obj->getDirect(offset)));
+    JSValue result = JSValue(offset != invalidOffset);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(result);
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -2920,6 +2979,9 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isWasmSupported", functionIsWasmSupported, 0);
     addFunction(vm, "make16BitStringIfPossible", functionMake16BitStringIfPossible, 1);
+
+    addFunction(vm, "getStructureTransitionList", JSDollarVMHelper::functionGetStructureTransitionList, 1);
+    addFunction(vm, "getConcurrently", functionGetConcurrently, 2);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

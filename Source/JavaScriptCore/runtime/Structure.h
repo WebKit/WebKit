@@ -123,6 +123,8 @@ private:
 };
 
 class Structure final : public JSCell {
+    static constexpr uint16_t shortInvalidOffset = std::numeric_limits<uint16_t>::max() - 1;
+    static constexpr uint16_t useRareDataFlag = std::numeric_limits<uint16_t>::max();
 public:
     friend class StructureTransitionTable;
 
@@ -187,11 +189,13 @@ public:
     JS_EXPORT_PRIVATE static Structure* addNewPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, UniquedStringImpl* uid, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
-    static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
+    static Structure* removeNewPropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&, DeferredStructureTransitionWatchpointFire* = nullptr);
+    static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&, DeferredStructureTransitionWatchpointFire* = nullptr);
+    static Structure* removePropertyTransitionFromExistingStructure(VM&, Structure*, PropertyName, PropertyOffset&, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype, DeferredStructureTransitionWatchpointFire&);
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
-    static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
+    static Structure* toUncacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     JS_EXPORT_PRIVATE static Structure* sealTransition(VM&, Structure*);
     JS_EXPORT_PRIVATE static Structure* freezeTransition(VM&, Structure*);
     static Structure* preventExtensionsTransition(VM&, Structure*);
@@ -352,14 +356,60 @@ public:
         return static_cast<Structure*>(cell);
     }
     bool transitivelyTransitionedFrom(Structure* structureToFind);
-    
-    PropertyOffset lastOffset() const { return m_offset; }
-    
-    void setLastOffset(PropertyOffset offset) { m_offset = offset; }
 
-    static unsigned outOfLineCapacity(PropertyOffset lastOffset)
+    PropertyOffset maxOffset() const
     {
-        unsigned outOfLineSize = Structure::outOfLineSize(lastOffset);
+        uint16_t maxOffset = m_maxOffset;
+        if (maxOffset == shortInvalidOffset)
+            return invalidOffset;
+        if (maxOffset == useRareDataFlag)
+            return rareData()->m_maxOffset;
+        return maxOffset;
+    }
+
+    void setMaxOffset(VM& vm, PropertyOffset offset)
+    {
+        if (offset == invalidOffset)
+            m_maxOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_maxOffset = offset;
+        else if (m_maxOffset == useRareDataFlag)
+            rareData()->m_maxOffset = offset;
+        else {
+            ensureRareData(vm)->m_maxOffset = offset;
+            WTF::storeStoreFence();
+            m_maxOffset = useRareDataFlag;
+        }
+    }
+
+    PropertyOffset transitionOffset() const
+    {
+        uint16_t transitionOffset = m_transitionOffset;
+        if (transitionOffset == shortInvalidOffset)
+            return invalidOffset;
+        if (transitionOffset == useRareDataFlag)
+            return rareData()->m_transitionOffset;
+        return transitionOffset;
+    }
+
+    void setTransitionOffset(VM& vm, PropertyOffset offset)
+    {
+        if (offset == invalidOffset)
+            m_transitionOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_transitionOffset = offset;
+        else if (m_transitionOffset == useRareDataFlag)
+            rareData()->m_transitionOffset = offset;
+        else {
+            ensureRareData(vm)->m_transitionOffset = offset;
+            WTF::storeStoreFence();
+            m_transitionOffset = useRareDataFlag;
+        }
+    }
+
+    static unsigned outOfLineCapacity(PropertyOffset maxOffset)
+    {
+        unsigned outOfLineSize = Structure::outOfLineSize(maxOffset);
 
         // This algorithm completely determines the out-of-line property storage growth algorithm.
         // The JSObject code will only trigger a resize if the value returned by this algorithm
@@ -377,18 +427,18 @@ public:
         return WTF::roundUpToPowerOfTwo(outOfLineSize);
     }
     
-    static unsigned outOfLineSize(PropertyOffset lastOffset)
+    static unsigned outOfLineSize(PropertyOffset maxOffset)
     {
-        return numberOfOutOfLineSlotsForLastOffset(lastOffset);
+        return numberOfOutOfLineSlotsForMaxOffset(maxOffset);
     }
 
     unsigned outOfLineCapacity() const
     {
-        return outOfLineCapacity(m_offset);
+        return outOfLineCapacity(maxOffset());
     }
     unsigned outOfLineSize() const
     {
-        return outOfLineSize(m_offset);
+        return outOfLineSize(maxOffset());
     }
     bool hasInlineStorage() const
     {
@@ -400,11 +450,7 @@ public:
     }
     unsigned inlineSize() const
     {
-        return std::min<unsigned>(m_offset + 1, m_inlineCapacity);
-    }
-    unsigned totalStorageSize() const
-    {
-        return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
+        return std::min<unsigned>(maxOffset() + 1, m_inlineCapacity);
     }
     unsigned totalStorageCapacity() const
     {
@@ -415,7 +461,7 @@ public:
     bool isValidOffset(PropertyOffset offset) const
     {
         return JSC::isValidOffset(offset)
-            && offset <= m_offset
+            && offset <= maxOffset()
             && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
 
@@ -466,12 +512,6 @@ public:
         setHasCustomGetterSetterProperties(true);
         if (!is__proto__)
             setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
-    }
-    
-    bool isEmpty() const
-    {
-        ASSERT(checkOffsetConsistency());
-        return !JSC::isValidOffset(m_offset);
     }
 
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
@@ -651,7 +691,7 @@ public:
     DEFINE_BITFIELD(bool, hasGetterSetterProperties, HasGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(unsigned, attributesInPrevious, AttributesInPrevious, 14, 6);
+    DEFINE_BITFIELD(unsigned, transitionPropertyAttributes, TransitionPropertyAttributes, 14, 6);
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
@@ -660,10 +700,11 @@ public:
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
-    DEFINE_BITFIELD(bool, isAddingPropertyForTransition, IsAddingPropertyForTransition, 1, 28);
+    DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 28);
     DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
+    DEFINE_BITFIELD(bool, isPropertyDeletionTransition, IsPropertyDeletionTransition, 1, 30);
 
-    static_assert(s_bitWidthOfAttributesInPrevious <= sizeof(TransitionPropertyAttributes) * 8);
+    static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -688,9 +729,9 @@ private:
     template<ShouldPin, typename Func>
     PropertyOffset add(VM&, PropertyName, unsigned attributes, const Func&);
     PropertyOffset add(VM&, PropertyName, unsigned attributes);
-    template<typename Func>
-    PropertyOffset remove(PropertyName, const Func&);
-    PropertyOffset remove(PropertyName);
+    template<ShouldPin, typename Func>
+    PropertyOffset remove(VM&, PropertyName, const Func&);
+    PropertyOffset remove(VM&, PropertyName);
 
     void checkConsistency();
 
@@ -735,10 +776,11 @@ private:
             m_previousOrRareData.clear();
     }
 
-    int transitionCount() const
+    int transitionCountEstimate() const
     {
-        // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
-        return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
+        // Since the number of transitions is often the same as the last offset (except if there are deletes)
+        // we keep the size of Structure down by not storing both.
+        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
     }
 
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
@@ -780,7 +822,7 @@ private:
 
     WriteBarrier<JSCell> m_previousOrRareData;
 
-    RefPtr<UniquedStringImpl> m_nameInPrevious;
+    RefPtr<UniquedStringImpl> m_transitionPropertyName;
 
     const ClassInfo* m_classInfo;
 
@@ -794,13 +836,14 @@ private:
 
     COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
 
-    // m_offset does not account for anonymous slots
-    PropertyOffset m_offset;
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
 
     uint32_t m_propertyHash;
     TinyBloomFilter m_seenProperties;
 
     friend class VMInspector;
+    friend class JSDollarVMHelper;
 };
 
 } // namespace JSC

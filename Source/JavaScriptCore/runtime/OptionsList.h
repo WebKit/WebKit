@@ -348,6 +348,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, useGC, true, Normal, nullptr) \
     v(Bool, gcAtEnd, false, Normal, "If true, the jsc CLI will do a GC before exiting") \
     v(Bool, forceGCSlowPaths, false, Normal, "If true, we will force all JIT fast allocations down their slow paths.") \
+    v(Bool, forceDidDeferGCWork, false, Normal, "If true, we will force all DeferGC destructions to perform a GC.") \
     v(Unsigned, gcMaxHeapSize, 0, Normal, nullptr) \
     v(Unsigned, forceRAMSize, 0, Normal, nullptr) \
     v(Bool, recordGCPauseTimes, false, Normal, nullptr) \
