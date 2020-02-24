@@ -352,7 +352,7 @@ inline void Structure::setCachedPrototypeChain(VM& vm, StructureChain* chain)
     m_inlineCapacityAndCachedPrototypeChainOrRareData.setPointer(chain);
     vm.heap.writeBarrier(this, chain);
 #else
-    m_cachedPrototypeChainOrRareData.set(vm, this, chain);
+    m_cachedPrototypeChainOrRareData.setMayBeNull(vm, this, chain);
 #endif
 }
 
