@@ -295,6 +295,14 @@ void AuthenticatorManager::selectAssertionResponse(const HashSet<Ref<Authenticat
     });
 }
 
+void AuthenticatorManager::verifyUser(SecAccessControlRef accessControlRef, CompletionHandler<void(LAContext *)>&& completionHandler)
+{
+    RetainPtr<SecAccessControlRef> accessControl = accessControlRef;
+    dispatchPanelClientCall([accessControl = WTFMove(accessControl), completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().verifyUser(accessControl.get(), WTFMove(completionHandler));
+    });
+}
+
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);

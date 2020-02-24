@@ -32,6 +32,7 @@
 #import "TCPServer.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <LocalAuthentication/LocalAuthentication.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
@@ -39,6 +40,7 @@
 #import <WebKit/_WKWebAuthenticationPanel.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RandomNumber.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
 static bool webAuthenticationPanelRan = false;
@@ -49,9 +51,18 @@ static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 static bool webAuthenticationPanelUpdatePINBlocked = false;
 static bool webAuthenticationPanelUpdatePINAuthBlocked = false;
 static bool webAuthenticationPanelUpdatePINInvalid = false;
+static bool webAuthenticationPanelUpdateLAError = false;
+static bool webAuthenticationPanelUpdateLAExcludeCredentialsMatched = false;
+static bool webAuthenticationPanelUpdateLANoCredential = false;
 static bool webAuthenticationPanelCancelImmediately = false;
+static bool webAuthenticationPanelVerifyUser = false;
 static String webAuthenticationPanelPin;
 static BOOL webAuthenticationPanelNullUserHandle = NO;
+static String testES256PrivateKeyBase64 =
+    "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U"
+    "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6"
+    "RQ==";
+static String testUserhandleBase64 = "AAECAwQFBgcICQ==";
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -84,6 +95,18 @@ static BOOL webAuthenticationPanelNullUserHandle = NO;
         webAuthenticationPanelUpdatePINInvalid = true;
         return;
     }
+    if (update == _WKWebAuthenticationPanelUpdateLAError) {
+        webAuthenticationPanelUpdateLAError = true;
+        return;
+    }
+    if (update == _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched) {
+        webAuthenticationPanelUpdateLAExcludeCredentialsMatched = true;
+        return;
+    }
+    if (update == _WKWebAuthenticationPanelUpdateLANoCredential) {
+        webAuthenticationPanelUpdateLANoCredential = true;
+        return;
+    }
 }
 
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result
@@ -111,6 +134,11 @@ static BOOL webAuthenticationPanelNullUserHandle = NO;
 
 - (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler
 {
+    if (responses.count == 1) {
+        completionHandler(responses[0]);
+        return;
+    }
+
     EXPECT_EQ(responses.count, 2ul);
     for (_WKWebAuthenticationAssertionResponse *response in responses) {
         EXPECT_TRUE([response.name isEqual:@"johnpsmith@example.com"] || [response.name isEqual:@""]);
@@ -121,6 +149,13 @@ static BOOL webAuthenticationPanelNullUserHandle = NO;
     auto index = weakRandomUint32() % 2;
     webAuthenticationPanelNullUserHandle = responses[index].userHandle ? NO : YES;
     completionHandler(responses[index]);
+}
+
+- (void)panel:(_WKWebAuthenticationPanel *)panel verifyUserWithAccessControl:(SecAccessControlRef)accessControl completionHandler:(void (^)(LAContext *))completionHandler
+{
+    webAuthenticationPanelVerifyUser = true;
+    auto context = adoptNS([[LAContext alloc] init]);
+    completionHandler(context.get());
 }
 
 @end
@@ -231,6 +266,24 @@ static _WKExperimentalFeature *webAuthenticationExperimentalFeature()
     return theFeature.get();
 }
 
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+static _WKExperimentalFeature *webAuthenticationLocalAuthenticatorExperimentalFeature()
+{
+    static RetainPtr<_WKExperimentalFeature> theFeature;
+    if (theFeature)
+        return theFeature.get();
+
+    NSArray *features = [WKPreferences _experimentalFeatures];
+    for (_WKExperimentalFeature *feature in features) {
+        if ([feature.key isEqual:@"WebAuthenticationLocalAuthenticatorEnabled"]) {
+            theFeature = feature;
+            break;
+        }
+    }
+    return theFeature.get();
+}
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+
 static void reset()
 {
     webAuthenticationPanelRan = false;
@@ -241,9 +294,13 @@ static void reset()
     webAuthenticationPanelUpdatePINBlocked = false;
     webAuthenticationPanelUpdatePINAuthBlocked = false;
     webAuthenticationPanelUpdatePINInvalid = false;
+    webAuthenticationPanelUpdateLAError = false;
+    webAuthenticationPanelUpdateLAExcludeCredentialsMatched = false;
+    webAuthenticationPanelUpdateLANoCredential = false;
     webAuthenticationPanelCancelImmediately = false;
     webAuthenticationPanelPin = emptyString();
     webAuthenticationPanelNullUserHandle = NO;
+    webAuthenticationPanelVerifyUser = false;
 }
 
 static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
@@ -276,6 +333,60 @@ static void checkFrameInfo(WKFrameInfo *frame, bool isMainFrame, NSString *url, 
     EXPECT_EQ(frame.securityOrigin.port, port);
     EXPECT_EQ(frame.webView, webView);
 }
+
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+
+bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const String& userHandleBase64)
+{
+    NSDictionary* options = @{
+        (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrKeySizeInBits: @256,
+    };
+    CFErrorRef errorRef = nullptr;
+    auto key = adoptCF(SecKeyCreateWithData(
+        (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:privateKeyBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (__bridge CFDictionaryRef)options,
+        &errorRef
+    ));
+    if (errorRef)
+        return false;
+
+    NSDictionary* addQuery = @{
+        (id)kSecValueRef: (id)key.get(),
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrLabel: rpId,
+        (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:userHandleBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
+        (id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
+    if (status)
+        return false;
+
+    return true;
+}
+
+void cleanUpKeychain(const String& rpId)
+{
+    NSDictionary* deleteQuery = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrLabel: rpId,
+        (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
+        (id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+}
+
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
 } // namesapce;
 
@@ -1075,6 +1186,124 @@ TEST(WebAuthenticationPanel, MultipleAccounts)
     [webView waitForMessage:@"Succeeded!"];
     EXPECT_EQ([[webView stringByEvaluatingJavaScript:@"userHandle"] isEqualToString:@"<null>"], webAuthenticationPanelNullUserHandle);
 }
+
+// For macOS, only internal builds can sign keychain entitlemnets
+// which are required to run local authenticator tests.
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+
+TEST(WebAuthenticationPanel, LAError)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-error" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelUpdateLAError);
+}
+
+TEST(WebAuthenticationPanel, LADuplicateCredential)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-duplicate-credential" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserhandleBase64));
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelUpdateLAExcludeCredentialsMatched);
+    cleanUpKeychain("");
+}
+
+TEST(WebAuthenticationPanel, LANoCredential)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelUpdateLANoCredential);
+}
+
+TEST(WebAuthenticationPanel, LAMakeCredentialNullDelegate)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [delegate setIsNull:true];
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+    cleanUpKeychain("");
+}
+
+TEST(WebAuthenticationPanel, LAMakeCredential)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelVerifyUser);
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
+    [webView waitForMessage:@"Succeeded!"];
+}
+
+TEST(WebAuthenticationPanel, LAGetAssertion)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserhandleBase64));
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelVerifyUser);
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
+    [webView waitForMessage:@"Succeeded!"];
+    cleanUpKeychain("");
+}
+
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
 } // namespace TestWebKitAPI
 

@@ -39,22 +39,13 @@
 
 namespace WebKit {
 
-void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef accessControl, UserConsentContextCallback&& completionHandler) const
+bool LocalConnection::isUnlocked(LAContext *context) const
 {
-    auto context = adoptNS([allocLAContextInstance() init]);
-    auto reply = makeBlockPtr([context, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
-        ASSERT(!RunLoop::isMain());
-
-        UserConsent consent = UserConsent::Yes;
-        if (!success || error) {
-            LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
-            consent = UserConsent::No;
-        }
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), consent, context = WTFMove(context)]() mutable {
-            completionHandler(consent, context.get());
-        });
-    });
-    [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign localizedReason:reason reply:reply.get()];
+    NSError *error = nil;
+    auto result = [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics options:@{ @(LAOptionNotInteractive): @YES } error:&error];
+    if (!result)
+        LOG_ERROR("Couldn't get user consent: %@", error);
+    return !!result;
 }
 
 RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
@@ -86,12 +77,6 @@ void LocalConnection::getAttestation(SecKeyRef privateKey, NSData *authData, NSD
 #if defined(LOCALCONNECTION_ADDITIONS)
 LOCALCONNECTION_ADDITIONS
 #endif
-}
-
-NSDictionary *LocalConnection::selectCredential(const NSArray *credentials) const
-{
-    // FIXME(rdar://problem/35900534): We don't have an UI to prompt users for selecting intersectedCredentials, and therefore we always use the first one for now.
-    return credentials[0];
 }
 
 } // namespace WebKit

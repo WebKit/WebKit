@@ -32,6 +32,7 @@
 #import <WebCore/ExceptionData.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
 
 #import "LocalAuthenticationSoftLink.h"
@@ -43,17 +44,9 @@ MockLocalConnection::MockLocalConnection(const WebCore::MockWebAuthenticationCon
 {
 }
 
-void MockLocalConnection::getUserConsent(const String&, SecAccessControlRef, UserConsentContextCallback&& callback) const
+bool MockLocalConnection::isUnlocked(LAContext *context) const
 {
-    // Mock async operations.
-    RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
-        ASSERT(configuration.local);
-        if (!configuration.local->acceptAuthentication) {
-            callback(UserConsent::No, nil);
-            return;
-        }
-        callback(UserConsent::Yes, adoptNS([allocLAContextInstance() init]).get());
-    });
+    return m_configuration.local->acceptAuthentication;
 }
 
 RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const
@@ -112,15 +105,24 @@ void MockLocalConnection::getAttestation(SecKeyRef, NSData *, NSData *, Attestat
     });
 }
 
-NSDictionary *MockLocalConnection::selectCredential(const NSArray *credentials) const
+void MockLocalConnection::filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses) const
 {
-    auto preferredUserhandle = adoptNS([[NSData alloc] initWithBase64EncodedString:m_configuration.local->preferredUserhandleBase64 options:0]);
-    for (NSDictionary *credential : credentials) {
-        if ([credential[(id)kSecAttrApplicationTag] isEqualToData:preferredUserhandle.get()])
-            return credential;
+    const auto& preferredUserhandleBase64 = m_configuration.local->preferredUserhandleBase64;
+    if (preferredUserhandleBase64.isEmpty())
+        return;
+
+    auto itr = responses.begin();
+    for (; itr != responses.end(); ++itr) {
+        auto* userHandle = itr->get().userHandle();
+        ASSERT(userHandle);
+        auto userhandleBase64 = base64Encode(userHandle->data(), userHandle->byteLength());
+        if (userhandleBase64 == preferredUserhandleBase64)
+            break;
     }
-    ASSERT_NOT_REACHED();
-    return nil;
+    auto response = responses.take(itr);
+    ASSERT(response);
+    responses.clear();
+    responses.add(WTFMove(*response));
 }
 
 } // namespace WebKit

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import <LocalAuthentication/LocalAuthentication.h>
+#import "LocalAuthenticationSPI.h"
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, LocalAuthentication);

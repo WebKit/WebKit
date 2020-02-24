@@ -53,6 +53,8 @@ WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manag
         m_transports.uncheckedAppend(AuthenticatorTransport::Usb);
     if (transports.contains(AuthenticatorTransport::Nfc))
         m_transports.uncheckedAppend(AuthenticatorTransport::Nfc);
+    if (transports.contains(AuthenticatorTransport::Internal))
+        m_transports.uncheckedAppend(AuthenticatorTransport::Internal);
 }
 
 WebAuthenticationPanel::~WebAuthenticationPanel() = default;

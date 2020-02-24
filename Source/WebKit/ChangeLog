@@ -1,3 +1,106 @@
+2020-02-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI for the platform authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=208087
+        <rdar://problem/59369305>
+
+        Reviewed by Brent Fulgham.
+
+        Here is the newly added SPI:
+        typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
+            ...
+            _WKWebAuthenticationPanelUpdateLAError,
+            _WKWebAuthenticationPanelUpdateLADuplicateCredential,
+            _WKWebAuthenticationPanelUpdateLANoCredential,
+        };
+
+        typedef NS_ENUM(NSInteger, _WKWebAuthenticationTransport) {
+            ...
+            _WKWebAuthenticationTransportInternal,
+        };
+
+        @protocol _WKWebAuthenticationPanelDelegate <NSObject>
+        @optional
+        ...
+        - (void)panel:(_WKWebAuthenticationPanel *)panel verifyUserWithAccessControl:(SecAccessControlRef)accessControl completionHandler:(void (^)(LAContext *))completionHandler;
+        @end
+
+        Illustrations:
+        1) _WKWebAuthenticationPanelUpdate: Three errors are added to help clients present meaningful error messages to users.
+        a) WKWebAuthenticationPanelUpdateLAError: An internal error, clients should inform users and terminate the platform
+        authentication process. This error can be returned at any time.
+        b) _WKWebAuthenticationPanelUpdateLADuplicateCredential: It means a credential is found to match an entry in the
+        excludeList. Clients should inform users and terminate the platform authentication process. This error will only be
+        returned during makeCredential and before verifyUserWithAccessControl delegate.
+        c) _WKWebAuthenticationPanelUpdateLANoCredential: It means no credentials are found. Clients should inform users and
+        terminate the platform authentication process. This error will only be returned during getAssertion and before
+        verifyUserWithAccessControl delegate.
+
+        2) _WKWebAuthenticationTransport: _WKWebAuthenticationTransportInternal is added such that clients can learn platform
+        authenticator will be used from _WKWebAuthenticationPanel.transports.
+
+        3) verifyUserWithAccessControl: A delegate that will be called during makeCredential or getAssertion when the platform
+        authenticator is involved. This delegate is used to obtain user verification from a LAContext. In addition, the LAContext
+        should evaluate the passed accessControl, such that the SEP protected credential private key can be used. A typical
+        example will be [LAContext evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign localizedReason:reply:].
+        Noted, for getAssertion, selectAssertionResponse will be called before verifyUserWithAccessControl. So users need to be
+        prompted to select a credential before the user verification.
+
+        In the scenario when both the platform authenticator and external authenticators are requested. Clients are advised to
+        wait until verifyUserWithAccessControl to show the combined UI. If any of the LAError states are received before
+        verifyUserWithAccessControl, clients should then only show the external authenticator UI. Also, platform authenticator and
+        external authenticators are being discovered at the same time, which means a user can plug in a security key at anytime.
+        If a valid response is received from the security key, the whole ceremony will be terminated.
+
+        Besides introducing the SPI, and all the necessary plumbing to make it happen. This patch also:
+        1) adds LocalAuthenticationSPI, which is used to check whether a given LAContext is unlocked or not;
+        2) improves MockLocalConnection such that mock testing can still be ran.
+
+        * Platform/spi/Cocoa/LocalAuthenticationSPI.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h.
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::verifyUser const):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (wkWebAuthenticationTransport):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::verifyUser):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::toNSData):
+        (WebKit::LocalAuthenticatorInternal::toArrayBuffer):
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserConsented):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        (WebKit::LocalAuthenticator::receiveException const):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h:
+        (WebKit::LocalConnection::filterResponses const):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::isUnlocked const):
+        (WebKit::LocalConnection::getUserConsent const): Deleted.
+        (WebKit::LocalConnection::selectCredential const): Deleted.
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::wkWebAuthenticationPanelUpdate):
+        (WebKit::WebAuthenticationPanelClient::selectAssertionResponse const):
+        (WebKit::WebAuthenticationPanelClient::verifyUser const):
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::isUnlocked const):
+        (WebKit::MockLocalConnection::filterResponses const):
+        (WebKit::MockLocalConnection::getUserConsent const): Deleted.
+        (WebKit::MockLocalConnection::selectCredential const): Deleted.
+        * UIProcess/WebAuthentication/WebAuthenticationFlags.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-02-24  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Use one telemetry decoration for each sandbox rule

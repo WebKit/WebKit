@@ -31,6 +31,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class LAContext;
 @class _WKWebAuthenticationAssertionResponse;
 @class _WKWebAuthenticationPanel;
 
@@ -46,6 +47,9 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
     _WKWebAuthenticationPanelUpdatePINBlocked,
     _WKWebAuthenticationPanelUpdatePINAuthBlocked,
     _WKWebAuthenticationPanelUpdatePINInvalid,
+    _WKWebAuthenticationPanelUpdateLAError,
+    _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched,
+    _WKWebAuthenticationPanelUpdateLANoCredential,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {
@@ -56,6 +60,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationTransport) {
     _WKWebAuthenticationTransportUSB,
     _WKWebAuthenticationTransportNFC,
+    _WKWebAuthenticationTransportInternal,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
@@ -71,6 +76,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRemainingRetries:(NSUInteger)retries completionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)panel:(_WKWebAuthenticationPanel *)panel verifyUserWithAccessControl:(SecAccessControlRef)accessControl completionHandler:(void (^)(LAContext *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

@@ -73,6 +73,8 @@ static _WKWebAuthenticationTransport wkWebAuthenticationTransport(WebCore::Authe
         return _WKWebAuthenticationTransportUSB;
     case WebCore::AuthenticatorTransport::Nfc:
         return _WKWebAuthenticationTransportNFC;
+    case WebCore::AuthenticatorTransport::Internal:
+        return _WKWebAuthenticationTransportInternal;
     default:
         ASSERT_NOT_REACHED();
         return _WKWebAuthenticationTransportUSB;

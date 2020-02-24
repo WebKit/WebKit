@@ -83,6 +83,7 @@ private:
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
     void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&&) final;
+    void verifyUser(SecAccessControlRef, CompletionHandler<void(LAContext *)>&&) final;
 
     // Overriden by MockAuthenticatorManager.
     virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const;

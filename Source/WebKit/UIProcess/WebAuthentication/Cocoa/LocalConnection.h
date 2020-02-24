@@ -46,23 +46,16 @@ class LocalConnection {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LocalConnection);
 public:
-    enum class UserConsent {
-        No,
-        Yes
-    };
-
     using AttestationCallback = CompletionHandler<void(NSArray *, NSError *)>;
-    using UserConsentCallback = CompletionHandler<void(UserConsent)>;
-    using UserConsentContextCallback = CompletionHandler<void(UserConsent, LAContext *)>;
 
     LocalConnection() = default;
     virtual ~LocalConnection() = default;
 
     // Overrided by MockLocalConnection.
-    virtual void getUserConsent(const String& reason, SecAccessControlRef, UserConsentContextCallback&&) const;
+    virtual bool isUnlocked(LAContext *) const;
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
     virtual void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const;
-    virtual NSDictionary *selectCredential(const NSArray *) const;
+    virtual void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };
 };
 
 } // namespace WebKit

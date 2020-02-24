@@ -1,3 +1,26 @@
+2020-02-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI for the platform authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=208087
+        <rdar://problem/59369305>
+
+        Reviewed by Brent Fulgham.
+
+        Besides adding API tests, this patch also teaches TestWebKitAPI to use restricted entitlements.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS.entitlements:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (-[TestWebAuthenticationPanelDelegate panel:selectAssertionResponse:completionHandler:]):
+        (-[TestWebAuthenticationPanelDelegate panel:verifyUserWithAccessControl:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-la.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-la-duplicate-credential.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-la-error.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-la.html: Added.
+
 2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, updating LLDB test for CompactPointerTuple.

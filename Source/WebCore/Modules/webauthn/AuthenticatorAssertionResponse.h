@@ -28,6 +28,8 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AuthenticatorResponse.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WebCore {
 
@@ -35,32 +37,38 @@ class AuthenticatorAssertionResponse : public AuthenticatorResponse {
 public:
     static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, Optional<AuthenticationExtensionsClientOutputs>&&);
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle);
+    WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& userHandle, SecAccessControlRef);
     virtual ~AuthenticatorAssertionResponse() = default;
 
-    ArrayBuffer* authenticatorData() const { return m_authenticatorData.ptr(); }
-    ArrayBuffer* signature() const { return m_signature.ptr(); }
+    ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
+    ArrayBuffer* signature() const { return m_signature.get(); }
     ArrayBuffer* userHandle() const { return m_userHandle.get(); }
-
-    void setName(const String& name) { m_name = name; }
     const String& name() const { return m_name; }
-    void setDisplayName(const String& displayName) { m_displayName = displayName; }
     const String& displayName() const { return m_displayName; }
-    void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
+    SecAccessControlRef accessControl() const { return m_accessControl.get(); }
+
+    WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
+    void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTFMove(signature); }
+    void setName(const String& name) { m_name = name; }
+    void setDisplayName(const String& displayName) { m_displayName = displayName; }
+    void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&);
+    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, SecAccessControlRef);
 
     Type type() const final { return Type::Assertion; }
     AuthenticatorResponseData data() const final;
 
-    Ref<ArrayBuffer> m_authenticatorData;
-    Ref<ArrayBuffer> m_signature;
+    RefPtr<ArrayBuffer> m_authenticatorData;
+    RefPtr<ArrayBuffer> m_signature;
     RefPtr<ArrayBuffer> m_userHandle;
 
     String m_name;
     String m_displayName;
     size_t m_numberOfCredentials { 0 };
+    RetainPtr<SecAccessControlRef> m_accessControl;
 };
 
 } // namespace WebCore

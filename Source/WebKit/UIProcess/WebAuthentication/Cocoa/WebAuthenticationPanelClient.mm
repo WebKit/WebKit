@@ -38,6 +38,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
+#import "LocalAuthenticationSoftLink.h"
+
 namespace WebKit {
 
 WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationPanel *panel, id <_WKWebAuthenticationPanelDelegate> delegate)
@@ -47,7 +49,8 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelUpdateWebAuthenticationPanel = [delegate respondsToSelector:@selector(panel:updateWebAuthenticationPanel:)];
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
     m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
-    m_delegateMethods.panelselectAssertionResponseCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:completionHandler:)];
+    m_delegateMethods.panelSelectAssertionResponseCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:completionHandler:)];
+    m_delegateMethods.panelVerifyUserWithAccessControlCompletionHandler = [delegate respondsToSelector:@selector(panel:verifyUserWithAccessControl:completionHandler:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
@@ -67,6 +70,12 @@ static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthent
         return _WKWebAuthenticationPanelUpdatePINAuthBlocked;
     if (status == WebAuthenticationStatus::PinInvalid)
         return _WKWebAuthenticationPanelUpdatePINInvalid;
+    if (status == WebAuthenticationStatus::LAError)
+        return _WKWebAuthenticationPanelUpdateLAError;
+    if (status == WebAuthenticationStatus::LAExcludeCredentialsMatched)
+        return _WKWebAuthenticationPanelUpdateLAExcludeCredentialsMatched;
+    if (status == WebAuthenticationStatus::LANoCredential)
+        return _WKWebAuthenticationPanelUpdateLANoCredential;
     ASSERT_NOT_REACHED();
     return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
 }
@@ -133,7 +142,7 @@ void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::A
 {
     ASSERT(!responses.isEmpty());
 
-    if (!m_delegateMethods.panelselectAssertionResponseCompletionHandler) {
+    if (!m_delegateMethods.panelSelectAssertionResponseCompletionHandler) {
         completionHandler(responses[0]);
         return;
     }
@@ -155,6 +164,28 @@ void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::A
             return;
         checker->didCallCompletionHandler();
         completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([response _apiObject]).response());
+    }).get()];
+}
+
+void WebAuthenticationPanelClient::verifyUser(SecAccessControlRef accessControl, CompletionHandler<void(LAContext *)>&& completionHandler) const
+{
+    if (!m_delegateMethods.panelVerifyUserWithAccessControlCompletionHandler) {
+        completionHandler(adoptNS([allocLAContextInstance() init]).get());
+        return;
+    }
+
+    auto delegate = m_delegate.get();
+    if (!delegate) {
+        completionHandler(adoptNS([allocLAContextInstance() init]).get());
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:verifyUserWithAccessControl:completionHandler:));
+    [delegate panel:m_panel verifyUserWithAccessControl:accessControl completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](LAContext *context) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(context);
     }).get()];
 }
 

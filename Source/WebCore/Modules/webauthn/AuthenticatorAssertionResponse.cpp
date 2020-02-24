@@ -40,7 +40,7 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<A
     return response;
 }
 
-Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle)
+Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle)
 {
     RefPtr<ArrayBuffer> userhandleBuffer;
     if (!userHandle.isEmpty())
@@ -48,11 +48,28 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
     return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(authenticatorData.data(), authenticatorData.size()), ArrayBuffer::create(signature.data(), signature.size()), WTFMove(userhandleBuffer), WTF::nullopt);
 }
 
+Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& userHandle, SecAccessControlRef accessControl)
+{
+    return adoptRef(*new AuthenticatorAssertionResponse(WTFMove(rawId), WTFMove(userHandle), accessControl));
+}
+
+void AuthenticatorAssertionResponse::setAuthenticatorData(Vector<uint8_t>&& authenticatorData)
+{
+    m_authenticatorData = ArrayBuffer::create(authenticatorData.data(), authenticatorData.size());
+}
+
 AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
     : AuthenticatorResponse(WTFMove(rawId))
     , m_authenticatorData(WTFMove(authenticatorData))
     , m_signature(WTFMove(signature))
     , m_userHandle(WTFMove(userHandle))
+{
+}
+
+AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& userHandle, SecAccessControlRef accessControl)
+    : AuthenticatorResponse(WTFMove(rawId))
+    , m_userHandle(WTFMove(userHandle))
+    , m_accessControl(accessControl)
 {
 }
 
