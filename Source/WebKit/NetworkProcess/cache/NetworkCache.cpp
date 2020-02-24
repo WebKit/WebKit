@@ -340,13 +340,28 @@ static bool inline canRequestUseSpeculativeRevalidation(const WebCore::ResourceR
 void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& request, const NetworkCache::Key& key, std::unique_ptr<Entry>&& entry, const GlobalFrameID& frameID)
 {
     m_pendingAsyncRevalidations.ensure(key, [&] {
-        return makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), [this, key](AsyncRevalidation::Result result) {
+        auto addResult = m_pendingAsyncRevalidationByPage.ensure(frameID, [] {
+            return WeakHashSet<AsyncRevalidation>();
+        });
+        auto revalidation = makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), [this, key](auto result) {
+            ASSERT(m_pendingAsyncRevalidations.contains(key));
             m_pendingAsyncRevalidations.remove(key);
             LOG(NetworkCache, "(NetworkProcess) Async revalidation completed for '%s' with result %d", key.identifier().utf8().data(), static_cast<int>(result));
         });
+        addResult.iterator->value.add(*revalidation);
+        return revalidation;
     });
 }
 #endif
+
+void Cache::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
+{
+#if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
+    auto loaders = m_pendingAsyncRevalidationByPage.take({ webPageProxyID, webPageID, webFrameID });
+    for (auto& loader : loaders)
+        loader.cancel();
+#endif
+}
 
 void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, RetrieveCompletionHandler&& completionHandler)
 {

@@ -51,6 +51,8 @@ public:
 
     const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
 
+    void cancel();
+
 private:
     // NetworkLoadClient.
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }

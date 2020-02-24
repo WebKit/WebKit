@@ -1,3 +1,18 @@
+2020-02-24  Rob Buis  <rbuis@igalia.com>
+
+        Handle page closure for stale-while-revalidate revalidations
+        https://bugs.webkit.org/show_bug.cgi?id=204147
+
+        Reviewed by Youenn Fablet.
+
+        Add test to verify that frame removal triggers revalidation cancellation.
+
+        * web-platform-tests/fetch/stale-while-revalidate/frame-removal-expected.txt: Added.
+        * web-platform-tests/fetch/stale-while-revalidate/frame-removal.html: Added.
+        * web-platform-tests/fetch/stale-while-revalidate/resources/stale-frame.py: Added.
+        (id_token):
+        (main):
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Fix HTMLDataListElement.options to include even options that are not suggestions

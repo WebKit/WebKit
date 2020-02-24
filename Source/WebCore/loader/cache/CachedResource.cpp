@@ -833,6 +833,9 @@ bool CachedResource::canUseCacheValidator() const
 
     if (m_response.cacheControlContainsNoStore())
         return false;
+    // Network process will handle revalidation for s-w-r.
+    if (m_response.cacheControlStaleWhileRevalidate())
+        return false;
     return m_response.hasCacheValidatorFields();
 }
 

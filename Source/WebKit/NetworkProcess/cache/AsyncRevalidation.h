@@ -31,6 +31,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheSpeculativeLoad.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ResourceRequest;
@@ -42,7 +43,7 @@ class SpeculativeLoad;
 
 namespace NetworkCache {
 
-class AsyncRevalidation {
+class AsyncRevalidation : public CanMakeWeakPtr<AsyncRevalidation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Result {
@@ -51,6 +52,7 @@ public:
         Success,
     };
     AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, CompletionHandler<void(Result)>&&);
+    void cancel();
 
     const SpeculativeLoad& load() const { return *m_load; }
 

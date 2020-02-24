@@ -503,6 +503,14 @@ void NetworkConnectionToWebProcess::pageLoadCompleted(PageIdentifier webPageID)
     stopAllNetworkActivityTrackingForPage(webPageID);
 }
 
+void NetworkConnectionToWebProcess::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID, FrameIdentifier webFrameID)
+{
+    if (auto* session = networkProcess().networkSession(sessionID())) {
+        if (auto* cache = session->cache())
+            cache->browsingContextRemoved(webPageProxyID, webPageID, webFrameID);
+    }
+}
+
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
     m_networkProcess->prefetchDNS(hostname);

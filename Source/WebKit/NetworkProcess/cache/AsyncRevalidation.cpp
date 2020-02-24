@@ -54,6 +54,12 @@ static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& k
     return revalidationRequest;
 }
 
+void AsyncRevalidation::cancel()
+{
+    if (m_load)
+        m_load->cancel();
+}
+
 void AsyncRevalidation::staleWhileRevalidateEnding()
 {
     if (m_completionHandler)

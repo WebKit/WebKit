@@ -67,6 +67,15 @@ SpeculativeLoad::~SpeculativeLoad()
     ASSERT(!m_networkLoad);
 }
 
+void SpeculativeLoad::cancel()
+{
+    if (!m_networkLoad)
+        return;
+    m_networkLoad->cancel();
+    m_networkLoad = nullptr;
+    m_completionHandler(nullptr);
+}
+
 void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());

@@ -636,6 +636,13 @@ void WebLoaderStrategy::pageLoadCompleted(Page& page)
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
 }
 
+void WebLoaderStrategy::browsingContextRemoved(Frame& frame)
+{
+    ASSERT(frame.page());
+    auto& page = WebPage::fromCorePage(*frame.page());
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
+}
+
 static uint64_t generateLoadIdentifier()
 {
     static uint64_t identifier = 0;

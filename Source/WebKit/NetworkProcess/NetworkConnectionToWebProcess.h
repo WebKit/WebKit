@@ -200,6 +200,7 @@ private:
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void pageLoadCompleted(WebCore::PageIdentifier);
+    void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const URL& redirectURL);
     void startDownload(DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);

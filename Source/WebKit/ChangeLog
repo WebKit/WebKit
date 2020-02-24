@@ -1,3 +1,40 @@
+2020-02-24  Rob Buis  <rbuis@igalia.com>
+
+        Handle page closure for stale-while-revalidate revalidations
+        https://bugs.webkit.org/show_bug.cgi?id=204147
+
+        Reviewed by Youenn Fablet.
+
+        Add a message for browsing context removal. When the message happens,
+        pass it down to the network cache to remove any pending
+        async revalidations for that page.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::browsingContextRemoved):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/cache/AsyncRevalidation.cpp:
+        (WebKit::NetworkCache::AsyncRevalidation::cancel):
+        * NetworkProcess/cache/AsyncRevalidation.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::startAsyncRevalidationIfNeeded):
+        (WebKit::NetworkCache::Cache::browsingContextRemoved):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::GlobalFrameID::hash const):
+        (WebKit::NetworkCache::operator==):
+        (WTF::GlobalFrameIDHash::hash):
+        (WTF::GlobalFrameIDHash::equal):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::emptyValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::isDeletedValue):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::cancel):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::browsingContextRemoved):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2020-02-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late February 2020 edition

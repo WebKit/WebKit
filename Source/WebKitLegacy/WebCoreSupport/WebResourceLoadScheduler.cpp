@@ -115,6 +115,10 @@ void WebResourceLoadScheduler::pageLoadCompleted(Page&)
 {
 }
 
+void WebResourceLoadScheduler::browsingContextRemoved(Frame&)
+{
+}
+
 void WebResourceLoadScheduler::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
     NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
