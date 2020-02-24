@@ -1,3 +1,17 @@
+2020-02-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Use one telemetry decoration for each sandbox rule
+        https://bugs.webkit.org/show_bug.cgi?id=207897
+
+        Reviewed by Brent Fulgham.
+
+        Currently, we are using the decorations '(with telemetry)' and '(with telemetry-backtrace)' for some sandbox rules
+        in the WebContent process' sandbox. Only one of the two decorations should be used.
+
+        No new tests, no behavior change.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-02-24  Chris Dumez  <cdumez@apple.com>
 
         Temporarily disable in-process cookie cache as it seems to be causing hangs on iOS
