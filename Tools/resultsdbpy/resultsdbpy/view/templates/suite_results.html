@@ -86,7 +86,7 @@ class MainView {
         Object.keys(this.children).forEach(key => {this.children[key].teardown();});
         this.children = {};
         sortedSuites.forEach((suite) => {
-            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite);
+            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, suite);
         });
         return sortedSuites;
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {deepCompare, ErrorDisplay, escapeHTML, paramsToQuery, queryToParams} from '/assets/js/common.js';
@@ -343,13 +344,16 @@ function combineResults() {
 }
 
 class TimelineFromEndpoint {
-    constructor(endpoint, suite = null, viewport = null) {
+    constructor(endpoint, suite = null, test = null, viewport = null) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
         this.configurations = Configuration.fromQuery();
         this.results = {};
-        this.suite = suite;  // Suite is often implied by the endpoint, but trying to determine suite from endpoint is not trivial.
+
+        // Suite and test can often be implied by the endpoint, but doing so is more confusing then helpful
+        this.suite = suite;
+        this.test = test;
 
         this.updates = [];
         this.xaxisUpdates = [];
@@ -628,18 +632,19 @@ class TimelineFromEndpoint {
                 });
                 partialConfiguration = new Configuration(partialConfiguration);
                 const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
+
+                const buildParams = configuration.toParams();
+                buildParams['suite'] = [self.suite];
+                buildParams['uuid'] = [data.uuid];
+                buildParams['after_time'] = [data.start_time];
+                buildParams['before_time'] = [data.start_time];
+                if (branch)
+                    buildParams['branch'] = branch;
+
                 ToolTip.set(
                     `<div class="content">
-                        ${data.start_time ? `<a href="/urls/build?${paramsToQuery(function () {
-                            let buildParams = configuration.toParams();
-                            buildParams['suite'] = [self.suite];
-                            buildParams['uuid'] = [data.uuid];
-                            buildParams['after_time'] = [data.start_time];
-                            buildParams['before_time'] = [data.start_time];
-                            if (branch)
-                                buildParams['branch'] = branch;
-                            return buildParams;
-                        } ())}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
+                        ${data.start_time ? `<a href="/urls/build?${paramsToQuery(buildParams)}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
+                        ${data.start_time && ArchiveRouter.hasArchive(self.suite, data.actual) ? `<a href="/archive/${ArchiveRouter.pathFor(self.suite, data.actual, self.test)}?${paramsToQuery(buildParams)}" target="_blank">${ArchiveRouter.labelFor(self.suite, data.actual)}</a><br>` : ''}
                         Commits: ${CommitBank.commitsDuringUuid(data.uuid).map((commit) => {
                             let params = {
                                 branch: commit.branch ? [commit.branch] : branch,

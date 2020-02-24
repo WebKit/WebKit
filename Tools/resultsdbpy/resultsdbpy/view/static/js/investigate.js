@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {DOM, REF} from '/library/js/Ref.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {queryToParams, paramsToQuery, QueryModifier, } from '/assets/js/common.js';
@@ -40,21 +41,31 @@ function commitsForUuid(uuid) {
         }).join(', ')}`
 }
 
+function parametersForInstance(suite, data)
+{
+    const branch = queryToParams(document.URL.split('?')[1]).branch;
+    const buildParams = data.configuration.toParams();
+    buildParams['suite'] = [suite];
+    buildParams['uuid'] = [data.uuid];
+    buildParams['after_time'] = [data.start_time];
+    buildParams['before_time'] = [data.start_time];
+    if (branch)
+        buildParams['branch'] = branch;
+    return paramsToQuery(buildParams);
+}
+
 function testRunLink(suite, data)
 {
     if (!data.start_time)
         return '';
-    const branch = queryToParams(document.URL.split('?')[1]).branch;
-    return `<a href="/urls/build?${paramsToQuery(function () {
-        const buildParams = data.configuration.toParams();
-        buildParams['suite'] = [suite];
-        buildParams['uuid'] = [data.uuid];
-        buildParams['after_time'] = [data.start_time];
-        buildParams['before_time'] = [data.start_time];
-        if (branch)
-            buildParams['branch'] = branch;
-        return buildParams;
-    } ())}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+}
+
+function archiveLink(suite, data)
+{
+    if (!data.start_time || !ArchiveRouter.hasArchive(suite))
+        return '';
+    return `<a href="/archive/${ArchiveRouter.pathFor(suite)}?${parametersForInstance(suite, data)}" target="_blank">${ArchiveRouter.labelFor(suite)}</a>`;
 }
 
 function elapsed(data)
@@ -207,6 +218,7 @@ function contentForData(suite, data, willFilterExpected = false)
         data.configuration,
         commitsForUuid(data.uuid),
         testRunLink(suite, data),
+        archiveLink(suite, data),
         elapsed(data),
     ];
 

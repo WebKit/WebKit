@@ -57,7 +57,7 @@ class SearchView {
                 state.children.push({
                     suite: this.currentParams.suite[i],
                     test: this.currentParams.test[i],
-                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i]),
+                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i], this.currentParams.test[i]),
                 });
             }
         }
@@ -171,7 +171,7 @@ class SearchView {
                     newChildren.push({
                         suite: params.suite[i],
                         test: params.test[i],
-                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`),
+                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`, params.suite[i], params.test[i]),
                     });
                 }
             }
@@ -266,7 +266,7 @@ DOM.inject(
                     let child = {
                         suite: arguments[i].suite,
                         test: arguments[i].test,
-                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, null, viewport),
+                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, arguments[i].suite, arguments[i].test, viewport),
                     }
 
                     view.ref.setState({prepending: [child]});

@@ -24,9 +24,9 @@ import os
 import requests
 import time
 
-from flask import abort, send_from_directory, redirect, Response
+from flask import abort, jsonify, send_from_directory, redirect, Response
 from jinja2 import Environment, PackageLoader, select_autoescape
-from resultsdbpy.flask_support.util import AssertRequest
+from resultsdbpy.flask_support.util import AssertRequest, cache_for
 from resultsdbpy.flask_support.authed_blueprint import AuthedBlueprint
 from resultsdbpy.view.archive_view import ArchiveView
 from resultsdbpy.view.ci_view import CIView
@@ -37,7 +37,7 @@ from werkzeug.exceptions import HTTPException, InternalServerError
 
 
 class ViewRoutes(AuthedBlueprint):
-    def __init__(self, model, controller, import_name=__name__, title='Results Database', auth_decorator=None):
+    def __init__(self, model, controller, import_name=__name__, title='Results Database', auth_decorator=None, archive_routes=None):
         super(ViewRoutes, self).__init__('view', import_name, url_prefix=None, auth_decorator=auth_decorator)
         self._cache = {}
 
@@ -93,6 +93,17 @@ class ViewRoutes(AuthedBlueprint):
 
         self.add_url_rule('/archive', 'archive-list', self.archive.extract, methods=('GET',))
         self.add_url_rule('/archive/<path:path>', 'archive', self.archive.extract, methods=('GET',))
+        # Archive routes control which suites get linked to result archives and how those links appear in the UI.
+        # This dictionary will be processed by archiveRouter.js, there are 3 active parameters respected:
+        #     enabled: If false, no archive link will be generated for this suite
+        #     path: The file in the archive to link to
+        #     label: Defines the user-visible name of the archive link
+        # Dictionaries have a defined ancestry, and will use the most specific parameters possible. The ancestry
+        # arguments are:
+        #     <suite>: Name of a suite (like layout-tests)
+        #     <result>: One of the expected results, like FAIL, TEXT or IMAGE
+        self.archive_routes = archive_routes or dict()
+        self.add_url_rule('/archive-routes', 'archive-routes', cache_for(hours=24 * 7)(lambda: jsonify(self.archive_routes)), methods=('GET',))
 
         self.site_menu.add_endpoint('Main', self.name + '.main', parameters=['branch'])
         self.site_menu.add_endpoint('Suites', self.name + '.suites', parameters=['branch'])

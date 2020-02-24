@@ -1,3 +1,31 @@
+2020-02-24  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Link to result archives
+        https://bugs.webkit.org/show_bug.cgi?id=207646
+        <rdar://problem/59395807>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/archiveRouter.js: Added.
+        (_ArchiveRouter): Retrieve json from archive-router endpoint.
+        (_ArchiveRouter.prototype._determineArgumentFromAncestry): Given an argument, default and ancestry values,
+        return the most specific value.
+        (_ArchiveRouter.prototype.hasArchive): Check if a suite and mode have an archive link.
+        (_ArchiveRouter.prototype.pathFor): Construct the path for archive access.
+        (_ArchiveRouter.prototype.labelFor): Return a label for an archive link.
+        * resultsdbpy/resultsdbpy/view/static/js/investigate.js:
+        (parametersForInstance): Extract from lambda function.
+        (testRunLink): Use parametersForInstance instead of a lambda function.
+        (archiveLink): Return an archive link for data. 
+        (contentForData): Add archive link to view.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint): Accept both suite and test.
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory): Add archive link to pop-over.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Pass suite and test to TimelineEndpoint.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Pass suite to TimelineEndpoint.
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.__init__): Add archive_route dictionary.
+
 2020-02-24  Alex Christensen  <achristensen@webkit.org>
 
         WKWebViewConfiguration._corsDisablingPatterns should also disable CORS for non-DocumentThreadableLoader loading
