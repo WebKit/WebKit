@@ -833,7 +833,7 @@ class RawBitmaskProviderBase(FlagEnumerationProvider):
 
 class WTFCompactPointerTupleProvider(object):
 
-    TYPE_MASK = 0xF800000000000007
+    TYPE_MASK = 0xFFFF000000000000
     POINTER_MASK = ~TYPE_MASK
 
     def __init__(self, valobj, internal_dict):
@@ -907,7 +907,7 @@ class WTFCompactPointerTupleProvider(object):
             pointer_data = lldb.SBData.CreateDataFromUInt64Array(byte_order, address_byte_size, [data & self.POINTER_MASK])
             self._pointer = self.valobj.CreateValueFromData('[0]', pointer_data, self.valobj.GetType().GetTemplateArgumentType(0))
 
-            type_data = lldb.SBData.CreateDataFromUInt64Array(byte_order, address_byte_size, [(data >> 59 | data << 5) & 0xFF])
+            type_data = lldb.SBData.CreateDataFromUInt64Array(byte_order, address_byte_size, [(data >> 48) & 0xFFFF])
             type_to_use = self.valobj.GetType().GetTemplateArgumentType(1)
             if not self.is_human_readable_type():
                 type_to_use = self.valobj.GetTarget().GetBasicType(lldb.eBasicTypeUnsignedInt)
