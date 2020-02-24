@@ -215,6 +215,56 @@ TEST(WebKit, SlowBeforeUnloadPromptAllow)
         TestWebKitAPI::Util::sleep(0.1);
 }
 
+TEST(WebKit, BeforeUnloadPromptRejectOnReload)
+{
+    auto slowBeforeUnloadPromptUIDelegate = adoptNS([[SlowBeforeUnloadPromptUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:slowBeforeUnloadPromptUIDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+    [webView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    shouldRejectClosingViaPrompt = true;
+    [webView reload];
+
+    TestWebKitAPI::Util::run(&didRespondToPrompt);
+
+    EXPECT_FALSE([webView _isClosed]);
+
+    TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_FALSE([webView _isClosed]);
+}
+
+TEST(WebKit, BeforeUnloadPromptAllowOnReload)
+{
+    auto slowBeforeUnloadPromptUIDelegate = adoptNS([[SlowBeforeUnloadPromptUIDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:slowBeforeUnloadPromptUIDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"beforeunload"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Need a user gesture on the page before being allowed to show the beforeunload prompt.
+    [webView sendClicksAtPoint:NSMakePoint(5, 5) numberOfClicks:1];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    shouldRejectClosingViaPrompt = false;
+    [webView reload];
+
+    TestWebKitAPI::Util::run(&didRespondToPrompt);
+
+    EXPECT_FALSE([webView _isClosed]);
+
+    TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_FALSE([webView _isClosed]);
+}
+
 static bool webViewDidCloseCalled = false;
 static unsigned viewDidCloseCallCount = 0;
 
