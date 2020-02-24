@@ -16,7 +16,6 @@ Stacking
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 829)
-  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -31,7 +30,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 210 1020)
-      (parent relative scrollable rect at (302,579) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
@@ -52,7 +50,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 210 1020)
-      (parent relative scrollable rect at (30,579) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
@@ -70,7 +67,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 205 1020)
-      (parent relative scrollable rect at (302,343) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
@@ -84,7 +80,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 205 1020)
-      (parent relative scrollable rect at (30,307) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
@@ -98,7 +93,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 210 1020)
-      (parent relative scrollable rect at (302,35) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)
@@ -122,7 +116,6 @@ Stacking
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 205 1020)
-      (parent relative scrollable rect at (30,35) size 205x155)
       (scrollable area parameters 
         (horizontal scroll elasticity 0)
         (vertical scroll elasticity 0)

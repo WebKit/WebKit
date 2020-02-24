@@ -7,7 +7,6 @@ Scrolling content
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 741)
-  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -21,7 +20,6 @@ Scrolling content
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 220 1020)
-      (parent relative scrollable rect at (19,11) size 220x170)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -32,7 +30,6 @@ Scrolling content
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 242 1020)
-      (parent relative scrollable rect at (19,193) size 220x170)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -44,7 +41,6 @@ Scrolling content
         (Overflow scrolling node
           (scrollable area size 220 170)
           (contents size 220 1020)
-          (parent relative scrollable rect at (22,42) size 220x170)
           (scrollable area parameters 
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
@@ -60,7 +56,6 @@ Scrolling content
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 220 1020)
-      (parent relative scrollable rect at (19,375) size 220x170)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -71,7 +66,6 @@ Scrolling content
     (Overflow scrolling node
       (scrollable area size 220 170)
       (contents size 220 1020)
-      (parent relative scrollable rect at (19,557) size 220x170)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

@@ -174,6 +174,8 @@ private:
 
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
 
+    ScrollingTreeNode* scrollingNodeForPoint(FloatPoint);
+
     Lock m_treeMutex; // Protects the scrolling tree.
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;

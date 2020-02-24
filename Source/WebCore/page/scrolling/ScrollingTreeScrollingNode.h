@@ -86,7 +86,6 @@ public:
     bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
 
     bool scrollLimitReached(const PlatformWheelEvent&) const;
-    ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const override;
 
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
@@ -111,7 +110,6 @@ protected:
     void applyLayerPositions() override;
 
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
-    const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
     // If the totalContentsSize changes in the middle of a rubber-band, we still want to use the old totalContentsSize for the sake of
@@ -126,9 +124,6 @@ protected:
     bool hasEnabledHorizontalScrollbar() const { return m_scrollableAreaParameters.hasEnabledHorizontalScrollbar; }
     bool hasEnabledVerticalScrollbar() const { return m_scrollableAreaParameters.hasEnabledVerticalScrollbar; }
 
-    LayoutPoint parentToLocalPoint(LayoutPoint) const override;
-    LayoutPoint localToContentsPoint(LayoutPoint) const override;
-
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
 private:
@@ -137,7 +132,6 @@ private:
     FloatSize m_totalContentsSizeForRubberBand;
     FloatSize m_reachableContentsSize;
     FloatPoint m_lastCommittedScrollPosition;
-    LayoutRect m_parentRelativeScrollableRect;
     FloatPoint m_currentScrollPosition;
     IntPoint m_scrollOrigin;
 #if ENABLE(CSS_SCROLL_SNAP)

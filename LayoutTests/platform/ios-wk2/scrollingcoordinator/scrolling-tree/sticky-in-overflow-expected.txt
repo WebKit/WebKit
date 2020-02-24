@@ -3,7 +3,6 @@ Sticky content
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
-  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -17,7 +16,6 @@ Sticky content
     (Overflow scrolling node
       (scrollable area size 400 300)
       (contents size 400 1100)
-      (parent relative scrollable rect at (8,8) size 400x300)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

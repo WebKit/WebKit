@@ -68,9 +68,6 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
 private:
-    LayoutPoint parentToLocalPoint(LayoutPoint) const final;
-    LayoutPoint localToContentsPoint(LayoutPoint) const final;
-
     void updateViewportForCurrentScrollPosition(Optional<FloatRect>) override;
     bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport) override;
     FloatRect layoutViewportForScrollPosition(const FloatPoint&, float scale, ScrollBehaviorForFixedElements = StickToDocumentBounds) const;

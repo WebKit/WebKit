@@ -44,13 +44,7 @@ private:
     void commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final;
 
-    const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
-
-    LayoutPoint parentToLocalPoint(LayoutPoint) const final;
-
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
-
-    LayoutRect m_parentRelativeScrollableRect;
 };
 
 } // namespace WebCore

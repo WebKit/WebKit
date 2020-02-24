@@ -77,10 +77,6 @@ public:
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
-    virtual LayoutPoint parentToLocalPoint(LayoutPoint point) const { return point; }
-    virtual LayoutPoint localToContentsPoint(LayoutPoint point) const { return point; }
-    virtual ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const;
-
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
@@ -97,7 +93,7 @@ private:
     const ScrollingNodeType m_nodeType;
     const ScrollingNodeID m_nodeID;
 
-    ScrollingTreeNode* m_parent;
+    ScrollingTreeNode* m_parent { nullptr };
 };
 
 } // namespace WebCore

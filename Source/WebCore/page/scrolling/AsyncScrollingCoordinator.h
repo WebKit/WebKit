@@ -114,7 +114,6 @@ private:
 
     WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, const NodeLayers&) override;
 
-    WEBCORE_EXPORT void setRectRelativeToParentNode(ScrollingNodeID, const LayoutRect&) override;
     WEBCORE_EXPORT void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) override;
     WEBCORE_EXPORT void setFrameScrollingNodeState(ScrollingNodeID, const FrameView&) override;
     WEBCORE_EXPORT void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) override;

@@ -606,25 +606,6 @@ void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, const Node
     }
 }
 
-void AsyncScrollingCoordinator::setRectRelativeToParentNode(ScrollingNodeID nodeID, const LayoutRect& parentRelativeScrollableRect)
-{
-    auto* stateNode = m_scrollingStateTree->stateNodeForID(nodeID);
-    ASSERT(stateNode);
-    if (!stateNode)
-        return;
-
-    if (is<ScrollingStateFrameHostingNode>(*stateNode)) {
-        auto& frameHostingStateNode = downcast<ScrollingStateFrameHostingNode>(*stateNode);
-        frameHostingStateNode.setParentRelativeScrollableRect(parentRelativeScrollableRect);
-        return;
-    }
-
-    if (is<ScrollingStateScrollingNode>(stateNode)) {
-        auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(*stateNode);
-        scrollingStateNode.setParentRelativeScrollableRect(parentRelativeScrollableRect);
-    }
-}
-
 void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeID, const FrameView& frameView)
 {
     auto* stateNode = m_scrollingStateTree->stateNodeForID(nodeID);

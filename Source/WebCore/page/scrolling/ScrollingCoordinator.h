@@ -152,7 +152,6 @@ public:
     };
     virtual void setNodeLayers(ScrollingNodeID, const NodeLayers&) { }
 
-    virtual void setRectRelativeToParentNode(ScrollingNodeID, const LayoutRect&) { }
     virtual void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) { }
     virtual void setFrameScrollingNodeState(ScrollingNodeID, const FrameView&) { }
     virtual void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) { }

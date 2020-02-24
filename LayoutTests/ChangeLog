@@ -25,6 +25,99 @@
 
         * platform/mac/TestExpectations:
 
+2020-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove geometry information from the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=208085
+
+        Reviewed by Sam Weinig.
+
+        The scrolling tree doesn't have enough information to do hit-testing because it has
+        no representation of layers that overlap scrollers. We'll have to do hit-testing another
+        way, so remove hit-testing-geometry data from the scrolling tree.
+
+        * fast/scrolling/ios/change-scrollability-on-content-resize-expected.txt:
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/composited-in-absolute-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-sc-scrollers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/absolute-inside-stacking-in-scroller-expected.txt:
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/clipped-layer-in-overflow-nested-expected.txt:
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/composited-in-absolute-in-stacking-context-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/nested-overflow-scroll-expected.txt:
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * scrollingcoordinator/scrolling-tree/sticky-in-overflow-expected.txt:
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-in-overflow-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-in-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/nested-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/percentage-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2020-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/forms/ios/click-should-not-suppress-misspelling.html fails on iOS 13.4 beta

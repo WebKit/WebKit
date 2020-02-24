@@ -4464,16 +4464,6 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
     return newNodeID;
 }
 
-LayoutRect RenderLayerCompositor::rootParentRelativeScrollableRect() const
-{
-    auto& frameView = m_renderView.frameView();
-
-    if (m_renderView.frame().isMainFrame())
-        return frameView.frameRect();
-    
-    return LayoutRect({ }, LayoutSize(frameView.size()));
-}
-
 LayoutRect RenderLayerCompositor::parentRelativeScrollableRect(const RenderLayer& layer, const RenderLayer* ancestorLayer) const
 {
     // FIXME: ancestorLayer needs to be always non-null, so should become a reference.
@@ -4527,7 +4517,6 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
             updateScrollingNodeLayers(newNodeID, layer, *scrollingCoordinator);
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
-            scrollingCoordinator->setRectRelativeToParentNode(newNodeID, rootParentRelativeScrollableRect());
             scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, frameView);
             scrollingCoordinator->setFrameScrollingNodeState(newNodeID, frameView);
         }
@@ -4541,11 +4530,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         if (changes & ScrollingNodeChangeFlags::Layer)
             updateScrollingNodeLayers(newNodeID, layer, *scrollingCoordinator);
 
-        if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
-            RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
-            scrollingCoordinator->setRectRelativeToParentNode(newNodeID, parentRelativeScrollableRect(layer, scrollingAncestorLayer));
+        if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID)
             scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, layer);
-        }
     }
 
     return newNodeID;
@@ -4608,11 +4594,6 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
 
     if (changes & ScrollingNodeChangeFlags::Layer)
         scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer() });
-
-    if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
-        RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
-        scrollingCoordinator->setRectRelativeToParentNode(newNodeID, parentRelativeScrollableRect(layer, scrollingAncestorLayer));
-    }
 
     return newNodeID;
 }

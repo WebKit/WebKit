@@ -68,9 +68,6 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
             m_currentScrollPosition = m_lastCommittedScrollPosition;
     }
 
-    if (state.hasChangedProperty(ScrollingStateScrollingNode::ParentRelativeScrollableRect))
-        m_parentRelativeScrollableRect = state.parentRelativeScrollableRect();
-
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
         m_scrollOrigin = state.scrollOrigin();
 
@@ -212,27 +209,6 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
     scrollingTree().didScrollByDelegatedScrolling();
 }
 
-LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) const
-{
-    return point - toLayoutSize(parentRelativeScrollableRect().location());
-}
-
-LayoutPoint ScrollingTreeScrollingNode::localToContentsPoint(LayoutPoint point) const
-{
-    return point + LayoutPoint(currentScrollPosition());
-}
-
-ScrollingTreeScrollingNode* ScrollingTreeScrollingNode::scrollingNodeForPoint(LayoutPoint parentPoint) const
-{
-    if (auto* node = ScrollingTreeNode::scrollingNodeForPoint(parentPoint))
-        return node;
-
-    if (parentRelativeScrollableRect().contains(parentPoint))
-        return const_cast<ScrollingTreeScrollingNode*>(this);
-
-    return nullptr;
-}
-
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ScrollingTreeNode::dumpProperties(ts, behavior);
@@ -243,9 +219,6 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
     if (m_reachableContentsSize != m_totalContentsSize)
         ts.dumpProperty("reachable content size", m_reachableContentsSize);
     ts.dumpProperty("last committed scroll position", m_lastCommittedScrollPosition);
-
-    if (!m_parentRelativeScrollableRect.isEmpty())
-        ts.dumpProperty("parent relative scrollable rect", m_parentRelativeScrollableRect);
 
     if (m_scrollOrigin != IntPoint())
         ts.dumpProperty("scroll origin", m_scrollOrigin);
