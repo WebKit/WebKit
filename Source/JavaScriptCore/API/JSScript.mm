@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #import <sys/stat.h>
 #import <wtf/FileMetadata.h>
 #import <wtf/FileSystem.h>
+#import <wtf/SHA1.h>
 #import <wtf/Scope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
@@ -153,7 +154,10 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    auto fd = FileSystem::openAndLockFile([m_cachePath path].UTF8String, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
+    NSString *cachePathString = [m_cachePath path];
+    const char* cacheFilename = cachePathString.UTF8String;
+
+    auto fd = FileSystem::openAndLockFile(cacheFilename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
     if (!FileSystem::isHandleValid(fd))
         return;
     auto closeFD = makeScopeExit([&] {
@@ -165,6 +169,30 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!success)
         return;
 
+    const uint8_t* fileData = reinterpret_cast<const uint8_t*>(mappedFile.data());
+    unsigned fileTotalSize = mappedFile.size();
+
+    // Ensure we at least have a SHA1::Digest to read.
+    if (fileTotalSize < sizeof(SHA1::Digest)) {
+        FileSystem::deleteFile(cacheFilename);
+        return;
+    }
+
+    unsigned fileDataSize = fileTotalSize - sizeof(SHA1::Digest);
+
+    SHA1::Digest computedHash;
+    SHA1 sha1;
+    sha1.addBytes(fileData, fileDataSize);
+    sha1.computeHash(computedHash);
+
+    SHA1::Digest fileHash;
+    memcpy(&fileHash, fileData + fileDataSize, sizeof(SHA1::Digest));
+
+    if (computedHash != fileHash) {
+        FileSystem::deleteFile(cacheFilename);
+        return;
+    }
+
     Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(WTFMove(mappedFile));
 
     JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
@@ -173,7 +201,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
         m_cachedBytecode = WTFMove(cachedBytecode);
     else
-        ftruncate(fd, 0);
+        FileSystem::truncateFile(fd, 0);
 }
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
@@ -266,13 +294,31 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return NO;
     }
 
-    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0666);
+    // We want to do the write as a transaction (i.e. we guarantee that it's all
+    // or nothing). So, we'll write to a temp file first, and rename the temp
+    // file to the cache file only after we've finished writing the whole thing.
+
+    NSString *cachePathString = [m_cachePath path];
+    const char* cacheFileName = cachePathString.UTF8String;
+    const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
+    int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
     if (fd == -1) {
         error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", strerror(errno));
         return NO;
     }
+
     auto closeFD = makeScopeExit([&] {
         close(fd);
+    });
+
+    int tempFD = open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600);
+    if (tempFD == -1) {
+        error = makeString("Could not open or lock the bytecode cache temp file. Error: ", strerror(errno));
+        return NO;
+    }
+
+    auto closeTempFD = makeScopeExit([&] {
+        close(tempFD);
     });
 
     JSC::BytecodeCacheError cacheError;
@@ -280,10 +326,10 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
     switch (m_type) {
     case kJSScriptTypeModule:
-        m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, tempFD, cacheError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateProgramBytecode(vm, sourceCode, fd, cacheError);
+        m_cachedBytecode = JSC::generateProgramBytecode(vm, sourceCode, tempFD, cacheError);
         break;
     }
 
@@ -294,6 +340,14 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return NO;
     }
 
+    SHA1::Digest computedHash;
+    SHA1 sha1;
+    sha1.addBytes(m_cachedBytecode->data(), m_cachedBytecode->size());
+    sha1.computeHash(computedHash);
+    FileSystem::writeToFile(tempFD, reinterpret_cast<const char*>(&computedHash), sizeof(computedHash));
+
+    fsync(tempFD);
+    rename(tempFileName, cacheFileName);
     return YES;
 }
 
