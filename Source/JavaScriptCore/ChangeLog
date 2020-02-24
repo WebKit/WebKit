@@ -1,3 +1,174 @@
+2020-02-24  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/59654271
+
+    2020-02-24  Justin Michaud  <justin_michaud@apple.com>
+
+            Deleting a property should not turn structures into uncacheable dictionaries
+            https://bugs.webkit.org/show_bug.cgi?id=206430
+
+            Reviewed by Yusuke Suzuki.
+
+            Right now, deleteProperty/removePropertyTransition causes a structure transition to uncacheable dictionary. Instead, we should allow it to transition to a new regular structure like adding a property does. This means that we have to:
+
+            1) Break the assumption that structure transition offsets increase monotonically
+
+            We add a new flag to tell that a structure has deleted its property, and update materializePropertyTable to use it.
+
+            2) Add a new transition map and transition kind for deletes
+
+            We cache the delete transition. We will not transition back to a previous structure if you add then immediately remove a property.
+
+            3) Find some heuristic for when we should actually transition to uncacheable dictionary.
+
+            Since deleting properties is expected to be rare, we just walk the structure list and count its size on removal.
+
+            This patch also fixes a related bug in addProperty, where we did not use a GCSafeConcurrentJSLocker, and adds an option to trigger the bug. Finally, we add some helper methods to dollarVM to test.
+
+            This gives a 24x speedup on delete-property-keeps-cacheable-structure.js, and is neutral on delete-property-from-prototype-chain.js (which was already generating code using the inline cache).
+
+            * heap/HeapInlines.h:
+            (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::deleteProperty):
+            * runtime/OptionsList.h:
+            * runtime/PropertyMapHashTable.h:
+            (JSC::PropertyTable::get):
+            (JSC::PropertyTable::add):
+            (JSC::PropertyTable::addDeletedOffset):
+            (JSC::PropertyTable::reinsert):
+            * runtime/Structure.cpp:
+            (JSC::StructureTransitionTable::contains const):
+            (JSC::StructureTransitionTable::get const):
+            (JSC::StructureTransitionTable::add):
+            (JSC::Structure::Structure):
+            (JSC::Structure::materializePropertyTable):
+            (JSC::Structure::addNewPropertyTransition):
+            (JSC::Structure::removePropertyTransition):
+            (JSC::Structure::removePropertyTransitionFromExistingStructure):
+            (JSC::Structure::removeNewPropertyTransition):
+            (JSC::Structure::toUncacheableDictionaryTransition):
+            (JSC::Structure::remove):
+            (JSC::Structure::visitChildren):
+            * runtime/Structure.h:
+            * runtime/StructureInlines.h:
+            (JSC::Structure::forEachPropertyConcurrently):
+            (JSC::Structure::add):
+            (JSC::Structure::remove):
+            (JSC::Structure::removePropertyWithoutTransition):
+            * runtime/StructureTransitionTable.h:
+            (JSC::StructureTransitionTable::Hash::hash):
+            * tools/JSDollarVM.cpp:
+            (JSC::JSDollarVMHelper::functionGetStructureTransitionList):
+            (JSC::functionGetConcurrently):
+            (JSC::JSDollarVM::finishCreation):
+
+2020-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Structure::setMaxOffset and setTransitionOffset are racy
+        https://bugs.webkit.org/show_bug.cgi?id=207249
+
+        Reviewed by Mark Lam.
+
+        We hit crash in JSTests/stress/array-slice-osr-exit-2.js. The situation is following.
+
+            1. The mutator thread (A) is working.
+            2. The concurrent collector (B) is working.
+            3. A attempts to set m_maxOffset in StructureRareData by allocating it. First, A sets Structure::m_maxOffset to useRareDataFlag.
+            3. B is in JSObject::visitButterflyImpl, and executing Structure::maxOffset().
+            4. B detects that m_maxOffset is useRareDataFlag.
+            5. B attempts to load rareData, but this is not a StructureRareData since A is just now setting up StructureRareData.
+            6. B crashes.
+
+        Set useRareDataFlag after StructureRareData is set. Ensuring this store-order by using storeStoreFence.
+
+        * runtime/Structure.h:
+
+2020-01-29  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix small memory regression caused by r206365
+        https://bugs.webkit.org/show_bug.cgi?id=206557
+
+        Reviewed by Yusuke Suzuki.
+
+        Put StructureRareData::m_giveUpOnObjectToStringValueCache into m_objectToStringValue to prevent increasing StructureRareData's size. We make a special value for the pointer
+        objectToStringCacheGiveUpMarker() to signal that we should not cache the string value. As a result, adding m_transitionOffset does not increase the size of the class.
+
+        * runtime/Structure.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        (JSC::StructureRareData::setObjectToStringValue):
+        (JSC::StructureRareData::clearObjectToStringValue):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::objectToStringValue const):
+
+2020-01-17  Justin Michaud  <justin_michaud@apple.com>
+
+        Separate storage of Structure::m_offset into transition and max offset
+        https://bugs.webkit.org/show_bug.cgi?id=206365
+
+        Reviewed by Saam Barati.
+
+        Right now, deleteProperty/removePropertyTransition causes a structure transition to uncacheable dictionary. Other transitions 
+        assume that the transition offset (m_offset) is monotonically increasing. In order to support structure transitions for deletion that 
+        do not involve turning into a dictionary (<https://bugs.webkit.org/show_bug.cgi?id=206430>), we first need to separate the transition 
+        offset (the offset of the property that was added/deleted) from the maximum offset.
+
+        For example, suppose we have the following operations:
+          Structure 1 (pinned property table, transitionOffset = _, maxOffset = 2): x y z (delete y, assuming that deletion transitions have been added)
+          Structure 2 (transitionOffset = 1, maxOffset = 2):                        x _ z (add w)
+          Structure 3 (transitionOffset = 1, maxOffset = 2):                        x w z
+
+        Note that without splitting the two, Structures 2/3 would be impossible to represent.
+
+        This change:
+
+        We split the existing Structure::m_offset into two 16-bit fields, transitionOffset and maxOffset, and put them in 32-bit rare data fields if they overflow. We also rename _inPrevious fields to
+        transition_ and lastOffset to maxOffset to make the code more clear.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markAuxiliaryAndVisitOutOfLineProperties):
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::verifyPropertiesAreInitialized):
+        * runtime/PropertyOffset.h:
+        (JSC::numberOfOutOfLineSlotsForMaxOffset):
+        (JSC::numberOfSlotsForMaxOffset):
+        (JSC::numberOfOutOfLineSlotsForLastOffset): Deleted.
+        (JSC::numberOfSlotsForLastOffset): Deleted.
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains const):
+        (JSC::StructureTransitionTable::get const):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::Structure):
+        (JSC::Structure::create):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinForCaching):
+        (JSC::Structure::add):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::checkOffsetConsistency const):
+        (JSC::Structure::add):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::StructureRareData):
+        * runtime/StructureRareData.h:
+
 2020-02-20  Alan Coon  <alancoon@apple.com>
 
         Revert r256996. rdar://problem/59478911

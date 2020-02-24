@@ -44,7 +44,12 @@ inline void StructureRareData::clearPreviousID()
 
 inline JSString* StructureRareData::objectToStringValue() const
 {
-    return m_objectToStringValue.get();
+    auto* value = m_objectToStringValue.unvalidatedGet();
+    if (value == objectToStringCacheGiveUpMarker())
+        return nullptr;
+    if (value)
+        validateCell(value);
+    return value;
 }
 
 inline JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const
