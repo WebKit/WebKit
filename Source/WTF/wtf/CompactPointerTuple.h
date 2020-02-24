@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,58 +32,73 @@
 
 namespace WTF {
 
-// The goal of this class is folding a pointer and 1 byte value into 8 bytes in both 32bit and 64bit architectures.
+// The goal of this class is folding a pointer and 2 bytes value into 8 bytes in both 32bit and 64bit architectures.
 // 32bit architecture just has a pair of byte and pointer, which should be 8 bytes.
-// In 64bit, we use the upper 5 bits and lower 3 bits (zero due to alignment) since these bits are safe to use even
-// with 5-level page tables where the effective pointer width is 57bits.
+// We are assuming 48bit pointers here, which is also assumed in JSValue anyway.
 template<typename PointerType, typename Type>
 class CompactPointerTuple final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static_assert(sizeof(Type) == 1, "");
+    static_assert(sizeof(Type) <= 2, "");
     static_assert(std::is_pointer<PointerType>::value, "");
     static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value, "");
+    using UnsignedType = std::make_unsigned_t<std::conditional_t<std::is_same_v<Type, bool>, uint8_t, Type>>;
+    static_assert(sizeof(UnsignedType) == sizeof(Type));
 
     CompactPointerTuple() = default;
 
 #if CPU(ADDRESS64)
 public:
-    static constexpr uint64_t encodeType(uint8_t type)
-    {
-        // Encode 8bit type UUUDDDDD into 64bit data DDDDD..56bit..UUU.
-        return (static_cast<uint64_t>(type) << 59) | (static_cast<uint64_t>(type) >> 5);
-    }
-    static constexpr uint8_t decodeType(uint64_t value)
-    {
-        // Decode 64bit data DDDDD..56bit..UUU into 8bit type UUUDDDDD.
-        return static_cast<uint8_t>((value >> 59) | (value << 5));
-    }
+    static constexpr unsigned maxNumberOfBitsInPointer = 48;
+    static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) <= maxNumberOfBitsInPointer);
 
-    static constexpr uint64_t typeMask = encodeType(UINT8_MAX);
-    static_assert(0xF800000000000007ULL == typeMask, "");
-    static constexpr uint64_t pointerMask = ~typeMask;
+#if CPU(LITTLE_ENDIAN)
+    static ptrdiff_t offsetOfType()
+    {
+        return maxNumberOfBitsInPointer / 8;
+    }
+#endif
+
+    static constexpr uint64_t pointerMask = (1ULL << maxNumberOfBitsInPointer) - 1;
 
     CompactPointerTuple(PointerType pointer, Type type)
-        : m_data(bitwise_cast<uint64_t>(pointer) | encodeType(static_cast<uint8_t>(type)))
+        : m_data(encode(pointer, type))
     {
-        ASSERT((bitwise_cast<uint64_t>(pointer) & 0b111) == 0x0);
+        ASSERT(this->type() == type);
+        ASSERT(this->pointer() == pointer);
     }
 
     PointerType pointer() const { return bitwise_cast<PointerType>(m_data & pointerMask); }
     void setPointer(PointerType pointer)
     {
-        static_assert(alignof(typename std::remove_pointer<PointerType>::type) >= alignof(void*), "");
-        ASSERT((bitwise_cast<uint64_t>(pointer) & 0b111) == 0x0);
-        m_data = CompactPointerTuple(pointer, type()).m_data;
+        m_data = encode(pointer, type());
+        ASSERT(this->pointer() == pointer);
     }
 
-    Type type() const { return static_cast<Type>(decodeType(m_data)); }
+    Type type() const { return decodeType(m_data); }
     void setType(Type type)
     {
-        m_data = CompactPointerTuple(pointer(), type).m_data;
+        m_data = encode(pointer(), type);
+        ASSERT(this->type() == type);
     }
 
+    uint64_t data() const { return m_data; }
+
 private:
+    static constexpr uint64_t encodeType(Type type)
+    {
+        return static_cast<uint64_t>(static_cast<UnsignedType>(type)) << maxNumberOfBitsInPointer;
+    }
+    static constexpr Type decodeType(uint64_t value)
+    {
+        return static_cast<Type>(static_cast<UnsignedType>(value >> maxNumberOfBitsInPointer));
+    }
+
+    static uint64_t encode(PointerType pointer, Type type)
+    {
+        return bitwise_cast<uint64_t>(pointer) | encodeType(type);
+    }
+
     uint64_t m_data { 0 };
 #else
 public:

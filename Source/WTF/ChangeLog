@@ -1,3 +1,21 @@
+2020-02-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink Structure
+        https://bugs.webkit.org/show_bug.cgi?id=207827
+
+        Reviewed by Saam Barati.
+
+        Make CompactPointerTuple usable for storing 16 bits data.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CompactPointerTuple.h:
+        * wtf/CompactRefPtrTuple.h: Added.
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::hashForSymbol const):
+        (WTF::SymbolImpl::SymbolImpl):
+
 2020-02-21  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r257072): MotionMark | Mac | -10%

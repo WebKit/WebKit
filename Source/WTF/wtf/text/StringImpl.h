@@ -189,8 +189,8 @@ public:
 
     static constexpr unsigned MaxLength = StringImplShape::MaxLength;
 
-    // The bottom 6 bits in the hash are flags.
-    static constexpr const unsigned s_flagCount = 6;
+    // The bottom 6 bits in the hash are flags, but reserve 8 bits since StringHash only has 24 bits anyway.
+    static constexpr const unsigned s_flagCount = 8;
 
 private:
     static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;

@@ -30,6 +30,7 @@ set(WTF_PUBLIC_HEADERS
     ClockType.h
     CommaPrinter.h
     CompactPointerTuple.h
+    CompactRefPtrTuple.h
     CompilationThread.h
     Compiler.h
     CompletionHandler.h

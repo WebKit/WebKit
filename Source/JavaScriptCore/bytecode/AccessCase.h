@@ -158,7 +158,7 @@ public:
     Structure* structure() const
     {
         if (m_type == Transition)
-            return m_structure->previousID();
+            return m_structure->previousID(m_structure->vm());
         return m_structure.get();
     }
     bool guardedByStructureCheck(const StructureStubInfo&) const;

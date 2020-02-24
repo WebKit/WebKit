@@ -110,7 +110,7 @@ std::unique_ptr<AccessCase> AccessCase::create(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
-    RELEASE_ASSERT(oldStructure == newStructure->previousID());
+    RELEASE_ASSERT(oldStructure == newStructure->previousID(vm));
 
     // Skip optimizing the case where we need a realloc, if we don't have
     // enough registers to make it happen.
@@ -705,7 +705,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
 
     switch (m_type) {
     case Transition:
-        if (visitor.vm().heap.isMarked(m_structure->previousID()))
+        if (visitor.vm().heap.isMarked(m_structure->previousID(visitor.vm())))
             visitor.appendUnbarriered(m_structure.get());
         else
             result = false;

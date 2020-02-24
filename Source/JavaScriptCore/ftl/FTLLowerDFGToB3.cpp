@@ -6091,17 +6091,17 @@ private:
 
                 LValue object = lowObject(m_node->child1());
                 LValue structure = loadStructure(object);
-                LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
-                m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(slowCase));
+                LValue cachedPrototypeChainOrRareData = m_out.bitAnd(m_out.constIntPtr(Structure::cachedPrototypeChainOrRareDataMask), m_out.loadPtr(structure, m_heaps.Structure_cachedPrototypeChainOrRareData));
+                m_out.branch(m_out.notNull(cachedPrototypeChainOrRareData), unsure(notNullCase), unsure(slowCase));
 
                 LBasicBlock lastNext = m_out.appendTo(notNullCase, rareDataCase);
                 m_out.branch(
-                    m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
+                    m_out.equal(m_out.load32(cachedPrototypeChainOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureRareDataStructure->structureID())),
                     unsure(rareDataCase), unsure(slowCase));
 
                 m_out.appendTo(rareDataCase, useCacheCase);
                 ASSERT(bitwise_cast<uintptr_t>(StructureRareData::cachedOwnKeysSentinel()) == 1);
-                LValue cachedOwnKeys = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedOwnKeys);
+                LValue cachedOwnKeys = m_out.loadPtr(cachedPrototypeChainOrRareData, m_heaps.StructureRareData_cachedOwnKeys);
                 m_out.branch(m_out.belowOrEqual(cachedOwnKeys, m_out.constIntPtr(bitwise_cast<void*>(StructureRareData::cachedOwnKeysSentinel()))), unsure(slowCase), unsure(useCacheCase));
 
                 m_out.appendTo(useCacheCase, slowButArrayBufferCase);
@@ -6675,7 +6675,8 @@ private:
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
-        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(m_node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())), usually(checkGlobalObjectCase), rarely(slowCase));
+        LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
+        m_out.branch(m_out.equal(classInfo, m_out.constIntPtr(m_node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
         ValueFromBlock derivedStructure = m_out.anchor(structure);
@@ -6730,7 +6731,8 @@ private:
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
-        m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
+        LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
+        m_out.branch(m_out.equal(classInfo, m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
         m_out.branch(m_out.equal(m_out.loadPtr(structure, m_heaps.Structure_globalObject), weakPointer(globalObject)), usually(fastAllocationCase), rarely(slowCase));
@@ -13208,7 +13210,7 @@ private:
             LBasicBlock continuation = m_out.newBlock();
 
             LValue structure = loadStructure(cell);
-            LValue classInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
+            LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
             ValueFromBlock otherAtStart = m_out.anchor(classInfo);
             m_out.jump(loop);
 

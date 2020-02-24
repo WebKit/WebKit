@@ -41,7 +41,7 @@ public:
     static constexpr Flags s_flagIsRegistered = 0b010u;
     static constexpr Flags s_flagIsPrivate = 0b100u;
 
-    unsigned hashForSymbol() const { return m_hashForSymbol; }
+    unsigned hashForSymbol() const { return m_hashForSymbolShiftedWithFlagCount >> s_flagCount; }
     bool isNullSymbol() const { return m_flags & s_flagIsNullSymbol; }
     bool isRegistered() const { return m_flags & s_flagIsRegistered; }
     bool isPrivate() const { return m_flags & s_flagIsPrivate; }
@@ -60,7 +60,7 @@ public:
         constexpr StaticSymbolImpl(const char (&characters)[characterCount], Flags flags = s_flagDefault)
             : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-            , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
             , m_flags(flags)
         {
         }
@@ -69,7 +69,7 @@ public:
         constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags flags = s_flagDefault)
             : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-            , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
             , m_flags(flags)
         {
         }
@@ -80,7 +80,7 @@ public:
         }
 
         StringImpl* m_owner { nullptr }; // We do not make StaticSymbolImpl BufferSubstring. Thus we can make this nullptr.
-        unsigned m_hashForSymbol;
+        unsigned m_hashForSymbolShiftedWithFlagCount;
         Flags m_flags;
     };
 
@@ -92,7 +92,7 @@ protected:
     SymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
         : UniquedStringImpl(CreateSymbol, characters, length)
         , m_owner(&base.leakRef())
-        , m_hashForSymbol(nextHashForSymbol())
+        , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
         , m_flags(flags)
     {
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
@@ -101,7 +101,7 @@ protected:
     SymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base, Flags flags = s_flagDefault)
         : UniquedStringImpl(CreateSymbol, characters, length)
         , m_owner(&base.leakRef())
-        , m_hashForSymbol(nextHashForSymbol())
+        , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
         , m_flags(flags)
     {
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
@@ -110,7 +110,7 @@ protected:
     SymbolImpl(Flags flags = s_flagDefault)
         : UniquedStringImpl(CreateSymbol)
         , m_owner(StringImpl::empty())
-        , m_hashForSymbol(nextHashForSymbol())
+        , m_hashForSymbolShiftedWithFlagCount(nextHashForSymbol())
         , m_flags(flags | s_flagIsNullSymbol)
     {
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
@@ -119,7 +119,7 @@ protected:
     // The pointer to the owner string should be immediately following after the StringImpl layout,
     // since we would like to align the layout of SymbolImpl to the one of BufferSubstring StringImpl.
     StringImpl* m_owner;
-    unsigned m_hashForSymbol;
+    unsigned m_hashForSymbolShiftedWithFlagCount;
     Flags m_flags { s_flagDefault };
 };
 static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");

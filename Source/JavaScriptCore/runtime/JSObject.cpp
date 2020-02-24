@@ -2005,7 +2005,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 
         PropertyOffset offset = invalidOffset;
         if (structure->isUncacheableDictionary())
-            offset = structure->removePropertyWithoutTransition(vm, propertyName, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset) { });
+            offset = structure->removePropertyWithoutTransition(vm, propertyName, [](const GCSafeConcurrentJSCellLocker&, PropertyOffset, PropertyOffset) { });
         else {
             structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
             if (thisObject->m_butterfly && !structure->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
@@ -3766,7 +3766,7 @@ void JSObject::convertToDictionary(VM& vm)
         vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
 }
 
-void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM& vm, Structure* structure, size_t outOfLineCapacityAfter)
+void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSCellLocker&, VM& vm, Structure* structure, size_t outOfLineCapacityAfter)
 {
     // This could interleave visitChildren because some old structure could have been a non
     // dictionary structure. We have to be crazy careful. But, we are guaranteed to be holding

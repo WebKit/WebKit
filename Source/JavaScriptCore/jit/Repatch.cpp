@@ -617,7 +617,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 if (baseValue.asCell()->structure(vm) != newStructure)
                     return GiveUpOnCache;
 
-                ASSERT(newStructure->previousID() == oldStructure);
+                ASSERT(newStructure->previousID(vm) == oldStructure);
                 ASSERT(!newStructure->isDictionary());
                 ASSERT(newStructure->isObject());
                 

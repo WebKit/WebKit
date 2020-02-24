@@ -33,18 +33,18 @@
 namespace JSC {
 
 using ConcurrentJSLock = Lock;
-using ConcurrentJSLockerImpl = LockHolder;
 
-static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConurrentJSLock is always one byte.");
+static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConcurrentJSLock is always one byte.");
 
+template<typename Lock>
 class ConcurrentJSLockerBase : public AbstractLocker {
     WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
-    explicit ConcurrentJSLockerBase(ConcurrentJSLock& lockable)
+    explicit ConcurrentJSLockerBase(Lock& lockable)
         : m_locker(&lockable)
     {
     }
-    explicit ConcurrentJSLockerBase(ConcurrentJSLock* lockable)
+    explicit ConcurrentJSLockerBase(Lock* lockable)
         : m_locker(lockable)
     {
     }
@@ -64,68 +64,73 @@ public:
     }
 
 private:
-    ConcurrentJSLockerImpl m_locker;
+    Locker<Lock> m_locker;
 };
 
-class GCSafeConcurrentJSLocker : public ConcurrentJSLockerBase {
+template<typename Lock>
+class GCSafeConcurrentJSLockerImpl : public ConcurrentJSLockerBase<Lock> {
 public:
-    GCSafeConcurrentJSLocker(ConcurrentJSLock& lockable, Heap& heap)
-        : ConcurrentJSLockerBase(lockable)
+    GCSafeConcurrentJSLockerImpl(Lock& lockable, Heap& heap)
+        : ConcurrentJSLockerBase<Lock>(lockable)
         , m_deferGC(heap)
     {
     }
 
-    GCSafeConcurrentJSLocker(ConcurrentJSLock* lockable, Heap& heap)
-        : ConcurrentJSLockerBase(lockable)
+    GCSafeConcurrentJSLockerImpl(Lock* lockable, Heap& heap)
+        : ConcurrentJSLockerBase<Lock>(lockable)
         , m_deferGC(heap)
     {
     }
 
-    ~GCSafeConcurrentJSLocker()
+    ~GCSafeConcurrentJSLockerImpl()
     {
         // We have to unlock early due to the destruction order of base
         // vs. derived classes. If we didn't, then we would destroy the 
         // DeferGC object before unlocking the lock which could cause a GC
         // and resulting deadlock.
-        unlockEarly();
+        ConcurrentJSLockerBase<Lock>::unlockEarly();
     }
 
 private:
     DeferGC m_deferGC;
 };
 
-class ConcurrentJSLocker : public ConcurrentJSLockerBase {
+template<typename Lock>
+class ConcurrentJSLockerImpl : public ConcurrentJSLockerBase<Lock> {
 public:
-    ConcurrentJSLocker(ConcurrentJSLock& lockable)
-        : ConcurrentJSLockerBase(lockable)
+    ConcurrentJSLockerImpl(Lock& lockable)
+        : ConcurrentJSLockerBase<Lock>(lockable)
 #if !defined(NDEBUG)
         , m_disallowGC(std::in_place)
 #endif
     {
     }
 
-    ConcurrentJSLocker(ConcurrentJSLock* lockable)
-        : ConcurrentJSLockerBase(lockable)
+    ConcurrentJSLockerImpl(Lock* lockable)
+        : ConcurrentJSLockerBase<Lock>(lockable)
 #if !defined(NDEBUG)
         , m_disallowGC(std::in_place)
 #endif
     {
     }
 
-    ConcurrentJSLocker(NoLockingNecessaryTag)
-        : ConcurrentJSLockerBase(NoLockingNecessary)
+    ConcurrentJSLockerImpl(NoLockingNecessaryTag)
+        : ConcurrentJSLockerBase<Lock>(NoLockingNecessary)
 #if !defined(NDEBUG)
         , m_disallowGC(WTF::nullopt)
 #endif
     {
     }
     
-    ConcurrentJSLocker(int) = delete;
+    ConcurrentJSLockerImpl(int) = delete;
 
 #if !defined(NDEBUG)
 private:
     Optional<DisallowGC> m_disallowGC;
 #endif
 };
+
+using ConcurrentJSLocker = ConcurrentJSLockerImpl<ConcurrentJSLock>;
+using GCSafeConcurrentJSLocker = GCSafeConcurrentJSLockerImpl<ConcurrentJSLock>;
 
 } // namespace JSC

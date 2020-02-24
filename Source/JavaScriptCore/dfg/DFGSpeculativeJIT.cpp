@@ -9605,7 +9605,7 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
         GPRReg specifiedGPR = specified.gpr();
 
         m_jit.emitLoadStructure(vm(), baseGPR, otherGPR, specifiedGPR);
-        m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
+        m_jit.emitLoadClassInfoFromStructure(otherGPR, otherGPR);
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         CCallHelpers::Label loop = m_jit.label();
@@ -12698,10 +12698,13 @@ void SpeculativeJIT::compileObjectKeys(Node* node)
 
             CCallHelpers::JumpList slowCases;
             m_jit.emitLoadStructure(vm(), objectGPR, structureGPR, scratchGPR);
-            m_jit.loadPtr(CCallHelpers::Address(structureGPR, Structure::previousOrRareDataOffset()), scratchGPR);
+            m_jit.loadPtr(CCallHelpers::Address(structureGPR, Structure::offsetOfCachedPrototypeChainOrRareData()), scratchGPR);
+#if CPU(ADDRESS64)
+            m_jit.andPtr(CCallHelpers::TrustedImmPtr(Structure::cachedPrototypeChainOrRareDataMask), scratchGPR);
+#endif
 
             slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratchGPR));
-            slowCases.append(m_jit.branch32(CCallHelpers::Equal, CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(vm().structureStructure->structureID()))));
+            slowCases.append(m_jit.branch32(CCallHelpers::NotEqual, CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(vm().structureRareDataStructure->structureID()))));
 
             m_jit.loadPtr(CCallHelpers::Address(scratchGPR, StructureRareData::offsetOfCachedOwnKeys()), scratchGPR);
 
@@ -12839,7 +12842,7 @@ void SpeculativeJIT::compileCreateThis(Node* node)
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObject(resultGPR, JITAllocator::variable(), allocatorGPR, structureGPR, butterfly, scratchGPR, slowPath);
 
-    m_jit.load8(JITCompiler::Address(structureGPR, Structure::inlineCapacityOffset()), inlineCapacityGPR);
+    m_jit.load8(JITCompiler::Address(structureGPR, Structure::offsetOfInlineCapacity()), inlineCapacityGPR);
     m_jit.emitInitializeInlineStorage(resultGPR, inlineCapacityGPR);
     m_jit.mutatorFence(vm());
 
@@ -12877,8 +12880,8 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag)));
     m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure() - JSFunction::rareDataTag), structureGPR);
     slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, structureGPR));
-    m_jit.move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
+    m_jit.emitLoadClassInfoFromStructure(structureGPR, scratch1GPR);
+    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())));
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 
@@ -12925,8 +12928,8 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag)));
     m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructure() - JSFunction::rareDataTag), structureGPR);
     slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, structureGPR));
-    m_jit.move(TrustedImmPtr(JSClass::info()), scratch1GPR);
-    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
+    m_jit.emitLoadClassInfoFromStructure(structureGPR, scratch1GPR);
+    slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, TrustedImmPtr(JSClass::info())));
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), globalObject), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::globalObjectOffset())));
 

@@ -29,6 +29,7 @@ enum JSType : uint8_t {
     SymbolType,
     BigIntType,
 
+    StructureRareDataType,
     GetterSetterType,
     CustomGetterSetterType,
     APIValueWrapperType,

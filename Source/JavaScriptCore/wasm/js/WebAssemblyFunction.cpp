@@ -275,7 +275,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
             stackLimitGPRIsClobbered = true;
             jit.emitLoadStructure(vm, scratchGPR, scratchGPR, stackLimitGPR);
-            jit.loadPtr(CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), scratchGPR);
+            jit.emitLoadClassInfoFromStructure(scratchGPR, scratchGPR);
 
             static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
             static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");

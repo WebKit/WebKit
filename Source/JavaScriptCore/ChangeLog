@@ -1,3 +1,141 @@
+2020-02-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink Structure
+        https://bugs.webkit.org/show_bug.cgi?id=207827
+
+        Reviewed by Saam Barati.
+
+        This patch shrinks sizeof(Structure) from 112 to 96 (16 bytes) in architectures using 64 bit pointers.
+        Structure is one of the most frequently allocated JSCell in JSC. So it is worth doing
+        all the sort of bit hacks to make it compact as much as possible.
+
+            1. Put outOfLineTypeFlags, maxOffset and transitionOffset into highest bits of m_propertyTableUnsafe,
+               m_cachedPrototypeChain, m_classInfo, and m_transitionPropertyName. Do not use PackedPtr here since
+               some of them are concurrently accessed by GC.
+            2. Put m_inlineCapacity into lower 8 bits of m_propertyHash.
+            3. Remove m_lock, and use Structure::cellLock() instead.
+            4. Remove m_cachedPrototypeChain clearing from the concurrent collector since it is dead code, it was old code.
+               We were setting m_cachedPrototypeChain only if Structure is for JSObject. Clearing happened only if it was not
+               a Structure for JSObject.
+            5. Previous Structure is held as StructureID m_previous. And m_previousOrRareData becomes m_cachedPrototypeChainOrRareData.
+
+        Many pairs are using CompactPointerTuple to make code clean.
+        Combining all of the above techniques saves us 16 bytes.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::propagateTransitions const):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::structure const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::compileObjectKeys):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileCreateInternalFieldObject):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeys):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitLoadClassInfoFromStructure):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createStructure):
+        * runtime/ConcurrentJSLock.h:
+        (JSC::ConcurrentJSLockerBase::ConcurrentJSLockerBase):
+        (JSC::GCSafeConcurrentJSLockerImpl::GCSafeConcurrentJSLockerImpl):
+        (JSC::GCSafeConcurrentJSLockerImpl::~GCSafeConcurrentJSLockerImpl):
+        (JSC::ConcurrentJSLockerImpl::ConcurrentJSLockerImpl):
+        (JSC::GCSafeConcurrentJSLocker::GCSafeConcurrentJSLocker): Deleted.
+        (JSC::GCSafeConcurrentJSLocker::~GCSafeConcurrentJSLocker): Deleted.
+        (JSC::ConcurrentJSLocker::ConcurrentJSLocker): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectConcurrently const):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains const):
+        (JSC::StructureTransitionTable::get const):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure):
+        (JSC::Structure::create):
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinForCaching):
+        (JSC::Structure::allocateRareData):
+        (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        (JSC::Structure::ruleOutUnseenProperty const):
+        (JSC::Structure::seenProperties const):
+        (JSC::Structure::addPropertyHashAndSeenProperty):
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::transitivelyTransitionedFrom):
+        (JSC::Structure::cachedPrototypeChain const):
+        (JSC::Structure::setCachedPrototypeChain):
+        (JSC::Structure::prototypeChain const):
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        (JSC::Structure::checkOffsetConsistency const):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::setPropertyTable):
+        (JSC::Structure::clearPropertyTable):
+        (JSC::Structure::setOutOfLineTypeFlags):
+        (JSC::Structure::setInlineCapacity):
+        (JSC::Structure::setClassInfo):
+        (JSC::Structure::setPreviousID):
+        (JSC::Structure::clearPreviousID):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::createStructure):
+        (JSC::StructureRareData::create):
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setCachedPrototypeChain):
+        (JSC::StructureRareData::setPreviousID): Deleted.
+        (JSC::StructureRareData::clearPreviousID): Deleted.
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMHelper::functionGetStructureTransitionList):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2020-02-20  Mark Lam  <mark.lam@apple.com>
 
         Make support for bytecode caching more robust against file corruption.

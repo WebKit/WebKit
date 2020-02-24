@@ -2804,7 +2804,7 @@ EncodedJSValue JSC_HOST_CALL JSDollarVMHelper::functionGetStructureTransitionLis
         return JSValue::encode(jsNull());
     Vector<Structure*, 8> structures;
 
-    for (auto* structure = obj->structure(); structure; structure = structure->previousID())
+    for (auto* structure = obj->structure(); structure; structure = structure->previousID(vm))
         structures.append(structure);
 
     JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
@@ -2818,8 +2818,8 @@ EncodedJSValue JSC_HOST_CALL JSDollarVMHelper::functionGetStructureTransitionLis
         RETURN_IF_EXCEPTION(scope, { });
         result->push(globalObject, JSValue(structure->maxOffset()));
         RETURN_IF_EXCEPTION(scope, { });
-        if (structure->m_transitionPropertyName)
-            result->push(globalObject, jsString(vm, String(*structure->m_transitionPropertyName)));
+        if (auto* transitionPropertyName = structure->transitionPropertyName())
+            result->push(globalObject, jsString(vm, String(*transitionPropertyName)));
         else
             result->push(globalObject, jsNull());
         RETURN_IF_EXCEPTION(scope, { });
