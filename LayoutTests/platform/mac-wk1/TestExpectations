@@ -949,3 +949,6 @@ webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure
 webkit.org/b/208059 [ Debug ] legacy-animation-engine/compositing/transitions/add-remove-transition.html [ Pass Failure ]
 
 webkit.org/b/208065 [ Debug ] legacy-animation-engine/animations/animation-direction-normal.html [ Pass Failure ]
+
+# prefetch not supported in WK1
+http/wpt/prefetch [ Skip ]

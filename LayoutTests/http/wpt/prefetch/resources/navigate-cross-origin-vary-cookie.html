@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/common/get-host-info.sub.js"></script>
+<body onload="test()">
+<script>
+  if (window.testRunner)
+    testRunner.setAlwaysAcceptCookies(true);
+
+  async function test() {
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/main-resource-cross-origin-vary-cookie.py";
+    document.body.appendChild(link);
+
+    await fetch(get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/main-resource-cross-origin-set-cookie.py", { "credentials": "include" });
+
+    window.location = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/main-resource-cross-origin-vary-cookie.py";
+  }
+</script>
+</body>

@@ -230,7 +230,6 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
             if (auto entry = session->prefetchCache().take(request.url())) {
                 RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: retrieved an entry from the prefetch cache (isRedirect=%d)", !entry->redirectRequest.isNull());
-                // FIXME: Deal with credentials (https://bugs.webkit.org/show_bug.cgi?id=200000)
                 if (!entry->redirectRequest.isNull()) {
                     auto cacheEntry = m_cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
                     retrieveCacheEntryInternal(WTFMove(cacheEntry), ResourceRequest { request });
@@ -550,6 +549,11 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     if (isCrossOriginPrefetch()) {
         RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Using response for cross-origin prefetch");
+        if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie")) {
+            RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Canceling cross-origin prefetch for Vary: Cookie");
+            abort();
+            return completionHandler(PolicyAction::Ignore);
+        }
         return completionHandler(PolicyAction::Use);
     }
 
