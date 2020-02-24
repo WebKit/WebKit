@@ -1,5 +1,20 @@
 2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix watchOS build
+        https://bugs.webkit.org/show_bug.cgi?id=207827
+
+        While watchOS does not use FTL at all, it still compiles.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeys):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::loadStructureClassInfo):
+        (JSC::FTL::DFG::LowerDFGToB3::loadStructureCachedPrototypeChainOrRareData):
+
+2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix for 32bit pointer architectures
         https://bugs.webkit.org/show_bug.cgi?id=207827
 

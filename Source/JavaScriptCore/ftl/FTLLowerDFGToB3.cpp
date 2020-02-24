@@ -6091,7 +6091,7 @@ private:
 
                 LValue object = lowObject(m_node->child1());
                 LValue structure = loadStructure(object);
-                LValue cachedPrototypeChainOrRareData = m_out.bitAnd(m_out.constIntPtr(Structure::cachedPrototypeChainOrRareDataMask), m_out.loadPtr(structure, m_heaps.Structure_cachedPrototypeChainOrRareData));
+                LValue cachedPrototypeChainOrRareData = loadStructureCachedPrototypeChainOrRareData(structure);
                 m_out.branch(m_out.notNull(cachedPrototypeChainOrRareData), unsure(notNullCase), unsure(slowCase));
 
                 LBasicBlock lastNext = m_out.appendTo(notNullCase, rareDataCase);
@@ -6675,7 +6675,7 @@ private:
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
-        LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
+        LValue classInfo = loadStructureClassInfo(structure);
         m_out.branch(m_out.equal(classInfo, m_out.constIntPtr(m_node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
@@ -6731,7 +6731,7 @@ private:
         m_out.branch(m_out.isZero64(structure), rarely(slowCase), usually(hasStructure));
 
         m_out.appendTo(hasStructure, checkGlobalObjectCase);
-        LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
+        LValue classInfo = loadStructureClassInfo(structure);
         m_out.branch(m_out.equal(classInfo, m_out.constIntPtr(JSClass::info())), usually(checkGlobalObjectCase), rarely(slowCase));
 
         m_out.appendTo(checkGlobalObjectCase, fastAllocationCase);
@@ -13210,7 +13210,7 @@ private:
             LBasicBlock continuation = m_out.newBlock();
 
             LValue structure = loadStructure(cell);
-            LValue classInfo = m_out.bitAnd(m_out.loadPtr(structure, m_heaps.Structure_classInfo), m_out.constIntPtr(Structure::classInfoMask));
+            LValue classInfo = loadStructureClassInfo(structure);
             ValueFromBlock otherAtStart = m_out.anchor(classInfo);
             m_out.jump(loop);
 
@@ -18217,6 +18217,26 @@ private:
         TypedPointer address = m_out.baseIndex(m_heaps.structureTable, tableBase, m_out.zeroExtPtr(tableIndex));
         LValue encodedStructureBits = m_out.loadPtr(address);
         return m_out.bitXor(encodedStructureBits, entropyBits);
+    }
+
+    LValue loadStructureClassInfo(LValue structure)
+    {
+        LValue result = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
+#if CPU(ADDRESS64)
+        return m_out.bitAnd(m_out.constIntPtr(Structure::classInfoMask), result);
+#else
+        return result;
+#endif
+    }
+
+    LValue loadStructureCachedPrototypeChainOrRareData(LValue structure)
+    {
+        LValue result = m_out.loadPtr(structure, m_heaps.Structure_cachedPrototypeChainOrRareData);
+#if CPU(ADDRESS64)
+        return m_out.bitAnd(m_out.constIntPtr(Structure::cachedPrototypeChainOrRareDataMask), result);
+#else
+        return result;
+#endif
     }
 
     LValue weakPointer(JSCell* pointer)
