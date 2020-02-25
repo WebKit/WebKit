@@ -60,13 +60,12 @@ var htmlString = '<html><script>async function doTest() { ' +
 promise_test(async (test) => {
     var promise = new Promise((resolve, reject) => {
         window.addEventListener("message", (event) => {
-            resolve(event.data);
+            reject("Received a message from iframe:" + event.data);
         }, false);
-        setTimeout(() => {  reject("Did not receive any message from iframe"); }, 5000);
+        setTimeout(resolve, 100);
     });
     var frame = await withFrame("data:text/html," + htmlString);
-    var result = await promise;
-    assert_equals(result, "PASS");
+    return promise;
 }, "Test data URL frame");
 
 promise_test(async (test) => {
