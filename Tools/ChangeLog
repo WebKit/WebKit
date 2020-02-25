@@ -1,3 +1,18 @@
+2020-02-25  Daniel Bates  <dabates@apple.com>
+
+        TestWebKitAPI.PasteMixedContent.CopyAndPasteWithCustomPasteboardDataOnly should wait until copy operation completes
+        https://bugs.webkit.org/show_bug.cgi?id=208214
+
+        Reviewed by Wenson Hsieh.
+
+        Wait until the copy operation completes before loading the second web view and testing paste
+        to ensure that something was actually copied to the clipboard.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST): Substitute -_synchronouslyExecuteEditCommand for -_executeEditCommand
+        so that we wait until the command completes.
+
 2020-02-25  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r256882): Can't drag an HTML file into a new (empty) Safari tab
