@@ -6,6 +6,7 @@ This tests that the navigator object of a deleted frame is disconnected properly
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.canShare() is OK
 navigator.clipboard is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
@@ -36,6 +37,7 @@ navigator.webdriver is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.canShare() is OK
 navigator.clipboard is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK

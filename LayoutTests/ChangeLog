@@ -1,3 +1,15 @@
+2020-02-25  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        REGRESSION: (r257289) [ macOS ] fast/dom/navigator-detached-no-crash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=208202
+
+        Reviewed by Megan Gardner.
+
+        Fixed expected for new function introduced to navigator. Test makes sure accessing each
+        member of navigator doesn't crash, added check for new function in expected. 
+
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2020-02-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][OutOfFlow] Out-of-flow positioned line breaks can generate display boxes
