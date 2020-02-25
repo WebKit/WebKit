@@ -54,6 +54,12 @@
 
 #if HAVE(OS_SIGNPOST)
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
+#else
+#define NETWORK_DATA_TASK_COCOA_ADDITIONS
+#endif
+
 #import <os/signpost.h>
 
 static os_log_t signpostLogHandle()
@@ -236,6 +242,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_isForMainResourceNavigationForAnyFrame(dataTaskIsForMainResourceNavigationForAnyFrame)
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
 {
+    NETWORK_DATA_TASK_COCOA_ADDITIONS
+
     if (m_scheduledFailureType != NoFailure)
         return;
 
