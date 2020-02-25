@@ -26,15 +26,6 @@ namespace WebCore {
 
 class CSSInitialValue final : public CSSValue {
 public:
-    static Ref<CSSInitialValue> createExplicit()
-    {
-        return adoptRef(*new CSSInitialValue(/* implicit */ false));
-    }
-    static Ref<CSSInitialValue> createImplicit()
-    {
-        return adoptRef(*new CSSInitialValue(/* implicit */ true));
-    }
-
     String customCSSText() const;
 
     bool isImplicit() const { return m_isImplicit; }
@@ -43,10 +34,11 @@ public:
 
 private:
     friend LazyNeverDestroyed<CSSInitialValue>;
-    CSSInitialValue(bool implicit)
+    CSSInitialValue(StaticCSSValueTag, bool implicit)
         : CSSValue(InitialClass)
         , m_isImplicit(implicit)
     {
+        makeStatic();
     }
 
 private:
