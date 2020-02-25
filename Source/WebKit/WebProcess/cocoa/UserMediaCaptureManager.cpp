@@ -36,6 +36,7 @@
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -467,6 +468,11 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
+#endif
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: Remove disabling of the audio session category managemeent once we move all media playing to GPUProcess.
+    if (m_shouldCaptureInGPUProcess)
+        DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
     return m_manager.createCaptureSource(device, WTFMove(hashSalt), constraints, m_shouldCaptureInGPUProcess);
 }

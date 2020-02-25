@@ -1,5 +1,25 @@
 2020-02-25  Youenn Fablet  <youenn@apple.com>
 
+        [iOS] Allow GPUProcess to set the AudioSession Category
+        https://bugs.webkit.org/show_bug.cgi?id=208194
+
+        Reviewed by Eric Carlson.
+
+        Disable setting the audio session category in WebProcess when media is playing in GPUProcess.
+        Always enable GPUProcess to set the audio session category.
+        With https://bugs.webkit.org/show_bug.cgi?id=208193 and activating playing audio in GPUProcess,
+        this allows running simple playing audio captured locally web pages.
+        Manually tested.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_overriddenMediaType):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+
+2020-02-25  Youenn Fablet  <youenn@apple.com>
+
         WebProcessPool does not need a map of service worker processes keyed by domain+session
         https://bugs.webkit.org/show_bug.cgi?id=208141
 

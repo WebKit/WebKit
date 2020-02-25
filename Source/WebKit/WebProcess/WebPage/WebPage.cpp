@@ -456,10 +456,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
-#if PLATFORM(IOS_FAMILY)
-    DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
-#endif
-
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
@@ -537,6 +533,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
     updatePreferences(parameters.store);
+
+#if PLATFORM(IOS_FAMILY)
+    if (!m_page->settings().useGPUProcessForMedia())
+        DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+#endif
 
     m_backgroundColor = parameters.backgroundColor;
 

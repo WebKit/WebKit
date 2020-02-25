@@ -39,6 +39,7 @@
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockAudioSharedUnit.h>
 #include <wtf/Algorithms.h>
@@ -107,6 +108,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
+
+#if PLATFORM(IOS_FAMILY)
+    DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
