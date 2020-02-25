@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WPEQtView.h"
 
+#include "WPEQtViewBackend.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
 #include <QGuiApplication>
