@@ -433,6 +433,10 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     graphicsContext.setFillColor(activeSelectionBackgroundColor({ }));
     graphicsContext.fillPath(path);
 
+#if ENABLE(DATALIST_ELEMENT)
+    paintSliderTicks(renderObject, paintInfo, rect);
+#endif
+
     if (isFocused(renderObject))
         ThemeAdwaita::paintFocus(graphicsContext, fieldRect, sliderTrackFocusOffset);
 
@@ -565,14 +569,12 @@ bool RenderThemeAdwaita::paintMediaVolumeSliderTrack(const RenderObject& renderO
 #if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeAdwaita::sliderTickSize() const
 {
-    // FIXME: We need to set this to the size of one tick mark.
-    return IntSize(0, 0);
+    return { 1, 7 };
 }
 
 int RenderThemeAdwaita::sliderTickOffsetFromTrackCenter() const
 {
-    // FIXME: We need to set this to the position of the tick marks.
-    return 0;
+    return -16;
 }
 
 void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element*) const

@@ -133,7 +133,18 @@
       <td><input type="range" value="50" max="100" disabled></input></td>
       <td><input type="range" value="50" max="100" style="-webkit-appearance: slider-vertical" disabled></input></td>
     </tr>
+    <tr>
+      <td><input type="range" min="0" max="100" step="25" list="steplist"></input></td>
+      <td><input type="range" min="0" max="100" step="25" list="steplist" style="-webkit-appearance: slider-vertical"></input></td>
+    </tr>
   </table>
+  <datalist id="steplist">
+    <option>0</option>
+    <option>25</option>
+    <option>50</option>
+    <option>75</option>
+    <option>100</option>
+  </datalist>
 
   <h1>Iframe scrollbars</h1>
   <iframe width="200" height="100" scrolling="yes" src="data:text/html,

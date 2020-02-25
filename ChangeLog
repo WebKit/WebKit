@@ -1,5 +1,16 @@
 2020-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add support for rendering slider ticks
+        https://bugs.webkit.org/show_bug.cgi?id=208132
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a test case for sliders with ticks.
+
+        * ManualTests/gtk/theme.html:
+
+2020-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Stop using gtk foreign drawing API to style form controls
         https://bugs.webkit.org/show_bug.cgi?id=208129
 
