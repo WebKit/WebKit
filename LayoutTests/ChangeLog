@@ -1,3 +1,14 @@
+2020-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Do not create a formatting context for empty subtree in TableFormattingContext::computePreferredWidthForColumns
+        https://bugs.webkit.org/show_bug.cgi?id=208205
+        <rdar://problem/59766702>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/simple-table-with-empty-td-expected.html: Added.
+        * fast/layoutformattingcontext/simple-table-with-empty-td.html: Added.
+
 2020-02-25  Jacob Uphoff  <jacob_uphoff@apple.com>
         
         Removing expectations for a resolved bug

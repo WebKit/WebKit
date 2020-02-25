@@ -234,7 +234,7 @@ void TableFormattingContext::computePreferredWidthForColumns()
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(tableCellBox);
         if (!intrinsicWidth) {
             intrinsicWidth = IntrinsicWidthConstraints { };
-            if (is<ContainerBox>(tableCellBox))
+            if (is<ContainerBox>(tableCellBox) && downcast<ContainerBox>(tableCellBox).hasInFlowOrFloatingChild())
                 intrinsicWidth = LayoutContext::createFormattingContext(downcast<ContainerBox>(tableCellBox), layoutState())->computedIntrinsicWidthConstraints();
             intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
             auto border = geometry().computedBorder(tableCellBox);
