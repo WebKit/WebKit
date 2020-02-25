@@ -55,7 +55,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
 
 static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 {
-    return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(CSSValue*) * count + sizeof(StylePropertyMetadata) * count;
+    return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(StylePropertyMetadata) * count + sizeof(PackedPtr<const CSSValue>) * count;
 }
 
 static bool isInitialOrInherit(const String& value)
@@ -94,17 +94,18 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     : StyleProperties(cssParserMode, length)
 {
     StylePropertyMetadata* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
-    CSSValue** valueArray = const_cast<CSSValue**>(this->valueArray());
+    PackedPtr<CSSValue>* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
-        valueArray[i] = properties[i].value();
-        valueArray[i]->ref();
+        auto* value = properties[i].value();
+        valueArray[i] = value;
+        value->ref();
     }
 }
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
-    CSSValue** valueArray = const_cast<CSSValue**>(this->valueArray());
+    PackedPtr<CSSValue>* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < m_arraySize; ++i)
         valueArray[i]->deref();
 }
@@ -1471,9 +1472,10 @@ int ImmutableStyleProperties::findCustomPropertyIndex(const String& propertyName
     for (int n = m_arraySize - 1 ; n >= 0; --n) {
         if (metadataArray()[n].m_propertyID == CSSPropertyCustom) {
             // We found a custom property. See if the name matches.
-            if (!valueArray()[n])
+            auto* value = valueArray()[n].get();
+            if (!value)
                 continue;
-            if (downcast<CSSCustomPropertyValue>(*valueArray()[n]).name() == propertyName)
+            if (downcast<CSSCustomPropertyValue>(*value).name() == propertyName)
                 return n;
         }
     }
