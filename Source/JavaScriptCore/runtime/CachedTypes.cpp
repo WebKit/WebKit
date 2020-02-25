@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2282,6 +2282,8 @@ private:
     CachedCodeBlockTag m_tag;
 };
 
+static_assert(alignof(GenericCacheEntry) <= alignof(std::max_align_t));
+
 template<typename UnlinkedCodeBlockType>
 class CacheEntry : public GenericCacheEntry {
 public:
@@ -2318,6 +2320,9 @@ private:
     CachedSourceCodeKey m_key;
     CachedPtr<CachedCodeBlockType<UnlinkedCodeBlockType>> m_codeBlock;
 };
+
+static_assert(alignof(CacheEntry<UnlinkedProgramCodeBlock>) <= alignof(std::max_align_t));
+static_assert(alignof(CacheEntry<UnlinkedModuleProgramCodeBlock>) <= alignof(std::max_align_t));
 
 bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlock*>& result) const
 {

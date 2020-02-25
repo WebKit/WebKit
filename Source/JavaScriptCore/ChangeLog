@@ -1,3 +1,95 @@
+2020-02-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r257134. rdar://problem/59676909
+
+    Make support for bytecode caching more robust against file corruption.
+    https://bugs.webkit.org/show_bug.cgi?id=207972
+    <rdar://problem/59260595>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    If a bytecode cache file is corrupted, we currently will always crash every time
+    we try to read it (in perpetuity as long as the corrupted cache file continues to
+    exist on disk).  To guard against this, we'll harden the bytecode caching mechanism
+    as follows:
+    
+    1. Modify the writeCache operation to always write the cache file in a transactional
+       manner i.e. we'll first write to a .tmp file, and then rename the .tmp file to
+       the cache file only if the entire file has been written in completeness.
+    
+       This ensures that we won't get corrupted cache files due to interrupted writes.
+    
+    2. Modify the writeCache operation to also compute a SHA1 hash of the cache file
+       and append the hash at end of the file.  Modify the readCache operation to
+       first authenticate the SHA1 hash before allowing the cache file to be used.
+       If the hash does not match, the file is bad, and we'll just delete it.
+    
+       This ensures that we won't be crashing while decoding a corrupted cache file.
+    
+    Manually tested with the following scenarios and ensuring that the client recovers
+    with no crashes:
+    
+    1. no cache file on disk.
+    2. a 0-sized cache file on a disk.
+    3. a truncated cache file on disk.
+    4. a corrupted cache file on disk.
+    5. an uncorrupted cache file on disk.
+    
+    Also added some static_asserts in CachedTypes.cpp to document some invariants that
+    the pre-existing code is dependent on.
+    
+    * API/JSScript.mm:
+    (-[JSScript readCache]):
+    (-[JSScript writeCache:]):
+    * runtime/CachedTypes.cpp:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257134 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-20  Mark Lam  <mark.lam@apple.com>
+
+            Make support for bytecode caching more robust against file corruption.
+            https://bugs.webkit.org/show_bug.cgi?id=207972
+            <rdar://problem/59260595>
+
+            Reviewed by Yusuke Suzuki.
+
+            If a bytecode cache file is corrupted, we currently will always crash every time
+            we try to read it (in perpetuity as long as the corrupted cache file continues to
+            exist on disk).  To guard against this, we'll harden the bytecode caching mechanism
+            as follows:
+
+            1. Modify the writeCache operation to always write the cache file in a transactional
+               manner i.e. we'll first write to a .tmp file, and then rename the .tmp file to
+               the cache file only if the entire file has been written in completeness.
+
+               This ensures that we won't get corrupted cache files due to interrupted writes.
+
+            2. Modify the writeCache operation to also compute a SHA1 hash of the cache file
+               and append the hash at end of the file.  Modify the readCache operation to
+               first authenticate the SHA1 hash before allowing the cache file to be used.
+               If the hash does not match, the file is bad, and we'll just delete it.
+
+               This ensures that we won't be crashing while decoding a corrupted cache file.
+
+            Manually tested with the following scenarios and ensuring that the client recovers
+            with no crashes:
+
+            1. no cache file on disk.
+            2. a 0-sized cache file on a disk.
+            3. a truncated cache file on disk.
+            4. a corrupted cache file on disk.
+            5. an uncorrupted cache file on disk.
+
+            Also added some static_asserts in CachedTypes.cpp to document some invariants that
+            the pre-existing code is dependent on.
+
+            * API/JSScript.mm:
+            (-[JSScript readCache]):
+            (-[JSScript writeCache:]):
+            * runtime/CachedTypes.cpp:
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254681. rdar://problem/59474790
