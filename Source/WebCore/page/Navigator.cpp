@@ -42,6 +42,7 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "ShareData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
@@ -105,27 +106,36 @@ bool Navigator::onLine() const
     return platformStrategies()->loaderStrategy()->isOnLine();
 }
 
-void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<DeferredPromise>&& promise)
+bool Navigator::canShare(ScriptExecutionContext& context, const ShareData& data)
 {
     auto* frame = this->frame();
-    if (!frame || !frame->page()) {
+    if (!frame || !frame->page())
+        return false;
+    if (data.title.isNull() && data.url.isNull() && data.text.isNull()) {
+        if (!data.files.isEmpty())
+            return false;
+        return false;
+    }
+
+    Optional<URL> url;
+    if (!data.url.isNull()) {
+        url = context.completeURL(data.url);
+        if (!url->isValid())
+            return false;
+    }
+    return true;
+}
+
+void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Ref<DeferredPromise>&& promise)
+{
+    if (!canShare(context, data)) {
         promise->reject(TypeError);
         return;
     }
     
-    if (data.title.isEmpty() && data.url.isEmpty() && data.text.isEmpty()) {
-        promise->reject(TypeError);
-        return;
-    }
-
     Optional<URL> url;
-    if (!data.url.isEmpty()) {
+    if (!data.url.isEmpty())
         url = context.completeURL(data.url);
-        if (!url->isValid()) {
-            promise->reject(TypeError);
-            return;
-        }
-    }
     
     auto* window = this->window();
     // Note that the specification does not indicate we should consume user activation. We are intentionally stricter here.
@@ -138,7 +148,8 @@ void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<Defer
         data,
         url,
     };
-
+    
+    auto* frame = this->frame();
     frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise)] (bool completed) {
         if (completed) {
             promise->resolve();

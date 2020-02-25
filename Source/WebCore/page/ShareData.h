@@ -24,6 +24,7 @@
  */
 
 #pragma once
+#include "File.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ struct ShareData {
     String title;
     String text;
     String url;
+    Vector<RefPtr<File>> files;
 };
     
 struct ShareDataWithParsedURL {

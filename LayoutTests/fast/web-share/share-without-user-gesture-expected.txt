@@ -1,0 +1,3 @@
+
+PASS share without a user gesture 
+

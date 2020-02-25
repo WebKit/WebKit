@@ -22,7 +22,6 @@
 #include "DOMWindowProperty.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
-#include "ShareData.h"
 #include "Supplementable.h"
 #include <wtf/IsoMalloc.h>
 
@@ -31,6 +30,7 @@ namespace WebCore {
 class DeferredPromise;
 class DOMMimeTypeArray;
 class DOMPluginArray;
+struct ShareData;
 
 class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
     WTF_MAKE_ISO_ALLOCATED(Navigator);
@@ -47,7 +47,8 @@ public:
     String platform() const final;
     void userAgentChanged();
     bool onLine() const final;
-    void share(ScriptExecutionContext&, ShareData, Ref<DeferredPromise>&&);
+    bool canShare(ScriptExecutionContext&, const ShareData&);
+    void share(ScriptExecutionContext&, const ShareData&, Ref<DeferredPromise>&&);
     
 #if PLATFORM(IOS_FAMILY)
     bool standalone() const;

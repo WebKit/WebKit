@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<head>
+    <title>PointerLock interface tests.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+promise_test(t => {
+    return promise_rejects(
+              t, 'NotAllowedError',
+              navigator.share({title: 'the title', text: 'the message',
+                               url: 'https://example.com'}));
+}, 'share without a user gesture');
+
+</script>
+</body>
+</html>

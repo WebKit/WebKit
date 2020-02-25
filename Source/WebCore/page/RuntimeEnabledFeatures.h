@@ -401,6 +401,9 @@ public:
     void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { m_accessibilityIsolatedTree = isEnabled; }
     bool isAccessibilityIsolatedTreeEnabled() const { return m_accessibilityIsolatedTree; }
 #endif
+    
+    void setWebShareFileAPIEnabled(bool isEnabled) { m_webShareFileAPIEnabled = isEnabled; }
+    bool webShareFileAPIEnabled() const { return m_webShareFileAPIEnabled; }
 
 private:
     // Never instantiate.
@@ -607,6 +610,7 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
 #endif
+    bool m_webShareFileAPIEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
