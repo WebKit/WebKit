@@ -109,7 +109,7 @@ void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier ser
 void WebSWServerToContextConnection::syncTerminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (!sendSync(Messages::WebSWContextManagerConnection::SyncTerminateWorker(serviceWorkerIdentifier), Messages::WebSWContextManagerConnection::SyncTerminateWorker::Reply(), 0, 10_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply))
-        m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses(registrableDomain(), m_connection.sessionID()), 0);
+        m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
 }
 
 void WebSWServerToContextConnection::findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<ServiceWorkerClientData>& data, bool hasSecurityError)

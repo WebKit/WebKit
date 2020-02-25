@@ -438,10 +438,12 @@ void NetworkProcessProxy::logDiagnosticMessage(WebPageProxyIdentifier pageID, co
     page->logDiagnosticMessage(message, description, shouldSample);
 }
 
-void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::RegistrableDomain&& domain, PAL::SessionID sessionID)
+void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
-        processPool->terminateServiceWorkerProcess(domain, sessionID);
+    if (auto* process = WebProcessProxy::processForIdentifier(processIdentifier)) {
+        process->disableServiceWorkers();
+        process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
+    }
 }
 
 void NetworkProcessProxy::logDiagnosticMessageWithResult(WebPageProxyIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
