@@ -51,10 +51,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @property (nonatomic, assign) BOOL showsAudioOnlyIndicatorView;
 @end
 
-@interface WebOverlayLayer : CALayer
+@interface WebVideoFullscreenOverlayLayer : CALayer
 @end
 
-@implementation WebOverlayLayer
+@implementation WebVideoFullscreenOverlayLayer
 - (void)layoutSublayers
 {
     for (CALayer* layer in self.sublayers)
@@ -152,7 +152,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     _playbackInterface = WebCore::PlaybackSessionInterfaceAVKit::create(*_playbackModel);
     _contentOverlay = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
     _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
-    _contentOverlay.get().layer = [[[WebOverlayLayer alloc] init] autorelease];
+    _contentOverlay.get().layer = [[[WebVideoFullscreenOverlayLayer alloc] init] autorelease];
     [_contentOverlay setWantsLayer:YES];
     [_contentOverlay setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [self windowDidLoad];

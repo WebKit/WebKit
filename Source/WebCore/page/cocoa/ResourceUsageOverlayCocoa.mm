@@ -44,14 +44,15 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 
 using WebCore::ResourceUsageOverlay;
-@interface WebOverlayLayer : CALayer {
+
+@interface WebResourceUsageOverlayLayer : CALayer {
     ResourceUsageOverlay* m_overlay;
 }
 @end
 
-@implementation WebOverlayLayer
+@implementation WebResourceUsageOverlayLayer
 
-- (WebOverlayLayer *)initWithResourceUsageOverlay:(ResourceUsageOverlay *)overlay
+- (instancetype)initWithResourceUsageOverlay:(ResourceUsageOverlay *)overlay
 {
     self = [super init];
     if (!self)
@@ -216,7 +217,7 @@ static void appendDataToHistory(const ResourceUsageData& data)
 
 void ResourceUsageOverlay::platformInitialize()
 {
-    m_layer = adoptNS([[WebOverlayLayer alloc] initWithResourceUsageOverlay:this]);
+    m_layer = adoptNS([[WebResourceUsageOverlayLayer alloc] initWithResourceUsageOverlay:this]);
 
     m_containerLayer = adoptNS([[CALayer alloc] init]);
     [m_containerLayer.get() addSublayer:m_layer.get()];

@@ -1,3 +1,17 @@
+2020-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename the clashing WebOverlayLayer classes
+        https://bugs.webkit.org/show_bug.cgi?id=208156
+        rdar://problem/59739250
+
+        Reviewed by Tim Horton.
+
+        The name WebOverlayLayer was used in two places. Rename them both to more specific names.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController init]):
+        (-[WebOverlayLayer layoutSublayers]): Deleted.
+
 2020-02-22  Darin Adler  <darin@apple.com>
 
         Fix some include mistakes and make some coding style tweaks to WebKit and WebKitTestRunner
