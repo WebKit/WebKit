@@ -1472,6 +1472,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->supportsExpandedTextValue())
         [additional addObject:NSAccessibilityExpandedTextValueAttribute];
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (_AXUIElementRequestServicedBySecondaryAXThread() && AXObjectCache::clientSupportsIsolatedTree())
+        [additional addObject:NSAccessibilityRelativeFrameAttribute];
+#endif
+    
     return additional;
 }
 
@@ -1543,7 +1548,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             NSAccessibilityFocusableAncestorAttribute,
             NSAccessibilityEditableAncestorAttribute,
             NSAccessibilityHighestEditableAncestorAttribute,
-            NSAccessibilityRelativeFrameAttribute,
             nil];
     }
     if (commonMenuAttrs == nil) {

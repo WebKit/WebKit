@@ -402,7 +402,9 @@ void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, cons
     if (!children.size())
         return;
 
-    Vector<AXID> childIDs(children.size());
+    Vector<AXID> childIDs;
+    childIDs.reserveCapacity(children.size());
+
     for (auto child : children)
         childIDs.uncheckedAppend(child->objectID());
 
