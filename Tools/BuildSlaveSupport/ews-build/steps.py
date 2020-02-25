@@ -387,8 +387,9 @@ class BugzillaMixin(object):
             return -1
 
         patch_author = patch_json.get('creator')
+        self.setProperty('patch_author', patch_author)
         if self.addURLs:
-            self.addURL('Patch by: {}'.format(patch_author), 'mailto:{}'.format(patch_author))
+            self.addURL('Patch by: {}'.format(patch_author), '')
         return patch_json.get('is_obsolete')
 
     def _is_patch_review_denied(self, patch_id):
@@ -410,8 +411,32 @@ class BugzillaMixin(object):
 
         for flag in patch_json.get('flags', []):
             if flag.get('name') == 'commit-queue' and flag.get('status') == '+':
+                self.setProperty('patch_committer', flag.get('setter', ''))
                 return 1
         return 0
+
+    def _does_patch_have_acceptable_review_flag(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return -1
+
+        for flag in patch_json.get('flags', []):
+            if flag.get('name') == 'review':
+                review_status = flag.get('status')
+                if review_status == '+':
+                    patch_reviewer = flag.get('setter', '')
+                    self.setProperty('patch_reviewer', patch_reviewer)
+                    if self.addURLs:
+                        self.addURL('Reviewed by: {}'.format(patch_reviewer), '')
+                    if patch_reviewer == patch_json.get('creator'):
+                        self._addToLog('stdio', 'Patch {} is r+ by the patch author {} itself. This seems like a mistake.\n'.format(patch_id, patch_reviewer))
+                        return 0
+                    return 1
+                if review_status in ['-', '?']:
+                    self._addToLog('stdio', 'Patch {} is marked r{}.\n'.format(patch_id, review_status))
+                    return 0
+        return 1  # Patch without review flag is acceptable, since the ChangeLog might have 'Reviewed by' in it.
 
     def _is_bug_closed(self, bug_id):
         if not bug_id:
@@ -566,6 +591,11 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
             self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
             return None
 
+        acceptable_review_flag = self._does_patch_have_acceptable_review_flag(patch_id) if self.verifycqplus else 1
+        if acceptable_review_flag != 1:
+            self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
+            return None
+
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
             self.finished(WARNINGS)
             self.setProperty('validated', False)
@@ -579,6 +609,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
             self._addToLog('stdio', 'Patch is not marked r-.\n')
         if self.verifycqplus:
             self._addToLog('stdio', 'Patch is marked cq+.\n')
+            self._addToLog('stdio', 'Patch have acceptable review flag.\n')
         self.finished(SUCCESS)
         return None
 
