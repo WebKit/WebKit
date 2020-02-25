@@ -65,6 +65,9 @@ page/scrolling/generic/ScrollingThreadGeneric.cpp
 platform/ScrollAnimationKinetic.cpp
 platform/UserAgentQuirks.cpp
 
+platform/adwaita/ScrollbarThemeAdwaita.cpp
+platform/adwaita/ThemeAdwaita.cpp
+
 platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp @no-unify
@@ -112,10 +115,8 @@ platform/gtk/PlatformMouseEventGtk.cpp
 platform/gtk/PlatformPasteboardGtk.cpp
 platform/gtk/PlatformScreenGtk.cpp
 platform/gtk/PlatformWheelEventGtk.cpp
-platform/gtk/RenderThemeGadget.cpp
-platform/gtk/RenderThemeWidget.cpp
-platform/gtk/ScrollbarThemeGtk.cpp
 platform/gtk/SelectionData.cpp
+platform/gtk/ThemeGtk.cpp
 platform/gtk/WidgetGtk.cpp
 
 platform/text/Hyphenation.cpp
@@ -129,4 +130,5 @@ platform/unix/LoggingUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
 
+rendering/RenderThemeAdwaita.cpp
 rendering/RenderThemeGtk.cpp

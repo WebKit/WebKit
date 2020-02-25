@@ -1,3 +1,13 @@
+2020-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop using gtk foreign drawing API to style form controls
+        https://bugs.webkit.org/show_bug.cgi?id=208129
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::themeDidChange): Notify RenderTheme about the theme change to clear the colors cache.
+
 2020-02-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI for the platform authenticator

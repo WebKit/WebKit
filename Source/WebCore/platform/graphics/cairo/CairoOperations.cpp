@@ -279,34 +279,6 @@ static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, c
     cairo_restore(cr);
 }
 
-static inline void adjustFocusRingColor(Color& color)
-{
-#if !PLATFORM(GTK)
-    // Force the alpha to 50%. This matches what the Mac does with outline rings.
-    color = Color(makeRGBA(color.red(), color.green(), color.blue(), 127));
-#else
-    UNUSED_PARAM(color);
-#endif
-}
-
-static inline void adjustFocusRingLineWidth(float& width)
-{
-#if PLATFORM(GTK)
-    width = 2;
-#else
-    UNUSED_PARAM(width);
-#endif
-}
-
-static inline StrokeStyle focusRingStrokeStyle()
-{
-#if PLATFORM(GTK)
-    return DottedStroke;
-#else
-    return SolidStroke;
-#endif
-}
-
 static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, FontSmoothingMode fontSmoothingMode)
 {
     cairo_matrix_t originalTransform;
@@ -1151,9 +1123,9 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, floa
 {
     // FIXME: We should draw paths that describe a rectangle with rounded corners
     // so as to be consistent with how we draw rectangular focus rings.
-    Color ringColor = color;
-    adjustFocusRingColor(ringColor);
-    adjustFocusRingLineWidth(width);
+
+    // Force the alpha to 50%. This matches what the Mac does with outline rings.
+    Color ringColor = makeRGBA(color.red(), color.green(), color.blue(), 127);
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
@@ -1162,7 +1134,6 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, floa
     appendWebCorePathToCairoContext(cr, path);
     setSourceRGBAFromColor(cr, ringColor);
     cairo_set_line_width(cr, width);
-    Cairo::State::setStrokeStyle(platformContext, focusRingStrokeStyle());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_stroke_preserve(cr);
 
@@ -1180,10 +1151,6 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, floa
 void drawFocusRing(PlatformContextCairo& platformContext, const Vector<FloatRect>& rects, float width, const Color& color)
 {
     Path path;
-#if PLATFORM(GTK)
-    for (const auto& rect : rects)
-        path.addRect(rect);
-#else
     unsigned rectCount = rects.size();
     int radius = (width - 1) / 2;
     Path subPath;
@@ -1193,7 +1160,6 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Vector<FloatRect
         subPath.addRoundedRect(rects[i], FloatSize(radius, radius));
         path.addPath(subPath, AffineTransform());
     }
-#endif
 
     drawFocusRing(platformContext, path, width, color);
 }

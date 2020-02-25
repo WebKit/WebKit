@@ -62,6 +62,9 @@ page/scrolling/generic/ScrollingThreadGeneric.cpp
 platform/ScrollAnimationKinetic.cpp
 platform/UserAgentQuirks.cpp
 
+platform/adwaita/ScrollbarThemeAdwaita.cpp
+platform/adwaita/ThemeAdwaita.cpp
+
 platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp
@@ -91,8 +94,7 @@ platform/text/LocaleICU.cpp
 platform/unix/LoggingUnix.cpp
 
 platform/wpe/PlatformScreenWPE.cpp
-platform/wpe/RenderThemeWPE.cpp
-platform/wpe/ScrollbarThemeWPE.cpp
-platform/wpe/ThemeWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
+
+rendering/RenderThemeAdwaita.cpp

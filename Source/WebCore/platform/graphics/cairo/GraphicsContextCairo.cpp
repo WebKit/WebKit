@@ -51,8 +51,8 @@
 #include <cairo-win32.h>
 #endif
 
-#if PLATFORM(WPE)
-#include "ThemeWPE.h"
+#if PLATFORM(WPE) || PLATFORM(GTK)
+#include "ThemeAdwaita.h"
 #endif
 
 namespace WebCore {
@@ -292,8 +292,8 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
     if (paintingDisabled())
         return;
 
-#if PLATFORM(WPE)
-    ThemeWPE::paintFocus(*this, path, color);
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    ThemeAdwaita::paintFocus(*this, path, color);
     UNUSED_PARAM(width);
     UNUSED_PARAM(offset);
     return;
@@ -314,8 +314,8 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     if (paintingDisabled())
         return;
 
-#if PLATFORM(WPE)
-    ThemeWPE::paintFocus(*this, rects, color);
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    ThemeAdwaita::paintFocus(*this, rects, color);
     UNUSED_PARAM(width);
     UNUSED_PARAM(offset);
     return;

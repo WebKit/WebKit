@@ -18,6 +18,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
+    "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/epoxy"
     "${WEBCORE_DIR}/platform/graphics/glx"

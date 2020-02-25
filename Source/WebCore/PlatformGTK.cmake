@@ -18,6 +18,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
+    "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/generic"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/egl"
@@ -64,16 +65,17 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/mediaControlsGtk.css
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsAdwaita.css
+    ${WEBCORE_DIR}/css/themeAdwaita.css
 )
 
 set(WebCore_USER_AGENT_SCRIPTS
     ${WEBCORE_DIR}/en.lproj/mediaControlsLocalizedStrings.js
+    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsAdwaita.js
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.js
-    ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsGtk.js
 )
 
-set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderThemeGtk.cpp)
+set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/RenderThemeAdwaita.cpp)
 
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
