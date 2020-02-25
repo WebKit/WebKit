@@ -1339,6 +1339,12 @@ webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Fa
 
 webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
 
+webkit.org/b/208180 http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
+
+webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
+
+webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2635,6 +2641,16 @@ webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-ca
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-307-status-code.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-404-status-code.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/cors/304.htm [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/304-update.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/freshness.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/heuristic.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/status.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/vary.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
