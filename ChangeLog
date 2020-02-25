@@ -1,3 +1,14 @@
+2020-02-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build.
+        https://bugs.webkit.org/show_bug.cgi?id=208164
+
+        Unreviewed build fix.
+
+        Allow a warning which happens when building with older SDKs.
+
+        * Source/cmake/OptionsMSVC.cmake:
+
 2020-02-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Not set ccache compiler prefix if ccache its already the compiler binary in path.
