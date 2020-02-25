@@ -517,6 +517,12 @@ bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, 
         return false;
     }
 
+    if (!m_session->isConnected()) {
+        m_session = nullptr;
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID, String("session deleted because of page crash or hang.")));
+        return false;
+    }
+
     return true;
 }
 

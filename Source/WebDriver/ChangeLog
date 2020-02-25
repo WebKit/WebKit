@@ -1,3 +1,15 @@
+2020-02-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        WebDriver: return invalidSessionID exception if the WebProcess doesn't respond (crashes)
+        https://bugs.webkit.org/show_bug.cgi?id=207565
+
+        Reviewed by Adrian Perez de Castro.
+
+        Report InvalidSessionID if the session connection its not connected.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::findSessionOrCompleteWithError):
+
 2020-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: screenshot ignores CSS transformations or WebGL content.
