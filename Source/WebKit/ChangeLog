@@ -1,3 +1,17 @@
+2020-02-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r256882): Can't drag an HTML file into a new (empty) Safari tab
+        https://bugs.webkit.org/show_bug.cgi?id=208199
+        <rdar://problem/59746887>
+
+        Reviewed by Alex Christensen.
+
+        Make sure we launch the initial WKWebView's WebProcess when a drag enters the view, so that the drag & drop
+        logic still works on empty views.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+
 2020-02-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make HostWindow be the creator of the remote ImageBuffer
