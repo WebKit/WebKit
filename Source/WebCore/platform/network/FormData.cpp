@@ -144,7 +144,7 @@ uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& bl
 uint64_t FormDataElement::lengthInBytes() const
 {
     return lengthInBytes([](auto& url) {
-        return blobRegistry().blobSize(url);
+        return ThreadableBlobRegistry::blobSize(url);
     });
 }
 
