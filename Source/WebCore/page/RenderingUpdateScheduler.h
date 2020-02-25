@@ -46,8 +46,6 @@ public:
     }
 
     RenderingUpdateScheduler(Page&);
-    
-    void adjustRenderingUpdateFrequency();
     void scheduleTimedRenderingUpdate();
     void scheduleImmediateRenderingUpdate();
     void scheduleRenderingUpdate();
@@ -58,9 +56,6 @@ public:
 
 private:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-#if PLATFORM(IOS_FAMILY)
-    void adjustFramesPerSecond();
-#endif
     RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const final;
     void displayRefreshFired() final;
 #else
@@ -72,9 +67,6 @@ private:
     void clearScheduled();
 
     Page& m_page;
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS_FAMILY)
-    bool m_isMonitorCreated;
-#endif
     bool m_scheduled { false };
     std::unique_ptr<Timer> m_refreshTimer;
 };

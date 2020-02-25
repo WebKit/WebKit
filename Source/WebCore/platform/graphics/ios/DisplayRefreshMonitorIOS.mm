@@ -40,7 +40,6 @@ using WebCore::DisplayRefreshMonitorIOS;
 }
 
 - (id)initWithMonitor:(DisplayRefreshMonitorIOS*)monitor;
-- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond;
 - (void)handleDisplayLink:(CADisplayLink *)sender;
 - (void)invalidate;
 
@@ -64,11 +63,6 @@ using WebCore::DisplayRefreshMonitorIOS;
 {
     ASSERT(!m_displayLink); // -invalidate should have been called already.
     [super dealloc];
-}
-
-- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond
-{
-    m_displayLink.preferredFramesPerSecond = preferredFramesPerSecond;
 }
 
 - (void)handleDisplayLink:(CADisplayLink *)sender

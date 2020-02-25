@@ -76,6 +76,7 @@ public:
     void updateCurrentTime(DOMHighResTimeStamp timestamp);
     void updateAnimationsAndSendEvents();
 
+    void updateThrottlingState();
     WEBCORE_EXPORT Seconds animationInterval() const;
     WEBCORE_EXPORT void suspendAnimations();
     WEBCORE_EXPORT void resumeAnimations();

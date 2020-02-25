@@ -594,7 +594,6 @@ public:
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         @NO, WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
         @YES, WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
-        @YES, WebKitRenderingUpdateThrottlingEnabledPreferenceKey,
         @NO, WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
         
         @NO, WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
@@ -2795,16 +2794,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey];
-}
-
-- (BOOL)renderingUpdateThrottlingEnabled
-{
-    return [self _boolValueForKey:WebKitRenderingUpdateThrottlingEnabledPreferenceKey];
-}
-
-- (void)setRenderingUpdateThrottlingEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitRenderingUpdateThrottlingEnabledPreferenceKey];
 }
 
 - (BOOL)lowPowerVideoAudioBufferSizeEnabled

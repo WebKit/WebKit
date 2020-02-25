@@ -1,3 +1,16 @@
+2020-02-13  Said Abou-Hallawa  <said@apple.com>
+
+        Unreviewed, rolling out r255158, 255405 and r255486
+
+        Caused test flakiness and PLT regression.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2020-02-12  Youenn Fablet  <youenn@apple.com>
 
         WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
