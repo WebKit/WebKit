@@ -294,7 +294,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif
 }
 
-void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
+void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {    
     TraceScope traceScope(InitializeWebProcessStart, InitializeWebProcessEnd);
 
@@ -459,7 +459,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 #endif
 
     RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting process = %d", WebCore::presentingApplicationPID());
-    completionHandler();
 }
 
 void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
