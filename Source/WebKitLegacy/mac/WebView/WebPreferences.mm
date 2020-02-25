@@ -653,7 +653,7 @@ public:
         @NO, WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
         @NO, WebKitDirectoryUploadEnabledPreferenceKey,
-        @YES, WebKitWebAnimationsEnabledPreferenceKey,
+        @NO, WebKitWebAnimationsEnabledPreferenceKey,
         @YES, WebKitPointerEventsEnabledPreferenceKey,
         @YES, WebKitSyntheticEditingCommandsEnabledPreferenceKey,
 
