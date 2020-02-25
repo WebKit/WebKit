@@ -99,8 +99,7 @@ private:
 };
 
 // PackedAlignedPtr can take alignment parameter too. PackedAlignedPtr only uses this alignment information if it is profitable: we use
-// alignment information only when we can reduce the size of the storage. Since the pointer width is 36 bits and JSCells are aligned to 16 bytes,
-// we can use 4 bits in Darwin ARM64, we can compact cell pointer into 4 bytes (32 bits).
+// alignment information only when we can reduce the size of the storage.
 template<typename T, size_t alignment = alignof(T)>
 class PackedAlignedPtr {
 public:

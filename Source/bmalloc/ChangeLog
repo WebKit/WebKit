@@ -1,3 +1,15 @@
+2020-02-25  Saam Barati  <sbarati@apple.com>
+
+        Update stale comment about PackedAlignedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=208176
+
+        Reviewed by Yusuke Suzuki.
+
+        The comment was stale since cells aren't guaranteed anymore to be
+        aligned on 16 byte boundaries because of the GCs precise allocations.
+
+        * bmalloc/Packed.h:
+
 2020-02-09  Keith Rollin  <krollin@apple.com>
 
         Re-enable LTO for ARM builds
