@@ -31,11 +31,14 @@
   <script type="text/javascript" charset="utf-8">
   
     const expectedValues = [
+      // Animations are paused from 100ms to 300ms by timers. We poll at 200ms and expect the same value as at 100ms since we're polling
+      // while paused at 100ms. Then, we poll again at 400ms and expect value as if the animation hadn't been suspended since it has resumed
+      // by then.
       // [animation-name, time, element-id, property, expected-value, tolerance]
       ["move", 0.2, "box", "webkitTransform", [1,0,0,1, 100, 0], 30],
       ["move", 0.2, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 100, 0], 30],
-      ["move", 0.4, "box", "webkitTransform", [1,0,0,1, 200, 0], 30],
-      ["move", 0.4, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+      ["move", 0.4, "box", "webkitTransform", [1,0,0,1, 400, 0], 30],
+      ["move", 0.4, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 400, 0], 30],
     ];
     
     function suspend()
