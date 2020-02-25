@@ -53,7 +53,7 @@ void GraphicsLayerTextureMapper::notifyChange(ChangeMask changeMask)
     m_changeMask |= changeMask;
 
     if (flushRequired)
-        client().notifyFlushRequired(this);
+        client().notifyRenderingUpdateRequired(this);
 }
 
 GraphicsLayerTextureMapper::~GraphicsLayerTextureMapper()

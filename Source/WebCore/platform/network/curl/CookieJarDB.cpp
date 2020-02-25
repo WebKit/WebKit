@@ -504,7 +504,8 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
-    if (!cookie.session && MonotonicTime::fromRawSeconds(cookie.expires) <= MonotonicTime::now())
+    auto expires = cookie.expires.valueOr(0.0);
+    if (!cookie.session && MonotonicTime::fromRawSeconds(expires) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
     auto& statement = preparedStatement(SET_COOKIE_SQL);
@@ -514,7 +515,7 @@ bool CookieJarDB::setCookie(const Cookie& cookie)
     statement.bindText(2, cookie.value);
     statement.bindText(3, cookie.domain);
     statement.bindText(4, cookie.path);
-    statement.bindInt64(5, cookie.session ? 0 : static_cast<int64_t>(cookie.expires));
+    statement.bindInt64(5, cookie.session ? 0 : static_cast<int64_t>(expires));
     statement.bindInt(6, cookie.value.length());
     statement.bindInt(7, cookie.session ? 1 : 0);
     statement.bindInt(8, cookie.httpOnly ? 1 : 0);
