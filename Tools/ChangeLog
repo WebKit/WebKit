@@ -1,3 +1,18 @@
+2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add tests for CompactRefPtrTuple
+        https://bugs.webkit.org/show_bug.cgi?id=208172
+
+        Reviewed by Darin Adler.
+
+        We copy tests from RefPtr for CompactRefPtrTuple to ensure that it is working correctly.
+        Many of tests are not necessary since currently CompactRefPtrTuple is non-copyable / non-movable.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CompactRefPtrTuple.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2020-02-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should check that patch have appropriate review flag

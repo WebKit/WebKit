@@ -30,6 +30,7 @@ set(TestWTF_SOURCES
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
+    Tests/WTF/CompactRefPtrTuple.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp
     Tests/WTF/Condition.cpp
     Tests/WTF/CrossThreadCopier.cpp
