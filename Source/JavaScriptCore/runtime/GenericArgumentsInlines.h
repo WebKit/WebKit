@@ -188,8 +188,10 @@ bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, JSGlobalObject*
 
     bool propertyMightBeInJSObjectStorage = thisObject->isModifiedArgumentDescriptor(index) || !thisObject->isMappedArgument(index);
     bool deletedProperty = true;
-    if (propertyMightBeInJSObjectStorage)
+    if (propertyMightBeInJSObjectStorage) {
         deletedProperty = Base::deletePropertyByIndex(cell, globalObject, index);
+        RETURN_IF_EXCEPTION(scope, true);
+    }
 
     if (deletedProperty) {
         // Deleting an indexed property unconditionally unmaps it.

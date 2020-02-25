@@ -1,3 +1,13 @@
+2020-02-10  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in GenericArguments<Type>::deletePropertyByIndex().
+        https://bugs.webkit.org/show_bug.cgi?id=207483
+        <rdar://problem/59302616>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/missing-exception-check-in-GenericArguments-deletePropertyByIndex.js: Added.
+
 2020-02-06  Sukolsak Sakshuwong  <sukolsak@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JavaScript string corruption using RegExp with unicode character
