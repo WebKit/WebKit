@@ -100,14 +100,6 @@ namespace WebCore {
 #if !USE(COMPOSITING_FOR_SMALL_CANVASES)
 static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
 #endif
-// During page loading delay layer flushes up to this many seconds to allow them coalesce, reducing workload.
-#if PLATFORM(IOS_FAMILY)
-static const Seconds throttledLayerFlushInitialDelay { 500_ms };
-static const Seconds throttledLayerFlushDelay { 1.5_s };
-#else
-static const Seconds throttledLayerFlushInitialDelay { 500_ms };
-static const Seconds throttledLayerFlushDelay { 500_ms };
-#endif
 
 using namespace HTMLNames;
 
@@ -314,7 +306,6 @@ static inline bool layersLogEnabled()
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
-    , m_layerFlushTimer(*this, &RenderLayerCompositor::layerFlushTimerFired)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
@@ -476,24 +467,16 @@ void RenderLayerCompositor::customPositionForVisibleRectComputation(const Graphi
     position = -scrollPosition;
 }
 
-void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer* layer)
+void RenderLayerCompositor::notifyRenderingUpdateRequired(const GraphicsLayer*)
 {
-    scheduleLayerFlush(layer->canThrottleLayerFlush());
+    scheduleRenderingUpdate();
 }
 
-void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
+void RenderLayerCompositor::scheduleRenderingUpdate()
 {
     ASSERT(!m_flushingLayers);
 
-    if (canThrottle)
-        startInitialLayerFlushTimerIfNeeded();
-
-    if (canThrottle && isThrottlingLayerFlushes())
-        m_hasPendingLayerFlush = true;
-    else {
-        m_hasPendingLayerFlush = false;
-        page().renderingUpdateScheduler().scheduleRenderingUpdate();
-    }
+    page().renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
@@ -522,9 +505,6 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         return;
 
     if (rootLayerAttachment() == RootLayerUnattached) {
-#if PLATFORM(IOS_FAMILY)
-        startLayerFlushTimerIfNeeded();
-#endif
         m_shouldFlushOnReattach = true;
         return;
     }
@@ -560,7 +540,6 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 #endif
 
     ++m_layerFlushCount;
-    startLayerFlushTimerIfNeeded();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -628,7 +607,7 @@ void RenderLayerCompositor::didChangeVisibleRect()
     bool requiresFlush = rootLayer->visibleRectChangeRequiresFlush(visibleRect);
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor::didChangeVisibleRect " << visibleRect << " requiresFlush " << requiresFlush);
     if (requiresFlush)
-        scheduleLayerFlush();
+        scheduleRenderingUpdate();
 }
 
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
@@ -643,7 +622,7 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
 
 void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater&)
 {
-    scheduleLayerFlush(true);
+    scheduleRenderingUpdate();
 }
 
 void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
@@ -2077,7 +2056,7 @@ void RenderLayerCompositor::frameViewDidScroll()
     // it will also manage updating the scroll layer position.
     if (hasCoordinatedScrolling()) {
         // We have to schedule a flush in order for the main TiledBacking to update its tile coverage.
-        scheduleLayerFlush();
+        scheduleRenderingUpdate();
         return;
     }
 
@@ -3935,7 +3914,7 @@ void RenderLayerCompositor::ensureRootLayer()
             updateOverflowControlsLayers();
 
             if (hasCoordinatedScrolling())
-                scheduleLayerFlush(true);
+                scheduleRenderingUpdate();
             else
                 updateScrollLayerPosition();
         }
@@ -4028,7 +4007,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
     rootLayerAttachmentChanged();
     
     if (m_shouldFlushOnReattach) {
-        scheduleLayerFlush();
+        scheduleRenderingUpdate();
         m_shouldFlushOnReattach = false;
     }
 }
@@ -4681,60 +4660,6 @@ ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
 {
     return page().chrome().client().graphicsLayerFactory();
-}
-
-void RenderLayerCompositor::setLayerFlushThrottlingEnabled(bool enabled)
-{
-    m_layerFlushThrottlingEnabled = enabled;
-    if (m_layerFlushThrottlingEnabled)
-        return;
-    m_layerFlushTimer.stop();
-    if (!m_hasPendingLayerFlush)
-        return;
-    scheduleLayerFlush();
-}
-
-void RenderLayerCompositor::disableLayerFlushThrottlingTemporarilyForInteraction()
-{
-    if (m_layerFlushThrottlingTemporarilyDisabledForInteraction)
-        return;
-    m_layerFlushThrottlingTemporarilyDisabledForInteraction = true;
-}
-
-bool RenderLayerCompositor::isThrottlingLayerFlushes() const
-{
-    if (!m_layerFlushThrottlingEnabled)
-        return false;
-    if (!m_layerFlushTimer.isActive())
-        return false;
-    if (m_layerFlushThrottlingTemporarilyDisabledForInteraction)
-        return false;
-    return true;
-}
-
-void RenderLayerCompositor::startLayerFlushTimerIfNeeded()
-{
-    m_layerFlushThrottlingTemporarilyDisabledForInteraction = false;
-    m_layerFlushTimer.stop();
-    if (!m_layerFlushThrottlingEnabled)
-        return;
-    m_layerFlushTimer.startOneShot(throttledLayerFlushDelay);
-}
-
-void RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded()
-{
-    if (!m_layerFlushThrottlingEnabled)
-        return;
-    if (m_layerFlushTimer.isActive())
-        return;
-    m_layerFlushTimer.startOneShot(throttledLayerFlushInitialDelay);
-}
-
-void RenderLayerCompositor::layerFlushTimerFired()
-{
-    if (!m_hasPendingLayerFlush)
-        return;
-    scheduleLayerFlush();
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

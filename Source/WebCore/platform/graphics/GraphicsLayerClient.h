@@ -98,7 +98,7 @@ public:
 
     // Notification that a layer property changed that requires a subsequent call to flushCompositingState()
     // to appear on the screen.
-    virtual void notifyFlushRequired(const GraphicsLayer*) { }
+    virtual void notifyRenderingUpdateRequired(const GraphicsLayer*) { }
     
     // Notification that this layer requires a flush before the next display refresh.
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }

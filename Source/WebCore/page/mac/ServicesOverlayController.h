@@ -81,7 +81,7 @@ private:
         Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>, Ref<Range>&&);
 
         // GraphicsLayerClient
-        void notifyFlushRequired(const GraphicsLayer*) override;
+        void notifyRenderingUpdateRequired(const GraphicsLayer*) override;
         void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& inClip, GraphicsLayerPaintBehavior) override;
         float deviceScaleFactor() const override;
 

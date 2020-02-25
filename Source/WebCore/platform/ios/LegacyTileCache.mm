@@ -48,7 +48,7 @@
 - (void)_willStartScrollingOrZooming;
 - (void)_didFinishScrollingOrZooming;
 - (void)_dispatchTileDidDraw;
-- (void)_scheduleLayerFlushForPendingTileCacheRepaint;
+- (void)_scheduleRenderingUpdateForPendingTileCacheRepaint;
 @end
 
 @interface LegacyTileCacheTombstone : NSObject {
@@ -609,10 +609,10 @@ void LegacyTileCache::setNeedsDisplay()
     setNeedsDisplayInRect(IntRect(0, 0, std::numeric_limits<int>::max(), std::numeric_limits<int>::max()));
 }
 
-void LegacyTileCache::scheduleLayerFlushForPendingRepaint()
+void LegacyTileCache::scheduleRenderingUpdateForPendingRepaint()
 {
     WAKView* view = [m_window contentView];
-    [view _scheduleLayerFlushForPendingTileCacheRepaint];
+    [view _scheduleRenderingUpdateForPendingTileCacheRepaint];
 }
 
 void LegacyTileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
@@ -623,7 +623,7 @@ void LegacyTileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
     if (!addedFirstRect)
         return;
     // Compositing layer flush will call back to doPendingRepaints(). The flush may be throttled and not happen immediately.
-    scheduleLayerFlushForPendingRepaint();
+    scheduleRenderingUpdateForPendingRepaint();
 }
 
 void LegacyTileCache::invalidateTiles(const IntRect& dirtyRect)
@@ -693,7 +693,7 @@ void LegacyTileCache::updateTilingMode()
         createTilesInActiveGrid(CoverVisibleOnly);
 
         if (!m_savedDisplayRects.isEmpty())
-            scheduleLayerFlushForPendingRepaint();
+            scheduleRenderingUpdateForPendingRepaint();
     }
 }
 

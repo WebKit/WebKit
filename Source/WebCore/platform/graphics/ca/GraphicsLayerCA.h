@@ -297,8 +297,6 @@ private:
 
     WEBCORE_EXPORT void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
 
-    WEBCORE_EXPORT bool canThrottleLayerFlush() const override;
-
     WEBCORE_EXPORT void getDebugBorderInfo(Color&, float& width) const override;
     WEBCORE_EXPORT void dumpAdditionalProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const override;
 

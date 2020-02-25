@@ -179,7 +179,7 @@ public:
 
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
-    void scheduleLayerFlush(bool canThrottle = false);
+    void scheduleRenderingUpdate();
     void flushPendingLayerChanges(bool isFlushRoot = true);
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
@@ -365,9 +365,6 @@ public:
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
     OptionSet<CompositingReason> reasonsForCompositing(const RenderLayer&) const;
-
-    void setLayerFlushThrottlingEnabled(bool);
-    void disableLayerFlushThrottlingTemporarilyForInteraction();
     
     void didPaintBacking(RenderLayerBacking*);
 
@@ -396,7 +393,7 @@ private:
     bool updateCompositingPolicy();
     
     // GraphicsLayerClient implementation
-    void notifyFlushRequired(const GraphicsLayer*) override;
+    void notifyRenderingUpdateRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
@@ -556,11 +553,6 @@ private:
 
     bool shouldCompositeOverflowControls() const;
 
-    bool isThrottlingLayerFlushes() const;
-    void startInitialLayerFlushTimerIfNeeded();
-    void startLayerFlushTimerIfNeeded();
-    void layerFlushTimerFired();
-
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer&);
     void logLayerInfo(const RenderLayer&, const char*, int depth);
@@ -623,11 +615,6 @@ private:
 
     std::unique_ptr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
 
-    Timer m_layerFlushTimer;
-
-    bool m_layerFlushThrottlingEnabled { false };
-    bool m_layerFlushThrottlingTemporarilyDisabledForInteraction { false };
-    bool m_hasPendingLayerFlush { false };
     bool m_viewBackgroundIsTransparent { false };
 
 #if !LOG_DISABLED

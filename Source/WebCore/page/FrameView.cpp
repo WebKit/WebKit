@@ -1018,12 +1018,12 @@ GraphicsLayer* FrameView::graphicsLayerForPlatformWidget(PlatformWidget platform
     return widgetLayer->backing()->parentForSublayers();
 }
 
-void FrameView::scheduleLayerFlushAllowingThrottling()
+void FrameView::scheduleRenderingUpdate()
 {
     RenderView* view = this->renderView();
     if (!view)
         return;
-    view->compositor().scheduleLayerFlush(true /* canThrottle */);
+    view->compositor().scheduleRenderingUpdate();
 }
 
 LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
@@ -2845,11 +2845,7 @@ void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
 
     auto flags = determineLayerFlushThrottleState(page);
     flags.add(RenderingUpdateThrottleState::UserIsInteracting);
-    if (page.chrome().client().adjustRenderingUpdateThrottling(flags))
-        return;
-
-    if (RenderView* view = renderView())
-        view->compositor().disableLayerFlushThrottlingTemporarilyForInteraction();
+    page.chrome().client().adjustRenderingUpdateThrottling(flags);
 }
 
 void FrameView::loadProgressingStatusChanged()
@@ -2870,14 +2866,7 @@ void FrameView::updateLayerFlushThrottling()
 
     auto flags = determineLayerFlushThrottleState(*page);
 
-    // See if the client is handling throttling.
-    if (page->chrome().client().adjustRenderingUpdateThrottling(flags))
-        return;
-
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        if (RenderView* renderView = frame->contentRenderer())
-            renderView->compositor().setLayerFlushThrottlingEnabled(flags.contains(RenderingUpdateThrottleState::Enabled));
-    }
+    page->chrome().client().adjustRenderingUpdateThrottling(flags);
 }
 
 void FrameView::adjustTiledBackingCoverage()
@@ -5308,7 +5297,7 @@ void FrameView::setViewExposedRect(Optional<FloatRect> viewExposedRect)
     }
 
     if (auto* view = renderView())
-        view->compositor().scheduleLayerFlush(false /* canThrottle */);
+        view->compositor().scheduleRenderingUpdate();
 
     if (auto* page = frame().page())
         page->pageOverlayController().didChangeViewExposedRect();

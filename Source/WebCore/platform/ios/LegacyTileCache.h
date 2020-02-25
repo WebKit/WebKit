@@ -170,7 +170,7 @@ private:
     void adjustTileGridTransforms();
     void removeAllNonVisibleTilesInternal();
     void createTilesInActiveGrid(SynchronousTileCreationMode);
-    void scheduleLayerFlushForPendingRepaint();
+    void scheduleRenderingUpdateForPendingRepaint();
 
     void tileCreationTimerFired();
 

@@ -147,7 +147,8 @@ public:
     void setNeedsOneShotDrawingSynchronization();
 
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
-    WEBCORE_EXPORT void scheduleLayerFlushAllowingThrottling();
+
+    WEBCORE_EXPORT void scheduleRenderingUpdate();
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
 

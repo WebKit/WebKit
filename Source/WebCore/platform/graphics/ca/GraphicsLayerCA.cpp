@@ -4199,12 +4199,6 @@ void GraphicsLayerCA::noteSublayersChanged(ScheduleFlushOrNot scheduleFlush)
     propagateLayerChangeToReplicas(scheduleFlush);
 }
 
-bool GraphicsLayerCA::canThrottleLayerFlush() const
-{
-    // Tile layers are currently plain CA layers, attached directly by TileController. They require immediate flush as they may contain garbage.
-    return !(m_uncommittedChanges & TilesAdded);
-}
-
 void GraphicsLayerCA::addUncommittedChanges(LayerChangeFlags flags)
 {
     m_uncommittedChanges |= flags;
@@ -4232,14 +4226,13 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleF
         return;
 
     bool hadUncommittedChanges = !!m_uncommittedChanges;
-    bool oldCanThrottleLayerFlush = canThrottleLayerFlush();
 
     addUncommittedChanges(flags);
 
     if (scheduleFlush == ScheduleFlush) {
-        bool needsFlush = !hadUncommittedChanges || oldCanThrottleLayerFlush != canThrottleLayerFlush();
+        bool needsFlush = !hadUncommittedChanges;
         if (needsFlush)
-            client().notifyFlushRequired(this);
+            client().notifyRenderingUpdateRequired(this);
     }
 }
 

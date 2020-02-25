@@ -609,8 +609,6 @@ public:
 
     void updateDebugIndicators();
 
-    virtual bool canThrottleLayerFlush() const { return false; }
-
     virtual bool isGraphicsLayerCA() const { return false; }
     virtual bool isGraphicsLayerCARemote() const { return false; }
     virtual bool isGraphicsLayerTextureMapper() const { return false; }

@@ -410,7 +410,7 @@ float PageOverlayController::deviceScaleFactor() const
     return m_page.deviceScaleFactor();
 }
 
-void PageOverlayController::notifyFlushRequired(const GraphicsLayer*)
+void PageOverlayController::notifyRenderingUpdateRequired(const GraphicsLayer*)
 {
     m_page.renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }

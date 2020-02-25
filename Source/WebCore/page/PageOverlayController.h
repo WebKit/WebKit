@@ -92,7 +92,7 @@ private:
     void updateForceSynchronousScrollLayerPositionUpdates();
 
     // GraphicsLayerClient
-    void notifyFlushRequired(const GraphicsLayer*) override;
+    void notifyRenderingUpdateRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& clipRect, GraphicsLayerPaintBehavior) override;
     float deviceScaleFactor() const override;
     bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;

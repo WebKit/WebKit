@@ -7417,7 +7417,7 @@ void WebView::notifyAnimationStarted(const GraphicsLayer*, const String&, Monoto
     ASSERT_NOT_REACHED();
 }
 
-void WebView::notifyFlushRequired(const GraphicsLayer*)
+void WebView::notifyRenderingUpdateRequired(const GraphicsLayer*)
 {
     flushPendingGraphicsLayerChangesSoon();
 }
