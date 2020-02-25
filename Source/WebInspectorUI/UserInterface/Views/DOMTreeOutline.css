@@ -34,7 +34,7 @@
 
     list-style-type: none;
 
- /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
+    /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
     background-color: transparent !important;
     color: var(--text-color);
 
@@ -61,11 +61,12 @@
     border-top: 2px solid var(--selected-background-color);
 }
 
-.tree-outline.dom:not(.non-selectable):focus li:matches(.selected, .hovered) .selection-area {
+.tree-outline.dom:not(.non-selectable):focus-within li.selected .selection-area {
     background-color: var(--selected-background-color);
 }
 
 .tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area {
+    background-color: var(--selected-background-color);
     opacity: 0.3;
 }
 
@@ -81,7 +82,7 @@
     white-space: pre;
 }
 
-.tree-outline.dom:focus li.inspected-node.selected > span::after {
+.tree-outline.dom:focus-within li.inspected-node.selected > span::after {
     color: var(--selected-secondary-text-color);
 }
 
@@ -116,6 +117,7 @@
 .tree-outline.dom li {
     padding: 0;
     word-wrap: break-word;
+    outline: none;
 
     --item-padding-start: 17px;
     --item-padding-end: 6px;
@@ -150,7 +152,7 @@
     left: var(--item-pseudo-class-indicator-start);
 }
 
-.tree-outline.dom:focus li.selected .pseudo-class-indicator {
+.tree-outline.dom:focus-within li.selected .pseudo-class-indicator {
     background-color: var(--selected-foreground-color);
 }
 
@@ -158,11 +160,11 @@
     padding-left: 2px;
 }
 
-.tree-outline.dom:focus li.selected {
+.tree-outline.dom:focus-within li.selected {
     color: white;
 }
 
-.tree-outline.dom:focus li.selected * {
+.tree-outline.dom:focus-within li.selected * {
     color: inherit;
 }
 
@@ -200,7 +202,7 @@
     float: left;
 }
 
-.tree-outline.dom:focus li.parent.selected::before {
+.tree-outline.dom:focus-within li.parent.selected::before {
     background-image: url(../Images/DisclosureTriangles.svg#closed-selected);
 }
 
@@ -208,7 +210,7 @@
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.tree-outline.dom:focus li.parent.expanded.selected::before {
+.tree-outline.dom:focus-within li.parent.expanded.selected::before {
     background-image: url(../Images/DisclosureTriangles.svg#open-selected);
 }
 

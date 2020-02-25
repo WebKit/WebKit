@@ -256,6 +256,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             this._setListItemNodeContent();
             this._listItemNode.title = this._tooltip ? this._tooltip : "";
             this._listItemNode.hidden = this.hidden;
+            this._listItemNode.role = "treeitem";
 
             if (this.hasChildren)
                 this._listItemNode.classList.add("parent");
@@ -347,10 +348,14 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     collapse()
     {
-        if (this._listItemNode)
+        if (this._listItemNode) {
             this._listItemNode.classList.remove("expanded");
-        if (this._childrenListNode)
+            this._listItemNode.ariaExpanded = false;
+        }
+        if (this._childrenListNode) {
             this._childrenListNode.classList.remove("expanded");
+            this._childrenListNode.ariaExpanded = false;
+        }
 
         this.expanded = false;
         if (this.treeOutline)
@@ -402,6 +407,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             this._childrenListNode.parentTreeElement = this;
             this._childrenListNode.classList.add("children");
             this._childrenListNode.hidden = this.hidden;
+            this._childrenListNode.role = "group";
 
             this.onpopulate();
 
@@ -417,12 +423,16 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         if (this._listItemNode) {
             this._listItemNode.classList.add("expanded");
+            this._listItemNode.ariaExpanded = true;
+
             if (this._childrenListNode && this._childrenListNode.parentNode !== this._listItemNode.parentNode)
                 this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
         }
 
-        if (this._childrenListNode)
+        if (this._childrenListNode) {
             this._childrenListNode.classList.add("expanded");
+            this._childrenListNode.ariaExpanded = true;
+        }
 
         if (this.onexpand)
             this.onexpand(this);
@@ -513,11 +523,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (!this.treeOutline || !this.selectable)
             return;
 
+        if (!omitFocus)
+            this.focus();
+
         if (this.selected && !this.treeOutline.allowsRepeatSelection)
             return;
-
-        if (!omitFocus)
-            this.treeOutline._childrenListNode.focus();
 
         // Focusing on another node may detach "this" from tree.
         let treeOutline = this.treeOutline;
@@ -526,6 +536,9 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         this.selected = true;
         treeOutline.selectTreeElementInternal(this, suppressNotification, selectedByUser);
+
+        if (this._listItemNode)
+            this._listItemNode.ariaSelected = true;
     }
 
     revealAndSelect(omitFocus, selectedByUser, suppressNotification)
@@ -542,7 +555,29 @@ WI.TreeElement = class TreeElement extends WI.Object
         this.selected = false;
         this.treeOutline.selectTreeElementInternal(null, suppressNotification);
 
+        if (this._listItemNode) {
+            this.unfocus();
+            this._listItemNode.ariaSelected = false;
+        }
+
         return true;
+    }
+
+    focus()
+    {
+        if (!this._listItemNode)
+            return;
+
+        this._listItemNode.tabIndex = 0;
+        this._listItemNode.focus();
+    }
+
+    unfocus()
+    {
+        if (!this._listItemNode)
+            return;
+
+        this._listItemNode.removeAttribute("tabIndex");
     }
 
     onpopulate()

@@ -34,6 +34,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         this.element = document.createElement("ol");
         this.element.classList.add(WI.TreeOutline.ElementStyleClassName);
+        this.element.role = "tree";
         this.element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
 
         this.children = [];
@@ -594,7 +595,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     _treeKeyDown(event)
     {
-        if (event.target !== this._childrenListNode)
+        if (WI.isBeingEdited(event.target))
+            return;
+
+        if (event.target !== this._childrenListNode && event.target.closest("." + WI.TreeOutline.ElementStyleClassName) !== this._childrenListNode)
             return;
 
         let isRTL = WI.resolveLayoutDirectionForElement(this.element) === WI.LayoutDirection.RTL;
@@ -1112,6 +1116,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._itemWasSelectedByUser = true;
         this._selectionController.handleItemMouseDown(this.objectForSelection(treeElement), event);
         this._itemWasSelectedByUser = false;
+
+        treeElement.focus();
     }
 
     _dispatchSelectionDidChangeEvent()

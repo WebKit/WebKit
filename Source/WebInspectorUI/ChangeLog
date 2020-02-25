@@ -1,3 +1,47 @@
+2020-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: VoiceOver: TreeOutline does not correctly indicate selected item
+        https://bugs.webkit.org/show_bug.cgi?id=207968
+
+        Reviewed by Brian Burg.
+
+        Previously, the entire TreeOutline's DOM element had focus. With this patch,
+        selected item DOM element has focus instead. When clicking on the treeElement,
+        set tabIndex to 0 and focus on it.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom): Fix indentation.
+
+        (.tree-outline.dom:not(.non-selectable):focus-within li.selected .selection-area):
+        (.tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area):
+        (.tree-outline.dom:focus-within li.inspected-node.selected > span::after):
+        (.tree-outline.dom li):
+        Remove outline - selection is already indicated by the background.
+
+        (.tree-outline.dom:focus-within li.selected .pseudo-class-indicator):
+        (.tree-outline.dom:focus-within li.selected):
+        (.tree-outline.dom:focus-within li.selected *):
+        (.tree-outline.dom:focus-within li.parent.selected::before):
+        (.tree-outline.dom:focus-within li.parent.expanded.selected::before):
+        * UserInterface/Views/DOMTreeOutline.js:
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._attach):
+        (WI.TreeElement.prototype.collapse):
+        (WI.TreeElement.prototype.expand):
+        (WI.TreeElement.prototype.select):
+        (WI.TreeElement.prototype.deselect):
+        (WI.TreeElement.prototype.focus):
+        (WI.TreeElement.prototype.unfocus):
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline .item.selected:focus .disclosure-button):
+        (.tree-outline .item.selected.expanded:focus .disclosure-button):
+        (.tree-outline .item.selected:focus):
+        (.tree-outline .item.selected:focus .subtitle):
+        (.tree-outline:not(.large) .item.selected:focus .status .indeterminate-progress-spinner):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._treeKeyDown):
+        (WI.TreeOutline.prototype._handleMouseDown):
+
 2020-02-19  Jon Davis  <jond@apple.com>
 
         Fixed object trees using the wrong theme of type icon

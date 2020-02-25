@@ -45,6 +45,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
         this.element.dir = "ltr";
+        this.element.role = "tree";
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._excludeRevealElementContextMenu = excludeRevealElementContextMenu;
