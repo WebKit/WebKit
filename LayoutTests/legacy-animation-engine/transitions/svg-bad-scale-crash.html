@@ -1,0 +1,21 @@
+<html>
+<style>
+    a { -webkit-perspective-origin-y: 0mm; -webkit-transition: 5s; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function setBadScale() {
+        try { svgvar.currentScale = undefined } catch(err) {};
+    }
+
+</script>
+<body>
+    <svg onload="setBadScale()"></svg>
+    <a></a>
+    <svg id="svgvar"></svg>
+    <p>Confirm that SVG elements with bad scale don't crash when nearby elements go through transitions.</p>
+    PASS
+</body>
+</html>

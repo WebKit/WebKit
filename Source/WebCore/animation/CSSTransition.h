@@ -53,7 +53,7 @@ public:
     void resolve(RenderStyle&) final;
 
 private:
-    CSSTransition(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
+    CSSTransition(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
 
     CSSPropertyID m_property;
