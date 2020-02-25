@@ -2321,7 +2321,7 @@ static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
         [webView goBack];
         TestWebKitAPI::Util::sleep(0.1);
         [webView goForward];
-        TestWebKitAPI::Util::spinRunLoop(0.1);
+        TestWebKitAPI::Util::spinRunLoop();
     }
 
     TestWebKitAPI::Util::run(&done);

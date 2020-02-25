@@ -1,3 +1,15 @@
+2020-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        spinRunLoop should take a non-zero integer as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=208148
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/cocoa/UtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::spinRunLoop):
+
 2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add tests for CompactRefPtrTuple

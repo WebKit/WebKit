@@ -1333,7 +1333,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
-        TestWebKitAPI::Util::spinRunLoop(0.1);
+        TestWebKitAPI::Util::spinRunLoop();
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
