@@ -27,7 +27,6 @@
 
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
-#include "GenericEventQueue.h"
 #include "WebAnimation.h"
 #include <wtf/Ref.h>
 
@@ -65,7 +64,6 @@ public:
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
     void cancel() final;
 
-    bool needsTick() const override;
     void tick() override;
 
     bool canHaveGlobalPosition() final;
@@ -85,12 +83,9 @@ private:
     void flushPendingStyleChanges() const;
     AnimationEffectPhase phaseWithoutEffect() const;
     void enqueueDOMEvent(const AtomString&, Seconds);
-    void remove() final;
 
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
-
-    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
 
     Element* m_owningElement;
     Ref<Animation> m_backingAnimation;
