@@ -85,6 +85,20 @@
         * legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport.html: Added.
         * legacy-animation-engine/compositing/layer-creation/translate-animation-overlap-expected.txt:
         * legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap-expected.txt:
+2020-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        WebContent jetsams on Sony lens webpage due to spike of IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=207493
+        rdar://problem/59020443
+
+        Reviewed by Zalan Bujtas.
+        
+        Test with an out-of-view transitioning element which should not get backing store.
+
+        * compositing/backing/transition-extent-expected.txt: Added.
+        * compositing/backing/transition-extent.html: Added.
+        * platform/ios-wk2/compositing/backing/transition-extent-expected.txt: Added.
+
         * platform/ios-wk2/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
         * platform/ios-wk2/legacy-animation-engine/compositing/backing/backing-store-attachment-animating-outside-viewport-expected.txt: Added.
 
