@@ -2032,10 +2032,12 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
 #if USE(ATK)
     // We need to consider replaced elements for GTK, as they will be
     // presented with the 'object replacement character' (0xFFFC).
-    return WebCore::indexForVisiblePosition(*node, position, { TextIteratorLengthOption::GenerateSpacesForReplacedElements });
+    bool forSelectionPreservation = true;
 #else
-    return WebCore::indexForVisiblePosition(*node, position);
+    bool forSelectionPreservation = false;
 #endif
+
+    return WebCore::indexForVisiblePosition(*node, position, forSelectionPreservation);
 }
 
 Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
