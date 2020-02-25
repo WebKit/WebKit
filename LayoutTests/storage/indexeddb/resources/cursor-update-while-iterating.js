@@ -12,12 +12,15 @@ const objectArray = [
     { key: "key1", value: "value1" },
     { key: "key1", value: "value3" },
     { key: "key2", value: "value2" },
-    { key: "key2", value: "value4" }
+    { key: "key2", value: "value4" },
+	{ key: "key3", value: "value5" },
+	{ key: "key3", value: "value6" },
 ];
 
 function populateObjectStore() {
-    for (let object of objectArray)
-        objectStore.add(object).onerror = unexpectedErrorCallback;
+    objectArray.forEach((object, i)=>{
+        objectStore.add(object, i).onerror = unexpectedErrorCallback;
+	});
 }
 
 function prepareDatabase(event)
@@ -26,7 +29,7 @@ function prepareDatabase(event)
     evalAndLog("db = event.target.result");
     deleteAllObjectStores(db);
 
-    objectStore = evalAndLog("objectStore = db.createObjectStore('objectStore', {autoIncrement: true})");
+    objectStore = evalAndLog("objectStore = db.createObjectStore('objectStore')");
     evalAndLog("objectStore.createIndex('key', 'key', {unique: false})");
 
     populateObjectStore();
@@ -43,28 +46,30 @@ function onOpenSuccess(event)
     evalAndLog("index = objectStore.index('key')");
     request = evalAndLog("index.openCursor()");
 
-    var n = 0;
+    totalRecordCount = 0;
     request.onsuccess = function(event) {
         cursor = event.target.result;
         if (cursor) {
-            shouldBeEqualToString("JSON.stringify(cursor.value)", JSON.stringify(objectArray[n++]));
+            shouldBeEqualToString("JSON.stringify(cursor.value)", JSON.stringify(objectArray[totalRecordCount++]));
 
             if (cursor.key == "key1") {
                 debug("Update cursor");
                 const {value} = cursor;
                 cursor.update(value);
-            } else {
+            }
+            if (cursor.key == "key2") {
                 debug("Delete cursor");
                 cursor.delete();
+            }
+            if (cursor.key == "key3") {
+                debug("Delete last record");
+                objectStore.delete(6);
             }
 
             debug("Cursor continues\n");
             cursor.continue();
         } else {
-            if (n != objectArray.length)
-                testFailed("Cursor didn't go through whole array.");
-            else 
-                testPassed("Successfully iterated whole array with cursor updates.");
+            shouldBeEqualToNumber("totalRecordCount", objectArray.length - 1);
         }
     }
 

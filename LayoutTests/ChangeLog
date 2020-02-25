@@ -1,3 +1,17 @@
+2020-02-11  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: iteration of cursors skip records if deleted
+        https://bugs.webkit.org/show_bug.cgi?id=207437
+
+        Reviewed by Brady Eidson.
+
+        * storage/indexeddb/cursor-update-while-iterating-expected.txt:
+        * storage/indexeddb/resources/cursor-update-while-iterating.js:
+        (populateObjectStore):
+        (onOpenSuccess.request.onsuccess):
+        (onOpenSuccess):
+        (prepareDatabase): Deleted.
+
 2020-02-13  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: (256381) [ macOS ] http/tests/workers/service/serviceworkerclients-claim.https.html is flaky failing

@@ -11,7 +11,7 @@ indexedDB.open(dbname)
 prepareDatabase():
 db = event.target.result
 Deleted all object stores.
-objectStore = db.createObjectStore('objectStore', {autoIncrement: true})
+objectStore = db.createObjectStore('objectStore')
 objectStore.createIndex('key', 'key', {unique: false})
 
 onOpenSuccess():
@@ -40,7 +40,11 @@ PASS JSON.stringify(cursor.value) is "{\"key\":\"key2\",\"value\":\"value4\"}"
 Delete cursor
 Cursor continues
 
-PASS Successfully iterated whole array with cursor updates.
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key3\",\"value\":\"value5\"}"
+Delete last record
+Cursor continues
+
+PASS totalRecordCount is 6
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -64,6 +64,7 @@ constexpr auto objectStoreInfoTableName = "ObjectStoreInfo"_s;
 constexpr auto objectStoreInfoTableNameAlternate = "\"ObjectStoreInfo\""_s;
 constexpr auto v2ObjectStoreInfoSchema = "CREATE TABLE ObjectStoreInfo (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, autoInc INTEGER NOT NULL ON CONFLICT FAIL)"_s;
 constexpr auto v1IndexRecordsRecordIndexSchema = "CREATE INDEX IndexRecordsRecordIndex ON IndexRecords (objectStoreID, objectStoreRecordID)"_s;
+constexpr auto v2IndexRecordsIndexSchema = "CREATE INDEX IndexRecordsIndex ON IndexRecords (key, value)"_s;
 
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
@@ -514,7 +515,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
 
         // If there is no IndexRecordsIndex index at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(v1IndexRecordsIndexSchema())) {
+            if (!m_sqliteDB->executeCommand(v2IndexRecordsIndexSchema)) {
                 LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
                 return false;
             }
@@ -533,11 +534,27 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
     ASSERT(!currentSchema.isEmpty());
 
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v1IndexRecordsIndexSchema())
+    if (currentSchema == v2IndexRecordsIndexSchema)
         return true;
 
-    // There is currently no outdated schema for the IndexRecordsIndex, so any other existing schema means this database is invalid.
-    return false;
+    RELEASE_ASSERT(currentSchema == v1IndexRecordsIndexSchema());
+
+    SQLiteTransaction transaction(*m_sqliteDB);
+    transaction.begin();
+
+    if (!m_sqliteDB->executeCommand("DROP INDEX IndexRecordsIndex")) {
+        LOG_ERROR("Could not drop index IndexRecordsIndex in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    if (!m_sqliteDB->executeCommand(v2IndexRecordsIndexSchema)) {
+        LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return false;
+    }
+
+    transaction.commit();
+
+    return true;
 }
 
 bool SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
