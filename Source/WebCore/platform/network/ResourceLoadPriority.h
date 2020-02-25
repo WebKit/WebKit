@@ -37,6 +37,8 @@ enum class ResourceLoadPriority : uint8_t {
     Lowest = VeryLow,
     Highest = VeryHigh,
 };
+static constexpr unsigned bitWidthOfResourceLoadPriority = 3;
+static_assert(static_cast<unsigned>(ResourceLoadPriority::Highest) <= ((1U << bitWidthOfResourceLoadPriority) - 1));
 
 static const unsigned resourceLoadPriorityCount { static_cast<unsigned>(ResourceLoadPriority::Highest) + 1 };
 
