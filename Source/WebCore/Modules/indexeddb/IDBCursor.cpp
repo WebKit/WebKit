@@ -312,7 +312,7 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(JSGlobalObject& 
     return request;
 }
 
-bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
+bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult, uint64_t operationID)
 {
     LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().substring(0, 100).utf8().data());
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
@@ -349,6 +349,13 @@ bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
         m_keyPath = getResult.keyPath();
     }
 
+    auto prefetchedRecords = getResult.prefetchedRecords();
+    if (!prefetchedRecords.isEmpty()) {
+        for (auto& record : prefetchedRecords)
+            m_prefetchedRecords.append(record);
+        m_prefetchOperationID = operationID;
+    }
+
     m_gotValue = true;
     return true;
 }
@@ -358,6 +365,26 @@ void IDBCursor::clearWrappers()
     m_keyWrapper.clear();
     m_primaryKeyWrapper.clear();
     m_valueWrapper.clear();
+}
+
+Optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID)
+{
+    unsigned step = count > 0 ? count : 1;
+    if (step > m_prefetchedRecords.size() || m_prefetchOperationID <= lastWriteOperationID)
+        return WTF::nullopt;
+
+    while (--step)
+        m_prefetchedRecords.removeFirst();
+
+    auto record = m_prefetchedRecords.takeFirst();
+
+    LOG(IndexedDB, "IDBTransaction::iterateWithPrefetchedRecords consumes %u records", count > 0 ? count : 1);
+    return IDBGetResult(record.key, record.primaryKey, IDBValue(record.value), effectiveObjectStore().keyPath());
+}
+
+void IDBCursor::clearPrefetchedRecords()
+{
+    m_prefetchedRecords.clear();
 }
 
 } // namespace WebCore

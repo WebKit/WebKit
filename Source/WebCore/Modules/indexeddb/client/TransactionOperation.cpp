@@ -44,6 +44,7 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
     if (auto* cursor = request.pendingCursor())
         m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(cursor->info().identifier());
 
+    request.setTransactionOperationID(m_operationID);
     m_idbRequest = &request;
 }
 

@@ -142,8 +142,6 @@ private:
 
     void clearTransactionsOnConnection(UniqueIDBDatabaseConnection&);
 
-    void prefetchCursor(const IDBResourceIdentifier&, const IDBResourceIdentifier&, uint64_t step);
-
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
 

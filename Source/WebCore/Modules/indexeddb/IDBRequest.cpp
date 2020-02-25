@@ -499,7 +499,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     m_resultWrapper = { };
 
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
-        if (m_pendingCursor->setGetResult(*this, resultData.getResult()) && m_cursorWrapper)
+        if (m_pendingCursor->setGetResult(*this, resultData.getResult(), m_currentTransactionOperationID) && m_cursorWrapper)
             m_resultWrapper = m_cursorWrapper;
         if (resultData.getResult().isDefined())
             m_result = m_pendingCursor;

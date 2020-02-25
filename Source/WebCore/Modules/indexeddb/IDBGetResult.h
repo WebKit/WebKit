@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorRecord.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
@@ -76,6 +77,15 @@ public:
     {
     }
 
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords)
+        : m_value(WTFMove(value))
+        , m_keyData(keyData)
+        , m_primaryKeyData(primaryKeyData)
+        , m_keyPath(keyPath)
+        , m_prefetchedRecords(WTFMove(prefetechedRecords))
+    {
+    }
+
     enum IsolatedCopyTag { IsolatedCopy };
     IDBGetResult(const IDBGetResult&, IsolatedCopyTag);
 
@@ -87,6 +97,7 @@ public:
     const IDBKeyData& keyData() const { return m_keyData; }
     const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
     const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const Vector<IDBCursorRecord>& prefetchedRecords() const { return m_prefetchedRecords; }
     bool isDefined() const { return m_isDefined; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -101,13 +112,14 @@ private:
     IDBKeyData m_keyData;
     IDBKeyData m_primaryKeyData;
     Optional<IDBKeyPath> m_keyPath;
+    Vector<IDBCursorRecord> m_prefetchedRecords;
     bool m_isDefined { true };
 };
 
 template<class Encoder>
 void IDBGetResult::encode(Encoder& encoder) const
 {
-    encoder << m_keyData << m_primaryKeyData << m_keyPath << m_isDefined << m_value;
+    encoder << m_keyData << m_primaryKeyData << m_keyPath << m_isDefined << m_value << m_prefetchedRecords;
 }
 
 template<class Decoder>
@@ -136,6 +148,12 @@ bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
     if (!value)
         return false;
     result.m_value = WTFMove(*value);
+
+    Optional<Vector<IDBCursorRecord>> prefetchedRecords;
+    decoder >> prefetchedRecords;
+    if (!prefetchedRecords)
+        return false;
+    result.m_prefetchedRecords = WTFMove(*prefetchedRecords);
 
     return true;
 }

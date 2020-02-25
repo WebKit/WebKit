@@ -71,6 +71,8 @@ public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
+    static uint64_t generateOperationID();
+
     WEBCORE_EXPORT ~IDBTransaction() final;
 
     // IDBTransaction IDL
@@ -165,7 +167,8 @@ private:
     void finishAbortOrCommit();
     void abortInProgressOperations(const IDBError&);
 
-    void scheduleOperation(Ref<IDBClient::TransactionOperation>&&);
+    enum class IsWriteOperation : bool { No, Yes };
+    void scheduleOperation(Ref<IDBClient::TransactionOperation>&&, IsWriteOperation = IsWriteOperation::No);
     void handleOperationsCompletedOnServer();
     void handlePendingOperations();
     void autoCommit();
@@ -244,8 +247,8 @@ private:
 
     Deque<RefPtr<IDBClient::TransactionOperation>> m_pendingTransactionOperationQueue;
     Deque<IDBClient::TransactionOperation*> m_transactionOperationsInProgressQueue;
-    Deque<std::pair<RefPtr<IDBClient::TransactionOperation>, IDBResultData>> m_completedOnServerQueue;
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
+    HashMap<RefPtr<IDBClient::TransactionOperation>, IDBResultData> m_transactionOperationResultMap;
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
@@ -258,6 +261,8 @@ private:
 
     bool m_contextStopped { false };
     bool m_didDispatchAbortOrCommit { false };
+
+    uint64_t m_lastWriteOperationID { 0 };
 };
 
 class TransactionActivator {

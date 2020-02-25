@@ -238,7 +238,8 @@ void IDBConnectionProxy::openCursor(TransactionOperation& operation, const IDBCu
 void IDBConnectionProxy::iterateCursor(TransactionOperation& operation, const IDBIterateCursorData& data)
 {
     const IDBRequestData requestData { operation };
-    saveOperation(operation);
+    if (data.option != IndexedDB::CursorIterateOption::DoNotReply)
+        saveOperation(operation);
 
     callConnectionOnMainThread(&IDBConnectionToServer::iterateCursor, requestData, data);
 }

@@ -35,6 +35,7 @@ struct IDBIterateCursorData {
     IDBKeyData keyData;
     IDBKeyData primaryKeyData;
     unsigned count;
+    IndexedDB::CursorIterateOption option { IndexedDB::CursorIterateOption::Reply };
 
     WEBCORE_EXPORT IDBIterateCursorData isolatedCopy() const;
 
@@ -50,6 +51,7 @@ template<class Encoder>
 void IDBIterateCursorData::encode(Encoder& encoder) const
 {
     encoder << keyData << primaryKeyData << static_cast<uint64_t>(count);
+    encoder.encodeEnum(option);
 }
 
 template<class Decoder>
@@ -73,8 +75,10 @@ bool IDBIterateCursorData::decode(Decoder& decoder, IDBIterateCursorData& iterat
 
     if (count > std::numeric_limits<unsigned>::max())
         return false;
-
     iteratorCursorData.count = static_cast<unsigned>(count);
+
+    if (!decoder.decodeEnum(iteratorCursorData.option))
+        return false;
 
     return true;
 }

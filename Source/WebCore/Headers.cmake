@@ -68,6 +68,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h
 
     Modules/indexeddb/shared/IDBCursorInfo.h
+    Modules/indexeddb/shared/IDBCursorRecord.h
     Modules/indexeddb/shared/IDBDatabaseInfo.h
     Modules/indexeddb/shared/IDBError.h
     Modules/indexeddb/shared/IDBGetAllRecordsData.h

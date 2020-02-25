@@ -1366,8 +1366,8 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
     while (!cursor->currentKey().isNull()) {
         auto& key = cursor->currentKey();
-        auto* value = cursor->currentValue();
-        ThreadSafeDataBuffer valueBuffer = value ? value->data() : ThreadSafeDataBuffer();
+        auto value = cursor->currentValue();
+        ThreadSafeDataBuffer valueBuffer = value.data();
 
         ASSERT(cursor->currentRecordRowID());
 
@@ -2354,7 +2354,7 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
         IDBKeyData keyCopy = cursor->currentPrimaryKey();
         result.addKey(WTFMove(keyCopy));
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values)
-            result.addValue(cursor->currentValue() ? *cursor->currentValue() : IDBValue());
+            result.addValue(IDBValue(cursor->currentValue()));
 
         ++currentCount;
         cursor->advance(1);
@@ -2401,7 +2401,7 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
         else {
             auto* objectStoreInfo = infoForObjectStore(objectStoreID);
             ASSERT(objectStoreInfo);
-            getResult = { cursor->currentPrimaryKey(), cursor->currentPrimaryKey(), cursor->currentValue() ? *cursor->currentValue() : IDBValue(), objectStoreInfo->keyPath() };
+            getResult = { cursor->currentPrimaryKey(), cursor->currentPrimaryKey(), IDBValue(cursor->currentValue()), objectStoreInfo->keyPath() };
         }
     }
 
@@ -2721,26 +2721,18 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
         }
     }
 
-    auto* objectStoreInfo = infoForObjectStore(cursor->objectStoreID());
-    ASSERT(objectStoreInfo);
-    cursor->currentData(result, objectStoreInfo->keyPath());
+    if (data.option == IndexedDB::CursorIterateOption::Reply) {
+        auto* objectStoreInfo = infoForObjectStore(cursor->objectStoreID());
+        ASSERT(objectStoreInfo);
+
+        bool shouldPrefetch = key.isNull() && primaryKey.isNull();
+        if (shouldPrefetch)
+            cursor->prefetch();
+
+        cursor->currentData(result, objectStoreInfo->keyPath(), shouldPrefetch ? SQLiteIDBCursor::ShouldIncludePrefetchedRecords::Yes : SQLiteIDBCursor::ShouldIncludePrefetchedRecords::No);
+    }
+
     return IDBError { };
-}
-
-bool SQLiteIDBBackingStore::prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier)
-{
-    LOG(IndexedDB, "SQLiteIDBBackingStore::prefetchCursor");
-
-    ASSERT(m_sqliteDB);
-    ASSERT(m_sqliteDB->isOpen());
-
-    auto* cursor = m_cursors.get(cursorIdentifier);
-    if (!cursor || !cursor->transaction() || !cursor->transaction()->inProgress())
-        return false;
-
-    ASSERT_UNUSED(transactionIdentifier, cursor->transaction()->transactionIdentifier() == transactionIdentifier);
-
-    return cursor->prefetch();
 }
 
 IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
