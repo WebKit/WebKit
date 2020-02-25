@@ -1,3 +1,16 @@
+2020-02-25  Matt Lewis  <jlewis3@apple.com>
+
+        Add checkout_root to stubrepository.py
+        https://bugs.webkit.org/show_bug.cgi?id=208213
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/stub_repository.py:
+        (StubRepository.__init__):
+
+        We are creating our own class variable for checkout_root rather than calling the parent SCM variable
+        because when initially we left out the parent constructor due to trying to override the fact that we don't actually have a SCM.
+
 2020-02-25  Daniel Bates  <dabates@apple.com>
 
         TestWebKitAPI.PasteMixedContent.CopyAndPasteWithCustomPasteboardDataOnly should wait until copy operation completes
