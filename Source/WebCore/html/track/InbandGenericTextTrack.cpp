@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "DataCue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"

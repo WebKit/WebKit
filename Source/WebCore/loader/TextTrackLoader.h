@@ -40,6 +40,7 @@ class Document;
 class HTMLTrackElement;
 class TextTrackLoader;
 class ScriptExecutionContext;
+class VTTCue;
 
 class TextTrackLoaderClient {
 public:
@@ -60,9 +61,11 @@ public:
 
     bool load(const URL&, HTMLTrackElement&);
     void cancelLoad();
-    void getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues);
+
+    Vector<Ref<VTTCue>> getNewCues();
     void getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions);
     Vector<String> getNewStyleSheets();
+
 private:
 
     // CachedResourceClient

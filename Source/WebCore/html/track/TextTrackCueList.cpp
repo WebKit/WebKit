@@ -49,6 +49,11 @@ static inline bool cueSortsBefore(const RefPtr<TextTrackCue>& a, const RefPtr<Te
     return a->startMediaTime() == b->startMediaTime() && a->endMediaTime() > b->endMediaTime();
 }
 
+Ref<TextTrackCueList> TextTrackCueList::create()
+{
+    return adoptRef(*new TextTrackCueList);
+}
+
 unsigned TextTrackCueList::cueIndex(const TextTrackCue& cue) const
 {
     ASSERT(m_vector.contains(&cue));

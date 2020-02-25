@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlayerPrivateAVFoundation_h
-#define MediaPlayerPrivateAVFoundation_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
@@ -34,17 +33,14 @@
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVF;
-class GenericCueData;
 
 // Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
 class MediaPlayerPrivateAVFoundation : public CanMakeWeakPtr<MediaPlayerPrivateAVFoundation, WeakPtrFactoryInitialization::Eager>, public MediaPlayerPrivateInterface, public AVFInbandTrackParent
@@ -376,5 +372,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(AVFOUNDATION)
-
-#endif // MediaPlayerPrivateAVFoundation_h

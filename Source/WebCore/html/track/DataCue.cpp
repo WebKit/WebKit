@@ -27,6 +27,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
+
 #include "DataCue.h"
 
 #include "Logging.h"
@@ -90,24 +91,9 @@ void DataCue::setData(ArrayBuffer& data)
     m_data = ArrayBuffer::create(data);
 }
 
-DataCue* toDataCue(TextTrackCue* cue)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(cue->cueType() == TextTrackCue::Data);
-    return static_cast<DataCue*>(cue);
-}
-
-const DataCue* toDataCue(const TextTrackCue* cue)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(cue->cueType() == TextTrackCue::Data);
-    return static_cast<const DataCue*>(cue);
-}
-
 bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
 {
-    if (cue.cueType() != TextTrackCue::Data)
-        return false;
-
-    const DataCue* dataCue = toDataCue(&cue);
+    const DataCue* dataCue = downcast<DataCue>(&cue);
     RefPtr<ArrayBuffer> otherData = dataCue->data();
     if ((otherData && !m_data) || (!otherData && m_data))
         return false;
@@ -130,25 +116,6 @@ bool DataCue::cueContentsMatch(const TextTrackCue& cue) const
         return false;
 
     return true;
-}
-
-bool DataCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
-{
-    if (!TextTrackCue::isEqual(cue, match))
-        return false;
-
-    if (cue.cueType() != TextTrackCue::Data)
-        return false;
-
-    return cueContentsMatch(cue);
-}
-
-bool DataCue::doesExtendCue(const TextTrackCue& cue) const
-{
-    if (!cueContentsMatch(cue))
-        return false;
-
-    return TextTrackCue::doesExtendCue(cue);
 }
 
 JSC::JSValue DataCue::value(JSC::JSGlobalObject& state) const
@@ -178,16 +145,12 @@ JSValue DataCue::valueOrNull() const
     return jsNull();
 }
 
-String DataCue::toJSONString() const
+void DataCue::toJSON(JSON::Object& object) const
 {
-    auto object = JSON::Object::create();
-
-    TextTrackCue::toJSON(object.get());
+    TextTrackCue::toJSON(object);
 
     if (!m_type.isEmpty())
-        object->setString("type"_s, m_type);
-
-    return object->toJSONString();
+        object.setString("type"_s, m_type);
 }
 
 } // namespace WebCore

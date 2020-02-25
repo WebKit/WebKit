@@ -183,27 +183,26 @@ static void removePseudoAttributes(Node& node)
         removePseudoAttributes(*child);
 }
 
-ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(ScriptExecutionContext& context, double start, double end, DocumentFragment& cueDocument)
+ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(ScriptExecutionContext& context, double start, double end, DocumentFragment& cueFragment)
 {
-    ASSERT(context.isDocument());
-    ASSERT(is<DocumentFragment>(cueDocument));
+    auto& document = downcast<Document>(context);
 
-    if (!cueDocument.firstChild())
+    if (!cueFragment.firstChild())
         return Exception { InvalidNodeTypeError, "Empty cue fragment" };
 
-    for (Node* node = cueDocument.firstChild(); node; node = node->nextSibling()) {
+    for (Node* node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = checkForInvalidNodeTypes(*node);
         if (result.hasException())
             return result.releaseException();
     }
 
-    auto fragment = DocumentFragment::create(downcast<Document>(context));
-    for (Node* node = cueDocument.firstChild(); node; node = node->nextSibling()) {
+    auto fragment = DocumentFragment::create(document);
+    for (Node* node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = fragment->ensurePreInsertionValidity(*node, nullptr);
         if (result.hasException())
             return result.releaseException();
     }
-    cueDocument.cloneChildNodes(fragment);
+    cueFragment.cloneChildNodes(fragment);
 
     OptionSet<RequiredNodes> nodeTypes = { };
     for (Node* node = fragment->firstChild(); node; node = node->nextSibling())
@@ -214,21 +213,27 @@ ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(ScriptExecutionContext& cont
     if (!nodeTypes.contains(RequiredNodes::CueBackground))
         return Exception { InvalidStateError, makeString("Missing required attribute: ", cueBackgroundAttributName().toString()) };
 
-    return adoptRef(*new TextTrackCue(context, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(fragment.get())));
+    return adoptRef(*new TextTrackCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(fragment)));
 }
 
-TextTrackCue::TextTrackCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, DocumentFragment&& cueFragment)
-    : TextTrackCue(context, start, end)
+TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<DocumentFragment>&& cueFragment)
+    : m_startTime(start)
+    , m_endTime(end)
+    , m_document(document)
+    , m_cueNode(WTFMove(cueFragment))
 {
-    m_cueNode = &cueFragment;
 }
 
 TextTrackCue::TextTrackCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end)
     : m_startTime(start)
     , m_endTime(end)
-    , m_scriptExecutionContext(context)
+    , m_document(downcast<Document>(context))
 {
-    ASSERT(m_scriptExecutionContext.isDocument());
+}
+
+ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
+{
+    return &m_document;
 }
 
 void TextTrackCue::willChange()
@@ -363,30 +368,16 @@ bool TextTrackCue::isOrderedBefore(const TextTrackCue* other) const
     return cueIndex() < other->cueIndex();
 }
 
-bool TextTrackCue::cueContentsMatch(const TextTrackCue& cue) const
+bool TextTrackCue::cueContentsMatch(const TextTrackCue& other) const
 {
-    if (cueType() != cue.cueType())
-        return false;
-
-    if (id() != cue.id())
-        return false;
-
-    return true;
+    return m_id == other.m_id;
 }
 
-bool TextTrackCue::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatchRules match) const
+bool TextTrackCue::isEqual(const TextTrackCue& other, TextTrackCue::CueMatchRules match) const
 {
-    if (cueType() != cue.cueType())
+    if (match != IgnoreDuration && endMediaTime() != other.endMediaTime())
         return false;
-
-    if (match != IgnoreDuration && endMediaTime() != cue.endMediaTime())
-        return false;
-    if (!hasEquivalentStartTime(cue))
-        return false;
-    if (!cueContentsMatch(cue))
-        return false;
-
-    return true;
+    return cueType() == other.cueType() && hasEquivalentStartTime(other) && cueContentsMatch(other);
 }
 
 bool TextTrackCue::hasEquivalentStartTime(const TextTrackCue& cue) const
@@ -398,17 +389,6 @@ bool TextTrackCue::hasEquivalentStartTime(const TextTrackCue& cue) const
         startTimeVariance = cue.track()->startTimeVariance();
 
     return abs(abs(startMediaTime()) - abs(cue.startMediaTime())) <= startTimeVariance;
-}
-
-bool TextTrackCue::doesExtendCue(const TextTrackCue& cue) const
-{
-    if (!cueContentsMatch(cue))
-        return false;
-
-    if (endMediaTime() != cue.startMediaTime())
-        return false;
-    
-    return true;
 }
 
 void TextTrackCue::toJSON(JSON::Object& value) const
@@ -437,9 +417,7 @@ void TextTrackCue::toJSON(JSON::Object& value) const
 String TextTrackCue::toJSONString() const
 {
     auto object = JSON::Object::create();
-
     toJSON(object.get());
-
     return object->toJSONString();
 }
 
@@ -449,7 +427,7 @@ TextStream& operator<<(TextStream& stream, const TextTrackCue& cue)
 {
     String text;
     if (is<VTTCue>(cue))
-        text = toVTTCue(&cue)->text();
+        text = downcast<VTTCue>(cue).text();
     return stream << &cue << " id=" << cue.id() << " interval=" << cue.startTime() << "-->" << cue.endTime() << " cue=" << text << ')';
 }
 

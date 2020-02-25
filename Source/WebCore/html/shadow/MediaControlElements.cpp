@@ -1190,8 +1190,8 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         for (auto& interval : activeCues) {
             auto cue = interval.data();
             cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
-            if (is<VTTCue>(cue) || is<TextTrackCueGeneric>(cue))
-                processActiveVTTCue(*toVTTCue(cue));
+            if (is<VTTCue>(*cue))
+                processActiveVTTCue(downcast<VTTCue>(*cue));
             else {
                 auto displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
                 if (displayBox->hasChildNodes() && !contains(displayBox.get()))
@@ -1212,8 +1212,6 @@ void MediaControlTextTrackContainerElement::updateDisplay()
 
 void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
 {
-    ASSERT(is<VTTCue>(cue) || is<TextTrackCueGeneric>(cue));
-
     DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime(), ", line=", cue.line());
     Ref<TextTrackCueBox> displayBox = *cue.getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
 

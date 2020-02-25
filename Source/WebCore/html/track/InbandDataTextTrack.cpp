@@ -125,7 +125,7 @@ ExceptionOr<void> InbandDataTextTrack::removeCue(TextTrackCue& cue)
 {
     ASSERT(cue.cueType() == TextTrackCue::Data);
 
-    if (auto platformValue = const_cast<SerializedPlatformDataCue*>(toDataCue(&cue)->platformValue()))
+    if (auto platformValue = const_cast<SerializedPlatformDataCue*>(downcast<DataCue>(cue).platformValue()))
         removeDataCue({ }, { }, *platformValue);
 
     return InbandTextTrack::removeCue(cue);

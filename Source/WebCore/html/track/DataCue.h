@@ -30,10 +30,13 @@
 
 #include "SerializedPlatformDataCue.h"
 #include "TextTrackCue.h"
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TypeCasts.h>
+
+namespace JSC {
+class ArrayBuffer;
+class JSValue;
+}
 
 namespace WebCore {
 
@@ -72,7 +75,6 @@ public:
     }
 
     virtual ~DataCue();
-    CueType cueType() const override { return Data; }
 
     RefPtr<JSC::ArrayBuffer> data() const;
     void setData(JSC::ArrayBuffer&);
@@ -85,12 +87,6 @@ public:
     String type() const { return m_type; }
     void setType(const String& type) { m_type = type; }
 
-    bool isEqual(const TextTrackCue&, CueMatchRules) const override;
-    bool cueContentsMatch(const TextTrackCue&) const override;
-    bool doesExtendCue(const TextTrackCue&) const override;
-
-    String toJSONString() const;
-
 private:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
@@ -98,6 +94,9 @@ private:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
 
     JSC::JSValue valueOrNull() const;
+    CueType cueType() const final { return Data; }
+    bool cueContentsMatch(const TextTrackCue&) const final;
+    void toJSON(JSON::Object&) const final;
 
     RefPtr<ArrayBuffer> m_data;
     String m_type;
@@ -108,23 +107,11 @@ private:
     JSC::Strong<JSC::Unknown> m_value;
 };
 
-DataCue* toDataCue(TextTrackCue*);
-const DataCue* toDataCue(const TextTrackCue*);
-
 } // namespace WebCore
 
 namespace WTF {
 
-template<typename Type>
-struct LogArgument;
-
-template <>
-struct LogArgument<WebCore::DataCue> {
-    static String toString(const WebCore::DataCue& cue)
-    {
-        return cue.toJSONString();
-    }
-};
+template<> struct LogArgument<WebCore::DataCue> : LogArgument<WebCore::TextTrackCue> { };
 
 }
 

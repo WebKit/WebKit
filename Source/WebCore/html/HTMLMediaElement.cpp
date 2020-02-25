@@ -2031,11 +2031,11 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     m_cueData->cueTree.remove(interval);
 
     // Since the cue will be removed from the media element and likely the
-    // TextTrack might also be destructed, notifying the region of the cue
+    // TextTrack might also be destroyed, notifying the region of the cue
     // removal shouldn't be done.
     auto isVTT = is<VTTCue>(cue);
     if (isVTT)
-        toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(false);
+        downcast<VTTCue>(cue).notifyRegionWhenRemovingDisplayTree(false);
 
     size_t index = m_cueData->currentlyActiveCues.find(interval);
     if (index != notFound) {
@@ -2047,7 +2047,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     updateActiveTextTrackCues(currentMediaTime());
 
     if (isVTT)
-        toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(true);
+        downcast<VTTCue>(cue).notifyRegionWhenRemovingDisplayTree(true);
 }
 
 CueList HTMLMediaElement::currentlyActiveCues() const

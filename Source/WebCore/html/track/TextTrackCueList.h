@@ -57,11 +57,6 @@ private:
     RefPtr<TextTrackCueList> m_activeCues;
 };
 
-inline Ref<TextTrackCueList> TextTrackCueList::create()
-{
-    return adoptRef(*new TextTrackCueList);
-}
-
 inline unsigned TextTrackCueList::length() const
 {
     return m_vector.size();

@@ -47,8 +47,6 @@
 #include "AudioTrack.h"
 #include "CaptionUserPreferences.h"
 #include "TextTrack.h"
-#include "TextTrackCue.h"
-#include "VTTCue.h"
 #include "VideoTrack.h"
 #endif
 

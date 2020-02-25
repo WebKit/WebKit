@@ -199,16 +199,20 @@ void TextTrackLoader::fileFailedToParse()
     cancelLoad();
 }
 
-void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues)
+Vector<Ref<VTTCue>> TextTrackLoader::getNewCues()
 {
     ASSERT(m_cueParser);
-    if (m_cueParser) {
-        Vector<RefPtr<WebVTTCueData>> newCues;
-        m_cueParser->getNewCues(newCues);
+    if (!m_cueParser)
+        return { };
 
-        for (auto& cueData : newCues)
-            outputCues.append(VTTCue::create(*m_scriptExecutionContext, *cueData));
-    }
+    Vector<RefPtr<WebVTTCueData>> newCues;
+    m_cueParser->getNewCues(newCues);
+
+    Vector<Ref<VTTCue>> result;
+    result.reserveInitialCapacity(newCues.size());
+    for (auto& cueData : newCues)
+        result.uncheckedAppend(VTTCue::create(*m_scriptExecutionContext, *cueData));
+    return result;
 }
 
 void TextTrackLoader::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)

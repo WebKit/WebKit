@@ -33,7 +33,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "HTMLElement.h"
 #include <wtf/JSONValues.h>
@@ -107,13 +106,12 @@ public:
     virtual bool isRenderable() const;
 
     enum CueMatchRules { MatchAllFields, IgnoreDuration };
-    virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
-    virtual bool doesExtendCue(const TextTrackCue&) const;
+    bool isEqual(const TextTrackCue&, CueMatchRules) const;
 
     void willChange();
     virtual void didChange();
 
-    virtual RefPtr<TextTrackCueBox> getDisplayTree(const IntSize&, int);
+    virtual RefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize, int fontSize);
     virtual void removeDisplayTree();
 
     virtual RefPtr<DocumentFragment> getCueAsHTML();
@@ -124,20 +122,22 @@ public:
     using RefCounted::deref;
 
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
-    virtual void setFontSize(int, const IntSize&, bool important);
-    virtual void updateDisplayTree(const MediaTime&) { };
+    virtual void setFontSize(int fontSize, const IntSize& videoSize, bool important);
+    virtual void updateDisplayTree(const MediaTime&) { }
 
     unsigned cueIndex() const;
 
 protected:
-    TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, DocumentFragment&&);
     TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end);
 
-    Document& ownerDocument() { return downcast<Document>(m_scriptExecutionContext); }
+    Document& ownerDocument() { return m_document; }
 
+    virtual bool cueContentsMatch(const TextTrackCue&) const;
     virtual void toJSON(JSON::Object&) const;
 
 private:
+    TextTrackCue(Document&, const MediaTime& start, const MediaTime& end, Ref<DocumentFragment>&&);
+
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -145,9 +145,7 @@ private:
     void dispatchEvent(Event&) final;
 
     EventTargetInterface eventTargetInterface() const final { return TextTrackCueEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
-
-    virtual bool cueContentsMatch(const TextTrackCue&) const;
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     void rebuildDisplayTree();
 
@@ -158,7 +156,7 @@ private:
 
     TextTrack* m_track { nullptr };
 
-    ScriptExecutionContext& m_scriptExecutionContext;
+    Document& m_document;
 
     RefPtr<DocumentFragment> m_cueNode;
     RefPtr<TextTrackCueBox> m_displayTree;

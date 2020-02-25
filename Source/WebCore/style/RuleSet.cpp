@@ -43,10 +43,6 @@
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrackCue.h"
-#endif
-
 namespace WebCore {
 namespace Style {
 

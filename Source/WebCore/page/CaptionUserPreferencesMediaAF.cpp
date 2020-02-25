@@ -39,7 +39,6 @@
 #include "MediaControlElements.h"
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
-#include "VTTCue.h"
 #include <algorithm>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>

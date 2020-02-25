@@ -34,6 +34,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "DataCue.h"
 #include "Document.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
@@ -301,7 +302,7 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
     // If a DataCue is added to a TextTrack via the addCue() method but the text track does not have its text
     // track kind set to metadata, throw a InvalidNodeTypeError exception and don't add the cue to the TextTrackList
     // of the TextTrack.
-    if (cue->cueType() == TextTrackCue::Data && m_kind != Kind::Metadata)
+    if (is<DataCue>(cue.get()) && m_kind != Kind::Metadata)
         return Exception { InvalidNodeTypeError };
 
     INFO_LOG(LOGIDENTIFIER, cue.get());

@@ -43,7 +43,6 @@ LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind
     : TextTrack(&track.document(), &track, kind, emptyString(), label, language, TrackElement)
     , m_trackElement(&track)
     , m_loadTimer(*this, &LoadableTextTrack::loadTimerFired)
-    , m_isDefault(false)
 {
 }
 
@@ -93,16 +92,13 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
 {
     ASSERT_UNUSED(loader, m_loader.get() == &loader);
 
-    Vector<RefPtr<TextTrackCue>> newCues;
-    m_loader->getNewCues(newCues);
-
     if (!m_cues)
         m_cues = TextTrackCueList::create();    
 
-    for (auto& newCue : newCues) {
+    for (auto& newCue : m_loader->getNewCues()) {
         newCue->setTrack(this);
-        INFO_LOG(LOGIDENTIFIER, *toVTTCue(newCue.get()));
-        m_cues->add(newCue.releaseNonNull());
+        INFO_LOG(LOGIDENTIFIER, newCue.get());
+        m_cues->add(WTFMove(newCue));
     }
 
     if (client())
