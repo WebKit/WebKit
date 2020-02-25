@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -89,7 +90,7 @@ struct Cookie {
     String path;
     // Creation and expiration dates are expressed as milliseconds since the UNIX epoch.
     double created { 0 };
-    double expires { 0 };
+    Optional<double> expires;
     bool httpOnly { false };
     bool secure { false };
     bool session { false };

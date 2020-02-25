@@ -84,6 +84,14 @@ static double cookieCreated(NSHTTPCookie *cookie)
     return 0;
 }
 
+static Optional<double> cookieExpiry(NSHTTPCookie *cookie)
+{
+    NSDate *expiryDate = cookie.expiresDate;
+    if (!expiryDate)
+        return WTF::nullopt;
+    return [expiryDate timeIntervalSince1970] * 1000.0;
+}
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
@@ -120,7 +128,7 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , domain { cookie.domain }
     , path { cookie.path }
     , created { cookieCreated(cookie) }
-    , expires { [cookie.expiresDate timeIntervalSince1970] * 1000.0 }
+    , expires { cookieExpiry(cookie) }
     , httpOnly { static_cast<bool>(cookie.HTTPOnly) }
     , secure { static_cast<bool>(cookie.secure) }
     , session { static_cast<bool>(cookie.sessionOnly) }
@@ -161,10 +169,10 @@ Cookie::operator NSHTTPCookie * _Nullable () const
     if (!value.isNull())
         [properties setObject:(NSString *)value forKey:NSHTTPCookieValue];
 
-    NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:expires / 1000.0];
-    auto maxAge = ceil([expirationDate timeIntervalSinceNow]);
-    if (maxAge > 0)
-        [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
+    if (expires) {
+        NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:*expires / 1000.0];
+        [properties setObject:expirationDate forKey:NSHTTPCookieExpires];
+    }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     [properties setObject:[NSNumber numberWithDouble:created / 1000.0 - NSTimeIntervalSince1970] forKey:@"Created"];

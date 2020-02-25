@@ -755,7 +755,7 @@ static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
         NSHTTPCookieValue: cookie.value,
         NSHTTPCookieDomain: cookie.domain,
         NSHTTPCookiePath: cookie.path,
-        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:(cookie.expires / 1000)],
+        NSHTTPCookieExpires: cookie.expires ? [NSDate dateWithTimeIntervalSince1970:(*cookie.expires / 1000)] : nil,
     }];
     if (cookie.secure)
         [properties setObject:@YES forKey:NSHTTPCookieSecure];

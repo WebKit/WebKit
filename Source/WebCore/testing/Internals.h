@@ -851,7 +851,7 @@ public:
             : name(cookie.name)
             , value(cookie.value)
             , domain(cookie.domain)
-            , expires(cookie.expires)
+            , expires(cookie.expires.valueOr(0))
             , isHttpOnly(cookie.httpOnly)
             , isSecure(cookie.secure)
             , isSession(cookie.session)

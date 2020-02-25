@@ -1,3 +1,15 @@
+2020-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Regression(CookieCache) Hang and very high CPU usage on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=208166
+        <rdar://problem/59739735>
+
+        Reviewed by Alex Christensen.
+
+        Re-enable the in-process cookie cache now that the bug on nytimes.com has been fixed.
+
+        * Shared/WebPreferences.yaml:
+
 2020-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop using gtk foreign drawing API to style form controls

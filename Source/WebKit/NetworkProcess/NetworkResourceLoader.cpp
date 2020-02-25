@@ -1274,7 +1274,7 @@ static void logCookieInformationInternal(NetworkConnectionToWebProcess& connecti
         LOCAL_LOG(R"(    "domain": "%{public}s",)", escapedDomain.utf8().data());
         LOCAL_LOG(R"(    "path": "%{public}s",)", escapedPath.utf8().data());
         LOCAL_LOG(R"(    "created": %f,)", cookie.created);
-        LOCAL_LOG(R"(    "expires": %f,)", cookie.expires);
+        LOCAL_LOG(R"(    "expires": %f,)", cookie.expires.valueOr(0));
         LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
         LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
         LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");

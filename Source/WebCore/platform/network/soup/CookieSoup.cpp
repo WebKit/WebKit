@@ -69,7 +69,7 @@ Cookie::Cookie(SoupCookie* cookie)
     , value(String::fromUTF8(cookie->value))
     , domain(String::fromUTF8(cookie->domain))
     , path(String::fromUTF8(cookie->path))
-    , expires(cookie->expires ? static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000 : 0)
+    , expires(cookie->expires ? makeOptional(static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000) : WTF::nullopt)
     , httpOnly(cookie->http_only)
     , secure(cookie->secure)
     , session(!cookie->expires)
@@ -105,8 +105,8 @@ SoupCookie* Cookie::toSoupCookie() const
     soup_cookie_set_same_site_policy(soupCookie, soupSameSitePolicy(sameSite));
 #endif
 
-    if (!session) {
-        SoupDate* date = msToSoupDate(expires);
+    if (!session && expires) {
+        SoupDate* date = msToSoupDate(*expires);
         soup_cookie_set_expires(soupCookie, date);
         soup_date_free(date);
     }

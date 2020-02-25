@@ -488,7 +488,7 @@ static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie&
         .setValue(cookie.value)
         .setDomain(cookie.domain)
         .setPath(cookie.path)
-        .setExpires(cookie.expires)
+        .setExpires(cookie.expires.valueOr(0))
         .setSize((cookie.name.length() + cookie.value.length()))
         .setHttpOnly(cookie.httpOnly)
         .setSecure(cookie.secure)

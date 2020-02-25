@@ -1276,7 +1276,7 @@ static Ref<Inspector::Protocol::Automation::Cookie> buildObjectForCookie(const W
         .setValue(cookie.value)
         .setDomain(cookie.domain)
         .setPath(cookie.path)
-        .setExpires(cookie.expires ? cookie.expires / 1000 : 0)
+        .setExpires(cookie.expires ? *cookie.expires / 1000 : 0)
         .setSize((cookie.name.length() + cookie.value.length()))
         .setHttpOnly(cookie.httpOnly)
         .setSecure(cookie.secure)
