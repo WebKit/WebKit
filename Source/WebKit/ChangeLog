@@ -1,3 +1,18 @@
+2020-02-10  Daniel Bates  <dabates@apple.com>
+
+        Disallow setting base URL to a data or JavaScript URL
+        https://bugs.webkit.org/show_bug.cgi?id=207136
+
+        Reviewed by Brent Fulgham.
+
+        Apply base URL restrictions to apps linked to a future WebKit to avoid breaking existing apps.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldRestrictBaseURLSchemes): Added.
+        (-[WKWebView _setupPageConfiguration:]): Update settings.
+        * UIProcess/Cocoa/VersionChecks.h:
+
 2020-02-10  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebProcessProxy::shouldSendPendingMessage()
