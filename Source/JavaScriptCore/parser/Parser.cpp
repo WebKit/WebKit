@@ -5072,7 +5072,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     JSTokenLocation location(tokenLocation());
 
     int oldTokenStackDepth = context.unaryTokenStackDepth();
-    makeScopeExit([&] {
+    auto scopeExit = makeScopeExit([&] {
         ASSERT_UNUSED(oldTokenStackDepth, oldTokenStackDepth <= context.unaryTokenStackDepth());
     });
 

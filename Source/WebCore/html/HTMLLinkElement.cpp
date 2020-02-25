@@ -302,7 +302,7 @@ void HTMLLinkElement::process()
         {
             bool previous = m_isHandlingBeforeLoad;
             m_isHandlingBeforeLoad = true;
-            makeScopeExit([&] { m_isHandlingBeforeLoad = previous; });
+            auto scopeExit = makeScopeExit([&] { m_isHandlingBeforeLoad = previous; });
             if (!shouldLoadLink())
                 return;
         }

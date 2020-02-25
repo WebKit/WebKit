@@ -67,6 +67,8 @@ private:
     bool m_executeOnDestruction { true };
 };
 
+
+template<typename ExitFunction> ScopeExit<ExitFunction> makeScopeExit(ExitFunction&&) WARN_UNUSED_RETURN;
 template<typename ExitFunction>
 ScopeExit<ExitFunction> makeScopeExit(ExitFunction&& exitFunction)
 {
