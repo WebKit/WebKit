@@ -924,6 +924,7 @@ webkit.org/b/207559 fast/parser/parser-yield-timing.html [ Pass Failure ]
 
 # This seems to be indicative of a CFNetwork bug.
 webkit.org/b/207895 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Pass Failure ]
+webkit.org/b/208165 http/tests/cookies/document-cookie-after-showModalDialog.html [ Pass Failure ]
 
 webkit.org/b/207560 media/airplay-target-availability.html [ Pass Failure ]
 

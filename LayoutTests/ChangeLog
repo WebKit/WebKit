@@ -1,3 +1,9 @@
+2020-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark http/tests/cookies/document-cookie-after-showModalDialog.html as flaky on WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-02-24  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] fast/scrolling/overflow-scroll-past-max.html is flaky failing
