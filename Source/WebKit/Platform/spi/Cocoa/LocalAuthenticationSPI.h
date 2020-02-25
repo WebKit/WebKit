@@ -29,7 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <LocalAuthentication/LocalAuthentication_Private.h>
+#import <LocalAuthentication/LAContext+Private.h>
 
 #else
 
