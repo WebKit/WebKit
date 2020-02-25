@@ -239,7 +239,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             m_resource->responseReceived(opaqueRedirectedResponse);
             if (reachedTerminalState()) {
                 RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: reached terminal state (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
-                return;
+                return completionHandler(WTFMove(newRequest));
             }
 
             RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: resource load completed (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
