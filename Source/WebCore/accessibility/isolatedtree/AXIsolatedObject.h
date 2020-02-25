@@ -689,6 +689,7 @@ private:
     bool isAccessibilitySVGRoot() const override;
     bool isAccessibilitySVGElement() const override;
     bool isAccessibilityTableInstance() const override;
+    bool isAccessibilityProgressIndicatorInstance() const override;
     bool isAttachmentElement() const override;
     bool isNativeImage() const override;
     bool isImageButton() const override;

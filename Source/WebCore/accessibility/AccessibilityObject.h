@@ -114,6 +114,7 @@ public:
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
+    bool isAccessibilityProgressIndicatorInstance() const override { return false; }
 
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }

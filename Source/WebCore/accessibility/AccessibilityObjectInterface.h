@@ -489,6 +489,7 @@ public:
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
+    virtual bool isAccessibilityProgressIndicatorInstance() const = 0;
 
     virtual bool isAttachmentElement() const = 0;
     virtual bool isHeading() const = 0;

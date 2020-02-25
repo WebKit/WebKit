@@ -71,25 +71,27 @@ String AccessibilityProgressIndicator::valueDescription() const
 
 #if ENABLE(METER_ELEMENT)
     if (!m_renderer->isMeter())
-        return String();
+        return description;
 
     HTMLMeterElement* meter = meterElement();
     if (!meter)
-        return String();
+        return description;
 
     // The HTML spec encourages authors to include a textual representation of the meter's state in
     // the element's contents. We'll fall back on that if there is not a more accessible alternative.
     AccessibilityObject* axMeter = axObjectCache()->getOrCreate(meter);
-    if (is<AccessibilityNodeObject>(axMeter)) {
+    if (is<AccessibilityNodeObject>(axMeter))
         description = downcast<AccessibilityNodeObject>(axMeter)->accessibilityDescriptionForChildren();
-        if (!description.isEmpty())
-            return description;
-    }
 
-    return meter->textContent();
+    if (description.isEmpty())
+        description = meter->textContent();
+
+    String gaugeRegionValue = gaugeRegionValueDescription();
+    if (!gaugeRegionValue.isEmpty())
+        description = description.isEmpty() ? gaugeRegionValue : description + ", " + gaugeRegionValue;
 #endif
 
-    return String();
+    return description;
 }
 
 float AccessibilityProgressIndicator::valueForRange() const

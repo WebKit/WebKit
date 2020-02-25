@@ -97,6 +97,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsMenuListOption, object.isMenuListOption());
     setProperty(AXPropertyName::IsMenuListPopup, object.isMenuListPopup());
     setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
+    setProperty(AXPropertyName::IsMeter, object.isMeter());
     setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
     setProperty(AXPropertyName::IsOffScreen, object.isOffScreen());
     setProperty(AXPropertyName::IsOnScreen, object.isOnScreen());
@@ -931,6 +932,12 @@ bool AXIsolatedObject::isAccessibilitySVGElement() const
 }
 
 bool AXIsolatedObject::isAccessibilityTableInstance() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isAccessibilityProgressIndicatorInstance() const
 {
     ASSERT_NOT_REACHED();
     return false;

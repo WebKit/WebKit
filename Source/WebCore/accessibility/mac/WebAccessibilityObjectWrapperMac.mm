@@ -2325,29 +2325,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     });
 }
 
-- (NSString *)valueDescriptionForMeter
-{
-    if (!self.axBackingObject)
-        return nil;
-    
-    String valueDescription = self.axBackingObject->valueDescription();
-#if ENABLE(METER_ELEMENT)
-    if (!is<AccessibilityProgressIndicator>(self.axBackingObject))
-        return valueDescription;
-    auto &meter = downcast<AccessibilityProgressIndicator>(*self.axBackingObject);
-    String gaugeRegionValue = meter.gaugeRegionValueDescription();
-    if (!gaugeRegionValue.isEmpty()) {
-        StringBuilder builder;
-        builder.append(valueDescription);
-        if (builder.length())
-            builder.appendLiteral(", ");
-        builder.append(gaugeRegionValue);
-        return builder.toString();
-    }
-#endif
-    return valueDescription;
-}
-
 - (id)windowElement:(NSString*)attributeName
 {
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([attributeName, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
@@ -2943,11 +2920,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute]) {
-        if (backingObject->isMeter())
-            return [self valueDescriptionForMeter];
+    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute])
         return backingObject->valueDescription();
-    }
 
     if ([attributeName isEqualToString:NSAccessibilityOrientationAttribute]) {
         AccessibilityOrientation elementOrientation = backingObject->orientation();
