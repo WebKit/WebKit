@@ -1,5 +1,19 @@
 2020-02-25  Youenn Fablet  <youenn@apple.com>
 
+        Allow GPU Process to capture microphone in the background
+        https://bugs.webkit.org/show_bug.cgi?id=208193
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist:
+        Add audio background mode and can inherit key, as done for WebProcess.
+        * Scripts/process-entitlements.sh:
+        Add entitlement to start audio capture in a background process.
+
+2020-02-25  Youenn Fablet  <youenn@apple.com>
+
         Pass UIProcess PID to GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=208197
 
