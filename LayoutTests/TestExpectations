@@ -3356,11 +3356,21 @@ webkit.org/b/197673 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.0/deqp [ Skip ]
 
-# webkit.org/b/208078 To-be-addressed WebGL 2 tests that generate inconsistent results
-webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Skip ]
-webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Skip ]
-webgl/2.0.0/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source.html [ Skip ]
-webgl/2.0.0/conformance2/buffers/get-buffer-sub-data.html [ Skip ]
+# webkit.org/b/208078 To-be-addressed WebGL 2 tests that generate inconsistent results between devices
+webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
+webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Pass Failure ]
+webgl/2.0.0/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source.html [ Pass Failure ]
+webgl/2.0.0/conformance2/buffers/get-buffer-sub-data.html [ Pass Failure ]
+
+# webkit.org/b/208211 Additional inconsitencies between Intel bots and AMD machine
+webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Pass Failure ]
+webgl/2.0.0/conformance/extensions/angle-instanced-arrays.html [ Pass Failure ]
+webgl/2.0.0/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
+webgl/2.0.0/conformance2/rendering/clipping-wide-points.html [ Pass Failure ]
+webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Pass Failure ]
+
+# WebGL 2 To-be-implemented flaky tests
+webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Pass Failure ]
 
 # To-be-addressed WebGL 2 Timeouts
 webgl/2.0.0/conformance/context/context-creation-and-destruction.html [ Skip ]

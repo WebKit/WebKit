@@ -1,3 +1,20 @@
+2020-02-25  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] More 2.0.0 conformance suite gardening after ANGLE rollout
+        https://bugs.webkit.org/show_bug.cgi?id=208211
+
+        Unreviewed test gardening.
+
+        Mark one more unsupported test as flaky, and add in Intel graphics-specific results for 
+        5 tests that were failing consistently across all bots.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance/buffers/buffer-uninitialized-expected.txt:
+        * webgl/2.0.0/conformance/extensions/angle-instanced-arrays-expected.txt:
+        * webgl/2.0.0/conformance/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit-expected.txt:
+
 2020-02-25  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] compositing/video/video-clip-change-src.html is flaky failing.
