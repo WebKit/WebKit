@@ -110,6 +110,8 @@ GPUProcessProxy& GPUProcessProxy::singleton()
             SandboxExtension::createHandleForMachLookup("com.apple.tccd", WTF::nullopt, parameters.tccSandboxExtensionHandle);
 #endif
 #endif
+        parameters.parentPID = getCurrentProcessID();
+
         // Initialize the GPU process.
         gpuProcess->send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
         gpuProcess->updateProcessAssertion();

@@ -42,6 +42,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockAudioSharedUnit.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
@@ -121,6 +122,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     SandboxExtension::consumePermanently(parameters.tccSandboxExtensionHandle);
 #endif
 #endif
+
+    WebCore::setPresentingApplicationPID(parameters.parentPID);
 }
 
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)

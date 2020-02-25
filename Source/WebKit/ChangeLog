@@ -1,5 +1,24 @@
 2020-02-25  Youenn Fablet  <youenn@apple.com>
 
+        Pass UIProcess PID to GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=208197
+
+        Reviewed by Eric Carlson.
+
+        Parent PID is needed for PID forwarding done in MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary.
+        Send it from UIProcess to GPUProcess and initialize it at creation time of GPUProcess singleton.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::singleton):
+
+2020-02-25  Youenn Fablet  <youenn@apple.com>
+
         Change DTMF and mDNS candidates feature flags from experimental to internal
         https://bugs.webkit.org/show_bug.cgi?id=208131
 

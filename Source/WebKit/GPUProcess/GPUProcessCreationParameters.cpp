@@ -49,6 +49,7 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << tccSandboxExtensionHandle;
 #endif
 #endif
+    encoder << parentPID;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -65,6 +66,8 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
         return false;
 #endif
 #endif
+    if (!decoder.decode(result.parentPID))
+        return false;
     return true;
 }
 
