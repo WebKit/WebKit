@@ -2986,8 +2986,11 @@ void Page::recomputeTextAutoSizingInAllFrames()
         if (auto* renderView = document.renderView()) {
             for (auto& renderer : descendantsOfType<RenderElement>(*renderView)) {
                 if (auto* element = renderer.element()) {
-                    if (Style::Adjuster::adjustForTextAutosizing(renderer.mutableStyle(), *element))
-                        renderer.setNeedsLayout();
+                    if (auto adjustment = Style::Adjuster::adjustmentForTextAutosizing(renderer.style(), *element)) {
+                        auto newStyle = RenderStyle::clone(renderer.style());
+                        Style::Adjuster::adjustForTextAutosizing(newStyle, *element, adjustment);
+                        renderer.setStyle(WTFMove(newStyle));
+                    }
                 }
             }
         }

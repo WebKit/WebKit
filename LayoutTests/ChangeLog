@@ -1,3 +1,14 @@
+2020-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPadOS] REGRESSION(r247667): Autosizing style changes don't invalidate RenderText's preferred logical widths
+        https://bugs.webkit.org/show_bug.cgi?id=208084
+        <rdar://problem/59463898>
+
+        Reviewed by Darin Adler.
+
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout-expected.html: Added.
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout.html: Added.
+
 2020-02-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Do not create a formatting context for empty subtree in TableFormattingContext::computePreferredWidthForColumns
