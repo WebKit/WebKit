@@ -606,7 +606,7 @@ WebRTCDTMFEnabled:
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC DTMF"
   humanReadableDescription: "Enable WebRTC DTMF"
-  category: experimental
+  category: internal
 
 WebRTCH264SimulcastEnabled:
   type: bool
@@ -623,7 +623,7 @@ WebRTCMDNSICECandidatesEnabled:
   humanReadableName: "WebRTC mDNS ICE candidates"
   humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
   webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
+  category: internal
   condition: ENABLE(WEB_RTC)
 
 UseLegacyTextAlignPositionedElementBehavior:
