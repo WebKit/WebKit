@@ -1,3 +1,15 @@
+2020-02-25  Philippe Normand  <pnormand@igalia.com>
+
+        [Linux] StackTrace symbols are not demangled
+        https://bugs.webkit.org/show_bug.cgi?id=207933
+
+        Reviewed by Yusuke Suzuki.
+
+        Demangle symbols provided by backtrace_symbols.
+
+        * wtf/StackTrace.cpp:
+        (WTF::StackTrace::dump const):
+
 2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add tests for CompactRefPtrTuple
