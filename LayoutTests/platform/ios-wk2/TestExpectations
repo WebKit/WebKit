@@ -1066,9 +1066,6 @@ webkit.org/b/155947 [ Debug ] fast/loader/scroll-position-restored-on-back.html 
 webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/155948 legacy-animation-engine/transitions/cancel-transition.html [ Pass Failure ]
 
-webkit.org/b/189686 webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ]
-webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ]
-
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary.html [ Pass Timeout ]
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Pass Timeout ]
 
@@ -1278,8 +1275,6 @@ webkit.org/b/190848 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/190850 [ Debug ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ] 
 
-webkit.org/b/189641 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
-
 # FIXME: Unskip these tests once we have the fix for <rdar://problem/44930119>.
 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Skip ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Skip ]
@@ -1425,3 +1420,6 @@ webkit.org/b/208030 http/tests/workers/service/registration-clear-redundant-work
 webkit.org/b/207038 compositing/webgl/webgl-reflection.html [ Pass Failure ]
 
 webkit.org/b/208081 http/tests/workers/service/Client-properties-auxiliary.html [ Pass Timeout ]
+
+# webkit.org/b/208078 Continue to skip 2.0.0 on iOS WK2 until discrepancies can be addressed
+webgl/2.0.0 [ Skip ]

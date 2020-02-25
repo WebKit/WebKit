@@ -1,3 +1,21 @@
+2020-02-24  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Unskip runnable WebGL 2.0.0 conformance suite for mac
+        https://bugs.webkit.org/show_bug.cgi?id=208078
+
+        Unreviewed test gardening.
+
+        Actually run WebGL 2 tests. Update expectations for ANGLE backend.
+
+        * TestExpectations: Unskip non-DEQP WebGL 2.0.0 tests that do not crash nor timeout.
+        * platform/ios-wk2/TestExpectations: Continue to skip 2.0.0 on iOS WK2 until discrepancies can be addressed.
+        * webgl/2.0.0/conformance2/renderbuffers/framebuffer-object-attachment-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-test-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/rgb-format-support-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit-expected.txt:
+
 2020-02-24  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Debug ] is inspector/dom-debugger/attribute-modified-style.html is flaky crashing.

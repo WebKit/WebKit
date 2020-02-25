@@ -5,12 +5,12 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/invalidate-fra
 [ 2: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
 [ 3: PASS ] getError was expected value: NO_ERROR : calling invalidateSubFramebuffer to invalidate an incomplete attachment will be ignored. There should be no errors
 [ 4: PASS ] getError was expected value: NO_ERROR : calling invalidateFramebuffer to invalidate an incomplete attachment will be ignored. There should be no errors.
-[ 5: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors after attaching a multi-sampled renderbuffer to fbo.
+[ 5: PASS ] getError was expected value: NO_ERROR : should be no errors after attaching a multi-sampled renderbuffer to fbo.
 [ 6: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-[ 7: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : calling invalidateSubFramebuffer to invalidate an incomplete attachment will be ignored. There should be no errors
+[ 7: PASS ] getError was expected value: NO_ERROR : calling invalidateSubFramebuffer to invalidate an incomplete attachment will be ignored. There should be no errors
 [ 8: PASS ] getError was expected value: NO_ERROR : calling invalidateFramebuffer to invalidate an incomplete attachment will be ignored. There should be no errors.
-[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors after attaching a renderbuffer to fbo.
-[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_FRAMEBUFFER_OPERATION : calling invalidateSubFramebuffer to invalidate a specified attachment that does not exist will be ignored. There should be no errors.
+[ 9: PASS ] getError was expected value: NO_ERROR : should be no errors after attaching a renderbuffer to fbo.
+[ 10: PASS ] getError was expected value: NO_ERROR : calling invalidateSubFramebuffer to invalidate a specified attachment that does not exist will be ignored. There should be no errors.
 [ 11: PASS ] getError was expected value: NO_ERROR : calling invalidateSubFramebuffer should succeed.
 [ 12: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : calling invalidateSubFramebuffer should generate INVALID_VALUE if width < 0 or height < 0.
 [ 13: PASS ] getError was expected value: NO_ERROR : calling invalidateSubFramebuffer should succeed, even the invalidated pixels may be outside of the framebuffer allocated to current context. These pixels are ignored.
@@ -36,5 +36,5 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/invalidate-fra
 [ 33: PASS ] getError was expected value: NO_ERROR : calling invalidateFramebuffer to invalidate a specified attachment that does not exist will be ignored. There should be no errors.
 [ 34: PASS ] getError was expected value: NO_ERROR : calling invalidateFramebuffer should succeed.
 [ 35: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
+[ FAIL ] 5 failures reported
 
