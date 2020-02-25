@@ -890,6 +890,21 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 
 #endif
 
+std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize&, RenderingMode renderingMode, float, ColorSpace) const
+{
+    switch (renderingMode) {
+    case RenderingMode::RemoteAccelerated:
+    case RenderingMode::RemoteUnaccelerated:
+        // FIXME: Create the remote ImageBuffer
+        return nullptr;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return nullptr;
+}
+
 void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* layer)
 {
     if (layer)

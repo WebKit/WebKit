@@ -83,6 +83,8 @@ public:
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 
+    std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float resolutionScale, ColorSpace) const override;
+
     void scheduleAnimation() override { }
 
     PlatformDisplayID displayID() const override;

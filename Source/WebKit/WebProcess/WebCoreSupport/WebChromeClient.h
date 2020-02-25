@@ -123,6 +123,8 @@ private:
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
 
+    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace) const final;
+
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
     PlatformPageClient platformPageClient() const final;

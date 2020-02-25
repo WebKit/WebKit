@@ -36,6 +36,7 @@
 #include "HTMLMediaElementEnums.h"
 #include "HostWindow.h"
 #include "Icon.h"
+#include "ImageBuffer.h"
 #include "InputMode.h"
 #include "MediaProducer.h"
 #include "PopupMenu.h"
@@ -304,6 +305,8 @@ public:
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
 #endif
+
+    virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float, ColorSpace) const { return nullptr; }
 
     // Pass nullptr as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(Frame&, GraphicsLayer*) = 0;

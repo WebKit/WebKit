@@ -29,6 +29,7 @@
 #include "ImageBuffer.h"
 
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "ImageData.h"
 #include "PlatformImageBuffer.h"
 
@@ -40,7 +41,7 @@ static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
 {
     std::unique_ptr<ImageBuffer> imageBuffer;
-    
+
     switch (renderingMode) {
     case RenderingMode::Accelerated:
         imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
@@ -49,13 +50,19 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, Renderin
         if (!imageBuffer)
             imageBuffer = UnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
         break;
-            
+
     case RenderingMode::DisplayListAccelerated:
         imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
         FALLTHROUGH;
     case RenderingMode::DisplayListUnaccelerated:
         if (!imageBuffer)
             imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, hostWindow);
+        break;
+
+    case RenderingMode::RemoteAccelerated:
+    case RenderingMode::RemoteUnaccelerated:
+        if (hostWindow)
+            imageBuffer = hostWindow->createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
         break;
     }
 
@@ -74,13 +81,18 @@ std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const Gr
         if (!imageBuffer)
             imageBuffer = UnacceleratedImageBuffer::create(size, context);
         break;
-            
+
     case RenderingMode::DisplayListAccelerated:
         imageBuffer = DisplayListAcceleratedImageBuffer::create(size, context);
         FALLTHROUGH;
     case RenderingMode::DisplayListUnaccelerated:
         if (!imageBuffer)
             imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, context);
+        break;
+
+    case RenderingMode::RemoteUnaccelerated:
+    case RenderingMode::RemoteAccelerated:
+        ASSERT_NOT_REACHED();
         break;
     }
 

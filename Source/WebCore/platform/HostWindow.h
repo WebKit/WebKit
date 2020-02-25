@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HostWindow_h
-#define HostWindow_h
+#pragma once
 
 #include "Widget.h"
 
 namespace WebCore {
 
 class Cursor;
+class ImageBuffer;
+
+enum class ColorSpace : uint8_t;
+enum class RenderingMode : uint8_t;
 
 class HostWindow {
     WTF_MAKE_NONCOPYABLE(HostWindow); WTF_MAKE_FAST_ALLOCATED;
@@ -55,7 +58,9 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
-    
+
+    virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float resolutionScale, ColorSpace) const = 0;
+
     // Method for retrieving the native client of the page.
     virtual PlatformPageClient platformPageClient() const = 0;
     
@@ -75,5 +80,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // HostWindow_h
