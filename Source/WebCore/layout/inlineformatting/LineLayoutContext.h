@@ -46,7 +46,13 @@ public:
         };
         Optional<unsigned> trailingInlineItemIndex;
         Optional<PartialContent> partialContent;
-        Vector<const InlineItem*> floats;
+        struct Float {
+            enum class Intrusive { No, Yes };
+            Intrusive isIntrusive { Intrusive::Yes };
+            const InlineItem* item { nullptr };
+        };
+        using FloatList = Vector<Float>;
+        FloatList floats;
         const LineBuilder::RunList runList;
         const LineBoxBuilder lineBox;
     };
@@ -59,7 +65,7 @@ public:
     LineContent layoutLine(LineBuilder&, const InlineItemRange, Optional<unsigned> partialLeadingContentLength);
 
 private:
-    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
@@ -69,8 +75,9 @@ private:
         CommittedContentCount committedCount { };
         Optional <LineContent::PartialContent> partialContent { };
     };
-    Result tryAddingFloatContent(LineBuilder&, const LineCandidate&);
-    Result tryAddingInlineItems(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
+    enum class CommitIntrusiveFloatsOnly { No, Yes };
+    void commitFloats(LineBuilder&, const LineCandidate&, CommitIntrusiveFloatsOnly = CommitIntrusiveFloatsOnly::No);
+    Result handleFloatsAndInlineContent(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
     size_t rebuildLine(LineBuilder&, const InlineItemRange& layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
     LineContent close(LineBuilder&, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
@@ -83,8 +90,7 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const ContainerBox& m_formattingContextRoot;
     const InlineItems& m_inlineItems;
-    using FloatList = Vector<const InlineItem*>;
-    FloatList m_floats;
+    LineContent::FloatList m_floats;
     Optional<InlineTextItem> m_partialLeadingTextItem;
     const InlineItem* m_lastWrapOpportunityItem { nullptr };
     unsigned m_successiveHyphenatedLineCount { 0 };

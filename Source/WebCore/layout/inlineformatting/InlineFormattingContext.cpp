@@ -240,13 +240,10 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
     while (!layoutRange.isEmpty()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         lineBuilder.initialize(LineBuilder::Constraints { { }, horizontalConstraints.logicalWidth, false, { } });
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange , { });
-
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, { });
         layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
-        InlineLayoutUnit floatsWidth = 0;
-        for (auto& floatItem : lineContent.floats)
-            floatsWidth += geometryForBox(floatItem->layoutBox()).marginBoxWidth();
-        maximumLineWidth = std::max(maximumLineWidth, floatsWidth + lineContent.lineBox.logicalWidth());
+        // FIXME: Use line logical left and right to take floats into account.
+        maximumLineWidth = std::max(maximumLineWidth, lineContent.lineBox.logicalWidth());
     }
     return maximumLineWidth;
 }
@@ -437,11 +434,12 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
         // Move floats to their final position.
-        for (const auto& floatItem : lineContent.floats) {
-            auto& floatBox = floatItem->layoutBox();
+        for (const auto& floatCandidate : lineContent.floats) {
+            auto& floatBox = floatCandidate.item->layoutBox();
             auto& displayBox = formattingState.displayBox(floatBox);
             // Set static position first.
-            displayBox.setTopLeft({ lineBox.logicalLeft(), lineBox.logicalTop() });
+            auto verticalStaticPosition = floatCandidate.isIntrusive == LineLayoutContext::LineContent::Float::Intrusive::Yes ? lineBox.logicalTop() : lineBox.logicalBottom();
+            displayBox.setTopLeft({ lineBox.logicalLeft(), verticalStaticPosition });
             // Float it.
             displayBox.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
             floatingContext.append(floatBox);
