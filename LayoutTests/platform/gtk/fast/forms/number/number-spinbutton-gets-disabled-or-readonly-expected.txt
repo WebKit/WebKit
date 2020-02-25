@@ -8,19 +8,19 @@ To run this test manually, input any value in the input form and then click the 
 
 Test on a readonly number input form:
 delay = 1 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 delay = 10 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 delay = 100 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 
 Test on a disabled number input form:
 delay = 1 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 delay = 10 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 delay = 100 ms
-FAIL input.value should be 1234566. Was 1234568.
+PASS input.value is "1234566"
 PASS successfullyParsed is true
 
 TEST COMPLETE

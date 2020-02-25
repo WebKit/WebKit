@@ -7,11 +7,11 @@ Initial state
 PASS changeEventCounter is 0
 PASS inputEventCounter is 0
 Click the upper button
-FAIL testInput.value should be 1. Was -1.
+PASS testInput.value is "1"
 PASS changeEventCounter is 1
 PASS inputEventCounter is 1
 Click again, but the value is not changed.
-FAIL testInput.value should be 1. Was -1.
+PASS testInput.value is "1"
 PASS changeEventCounter is 1
 PASS inputEventCounter is 1
 Focus on another field

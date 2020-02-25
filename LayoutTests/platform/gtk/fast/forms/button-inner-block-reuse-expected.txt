@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 80: "descendants."
       RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,114) size 784x13
-        RenderButton {BUTTON} at (2,2) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,2) size 16x9 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 0x0
             RenderBlock (anonymous) at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0

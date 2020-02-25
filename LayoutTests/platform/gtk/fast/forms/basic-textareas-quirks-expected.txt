@@ -242,7 +242,7 @@ layer at (25,91) size 201x42 clip at (26,92) size 184x40 scrollHeight 76
         text run at (169,54) width 4: " "
 layer at (25,156) size 201x42 clip at (26,157) size 184x40 scrollHeight 76
   RenderTextControl {TEXTAREA} at (16,3) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 180x72 [color=#8B8E8F]
+    RenderBlock {DIV} at (3,3) size 180x72 [color=#545454]
       RenderText {#text} at (0,0) size 173x71
         text run at (0,0) width 132: "Lorem ipsum dolor"
         text run at (132,0) width 4: " "

@@ -18,14 +18,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 282x17
           text run at (0,0) width 282: "The first slider\x{2019}s thumb should be on the left."
-      RenderBlock {DIV} at (0,68) size 784x76
-        RenderSlider {INPUT} at (2,2) size 129x34 [color=#909090] [bgcolor=#FFFFFF]
-          RenderFlexibleBox {DIV} at (0,0) size 129x34
-            RenderBlock {DIV} at (0,0) size 129x34
-              RenderBlock {DIV} at (0,0) size 34x34
-        RenderBR {BR} at (133,36) size 0x0
-        RenderSlider {INPUT} at (2,40) size 129x34 [color=#909090] [bgcolor=#FFFFFF]
-          RenderFlexibleBox {DIV} at (0,0) size 129x34
-            RenderBlock {DIV} at (0,0) size 129x34
-              RenderBlock {DIV} at (95,0) size 34x34
+      RenderBlock {DIV} at (0,68) size 784x48
+        RenderSlider {INPUT} at (2,2) size 129x20 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x20
+            RenderBlock {DIV} at (0,0) size 129x20
+              RenderBlock {DIV} at (0,0) size 20x20
+        RenderBR {BR} at (133,22) size 0x0
+        RenderSlider {INPUT} at (2,26) size 129x20 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x20
+            RenderBlock {DIV} at (0,0) size 129x20
+              RenderBlock {DIV} at (109,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
