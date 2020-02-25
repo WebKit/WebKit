@@ -1,3 +1,12 @@
+2020-02-12  Youenn Fablet  <youenn@apple.com>
+
+        WebSWServerConnection::registerServiceWorkerClient is not sending IPC message to UIProcess when it should
+        https://bugs.webkit.org/show_bug.cgi?id=207537
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2020-02-11  Rob Buis  <rbuis@igalia.com>
 
         Bug 207424: Crash in WebCore::ParsedContentType::parseContentType when parsing invalid MIME type
