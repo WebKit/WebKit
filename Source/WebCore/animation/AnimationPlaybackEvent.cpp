@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : AnimationEventBase(type, initializer, isTrusted)
 {
     if (initializer.currentTime)
         m_currentTime = Seconds::fromMilliseconds(*initializer.currentTime);
@@ -47,10 +47,9 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
         m_timelineTime = WTF::nullopt;
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
-    : Event(type, CanBubble::Yes, IsCancelable::No)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime, WebAnimation* animation)
+    : AnimationEventBase(type, animation, timelineTime)
     , m_currentTime(currentTime)
-    , m_timelineTime(timelineTime)
 {
 }
 
@@ -65,9 +64,9 @@ Optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
 
 Optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
 {
-    if (!m_timelineTime)
+    if (!timelineTime())
         return WTF::nullopt;
-    return secondsToWebAnimationsAPITime(m_timelineTime.value());
+    return secondsToWebAnimationsAPITime(timelineTime().value());
 }
 
 } // namespace WebCore

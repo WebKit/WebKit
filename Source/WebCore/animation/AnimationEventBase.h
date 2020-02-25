@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,42 @@
 
 #pragma once
 
-#include "DeclarativeAnimation.h"
-#include <wtf/Ref.h>
+#include "Event.h"
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
-class Animation;
-class Element;
-class RenderStyle;
+class WebAnimation;
 
-class CSSAnimation final : public DeclarativeAnimation {
-    WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
+class AnimationEventBase : public Event {
+    WTF_MAKE_ISO_ALLOCATED(AnimationEventBase);
 public:
-    static Ref<CSSAnimation> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
-    ~CSSAnimation() = default;
+    static Ref<AnimationEventBase> create(const AtomString& type, WebAnimation* animation, Optional<Seconds> timelineTime)
+    {
+        return adoptRef(*new AnimationEventBase(type, animation, timelineTime));
+    }
 
-    bool isCSSAnimation() const override { return true; }
-    const String& animationName() const { return m_animationName; }
-    const RenderStyle& unanimatedStyle() const { return *m_unanimatedStyle; }
+    virtual ~AnimationEventBase();
 
-    ExceptionOr<void> bindingsPlay() final;
-    ExceptionOr<void> bindingsPause() final;
+    virtual bool isAnimationPlaybackEvent() const { return false; }
+    virtual bool isAnimationEvent() const { return false; }
+    virtual bool isTransitionEvent() const { return false; }
+
+    Optional<Seconds> timelineTime() const { return m_timelineTime; }
+    WebAnimation* animation() const { return m_animation.get(); }
 
 protected:
-    void syncPropertiesWithBackingAnimation() final;
-    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
+    AnimationEventBase(const AtomString&, WebAnimation*, Optional<Seconds>);
+    AnimationEventBase(const AtomString&, const EventInit&, IsTrusted);
 
-private:
-    CSSAnimation(Element&, const Animation&, const RenderStyle&);
-
-    String m_animationName;
-    std::unique_ptr<RenderStyle> m_unanimatedStyle;
-    bool m_stickyPaused { false };
+    RefPtr<WebAnimation> m_animation;
+    Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;
 };
 
-} // namespace WebCore
+}
 
-SPECIALIZE_TYPE_TRAITS_WEB_ANIMATION(CSSAnimation, isCSSAnimation())
+#define SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+static bool isType(const WebCore::AnimationEventBase& value) { return value.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+

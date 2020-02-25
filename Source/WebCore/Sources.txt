@@ -447,7 +447,7 @@ accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
 
 animation/AnimationEffect.cpp
-animation/KeyframeEffectStack.cpp
+animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
@@ -455,6 +455,7 @@ animation/CSSTransition.cpp
 animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
+animation/KeyframeEffectStack.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 
