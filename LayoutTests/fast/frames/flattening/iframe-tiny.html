@@ -12,6 +12,8 @@ function checkResult(frameName, expectedWidth, expectedHeight)
 {
     frame = document.getElementById(frameName);
     debug(frameName);
+    // Force layout on the subframe. See webkit.org/b/208161.
+    frame.style.whiteSpace = "pre-line";
     shouldBe("getComputedStyle(frame, 0).width", expectedWidth);
     shouldBe("getComputedStyle(frame, 0).height", expectedHeight);
 }

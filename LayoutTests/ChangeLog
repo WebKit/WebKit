@@ -1,3 +1,21 @@
+2020-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r257126): fast/frames/flattening/iframe-tiny.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=208055
+        <rdar://problem/59668089>
+
+        Reviewed by Simon Fraser.
+
+        In the frame flattening context when optional layout is delayed, getComputedStyle() might return
+        the un-flattened geometry unless the iframe element is forced to get laid out.
+        1. main frame content is loaded and laid out -> if the iframe content is not ready yet, we don't initiate iframe flattening.
+        2. iframe content is ready -> layout is scheduled.
+        3. getComputedStyle() is called which initiates a style update/layout on the main frame,
+           but only dirty boxes trigger layout (the iframe renderer itself is not dirty <- this is where frame flattening fails: webkit.org/b/208161)
+        4. getComputedStyle() returns with the "stale" geometry.
+
+        * fast/frames/flattening/iframe-tiny.html:
+
 2020-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark http/tests/cookies/document-cookie-after-showModalDialog.html as flaky on WK1.
