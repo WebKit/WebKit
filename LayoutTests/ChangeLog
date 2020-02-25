@@ -1,5 +1,18 @@
 2020-02-10  Antoine Quint  <graouts@webkit.org>
 
+        There's an event loop cycle between an animation finishing, and it being removed from GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=207361
+        <rdar://problem/59280370>
+
+        Reviewed by Simon Fraser.
+
+        Lower the number of frames to wait after an animation completes by one to check that the accelerated animation has been removed
+        to show that we enqueue accelerated actions as part of the "update animations and send events" procedure.
+
+        * webanimations/accelerated-animation-removal-upon-transition-completion.html: Added.
+
+2020-02-10  Antoine Quint  <graouts@webkit.org>
+
         [Web Animations] Fix animations/stop-animation-on-suspend.html
         https://bugs.webkit.org/show_bug.cgi?id=184580
         <rdar://problem/39406014>
