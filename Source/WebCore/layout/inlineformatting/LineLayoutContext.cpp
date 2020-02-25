@@ -333,7 +333,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const
             // We didn't manage to add a run or a float at this vertical position.
             return LineContent { { }, { }, WTFMove(m_floats), line.close(), line.lineBox() };
         }
-        auto trailingInlineItemIndex = layoutRange.start + m_floats.size();
+        unsigned trailingInlineItemIndex = layoutRange.start + m_floats.size();
         return LineContent { trailingInlineItemIndex, { }, WTFMove(m_floats), line.close(), line.lineBox() };
     }
     // Adjust hyphenated line count.
@@ -342,7 +342,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const
     else
         m_successiveHyphenatedLineCount = 0;
     ASSERT(committedInlineItemCount);
-    auto trailingInlineItemIndex = layoutRange.start + committedInlineItemCount + m_floats.size() - 1;
+    unsigned trailingInlineItemIndex = layoutRange.start + committedInlineItemCount + m_floats.size() - 1;
     ASSERT(trailingInlineItemIndex < layoutRange.end);
     auto isLastLineWithInlineContent = [&] {
         if (trailingInlineItemIndex == layoutRange.end - 1)
