@@ -1,3 +1,17 @@
+2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Do not use target/icu.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=208173
+
+        Reviewed by Don Olmstead.
+
+        icu.cmake is removed in r256731. Use find_package + ICU since WebKit offers find_package implementation
+        which can find appropriate system-installed ICU.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+
 2020-02-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build.
