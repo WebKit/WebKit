@@ -1,5 +1,94 @@
 2020-02-24  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r256967. rdar://problem/59654613
+
+    Regression(r247567) HTTP Disk cache capacity is no longer set
+    https://bugs.webkit.org/show_bug.cgi?id=207959
+    <rdar://problem/59603972>
+    
+    Reviewed by Alex Christensen.
+    
+    NetworkProcess::initializeNetworkProcess() was setting the cache model, which
+    would iterate over all network sessions to update their network cache capacity.
+    The issue was that network sessions were not constructed yet at this point.
+    When the network session(s) would get created later on, they would construct
+    their NetworkCache and it would use the default capacity (i.e.
+    std::numeric_limits<size_t>::max()).
+    
+    To make this safer, I have moved the capacity computation to the Cache::open()
+    method and now pass the capacity when constructing the network cache storage.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::initializeNetworkProcess):
+    (WebKit::NetworkProcess::setCacheModelSynchronouslyForTesting):
+    (WebKit::NetworkProcess::setCacheModel):
+    * NetworkProcess/NetworkProcess.h:
+    (WebKit::NetworkProcess::cacheModel const):
+    * NetworkProcess/NetworkProcess.messages.in:
+    * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+    (WebKit::CacheStorage::Caches::initialize):
+    * NetworkProcess/cache/NetworkCache.cpp:
+    (WebKit::NetworkCache::computeCapacity):
+    (WebKit::NetworkCache::Cache::open):
+    (WebKit::NetworkCache::Cache::capacity const):
+    (WebKit::NetworkCache::Cache::updateCapacity):
+    (WebKit::NetworkCache::Cache::setCapacity): Deleted.
+    * NetworkProcess/cache/NetworkCache.h:
+    * NetworkProcess/cache/NetworkCacheStorage.cpp:
+    (WebKit::NetworkCache::Storage::open):
+    (WebKit::NetworkCache::Storage::Storage):
+    (WebKit::NetworkCache::Storage::setCapacity):
+    * NetworkProcess/cache/NetworkCacheStorage.h:
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::setCacheModel):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256967 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-19  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r247567) HTTP Disk cache capacity is no longer set
+            https://bugs.webkit.org/show_bug.cgi?id=207959
+            <rdar://problem/59603972>
+
+            Reviewed by Alex Christensen.
+
+            NetworkProcess::initializeNetworkProcess() was setting the cache model, which
+            would iterate over all network sessions to update their network cache capacity.
+            The issue was that network sessions were not constructed yet at this point.
+            When the network session(s) would get created later on, they would construct
+            their NetworkCache and it would use the default capacity (i.e.
+            std::numeric_limits<size_t>::max()).
+
+            To make this safer, I have moved the capacity computation to the Cache::open()
+            method and now pass the capacity when constructing the network cache storage.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::initializeNetworkProcess):
+            (WebKit::NetworkProcess::setCacheModelSynchronouslyForTesting):
+            (WebKit::NetworkProcess::setCacheModel):
+            * NetworkProcess/NetworkProcess.h:
+            (WebKit::NetworkProcess::cacheModel const):
+            * NetworkProcess/NetworkProcess.messages.in:
+            * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+            (WebKit::CacheStorage::Caches::initialize):
+            * NetworkProcess/cache/NetworkCache.cpp:
+            (WebKit::NetworkCache::computeCapacity):
+            (WebKit::NetworkCache::Cache::open):
+            (WebKit::NetworkCache::Cache::capacity const):
+            (WebKit::NetworkCache::Cache::updateCapacity):
+            (WebKit::NetworkCache::Cache::setCapacity): Deleted.
+            * NetworkProcess/cache/NetworkCache.h:
+            * NetworkProcess/cache/NetworkCacheStorage.cpp:
+            (WebKit::NetworkCache::Storage::open):
+            (WebKit::NetworkCache::Storage::Storage):
+            (WebKit::NetworkCache::Storage::setCapacity):
+            * NetworkProcess/cache/NetworkCacheStorage.h:
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::setCacheModel):
+
+2020-02-24  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r256881. rdar://problem/59654579
 
     Drop getSandboxExtensionsForBlobFiles() as it is dead code

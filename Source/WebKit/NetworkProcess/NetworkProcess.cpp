@@ -321,7 +321,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         memoryPressureHandler.install();
     }
 
-    setCacheModel(parameters.cacheModel, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory);
+    setCacheModel(parameters.cacheModel);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
@@ -2005,11 +2005,11 @@ void NetworkProcess::continueDecidePendingDownloadDestination(DownloadID downloa
 
 void NetworkProcess::setCacheModelSynchronouslyForTesting(CacheModel cacheModel, CompletionHandler<void()>&& completionHandler)
 {
-    setCacheModel(cacheModel, { });
+    setCacheModel(cacheModel);
     completionHandler();
 }
 
-void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDirectory)
+void NetworkProcess::setCacheModel(CacheModel cacheModel)
 {
     if (m_hasSetCacheModel && (cacheModel == m_cacheModel))
         return;
@@ -2017,28 +2017,9 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel, String cacheStorageDir
     m_hasSetCacheModel = true;
     m_cacheModel = cacheModel;
 
-    unsigned urlCacheMemoryCapacity = 0;
-    uint64_t urlCacheDiskCapacity = 0;
-    uint64_t diskFreeSize = 0;
-
-    // FIXME: Move the cache model to WebsiteDataStore so we don't need to assume the first cache is on the same volume as all caches.
-    forEachNetworkSession([&](auto& session) {
-        if (!cacheStorageDirectory.isNull())
-            return;
+    forEachNetworkSession([](auto& session) {
         if (auto* cache = session.cache())
-            cacheStorageDirectory = cache->storageDirectory();
-    });
-
-    if (FileSystem::getVolumeFreeSpace(cacheStorageDirectory, diskFreeSize)) {
-        // As a fudge factor, use 1000 instead of 1024, in case the reported byte
-        // count doesn't align exactly to a megabyte boundary.
-        diskFreeSize /= KB * 1000;
-        calculateURLCacheSizes(cacheModel, diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
-    }
-
-    forEachNetworkSession([urlCacheDiskCapacity](auto& session) {
-        if (auto* cache = session.cache())
-            cache->setCapacity(urlCacheDiskCapacity);
+            cache->updateCapacity();
     });
 }
 
