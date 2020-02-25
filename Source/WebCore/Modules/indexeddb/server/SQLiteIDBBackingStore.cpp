@@ -689,7 +689,10 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
     if (currentSchema == v2ObjectStoreInfoSchema || currentSchema == createV2ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate))
         return { IsSchemaUpgraded::No };
 
-    RELEASE_ASSERT(currentSchema == createV1ObjectStoreInfoSchema(objectStoreInfoTableName) || currentSchema == createV1ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate));
+    if (currentSchema != createV1ObjectStoreInfoSchema(objectStoreInfoTableName) && currentSchema != createV1ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate)) {
+        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable: schema is invalid - %s", this, currentSchema.utf8().data());
+        return WTF::nullopt;
+    }
 
     // Drop column maxIndexID from table.
     SQLiteTransaction transaction(*m_sqliteDB);
