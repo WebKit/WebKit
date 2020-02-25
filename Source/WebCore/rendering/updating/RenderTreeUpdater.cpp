@@ -302,7 +302,10 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
         if (!m_document.view() || !m_document.view()->layoutContext().layoutTreeContent())
             return;
-        if (auto* layoutBox = m_document.view()->layoutContext().layoutTreeContent()->layoutBoxForRenderer(renderer))
+        auto& layoutContext = m_document.view()->layoutContext();
+        if (minimalStyleDifference >= StyleDifference::LayoutPositionedMovementOnly || renderer.needsLayout())
+            layoutContext.invalidateLayoutState();
+        if (auto* layoutBox = layoutContext.layoutTreeContent()->layoutBoxForRenderer(renderer))
             layoutBox->updateStyle(renderer.style());
     }
 #endif

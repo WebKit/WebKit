@@ -99,6 +99,11 @@ void FrameViewLayoutContext::invalidateLayoutTreeContent()
 {
     m_layoutTreeContent = nullptr;
 }
+
+void FrameViewLayoutContext::invalidateLayoutState()
+{
+    m_layoutState = nullptr;
+}
 #endif
 
 static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& descendant)

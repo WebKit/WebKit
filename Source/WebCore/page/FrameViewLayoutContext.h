@@ -120,6 +120,7 @@ public:
     const Layout::LayoutState* layoutFormattingState() const { return m_layoutState.get(); }
     Layout::LayoutTreeContent* layoutTreeContent() const { return m_layoutTreeContent.get(); }
     void invalidateLayoutTreeContent();
+    void invalidateLayoutState();
 #endif
 
 private:
