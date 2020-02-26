@@ -9327,6 +9327,7 @@
 		6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLTransformFeedback.h; sourceTree = "<group>"; };
 		6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObject.cpp; sourceTree = "<group>"; };
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
+		6FAE16BA2406DE7E00A48414 /* PrecomputedBlockMarginCollapse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrecomputedBlockMarginCollapse.cpp; sourceTree = "<group>"; };
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
 		6FB22E30230097E300C20866 /* TableGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableGrid.h; sourceTree = "<group>"; };
@@ -16767,6 +16768,7 @@
 				115CFA79208B8D9D001E6991 /* BlockFormattingState.cpp */,
 				115CFA78208B8D9D001E6991 /* BlockFormattingState.h */,
 				115CFA89208B921A001E6991 /* BlockMarginCollapse.cpp */,
+				6FAE16BA2406DE7E00A48414 /* PrecomputedBlockMarginCollapse.cpp */,
 			);
 			path = blockformatting;
 			sourceTree = "<group>";

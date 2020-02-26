@@ -1430,6 +1430,7 @@ layout/blockformatting/BlockFormattingContextGeometry.cpp
 layout/blockformatting/BlockFormattingContextQuirks.cpp
 layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
+layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
 layout/displaytree/DisplayBox.cpp
 layout/displaytree/DisplayInlineContent.cpp
 layout/displaytree/DisplayPainter.cpp

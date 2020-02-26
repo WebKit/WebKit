@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
