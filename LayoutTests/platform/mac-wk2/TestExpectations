@@ -1071,3 +1071,5 @@ webkit.org/b/208160 fast/scrolling/overflow-scroll-past-max.html [ Pass Failure 
 webkit.org/b/208167 [ Debug ] inspector/dom-debugger/attribute-modified-style.html [ Pass Crash ]
 
 webkit.org/b/208222 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
+
+webkit.org/b/208264 [ Release ] fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html [ Pass Failure ]
