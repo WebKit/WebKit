@@ -1,3 +1,23 @@
+2020-02-25  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: 'Open in Preview' and 'Save' don't work for blobs
+        https://bugs.webkit.org/show_bug.cgi?id=208221
+        <rdar://problem/22676176>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::convertPostScriptDataIfNeeded):
+        (WebKit::PDFPlugin::setSuggestedFilename):
+        (WebKit::PDFPlugin::streamDidReceiveResponse):
+        (WebKit::PDFPlugin::manualStreamDidReceiveResponse):
+        Ensure that PDFPlugin's suggestedFilename always has a .pdf extension.
+        The UI process already requires this, and enforces it, causing operations
+        that use the suggestedFilename to fail if it does not have a .pdf extension.
+        However, in the case of a blob-loaded PDF, we get just the name "Unknown".
+        Slap the extension on there, and all is well!
+
 2020-02-25  Chris Dumez  <cdumez@apple.com>
 
         Make sure a client cannot cause a whole DOM tree to get leaked by simply holding on to a WKBundleNodeHandle

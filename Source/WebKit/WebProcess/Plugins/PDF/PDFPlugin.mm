@@ -68,6 +68,7 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
@@ -937,7 +938,6 @@ void PDFPlugin::convertPostScriptDataIfNeeded()
     if (!m_isPostScript)
         return;
 
-    m_suggestedFilename = String(m_suggestedFilename + ".pdf");
     m_data = PDFDocumentImage::convertPostScriptDataToPDF(WTFMove(m_data));
 }
 
@@ -972,12 +972,23 @@ void PDFPlugin::pdfDocumentDidLoad()
         [m_pdfLayerController setURLFragment:pdfURLFragment];
     }
 }
+
+void PDFPlugin::setSuggestedFilename(const String& suggestedFilename)
+{
+    m_suggestedFilename = suggestedFilename;
+
+    if (m_suggestedFilename.isEmpty())
+        m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf");
+
+    if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
+        m_suggestedFilename.append(".pdf");
+}
     
 void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
-    m_suggestedFilename = suggestedFilename;
+    setSuggestedFilename(suggestedFilename);
 
     if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
         m_isPostScript = true;
@@ -1010,7 +1021,7 @@ void PDFPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
 
 void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
 {
-    m_suggestedFilename = suggestedFilename;
+    setSuggestedFilename(suggestedFilename);
 
     if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
         m_isPostScript = true;

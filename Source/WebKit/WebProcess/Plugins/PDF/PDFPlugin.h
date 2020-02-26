@@ -259,6 +259,8 @@ private:
 
     void convertPostScriptDataIfNeeded();
 
+    void setSuggestedFilename(const String&);
+
     // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.
     PluginView* pluginView();
     const PluginView* pluginView() const;
