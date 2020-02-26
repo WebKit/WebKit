@@ -54,14 +54,17 @@ RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
     return insertCommand->m_listElement;
 }
 
-HTMLElement& InsertListCommand::fixOrphanedListChild(Node& node)
+HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 {
     auto listElement = HTMLUListElement::create(document());
     insertNodeBefore(listElement.copyRef(), node);
+    if (!listElement->hasEditableStyle())
+        return nullptr;
+
     removeNode(node);
     appendNode(node, listElement.copyRef());
     m_listElement = WTFMove(listElement);
-    return *m_listElement;
+    return m_listElement.get();
 }
 
 Ref<HTMLElement> InsertListCommand::mergeWithNeighboringLists(HTMLElement& list)
@@ -206,9 +209,14 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
     if (listChildNode) {
         // Remove the list chlild.
         RefPtr<HTMLElement> listNode = enclosingList(listChildNode);
-        if (!listNode)
-            listNode = mergeWithNeighboringLists(fixOrphanedListChild(*listChildNode));
+        if (!listNode) {
+            RefPtr<HTMLElement> listElement = fixOrphanedListChild(*listChildNode);
+            if (!listElement)
+                return;
 
+            listNode = mergeWithNeighboringLists(*listElement);
+        }
+        
         if (!listNode->hasTagName(listTag)) {
             // listChildNode will be removed from the list and a list of type m_type will be created.
             switchListType = true;
