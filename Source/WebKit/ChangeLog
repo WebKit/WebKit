@@ -1,3 +1,10 @@
+2020-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix debug asserts on the bots after r257389.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::create):
+
 2020-02-26  Youenn Fablet  <youenn@apple.com>
 
         Conversion between MediaSample and RemoteVideoSample should preserve the rotation information
