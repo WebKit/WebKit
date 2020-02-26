@@ -1,5 +1,18 @@
 2020-02-25  Jack Lee  <shihchieh_lee@apple.com>
 
+        ASSERTION FAILURE in AppendNodeCommand::AppendNodeCommand when inserting list with read-only user-modify
+        https://bugs.webkit.org/show_bug.cgi?id=208045
+        <rdar://problem/39023383>
+
+        Reviewed by Ryosuke Niwa.
+
+        When inserting a list (InsertListCommand) around enclosed list items, if new list is not editable, skip moving list items in function doApplyForSingleParagraph.
+
+        * fast/lists/insert-list-user-modify-read-only-enclosed-li-expected.txt: Added.
+        * fast/lists/insert-list-user-modify-read-only-enclosed-li.html: Added.
+
+2020-02-25  Jack Lee  <shihchieh_lee@apple.com>
+
         Nullptr crash in CompositeEditCommand::splitTreeToNode
         https://bugs.webkit.org/show_bug.cgi?id=208039
         <rdar://problem/52011355>

@@ -233,6 +233,8 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
 
             RefPtr<HTMLElement> newList = createHTMLElement(document(), listTag);
             insertNodeBefore(*newList, *listNode);
+            if (!newList->hasEditableStyle())
+                return;
 
             auto* firstChildInList = enclosingListChild(VisiblePosition(firstPositionInNode(listNode.get())).deepEquivalent().deprecatedNode(), listNode.get());
             Node* outerBlock = firstChildInList && isBlockFlowElement(*firstChildInList) ? firstChildInList : listNode.get();
