@@ -2096,11 +2096,19 @@ void testElideSimpleMove()
 
         auto compilation = compile(proc);
         CString disassembly = compilation->disassembly();
-        std::regex findRRMove(isARM64() ? "mov r\\d+, r\\d+\\n" : "mov %\\w+, %\\w+\\n");
+        std::regex findRRMove(isARM64() ? "mov\\s+x\\d+, x\\d+\\n" : "mov %\\w+, %\\w+\\n");
         auto result = matchAll(disassembly, findRRMove);
-        // sp -> fp; arg0 -> ret0; fp -> sp
-        // fp -> sp only happens in O0 because we don't actually need to move the stack in general.
-        CHECK(result.size() == 2 + !Options::defaultB3OptLevel());
+        if (isARM64()) {
+            if (!Options::defaultB3OptLevel())
+                CHECK(result.size() == 2);
+            else
+                CHECK(result.size() == 0);
+        } else if (isX86()) {
+            // sp -> fp; arg0 -> ret0; fp -> sp
+            // fp -> sp only happens in O0 because we don't actually need to move the stack in general.
+            CHECK(result.size() == 2 + !Options::defaultB3OptLevel());
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -2177,10 +2185,19 @@ void testElideMoveThenRealloc()
         BasicBlock* continuation = code.addBlock();
 
         Tmp tmp = code.newTmp(B3::GP);
+        Arg negOne;
+        if (isARM64()) {
+            negOne = code.newTmp(B3::GP);
+            root->append(Move, nullptr, Arg::bigImm(-1), negOne);
+        } else if (isX86())
+            negOne = Arg::bitImm(-1);
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+
         {
             root->append(Move, nullptr, Arg::imm(1), Tmp(reg));
 
-            root->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), Tmp(reg), Arg::bitImm(-1));
+            root->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), Tmp(reg), negOne);
             root->setSuccessors(taken, notTaken);
         }
 
@@ -2190,14 +2207,14 @@ void testElideMoveThenRealloc()
         }
 
         {
-            notTaken->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), Tmp(reg), Arg::bitImm(-1));
+            notTaken->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), Tmp(reg), negOne);
             notTaken->setSuccessors(continuation, notTakenReturn);
         }
 
         {
             tmp = code.newTmp(B3::GP);
             continuation->append(Move, nullptr, Arg::imm(42), tmp);
-            continuation->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), tmp, Arg::bitImm(-1));
+            continuation->append(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), tmp, negOne);
             continuation->setSuccessors(ret, notTakenReturn);
         }
 
