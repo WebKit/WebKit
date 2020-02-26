@@ -1,3 +1,12 @@
+2020-02-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=208253
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-26  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Garden dedicated queue
