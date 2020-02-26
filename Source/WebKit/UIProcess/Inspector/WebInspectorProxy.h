@@ -162,6 +162,10 @@ public:
 
     void setDiagnosticLoggingAvailable(bool);
 
+    // Browser
+    void browserExtensionsEnabled(HashMap<String, String>&&);
+    void browserExtensionsDisabled(HashSet<String>&&);
+
     // Provided by platform WebInspectorProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();

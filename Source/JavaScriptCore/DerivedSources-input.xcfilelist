@@ -90,6 +90,7 @@ $(PROJECT_DIR)/inspector/protocol/DOMDebugger.json
 $(PROJECT_DIR)/inspector/protocol/DOMStorage.json
 $(PROJECT_DIR)/inspector/protocol/Database.json
 $(PROJECT_DIR)/inspector/protocol/Debugger.json
+$(PROJECT_DIR)/inspector/protocol/Browser.json
 $(PROJECT_DIR)/inspector/protocol/GenericTypes.json
 $(PROJECT_DIR)/inspector/protocol/Heap.json
 $(PROJECT_DIR)/inspector/protocol/IndexedDB.json

@@ -124,7 +124,6 @@ private:
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, WebCore::SecurityOriginData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
-        void didAttachInspector(WebPageProxy&, WebInspectorProxy&) final;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
         void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy&, WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
@@ -199,7 +198,6 @@ private:
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
-        bool webViewDidAttachInspector : 1;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
         bool webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler : 1;

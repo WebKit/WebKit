@@ -81,6 +81,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Downloads \
     $(WebKit2)/UIProcess/GPU \
     $(WebKit2)/UIProcess/Inspector \
+    $(WebKit2)/UIProcess/Inspector/Agents \
     $(WebKit2)/UIProcess/MediaStream \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \

@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 struct AuthenticationExtensionsClientOutputs {

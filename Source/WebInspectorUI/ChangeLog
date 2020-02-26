@@ -1,5 +1,81 @@
 2020-02-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name
+        https://bugs.webkit.org/show_bug.cgi?id=206911
+        <rdar://problem/58026635>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/BrowserManager.js: Added.
+        (WI.BrowserManager):
+        (WI.BrowserManager.prototype.initializeTarget):
+        (WI.BrowserManager.prototype.enable):
+        (WI.BrowserManager.prototype.disable):
+        (WI.BrowserManager.prototype.isExtensionScheme):
+        (WI.BrowserManager.prototype.extensionNameForId):
+        (WI.BrowserManager.prototype.extensionNameForURL):
+        * UserInterface/Protocol/BrowserObserver.js: Added.
+        (WI.BrowserObserver.prototype.extensionsEnabled):
+        (WI.BrowserObserver.prototype.extensionsDisabled):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.get BrowserAgent): Added.
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Main.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        * UserInterface/Test.html:
+        Add an observer and manager for the `Browser` domain.
+
+        * UserInterface/Protocol/MultiplexingBackendTarget.js:
+        (WI.MultiplexingBackendTarget):
+        (WI.MultiplexingBackendTarget.prototype.initialize):
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype.initializeTarget): Added.
+        The `Browser` agent lives in the UIProcess alongside the `Target` agent (meaning there
+        should only be one per debuggable rather than one per target) and as such is not routed
+        through the `Target` agent.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._displayNameForExecutionContext):
+        Attempt to match the execution context name against any known extension identifier, and
+        use the extension's display name if one is found.
+
+        * UserInterface/Base/URLUtilities.js:
+        (WI.displayNameForHost):
+        Attempt to match the host against any known extension identifier, and use the extension's
+        display name if one is found.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addStyleSheet):
+        (WI.SourcesNavigationSidebarPanel.prototype._addScript):
+        * UserInterface/Base/Utilities.js:
+        (isWebKitExtensionScheme): Deleted.
+        * .eslintrc:
+        Use `WI.BrowserManager.prototype.isExtensionScheme` instead of the global function.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode):
+        (WI.SourceCode.prototype.get url): Added.
+        (WI.SourceCode.prototype.get urlComponents): Added.
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WI.CSSStyleSheet):
+        (WI.CSSStyleSheet.prototype.get injected):
+        (WI.CSSStyleSheet.prototype.get url): Deleted.
+        (WI.CSSStyleSheet.prototype.get urlComponents): Deleted.
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+        (WI.Resource.prototype.get url): Deleted.
+        (WI.Resource.prototype.get urlComponents): Deleted.
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+        (WI.Script.prototype.get url): Deleted.
+        (WI.Script.prototype.get urlComponents): Deleted.
+        All subclasses of `WI.SourceCode` have separate `get url` and `get urlComponents` functions,
+        so unify them in the common superclass so that it's guaranteed to exist.
+
+2020-02-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: move code for debug outlined focus element to the Debug folder so it isn't shipped
         https://bugs.webkit.org/show_bug.cgi?id=208217
 

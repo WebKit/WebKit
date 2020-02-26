@@ -27,9 +27,11 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "APIInspectorClient.h"
 #include "APINavigation.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIUIClient.h"
+#include "InspectorBrowserAgent.h"
 #include "WebAutomationSession.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorInterruptDispatcherMessages.h"
@@ -46,7 +48,10 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
 #include "WebInspectorProxyClient.h"
@@ -460,7 +465,7 @@ void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTes
     }
 
     // Notify WebKit client when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
-    m_inspectedPage->uiClient().didAttachInspector(*m_inspectedPage, *this);
+    m_inspectedPage->inspectorClient().didAttachLocalInspector(*m_inspectedPage, *this);
 
     // Bail out if the client closed the inspector from the delegate method.
     if (!m_inspectorPage)
@@ -631,6 +636,18 @@ void WebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 #else
     UNUSED_PARAM(available);
 #endif
+}
+
+void WebInspectorProxy::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
+{
+    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledInspectorBrowserAgent())
+        browserAgent->extensionsEnabled(WTFMove(extensionIDToName));
+}
+
+void WebInspectorProxy::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
+{
+    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledInspectorBrowserAgent())
+        browserAgent->extensionsDisabled(WTFMove(extensionIDs));
 }
 
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)

@@ -24,9 +24,6 @@
  */
 
 // This class is used when connecting to a target which multiplexes to other targets.
-// The main connection is to a target that, currently, has only a Target agent.
-// All other Targets will have their messages be multiplexed through this
-// main connection's Target agent.
 
 WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
 {
@@ -36,18 +33,16 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
         const targetId = "multi";
         super(parentTarget, targetId, WI.UIString("Web Page"), WI.TargetType.WebPage, InspectorBackend.backendConnection);
 
-        console.assert(Array.shallowEqual(Object.keys(this._agents), ["Target"]), "A WebPage target should only have a single agent.");
+        console.assert(Array.shallowEqual(Object.keys(this._agents), ["Browser", "Target"]));
     }
 
     // Target
 
     initialize()
     {
-        // Intentionally not calling super. No agents other than the TargetAgent.
-
-        // COMPATIBILITY (iOS 13): Target.setPauseOnStart did not exist yet.
-        if (this.hasCommand("Target.setPauseOnStart"))
-            this.TargetAgent.setPauseOnStart(true);
+        // Only initialize with the managers that are known to support a multiplexing target.
+        WI.browserManager.initializeTarget(this);
+        WI.targetManager.initializeTarget(this);
     }
 
     // Protected (Target)

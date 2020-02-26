@@ -41,6 +41,9 @@ class FrontendRouter;
 
 namespace WebKit {
 
+class InspectorBrowserAgent;
+struct WebPageAgentContext;
+
 class WebPageInspectorController {
     WTF_MAKE_NONCOPYABLE(WebPageInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
@@ -73,15 +76,27 @@ public:
     void willDestroyProvisionalPage(const ProvisionalPageProxy&);
     void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
 
+    InspectorBrowserAgent* enabledInspectorBrowserAgent() const { return m_enabledInspectorBrowserAgent; }
+    void setEnabledInspectorBrowserAgent(InspectorBrowserAgent* agent) { m_enabledInspectorBrowserAgent = agent; }
+
 private:
+    WebPageAgentContext webPageAgentContext();
+    void createLazyAgents();
+
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
 
-    WebPageProxy& m_page;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::AgentRegistry m_agents;
+
+    WebPageProxy& m_page;
+
     Inspector::InspectorTargetAgent* m_targetAgent;
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
+
+    InspectorBrowserAgent* m_enabledInspectorBrowserAgent;
+
+    bool m_didCreateLazyAgents { false };
 };
 
 } // namespace WebKit

@@ -39,7 +39,6 @@
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
 @class _WKFrameHandle;
-@class _WKInspector;
 
 #if TARGET_OS_IOS
 @class UIContextMenuConfiguration;
@@ -237,11 +236,6 @@ struct UIEdgeInsets;
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:getContextMenuFromProposedMenu:forElement:userInfo:completionHandler:", macos(10.12, 10.14.4));
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled WK_API_AVAILABLE(macos(10.14.4));
-
-/*! @abstract Called when a Web Inspector instance is attached to this WKWebView. This is not called in the case of remote inspection.
-    @param inspector The Web Inspector instance attached to this WKWebView.
-*/
-- (void)_webView:(WKWebView *)webView didAttachInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 #endif // !TARGET_OS_IPHONE
 

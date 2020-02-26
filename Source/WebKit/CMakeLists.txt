@@ -57,6 +57,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Gamepad"
     "${WEBKIT_DIR}/UIProcess/GPU"
     "${WEBKIT_DIR}/UIProcess/Inspector"
+    "${WEBKIT_DIR}/UIProcess/Inspector/Agents"
     "${WEBKIT_DIR}/UIProcess/Launcher"
     "${WEBKIT_DIR}/UIProcess/Network"
     "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols"

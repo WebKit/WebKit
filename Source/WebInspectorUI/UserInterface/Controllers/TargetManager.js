@@ -35,6 +35,15 @@ WI.TargetManager = class TargetManager extends WI.Object
         this._transitionTimeoutIdentifier = undefined;
     }
 
+    // Target
+
+    initializeTarget(target)
+    {
+        // COMPATIBILITY (iOS 13): Target.setPauseOnStart did not exist yet.
+        if (target.hasCommand("Target.setPauseOnStart"))
+            target.TargetAgent.setPauseOnStart(true);
+    }
+
     // Public
 
     get targets()

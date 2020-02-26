@@ -29,9 +29,12 @@
 #include "DeletedAddressOfOperator.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
+#include "Test.h"
 #include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
 
@@ -504,6 +507,52 @@ TEST(WTF_HashSet, RemoveIfShrinkToBestSize)
     set1.checkConsistency();
     ASSERT_EQ(set1.size(), originalCapacity / 2 - 1);
     ASSERT_EQ(set1.capacity(), originalCapacity);
+}
+
+TEST(WTF_HashSet, ReserveInitialCapacity)
+{
+    HashSet<String> set;
+    EXPECT_EQ(0u, set.size());
+    EXPECT_EQ(0u, set.capacity());
+
+    set.reserveInitialCapacity(9999);
+    EXPECT_EQ(0u, set.size());
+    EXPECT_EQ(32768u, set.capacity());
+
+    for (int i = 0; i < 9999; ++i)
+        set.add(makeString("foo", i));
+    EXPECT_EQ(9999u, set.size());
+    EXPECT_EQ(32768u, set.capacity());
+    EXPECT_TRUE(set.contains("foo3"_str));
+
+    for (int i = 0; i < 9999; ++i)
+        set.add(makeString("excess", i));
+    EXPECT_EQ(9999u + 9999u, set.size());
+    EXPECT_EQ(32768u + 32768u, set.capacity());
+
+    for (int i = 0; i < 9999; ++i)
+        EXPECT_TRUE(set.remove(makeString("foo", i)));
+    EXPECT_EQ(9999u, set.size());
+    EXPECT_EQ(32768u, set.capacity());
+
+    for (int i = 0; i < 9999; ++i)
+        EXPECT_TRUE(set.remove(makeString("excess", i)));
+    EXPECT_EQ(0u, set.size());
+    EXPECT_EQ(8u, set.capacity());
+
+    HashSet<String> set2;
+    set2.reserveInitialCapacity(9999);
+    EXPECT_FALSE(set2.remove("foo1"_s));
+
+    for (int i = 0; i < 2000; ++i)
+        set2.add(makeString("foo", i));
+    EXPECT_EQ(2000u, set2.size());
+    EXPECT_EQ(32768u, set2.capacity());
+
+    for (int i = 0; i < 2000; ++i)
+        EXPECT_TRUE(set2.remove(makeString("foo", i)));
+    EXPECT_EQ(0u, set2.size());
+    EXPECT_EQ(8u, set2.capacity());
 }
 
 } // namespace TestWebKitAPI

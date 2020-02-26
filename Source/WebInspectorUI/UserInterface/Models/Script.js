@@ -27,7 +27,7 @@ WI.Script = class Script extends WI.SourceCode
 {
     constructor(target, id, range, url, sourceType, injected, sourceURL, sourceMapURL)
     {
-        super();
+        super(url);
 
         console.assert(target instanceof WI.Target || this instanceof WI.LocalScript);
         console.assert(range instanceof WI.TextRange);
@@ -35,7 +35,6 @@ WI.Script = class Script extends WI.SourceCode
         this._target = target;
         this._id = id || null;
         this._range = range || null;
-        this._url = url || null;
         this._sourceType = sourceType || WI.Script.SourceType.Program;
         this._sourceURL = sourceURL || null;
         this._sourceMappingURL = sourceMapURL || null;
@@ -80,7 +79,6 @@ WI.Script = class Script extends WI.SourceCode
     get target() { return this._target; }
     get id() { return this._id; }
     get range() { return this._range; }
-    get url() { return this._url; }
     get sourceType() { return this._sourceType; }
     get sourceURL() { return this._sourceURL; }
     get sourceMappingURL() { return this._sourceMappingURL; }
@@ -106,13 +104,6 @@ WI.Script = class Script extends WI.SourceCode
             return null;
 
         return this._sourceURL;
-    }
-
-    get urlComponents()
-    {
-        if (!this._urlComponents)
-            this._urlComponents = parseURL(this._url);
-        return this._urlComponents;
     }
 
     get mimeType()

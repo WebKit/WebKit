@@ -35,6 +35,12 @@
 
 OBJC_CLASS LAContext;
 
+namespace WebCore {
+
+class AuthenticatorAssertionResponse;
+
+}
+
 namespace WebKit {
 
 // Local authenticators normally doesn't need to establish connections

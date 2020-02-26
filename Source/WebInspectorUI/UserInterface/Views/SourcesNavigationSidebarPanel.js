@@ -969,7 +969,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         let parentTreeElement = null;
 
-        if (isWebKitExtensionScheme(styleSheet.urlComponents.scheme)) {
+        if (WI.browserManager.isExtensionScheme(styleSheet.urlComponents.scheme)) {
             if (!this._extensionStyleSheetsFolderTreeElement)
                 this._extensionStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Style Sheets"), new WI.CSSStyleSheetCollection);
             parentTreeElement = this._extensionStyleSheetsFolderTreeElement;
@@ -1024,7 +1024,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else {
             let parentFolderTreeElement = null;
 
-            if (isWebKitExtensionScheme(script.urlComponents.scheme)) {
+            if (WI.browserManager.isExtensionScheme(script.urlComponents.scheme)) {
                 if (!this._extensionScriptsFolderTreeElement) {
                     let collection = new WI.ScriptCollection;
                     this._extensionScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Scripts"), collection);

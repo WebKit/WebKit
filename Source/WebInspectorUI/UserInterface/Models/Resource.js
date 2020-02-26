@@ -28,9 +28,9 @@ WI.Resource = class Resource extends WI.SourceCode
 {
     constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode, originalRequestWillBeSentTimestamp} = {})
     {
-        super();
-
         console.assert(url);
+
+        super(url);
 
         if (type in WI.Resource.Type)
             type = WI.Resource.Type[type];
@@ -39,8 +39,6 @@ WI.Resource = class Resource extends WI.SourceCode
             type = WI.Resource.Type.StyleSheet;
         }
 
-        this._url = url;
-        this._urlComponents = null;
         this._mimeType = mimeType;
         this._mimeTypeComponents = null;
         this._type = Resource.resolvedType(type, mimeType);
@@ -310,7 +308,6 @@ WI.Resource = class Resource extends WI.SourceCode
 
     // Public
 
-    get url() { return this._url; }
     get mimeType() { return this._mimeType; }
     get target() { return this._target; }
     get type() { return this._type; }
@@ -351,13 +348,6 @@ WI.Resource = class Resource extends WI.SourceCode
     get responseBodyTransferSize() { return this._responseBodyTransferSize; }
     get cachedResponseBodySize() { return this._cachedResponseBodySize; }
     get redirects() { return this._redirects; }
-
-    get urlComponents()
-    {
-        if (!this._urlComponents)
-            this._urlComponents = parseURL(this._url);
-        return this._urlComponents;
-    }
 
     get loadedSecurely()
     {

@@ -55,6 +55,8 @@ WI.loaded = function()
         InspectorBackend.registerAnimationDispatcher(WI.AnimationObserver);
     if (InspectorBackend.registerApplicationCacheDispatcher)
         InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
+    if (InspectorBackend.registerBrowserDispatcher)
+        InspectorBackend.registerBrowserDispatcher(WI.BrowserObserver);
     if (InspectorBackend.registerCPUProfilerDispatcher)
         InspectorBackend.registerCPUProfilerDispatcher(WI.CPUProfilerObserver);
     if (InspectorBackend.registerCSSDispatcher)
@@ -104,6 +106,7 @@ WI.loaded = function()
     // Create the singleton managers next, before the user interface elements, so the user interface can register
     // as event listeners on these managers.
     WI.managers = [
+        WI.browserManager = new WI.BrowserManager,
         WI.targetManager = new WI.TargetManager,
         WI.networkManager = new WI.NetworkManager,
         WI.domStorageManager = new WI.DOMStorageManager,
@@ -135,6 +138,7 @@ WI.loaded = function()
     WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, WI._databaseWasInspected);
     WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, WI._mainFrameDidChange);
     WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, WI._frameWasAdded);
+    WI.browserManager.enable();
 
     WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, WI._mainResourceDidChange);
 

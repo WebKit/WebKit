@@ -31,7 +31,10 @@
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/FrameIdentifier.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 @implementation _WKInspector
 
@@ -148,6 +151,25 @@
 
     inspectorWebView._diagnosticLoggingDelegate = delegate;
     _inspector->setDiagnosticLoggingAvailable(!!delegate);
+}
+
+- (void)_browserExtensionsEnabled:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap
+{
+    HashMap<String, String> transformed;
+    transformed.reserveInitialCapacity(extensionIDToNameMap.count);
+    [extensionIDToNameMap enumerateKeysAndObjectsUsingBlock:[&](NSString *extensionID, NSString *extensionName, BOOL *) {
+        transformed.set(extensionID, extensionName);
+    }];
+    _inspector->browserExtensionsEnabled(WTFMove(transformed));
+}
+
+- (void)_browserExtensionsDisabled:(NSSet<NSString *> *)extensionIDs
+{
+    HashSet<String> transformed;
+    transformed.reserveInitialCapacity(extensionIDs.count);
+    for (NSString *extensionID in extensionIDs)
+        transformed.addVoid(extensionID);
+    _inspector->browserExtensionsDisabled(WTFMove(transformed));
 }
 
 // MARK: _WKInspectorInternal methods

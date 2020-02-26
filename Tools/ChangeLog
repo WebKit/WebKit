@@ -1,3 +1,28 @@
+2020-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name
+        https://bugs.webkit.org/show_bug.cgi?id=206911
+        <rdar://problem/58026635>
+
+        Reviewed by Brian Burg.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        Add test for `WTF::HashSet::reserveInitialCapacity`.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        Actually check the value of `WTF::HashMap::capacity`.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKInspectorDelegate.mm: Added.
+        (-[InspectorDelegate _webView:didAttachInspector:])
+        (-[InspectorDelegate _webView:browserDomainEnabledForInspector:])
+        (-[InspectorDelegate _webView:browserDomainDisabledForInspector:])
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[InspectorDelegate _webView:didAttachInspector:]): Deleted.
+        (TestWebKitAPI::TEST): Deleted.
+
 2020-02-25  Matt Lewis  <jlewis3@apple.com>
 
         Add checkout_root to stubrepository.py

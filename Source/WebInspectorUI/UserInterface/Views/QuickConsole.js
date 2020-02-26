@@ -121,6 +121,12 @@ WI.QuickConsole = class QuickConsole extends WI.View
         if (context.type === WI.ExecutionContext.Type.Internal)
             return WI.unlocalizedString("[Internal] ") + context.name;
 
+        if (context.type === WI.ExecutionContext.Type.User) {
+            let extensionName = WI.browserManager.extensionNameForExecutionContext(context);
+            if (extensionName)
+                return truncate(extensionName, maxLength);
+        }
+
         let target = context.target;
         if (target.type === WI.TargetType.Worker)
             return truncate(target.displayName, maxLength);

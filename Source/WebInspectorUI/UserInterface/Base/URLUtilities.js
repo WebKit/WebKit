@@ -311,7 +311,12 @@ WI.urlWithoutFragment = function(urlString)
 
 WI.displayNameForHost = function(host)
 {
+    let extensionName = WI.browserManager.extensionNameForId(host);
+    if (extensionName)
+        return extensionName;
+
     // FIXME <rdar://problem/11237413>: This should decode punycode hostnames.
+
     return host;
 };
 

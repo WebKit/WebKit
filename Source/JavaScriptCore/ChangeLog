@@ -1,3 +1,20 @@
+2020-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name
+        https://bugs.webkit.org/show_bug.cgi?id=206911
+        <rdar://problem/58026635>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Browser.json: Added.
+        Add a `Browser` agent that can communicate with the inspected page's containing browser. It
+        lives in the UIProcess alongside the `Target` agent (meaning there should only be one per
+        debuggable rather than one per target) and as such is not routed through the `Target` agent.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+
 2020-02-25  Justin Michaud  <justin_michaud@apple.com>
 
         Inline Cache delete by id/val

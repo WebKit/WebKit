@@ -177,6 +177,7 @@ class FormClient;
 class FullscreenClient;
 class HistoryClient;
 class IconLoadingClient;
+class InspectorClient;
 class LoaderClient;
 class Navigation;
 class NavigationClient;
@@ -555,6 +556,9 @@ public:
 
     API::IconLoadingClient& iconLoadingClient() { return *m_iconLoadingClient; }
     void setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>&&);
+
+    API::InspectorClient& inspectorClient() { return *m_inspectorClient; }
+    void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     void setPageLoadStateObserver(std::unique_ptr<PageLoadState::Observer>&&);
 
@@ -2278,6 +2282,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::ContextMenuClient> m_contextMenuClient;
 #endif
+    std::unique_ptr<API::InspectorClient> m_inspectorClient;
     std::unique_ptr<WebPageInjectedBundleClient> m_injectedBundleClient;
     std::unique_ptr<PageLoadState::Observer> m_pageLoadStateObserver;
 

@@ -32,7 +32,6 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         console.assert(id);
 
         this._id = id || null;
-        this._url = null;
         this._parentFrame = null;
         this._origin = null;
         this._startLineNumber = 0;
@@ -70,24 +69,12 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     get injected()
     {
-        return isWebKitExtensionScheme(this.urlComponents.scheme);
+        return WI.browserManager.isExtensionScheme(this.urlComponents.scheme);
     }
 
     get anonymous()
     {
         return !this.isInspectorStyleSheet() && !this._url;
-    }
-
-    get url()
-    {
-        return this._url;
-    }
-
-    get urlComponents()
-    {
-        if (!this._urlComponents)
-            this._urlComponents = parseURL(this._url);
-        return this._urlComponents;
     }
 
     get mimeType()

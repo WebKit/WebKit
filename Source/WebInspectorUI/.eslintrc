@@ -101,7 +101,6 @@
         "isWebInspectorConsoleEvaluationScript": true,
         "isWebInspectorInternalScript": true,
         "isWebKitInternalScript": true,
-        "isWebKitExtensionScheme": true,
         "multiplicationSign": true,
         "parseMIMEType": true,
         "resolveDotsInPath": true,

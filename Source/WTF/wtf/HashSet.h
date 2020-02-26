@@ -75,6 +75,8 @@ public:
     unsigned capacity() const;
     bool isEmpty() const;
 
+    void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
+
     iterator begin() const;
     iterator end() const;
 

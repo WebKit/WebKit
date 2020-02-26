@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WebPageInspectorController.h"
 
+#include "InspectorBrowserAgent.h"
 #include "ProvisionalPageProxy.h"
 #include "WebFrameProxy.h"
+#include "WebPageInspectorAgentBase.h"
 #include "WebPageInspectorTarget.h"
 #include "WebPageProxy.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
@@ -47,14 +49,12 @@ static String getTargetID(const ProvisionalPageProxy& provisionalPage)
 }
 
 WebPageInspectorController::WebPageInspectorController(WebPageProxy& page)
-    : m_page(page)
-    , m_frontendRouter(FrontendRouter::create())
+    : m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
+    , m_page(page)
 {
     auto targetAgent = makeUnique<InspectorTargetAgent>(m_frontendRouter.get(), m_backendDispatcher.get());
-
     m_targetAgent = targetAgent.get();
-
     m_agents.append(WTFMove(targetAgent));
 }
 
@@ -78,6 +78,8 @@ bool WebPageInspectorController::hasLocalFrontend() const
 
 void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool, bool)
 {
+    createLazyAgents();
+
     bool connectingFirstFrontend = !m_frontendRouter->hasFrontends();
 
     m_frontendRouter->connectFrontend(frontendChannel);
@@ -210,6 +212,27 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
         m_targetAgent->targetDestroyed(*target);
     m_targets.clear();
     m_targets.set(newTarget->identifier(), WTFMove(newTarget));
+}
+
+WebPageAgentContext WebPageInspectorController::webPageAgentContext()
+{
+    return {
+        m_frontendRouter.get(),
+        m_backendDispatcher.get(),
+        m_page,
+    };
+}
+
+void WebPageInspectorController::createLazyAgents()
+{
+    if (m_didCreateLazyAgents)
+        return;
+
+    m_didCreateLazyAgents = true;
+
+    auto webPageContext = webPageAgentContext();
+
+    m_agents.append(makeUnique<InspectorBrowserAgent>(webPageContext));
 }
 
 void WebPageInspectorController::addTarget(std::unique_ptr<InspectorTargetProxy>&& target)
