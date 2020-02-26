@@ -127,7 +127,8 @@ class Cache : public RefCounted<Cache> {
 public:
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
-    void setCapacity(size_t);
+    size_t capacity() const;
+    void updateCapacity();
 
     // Completion handler may get called back synchronously on failure.
     struct RetrieveInfo {
