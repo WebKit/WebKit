@@ -1,3 +1,38 @@
+2020-02-26  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][MIPS] Adding support to Checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=208196
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adding changes to properly support OSR to
+        checkpoints on MIPS. It required fixes on JIT probe and some
+        adjustment on Offlineasm to correct generate `$gp` load when executing 
+        `checkpoint_osr_exit_from_inlined_call_trampoline`.
+
+        * assembler/MacroAssemblerMIPS.cpp:
+
+        Probe trampoline needs to allocate 16 bytes for 4 arguments to
+        properly follow C calling conventions. This space is used by callee
+        when the JSC is compiled with `-O0` flags
+        (Check "DEFAULT C CALLING CONVENTION (O32)" section on
+        https://www.mips.com/downloads/mips32-instruction-set-quick-reference-v1-01).
+
+        * llint/LowLevelInterpreter.asm:
+
+        As we need to do on ARMv7, 64-bits arguments needs to be passed in
+        register pairs `$a1:$a0` or `$a3:$a2` (little-endian mode). Since `$a0`
+        contais `CallFrame*`, we need to pass `EncodedJSValue` on `$a3:$a2`
+        pair.
+
+        * offlineasm/mips.rb:
+
+        Following the same reason for return locations on OSR to LLInt, we
+        need to adjust `$gp` using `$ra` instead of `$t9` on
+        `checkpoint_osr_exit_from_inlined_call_trampoline`, given it is only
+        reachable through `ret` operations. For detailed explanation, check
+        ChangeLog of https://trac.webkit.org/changeset/252713.
+
 2020-02-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name

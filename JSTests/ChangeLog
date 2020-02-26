@@ -1,3 +1,12 @@
+2020-02-26  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][MIPS] Adding support to Checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=208196
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/memcpy-typed-loop.js:
+
 2020-02-25  Justin Michaud  <justin_michaud@apple.com>
 
         Inline Cache delete by id/val
