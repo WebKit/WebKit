@@ -251,15 +251,17 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
 
-    if (parameters.launchServicesOpenExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.launchServicesOpenExtensionHandle);
-
-    if (parameters.diagnosticsExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.diagnosticsExtensionHandle);
-
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
     ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (parameters.diagnosticsExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.diagnosticsExtensionHandle);
+
+    for (size_t i = 0, size = parameters.dynamicMachExtensionHandles.size(); i < size; ++i)
+        SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles[i]);
 #endif
     
 #if PLATFORM(COCOA)

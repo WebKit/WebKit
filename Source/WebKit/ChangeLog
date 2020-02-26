@@ -1,3 +1,25 @@
+2020-02-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Issue mach sandbox extensions to the WebContent process for a set of specific services
+        https://bugs.webkit.org/show_bug.cgi?id=208146
+
+        Reviewed by Brent Fulgham.
+
+        We are still seeing some accesses from the WebContent process to a small set of services. Since we do not currently have
+        backtraces for these accesses, make a speculative patch, where we issue these extension for all apps except Safari.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup-mail.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-02-26  Keith Rollin  <krollin@apple.com>
 
         Add logging to help diagnose redirect issue
