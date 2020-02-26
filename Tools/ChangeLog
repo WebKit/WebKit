@@ -1,3 +1,13 @@
+2020-02-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] googleapis.com is a public suffix, defeating isGoogle() check in UserAgentQuirks.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=207984
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-02-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Improve user agent quirk for Google Docs and Google Drive
