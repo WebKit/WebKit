@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
+#include <WebCore/ActiveDOMObject.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
@@ -45,7 +46,7 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
 
-class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle> {
+class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle>, public WebCore::ActiveDOMObject {
 public:
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
@@ -56,7 +57,7 @@ public:
     WebCore::Node* coreNode();
 
     // Convenience DOM Operations
-    Ref<InjectedBundleNodeHandle> document();
+    RefPtr<InjectedBundleNodeHandle> document();
 
     // Additional DOM Operations
     // Note: These should only be operations that are not exposed to JavaScript.
@@ -92,7 +93,11 @@ private:
     static Ref<InjectedBundleNodeHandle> create(WebCore::Node&);
     InjectedBundleNodeHandle(WebCore::Node&);
 
-    Ref<WebCore::Node> m_node;
+    // ActiveDOMObject.
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+
+    RefPtr<WebCore::Node> m_node;
 };
 
 } // namespace WebKit
