@@ -1,3 +1,31 @@
+2020-02-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r257288. rdar://problem/59417124
+
+    [Win] Fix AppleWin build.
+    https://bugs.webkit.org/show_bug.cgi?id=208164
+    
+    Unreviewed build fix.
+    
+    Allow a warning which happens when building with older SDKs.
+    
+    
+    * Source/cmake/OptionsMSVC.cmake:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257288 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-24  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Fix AppleWin build.
+            https://bugs.webkit.org/show_bug.cgi?id=208164
+
+            Unreviewed build fix.
+
+            Allow a warning which happens when building with older SDKs.
+
+            * Source/cmake/OptionsMSVC.cmake:
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r254681. rdar://problem/59474790
