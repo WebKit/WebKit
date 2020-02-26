@@ -69,7 +69,7 @@ public:
 
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
-    AnimationTimeline* timeline() const { return m_timeline.get(); }
+    AnimationTimeline* timeline() const;
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
     Optional<Seconds> currentTime() const;
@@ -187,7 +187,7 @@ private:
     void applyPendingPlaybackRate();
 
     RefPtr<AnimationEffect> m_effect;
-    RefPtr<AnimationTimeline> m_timeline;
+    WeakPtr<AnimationTimeline> m_timeline;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
     Markable<Seconds, Seconds::MarkableTraits> m_previousCurrentTime;
