@@ -215,7 +215,7 @@ class StructureTransitionTable {
 
         static unsigned hash(const Key& p)
         {
-            return PtrHash<UniquedStringImpl*>::hash(p.first) + p.second;
+            return PtrHash<UniquedStringImpl*>::hash(std::get<0>(p)) + std::get<1>(p);
         }
 
         static bool equal(const Key& a, const Key& b)
