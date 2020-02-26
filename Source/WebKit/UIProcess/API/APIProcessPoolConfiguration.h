@@ -104,18 +104,6 @@ public:
     bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
     void setShouldTakeUIBackgroundAssertion(bool shouldTakeUIBackgroundAssertion) { m_shouldTakeUIBackgroundAssertion = shouldTakeUIBackgroundAssertion; }
 
-    bool shouldCaptureAudioInUIProcess() const { return m_shouldCaptureAudioInUIProcess; }
-    void setShouldCaptureAudioInUIProcess(bool shouldCaptureAudioInUIProcess) { m_shouldCaptureAudioInUIProcess = shouldCaptureAudioInUIProcess; }
-
-    bool shouldCaptureAudioInGPUProcess() const { return m_shouldCaptureAudioInGPUProcess; }
-    void setShouldCaptureAudioInGPUProcess(bool shouldCaptureAudioInGPUProcess) { m_shouldCaptureAudioInGPUProcess = shouldCaptureAudioInGPUProcess; }
-
-    bool shouldCaptureVideoInUIProcess() const { return m_shouldCaptureVideoInUIProcess; }
-    void setShouldCaptureVideoInUIProcess(bool shouldCaptureVideoInUIProcess) { m_shouldCaptureVideoInUIProcess = shouldCaptureVideoInUIProcess; }
-
-    bool shouldCaptureVideoInGPUProcess() const { return m_shouldCaptureVideoInGPUProcess; }
-    void setShouldCaptureVideoInGPUProcess(bool shouldCaptureVideoInGPUProcess) { m_shouldCaptureVideoInGPUProcess = shouldCaptureVideoInGPUProcess; }
-
     bool shouldCaptureDisplayInUIProcess() const { return m_shouldCaptureDisplayInUIProcess; }
     void setShouldCaptureDisplayInUIProcess(bool shouldCaptureDisplayInUIProcess) { m_shouldCaptureDisplayInUIProcess = shouldCaptureDisplayInUIProcess; }
 
@@ -155,10 +143,6 @@ private:
     Vector<WTF::String> m_overrideLanguages;
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
-    bool m_shouldCaptureAudioInUIProcess { false };
-    bool m_shouldCaptureAudioInGPUProcess { false };
-    bool m_shouldCaptureVideoInUIProcess { false };
-    bool m_shouldCaptureVideoInGPUProcess { false };
     bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };
     ProcessID m_presentingApplicationPID { getCurrentProcessID() };
     Optional<bool> m_processSwapsOnNavigationFromClient;

@@ -1,3 +1,29 @@
+2020-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Use WebPageProxy preferences for capture instead of WebProcessPool configuration parameters
+        https://bugs.webkit.org/show_bug.cgi?id=208238
+
+        Reviewed by Eric Carlson.
+
+        We can use page preferences instead of pool preferences for audio/video capture.
+        This allows removing code and is more up to date.
+        Manually tested.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForInternalDebugFeatureKey):
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2020-02-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix debug asserts on the bots after r257389.

@@ -241,16 +241,6 @@
 {
 }
 
-- (BOOL)shouldCaptureAudioInUIProcess
-{
-    return _processPoolConfiguration->shouldCaptureAudioInUIProcess();
-}
-
-- (void)setShouldCaptureAudioInUIProcess:(BOOL)shouldCaptureAudioInUIProcess
-{
-    _processPoolConfiguration->setShouldCaptureAudioInUIProcess(shouldCaptureAudioInUIProcess);
-}
-
 - (void)setPresentingApplicationPID:(pid_t)presentingApplicationPID
 {
     _processPoolConfiguration->setPresentingApplicationPID(presentingApplicationPID);

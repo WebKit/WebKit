@@ -122,36 +122,11 @@ void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key
 
         return;
     }
-    if (key == WebPreferencesKey::captureAudioInUIProcessEnabledKey()) {
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->configuration().setShouldCaptureAudioInUIProcess(value);
-
-        return;
-    }
-    if (key == WebPreferencesKey::captureAudioInGPUProcessEnabledKey()) {
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->configuration().setShouldCaptureAudioInGPUProcess(value);
-
-        return;
-    }
-    if (key == WebPreferencesKey::captureVideoInGPUProcessEnabledKey()) {
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->configuration().setShouldCaptureVideoInGPUProcess(value);
-
-        return;
-    }
-
     update(); // FIXME: Only send over the changed key and value.
 }
 
 void WebPreferences::updateBoolValueForExperimentalFeatureKey(const String& key, bool value)
 {
-    if (key == WebPreferencesKey::captureVideoInUIProcessEnabledKey()) {
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->configuration().setShouldCaptureVideoInUIProcess(value);
-
-        return;
-    }
     update(); // FIXME: Only send over the changed key and value.
 }
 

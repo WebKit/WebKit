@@ -7729,10 +7729,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 
-    parameters.shouldCaptureAudioInUIProcess = m_process->processPool().configuration().shouldCaptureAudioInUIProcess();
-    parameters.shouldCaptureAudioInGPUProcess = m_process->processPool().configuration().shouldCaptureAudioInGPUProcess();
-    parameters.shouldCaptureVideoInUIProcess = m_process->processPool().configuration().shouldCaptureVideoInUIProcess();
-    parameters.shouldCaptureVideoInGPUProcess = m_process->processPool().configuration().shouldCaptureVideoInGPUProcess();
+    parameters.shouldCaptureAudioInUIProcess = preferences().captureAudioInUIProcessEnabled();
+    parameters.shouldCaptureAudioInGPUProcess = preferences().captureAudioInGPUProcessEnabled();
+    parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
+    parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
 
 #if PLATFORM(GTK)

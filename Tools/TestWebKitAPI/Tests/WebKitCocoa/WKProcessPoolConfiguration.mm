@@ -50,7 +50,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     [configuration setDiskCacheSizeOverride:42000];
     [configuration setCachePartitionedURLSchemes:@[ @"ssh", @"vnc" ]];
     [configuration setAlwaysRevalidatedURLSchemes:@[ @"afp", @"smb" ]];
-    [configuration setShouldCaptureAudioInUIProcess:YES];
 #if PLATFORM(IOS_FAMILY)
     [configuration setAlwaysRunsAtBackgroundPriority:YES];
     [configuration setShouldTakeUIBackgroundAssertion:YES];
@@ -73,7 +72,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration diskCacheSizeOverride], [copy diskCacheSizeOverride]);
     EXPECT_TRUE([[configuration cachePartitionedURLSchemes] isEqual:[copy cachePartitionedURLSchemes]]);
     EXPECT_TRUE([[configuration alwaysRevalidatedURLSchemes] isEqual:[copy alwaysRevalidatedURLSchemes]]);
-    EXPECT_EQ([configuration shouldCaptureAudioInUIProcess], [copy shouldCaptureAudioInUIProcess]);
 #if PLATFORM(IOS_FAMILY)
     EXPECT_EQ([configuration alwaysRunsAtBackgroundPriority], [copy alwaysRunsAtBackgroundPriority]);
     EXPECT_EQ([configuration shouldTakeUIBackgroundAssertion], [copy shouldTakeUIBackgroundAssertion]);
