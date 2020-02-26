@@ -2076,6 +2076,8 @@ article .table-of-contents label {
     padding: 1rem 0 1rem 5.5rem;
     color: hsl(0, 0%, 100%);
     color: var(--inverse-text-color);
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .hero .logo {
@@ -2100,6 +2102,8 @@ article .table-of-contents label {
 
 header nav {
     text-align: right;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Hide menu toggle checkboxes */
