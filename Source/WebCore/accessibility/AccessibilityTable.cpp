@@ -418,7 +418,7 @@ void AccessibilityTable::addChildren()
     unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
         auto& column = downcast<AccessibilityTableColumn>(*axCache->getOrCreate(AccessibilityRole::Column));
-        column.setColumnIndex((int)i);
+        column.setColumnIndex(i);
         column.setParent(this);
         m_columns.append(&column);
         if (!column.accessibilityIsIgnored())
@@ -538,7 +538,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::columnHeaders()
     AccessibilityChildrenVector columnsCopy = m_columns;
 
     for (const auto& column : columnsCopy) {
-        if (AXCoreObject* header = downcast<AccessibilityTableColumn>(*column).headerObject())
+        if (auto* header = column->columnHeader())
             headers.append(header);
     }
 

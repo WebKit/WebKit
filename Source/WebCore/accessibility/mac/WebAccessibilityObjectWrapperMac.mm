@@ -2743,21 +2743,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @(backingObject->axRowCount());
     }
 
-    if (is<AccessibilityTableColumn>(*backingObject)) {
-        auto& column = downcast<AccessibilityTableColumn>(*backingObject);
+    if (backingObject->isTableColumn()) {
         if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-            return [NSNumber numberWithInt:column.columnIndex()];
+            return [NSNumber numberWithUnsignedInt:backingObject->columnIndex()];
 
         // rows attribute for a column is the list of all the elements in that column at each row
-        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
-            [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
-            return convertToNSArray(column.children());
-        }
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]
+            || [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute])
+            return convertToNSArray(backingObject->children());
+
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AXCoreObject* header = column.headerObject();
-            if (!header)
-                return nil;
-            return header->wrapper();
+            auto* header = backingObject->columnHeader();
+            return header ? header->wrapper() : nil;
         }
     }
 

@@ -41,13 +41,13 @@ public:
     static Ref<AccessibilityTableColumn> create();
     virtual ~AccessibilityTableColumn();
 
-    AXCoreObject* headerObject();
+    AXCoreObject* columnHeader() override;
 
     AccessibilityRole roleValue() const override { return AccessibilityRole::Column; }
-    
-    void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }
-    int columnIndex() const { return m_columnIndex; }    
-    
+
+    void setColumnIndex(unsigned columnIndex) { m_columnIndex = columnIndex; }
+    unsigned columnIndex() const override { return m_columnIndex; }
+
     void addChildren() override;
     void setParent(AccessibilityObject*) override;
     
@@ -60,9 +60,10 @@ private:
     bool computeAccessibilityIsIgnored() const override;
     bool isTableColumn() const override { return true; }
 
+    bool isAccessibilityTableColumnInstance() const final { return true; }
     unsigned m_columnIndex;
 };
 
 } // namespace WebCore 
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableColumn, isTableColumn())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityTableColumn, isAccessibilityTableColumnInstance())

@@ -115,7 +115,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
     setProperty(AXPropertyName::IsTableCell, object.isTableCell());
-    setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
     setProperty(AXPropertyName::IsTableRow, object.isTableRow());
     setProperty(AXPropertyName::IsTextControl, object.isTextControl());
     setProperty(AXPropertyName::IsTree, object.isTree());
@@ -235,6 +234,12 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
         setProperty(AXPropertyName::AXRowCount, object.axRowCount());
+    }
+
+    if (object.isTableColumn()) {
+        setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
+        setProperty(AXPropertyName::ColumnIndex, object.columnIndex());
+        setProperty(AXPropertyName::ColumnHeader, object.columnHeader());
     }
 
     if (object.isTextControl())
@@ -932,6 +937,12 @@ bool AXIsolatedObject::isAccessibilitySVGElement() const
 }
 
 bool AXIsolatedObject::isAccessibilityTableInstance() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isAccessibilityTableColumnInstance() const
 {
     ASSERT_NOT_REACHED();
     return false;

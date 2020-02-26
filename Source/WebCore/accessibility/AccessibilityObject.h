@@ -116,6 +116,8 @@ public:
     bool isAccessibilityTableInstance() const override { return false; }
     bool isAccessibilityProgressIndicatorInstance() const override { return false; }
 
+    bool isAccessibilityTableColumnInstance() const override { return false; }
+
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
@@ -170,7 +172,11 @@ public:
     int axRowCount() const override { return 0; }
 
     bool isTableRow() const override { return false; }
+
     bool isTableColumn() const override { return false; }
+    unsigned columnIndex() const override { return 0; }
+    AXCoreObject* columnHeader() override { return nullptr; }
+
     bool isTableCell() const override { return false; }
     bool isFieldset() const override { return false; }
     bool isGroup() const override { return false; }

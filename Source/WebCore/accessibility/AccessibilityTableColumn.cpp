@@ -69,21 +69,18 @@ LayoutRect AccessibilityTableColumn::elementRect() const
     return columnRect;
 }
 
-AXCoreObject* AccessibilityTableColumn::headerObject()
+AXCoreObject* AccessibilityTableColumn::columnHeader()
 {
-    if (!m_parent)
+    if (!m_parent || !is<AccessibilityTable>(*m_parent)
+        || !m_parent->isExposable())
         return nullptr;
-    
+
     RenderObject* renderer = m_parent->renderer();
     if (!renderer)
         return nullptr;
-    if (!is<AccessibilityTable>(*m_parent))
-        return nullptr;
 
     auto& parentTable = downcast<AccessibilityTable>(*m_parent);
-    if (!parentTable.isExposable())
-        return nullptr;
-    
+
     if (parentTable.isAriaTable()) {
         for (const auto& cell : children()) {
             if (cell->ariaRoleAttribute() == AccessibilityRole::ColumnHeader)

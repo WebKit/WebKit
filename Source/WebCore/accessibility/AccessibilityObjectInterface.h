@@ -489,6 +489,7 @@ public:
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
+    virtual bool isAccessibilityTableColumnInstance() const = 0;
     virtual bool isAccessibilityProgressIndicatorInstance() const = 0;
 
     virtual bool isAttachmentElement() const = 0;
@@ -552,7 +553,12 @@ public:
     virtual int axRowCount() const = 0;
 
     virtual bool isTableRow() const = 0;
+
+    // Table column support.
     virtual bool isTableColumn() const = 0;
+    virtual unsigned columnIndex() const = 0;
+    virtual AXCoreObject* columnHeader() = 0;
+
     virtual bool isTableCell() const = 0;
 
     virtual bool isFieldset() const = 0;

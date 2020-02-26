@@ -120,7 +120,9 @@ private:
         ColorValue,
         Columns,
         ColumnCount,
+        ColumnHeader,
         ColumnHeaders,
+        ColumnIndex,
         ComputedLabel,
         ComputedRoleString,
         CurrentState,
@@ -399,7 +401,12 @@ private:
     int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
 
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
+
+    // Table column support.
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }
+    unsigned columnIndex() const override { return unsignedAttributeValue(AXPropertyName::ColumnIndex); }
+    AXCoreObject* columnHeader() override { return objectAttributeValue(AXPropertyName::ColumnHeader); }
+
     bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isGroup() const override { return boolAttributeValue(AXPropertyName::IsGroup); }
@@ -689,7 +696,9 @@ private:
     bool isAccessibilitySVGRoot() const override;
     bool isAccessibilitySVGElement() const override;
     bool isAccessibilityTableInstance() const override;
+    bool isAccessibilityTableColumnInstance() const override;
     bool isAccessibilityProgressIndicatorInstance() const override;
+
     bool isAttachmentElement() const override;
     bool isNativeImage() const override;
     bool isImageButton() const override;
