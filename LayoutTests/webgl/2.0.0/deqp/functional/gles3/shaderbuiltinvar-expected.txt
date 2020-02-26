@@ -23,14 +23,14 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderbuiltinvar
 [ 20: FAIL ] builtin_variable.min_program_texel_offset_fragment: gl.createProgram()
 [ 21: FAIL ] builtin_variable.max_program_texel_offset_vertex: drawArrays
 [ 22: FAIL ] builtin_variable.max_program_texel_offset_fragment: gl.createProgram()
-[ 23: FAIL ] builtin_variable.depth_range_vertex: Fail
-[ 24: FAIL ] builtin_variable.depth_range_fragment: Fail
+[ 23: FAIL ] builtin_variable.depth_range_vertex: bindBuffer
+[ 24: FAIL ] builtin_variable.depth_range_fragment: bindBuffer
 [ 25: FAIL ] builtin_variable.vertex_id: Image comparison failed
 [ 26: FAIL ] builtin_variable.vertex_id: Image comparison failed
 [ 27: FAIL ] builtin_variable.fragcoord_xyz: gl.createProgram()
-[ 28: FAIL ] builtin_variable.fragcoord_w: gl.createProgram()
-[ 29: FAIL ] builtin_variable.pointcoord: Invalid gl.ALIASED_POINT_SIZE_RANGE
-[ 30: FAIL ] builtin_variable.frontfacing: gl.createProgram()
+[ 28: FAIL ] builtin_variable.fragcoord_w: bindBuffer
+[ 29: FAIL ] builtin_variable.pointcoord: bindBuffer
+[ 30: FAIL ] builtin_variable.frontfacing: bindBuffer
 [ 31: PASS ] successfullyParsed is true
 [ FAIL ] 30 failures reported
 

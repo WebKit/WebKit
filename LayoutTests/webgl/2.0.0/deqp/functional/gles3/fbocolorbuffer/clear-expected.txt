@@ -1,7 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/clear.html
-[ 1: FAIL ] color.clear.rgba32i:
+[ 1: FAIL ] color.clear.rgba32i: glError: INVALID_OPERATION
 [ 2: FAIL ] color.clear.rgba32ui: glError: INVALID_ENUM
 [ 3: FAIL ] color.clear.rgba16i: glError: INVALID_ENUM
 [ 4: FAIL ] color.clear.rgba16ui: glError: INVALID_ENUM

@@ -4,5 +4,5 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/bufferobjectquer
 [ 1: PASS ] buffer_object.buffer_size: Passed
 [ 2: FAIL ] buffer_object.buffer_usage: Buffer usage should be STREAM_READ ; got STREAM_DRAW
 [ 3: PASS ] successfullyParsed is true
-[ FAIL ] 1 failure reported
+[ FAIL ] 1 failures reported
 

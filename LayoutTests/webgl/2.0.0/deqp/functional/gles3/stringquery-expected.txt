@@ -5,7 +5,7 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/stringquery.html
 [ 2: PASS ] string.vendor: Passed
 [ 3: PASS ] string.version: Passed
 [ 4: FAIL ] string.shading_language_version: Got invalid string prefix
-[ 5: FAIL ] string.extensions: Advertised extension WEBKIT_EXT_texture_filter_anisotropic not found
-[ 6: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ 5: PASS ] string.extensions: Passed
+[ 6: PASS ] string.extensions: successfullyParsed is true
+[ FAIL ] 1 failures reported
 

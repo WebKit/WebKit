@@ -6,9 +6,9 @@ Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fragmentoutpu
 [ 3: FAIL ] fragment_outputs.random.12: gl.createProgram()
 [ 4: FAIL ] fragment_outputs.random.15: Image comparison failed for some of 3 attachments
 [ 5: FAIL ] fragment_outputs.random.21: gl.createProgram()
-[ 6: FAIL ] fragment_outputs.random.24: Image comparison failed for some of 2 attachments
-[ 7: FAIL ] fragment_outputs.random.27: gl.createProgram()
-[ 8: FAIL ] fragment_outputs.random.33: Image comparison failed for some of 2 attachments
+[ 6: FAIL ] fragment_outputs.random.24: gl.createProgram()
+[ 7: FAIL ] fragment_outputs.random.27: Image comparison failed for some of 4 attachments
+[ 8: FAIL ] fragment_outputs.random.33: gl.createProgram()
 [ 9: FAIL ] fragment_outputs.random.36: gl.createProgram()
 [ 10: FAIL ] fragment_outputs.random.42: Image comparison failed for some of 4 attachments
 [ 11: FAIL ] fragment_outputs.random.45: gl.createProgram()

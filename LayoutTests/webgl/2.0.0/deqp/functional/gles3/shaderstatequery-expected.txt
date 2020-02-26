@@ -5,7 +5,7 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderstatequery
 [ 2: PASS ] shader.shader_compile_status: Passed
 [ 3: PASS ] shader.shader_info_log: Passed
 [ 4: PASS ] shader.shader_source: Passed
-[ 5: PASS ] shader.delete_status: Passed
+[ 5: FAIL ] shader.delete_status:
 [ 6: PASS ] shader.current_vertex_attrib_initial: Passed
 [ 7: PASS ] shader.current_vertex_attrib_float: Passed
 [ 8: FAIL ] shader.current_vertex_attrib_int:
@@ -16,7 +16,7 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderstatequery
 [ 13: FAIL ] shader.program_active_uniform_name: null is not an object (evaluating 'indices[ndx]')
 [ 14: FAIL ] shader.program_active_uniform_types: Value is not a sequence
 [ 15: FAIL ] shader.program_active_uniform_blocks: Value is not a sequence
-[ 16: FAIL ] shader.transform_feedback:
+[ 16: PASS ] shader.transform_feedback: Passed
 [ 17: PASS ] shader.active_attributes: Passed
 [ 18: FAIL ] shader.vertex_attrib_size:
 [ 19: FAIL ] shader.vertex_attrib_type:

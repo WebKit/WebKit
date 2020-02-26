@@ -7,7 +7,7 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/booleanstatequer
 [ 4: PASS ] boolean.sample_alpha_to_coverage: Passed
 [ 5: PASS ] boolean.sample_coverage: Passed
 [ 6: PASS ] boolean.scissor_test: Passed
-[ 7: FAIL ] boolean.stencil_test:
+[ 7: PASS ] boolean.stencil_test: Passed
 [ 8: PASS ] boolean.depth_test: Passed
 [ 9: PASS ] boolean.blend: Passed
 [ 10: PASS ] boolean.dither: Passed
@@ -19,5 +19,5 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/booleanstatequer
 [ 16: FAIL ] boolean.transform_feedback:
 [ 17: FAIL ] boolean.transform_feedback_implicit_resume:
 [ 18: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ FAIL ] 2 failures reported
 

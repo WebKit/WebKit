@@ -7,5 +7,5 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/rbostatequery.ht
 [ 4: PASS ] rbo.renderbuffer_component_size_depth: Passed
 [ 5: FAIL ] rbo.renderbuffer_samples:
 [ 6: PASS ] successfullyParsed is true
-[ FAIL ] 1 failure reported
+[ FAIL ] 1 failures reported
 
