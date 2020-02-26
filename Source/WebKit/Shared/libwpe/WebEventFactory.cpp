@@ -144,6 +144,35 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor)
 {
+    WebCore::IntPoint position(event->x, event->y);
+    position.scale(1 / deviceScaleFactor);
+
+    WebCore::FloatSize wheelTicks;
+    WebCore::FloatSize delta;
+
+#if WPE_CHECK_VERSION(1, 5, 0)
+    if (event->type & wpe_input_axis_event_type_mask_2d) {
+        auto* event2D = reinterpret_cast<struct wpe_input_axis_2d_event*>(event);
+        switch (event->type & (wpe_input_axis_event_type_mask_2d - 1)) {
+        case wpe_input_axis_event_type_motion:
+            wheelTicks = WebCore::FloatSize(std::copysign(1, event2D->x_axis), std::copysign(1, event2D->y_axis));
+            delta = wheelTicks;
+            delta.scale(WebCore::Scrollbar::pixelsPerLineStep());
+            break;
+        case wpe_input_axis_event_type_motion_smooth:
+            wheelTicks = WebCore::FloatSize(event2D->x_axis / deviceScaleFactor, event2D->y_axis / deviceScaleFactor);
+            delta = wheelTicks;
+            break;
+        default:
+            return WebWheelEvent();
+        }
+
+        return WebWheelEvent(WebEvent::Wheel, position, position,
+            delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent,
+            OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
+    }
+#endif
+
     // FIXME: We shouldn't hard-code this.
     enum Axis {
         Vertical,
@@ -151,8 +180,6 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         Smooth
     };
 
-    WebCore::FloatSize wheelTicks;
-    WebCore::FloatSize delta;
     switch (event->axis) {
     case Vertical:
         wheelTicks = WebCore::FloatSize(0, std::copysign(1, event->value));
@@ -169,13 +196,12 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         delta = wheelTicks;
         break;
     default:
-        ASSERT_NOT_REACHED();
+        return WebWheelEvent();
     };
 
-    WebCore::IntPoint position(event->x, event->y);
-    position.scale(1 / deviceScaleFactor);
     return WebWheelEvent(WebEvent::Wheel, position, position,
-        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
+        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent,
+        OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
 }
 
 #if ENABLE(TOUCH_EVENTS)
