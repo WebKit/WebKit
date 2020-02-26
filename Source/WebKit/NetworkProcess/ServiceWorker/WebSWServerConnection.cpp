@@ -77,6 +77,8 @@ WebSWServerConnection::~WebSWServerConnection()
     m_networkProcess->unregisterSWServerConnection(*this);
     for (const auto& keyValue : m_clientOrigins)
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
+    for (auto& completionHandler : m_unregisterJobs.values())
+        completionHandler(false);
 }
 
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
