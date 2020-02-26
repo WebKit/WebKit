@@ -1,3 +1,48 @@
+2020-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Make sure a client cannot cause a whole DOM tree to get leaked by simply holding on to a WKBundleNodeHandle
+        https://bugs.webkit.org/show_bug.cgi?id=208218
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure a client cannot cause a whole DOM tree to get leaked by simply holding on to a WKBundleNodeHandle.
+        Previously, WKBundleNodeHandle would ref its node, which would keep the whole HTML document alive. To protect
+        against this, InjectedBundleNodeHandle is now an ActiveDOMObject which nulls out its node RefPtr when the
+        document is getting ready for destruction (i.e. ActiveDOMObject::stop() is called).
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::InjectedBundleNodeHandle):
+        (WebKit::InjectedBundleNodeHandle::~InjectedBundleNodeHandle):
+        (WebKit::InjectedBundleNodeHandle::coreNode):
+        (WebKit::InjectedBundleNodeHandle::document):
+        (WebKit::InjectedBundleNodeHandle::elementBounds):
+        (WebKit::InjectedBundleNodeHandle::renderRect):
+        (WebKit::InjectedBundleNodeHandle::renderedImage):
+        (WebKit::InjectedBundleNodeHandle::visibleRange):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementValueForUser):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFilled const):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable const):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFilled):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable):
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled const):
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType const):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonType const):
+        (WebKit::InjectedBundleNodeHandle::isAutoFillAvailable const):
+        (WebKit::InjectedBundleNodeHandle::setAutoFillAvailable):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds):
+        (WebKit::InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit):
+        (WebKit::InjectedBundleNodeHandle::isTextField const):
+        (WebKit::InjectedBundleNodeHandle::htmlTableCellElementCellAbove):
+        (WebKit::InjectedBundleNodeHandle::documentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::stop):
+        (WebKit::InjectedBundleNodeHandle::activeDOMObjectName const):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2020-02-26  Daniel Bates  <dabates@apple.com>
 
         [iOS] Send focus update immediately on becoming or resigning first responder
