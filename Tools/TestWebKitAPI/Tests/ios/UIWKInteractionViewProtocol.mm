@@ -28,11 +28,15 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
+#import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 @interface TestWKWebView (UIWKInteractionViewTesting)
+- (void)selectPositionAtPoint:(CGPoint)point;
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity;
@@ -67,6 +71,15 @@
     TestWebKitAPI::Util::run(&done);
 }
 
+- (void)selectPositionAtPoint:(CGPoint)point
+{
+    __block bool done = false;
+    [self.textInputContentView selectPositionAtPoint:point completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 @end
 
 TEST(UIWKInteractionViewProtocol, SelectTextWithCharacterGranularity)
@@ -90,6 +103,31 @@ TEST(UIWKInteractionViewProtocol, UpdateSelectionWithExtentPoint)
     [webView evaluateJavaScript:@"getSelection().setPosition(document.body, 0)" completionHandler:nil];
     [webView updateSelectionWithExtentPoint:CGPointMake(300, 20)];
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(UIWKInteractionViewProtocol, SelectPositionAtPointAfterBecomingFirstResponder)
+{
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    // 1. Ensure that the WKWebView is not first responder.
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; padding: 0'><div contenteditable='true' style='height: 200px; width: 200px'></div></body>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('div').focus()"];
+
+    // We explicitly dismiss the form accessory view to ensure that a DOM blur event is dispatched
+    // regardless of the test device used as -resignFirstResponder may not do this (e.g. it does
+    // not do this on iPad when there is a hardware keyboard attached).
+    [webView dismissFormAccessoryView];
+    [webView resignFirstResponder];
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+    // 2. Make it first responder and perform selection.
+    [webView becomeFirstResponder];
+    [webView selectPositionAtPoint:CGPointMake(8, 8)];
+    EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
 }
 
 #endif

@@ -100,7 +100,7 @@
         return;
 
     page->applicationWillEnterForeground();
-    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, true, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate, WebKit::WebPageProxy::ActivityStateChangeReplyMode::Synchronous);
 }
 
 - (BOOL)isBackground

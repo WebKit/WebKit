@@ -2432,7 +2432,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
     });
 
     dispatchSetTopContentInset();
-    m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow, false, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+    m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
     m_viewInWindowChangeWasDeferred = false;
 }
 

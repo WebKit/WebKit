@@ -1,3 +1,42 @@
+2020-02-26  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Send focus update immediately on becoming or resigning first responder
+        https://bugs.webkit.org/show_bug.cgi?id=208082
+        <rdar://problem/59688413>
+
+        Rubber-stamped by Jer Noble.
+
+        Send an activity state change immediately to the web process when the WKWebView becomes first
+        responder or resigns first responder.
+
+        Currently -becomeFirstResponderForWebView and -resignFirstResponderForWebView schedule an activity
+        state change message to be sent to the web process. This message will never be delivered within the
+        same event loop iteration. As a result, performing operations that requires the page to be focused
+        (e.g. selecting a position at a point) in the same event loop iteration as a call to -[WKWebView becomeFirstResponder])
+        will not work.
+
+        While I am in this area of the code simplify callers of activityStateDidChange() by changing its
+        parameter order such that it takes a dispatch mode before wantsSynchronousReply. The latter is
+        almost always defaulted to false to schedule an async message to the web process. Additionally,
+        changed wantsSynchronousReply from a boolean to an enumeration, ActivityStateChangeReplyMode, and
+        renamed the param to replyMode. The enumerators are self-documenting at the call site unlike the
+        boolean.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activityStateDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView _applicationWillEnterForeground]):
+        Update code for new parameter ordering and pass a ActivityStateChangeReplyMode enumerator.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        Pass WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate to activityStateDidChange()
+        to dispatch the update immediately to the web process.
+
 2020-02-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r257471.

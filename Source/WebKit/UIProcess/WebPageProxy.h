@@ -646,8 +646,9 @@ public:
     void setDelegatesScrolling(bool delegatesScrolling) { m_delegatesScrolling = delegatesScrolling; }
     bool delegatesScrolling() const { return m_delegatesScrolling; }
 
-    enum class ActivityStateChangeDispatchMode { Deferrable, Immediate };
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> mayHaveChanged, bool wantsSynchronousReply = false, ActivityStateChangeDispatchMode = ActivityStateChangeDispatchMode::Deferrable);
+    enum class ActivityStateChangeDispatchMode : bool { Deferrable, Immediate };
+    enum class ActivityStateChangeReplyMode : bool { Asynchronous, Synchronous };
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> mayHaveChanged, ActivityStateChangeDispatchMode = ActivityStateChangeDispatchMode::Deferrable, ActivityStateChangeReplyMode = ActivityStateChangeReplyMode::Asynchronous);
     bool isInWindow() const { return m_activityState.contains(WebCore::ActivityState::IsInWindow); }
     void waitForDidUpdateActivityState(ActivityStateChangeID);
     void didUpdateActivityState() { m_waitingForDidUpdateActivityState = false; }

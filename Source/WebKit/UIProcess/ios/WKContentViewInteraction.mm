@@ -1343,7 +1343,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
             [strongSelf _resetInputViewDeferral];
         });
 
-        _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
+        _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
         if ([self canShowNonEmptySelectionView])
             [_textInteractionAssistant activateSelection];
@@ -1404,7 +1404,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
     if (superDidResign) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
-        _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
+        _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
         if (_keyWebEventHandler) {
             dispatch_async(dispatch_get_main_queue(), [weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {

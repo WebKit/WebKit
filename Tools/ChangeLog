@@ -1,3 +1,20 @@
+2020-02-26  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Send focus update immediately on becoming or resigning first responder
+        https://bugs.webkit.org/show_bug.cgi?id=208082
+        <rdar://problem/59688413>
+
+        Rubber-stamped by Jer Noble.
+
+        Add a test to ensure that selecting a position at a point after the web view
+        becomes first responder is allowed. Such an operation is only allowed if the
+        web view is focused.
+
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (-[TestWKWebView selectPositionAtPoint:]):
+        (TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h: Forward declare SPI.
+
 2020-02-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, disable new DragAndDropTests.DragAndDropOnEmptyView API test on iOS.
