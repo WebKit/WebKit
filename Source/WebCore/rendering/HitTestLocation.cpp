@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2011, 2020 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -24,50 +24,37 @@
 
 namespace WebCore {
 
-HitTestLocation::HitTestLocation()
-    : m_isRectBased(false)
-    , m_isRectilinear(true)
-{
-}
+HitTestLocation::HitTestLocation() = default;
 
 HitTestLocation::HitTestLocation(const LayoutPoint& point)
     : m_point(point)
     , m_boundingBox(rectForPoint(point, 0, 0, 0, 0))
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
-    , m_isRectBased(false)
-    , m_isRectilinear(true)
 {
 }
 
 HitTestLocation::HitTestLocation(const FloatPoint& point)
-    : m_point(flooredLayoutPoint(point))
-    , m_boundingBox(rectForPoint(m_point, 0, 0, 0, 0))
-    , m_transformedPoint(point)
-    , m_transformedRect(m_boundingBox)
-    , m_isRectBased(false)
-    , m_isRectilinear(true)
+    : HitTestLocation::HitTestLocation { flooredLayoutPoint(point) }
 {
 }
 
 HitTestLocation::HitTestLocation(const FloatPoint& point, const FloatQuad& quad)
-    : m_transformedPoint(point)
-    , m_transformedRect(quad)
-    , m_isRectBased(true)
+    : m_point { flooredLayoutPoint(point) }
+    , m_boundingBox { quad.enclosingBoundingBox() }
+    , m_transformedPoint { point }
+    , m_transformedRect { quad }
+    , m_isRectilinear { quad.isRectilinear() }
 {
-    m_point = flooredLayoutPoint(point);
-    m_boundingBox = enclosingIntRect(quad.boundingBox());
-    m_isRectilinear = quad.isRectilinear();
 }
 
 HitTestLocation::HitTestLocation(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
     : m_point(centerPoint)
     , m_boundingBox(rectForPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding))
     , m_transformedPoint(centerPoint)
+    , m_transformedRect(FloatQuad { m_boundingBox })
     , m_isRectBased(topPadding || rightPadding || bottomPadding || leftPadding)
-    , m_isRectilinear(true)
 {
-    m_transformedRect = FloatQuad(m_boundingBox);
 }
 
 HitTestLocation::HitTestLocation(const HitTestLocation& other, const LayoutSize& offset)

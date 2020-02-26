@@ -21,11 +21,7 @@
 
 #pragma once
 
-#include "FloatQuad.h"
-#include "FloatRect.h"
-#include "LayoutRect.h"
 #include "RoundedRect.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -65,19 +61,19 @@ public:
     const FloatQuad& transformedRect() const { return m_transformedRect; }
 
 private:
-    template<typename RectType>
-    bool intersectsRect(const RectType&) const;
-    void move(const LayoutSize& offset);
+    template<typename RectType> bool intersectsRect(const RectType&) const;
 
-    // This is cached forms of the more accurate point and area below.
+    void move(const LayoutSize&);
+
+    // These are the cached forms of the more accurate point and rect below.
     LayoutPoint m_point;
     IntRect m_boundingBox;
 
     FloatPoint m_transformedPoint;
     FloatQuad m_transformedRect;
 
-    bool m_isRectBased;
-    bool m_isRectilinear;
+    bool m_isRectBased { false };
+    bool m_isRectilinear { true };
 };
 
 } // namespace WebCore
