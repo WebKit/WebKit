@@ -1,3 +1,12 @@
+2020-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Various test-cases from Gecko assert with ASSERTION FAILED: layoutState->renderer() == this.
+        https://bugs.webkit.org/show_bug.cgi?id=202805
+
+        Skip the test that's always crashing as suggested by Alexey.
+
+        * TestExpectations:
+
 2020-02-25  Justin Fan  <justin_fan@apple.com>
 
         [ WebGL ] Update WebGL bot expectations
