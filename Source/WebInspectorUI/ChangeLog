@@ -1,3 +1,18 @@
+2020-02-26  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: (257410) [ macOS ] inspector/network/client-blocked-load.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=208251
+        <rdar://problem/59812765>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode):
+        The test failed because it expected `url` to be an empty string (`""`) instead of `null`.
+        Use the given `url` parameter exactly as provided instead of trying to add a fallback in the
+        case of a falsy value. Given the prevalence of usage of `WI.SourceCode`, it's better to
+        match the existing behavior of before r257410 than change it and risk other subtle bugs.
+
 2020-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: AXI: buttons should be focusable when navigating by pressing Tab

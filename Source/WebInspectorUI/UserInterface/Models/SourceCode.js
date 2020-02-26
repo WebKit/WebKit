@@ -29,7 +29,7 @@ WI.SourceCode = class SourceCode extends WI.Object
     {
         super();
 
-        this._url = url || null;
+        this._url = url;
         this._urlComponents = null;
 
         this._originalRevision = new WI.SourceCodeRevision(this);
