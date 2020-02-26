@@ -57,7 +57,7 @@ HTTPSUpgradeEnabled:
 
 InProcessCookieCacheEnabled:
    type: bool
-   defaultValue: true
+   defaultValue: false
    humanReadableName: "In-Process Cookie Cache"
    humanReadableDescription: "In-Process DOM Cookie Cache"
    category: experimental
