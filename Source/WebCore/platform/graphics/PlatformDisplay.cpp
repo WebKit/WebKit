@@ -231,6 +231,10 @@ void PlatformDisplay::initializeEGLDisplay()
 
 void PlatformDisplay::terminateEGLDisplay()
 {
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+    m_gstGLDisplay = nullptr;
+    m_gstGLContext = nullptr;
+#endif
     m_sharingGLContext = nullptr;
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)

@@ -82,8 +82,6 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 
 typedef struct _GstStreamVolume GstStreamVolume;
 typedef struct _GstVideoInfo GstVideoInfo;
-typedef struct _GstGLContext GstGLContext;
-typedef struct _GstGLDisplay GstGLDisplay;
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 struct wpe_video_plane_display_dmabuf_source;
