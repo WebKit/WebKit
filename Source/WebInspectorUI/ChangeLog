@@ -1,5 +1,19 @@
 2020-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: VoiceOver should read "Console prompt" when focusing on it
+        https://bugs.webkit.org/show_bug.cgi?id=208028
+        <rdar://problem/59641238>
+
+        Reviewed by Brian Burg.
+
+        Before this change, VoiceOver read "edit text blank" when focusing on the console prompt.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ConsolePrompt.js:
+        (WI.ConsolePrompt):
+
+2020-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: VoiceOver: TreeOutline does not correctly indicate selected item
         https://bugs.webkit.org/show_bug.cgi?id=207968
 

@@ -306,6 +306,7 @@ localizedStrings["Console Evaluation %d"] = "Console Evaluation %d";
 localizedStrings["Console Profile Recorded"] = "Console Profile Recorded";
 localizedStrings["Console cleared at %s"] = "Console cleared at %s";
 localizedStrings["Console opened at %s"] = "Console opened at %s";
+localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Containing"] = "Containing";
 localizedStrings["Content"] = "Content";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
