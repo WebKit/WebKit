@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSImageSetValue.h"
 
+#include "CSSImageGeneratorValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Document.h"
