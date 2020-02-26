@@ -103,8 +103,8 @@ static void webkit_text_combiner_pad_init(WebKitTextCombinerPad* pad)
 static void webkitTextCombinerPadDispose(GObject* object)
 {
     WebKitTextCombinerPad* combinerPad = WEBKIT_TEXT_COMBINER_PAD(object);
-    gst_clear_tag_list(&combinerPad->tags);
-    gst_clear_object(&combinerPad->funnelPad);
+    g_clear_pointer(&combinerPad->tags, gst_tag_list_unref);
+    g_clear_pointer(&combinerPad->funnelPad, gst_object_unref);
     G_OBJECT_CLASS(webkit_text_combiner_pad_parent_class)->dispose(object);
 }
 
