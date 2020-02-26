@@ -107,7 +107,7 @@ private:
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
     Vector<Ref<AnimationEventBase>> m_pendingAnimationEvents;
-    RefPtr<Document> m_document;
+    WeakPtr<Document> m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     Seconds m_originTime;
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };

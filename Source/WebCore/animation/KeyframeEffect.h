@@ -191,7 +191,7 @@ private:
     KeyframeList m_blendingKeyframes { emptyString() };
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
-    RefPtr<Element> m_target;
+    WeakPtr<Element> m_target;
 
     std::unique_ptr<const RenderStyle> m_unanimatedStyle;
 
