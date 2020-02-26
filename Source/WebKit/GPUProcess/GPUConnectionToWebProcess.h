@@ -74,6 +74,10 @@ public:
     const String& mediaKeysStorageDirectory() const;
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    void setOrientationForMediaCapture(uint64_t orientation);
+#endif
+
     WebCore::PlatformMediaSessionManager& sessionManager();
 
 private:

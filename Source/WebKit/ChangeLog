@@ -1,5 +1,29 @@
 2020-02-26  Youenn Fablet  <youenn@apple.com>
 
+        GPUProcess should be made aware of device orientation for correct video capture frame rotation computation
+        https://bugs.webkit.org/show_bug.cgi?id=208242
+
+        Reviewed by Eric Carlson.
+
+        Pipe orientation information to GPUProcess whenever a page has a user media capture manager proxy.
+        This is used by AVVideoCaptureSource to compute the correct video sample rotation value.
+        Manually tested.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::setOrientationForMediaCapture):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setMockCaptureDevicesEnabled):
+        (WebKit::GPUProcess::setOrientationForMediaCapture):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::setOrientationForMediaCapture):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+
+2020-02-26  Youenn Fablet  <youenn@apple.com>
+
         Use WebPageProxy preferences for capture instead of WebProcessPool configuration parameters
         https://bugs.webkit.org/show_bug.cgi?id=208238
 

@@ -9922,6 +9922,9 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (auto* proxy = m_process->userMediaCaptureManagerProxy())
         proxy->setOrientation(orientation);
+
+    if (preferences().captureVideoInGPUProcessEnabled())
+        GPUProcessProxy::singleton().setOrientationForMediaCapture(orientation);
 #endif
 }
 

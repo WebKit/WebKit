@@ -283,6 +283,13 @@ PlatformMediaSessionManager& GPUConnectionToWebProcess::sessionManager()
     return *m_sessionManager;
 }
 
+#if ENABLE(MEDIA_STREAM)
+void GPUConnectionToWebProcess::setOrientationForMediaCapture(uint64_t orientation)
+{
+    userMediaCaptureManagerProxy().setOrientation(orientation);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

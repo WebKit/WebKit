@@ -83,7 +83,10 @@ private:
 
     void processDidTransitionToForeground();
     void processDidTransitionToBackground();
+#if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
+    void setOrientationForMediaCapture(uint64_t orientation);
+#endif
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;

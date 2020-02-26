@@ -61,6 +61,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
+    void setOrientationForMediaCapture(uint64_t orientation);
 #endif
 
     void removeSession(PAL::SessionID);
@@ -107,6 +108,7 @@ private:
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
+    uint64_t m_orientation { 0 };
 #endif
     HashSet<PAL::SessionID> m_sessionIDs;
 };

@@ -156,12 +156,18 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(ProcessIdentifier id
     return m_webProcessConnections.get(identifier);
 }
 
+#if ENABLE(MEDIA_STREAM)
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 {
-#if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
-#endif
 }
+
+void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->setOrientationForMediaCapture(orientation);
+}
+#endif
 
 void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)
 {

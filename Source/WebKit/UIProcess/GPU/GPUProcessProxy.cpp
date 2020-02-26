@@ -146,6 +146,14 @@ void GPUProcessProxy::setUseMockCaptureDevices(bool value)
     m_useMockCaptureDevices = value;
     send(Messages::GPUProcess::SetMockCaptureDevicesEnabled { m_useMockCaptureDevices }, 0);
 }
+
+void GPUProcessProxy::setOrientationForMediaCapture(uint64_t orientation)
+{
+    if (m_orientation == orientation)
+        return;
+    m_orientation = orientation;
+    send(Messages::GPUProcess::SetOrientationForMediaCapture { orientation }, 0);
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
