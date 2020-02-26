@@ -194,7 +194,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
-        scheduleInitialDeferredPaint();
+        scheduleImmediateRenderingUpdate();
     }
 }
 
@@ -278,59 +278,18 @@ void RemoteLayerTreeDrawingArea::scheduleImmediateRenderingUpdate()
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
-void RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint()
+void RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
 {
-    ASSERT(!m_isRenderingSuspended);
-    m_inInitialDeferredRenderingUpdate = true;
+    if (m_isRenderingSuspended) {
+        m_hasDeferredRenderingUpdate = true;
+        return;
+    }
 
     if (m_updateRenderingTimer.isActive())
         return;
     scheduleImmediateRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
-{
-    if (m_isRenderingSuspended) {
-        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
-        m_hasDeferredRenderingUpdate = true;
-        return;
-    }
-    if (m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction) {
-        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
-        scheduleImmediateRenderingUpdate();
-        return;
-    }
-
-    if (m_updateRenderingTimer.isActive())
-        return;
-
-    const Seconds initialFlushDelay = 500_ms;
-    const Seconds flushDelay = 1500_ms;
-    Seconds throttleDelay = m_isThrottlingRenderingUpdates ? (m_isFirstThrottledRenderingUpdate ? initialFlushDelay : flushDelay) : 0_s;
-    m_isFirstThrottledRenderingUpdate = false;
-
-    m_updateRenderingTimer.startOneShot(throttleDelay);
-}
-
-bool RemoteLayerTreeDrawingArea::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)
-{
-    if (flags.contains(RenderingUpdateThrottleState::UserIsInteracting))
-        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = true;
-
-    bool wasThrottlingLayerFlushes = m_isThrottlingRenderingUpdates;
-    m_isThrottlingRenderingUpdates = flags.contains(RenderingUpdateThrottleState::Enabled);
-
-    if (!wasThrottlingLayerFlushes && m_isThrottlingRenderingUpdates)
-        m_isFirstThrottledRenderingUpdate = true;
-
-    // Re-schedule the flush if we stopped throttling.
-    if (wasThrottlingLayerFlushes && !m_isThrottlingRenderingUpdates && m_updateRenderingTimer.isActive()) {
-        m_updateRenderingTimer.stop();
-        scheduleRenderingUpdate();
-    }
-    return true;
-}
-    
 void RemoteLayerTreeDrawingArea::addCommitHandlers()
 {
     if (m_webPage.firstFlushAfterCommit())
@@ -364,13 +323,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (m_waitingForBackingStoreSwap) {
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
         return;
-    }
-
-    if (m_inInitialDeferredRenderingUpdate) {
-        m_inInitialDeferredRenderingUpdate = false;
-        // Reschedule the flush timer for the second paint if painting is being throttled.
-        if (m_isThrottlingRenderingUpdates)
-            scheduleRenderingUpdate();
     }
 
     // This function is not reentrant, e.g. a rAF callback may force repaint.

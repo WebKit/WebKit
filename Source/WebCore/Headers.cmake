@@ -834,7 +834,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteDOMWindow.h
     page/RemoteFrame.h
     page/RenderingUpdateScheduler.h
-    page/RenderingUpdateThrottleState.h
     page/RuntimeEnabledFeatures.h
     page/ScrollBehavior.h
     page/ScrollIntoViewOptions.h

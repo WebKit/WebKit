@@ -35,7 +35,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/RenderingUpdateThrottleState.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
@@ -85,7 +84,6 @@ public:
     virtual bool forceRepaintAsync(CallbackID) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
-    virtual bool renderingUpdateThrottlingIsActive() const { return false; }
 
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void enablePainting() { }
@@ -114,7 +112,6 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleRenderingUpdate() = 0;
-    virtual void scheduleInitialDeferredPaint() = 0;
     virtual void scheduleImmediateRenderingUpdate() = 0;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -127,8 +124,6 @@ public:
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
     virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
-
-    virtual bool adjustRenderingUpdateThrottling(OptionSet<WebCore::RenderingUpdateThrottleState>) { return false; }
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 

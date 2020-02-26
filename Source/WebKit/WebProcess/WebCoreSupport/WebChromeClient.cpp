@@ -938,23 +938,10 @@ void WebChromeClient::contentRuleListNotification(const URL& url, const ContentR
 #endif
 }
 
-bool WebChromeClient::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)
-{
-    return m_page.drawingArea() && m_page.drawingArea()->adjustRenderingUpdateThrottling(flags);
-}
-
 bool WebChromeClient::layerTreeStateIsFrozen() const
 {
     if (m_page.drawingArea())
         return m_page.drawingArea()->layerTreeStateIsFrozen();
-
-    return false;
-}
-
-bool WebChromeClient::renderingUpdateThrottlingIsActive() const
-{
-    if (m_page.drawingArea())
-        return m_page.drawingArea()->renderingUpdateThrottlingIsActive();
 
     return false;
 }

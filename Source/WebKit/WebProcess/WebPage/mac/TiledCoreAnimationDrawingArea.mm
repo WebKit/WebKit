@@ -73,7 +73,6 @@ using namespace WebCore;
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
-    , m_renderThrottlingTimer(*this, &TiledCoreAnimationDrawingArea::renderThrottlingTimerFired)
     , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
@@ -184,7 +183,6 @@ void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStat
 
     if (m_layerTreeStateIsFrozen) {
         invalidateRenderingUpdateRunLoopObserver();
-        m_renderThrottlingTimer.stop();
     } else {
         // Immediate flush as any delay in unfreezing can result in flashes.
         scheduleRenderingUpdateRunLoopObserver();
@@ -196,26 +194,9 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
     return m_layerTreeStateIsFrozen;
 }
 
-void TiledCoreAnimationDrawingArea::scheduleInitialDeferredPaint()
-{
-}
-
 void TiledCoreAnimationDrawingArea::scheduleRenderingUpdate()
 {
     if (m_layerTreeStateIsFrozen) {
-        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
-        return;
-    }
-
-    if (m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction) {
-        m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = false;
-        scheduleRenderingUpdateRunLoopObserver();
-        m_renderThrottlingTimer.stop();
-        return;
-    }
-
-    if (m_renderThrottlingTimer.isActive()) {
-        ASSERT(m_isThrottlingRenderingUpdates);
         return;
     }
 
@@ -507,11 +488,6 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
             sendEnterAcceleratedCompositingModeIfNeeded();
             invalidateRenderingUpdateRunLoopObserver();
         }
-
-        if (m_isThrottlingRenderingUpdates)
-            startRenderThrottlingTimer();
-        else
-            m_renderThrottlingTimer.stop();
     }
 }
 
@@ -967,49 +943,6 @@ void TiledCoreAnimationDrawingArea::scheduleRenderingUpdateRunLoopObserver()
 
     // Avoid running any more tasks before the runloop observer fires.
     WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
-}
-
-bool TiledCoreAnimationDrawingArea::adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState> flags)
-{
-    bool wasThrottlingRendering = m_isThrottlingRenderingUpdates;
-    m_isThrottlingRenderingUpdates = flags.contains(RenderingUpdateThrottleState::Enabled);
-    m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction = flags.contains(RenderingUpdateThrottleState::UserIsInteracting);
-
-    if (wasThrottlingRendering == m_isThrottlingRenderingUpdates)
-        return true;
-
-    m_renderThrottlingTimer.stop();
-
-    if (m_layerTreeStateIsFrozen)
-        return true;
-
-    if (m_isThrottlingRenderingUpdates) {
-        invalidateRenderingUpdateRunLoopObserver();
-        startRenderThrottlingTimer();
-    } else
-        scheduleRenderingUpdateRunLoopObserver();
-
-    return true;
-}
-
-bool TiledCoreAnimationDrawingArea::renderingUpdateThrottlingIsActive() const
-{
-    return m_isThrottlingRenderingUpdates && !m_layerTreeStateIsFrozen;
-}
-
-void TiledCoreAnimationDrawingArea::startRenderThrottlingTimer()
-{
-    ASSERT(m_isThrottlingRenderingUpdates);
-
-    const auto throttledFlushDelay = 500_ms;
-    m_renderThrottlingTimer.startOneShot(throttledFlushDelay);
-}
-
-void TiledCoreAnimationDrawingArea::renderThrottlingTimerFired()
-{
-    if (m_layerTreeStateIsFrozen)
-        return;
-    scheduleRenderingUpdateRunLoopObserver();
 }
 
 } // namespace WebKit

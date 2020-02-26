@@ -2257,8 +2257,6 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
     if (!view)
         return false;
 
-    view->disableLayerFlushThrottlingTemporarilyForInteraction();
-
     auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
         event.globalPosition(), event.position(),
@@ -2633,9 +2631,6 @@ static RefPtr<Element> findFirstMouseFocusableElementInComposedTree(Element& hos
 bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
 {
     Ref<Frame> protectedFrame(m_frame);
-
-    if (auto* view = m_frame.view())
-        view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
     updateMouseEventTargetNode(targetNode, platformMouseEvent, setUnder ? FireMouseOverOut::Yes : FireMouseOverOut::No);
 
@@ -3302,9 +3297,6 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
-    if (FrameView* view = m_frame.view())
-        view->disableLayerFlushThrottlingTemporarilyForInteraction();
-
     // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame.loader().resetMultipleFormSubmissionProtection();
 
@@ -3885,9 +3877,6 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
         target = eventTargetElementForDocument(m_frame.document());
     if (!target)
         return false;
-    
-    if (FrameView* view = m_frame.view())
-        view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
     auto event = TextEvent::create(&m_frame.windowProxy(), text, inputType);
     event->setUnderlyingEvent(underlyingEvent);

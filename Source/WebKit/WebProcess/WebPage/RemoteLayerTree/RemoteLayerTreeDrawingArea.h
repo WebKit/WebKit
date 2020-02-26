@@ -64,7 +64,6 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    void scheduleInitialDeferredPaint() override;
     void scheduleRenderingUpdate() override;
     void scheduleImmediateRenderingUpdate() override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
@@ -84,7 +83,6 @@ private:
 
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }
-    bool renderingUpdateThrottlingIsActive() const override { return m_isThrottlingRenderingUpdates && m_updateRenderingTimer.isActive(); }
 
     void forceRepaint() override;
     bool forceRepaintAsync(CallbackID) override { return false; }
@@ -107,8 +105,6 @@ private:
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs) override;
-
-    bool adjustRenderingUpdateThrottling(OptionSet<WebCore::RenderingUpdateThrottleState>) override;
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) override;
 
@@ -154,13 +150,8 @@ private:
     WebCore::Timer m_updateRenderingTimer;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
-    bool m_inInitialDeferredRenderingUpdate { false };
-    bool m_isFirstThrottledRenderingUpdate { false };
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_inUpdateRendering { false };
-
-    bool m_isThrottlingRenderingUpdates { false };
-    bool m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction { false };
 
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };

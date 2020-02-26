@@ -1872,10 +1872,6 @@ void Document::scheduleStyleRecalc()
         return;
 
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
-    if (page() && page()->chrome().client().renderingUpdateThrottlingIsActive()) {
-        // Do not run optional style recalcs while we throttle painting.
-        return;
-    }
 
     m_styleRecalcTimer.startOneShot(0_s);
 
@@ -3128,8 +3124,6 @@ bool Document::shouldScheduleLayout()
     if (!bodyOrFrameset())
         return false;
     if (styleScope().hasPendingSheetsBeforeBody())
-        return false;
-    if (page() && page()->chrome().client().renderingUpdateThrottlingIsActive())
         return false;
     if (view() && !view()->isVisuallyNonEmpty())
         return false;

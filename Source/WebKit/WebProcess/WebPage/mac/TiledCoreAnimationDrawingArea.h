@@ -65,7 +65,6 @@ private:
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    void scheduleInitialDeferredPaint() override;
     void scheduleRenderingUpdate() override;
     void scheduleImmediateRenderingUpdate() override;
 
@@ -134,9 +133,6 @@ private:
     void invalidateRenderingUpdateRunLoopObserver();
     void scheduleRenderingUpdateRunLoopObserver();
 
-    bool adjustRenderingUpdateThrottling(OptionSet<WebCore::RenderingUpdateThrottleState>) override;
-    bool renderingUpdateThrottlingIsActive() const override;
-
     void startRenderThrottlingTimer();
     void renderThrottlingTimerFired();
 
@@ -156,8 +152,6 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
-    WebCore::Timer m_renderThrottlingTimer;
-
     RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
     Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
@@ -174,8 +168,6 @@ private:
     bool m_layerTreeStateIsFrozen { false };
     bool m_shouldScaleViewToFitDocument { false };
     bool m_isScalingViewToFitDocument { false };
-    bool m_isThrottlingRenderingUpdates { false };
-    bool m_isRenderingUpdateThrottlingTemporarilyDisabledForInteraction { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
 };
 

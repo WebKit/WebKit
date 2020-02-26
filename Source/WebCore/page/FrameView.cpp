@@ -2822,51 +2822,11 @@ void FrameView::unobscuredContentSizeChanged()
 #endif
 }
 
-static OptionSet<RenderingUpdateThrottleState> determineLayerFlushThrottleState(Page& page)
-{
-    // We only throttle when constantly receiving new data during the inital page load.
-    if (!page.progress().isMainLoadProgressing())
-        return { };
-    // Scrolling during page loading disables throttling.
-    if (page.mainFrame().view()->wasScrolledByUser())
-        return { };
-    // Disable for image documents so large GIF animations don't get throttled during loading.
-    auto* document = page.mainFrame().document();
-    if (!document || is<ImageDocument>(*document))
-        return { };
-    return { RenderingUpdateThrottleState::Enabled };
-}
-
-void FrameView::disableLayerFlushThrottlingTemporarilyForInteraction()
-{
-    if (!frame().page())
-        return;
-    auto& page = *frame().page();
-
-    auto flags = determineLayerFlushThrottleState(page);
-    flags.add(RenderingUpdateThrottleState::UserIsInteracting);
-    page.chrome().client().adjustRenderingUpdateThrottling(flags);
-}
-
 void FrameView::loadProgressingStatusChanged()
 {
     if (m_firstVisuallyNonEmptyLayoutMilestoneIsPending && frame().loader().isComplete())
         fireLayoutRelatedMilestonesIfNeeded();
-    updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
-}
-
-void FrameView::updateLayerFlushThrottling()
-{
-    Page* page = frame().page();
-    if (!page)
-        return;
-
-    ASSERT(frame().isMainFrame());
-
-    auto flags = determineLayerFlushThrottleState(*page);
-
-    page->chrome().client().adjustRenderingUpdateThrottling(flags);
 }
 
 void FrameView::adjustTiledBackingCoverage()
@@ -4087,8 +4047,6 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (m_wasScrolledByUser == wasScrolledByUser)
         return;
     m_wasScrolledByUser = wasScrolledByUser;
-    if (frame().isMainFrame())
-        updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
 }
 

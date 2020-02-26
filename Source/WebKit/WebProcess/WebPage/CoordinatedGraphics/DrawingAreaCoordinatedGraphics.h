@@ -69,7 +69,6 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    void scheduleInitialDeferredPaint() override { };
     void scheduleRenderingUpdate() override;
     void scheduleImmediateRenderingUpdate() override { scheduleRenderingUpdate(); };
 

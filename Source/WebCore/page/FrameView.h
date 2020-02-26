@@ -334,7 +334,6 @@ public:
     
     bool fixedElementsLayoutRelativeToFrame() const;
 
-    WEBCORE_EXPORT void disableLayerFlushThrottlingTemporarilyForInteraction();
     bool speculativeTilingEnabled() const { return m_speculativeTilingEnabled; }
     void loadProgressingStatusChanged();
 
@@ -711,7 +710,6 @@ private:
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
 
-    void updateLayerFlushThrottling();
     WEBCORE_EXPORT void adjustTiledBackingCoverage();
 
     void repaintContentRectangle(const IntRect&) final;

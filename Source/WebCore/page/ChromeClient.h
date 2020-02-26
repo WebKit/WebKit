@@ -43,7 +43,6 @@
 #include "PopupMenuClient.h"
 #include "RegistrableDomain.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderingUpdateThrottleState.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
@@ -340,9 +339,6 @@ public:
     
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
-    virtual bool renderingUpdateThrottlingIsActive() const { return false; }
-
-    virtual bool adjustRenderingUpdateThrottling(OptionSet<RenderingUpdateThrottleState>) { return false; }
 
     virtual RefPtr<ScrollingCoordinator> createScrollingCoordinator(Page&) const { return nullptr; }
 

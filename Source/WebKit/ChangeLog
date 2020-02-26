@@ -1,3 +1,45 @@
+2020-02-25  Ben Nham  <nham@apple.com>
+
+        Remove render update throttling
+        https://bugs.webkit.org/show_bug.cgi?id=208168
+
+        Reviewed by Zalan Bujtas.
+
+        Currently, we disable render updates after the first paint for 500 ms while the page is
+        actively loading. However, oftentimes our first paint heuristic selects a first paint that
+        isn't particularly interesting (mostly background colors) and this paint throttler just
+        makes the user look at a nearly empty page for 500 ms. Antti and Simon both think we should
+        remove the throttler to fix this so this patch does that.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::adjustRenderingUpdateThrottling): Deleted.
+        (WebKit::WebChromeClient::renderingUpdateThrottlingIsActive const): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleInitialDeferredPaint): Deleted.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::layerTreeStateIsFrozen const):
+        (WebKit::DrawingArea::renderingUpdateThrottlingIsActive const): Deleted.
+        (WebKit::DrawingArea::adjustRenderingUpdateThrottling): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleRenderingUpdate):
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleInitialDeferredPaint): Deleted.
+        (WebKit::RemoteLayerTreeDrawingArea::adjustRenderingUpdateThrottling): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdate):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleInitialDeferredPaint): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::adjustRenderingUpdateThrottling): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::renderingUpdateThrottlingIsActive const): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::startRenderThrottlingTimer): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::renderThrottlingTimerFired): Deleted.
+
 2020-02-25  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: 'Open in Preview' and 'Save' don't work for blobs
