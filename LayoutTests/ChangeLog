@@ -1,5 +1,17 @@
 2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Update WPT tests for Intersection Observer
+        https://bugs.webkit.org/show_bug.cgi?id=208053.
+
+        Unreviewed test gardening
+
+        Skipping tests that do not have an expected file.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         Unreviewed, rolling out r257373.
 
         This commit introduced one test that is a flaky failure on ios
