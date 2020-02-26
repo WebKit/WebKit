@@ -224,15 +224,27 @@ void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSA
     }
 }
 
-void AnimationTimeline::elementWasRemoved(Element& element)
+void AnimationTimeline::willDestroyRendererForElement(Element& element)
 {
     for (auto& cssTransition : m_elementToCSSTransitionsMap.get(&element))
         cssTransition->cancel(WebAnimation::Silently::Yes);
+
     for (auto& cssAnimation : m_elementToCSSAnimationsMap.get(&element)) {
         if (is<CSSAnimation>(cssAnimation))
             removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
         cssAnimation->cancel(WebAnimation::Silently::Yes);
     }
+}
+
+void AnimationTimeline::elementWasRemoved(Element& element)
+{
+    willDestroyRendererForElement(element);
+
+    m_elementToAnimationsMap.remove(&element);
+    m_elementToCSSAnimationsMap.remove(&element);
+    m_elementToCSSTransitionsMap.remove(&element);
+    m_elementToRunningCSSTransitionByCSSPropertyID.remove(&element);
+    m_elementToCSSAnimationsCreatedByMarkupMap.remove(&element);
 }
 
 void AnimationTimeline::removeAnimationsForElement(Element& element)

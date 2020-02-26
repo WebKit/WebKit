@@ -90,7 +90,8 @@ void PseudoElement::clearHostElement()
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
     if (auto* timeline = document().existingTimeline())
-        timeline->removeAnimationsForElement(*this);
+        timeline->elementWasRemoved(*this);
+    
     if (auto* frame = document().frame())
         frame->animation().cancelAnimations(*this);
 
