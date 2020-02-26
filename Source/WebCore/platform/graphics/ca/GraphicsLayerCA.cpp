@@ -4232,7 +4232,7 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleF
     if (scheduleFlush == ScheduleFlush) {
         bool needsFlush = !hadUncommittedChanges;
         if (needsFlush)
-            client().notifyRenderingUpdateRequired(this);
+            client().notifyFlushRequired(this);
     }
 }
 

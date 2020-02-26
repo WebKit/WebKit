@@ -116,7 +116,7 @@ void ServicesOverlayController::Highlight::invalidate()
     m_controller = nullptr;
 }
 
-void ServicesOverlayController::Highlight::notifyRenderingUpdateRequired(const GraphicsLayer*)
+void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLayer*)
 {
     if (!m_controller)
         return;

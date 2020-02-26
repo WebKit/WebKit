@@ -90,7 +90,7 @@ public:
 
 private:
     // GraphicsLayerClient
-    void notifyRenderingUpdateRequired(const WebCore::GraphicsLayer*) override;
+    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 

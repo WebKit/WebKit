@@ -565,7 +565,7 @@ private:
 
     // GraphicsLayerClient
     void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, MonotonicTime) override;
-    void notifyRenderingUpdateRequired(const WebCore::GraphicsLayer*) override;
+    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& inClip, WebCore::GraphicsLayerPaintBehavior) override;
 
 #if USE(CA)

@@ -66,7 +66,7 @@ void CoordinatedGraphicsLayer::notifyFlushRequired()
     if (m_coordinator->isFlushingLayerChanges())
         return;
 
-    client().notifyRenderingUpdateRequired(this);
+    client().notifyFlushRequired(this);
 }
 
 void CoordinatedGraphicsLayer::didChangeAnimations()

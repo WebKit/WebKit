@@ -122,7 +122,7 @@ private:
         position.move(0, gFontSize + 2);
     }
 
-    void notifyRenderingUpdateRequired(const GraphicsLayer*) override
+    void notifyFlushRequired(const GraphicsLayer*) override
     {
         m_overlay.overlay().page()->chrome().client().scheduleRenderingUpdate();
     }

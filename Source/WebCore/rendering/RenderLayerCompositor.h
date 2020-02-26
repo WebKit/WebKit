@@ -393,7 +393,7 @@ private:
     bool updateCompositingPolicy();
     
     // GraphicsLayerClient implementation
-    void notifyRenderingUpdateRequired(const GraphicsLayer*) override;
+    void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }

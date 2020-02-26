@@ -467,7 +467,7 @@ void RenderLayerCompositor::customPositionForVisibleRectComputation(const Graphi
     position = -scrollPosition;
 }
 
-void RenderLayerCompositor::notifyRenderingUpdateRequired(const GraphicsLayer*)
+void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer*)
 {
     scheduleRenderingUpdate();
 }

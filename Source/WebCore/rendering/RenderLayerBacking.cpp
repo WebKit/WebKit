@@ -3401,7 +3401,7 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const Stri
         renderer().animation().notifyAnimationStarted(renderer(), time);
 }
 
-void RenderLayerBacking::notifyRenderingUpdateRequired(const GraphicsLayer*)
+void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)
 {
     if (renderer().renderTreeBeingDestroyed())
         return;

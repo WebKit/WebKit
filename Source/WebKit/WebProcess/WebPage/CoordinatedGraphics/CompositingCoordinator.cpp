@@ -109,7 +109,7 @@ void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLaye
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 {
     m_rootLayer->setSize(newSize);
-    notifyRenderingUpdateRequired(m_rootLayer.get());
+    notifyFlushRequired(m_rootLayer.get());
 }
 
 bool CompositingCoordinator::flushPendingLayerChanges()
@@ -208,7 +208,7 @@ void CompositingCoordinator::syncLayerState()
     m_shouldSyncFrame = true;
 }
 
-void CompositingCoordinator::notifyRenderingUpdateRequired(const GraphicsLayer*)
+void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 {
     if (m_rootLayer && !isFlushingLayerChanges())
         m_client.notifyFlushRequired();
@@ -270,7 +270,7 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
         compositionLayer->setSceneIntegration(nullptr);
     }
     m_registeredLayers.remove(layer->id());
-    notifyRenderingUpdateRequired(layer);
+    notifyFlushRequired(layer);
 }
 
 void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
@@ -283,7 +283,7 @@ void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
     }
     m_registeredLayers.add(layer->id(), layer);
     layer->setNeedsVisibleRectAdjustment();
-    notifyRenderingUpdateRequired(layer);
+    notifyFlushRequired(layer);
 }
 
 void CompositingCoordinator::renderNextFrame()
