@@ -1,3 +1,14 @@
+2020-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC][Floats] ASSERT(committedInlineItemCount || line.hasIntrusiveFloat()) in LineLayoutContext::close
+        https://bugs.webkit.org/show_bug.cgi?id=208230
+        <rdar://problem/59791249>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-and-br-inline-content-only-expected.html: Added.
+        * fast/layoutformattingcontext/float-and-br-inline-content-only.html: Added.
+
 2020-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update fast/forms/number/number-size.html after r257299

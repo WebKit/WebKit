@@ -327,13 +327,13 @@ LineLayoutContext::LineContent LineLayoutContext::layoutLine(LineBuilder& line, 
 
 LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent> partialContent)
 {
-    ASSERT(committedInlineItemCount || line.hasIntrusiveFloat());
+    ASSERT(committedInlineItemCount || !m_floats.isEmpty() || line.hasIntrusiveFloat());
     if (!committedInlineItemCount) {
         if (m_floats.isEmpty()) {
             // We didn't manage to add a run or a float at this vertical position.
             return LineContent { { }, { }, WTFMove(m_floats), line.close(), line.lineBox() };
         }
-        unsigned trailingInlineItemIndex = layoutRange.start + m_floats.size();
+        unsigned trailingInlineItemIndex = layoutRange.start + m_floats.size() - 1;
         return LineContent { trailingInlineItemIndex, { }, WTFMove(m_floats), line.close(), line.lineBox() };
     }
     // Adjust hyphenated line count.
@@ -410,30 +410,31 @@ void LineLayoutContext::nextContentForLine(LineCandidate& lineCandidate, unsigne
 void LineLayoutContext::commitFloats(LineBuilder& line, const LineCandidate& lineCandidate, CommitIntrusiveFloatsOnly commitIntrusiveOnly)
 {
     auto& floatContent = lineCandidate.floatContent;
-    auto leftFloatsWidth = InlineLayoutUnit { };
-    auto rightFloatsWidth = InlineLayoutUnit { };
+    auto leftIntrusiveFloatsWidth = InlineLayoutUnit { };
+    auto rightIntrusiveFloatsWidth = InlineLayoutUnit { };
+    auto hasIntrusiveFloat = false;
 
     for (auto& floatCandidate : floatContent.list()) {
-        if (floatCandidate.isIntrusive && commitIntrusiveOnly == CommitIntrusiveFloatsOnly::Yes)
+        if (!floatCandidate.isIntrusive && commitIntrusiveOnly == CommitIntrusiveFloatsOnly::Yes)
             continue;
-        if (!floatCandidate.isIntrusive) {
-            m_floats.append({ LineContent::Float::Intrusive::No, floatCandidate.item });
-            continue;
+        m_floats.append({ floatCandidate.isIntrusive? LineContent::Float::Intrusive::Yes : LineContent::Float::Intrusive::No, floatCandidate.item });
+        if (floatCandidate.isIntrusive) {
+            hasIntrusiveFloat = true;
+            // This float is intrusive and it shrinks the current line.
+            // Shrink available space for current line.
+            if (floatCandidate.item->layoutBox().isLeftFloatingPositioned())
+                leftIntrusiveFloatsWidth += floatCandidate.logicalWidth;
+            else
+                rightIntrusiveFloatsWidth += floatCandidate.logicalWidth;
         }
-        m_floats.append({ LineContent::Float::Intrusive::Yes, floatCandidate.item });
-        // This float is intrusive and it shrinks the current line.
-        // Shrink available space for current line.
-        if (floatCandidate.item->layoutBox().isLeftFloatingPositioned())
-            leftFloatsWidth += floatCandidate.logicalWidth;
-        else
-            rightFloatsWidth += floatCandidate.logicalWidth;
     }
-    if (leftFloatsWidth || rightFloatsWidth) {
+    if (hasIntrusiveFloat)
         line.setHasIntrusiveFloat();
-        if (leftFloatsWidth)
-            line.moveLogicalLeft(leftFloatsWidth);
-        if (rightFloatsWidth)
-            line.moveLogicalRight(rightFloatsWidth);
+    if (leftIntrusiveFloatsWidth || rightIntrusiveFloatsWidth) {
+        if (leftIntrusiveFloatsWidth)
+            line.moveLogicalLeft(leftIntrusiveFloatsWidth);
+        if (rightIntrusiveFloatsWidth)
+            line.moveLogicalRight(rightIntrusiveFloatsWidth);
     }
 }
 
