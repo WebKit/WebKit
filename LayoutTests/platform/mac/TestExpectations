@@ -24,7 +24,7 @@ fast/text-autosizing/ios/programmatic-text-size-adjust.html [ Skip ]
 fast/text-autosizing/ios/text-size-adjust-inline-style.html [ Skip ]
 fast/text-autosizing [ Pass ]
 # Tests for idempotent autosizing mode rely on viewport scaling which isn't implemented on Mac.
-fast/text-autosizing/ios/idempotentmode [ Pass Failure ImageOnlyFailure ]
+fast/text-autosizing/ios/idempotentmode [ Skip ]
 
 fast/attachment/attachment-subtitle-resize.html [ Pass ]
 

@@ -1,3 +1,11 @@
+2020-02-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for macOS.
+
+        * platform/mac/TestExpectations: Change the expectation for the
+        fast/text-autosizing/ios/idempotentmode directory to 'Skip' since the
+        tests rely on a feature that isn't implemented on macOS.
+
 2020-02-25  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is flaky failing.
