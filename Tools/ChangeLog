@@ -1,3 +1,17 @@
+2020-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Tests should each use a unique ResourceLoadStatistics file path for its database store
+        https://bugs.webkit.org/show_bug.cgi?id=208206
+        <rdar://problem/59690272>
+
+        Reviewed by Brady Eidson.
+
+        Initialize a default website data store before checking for the ITP
+        store to ensure the directory exists after the file has been deleted.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2020-02-26  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Implement NetworkCache::Data by using FileSystem::MappedFileData

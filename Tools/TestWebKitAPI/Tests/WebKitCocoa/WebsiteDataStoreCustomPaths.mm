@@ -428,6 +428,7 @@ TEST(WebKit, WebsiteDataStoreEphemeral)
     handler = nil;
     configuration = nil;
 
+    [WKWebsiteDataStore defaultDataStore];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsFilePath.path]);
 
@@ -471,6 +472,7 @@ TEST(WebKit, WebsiteDataStoreEphemeralViaConfiguration)
     handler = nil;
     configuration = nil;
 
+    [WKWebsiteDataStore defaultDataStore];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsFilePath.path]);
 

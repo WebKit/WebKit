@@ -52,6 +52,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
@@ -157,36 +158,30 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-    postTask([this, databaseEnabled = networkSession.networkProcess().isITPDatabaseEnabled(), resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
-        if (databaseEnabled) {
-            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
+    if (!resourceLoadStatisticsDirectory.isEmpty()) {
+        postTask([this, databaseEnabled = networkSession.networkProcess().isITPDatabaseEnabled(), resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
+            if (databaseEnabled) {
+                m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
 
-            auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-            downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
+                auto memoryStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
+                downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore.get()).populateFromMemoryStore(*memoryStore);
 
-            auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist");
-            if (FileSystem::fileExists(legacyPlistFilePath))
-                FileSystem::deleteFile(legacyPlistFilePath);
+                auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist");
+                if (FileSystem::fileExists(legacyPlistFilePath))
+                    FileSystem::deleteFile(legacyPlistFilePath);
 
-        } else {
-            m_statisticsStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
-            m_persistentStorage = makeUnique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
+            } else {
+                m_statisticsStore = makeUnique<ResourceLoadStatisticsMemoryStore>(*this, m_statisticsQueue, shouldIncludeLocalhost);
+                m_persistentStorage = makeUnique<ResourceLoadStatisticsPersistentStorage>(downcast<ResourceLoadStatisticsMemoryStore>(*m_statisticsStore), m_statisticsQueue, resourceLoadStatisticsDirectory);
 
-            auto databaseStorageFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db");
-            auto databaseStorageTemporaryWalFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db-wal");
-            auto databaseStorageTemporaryShmFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db-shm");
-            if (FileSystem::fileExists(databaseStorageFilePath)) {
-                FileSystem::deleteFile(databaseStorageFilePath);
-                FileSystem::deleteFile(databaseStorageTemporaryWalFilePath);
-                FileSystem::deleteFile(databaseStorageTemporaryShmFilePath);
+                SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "observations.db"));
             }
-        }
 
-        // FIXME(193297): This should be revised after the UIProcess version goes away.
-        m_statisticsStore->didCreateNetworkProcess();
-    });
+            m_statisticsStore->didCreateNetworkProcess();
+        });
 
-    m_dailyTasksTimer.startRepeating(24_h);
+        m_dailyTasksTimer.startRepeating(24_h);
+    }
 }
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
@@ -244,7 +239,7 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
             m_persistentStorage->populateMemoryStoreFromDisk([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 postTaskReply(WTFMove(completionHandler));
             });
-        else if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+        else if (m_statisticsStore && is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
             auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
             if (databaseStore.isNewResourceLoadStatisticsDatabaseFile()) {
                 m_statisticsStore->grandfatherExistingWebsiteData([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
