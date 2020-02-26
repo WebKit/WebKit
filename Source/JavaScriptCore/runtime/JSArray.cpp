@@ -306,7 +306,7 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
     RELEASE_AND_RETURN(scope, JSObject::put(thisObject, globalObject, propertyName, value, slot));
 }
 
-bool JSArray::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool JSArray::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     JSArray* thisObject = jsCast<JSArray*>(cell);
@@ -314,7 +314,7 @@ bool JSArray::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Propert
     if (propertyName == vm.propertyNames->length)
         return false;
 
-    return JSObject::deleteProperty(thisObject, globalObject, propertyName);
+    return JSObject::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 static int compareKeysForQSort(const void* a, const void* b)

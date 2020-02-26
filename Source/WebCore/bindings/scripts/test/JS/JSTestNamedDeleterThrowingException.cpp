@@ -190,7 +190,7 @@ void JSTestNamedDeleterThrowingException::getOwnPropertyNames(JSObject* object, 
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
 }
 
-bool JSTestNamedDeleterThrowingException::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
+bool JSTestNamedDeleterThrowingException::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterThrowingException*>(cell);
     auto& impl = thisObject.wrapped();
@@ -204,7 +204,7 @@ bool JSTestNamedDeleterThrowingException::deleteProperty(JSCell* cell, JSGlobalO
 
         return result.releaseReturnValue();
     }
-    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName);
+    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
 }
 
 bool JSTestNamedDeleterThrowingException::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)

@@ -438,7 +438,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
 
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
-    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -450,7 +450,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     if (parseIndex(propertyName))
         return false;
     
-    return Base::deleteProperty(thisObject, globalObject, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 template<typename Adaptor>
@@ -484,7 +484,7 @@ bool JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex(
     JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
     VM& vm = globalObject->vm();
-    return cell->methodTable(vm)->deleteProperty(cell, globalObject, Identifier::from(vm, propertyName));
+    return JSCell::deleteProperty(cell, globalObject, Identifier::from(vm, propertyName));
 }
 
 template<typename Adaptor>

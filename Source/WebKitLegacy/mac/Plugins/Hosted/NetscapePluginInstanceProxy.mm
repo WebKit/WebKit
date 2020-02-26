@@ -1141,8 +1141,8 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
         scope.clearException();
         return false;
     }
-    
-    object->methodTable(vm)->deleteProperty(object, lexicalGlobalObject, propertyName);
+
+    JSCell::deleteProperty(object, lexicalGlobalObject, propertyName);
     scope.clearException();
     return true;
 }

@@ -925,7 +925,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     auto bytecode = pc->as<OpDelById>();
     JSObject* baseObject = getOperand(callFrame, bytecode.m_base).toObject(globalObject);
     LLINT_CHECK_EXCEPTION();
-    bool couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, globalObject, codeBlock->identifier(bytecode.m_property));
+    bool couldDelete = JSCell::deleteProperty(baseObject, globalObject, codeBlock->identifier(bytecode.m_property));
     LLINT_CHECK_EXCEPTION();
     if (!couldDelete && codeBlock->isStrictMode())
         LLINT_THROW(createTypeError(globalObject, UnableToDeletePropertyError));
@@ -1108,7 +1108,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
         LLINT_CHECK_EXCEPTION();
         auto property = subscript.toPropertyKey(globalObject);
         LLINT_CHECK_EXCEPTION();
-        couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, globalObject, property);
+        couldDelete = JSCell::deleteProperty(baseObject, globalObject, property);
     }
     LLINT_CHECK_EXCEPTION();
 

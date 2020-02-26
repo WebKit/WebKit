@@ -139,8 +139,10 @@ bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, Pro
         thisObject->setIndexQuickly(vm, index.value(), value);
         return true;
     }
-    
-    RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, ident, value, slot));
+
+    auto result = Base::put(thisObject, globalObject, ident, value, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    RELEASE_AND_RETURN(scope, result);
 }
 
 template<typename Type>
@@ -158,7 +160,7 @@ bool GenericArguments<Type>::putByIndex(JSCell* cell, JSGlobalObject* globalObje
 }
 
 template<typename Type>
-bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident)
+bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, DeletePropertySlot& slot)
 {
     Type* thisObject = jsCast<Type*>(cell);
     VM& vm = globalObject->vm();
@@ -175,7 +177,7 @@ bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* global
     if (Optional<uint32_t> index = parseIndex(ident))
         RELEASE_AND_RETURN(scope, GenericArguments<Type>::deletePropertyByIndex(thisObject, globalObject, *index));
 
-    RELEASE_AND_RETURN(scope, Base::deleteProperty(thisObject, globalObject, ident));
+    RELEASE_AND_RETURN(scope, Base::deleteProperty(thisObject, globalObject, ident, slot));
 }
 
 template<typename Type>

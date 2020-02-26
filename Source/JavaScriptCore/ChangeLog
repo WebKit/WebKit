@@ -1,3 +1,213 @@
+2020-02-25  Justin Michaud  <justin_michaud@apple.com>
+
+        Inline Cache delete by id/val
+        https://bugs.webkit.org/show_bug.cgi?id=207522
+
+        Reviewed by Keith Miller and Filip Pizlo.
+
+        We add inline caching for deleteById/val for baseline only. We also fix a concurrency bug in ICStats used for testing.
+        We add three new access cases (no inline code is emitted at this time): 
+        - Delete is a cached delete of an existing property
+        - DeleteMiss is a delete of a property that does not exist
+        - DeleteNonConfigurable is a delete of a property that exists, but should not be deleted.
+        There are no conditions required for these caches, since the structure id must change and the prototype does not matter.
+        This gives the following microbenchmark results:
+
+        delete-property-keeps-cacheable-structure (neutral)
+        delete-property-inline-cache              definitely 3.9096x faster
+        delete-property-inline-cache-polymorphic  definitely 1.5239x faster
+        delete-property-from-prototype-chain      (neutral)
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::deleteProperty):
+        (JSC::JSCallbackObject<Parent>::deletePropertyByIndex):
+        * API/JSObjectRef.cpp:
+        (JSObjectDeletePropertyForKey):
+        (JSObjectDeleteProperty):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::createTransition):
+        (JSC::AccessCase::createDelete):
+        (JSC::AccessCase::requiresIdentifierNameMatch const):
+        (JSC::AccessCase::requiresInt32PropertyCheck const):
+        (JSC::AccessCase::needsScratchFPR const):
+        (JSC::AccessCase::forEachDependentCell const):
+        (JSC::AccessCase::doesCalls const):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::dump const):
+        (JSC::AccessCase::propagateTransitions const):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::structure const):
+        (JSC::AccessCase::newStructure const):
+        * bytecode/PolymorphicAccess.cpp:
+        (WTF::printInternal):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::deleteProperty):
+        * debugger/DebuggerScope.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addDelById):
+        (JSC::DFG::JITCompiler::addDelByVal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteByVal):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITDelByValGenerator::JITDelByValGenerator):
+        (JSC::JITDelByValGenerator::generateFastPath):
+        (JSC::JITDelByValGenerator::finalize):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        (JSC::JITDelByIdGenerator::generateFastPath):
+        (JSC::JITDelByIdGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITDelByValGenerator::JITDelByValGenerator):
+        (JSC::JITDelByValGenerator::slowPathJump const):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        (JSC::JITDelByIdGenerator::slowPathJump const):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheDelBy):
+        (JSC::repatchDelBy):
+        (JSC::resetPutByID):
+        (JSC::resetDelBy):
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::CacheableIdentifier):
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::deleteProperty):
+        * runtime/ClonedArguments.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/DeletePropertySlot.h: Added.
+        (JSC::DeletePropertySlot::DeletePropertySlot):
+        (JSC::DeletePropertySlot::setConfigurableMiss):
+        (JSC::DeletePropertySlot::setNonconfigurable):
+        (JSC::DeletePropertySlot::setHit):
+        (JSC::DeletePropertySlot::isCacheableDelete const):
+        (JSC::DeletePropertySlot::isDeleteHit const):
+        (JSC::DeletePropertySlot::isConfigurableDeleteMiss const):
+        (JSC::DeletePropertySlot::isNonconfigurable const):
+        (JSC::DeletePropertySlot::cachedOffset const):
+        (JSC::DeletePropertySlot::disableCaching):
+        (JSC::DeletePropertySlot::isCacheable const):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::deleteProperty):
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::deleteProperty):
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::deleteProperty):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::deleteProperty):
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::deleteProperty):
+        * runtime/JSDataView.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deleteProperty):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deletePropertyByIndex):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addFunction):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::deleteProperty):
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::deleteProperty):
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::deleteProperty):
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::deleteProperty):
+        * runtime/JSProxy.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::deleteProperty):
+        * runtime/JSSymbolTableObject.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::deleteProperty):
+        * runtime/ProxyObject.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::deleteProperty):
+        * runtime/RegExpObject.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::deleteProperty):
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::deleteProperty):
+        * runtime/StringObject.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::removePropertyTransitionFromExistingStructureImpl):
+        (JSC::Structure::removePropertyTransitionFromExistingStructure):
+        (JSC::Structure::removePropertyTransitionFromExistingStructureConcurrently):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::dump const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::hasIndexingHeader const):
+        (JSC::Structure::mayHaveIndexingHeader const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionHasOwnLengthProperty):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Attach WARN_UNUSED_RETURN to makeScopeExit and fix existing wrong usage

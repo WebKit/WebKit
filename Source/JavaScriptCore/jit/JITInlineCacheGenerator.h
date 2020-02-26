@@ -142,6 +142,56 @@ private:
     PutKind m_putKind;
 };
 
+class JITDelByValGenerator : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITDelByValGenerator() { }
+
+    JITDelByValGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs property, GPRReg result, GPRReg scratch);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+    void generateFastPath(MacroAssembler&);
+
+private:
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
+};
+
+class JITDelByIdGenerator : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITDelByIdGenerator() { }
+
+    JITDelByIdGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        JSValueRegs base, GPRReg result, GPRReg scratch);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+    void generateFastPath(MacroAssembler&);
+
+private:
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
+};
+
 class JITInByIdGenerator : public JITByIdGenerator {
 public:
     JITInByIdGenerator() { }

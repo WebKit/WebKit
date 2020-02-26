@@ -127,13 +127,13 @@ bool JSLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Prope
     return thisObject->putOwnDataProperty(globalObject->vm(), propertyName, value, slot);
 }
 
-bool JSLexicalEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool JSLexicalEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->arguments)
         return false;
 
-    return Base::deleteProperty(cell, globalObject, propertyName);
+    return Base::deleteProperty(cell, globalObject, propertyName, slot);
 }
 
 } // namespace JSC

@@ -1,3 +1,70 @@
+2020-02-25  Justin Michaud  <justin_michaud@apple.com>
+
+        Inline Cache delete by id/val
+        https://bugs.webkit.org/show_bug.cgi?id=207522
+
+        Reviewed by Keith Miller and Filip Pizlo. 
+
+        * microbenchmarks/delete-property-from-prototype-chain.js:
+        (delete.C.prototype.z):
+        * microbenchmarks/delete-property-inline-cache-polymorphic.js: Added.
+        (C):
+        (noInline.C.foo):
+        (noInline.foo.F):
+        (noInline.F):
+        * microbenchmarks/delete-property-inline-cache.js: Added.
+        (C):
+        (noInline.C.D):
+        (noInline.D.foo):
+        (noInline.foo.E):
+        (noInline.E.F):
+        (noInline.F):
+        * microbenchmarks/delete-property-keeps-cacheable-structure.js:
+        * stress/delete-property-check-structure-transition.js:
+        (sd): Deleted.
+        (testDeleteIsNotUncacheable): Deleted.
+        (): Deleted.
+        (testCanFlatten): Deleted.
+        (testDeleteWithInlineCache.Object.prototype.globalProperty.42.makeFoo): Deleted.
+        (testDeleteWithInlineCache.noInline.doTest): Deleted.
+        (testDeleteWithInlineCache): Deleted.
+        * stress/delete-property-inline-cache.js: Added.
+        (assert):
+        (assert_eq):
+        (assert_neq):
+        (assert_throws):
+        (noInline.assert.noInline.assert_eq.noInline.assert_neq.noInline.assert_throws.testCacheableDeleteById.makeFoo):
+        (noInline.assert.noInline.assert_eq.noInline.assert_neq.noInline.assert_throws.testCacheableDeleteById):
+        (noInline.testCacheableDeleteById.testCacheableDeleteByVal.makeFoo2):
+        (noInline.testCacheableDeleteById.testCacheableDeleteByVal):
+        (noInline.testCacheableDeleteByVal.testCacheableEmptyDeleteById.makeFoo3):
+        (noInline.testCacheableDeleteByVal.testCacheableEmptyDeleteById):
+        (noInline.testCacheableEmptyDeleteById.testCacheableDeleteByIdMiss.makeFoo4):
+        (noInline.testCacheableEmptyDeleteById.testCacheableDeleteByIdMiss):
+        (noInline.testCacheableDeleteByIdMiss.testDeleteIndex.makeFoo5):
+        (noInline.testCacheableDeleteByIdMiss.testDeleteIndex):
+        (noInline.testDeleteIndex.testPolymorphicDelByVal.makeFoo6):
+        (noInline.testDeleteIndex.testPolymorphicDelByVal):
+        (noInline.testPolymorphicDelByVal.testBigintDeleteByVal.makeFoo7):
+        (noInline.testPolymorphicDelByVal.testBigintDeleteByVal):
+        (noInline.testBigintDeleteByVal.testSymbolDeleteByVal.makeFoo8):
+        (noInline.testBigintDeleteByVal.testSymbolDeleteByVal):
+        (noInline.testSymbolDeleteByVal.testObjDeleteByVal.makeFoo9):
+        (noInline.testSymbolDeleteByVal.testObjDeleteByVal):
+        (noInline.testObjDeleteByVal.testStrict.makeFoo10):
+        (noInline.testObjDeleteByVal.testStrict):
+        (noInline.testStrict.testOverride.arr.j):
+        (noInline.testStrict.testOverride):
+        (noInline.testOverride.testNonObject.deleteIt):
+        (noInline.testOverride.testNonObject):
+        (noInline.testNonObject.testNonObjectStrict.deleteIt):
+        (noInline.testNonObject.testNonObjectStrict):
+        (noInline.testNonObjectStrict.testExceptionUnwind.mutateThem):
+        (noInline.testNonObjectStrict.testExceptionUnwind.noInline.deleteIt):
+        (noInline.testNonObjectStrict.testExceptionUnwind):
+        (noInline.testExceptionUnwind.testTDZ):
+        (noInline.testTDZ):
+
 2020-02-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Computed Properties with increment sometimes produces incorrect results

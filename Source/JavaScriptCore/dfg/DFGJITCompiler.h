@@ -191,7 +191,17 @@ public:
     {
         m_putByIds.append(InlineCacheWrapper<JITPutByIdGenerator>(gen, slowPath));
     }
-    
+
+    void addDelById(const JITDelByIdGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_delByIds.append(InlineCacheWrapper<JITDelByIdGenerator>(gen, slowPath));
+    }
+
+    void addDelByVal(const JITDelByValGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_delByVals.append(InlineCacheWrapper<JITDelByValGenerator>(gen, slowPath));
+    }
+
     void addInstanceOf(const JITInstanceOfGenerator& gen, SlowPathGenerator* slowPath)
     {
         m_instanceOfs.append(InlineCacheWrapper<JITInstanceOfGenerator>(gen, slowPath));
@@ -348,6 +358,8 @@ private:
     Vector<InlineCacheWrapper<JITGetByIdWithThisGenerator>, 4> m_getByIdsWithThis;
     Vector<InlineCacheWrapper<JITGetByValGenerator>, 4> m_getByVals;
     Vector<InlineCacheWrapper<JITPutByIdGenerator>, 4> m_putByIds;
+    Vector<InlineCacheWrapper<JITDelByIdGenerator>, 4> m_delByIds;
+    Vector<InlineCacheWrapper<JITDelByValGenerator>, 4> m_delByVals;
     Vector<InlineCacheWrapper<JITInByIdGenerator>, 4> m_inByIds;
     Vector<InlineCacheWrapper<JITInstanceOfGenerator>, 4> m_instanceOfs;
     Vector<JSCallRecord, 4> m_jsCalls;

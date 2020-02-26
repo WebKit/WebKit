@@ -1145,43 +1145,6 @@ void SpeculativeJIT::compileInByVal(Node* node)
     blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::compileDeleteById(Node* node)
-{
-    JSValueOperand value(this, node->child1());
-    GPRFlushedCallResult result(this);
-
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
-
-    value.use();
-
-    flushRegisters();
-    callOperation(operationDeleteById, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), valueRegs, identifierUID(node->identifierNumber()));
-    m_jit.exceptionCheck();
-
-    unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
-}
-
-void SpeculativeJIT::compileDeleteByVal(Node* node)
-{
-    JSValueOperand base(this, node->child1());
-    JSValueOperand key(this, node->child2());
-    GPRFlushedCallResult result(this);
-
-    JSValueRegs baseRegs = base.jsValueRegs();
-    JSValueRegs keyRegs = key.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
-
-    base.use();
-    key.use();
-
-    flushRegisters();
-    callOperation(operationDeleteByVal, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, keyRegs);
-    m_jit.exceptionCheck();
-
-    unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
-}
-
 void SpeculativeJIT::compilePushWithScope(Node* node)
 {
     SpeculateCellOperand currentScope(this, node->child1());

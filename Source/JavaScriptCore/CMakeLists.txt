@@ -815,6 +815,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DateInstance.h
     runtime/DateInstanceCache.h
     runtime/DefinePropertyAttributes.h
+    runtime/DeletePropertySlot.h
     runtime/DirectArgumentsOffset.h
     runtime/DirectEvalExecutable.h
     runtime/DisallowScope.h

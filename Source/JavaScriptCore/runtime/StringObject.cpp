@@ -125,7 +125,7 @@ bool StringObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObj
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException));
 }
 
-bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     StringObject* thisObject = jsCast<StringObject*>(cell);
@@ -134,7 +134,7 @@ bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Pr
     Optional<uint32_t> index = parseIndex(propertyName);
     if (index && thisObject->internalValue()->canGetIndex(index.value()))
         return false;
-    return JSObject::deleteProperty(thisObject, globalObject, propertyName);
+    return JSObject::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 bool StringObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned i)

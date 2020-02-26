@@ -82,7 +82,7 @@ bool JSRemoteDOMWindow::putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, 
     return false;
 }
 
-bool JSRemoteDOMWindow::deleteProperty(JSCell*, JSGlobalObject* lexicalGlobalObject, PropertyName)
+bool JSRemoteDOMWindow::deleteProperty(JSCell*, JSGlobalObject* lexicalGlobalObject, PropertyName, DeletePropertySlot&)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -31,6 +31,7 @@
 #include "ClassInfo.h"
 #include "CustomGetterSetter.h"
 #include "DOMAttributeGetterSetter.h"
+#include "DeletePropertySlot.h"
 #include "Heap.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCast.h"
@@ -623,7 +624,7 @@ public:
     bool hasOwnProperty(JSGlobalObject*, PropertyName) const;
     bool hasOwnProperty(JSGlobalObject*, unsigned) const;
 
-    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
 
     JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);

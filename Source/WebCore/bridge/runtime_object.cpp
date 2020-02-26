@@ -200,7 +200,7 @@ bool RuntimeObject::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Prope
     return result;
 }
 
-bool RuntimeObject::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
+bool RuntimeObject::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)
 {
     // Can never remove a property of a RuntimeObject.
     return false;

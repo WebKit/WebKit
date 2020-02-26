@@ -458,7 +458,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    [self _imp]->methodTable(vm)->deleteProperty([self _imp], lexicalGlobalObject, Identifier::fromString(vm, String(key)));
+    JSC::JSCell::deleteProperty([self _imp], lexicalGlobalObject, Identifier::fromString(vm, String(key)));
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(lexicalGlobalObject);

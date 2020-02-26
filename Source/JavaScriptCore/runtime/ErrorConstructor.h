@@ -49,7 +49,7 @@ protected:
     void finishCreation(VM&, ErrorPrototype*);
 
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
 private:
     ErrorConstructor(VM&, Structure*);

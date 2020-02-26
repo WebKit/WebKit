@@ -209,7 +209,7 @@ void JSTestNamedDeleterWithIndexedGetter::getOwnPropertyNames(JSObject* object, 
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
 }
 
-bool JSTestNamedDeleterWithIndexedGetter::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
+bool JSTestNamedDeleterWithIndexedGetter::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIndexedGetter*>(cell);
     auto& impl = thisObject.wrapped();
@@ -218,7 +218,7 @@ bool JSTestNamedDeleterWithIndexedGetter::deleteProperty(JSCell* cell, JSGlobalO
     if (isVisibleNamedProperty<OverrideBuiltins::No>(*lexicalGlobalObject, thisObject, propertyName)) {
         return impl.deleteNamedProperty(propertyNameToString(propertyName));
     }
-    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName);
+    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
 }
 
 bool JSTestNamedDeleterWithIndexedGetter::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)

@@ -70,7 +70,9 @@ namespace JSC {
     macro(PutByIdAddAccessCase) \
     macro(PutByIdReplaceWithJump) \
     macro(PutByIdSelfPatch) \
-    macro(InByIdSelfPatch)
+    macro(InByIdSelfPatch) \
+    macro(DelByReplaceWithJump) \
+    macro(DelByReplaceWithGeneric)
 
 class ICEvent {
 public:

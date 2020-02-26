@@ -71,12 +71,12 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalOb
     return Base::getOwnPropertySlot(object, globalObject, propertyName, slot);
 }
 
-bool RegExpObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool RegExpObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->lastIndex)
         return false;
-    return Base::deleteProperty(cell, globalObject, propertyName);
+    return Base::deleteProperty(cell, globalObject, propertyName, slot);
 }
 
 void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)

@@ -220,7 +220,7 @@ bool ClonedArguments::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNa
     return Base::put(thisObject, globalObject, ident, value, slot);
 }
 
-bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident)
+bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, DeletePropertySlot& slot)
 {
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
     VM& vm = globalObject->vm();
@@ -229,7 +229,7 @@ bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject,
         || ident == vm.propertyNames->iteratorSymbol)
         thisObject->materializeSpecialsIfNecessary(globalObject);
     
-    return Base::deleteProperty(thisObject, globalObject, ident);
+    return Base::deleteProperty(thisObject, globalObject, ident, slot);
 }
 
 bool ClonedArguments::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)

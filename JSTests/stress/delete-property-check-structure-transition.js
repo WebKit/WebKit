@@ -12,6 +12,9 @@ function assert_neq(a, b) {
     if (a === b)
         throw new Error("assertion failed: " + a + " !== " + b);
 }
+noInline(assert)
+noInline(assert_eq)
+noInline(assert_neq)
 
 function sd(obj) {
     let data = $vm.getStructureTransitionList(obj)
@@ -31,6 +34,8 @@ function sid(obj) {
     let data = sd(obj)
     return data[data.length-1].id
 }
+noInline(sd)
+noInline(sid)
 
 function testDeleteIsNotUncacheable(i) {
     let foo = {}
@@ -62,6 +67,7 @@ function testDeleteIsNotUncacheable(i) {
     assert_eq($vm.getConcurrently(foo, "bar"+i), 1)
     assert(foo["bar" + i] === 1)
 }
+noInline(testDeleteIsNotUncacheable)
 
 function testCanMaterializeDeletes(i) {
     let foo = {}
@@ -100,6 +106,8 @@ function testCanMaterializeDeletes(i) {
     assert_eq(data[data.length-2].property, "bar" + i)
 }
 
+noInline(testCanMaterializeDeletes)
+
 function testCanFlatten(i) {
     let foo = {}
     for (let j=0; j<500; ++j) {
@@ -131,6 +139,7 @@ function testCanFlatten(i) {
             assert_eq(val, undefined)
     }
 }
+noInline(testCanFlatten)
 
 function testDeleteWithInlineCache() {
     Object.prototype.globalProperty = 42
@@ -175,6 +184,7 @@ function testDeleteWithInlineCache() {
 
     doTest(undefined)
 }
+noInline(testDeleteWithInlineCache)
 
 testDeleteWithInlineCache()
 

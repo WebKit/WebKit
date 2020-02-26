@@ -1314,7 +1314,7 @@ void JSGlobalObject::addFunction(JSGlobalObject* globalObject, const Identifier&
 {
     VM& vm = globalObject->vm();
     VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-    methodTable(vm)->deleteProperty(this, globalObject, propertyName);
+    JSCell::deleteProperty(this, globalObject, propertyName);
     addGlobalVar(propertyName);
 }
 

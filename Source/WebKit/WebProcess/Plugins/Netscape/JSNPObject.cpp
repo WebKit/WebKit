@@ -361,7 +361,7 @@ bool JSNPObject::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Property
     return result;
 }
 
-bool JSNPObject::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
+bool JSNPObject::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     return jsCast<JSNPObject*>(cell)->deleteProperty(lexicalGlobalObject, npIdentifierFromIdentifier(propertyName));
 }

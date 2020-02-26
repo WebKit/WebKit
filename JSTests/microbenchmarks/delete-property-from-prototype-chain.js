@@ -1,4 +1,4 @@
-//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
+//@ skip if $model =~ /^Apple Watch/
 function assert(b) {
     if (!b)
         throw new Error;
@@ -28,7 +28,7 @@ function doTest(zVal) {
 }
 noInline(doTest);
 
-for (let i=0; i<10000; ++i) {
+for (let i = 0; i < 10000; ++i) {
     const X = { i }
     C.prototype.z = X
     doTest(X)
@@ -36,7 +36,7 @@ for (let i=0; i<10000; ++i) {
 
 delete C.prototype.z
 
-for (let i=0; i<1000000; ++i) {
+for (let i = 0; i < 2000000; ++i) {
     getZ({z: i})
     doTest(undefined)
 }

@@ -500,6 +500,8 @@ void JIT::privateCompileSlowCases()
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
     m_inByIdIndex = 0;
+    m_delByValIndex = 0;
+    m_delByIdIndex = 0;
     m_instanceOfIndex = 0;
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
@@ -580,6 +582,8 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_put_by_id)
         case op_put_by_val_direct:
         DEFINE_SLOWCASE_OP(op_put_by_val)
+        DEFINE_SLOWCASE_OP(op_del_by_val)
+        DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
         DEFINE_SLOWCASE_OP(op_has_indexed_property)
         DEFINE_SLOWCASE_OP(op_get_from_scope)
@@ -875,6 +879,8 @@ CompilationResult JIT::link()
     finalizeInlineCaches(m_getByVals, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
     finalizeInlineCaches(m_putByIds, patchBuffer);
+    finalizeInlineCaches(m_delByIds, patchBuffer);
+    finalizeInlineCaches(m_delByVals, patchBuffer);
     finalizeInlineCaches(m_inByIds, patchBuffer);
     finalizeInlineCaches(m_instanceOfs, patchBuffer);
 

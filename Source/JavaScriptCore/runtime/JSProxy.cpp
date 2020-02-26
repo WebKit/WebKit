@@ -91,10 +91,10 @@ bool JSProxy::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
     return thisObject->target()->methodTable(globalObject->vm())->defineOwnProperty(thisObject->target(), globalObject, propertyName, descriptor, shouldThrow);
 }
 
-bool JSProxy::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool JSProxy::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
-    return thisObject->target()->methodTable(globalObject->vm())->deleteProperty(thisObject->target(), globalObject, propertyName);
+    return thisObject->target()->methodTable(globalObject->vm())->deleteProperty(thisObject->target(), globalObject, propertyName, slot);
 }
 
 bool JSProxy::isExtensible(JSObject* object, JSGlobalObject* globalObject)

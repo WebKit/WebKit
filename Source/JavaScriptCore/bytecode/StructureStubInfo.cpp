@@ -276,6 +276,12 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
     case AccessType::InstanceOf:
         resetInstanceOf(*this);
         break;
+    case AccessType::DeleteByID:
+        resetDelBy(codeBlock, *this, DelByKind::Normal);
+        break;
+    case AccessType::DeleteByVal:
+        resetDelBy(codeBlock, *this, DelByKind::NormalByVal);
+        break;
     }
     
     deref();

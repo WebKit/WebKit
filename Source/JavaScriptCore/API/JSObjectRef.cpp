@@ -479,7 +479,7 @@ bool JSObjectDeletePropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueR
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return false;
 
-    bool result = jsObject->methodTable(vm)->deleteProperty(jsObject, globalObject, ident);
+    bool result = JSCell::deleteProperty(jsObject, globalObject, ident);
     handleExceptionIfNeeded(scope, ctx, exception);
     return result;
 }
@@ -534,7 +534,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
     JSObject* jsObject = toJS(object);
 
-    bool result = jsObject->methodTable(vm)->deleteProperty(jsObject, globalObject, propertyName->identifier(&vm));
+    bool result = JSCell::deleteProperty(jsObject, globalObject, propertyName->identifier(&vm));
     handleExceptionIfNeeded(scope, ctx, exception);
     return result;
 }

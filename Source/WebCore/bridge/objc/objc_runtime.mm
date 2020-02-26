@@ -290,7 +290,7 @@ CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
     return CallType::Host;
 }
 
-bool ObjcFallbackObjectImp::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
+bool ObjcFallbackObjectImp::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)
 {
     return false;
 }

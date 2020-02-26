@@ -196,7 +196,7 @@ void JSTestNamedDeleterWithIdentifier::getOwnPropertyNames(JSObject* object, JSG
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
 }
 
-bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
+bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
@@ -204,7 +204,7 @@ bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObje
         impl.namedDeleter(propertyNameToString(propertyName));
         return true;
     }
-    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName);
+    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
 }
 
 bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)

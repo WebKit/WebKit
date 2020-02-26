@@ -123,7 +123,9 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     int property = bytecode.m_property;
     emitLoad(base, regT1, regT0);
-    callOperation(operationDeleteByIdJSResult, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), m_codeBlock->identifier(property).impl());
+    callOperation(operationDeleteByIdGeneric, m_codeBlock->globalObject(), nullptr, JSValueRegs(regT1, regT0), m_codeBlock->identifier(property).impl());
+    boxBoolean(regT0, JSValueRegs(regT1, regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
 }
 
 void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
@@ -133,8 +135,13 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    callOperation(operationDeleteByValJSResult, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    callOperation(operationDeleteByValGeneric, m_codeBlock->globalObject(), nullptr, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    boxBoolean(regT0, JSValueRegs(regT1, regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
 }
+
+void JIT::emitSlow_op_del_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&) { }
+void JIT::emitSlow_op_del_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&) { }
 
 void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 {

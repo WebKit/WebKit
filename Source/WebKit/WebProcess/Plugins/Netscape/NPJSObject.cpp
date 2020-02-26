@@ -229,8 +229,8 @@ bool NPJSObject::removeProperty(NPIdentifier propertyName)
             scope.clearException();
             return false;
         }
-        
-        m_jsObject->methodTable(vm)->deleteProperty(m_jsObject.get(), lexicalGlobalObject, identifier);
+
+        JSCell::deleteProperty(m_jsObject.get(), lexicalGlobalObject, identifier);
     } else {
         if (!m_jsObject->hasProperty(lexicalGlobalObject, identifierRep->number())) {
             scope.clearException();

@@ -126,10 +126,17 @@ bool JSCell::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned ide
     return thisObject->methodTable(vm)->putByIndex(thisObject, globalObject, identifier, value, shouldThrow);
 }
 
+bool JSCell::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, DeletePropertySlot& slot)
+{
+    JSObject* thisObject = cell->toObject(globalObject);
+    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier, slot);
+}
+
 bool JSCell::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier)
 {
     JSObject* thisObject = cell->toObject(globalObject);
-    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier);
+    DeletePropertySlot slot;
+    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier, slot);
 }
 
 bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier)

@@ -1301,7 +1301,7 @@ sub GenerateDeleteProperty
     # This implements https://heycam.github.io/webidl/#legacy-platform-object-delete for the
     # for the deleteProperty override hook.
 
-    push(@$outputArray, "bool ${className}::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)\n");
+    push(@$outputArray, "bool ${className}::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)\n");
     push(@$outputArray, "{\n");
 
     push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
@@ -1321,7 +1321,7 @@ sub GenerateDeleteProperty
 
     # FIXME: Instead of calling down JSObject::deleteProperty, perhaps we should implement
     # the remained of the algorithm ourselves.
-    push(@$outputArray, "    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName);\n");
+    push(@$outputArray, "    return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);\n");
     push(@$outputArray, "}\n\n");
 }
 
@@ -2696,7 +2696,7 @@ sub GenerateHeader
     }
 
     if (InstanceOverridesDeleteProperty($interface)) {
-        push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName);\n");
+        push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::DeletePropertySlot&);\n");
         push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned);\n");
     }
 
@@ -4324,7 +4324,8 @@ sub GenerateImplementation
             push(@implContent, "        hasDisabledRuntimeProperties = true;\n");
             push(@implContent, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
             push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-            push(@implContent, "        JSObject::deleteProperty(this, globalObject(), propertyName);\n");
+            push(@implContent, "        DeletePropertySlot slot;\n");
+            push(@implContent, "        JSObject::deleteProperty(this, globalObject(), propertyName, slot);\n");
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
@@ -7512,7 +7513,8 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
         push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
         push(@$outputArray, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-        push(@$outputArray, "        JSObject::deleteProperty(this, &globalObject, propertyName);\n");
+        push(@$outputArray, "        DeletePropertySlot slot;\n");
+        push(@$outputArray, "        JSObject::deleteProperty(this, &globalObject, propertyName, slot);\n");
         push(@$outputArray, "    }\n");
         push(@$outputArray, "#endif\n") if $conditionalString;
     }

@@ -500,7 +500,9 @@ namespace JSC {
         void emit_op_identity_with_profile(const Instruction*);
         void emit_op_debug(const Instruction*);
         void emit_op_del_by_id(const Instruction*);
+        void emitSlow_op_del_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_del_by_val(const Instruction*);
+        void emitSlow_op_del_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emit_op_div(const Instruction*);
         void emit_op_end(const Instruction*);
         void emit_op_enter(const Instruction*);
@@ -913,6 +915,8 @@ namespace JSC {
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
         Vector<JITInByIdGenerator> m_inByIds;
+        Vector<JITDelByIdGenerator> m_delByIds;
+        Vector<JITDelByValGenerator> m_delByVals;
         Vector<JITInstanceOfGenerator> m_instanceOfs;
         Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
@@ -934,6 +938,8 @@ namespace JSC {
         unsigned m_getByIdWithThisIndex { UINT_MAX };
         unsigned m_putByIdIndex { UINT_MAX };
         unsigned m_inByIdIndex { UINT_MAX };
+        unsigned m_delByValIndex { UINT_MAX };
+        unsigned m_delByIdIndex { UINT_MAX };
         unsigned m_instanceOfIndex { UINT_MAX };
         unsigned m_byValInstructionIndex { UINT_MAX };
         unsigned m_callLinkInfoIndex { UINT_MAX };

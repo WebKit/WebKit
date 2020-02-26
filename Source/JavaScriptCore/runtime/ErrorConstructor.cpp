@@ -87,7 +87,7 @@ bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyN
     return Base::put(thisObject, globalObject, propertyName, value, slot);
 }
 
-bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
@@ -95,7 +95,7 @@ bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject
     if (propertyName == vm.propertyNames->stackTraceLimit)
         thisObject->globalObject()->setStackTraceLimit(WTF::nullopt);
 
-    return Base::deleteProperty(thisObject, globalObject, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 } // namespace JSC

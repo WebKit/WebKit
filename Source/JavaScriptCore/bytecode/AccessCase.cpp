@@ -73,6 +73,8 @@ std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType
     switch (type) {
     case InHit:
     case InMiss:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
         break;
     case ArrayLength:
     case StringLength:
@@ -106,7 +108,7 @@ std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType
     return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, type, identifier, offset, structure, conditionSet, WTFMove(prototypeAccessChain)));
 }
 
-std::unique_ptr<AccessCase> AccessCase::create(
+std::unique_ptr<AccessCase> AccessCase::createTransition(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
@@ -121,6 +123,22 @@ std::unique_ptr<AccessCase> AccessCase::create(
     }
 
     return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, Transition, identifier, offset, newStructure, conditionSet, WTFMove(prototypeAccessChain)));
+}
+
+std::unique_ptr<AccessCase> AccessCase::createDelete(
+    VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure)
+{
+    RELEASE_ASSERT(oldStructure == newStructure->previousID(vm));
+    if (!newStructure->outOfLineCapacity() && oldStructure->outOfLineCapacity()) {
+        // We do not cache this case so that we do not need to check the jscell.
+        // See the Delete code below.
+        bool mayNeedToCheckCell;
+        newStructure->mayHaveIndexingHeader(mayNeedToCheckCell);
+
+        if (mayNeedToCheckCell)
+            return nullptr;
+    }
+    return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, Delete, identifier, offset, newStructure, { }, { }));
 }
 
 AccessCase::~AccessCase()
@@ -262,6 +280,9 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case Load:
     // We don't currently have a by_val for these puts, but we do care about the identifier.
     case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Replace: 
     case Miss:
     case GetGetter:
@@ -309,6 +330,9 @@ bool AccessCase::requiresInt32PropertyCheck() const
     switch (m_type) {
     case Load:
     case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Replace: 
     case Miss:
     case GetGetter:
@@ -356,6 +380,9 @@ bool AccessCase::needsScratchFPR() const
     switch (m_type) {
     case Load:
     case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Replace: 
     case Miss:
     case GetGetter:
@@ -447,6 +474,9 @@ void AccessCase::forEachDependentCell(VM& vm, const Functor& functor) const
     case CustomAccessorSetter:
     case Load:
     case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Replace:
     case Miss:
     case GetGetter:
@@ -492,6 +522,9 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case CustomAccessorSetter:
         doesCalls = true;
         break;
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Load:
     case Replace:
     case Miss:
@@ -614,6 +647,9 @@ bool AccessCase::canReplace(const AccessCase& other) const
 
     case Load:
     case Transition:
+    case Delete:
+    case DeleteNonConfigurable:
+    case DeleteMiss:
     case Replace:
     case Miss:
     case GetGetter:
@@ -663,7 +699,7 @@ void AccessCase::dump(PrintStream& out) const
         out.print(comma, "prototype access chain = ");
         m_polyProtoAccessChain->dump(structure(), out);
     } else {
-        if (m_type == Transition)
+        if (m_type == Transition || m_type == Delete)
             out.print(comma, "structure = ", pointerDump(structure()), " -> ", pointerDump(newStructure()));
         else if (m_structure)
             out.print(comma, "structure = ", pointerDump(m_structure.get()));
@@ -705,6 +741,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
 
     switch (m_type) {
     case Transition:
+    case Delete:
         if (visitor.vm().heap.isMarked(m_structure->previousID(visitor.vm())))
             visitor.appendUnbarriered(m_structure.get());
         else
@@ -1851,7 +1888,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 state.restoreLiveRegistersFromStackForCall(spillState, resultRegisterToExclude);
             }
         }
-        
+
         if (isInlineOffset(m_offset)) {
             jit.storeValue(
                 valueRegs,
@@ -1894,6 +1931,71 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 state.failAndIgnore.append(slowPath);
         } else
             RELEASE_ASSERT(slowPath.empty());
+        return;
+    }
+
+    case Delete: {
+        ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
+        allocator.lock(stubInfo.baseRegs());
+        allocator.lock(valueRegs);
+        allocator.lock(baseGPR);
+        allocator.lock(scratchGPR);
+        ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
+        ASSERT(newStructure()->isPropertyDeletionTransition());
+        ASSERT(baseGPR != valueRegs.gpr());
+        ASSERT(baseGPR != scratchGPR);
+        ASSERT(valueRegs.gpr() != scratchGPR);
+
+        ScratchRegisterAllocator::PreservedState preservedState =
+            allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        bool mayNeedToCheckCell;
+        bool hasIndexingHeader = newStructure()->mayHaveIndexingHeader(mayNeedToCheckCell);
+        // We do not cache this case yet so that we do not need to check the jscell.
+        // See Structure::hasIndexingHeader and JSObject::deleteProperty.
+        ASSERT(!mayNeedToCheckCell);
+        // Clear the butterfly if we have no properties, since our put code expects this.
+        bool shouldNukeStructureAndClearButterfly = !newStructure()->outOfLineCapacity() && structure()->outOfLineCapacity() && !hasIndexingHeader;
+
+        jit.moveValue(JSValue(), valueRegs);
+
+        if (shouldNukeStructureAndClearButterfly) {
+            jit.nukeStructureAndStoreButterfly(vm, valueRegs.payloadGPR(), baseGPR);
+        } else if (isInlineOffset(m_offset)) {
+            jit.storeValue(
+                valueRegs,
+                CCallHelpers::Address(
+                    baseGPR,
+                    JSObject::offsetOfInlineStorage() +
+                    offsetInInlineStorage(m_offset) * sizeof(JSValue)));
+        } else {
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
+            jit.storeValue(
+                valueRegs,
+                CCallHelpers::Address(scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
+        }
+
+        uint32_t structureBits = bitwise_cast<uint32_t>(newStructure()->id());
+        jit.store32(
+            CCallHelpers::TrustedImm32(structureBits),
+            CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
+
+        jit.move(MacroAssembler::TrustedImm32(true), valueRegs.payloadGPR());
+
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        state.succeed();
+        return;
+    }
+
+    case DeleteNonConfigurable: {
+        jit.move(MacroAssembler::TrustedImm32(false), valueRegs.payloadGPR());
+        state.succeed();
+        return;
+    }
+
+    case DeleteMiss: {
+        jit.move(MacroAssembler::TrustedImm32(true), valueRegs.payloadGPR());
+        state.succeed();
         return;
     }
         

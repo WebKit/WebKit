@@ -42,6 +42,7 @@ inline CacheableIdentifier::CacheableIdentifier(const Identifier& identifier)
 
 inline CacheableIdentifier::CacheableIdentifier(JSCell* identifier)
 {
+    ASSERT(isCacheableIdentifierCell(identifier));
     setCellBits(identifier);
 }
 

@@ -387,9 +387,39 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpDelById>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
-    int property = bytecode.m_property;
+
+    emitGetVirtualRegister(base, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT1, base);
+    JITDelByIdGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT1), regT0, regT2);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_delByIds.append(gen);
+
+    boxBoolean(regT0, JSValueRegs(regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT0));
+}
+
+void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpDelById>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    UniquedStringImpl* uid = m_codeBlock->identifier(bytecode.m_property).impl();
+
+    JITDelByIdGenerator& gen = m_delByIds[m_delByIdIndex++];
+
+    Label coldPathBegin = label();
+
     emitGetVirtualRegister(base, regT0);
-    callOperation(operationDeleteByIdJSResult, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, m_codeBlock->identifier(property).impl());
+    Call call = callOperation(operationDeleteByIdOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, uid);
+    gen.reportSlowPathCall(coldPathBegin, call);
+
+    boxBoolean(regT0, JSValueRegs(regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT0));
 }
 
 void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
@@ -398,9 +428,42 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
+
+    emitGetVirtualRegister(base, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT1, base);
+    emitGetVirtualRegister(property, regT0);
+    emitJumpSlowCaseIfNotJSCell(regT0, property);
+    JITDelByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT1), JSValueRegs(regT0), regT0, regT2);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_delByVals.append(gen);
+
+    boxBoolean(regT0, JSValueRegs(regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT0));
+}
+
+void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpDelByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+
+    JITDelByValGenerator& gen = m_delByVals[m_delByValIndex++];
+
+    Label coldPathBegin = label();
+
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    callOperation(operationDeleteByValJSResult, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
+    Call call = callOperation(operationDeleteByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, regT1);
+    gen.reportSlowPathCall(coldPathBegin, call);
+
+    boxBoolean(regT0, JSValueRegs(regT0));
+    emitPutVirtualRegister(dst, JSValueRegs(regT0));
 }
 
 void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)

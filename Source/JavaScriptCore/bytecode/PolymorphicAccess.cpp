@@ -795,6 +795,15 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
     case AccessCase::Transition:
         out.print("Transition");
         return;
+    case AccessCase::Delete:
+        out.print("Delete");
+        return;
+    case AccessCase::DeleteNonConfigurable:
+        out.print("DeleteNonConfigurable");
+        return;
+    case AccessCase::DeleteMiss:
+        out.print("DeleteMiss");
+        return;
     case AccessCase::Replace:
         out.print("Replace");
         return;

@@ -1618,6 +1618,22 @@ private:
             break;
         }
 
+        case DeleteByVal: {
+#if USE(JSVALUE64)
+            if (node->child2()->shouldSpeculateCell())
+                fixEdge<CellUse>(node->child2());
+#endif
+            FALLTHROUGH;
+        }
+
+        case DeleteById: {
+#if USE(JSVALUE64)
+            if (node->child1()->shouldSpeculateCell())
+                fixEdge<CellUse>(node->child1());
+#endif
+            break;
+        }
+
         case GetById:
         case GetByIdFlush: {
             // FIXME: This should be done in the ByteCodeParser based on reading the
@@ -2518,8 +2534,6 @@ private:
         case NewAsyncGenerator:
         case NewArrayIterator:
         case NewRegexp:
-        case DeleteById:
-        case DeleteByVal:
         case IsTypedArrayView:
         case IsEmpty:
         case IsUndefined:

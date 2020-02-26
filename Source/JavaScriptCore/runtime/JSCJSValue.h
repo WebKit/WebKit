@@ -40,6 +40,7 @@
 namespace JSC {
 
 class AssemblyHelpers;
+class DeletePropertySlot;
 class JSBigInt;
 class CallFrame;
 class JSCell;

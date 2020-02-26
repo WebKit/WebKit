@@ -760,7 +760,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
-                    object->methodTable(vm)->deleteProperty(object, m_globalObject, prop);
+                    JSCell::deleteProperty(object, m_globalObject, prop);
                 else
                     object->methodTable(vm)->put(object, m_globalObject, prop, filteredValue, slot);
                 RETURN_IF_EXCEPTION(scope, { });

@@ -539,8 +539,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
 
 Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, PropertyOffset& offset, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    Structure* newStructure = removePropertyTransitionFromExistingStructure(
-        vm, structure, propertyName, offset, deferred);
+    Structure* newStructure = removePropertyTransitionFromExistingStructure(structure, propertyName, offset);
     if (newStructure)
         return newStructure;
 
@@ -548,16 +547,13 @@ Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, Pro
         vm, structure, propertyName, offset, deferred);
 }
 
-Structure* Structure::removePropertyTransitionFromExistingStructure(VM& vm, Structure* structure, PropertyName propertyName, PropertyOffset& offset, DeferredStructureTransitionWatchpointFire*)
+Structure* Structure::removePropertyTransitionFromExistingStructureImpl(Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
 {
-    ASSERT(!isCompilationThread());
     ASSERT(!structure->isUncacheableDictionary());
     ASSERT(structure->isObject());
 
-    unsigned attributes;
-    structure->get(vm, propertyName, attributes);
-
     constexpr bool isAddition = false;
+    offset = invalidOffset;
     if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.uid(), attributes, isAddition)) {
         validateOffset(existingTransition->transitionOffset(), existingTransition->inlineCapacity());
         offset = existingTransition->transitionOffset();
@@ -567,11 +563,31 @@ Structure* Structure::removePropertyTransitionFromExistingStructure(VM& vm, Stru
     return nullptr;
 }
 
+Structure* Structure::removePropertyTransitionFromExistingStructure(Structure* structure, PropertyName propertyName, PropertyOffset& offset)
+{
+    ASSERT(!isCompilationThread());
+    unsigned attributes = 0;
+    if (structure->getConcurrently(propertyName.uid(), attributes) == invalidOffset)
+        return nullptr;
+    return removePropertyTransitionFromExistingStructureImpl(structure, propertyName, attributes, offset);
+}
+
+Structure* Structure::removePropertyTransitionFromExistingStructureConcurrently(Structure* structure, PropertyName propertyName, PropertyOffset& offset)
+{
+    unsigned attributes = 0;
+    if (structure->getConcurrently(propertyName.uid(), attributes) == invalidOffset)
+        return nullptr;
+    ConcurrentJSCellLocker locker(structure->cellLock());
+    return removePropertyTransitionFromExistingStructureImpl(structure, propertyName, attributes, offset);
+}
+
 Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, PropertyOffset& offset, DeferredStructureTransitionWatchpointFire* deferred)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(!structure->isUncacheableDictionary());
     ASSERT(structure->isObject());
-    ASSERT(!Structure::removePropertyTransitionFromExistingStructure(vm, structure, propertyName, offset, deferred));
+    ASSERT(!Structure::removePropertyTransitionFromExistingStructure(structure, propertyName, offset));
+    ASSERT(structure->getConcurrently(propertyName.uid()) != invalidOffset);
 
     int transitionCount = 0;
     for (auto* s = structure; s && transitionCount <= s_maxTransitionLength; s = s->previousID(vm))
@@ -1203,7 +1219,7 @@ Ref<StructureShape> Structure::toStructureShape(JSValue value, bool& sawPolyProt
 
 void Structure::dump(PrintStream& out) const
 {
-    out.print(RawPointer(this), ":[", classInfo()->className, ", {");
+    out.print(RawPointer(this), ":[", RawPointer(reinterpret_cast<void*>(id())), ", ", classInfo()->className, ", {");
     
     CommaPrinter comma;
     

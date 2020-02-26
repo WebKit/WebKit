@@ -985,7 +985,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
         CHECK_EXCEPTION();
         auto property = subscript.toPropertyKey(globalObject);
         CHECK_EXCEPTION();
-        couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, globalObject, property);
+        couldDelete = JSCell::deleteProperty(baseObject, globalObject, property);
     }
     CHECK_EXCEPTION();
     

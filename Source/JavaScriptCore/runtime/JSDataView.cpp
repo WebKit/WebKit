@@ -152,7 +152,7 @@ bool JSDataView::defineOwnProperty(
 }
 
 bool JSDataView::deleteProperty(
-    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
@@ -160,7 +160,7 @@ bool JSDataView::deleteProperty(
         || propertyName == vm.propertyNames->byteOffset)
         return false;
 
-    return Base::deleteProperty(thisObject, globalObject, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 void JSDataView::getOwnNonIndexPropertyNames(

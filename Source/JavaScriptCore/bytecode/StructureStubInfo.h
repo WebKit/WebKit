@@ -55,7 +55,9 @@ enum class AccessType : int8_t {
     GetByVal,
     Put,
     In,
-    InstanceOf
+    InstanceOf,
+    DeleteByID,
+    DeleteByVal
 };
 
 enum class CacheType : int8_t {

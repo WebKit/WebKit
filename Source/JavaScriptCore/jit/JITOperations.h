@@ -251,10 +251,10 @@ EncodedJSValue JIT_OPERATION operationGetByValGeneric(JSGlobalObject*, Structure
 EncodedJSValue JIT_OPERATION operationGetByVal(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationDeleteByIdJSResult(JSGlobalObject*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
-size_t JIT_OPERATION operationDeleteById(JSGlobalObject*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationDeleteByValJSResult(JSGlobalObject*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
-size_t JIT_OPERATION operationDeleteByVal(JSGlobalObject*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
+size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
+size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
+size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
+size_t JIT_OPERATION operationDeleteByValGeneric(JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationPushWithScope(JSGlobalObject*, JSCell* currentScopeCell, EncodedJSValue object) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationPushWithScopeObject(JSGlobalObject* globalObject, JSCell* currentScopeCell, JSObject* object) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationGetPNames(JSGlobalObject*, JSObject*) WTF_INTERNAL;

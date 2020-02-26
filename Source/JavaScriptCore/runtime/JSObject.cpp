@@ -1972,7 +1972,7 @@ bool JSObject::hasPropertyGeneric(JSGlobalObject* globalObject, unsigned propert
 }
 
 // ECMA 8.6.2.5
-bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     VM& vm = globalObject->vm();
@@ -1999,8 +1999,10 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 
     bool propertyIsPresent = isValidOffset(structure->get(vm, propertyName, attributes));
     if (propertyIsPresent) {
-        if (attributes & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
+        if (attributes & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
+            slot.setNonconfigurable();
             return false;
+        }
         DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
 
         PropertyOffset offset = invalidOffset;
@@ -2008,7 +2010,9 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
             offset = structure->removePropertyWithoutTransition(vm, propertyName, [](const GCSafeConcurrentJSCellLocker&, PropertyOffset, PropertyOffset) { });
         else {
             structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
-            if (thisObject->m_butterfly && !structure->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
+            slot.setHit(offset);
+            if (!structure->outOfLineCapacity() && thisObject->structure(vm)->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
+                ASSERT(thisObject->m_butterfly);
                 thisObject->nukeStructureAndSetButterfly(vm, thisObject->structureID(), nullptr);
                 offset = invalidOffset;
                 ASSERT(structure->maxOffset() == invalidOffset);
@@ -2020,7 +2024,8 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 
         if (offset != invalidOffset)
             thisObject->locationForOffset(offset)->clear();
-    }
+    } else
+        slot.setConfigurableMiss();
 
     return true;
 }
@@ -2031,7 +2036,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
     JSObject* thisObject = jsCast<JSObject*>(cell);
     
     if (i > MAX_ARRAY_INDEX)
-        return thisObject->methodTable(vm)->deleteProperty(thisObject, globalObject, Identifier::from(vm, i));
+        return JSCell::deleteProperty(thisObject, globalObject, Identifier::from(vm, i));
     
     switch (thisObject->indexingMode()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -3625,7 +3630,7 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
     // A generic descriptor is simply changing the attributes of an existing property
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor) && object) {
-            object->methodTable(vm)->deleteProperty(object, globalObject, propertyName);
+            JSCell::deleteProperty(object, globalObject, propertyName);
             RETURN_IF_EXCEPTION(scope, false);
             return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
         }
@@ -3641,7 +3646,7 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
         if (!object)
             return true;
 
-        object->methodTable(vm)->deleteProperty(object, globalObject, propertyName);
+        JSCell::deleteProperty(object, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
         return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
@@ -3665,7 +3670,7 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
             return true;
         if (!object)
             return true;
-        object->methodTable(vm)->deleteProperty(object, globalObject, propertyName);
+        JSCell::deleteProperty(object, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
         return putDescriptor(globalObject, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
@@ -3718,7 +3723,7 @@ bool validateAndApplyPropertyDescriptor(JSGlobalObject* globalObject, JSObject* 
 
     GetterSetter* getterSetter = GetterSetter::create(vm, globalObject, getter, setter);
 
-    object->methodTable(vm)->deleteProperty(object, globalObject, propertyName);
+    JSCell::deleteProperty(object, globalObject, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
     unsigned attrs = descriptor.attributesOverridingCurrent(current);
     object->putDirectAccessor(globalObject, propertyName, getterSetter, attrs | PropertyAttribute::Accessor);

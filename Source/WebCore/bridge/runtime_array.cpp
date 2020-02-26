@@ -149,7 +149,7 @@ bool RuntimeArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject,
     return thisObject->getConcreteArray()->setValueAt(lexicalGlobalObject, index, value);
 }
 
-bool RuntimeArray::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
+bool RuntimeArray::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)
 {
     return false;
 }

@@ -685,12 +685,12 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
     return true;
 }
 
-bool ProxyObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
+bool ProxyObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     auto performDefaultDelete = [&] () -> bool {
         JSObject* target = thisObject->target();
-        return target->methodTable(globalObject->vm())->deleteProperty(target, globalObject, propertyName);
+        return target->methodTable(globalObject->vm())->deleteProperty(target, globalObject, propertyName, slot);
     };
     return thisObject->performDelete(globalObject, propertyName, performDefaultDelete);
 }

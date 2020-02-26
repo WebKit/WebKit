@@ -59,7 +59,7 @@ struct MethodTable {
     using PutByIndexFunctionPtr = bool (*)(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
     PutByIndexFunctionPtr METHOD_TABLE_ENTRY(putByIndex);
 
-    using DeletePropertyFunctionPtr = bool (*)(JSCell*, JSGlobalObject*, PropertyName);
+    using DeletePropertyFunctionPtr = bool (*)(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     DeletePropertyFunctionPtr METHOD_TABLE_ENTRY(deleteProperty);
 
     using DeletePropertyByIndexFunctionPtr = bool (*)(JSCell*, JSGlobalObject*, unsigned);

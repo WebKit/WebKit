@@ -5144,20 +5144,168 @@ private:
             weakPointer(globalObject), base, subscript, m_out.constInt32(m_node->accessorAttributes()), accessor);
     }
 
+    template<DelByKind kind, typename SubscriptKind>
+    void compileDelBy(LValue base, SubscriptKind subscriptValue)
+    {
+        PatchpointValue* patchpoint;
+        if constexpr (kind == DelByKind::Normal) {
+            patchpoint = m_out.patchpoint(Int64);
+            patchpoint->append(ConstrainedValue(base, ValueRep::SomeLateRegister));
+        } else {
+            patchpoint = m_out.patchpoint(Int64);
+            patchpoint->append(ConstrainedValue(base, ValueRep::SomeLateRegister));
+            patchpoint->append(ConstrainedValue(subscriptValue, ValueRep::SomeLateRegister));
+        }
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->numGPScratchRegisters = 1;
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
+
+        State* state = &m_ftlState;
+        Node* node = m_node;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CallSiteIndex callSiteIndex =
+                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic);
+
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+                CCallHelpers::JumpList slowCases;
+
+                auto base = JSValueRegs(params[1].gpr());
+                auto returnGPR = params[0].gpr();
+                ASSERT(base.gpr() != returnGPR);
+                ASSERT(base.gpr() != params.gpScratch(0));
+                ASSERT(returnGPR != params.gpScratch(0));
+
+                if (node->child1().useKind() == UntypedUse)
+                    slowCases.append(jit.branchIfNotCell(base));
+
+                constexpr auto optimizationFunction = [&] () {
+                    if constexpr (kind == DelByKind::Normal)
+                        return operationDeleteByIdOptimize;
+                    else
+                        return operationDeleteByValOptimize;
+                }();
+
+                const auto subscript = [&] {
+                    if constexpr (kind == DelByKind::Normal)
+                        return CCallHelpers::TrustedImmPtr(subscriptValue);
+                    else {
+                        ASSERT(base.gpr() != params[2].gpr());
+                        ASSERT(params.gpScratch(0) != params[2].gpr());
+                        if (node->child2().useKind() == UntypedUse)
+                            slowCases.append(jit.branchIfNotCell(JSValueRegs(params[2].gpr())));
+                        return JSValueRegs(params[2].gpr());
+                    }
+                }();
+
+                const auto generator = [&] {
+                    if constexpr (kind == DelByKind::Normal) {
+                        return Box<JITDelByIdGenerator>::create(
+                            jit.codeBlock(), node->origin.semantic, callSiteIndex,
+                            params.unavailableRegisters(), base,
+                            returnGPR, params.gpScratch(0));
+                    } else {
+                        return Box<JITDelByValGenerator>::create(
+                            jit.codeBlock(), node->origin.semantic, callSiteIndex,
+                            params.unavailableRegisters(), base,
+                            subscript, returnGPR, params.gpScratch(0));
+                    }
+                }();
+
+                generator->generateFastPath(jit);
+                slowCases.append(generator->slowPathJump());
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                        slowCases.link(&jit);
+                        CCallHelpers::Label slowPathBegin = jit.label();
+                        CCallHelpers::Call slowPathCall = callOperation(
+                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            exceptions.get(), optimizationFunction, returnGPR,
+                            jit.codeBlock()->globalObjectFor(node->origin.semantic),
+                            CCallHelpers::TrustedImmPtr(generator->stubInfo()), base,
+                            subscript).call();
+                        jit.jump().linkTo(done, &jit);
+
+                        generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                        jit.addLinkTask(
+                            [=] (LinkBuffer& linkBuffer) {
+                                generator->finalize(linkBuffer, linkBuffer);
+                            });
+                    });
+            });
+
+        setBoolean(m_out.notZero64(patchpoint));
+    }
+
     void compileDeleteById()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        LValue base = lowJSValue(m_node->child1());
-        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteById, weakPointer(globalObject), base, m_out.constIntPtr(uid))));
+        LValue base;
+
+        switch (m_node->child1().useKind()) {
+        case CellUse: {
+            base = lowCell(m_node->child1());
+            break;
+        }
+
+        case UntypedUse: {
+            base = lowJSValue(m_node->child1());
+            break;
+        }
+
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            return;
+        }
+        compileDelBy<DelByKind::Normal>(base, m_graph.identifiers()[m_node->identifierNumber()]);
     }
 
     void compileDeleteByVal()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        LValue base = lowJSValue(m_node->child1());
-        LValue subscript = lowJSValue(m_node->child2());
-        setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByVal, weakPointer(globalObject), base, subscript)));
+        LValue base;
+        LValue subscript;
+
+        switch (m_node->child1().useKind()) {
+        case CellUse: {
+            base = lowCell(m_node->child1());
+            break;
+        }
+
+        case UntypedUse: {
+            base = lowJSValue(m_node->child1());
+            break;
+        }
+
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            return;
+        }
+
+        switch (m_node->child2().useKind()) {
+        case CellUse: {
+            subscript = lowCell(m_node->child2());
+            break;
+        }
+
+        case UntypedUse: {
+            subscript = lowJSValue(m_node->child2());
+            break;
+        }
+
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            return;
+        }
+        compileDelBy<DelByKind::NormalByVal>(base, subscript);
     }
     
     void compileArrayPush()

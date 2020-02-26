@@ -392,7 +392,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         }
 
         if (i->isString())
-            obj->imp->methodTable(vm)->deleteProperty(obj->imp, lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
+            JSCell::deleteProperty(obj->imp, lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         else
             obj->imp->methodTable(vm)->deletePropertyByIndex(obj->imp, lexicalGlobalObject, i->number());
 
