@@ -64,7 +64,7 @@ constexpr auto objectStoreInfoTableName = "ObjectStoreInfo"_s;
 constexpr auto objectStoreInfoTableNameAlternate = "\"ObjectStoreInfo\""_s;
 constexpr auto v2ObjectStoreInfoSchema = "CREATE TABLE ObjectStoreInfo (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, autoInc INTEGER NOT NULL ON CONFLICT FAIL)"_s;
 constexpr auto v1IndexRecordsRecordIndexSchema = "CREATE INDEX IndexRecordsRecordIndex ON IndexRecords (objectStoreID, objectStoreRecordID)"_s;
-constexpr auto v2IndexRecordsIndexSchema = "CREATE INDEX IndexRecordsIndex ON IndexRecords (key, value)"_s;
+constexpr auto IndexRecordsIndexSchema = "CREATE INDEX IndexRecordsIndex ON IndexRecords (indexID, key, value)"_s;
 
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
@@ -193,12 +193,6 @@ static const String v3IndexRecordsTableSchemaAlternate()
 {
     static NeverDestroyed<WTF::String> indexRecordsTableSchemaString = v3IndexRecordsTableSchema("\"IndexRecords\"");
     return indexRecordsTableSchemaString;
-}
-
-static const String& v1IndexRecordsIndexSchema()
-{
-    static NeverDestroyed<WTF::String> indexRecordsIndexSchemaString("CREATE INDEX IndexRecordsIndex ON IndexRecords (key)");
-    return indexRecordsIndexSchemaString;
 }
 
 static const String blobRecordsTableSchema(const String& tableName)
@@ -515,7 +509,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
 
         // If there is no IndexRecordsIndex index at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(v2IndexRecordsIndexSchema)) {
+            if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema)) {
                 LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
                 return false;
             }
@@ -534,11 +528,10 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
     ASSERT(!currentSchema.isEmpty());
 
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v2IndexRecordsIndexSchema)
+    if (currentSchema == IndexRecordsIndexSchema)
         return true;
 
-    RELEASE_ASSERT(currentSchema == v1IndexRecordsIndexSchema());
-
+    // Otherwise, update the schema.
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
@@ -547,7 +540,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
         return false;
     }
 
-    if (!m_sqliteDB->executeCommand(v2IndexRecordsIndexSchema)) {
+    if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema)) {
         LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
