@@ -1,3 +1,14 @@
+2020-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r257389.
+
+        Reverted changeset:
+
+        "Make sure a client cannot cause a whole DOM tree to get
+        leaked by simply holding on to a WKBundleNodeHandle"
+        https://bugs.webkit.org/show_bug.cgi?id=208218
+        https://trac.webkit.org/changeset/257389
+
 2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, rolling out r257470.

@@ -101,27 +101,22 @@ Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::create(Node& node)
 }
 
 InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node& node)
-    : ActiveDOMObject(node.document())
-    , m_node(&node)
+    : m_node(node)
 {
 }
 
 InjectedBundleNodeHandle::~InjectedBundleNodeHandle()
 {
-    if (m_node)
-        domNodeHandleCache().remove(m_node.get());
+    domNodeHandleCache().remove(m_node.ptr());
 }
 
 Node* InjectedBundleNodeHandle::coreNode()
 {
-    return m_node.get();
+    return m_node.ptr();
 }
 
-RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
+Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::document()
 {
-    if (!m_node)
-        return nullptr;
-
     return getOrCreate(m_node->document());
 }
 
@@ -133,14 +128,11 @@ IntRect InjectedBundleNodeHandle::elementBounds()
     if (!is<Element>(m_node))
         return IntRect();
 
-    return downcast<Element>(*m_node).boundsInRootViewSpace();
+    return downcast<Element>(m_node.get()).boundsInRootViewSpace();
 }
     
 IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced)
 {
-    if (!m_node)
-        return { };
-
     return m_node->pixelSnappedRenderRect(isReplaced);
 }
 
@@ -198,9 +190,6 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
 
 RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options, bool shouldExcludeOverflow, const Optional<float>& bitmapWidth)
 {
-    if (!m_node)
-        return nullptr;
-
     Frame* frame = m_node->document().frame();
     if (!frame)
         return nullptr;
@@ -223,7 +212,7 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
         paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
     }
 
-    frameView->setNodeToDraw(m_node.get());
+    frameView->setNodeToDraw(m_node.ptr());
     auto image = imageForRect(frameView, paintingRect, bitmapWidth, options);
     frameView->setNodeToDraw(0);
 
@@ -232,11 +221,8 @@ RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options
 
 RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
 {
-    if (!m_node)
-        return nullptr;
-
-    VisiblePosition start = firstPositionInNode(m_node.get());
-    VisiblePosition end = lastPositionInNode(m_node.get());
+    VisiblePosition start = firstPositionInNode(m_node.ptr());
+    VisiblePosition end = lastPositionInNode(m_node.ptr());
 
     RefPtr<Range> range = makeRange(start, end);
     return InjectedBundleRangeHandle::getOrCreate(range.get());
@@ -247,7 +233,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& val
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setValueForUser(value);
+    downcast<HTMLInputElement>(m_node.get()).setValueForUser(value);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled(bool enabled)
@@ -255,7 +241,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementSpellcheckEnabled(bool enabled
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setSpellcheckDisabledExceptTextReplacement(!enabled);
+    downcast<HTMLInputElement>(m_node.get()).setSpellcheckDisabledExceptTextReplacement(!enabled);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
@@ -263,7 +249,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
     if (!is<HTMLInputElement>(m_node))
         return false;
     
-    return downcast<HTMLInputElement>(*m_node).isAutoFilled();
+    return downcast<HTMLInputElement>(m_node.get()).isAutoFilled();
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
@@ -271,7 +257,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
     if (!is<HTMLInputElement>(m_node))
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isAutoFilledAndViewable();
+    return downcast<HTMLInputElement>(m_node.get()).isAutoFilledAndViewable();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
@@ -279,7 +265,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFilled(filled);
+    downcast<HTMLInputElement>(m_node.get()).setAutoFilled(filled);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool autoFilledAndViewable)
@@ -287,7 +273,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool aut
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFilledAndViewable(autoFilledAndViewable);
+    downcast<HTMLInputElement>(m_node.get()).setAutoFilledAndViewable(autoFilledAndViewable);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const
@@ -295,7 +281,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const
     if (!is<HTMLInputElement>(m_node))
         return false;
     
-    return downcast<HTMLInputElement>(*m_node).autoFillButtonType() != AutoFillButtonType::None;
+    return downcast<HTMLInputElement>(m_node.get()).autoFillButtonType() != AutoFillButtonType::None;
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFillButtonType autoFillButtonType)
@@ -303,21 +289,21 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFill
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setShowAutoFillButton(autoFillButtonType);
+    downcast<HTMLInputElement>(m_node.get()).setShowAutoFillButton(autoFillButtonType);
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType() const
 {
     if (!is<HTMLInputElement>(m_node))
         return AutoFillButtonType::None;
-    return downcast<HTMLInputElement>(*m_node).autoFillButtonType();
+    return downcast<HTMLInputElement>(m_node.get()).autoFillButtonType();
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonType() const
 {
     if (!is<HTMLInputElement>(m_node))
         return AutoFillButtonType::None;
-    return downcast<HTMLInputElement>(*m_node).lastAutoFillButtonType();
+    return downcast<HTMLInputElement>(m_node.get()).lastAutoFillButtonType();
 }
 
 bool InjectedBundleNodeHandle::isAutoFillAvailable() const
@@ -325,7 +311,7 @@ bool InjectedBundleNodeHandle::isAutoFillAvailable() const
     if (!is<HTMLInputElement>(m_node))
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isAutoFillAvailable();
+    return downcast<HTMLInputElement>(m_node.get()).isAutoFillAvailable();
 }
 
 void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
@@ -333,7 +319,7 @@ void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
     if (!is<HTMLInputElement>(m_node))
         return;
 
-    downcast<HTMLInputElement>(*m_node).setAutoFillAvailable(autoFillAvailable);
+    downcast<HTMLInputElement>(m_node.get()).setAutoFillAvailable(autoFillAvailable);
 }
 
 IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()
@@ -341,7 +327,7 @@ IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()
     if (!is<HTMLInputElement>(m_node))
         return IntRect();
 
-    auto autoFillButton = downcast<HTMLInputElement>(*m_node).autoFillButtonElement();
+    auto autoFillButton = downcast<HTMLInputElement>(m_node.get()).autoFillButtonElement();
     if (!autoFillButton)
         return IntRect();
 
@@ -353,7 +339,7 @@ bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
     if (!is<HTMLInputElement>(m_node))
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).lastChangeWasUserEdit();
+    return downcast<HTMLInputElement>(m_node.get()).lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
@@ -361,7 +347,7 @@ bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
     if (!is<HTMLTextAreaElement>(m_node))
         return false;
 
-    return downcast<HTMLTextAreaElement>(*m_node).lastChangeWasUserEdit();
+    return downcast<HTMLTextAreaElement>(m_node.get()).lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::isTextField() const
@@ -369,7 +355,7 @@ bool InjectedBundleNodeHandle::isTextField() const
     if (!is<HTMLInputElement>(m_node))
         return false;
 
-    return downcast<HTMLInputElement>(*m_node).isTextField();
+    return downcast<HTMLInputElement>(m_node.get()).isTextField();
 }
 
 bool InjectedBundleNodeHandle::isSelectElement() const
@@ -382,15 +368,15 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementC
     if (!is<HTMLTableCellElement>(m_node))
         return nullptr;
 
-    return getOrCreate(downcast<HTMLTableCellElement>(*m_node).cellAbove());
+    return getOrCreate(downcast<HTMLTableCellElement>(m_node.get()).cellAbove());
 }
 
 RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
-    if (!m_node || !m_node->isDocumentNode())
+    if (!m_node->isDocumentNode())
         return nullptr;
 
-    Frame* frame = downcast<Document>(*m_node).frame();
+    Frame* frame = downcast<Document>(m_node.get()).frame();
     if (!frame)
         return nullptr;
 
@@ -402,7 +388,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
     if (!is<HTMLFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLFrameElement>(*m_node).contentFrame();
+    Frame* frame = downcast<HTMLFrameElement>(m_node.get()).contentFrame();
     if (!frame)
         return nullptr;
 
@@ -414,25 +400,11 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!is<HTMLIFrameElement>(m_node))
         return nullptr;
 
-    Frame* frame = downcast<HTMLIFrameElement>(*m_node).contentFrame();
+    Frame* frame = downcast<HTMLIFrameElement>(m_node.get()).contentFrame();
     if (!frame)
         return nullptr;
 
     return WebFrame::fromCoreFrame(*frame);
-}
-
-void InjectedBundleNodeHandle::stop()
-{
-    // Invalidate handles to nodes inside documents that are about to be destroyed in order to prevent leaks.
-    if (m_node) {
-        domNodeHandleCache().remove(m_node.get());
-        m_node = nullptr;
-    }
-}
-
-const char* InjectedBundleNodeHandle::activeDOMObjectName() const
-{
-    return "InjectedBundleNodeHandle";
 }
 
 } // namespace WebKit
