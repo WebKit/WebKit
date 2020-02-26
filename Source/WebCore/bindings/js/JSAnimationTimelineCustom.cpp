@@ -27,6 +27,7 @@
 #include "config.h"
 #include "JSAnimationTimeline.h"
 
+#include "Document.h"
 #include "DocumentTimeline.h"
 #include "JSDOMBinding.h"
 #include "JSDocumentTimeline.h"
