@@ -28,13 +28,6 @@ input#number-with-width {
 
 <script>
 
-function widthSpecified(size) {
-    // GTK+ port overrides the style width and always increments it with the spinbuttons size.
-    if (isGtk())
-      size += spinButtonWidth;
-    return size;
-}
-
 description('Test for size attribute of input');
 
 var parent = document.createElement('div');
@@ -56,8 +49,8 @@ shouldBe('number.offsetWidth', 'text.offsetWidth');
 debug('');
 
 debug('The number whose width is specified should respect the setting');
-shouldBe('numberWithWidth.offsetWidth', 'widthSpecified(100)');
-shouldBe('numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth', 'widthSpecified(100)');
+shouldBe('numberWithWidth.offsetWidth', '100');
+shouldBe('numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth', '100');
 debug('');
 
 debug('The number input should ignore size attribute for layout');

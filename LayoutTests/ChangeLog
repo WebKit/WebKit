@@ -1,3 +1,13 @@
+2020-02-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update fast/forms/number/number-size.html after r257299
+
+        Since r257299 the GTK port specific behavior is no longer needed, so we can remove the widthSpecified function
+        and use the specified value directly.
+
+        * fast/forms/number/number-size-expected.txt:
+        * fast/forms/number/number-size.html:
+
 2020-02-25  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILURE in AppendNodeCommand::AppendNodeCommand when inserting list with read-only user-modify

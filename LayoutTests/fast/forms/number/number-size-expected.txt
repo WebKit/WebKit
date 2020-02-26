@@ -8,8 +8,8 @@ The content area of the number input without min/max/step attribute should have 
 PASS number.offsetWidth is text.offsetWidth
 
 The number whose width is specified should respect the setting
-PASS numberWithWidth.offsetWidth is widthSpecified(100)
-PASS numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth is widthSpecified(100)
+PASS numberWithWidth.offsetWidth is 100
+PASS numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth is 100
 
 The number input should ignore size attribute for layout
 PASS number.size = 10; number.offsetWidth is text.offsetWidth
