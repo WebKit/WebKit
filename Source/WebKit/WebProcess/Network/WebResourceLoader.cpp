@@ -114,6 +114,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
             return;
         }
 
+        RELEASE_LOG_IF_ALLOWED("willSendRequest: returning ContinueWillSendRequest");
         send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, m_coreLoader->isAllowedToAskUserForCredentials()));
     });
 }

@@ -808,11 +808,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 {
     WebPage* webPage = m_frame ? m_frame->page() : nullptr;
     if (!webPage) {
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: ignoring because there's no web page");
         function(PolicyAction::Ignore, identifier);
         return;
     }
 
     if (!request.url().string()) {
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: continuing because the url string is null");
         function(PolicyAction::Use, identifier);
         return;
     }
@@ -822,6 +824,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame, response, request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: continuing because injected bundle says so");
         function(PolicyAction::Use, identifier);
         return;
     }
@@ -835,8 +838,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     Ref<WebFrame> protector(*m_frame);
     uint64_t listenerID = m_frame->setUpPolicyListener(identifier, WTFMove(function), WebFrame::ForNavigationAction::No);
     if (!webPage->send(Messages::WebPageProxy::DecidePolicyForResponse(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), identifier, navigationID, response, request,
-        canShowResponse, downloadAttribute, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()))))
+        canShowResponse, downloadAttribute, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())))) {
+        WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForResponse: ignoring because WebPageProxy::DecidePolicyForResponse failed");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { identifier, NavigatingToAppBoundDomain::No, PolicyAction::Ignore, 0, { }, { } });
+    }
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request,

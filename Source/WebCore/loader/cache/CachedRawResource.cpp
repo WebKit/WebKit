@@ -30,11 +30,14 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "HTTPHeaderNames.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringView.h>
+
+#define RELEASE_LOG_ALWAYS(fmt, ...) RELEASE_LOG(Network, "%p - CachedRawResource::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -204,6 +207,7 @@ static void iterateClients(CachedResourceClientWalker<CachedRawResourceClient>&&
 
 void CachedRawResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    RELEASE_LOG_ALWAYS("redirectReceived:");
     if (response.isNull())
         CachedResource::redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
     else {

@@ -540,7 +540,8 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 {
     if (document() && !document()->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
-        LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
+        LOG(ResourceLoading, "CachedResourceLoader::canRequestAfterRedirection URL was not allowed by SecurityOrigin::canDisplay");
+        RELEASE_LOG_IF_ALLOWED("canRequestAfterRedirection: URL was not allowed by SecurityOrigin::canDisplay");
         return false;
     }
 
@@ -548,17 +549,22 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
     // But we currently allow at least data URLs to be loaded.
 
     if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin().canRequest(url)) {
+        RELEASE_LOG_IF_ALLOWED("canRequestAfterRedirection: URL was not allowed by SecurityOrigin::canRequest");
         printAccessDeniedMessage(url);
         return false;
     }
 
-    if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::Yes))
+    if (!allowedByContentSecurityPolicy(type, url, options, ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+        RELEASE_LOG_IF_ALLOWED("canRequestAfterRedirection: URL was not allowed by content policy");
         return false;
+    }
 
     // Last of all, check for insecure content. We do this last so that when folks block insecure content with a CSP policy, they don't get a warning.
     // They'll still get a warning in the console about CSP blocking the load.
-    if (!checkInsecureContent(type, url))
+    if (!checkInsecureContent(type, url)) {
+        RELEASE_LOG_IF_ALLOWED("canRequestAfterRedirection: URL was not allowed because content is insecure");
         return false;
+    }
 
     return true;
 }

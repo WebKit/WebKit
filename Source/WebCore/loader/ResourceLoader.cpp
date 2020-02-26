@@ -64,7 +64,7 @@
 #endif
 
 #undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - ResourceLoader::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [frame=%p, frameLoader=%p, resourceID=%lu] ResourceLoader::" fmt, this, frame(), frameLoader(), identifier(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -272,7 +272,7 @@ void ResourceLoader::loadDataURL()
         if (this->reachedTerminalState())
             return;
         if (!decodeResult) {
-            RELEASE_LOG_IF_ALLOWED("loadDataURL: decoding of data failed (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+            RELEASE_LOG_IF_ALLOWED("loadDataURL: decoding of data failed");
             protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
             return;
         }
@@ -371,7 +371,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
             bool blockedLoad = results.summary.blockedLoad;
             ContentExtensions::applyResultsToRequest(WTFMove(results), page, request);
             if (blockedLoad) {
-                RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: resource load canceled because of content blocker (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+                RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load canceled because of content blocker");
                 didFail(blockedByContentBlockerError());
                 completionHandler({ });
                 return;
@@ -381,7 +381,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 #endif
 
     if (request.isNull()) {
-        RELEASE_LOG_IF_ALLOWED("willSendRequestinternal: resource load canceled because of empty request (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+        RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load canceled because of empty request");
         didFail(cannotShowURLError());
         completionHandler({ });
         return;
@@ -394,6 +394,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
         if (m_reachedTerminalState) {
+            RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load reached terminal state after calling assignIdentifierToInitialRequest()");
             completionHandler(WTFMove(request));
             return;
         }
@@ -429,6 +430,8 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
             loadDataURL();
         }
     }
+
+    RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: calling completion handler");
     completionHandler(WTFMove(request));
 }
 
@@ -539,7 +542,7 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, R
 
 void ResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    RELEASE_LOG_IF_ALLOWED("didFinishLoading: (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+    RELEASE_LOG_IF_ALLOWED("didFinishLoading:");
 
     didFinishLoadingOnePart(networkLoadMetrics);
 
@@ -567,7 +570,7 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
 
 void ResourceLoader::didFail(const ResourceError& error)
 {
-    RELEASE_LOG_IF_ALLOWED("didFail: (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+    RELEASE_LOG_IF_ALLOWED("didFail:");
 
     if (wasCancelled())
         return;
@@ -669,7 +672,7 @@ void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceReques
 {
     RefPtr<ResourceHandle> protectedHandle(handle);
     if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse)) {
-        RELEASE_LOG_IF_ALLOWED("willSendRequestAsync: exiting early because maybeLoadFallbackForRedirect returned false (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+        RELEASE_LOG_IF_ALLOWED("willSendRequestAsync: exiting early because maybeLoadFallbackForRedirect returned false");
         completionHandler(WTFMove(request));
         return;
     }
@@ -715,13 +718,13 @@ void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 
 void ResourceLoader::wasBlocked(ResourceHandle*)
 {
-    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of content blocker (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of content blocker");
     didFail(blockedError());
 }
 
 void ResourceLoader::cannotShowURL(ResourceHandle*)
 {
-    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of invalid URL (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
+    RELEASE_LOG_IF_ALLOWED("wasBlocked: resource load canceled because of invalid URL");
     didFail(cannotShowURLError());
 }
 

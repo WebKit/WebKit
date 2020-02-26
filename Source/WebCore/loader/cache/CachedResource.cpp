@@ -61,7 +61,10 @@
 #include "QuickLook.h"
 #endif
 
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_ALWAYS
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_ALWAYS(fmt, ...) RELEASE_LOG(Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -485,11 +488,12 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
 
 void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    m_requestedFromNetworkingLayer = true;
-    if (response.isNull())
-        return completionHandler(WTFMove(request));
+    RELEASE_LOG_ALWAYS("redirectReceived:");
 
-    updateRedirectChainStatus(m_redirectChainCacheStatus, response);
+    m_requestedFromNetworkingLayer = true;
+    if (!response.isNull())
+        updateRedirectChainStatus(m_redirectChainCacheStatus, response);
+
     completionHandler(WTFMove(request));
 }
 
