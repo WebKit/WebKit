@@ -243,11 +243,13 @@ static void webkitTextCombinerReleasePad(GstElement *element, GstPad *pad)
     WebKitTextCombiner* combiner = WEBKIT_TEXT_COMBINER(element);
     WebKitTextCombinerPad* combinerPad = WEBKIT_TEXT_COMBINER_PAD(pad);
 
-    if (GRefPtr<GstPad> peer = adoptGRef(gst_pad_get_peer(pad))) {
-        GRefPtr<GstElement> parent = adoptGRef(gst_pad_get_parent_element(peer.get()));
+    if (GRefPtr<GstPad> target = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD(pad)))) {
+        GRefPtr<GstElement> parent = adoptGRef(gst_pad_get_parent_element(target.get()));
         ASSERT(parent);
-        if (G_TYPE_FROM_INSTANCE(parent.get()) == webVTTEncType)
+        if (G_TYPE_FROM_INSTANCE(parent.get()) == webVTTEncType) {
+            gst_element_set_state(parent.get(), GST_STATE_NULL);
             gst_bin_remove(GST_BIN(combiner), parent.get());
+        }
     }
 
     gst_element_release_request_pad(combiner->funnel, combinerPad->funnelPad);
