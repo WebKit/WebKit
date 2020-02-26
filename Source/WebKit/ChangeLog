@@ -1,3 +1,19 @@
+2020-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Conversion between MediaSample and RemoteVideoSample should preserve the rotation information
+        https://bugs.webkit.org/show_bug.cgi?id=208240
+
+        Reviewed by Eric Carlson.
+
+        Use new routine that preserves rotation.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::videoSampleAvailable):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSample):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::remoteVideoSampleAvailable):
+
 2020-02-26  Antti Koivisto  <antti@apple.com>
 
         Remove throttling code from RenderLayerCompositor
