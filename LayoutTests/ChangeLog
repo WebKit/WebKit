@@ -1,3 +1,14 @@
+2020-02-26  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Regression r257289: fast/web-share/share-with-files.html is missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=208191
+
+        Reviewed by Tim Horton.
+
+        Added expected for new test.
+
+        * fast/web-share/share-with-files-expected.txt: Added.
+
 2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Update WPT tests for Intersection Observer
