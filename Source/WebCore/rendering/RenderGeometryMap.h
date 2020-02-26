@@ -130,6 +130,9 @@ private:
     RenderGeometryMapSteps m_mapping;
     LayoutSize m_accumulatedOffset;
     MapCoordinatesFlags m_mapCoordinatesFlags;
+#if ASSERT_ENABLED
+    bool m_accumulatedOffsetMightBeSaturated { false };
+#endif
 };
 
 } // namespace WebCore

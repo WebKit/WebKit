@@ -136,6 +136,11 @@ public:
         return LayoutSize(width(), width() * aspectRatio.height() / aspectRatio.width());
     }
 
+    bool mightBeSaturated() const
+    {
+        return m_width.mightBeSaturated() || m_height.mightBeSaturated();
+    }
+
 private:
     LayoutUnit m_width;
     LayoutUnit m_height;
