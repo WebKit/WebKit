@@ -2,5 +2,5 @@
 The empty string has zero width
 Actual output:
 
-FAIL The empty string has zero width The string did not match the expected pattern.
+PASS The empty string has zero width 
 

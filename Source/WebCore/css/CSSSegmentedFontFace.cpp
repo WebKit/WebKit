@@ -118,7 +118,10 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
             if (face->computeFailureState())
                 continue;
 
-            auto selectionCapabilities = face->fontSelectionCapabilities();
+            auto selectionCapabilitiesWrapped = face->fontSelectionCapabilities();
+            ASSERT(selectionCapabilitiesWrapped.hasValue());
+            auto selectionCapabilities = selectionCapabilitiesWrapped.value();
+
             bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && !isFontWeightBold(selectionCapabilities.weight.maximum) && isFontWeightBold(desiredRequest.weight);
             bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
 
@@ -126,7 +129,11 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
             auto fontAccessor = CSSFontAccessor::create(face, fontDescription, syntheticBold, syntheticItalic);
             if (result.isNull() && !fontAccessor->font(ExternalResourceDownloadPolicy::Forbid))
                 continue;
-            appendFont(result, WTFMove(fontAccessor), face->ranges());
+            
+            auto faceRangesWrapped = face->ranges();
+            ASSERT(faceRangesWrapped.hasValue());
+            auto faceRanges = faceRangesWrapped.value();
+            appendFont(result, WTFMove(fontAccessor), faceRanges);
         }
     }
     return result;

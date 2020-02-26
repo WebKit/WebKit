@@ -5,16 +5,16 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {}).stretch is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).unicodeRange is "U+0-10ffff"
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).featureSettings is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'normal'}).style is "normal"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'inherit'}).status is "error"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic'}).style is "italic"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'oblique'}).style is "italic"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('family_name', 'url(\'asdf\')', {'style': 'asdf'}).status is "error"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'normal'}).weight is "normal"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': '200'}).weight is "200"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bold'}).weight is "bold"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bolder'}).weight is "bold"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'lighter'}).weight is "200"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).status is "error"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'stretch': 'ultra-expanded'}).stretch is "ultra-expanded"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+26'}).unicodeRange is "U+26"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+0-7F'}).unicodeRange is "U+0-7f"
@@ -34,10 +34,10 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {}) did not throw exception.
 PASS new FontFace('family_name', newArrayBuffer, {}) did not throw exception.
 PASS new FontFace('family_name', new DataView(newArrayBuffer), {}) did not throw exception.
 PASS new FontFace('family_name', new Uint8Array(newArrayBuffer), {}) did not throw exception.
-PASS new FontFace('family_name', 5, {}) threw exception SyntaxError: The string did not match the expected pattern..
-PASS new FontFace('family_name', {}, {}) threw exception SyntaxError: The string did not match the expected pattern..
-PASS new FontFace('family_name', new Array(), {}) threw exception SyntaxError: The string did not match the expected pattern..
-PASS new FontFace('family_name', { toString: function() { return 5; } }, {}) threw exception SyntaxError: The string did not match the expected pattern..
+PASS new FontFace('family_name', 5, {}).status is "error"
+PASS new FontFace('family_name', {}, {}).status is "error"
+PASS new FontFace('family_name', new Array(), {}).status is "error"
+PASS new FontFace('family_name', { toString: function() { return 5; } }, {}).status is "error"
 PASS new FontFace('family_name', { toString: function() { throw "Error"; } }, {}) threw exception Error.
 PASS new FontFace('family_name', { toString: function() { return "url('asdf')"; } }, {}).family is "family_name"
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).status is "unloaded"
