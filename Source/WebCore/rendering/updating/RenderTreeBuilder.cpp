@@ -694,6 +694,12 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
             // We need to re-run the grid items placement if it had gained a new item.
             if (newParent != parent && is<RenderGrid>(*newParent))
                 downcast<RenderGrid>(*newParent).dirtyGrid();
+            else if (auto* enclosingFragmentedFlow = newParent->enclosingFragmentedFlow()) {
+                if (is<RenderMultiColumnFlow>(*enclosingFragmentedFlow)) {
+                    // Let the fragmented flow know that it has a new in-flow descendant.
+                    multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), child);
+                }
+            }
         }
     } else {
         // An anonymous block must be made to wrap this inline.
