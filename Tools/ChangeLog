@@ -1,3 +1,15 @@
+2020-02-26  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Implement NetworkCache::Data by using FileSystem::MappedFileData
+        https://bugs.webkit.org/show_bug.cgi?id=197684
+        <rdar://problem/59467397>
+
+        Reviewed by Yusuke Suzuki.
+
+        Add test for FileSystem::createFile
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+
 2020-02-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should verify patch committer and reviewer

@@ -145,4 +145,10 @@ TEST_F(FileSystemTest, UnicodeDirectoryName)
     EXPECT_TRUE(expectedDirectoryName == directoryName);
 }
 
+TEST_F(FileSystemTest, openExistingFileAndFailIfFileExists)
+{
+    auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::All, true);
+    EXPECT_FALSE(FileSystem::isHandleValid(handle));
+}
+
 }

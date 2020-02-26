@@ -1,3 +1,29 @@
+2020-02-26  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Implement NetworkCache::Data by using FileSystem::MappedFileData
+        https://bugs.webkit.org/show_bug.cgi?id=197684
+        <rdar://problem/59467397>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        Added FileAccessPermission flag when opening files.
+        Remove default argument for the listDirectory filter since the defaut
+        String() filter doesn't match all files on Mac and Windows.
+
+        Added FileOpenMode::ReadWrite to be used with ReadWrite MappedFileData.
+        Added failIfFileExists flag to openFile.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        Added (S_IRUSR | S_IWUSR) file open modes.
+
+        * wtf/win/FileSystemWin.cpp:
+        Implement getVolumeFreeSpace since some of the tests use it when toggling cache.
+        
+        * wtf/win/PathWalker.cpp:
+
 2020-02-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name

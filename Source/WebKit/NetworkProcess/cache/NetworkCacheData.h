@@ -39,6 +39,11 @@
 #include <WebCore/GRefPtrSoup.h>
 #endif
 
+#if USE(CURL)
+#include <wtf/Box.h>
+#include <wtf/Variant.h>
+#endif
+
 namespace WebKit {
 
 class SharedMemory;
@@ -53,19 +58,16 @@ public:
     ~Data() { }
 
     static Data empty();
-#if !OS(WINDOWS)
-    static Data adoptMap(void* map, size_t, int fd);
-#endif
+    static Data adoptMap(FileSystem::MappedFileData&&, FileSystem::PlatformFileHandle);
 
 #if PLATFORM(COCOA)
     enum class Backing { Buffer, Map };
     Data(OSObjectPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
 #endif
 #if USE(SOUP)
-    Data(GRefPtr<SoupBuffer>&&, int fd = -1);
-#elif OS(WINDOWS)
-    explicit Data(Vector<uint8_t>&&);
-    Data(FileSystem::PlatformFileHandle, size_t offset, size_t);
+    Data(GRefPtr<SoupBuffer>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
+#elif USE(CURL)
+    Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
 #endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
@@ -94,10 +96,10 @@ private:
 #endif
 #if USE(SOUP)
     mutable GRefPtr<SoupBuffer> m_buffer;
-    int m_fileDescriptor { -1 };
+    FileSystem::PlatformFileHandle m_fileDescriptor { FileSystem::invalidPlatformFileHandle };
 #endif
-#if OS(WINDOWS)
-    Vector<uint8_t> m_buffer;
+#if USE(CURL)
+    Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>> m_buffer;
 #endif
     mutable const uint8_t* m_data { nullptr };
     size_t m_size { 0 };
@@ -106,17 +108,8 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-#if !OS(WINDOWS)
-Data adoptAndMapFile(int, size_t offset, size_t);
-#else
 Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
-#endif
-#if USE(GLIB) && !PLATFORM(WIN)
-Data adoptAndMapFile(GFileIOStream*, size_t offset, size_t);
-#endif
-#if !OS(WINDOWS)
 Data mapFile(const char* path);
-#endif
 Data mapFile(const String& path);
 
 using Salt = std::array<uint8_t, 8>;

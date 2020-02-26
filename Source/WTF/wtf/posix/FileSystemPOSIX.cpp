@@ -79,7 +79,7 @@ bool deleteFile(const String& path)
     return unlinked;
 }
 
-PlatformFileHandle openFile(const String& path, FileOpenMode mode)
+PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission, bool failIfFileExists)
 {
     CString fsRep = fileSystemRepresentation(path);
 
@@ -87,16 +87,33 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
         return invalidPlatformFileHandle;
 
     int platformFlag = 0;
-    if (mode == FileOpenMode::Read)
+    switch (mode) {
+    case FileOpenMode::Read:
         platformFlag |= O_RDONLY;
-    else if (mode == FileOpenMode::Write)
+        break;
+    case FileOpenMode::Write:
         platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
+        break;
+    case FileOpenMode::ReadWrite:
+        platformFlag |= (O_RDWR | O_CREAT);
+        break;
 #if OS(DARWIN)
-    else if (mode == FileOpenMode::EventsOnly)
+    case FileOpenMode::EventsOnly:
         platformFlag |= O_EVTONLY;
+        break;
 #endif
+    }
 
-    return open(fsRep.data(), platformFlag, 0666);
+    if (failIfFileExists)
+        platformFlag |= (O_CREAT | O_EXCL);
+
+    int permissionFlag = 0;
+    if (permission == FileAccessPermission::User)
+        permissionFlag |= (S_IRUSR | S_IWUSR);
+    else if (permission == FileAccessPermission::All)
+        permissionFlag |= (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+
+    return open(fsRep.data(), platformFlag, permissionFlag);
 }
 
 void closeFile(PlatformFileHandle& handle)

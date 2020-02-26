@@ -53,48 +53,13 @@
 namespace WebKit {
 namespace NetworkCache {
 
-#if !OS(WINDOWS)
-static DirectoryEntryType directoryEntryType(uint8_t dtype)
-{
-    switch (dtype) {
-    case DT_DIR:
-        return DirectoryEntryType::Directory;
-    case DT_REG:
-        return DirectoryEntryType::File;
-    default:
-        ASSERT_NOT_REACHED();
-        return DirectoryEntryType::File;
-    }
-    return DirectoryEntryType::File;
-}
-#endif
-
 void traverseDirectory(const String& path, const Function<void (const String&, DirectoryEntryType)>& function)
 {
-#if !OS(WINDOWS)
-    DIR* dir = opendir(FileSystem::fileSystemRepresentation(path).data());
-    if (!dir)
-        return;
-    dirent* dp;
-    while ((dp = readdir(dir))) {
-        if (dp->d_type != DT_DIR && dp->d_type != DT_REG)
-            continue;
-        const char* name = dp->d_name;
-        if (!strcmp(name, ".") || !strcmp(name, ".."))
-            continue;
-        auto nameString = String::fromUTF8(name);
-        if (nameString.isNull())
-            continue;
-        function(nameString, directoryEntryType(dp->d_type));
-    }
-    closedir(dir);
-#else
-    auto entries = FileSystem::listDirectory(path);
+    auto entries = FileSystem::listDirectory(path, "*"_s);
     for (auto& entry : entries) {
         auto type = FileSystem::fileIsDirectory(entry, FileSystem::ShouldFollowSymbolicLinks::No) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
-        function(entry, type);
+        function(FileSystem::pathGetFileName(entry), type);
     }
-#endif
 }
 
 void deleteDirectoryRecursively(const String& path)

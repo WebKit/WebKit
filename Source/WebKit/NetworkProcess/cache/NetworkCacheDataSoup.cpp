@@ -48,11 +48,11 @@ Data::Data(const uint8_t* data, size_t size)
     m_buffer = adoptGRef(soup_buffer_new_with_owner(copiedData, size, copiedData, fastFree));
 }
 
-Data::Data(GRefPtr<SoupBuffer>&& buffer, int fd)
+Data::Data(GRefPtr<SoupBuffer>&& buffer, FileSystem::PlatformFileHandle fd)
     : m_buffer(buffer)
     , m_fileDescriptor(fd)
     , m_size(buffer ? buffer->length : 0)
-    , m_isMap(m_size && fd != -1)
+    , m_isMap(m_size && FileSystem::isHandleValid(fd))
 {
 }
 
@@ -108,12 +108,12 @@ struct MapWrapper {
     ~MapWrapper()
     {
         munmap(map, size);
-        close(fileDescriptor);
+        FileSystem::closeFile(fileDescriptor);
     }
 
     void* map;
     size_t size;
-    int fileDescriptor;
+    FileSystem::PlatformFileHandle fileDescriptor;
 };
 
 static void deleteMapWrapper(MapWrapper* wrapper)
@@ -121,8 +121,10 @@ static void deleteMapWrapper(MapWrapper* wrapper)
     delete wrapper;
 }
 
-Data Data::adoptMap(void* map, size_t size, int fd)
+Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
+    size_t size = mappedFile.size();
+    void* map = mappedFile.leakHandle();
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
     MapWrapper* wrapper = new MapWrapper { map, size, fd };
@@ -130,21 +132,14 @@ Data Data::adoptMap(void* map, size_t size, int fd)
     return { WTFMove(buffer), fd };
 }
 
-#if USE(GLIB) && !PLATFORM(WIN)
-Data adoptAndMapFile(GFileIOStream* stream, size_t offset, size_t size)
-{
-    GInputStream* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(stream));
-    int fd = g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream));
-    return adoptAndMapFile(fd, offset, size);
-}
-#endif
-
 RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
 {
     if (isNull() || !isMap())
         return nullptr;
 
-    return SharedMemory::wrapMap(const_cast<char*>(m_buffer->data), m_buffer->length, m_fileDescriptor);
+    GInputStream* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_fileDescriptor));
+    int fd = g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream));
+    return SharedMemory::wrapMap(const_cast<char*>(m_buffer->data), m_buffer->length, fd);
 }
 
 } // namespace NetworkCache

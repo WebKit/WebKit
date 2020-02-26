@@ -32,7 +32,7 @@ namespace WTF {
 
 PathWalker::PathWalker(const String& directory, const String& pattern)
 {
-    String path = directory + "\\" + pattern;
+    String path = makeString(directory, '\\', pattern);
     m_handle = ::FindFirstFileW(path.wideCharacters().data(), &m_data);
 }
 
