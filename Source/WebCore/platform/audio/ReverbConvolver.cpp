@@ -123,7 +123,7 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     if (this->useBackgroundThreads() && m_backgroundStages.size() > 0) {
         m_backgroundThread = Thread::create("convolution background thread", [this] {
             backgroundThreadEntry();
-        });
+        }, ThreadType::Audio);
     }
 }
 

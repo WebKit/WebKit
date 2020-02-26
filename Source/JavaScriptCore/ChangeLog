@@ -1,3 +1,15 @@
+2020-02-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Allow setting of stack sizes for threads
+        https://bugs.webkit.org/show_bug.cgi?id=208223
+
+        Reviewed by Yusuke Suzuki.
+
+        Specify ThreadType at the Thread::create callsite.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::notifyIsSafeToCollect):
+
 2020-02-26  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][MIPS] Adding support to Checkpoints

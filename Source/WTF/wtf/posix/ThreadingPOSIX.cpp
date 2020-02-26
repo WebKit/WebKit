@@ -201,7 +201,7 @@ static void* wtfThreadEntryPoint(void* context)
     return nullptr;
 }
 
-bool Thread::establishHandle(NewThreadContext* context)
+bool Thread::establishHandle(NewThreadContext* context, Optional<size_t> stackSize)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;
@@ -209,6 +209,8 @@ bool Thread::establishHandle(NewThreadContext* context)
 #if HAVE(QOS_CLASSES)
     pthread_attr_set_qos_class_np(&attr, adjustedQOSClass(QOS_CLASS_USER_INITIATED), 0);
 #endif
+    if (stackSize)
+        pthread_attr_setstacksize(&attr, stackSize.value());
     int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, context);
     pthread_attr_destroy(&attr);
     if (error) {

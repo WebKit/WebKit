@@ -595,7 +595,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
             while (true)
                 CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1E30, true);
-        });
+        }, ThreadType::Network);
         sem.wait();
     }
     CFURLConnectionScheduleWithRunLoop(handle->connection(), runLoop, kCFRunLoopDefaultMode);

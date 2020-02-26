@@ -118,7 +118,7 @@ void CurlStreamScheduler::startThreadIfNeeded()
 
     m_thread = Thread::create("curlStreamThread", [this] {
         workerThread();
-    });
+    }, ThreadType::Network);
 }
 
 void CurlStreamScheduler::stopThreadIfNoMoreJobRunning()

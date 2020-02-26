@@ -153,10 +153,11 @@ static unsigned __stdcall wtfThreadEntryPoint(void* data)
     return 0;
 }
 
-bool Thread::establishHandle(NewThreadContext* data)
+bool Thread::establishHandle(NewThreadContext* data, Optional<size_t> stackSize)
 {
     unsigned threadIdentifier = 0;
-    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, data, 0, &threadIdentifier));
+    unsigned initFlag = stackSize ? STACK_SIZE_PARAM_IS_A_RESERVATION : 0;
+    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, stackSize.valueOr(0), wtfThreadEntryPoint, data, initFlag, &threadIdentifier));
     if (!threadHandle) {
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", wtfThreadEntryPoint, data, errno);
         return false;

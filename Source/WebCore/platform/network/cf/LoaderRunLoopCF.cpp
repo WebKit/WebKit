@@ -74,7 +74,7 @@ CFRunLoopRef loaderRunLoop()
                 AutodrainedPool pool;
                 result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::numeric_limits<double>::max(), true);
             } while (result != kCFRunLoopRunStopped && result != kCFRunLoopRunFinished);
-        });
+        }, ThreadType::Network);
 
         loaderRunLoopConditionVariable.wait(lock, [] { return loaderRunLoopObject; });
     }

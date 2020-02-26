@@ -41,7 +41,7 @@ AsyncAudioDecoder::AsyncAudioDecoder()
     LockHolder lock(m_threadCreationMutex);
     m_thread = Thread::create("Audio Decoder", [this] {
         runLoop();
-    });
+    }, ThreadType::Audio);
 }
 
 AsyncAudioDecoder::~AsyncAudioDecoder()

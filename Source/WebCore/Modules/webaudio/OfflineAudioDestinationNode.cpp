@@ -97,7 +97,7 @@ void OfflineAudioDestinationNode::startRendering()
             context().finishedRendering(didRender);
             deref();
         });
-    });
+    }, ThreadType::Audio);
 }
 
 bool OfflineAudioDestinationNode::offlineRender()

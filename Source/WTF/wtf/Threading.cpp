@@ -45,6 +45,26 @@
 
 namespace WTF {
 
+static Optional<size_t> stackSize(ThreadType threadType)
+{
+    // Return the stack size for the created thread based on its type.
+    // If the stack size is not specified, then use the system default. Platforms can tune the values here.
+    // Enable STACK_STATS in StackStats.h to create a build that will track the information for tuning.
+#if PLATFORM(PLAYSTATION)
+    if (threadType == ThreadType::JavaScript)
+        return 512 * 1024;
+#else
+    UNUSED_PARAM(threadType);
+#endif
+
+#if defined(DEFAULT_THREAD_STACK_SIZE_IN_KB) && DEFAULT_THREAD_STACK_SIZE_IN_KB > 0
+    return DEFAULT_THREAD_STACK_SIZE_IN_KB * 1024;
+#else
+    // Use the platform's default stack size
+    return WTF::nullopt;
+#endif
+}
+
 struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> {
 public:
     NewThreadContext(const char* name, Function<void()>&& entryPoint, Ref<Thread>&& thread)
@@ -148,7 +168,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
+Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, ThreadType threadType)
 {
     WTF::initializeThreading();
     Ref<Thread> thread = adoptRef(*new Thread());
@@ -161,7 +181,7 @@ Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
     context->ref();
     {
         MutexLocker locker(context->mutex);
-        bool success = thread->establishHandle(context.ptr());
+        bool success = thread->establishHandle(context.ptr(), stackSize(threadType));
         RELEASE_ASSERT(success);
         context->stage = NewThreadContext::Stage::EstablishedHandle;
 

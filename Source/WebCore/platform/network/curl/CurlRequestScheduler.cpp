@@ -97,7 +97,7 @@ void CurlRequestScheduler::startThreadIfNeeded()
 
         auto locker = holdLock(m_mutex);
         m_runThread = false;
-    });
+    }, ThreadType::Network);
 }
 
 void CurlRequestScheduler::stopThreadIfNoMoreJobRunning()

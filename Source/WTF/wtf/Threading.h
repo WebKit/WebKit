@@ -82,6 +82,15 @@ enum class GCThreadType : uint8_t {
     Helper,
 };
 
+enum class ThreadType : uint8_t {
+    Unknown = 0,
+    JavaScript,
+    GarbageCollection,
+    Network,
+    Graphics,
+    Audio,
+};
+
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
@@ -91,7 +100,7 @@ public:
 
     // Returns nullptr if thread creation failed.
     // The thread name must be a literal since on some platforms it's passed in to the thread.
-    WTF_EXPORT_PRIVATE static Ref<Thread> create(const char* threadName, Function<void()>&&);
+    WTF_EXPORT_PRIVATE static Ref<Thread> create(const char* threadName, Function<void()>&&, ThreadType threadType = ThreadType::Unknown);
 
     // Returns Thread object.
     static Thread& current();
@@ -235,7 +244,7 @@ protected:
     void initializeInThread();
 
     // Internal platform-specific Thread establishment implementation.
-    bool establishHandle(NewThreadContext*);
+    bool establishHandle(NewThreadContext*, Optional<size_t>);
 
 #if USE(PTHREADS)
     void establishPlatformSpecificHandle(PlatformThreadHandle);
@@ -379,4 +388,5 @@ inline Thread& Thread::current()
 } // namespace WTF
 
 using WTF::Thread;
+using WTF::ThreadType;
 using WTF::GCThreadType;

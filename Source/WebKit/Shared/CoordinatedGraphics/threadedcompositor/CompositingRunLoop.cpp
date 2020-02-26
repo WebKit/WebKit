@@ -47,7 +47,7 @@ static RunLoop* createRunLoop()
         runLoop = &RunLoop::current();
         semaphore.signal();
         runLoop->run();
-    })->detach();
+    }, ThreadType::Graphics)->detach();
     semaphore.wait();
 
     return runLoop;

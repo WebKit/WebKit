@@ -1,3 +1,15 @@
+2020-02-26  Don Olmstead  <don.olmstead@sony.com>
+
+        Allow setting of stack sizes for threads
+        https://bugs.webkit.org/show_bug.cgi?id=208223
+
+        Reviewed by Yusuke Suzuki.
+
+        Specify ThreadType at the Thread::create callsite.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::createRunLoop):
+
 2020-02-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Tests should each use a unique ResourceLoadStatistics file path for its database store

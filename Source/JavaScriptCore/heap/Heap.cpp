@@ -2907,7 +2907,7 @@ void Heap::notifyIsSafeToCollect()
                         }
                     }
                 }
-            });
+            }, ThreadType::GarbageCollection);
     }
     
     dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
