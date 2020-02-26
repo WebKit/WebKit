@@ -141,10 +141,10 @@ RemoteVideoSample::RemoteVideoSample(IOSurfaceRef surface, CGColorSpaceRef color
 {
 }
 
-IOSurfaceRef RemoteVideoSample::surface() const
+IOSurfaceRef RemoteVideoSample::surface()
 {
     if (!m_ioSurface && m_sendRight)
-        const_cast<RemoteVideoSample*>(this)->m_ioSurface = WebCore::IOSurface::createFromSendRight(WTFMove(const_cast<RemoteVideoSample*>(this)->m_sendRight), sRGBColorSpaceRef());
+        m_ioSurface = WebCore::IOSurface::createFromSendRight(WTFMove(m_sendRight), sRGBColorSpaceRef());
 
     return m_ioSurface ? m_ioSurface->surface() : nullptr;
 }

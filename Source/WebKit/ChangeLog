@@ -1,3 +1,16 @@
+2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Unreviewed, rolling out r257470.
+
+        This broke the build for tvOS and watchOS
+
+        Reverted changeset:
+
+        "Conversion between MediaSample and RemoteVideoSample should
+        preserve the rotation information"
+        https://bugs.webkit.org/show_bug.cgi?id=208240
+        https://trac.webkit.org/changeset/257470
+
 2020-02-26  Youenn Fablet  <youenn@apple.com>
 
         GPUProcess should be made aware of device orientation for correct video capture frame rotation computation

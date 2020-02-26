@@ -111,7 +111,7 @@ void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remo
         return;
     }
 
-    auto sampleBuffer = m_imageTransferSession->createMediaSample(remoteSample);
+    auto sampleBuffer = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size());
     if (!sampleBuffer) {
         ASSERT_NOT_REACHED();
         return;
