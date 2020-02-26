@@ -1,5 +1,23 @@
 2020-02-26  Kate Cheney  <katherine_cheney@apple.com>
 
+        TestWebKitAPI and WebKitTestRunner should have bundle identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=208260
+        <rdar://problem/59820107>
+
+        Reviewed by Tim Horton.
+
+        Followed instructions for adding an Info.plist for Single-File Tools
+        found on https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/Info.plist: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/Info.plist: Added.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+2020-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
         Tests should each use a unique ResourceLoadStatistics file path for its database store
         https://bugs.webkit.org/show_bug.cgi?id=208206
         <rdar://problem/59690272>
