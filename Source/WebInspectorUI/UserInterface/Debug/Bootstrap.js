@@ -124,6 +124,14 @@ WI.runBootstrapOperations = function() {
         InspectorFrontendHost.inspectInspector();
     });
 
+    function setFocusDebugOutline() {
+        document.body.classList.toggle("focus-debug", WI.settings.debugOutlineFocusedElement.value);
+    }
+
+    WI.settings.debugOutlineFocusedElement.addEventListener(WI.Setting.Event.Changed, setFocusDebugOutline);
+
+    setFocusDebugOutline();
+
     function updateDebugUI() {
         dumpMessagesToolbarItem.hidden = !WI.showDebugUISetting.value;
         inspectInspectorToolbarItem.hidden = !WI.showDebugUISetting.value;
