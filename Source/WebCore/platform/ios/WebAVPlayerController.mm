@@ -27,7 +27,7 @@
 #import "config.h"
 #import "WebAVPlayerController.h"
 
-#if HAVE(AVKIT)
+#if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import "Logging.h"
 #import "PlaybackSessionInterfaceAVKit.h"
@@ -660,5 +660,5 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @end
 
-#endif // HAVE(AVKIT)
+#endif // PLATFORM(COCOA) && HAVE(AVKIT)
 

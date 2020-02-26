@@ -27,6 +27,7 @@
 #import "config.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 
+#if PLATFORM(COCOA)
 #if HAVE(AVKIT)
 
 #import "Logging.h"
@@ -230,3 +231,4 @@ void PlaybackSessionInterfaceAVKit::modelDestroyed()
 }
 
 #endif // HAVE(AVKIT)
+#endif // PLATFORM(COCOA)

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if HAVE(AVKIT)
+#if PLATFORM(COCOA)
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
@@ -88,4 +88,4 @@ protected:
 
 }
 
-#endif // HAVE(AVKIT)
+#endif // PLATFORM(COCOA)
