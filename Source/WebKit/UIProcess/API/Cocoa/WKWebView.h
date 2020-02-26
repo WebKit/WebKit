@@ -35,10 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKBackForwardList;
 @class WKBackForwardListItem;
-@class WKFindConfiguration;
-@class WKFindResult;
 @class WKNavigation;
-@class WKPDFConfiguration;
 @class WKSnapshotConfiguration;
 @class WKWebViewConfiguration;
 
@@ -235,24 +232,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macos(10.13));
 #endif
 
-/*! @abstract Create a PDF document representation from the web page currently displayed in the WKWebView
-@param pdfConfiguration An object that specifies how the PDF capture is configured.
-@param completionHandler A block to invoke when the pdf document data is ready.
-@discussion If the WKPDFConfiguration is nil, the method will create a PDF document representing the bounds of the currently displayed web page.
-The completionHandler is passed the resulting PDF document data or an error.
-The data can be used to create a PDFDocument object.
-If the data is written to a file the resulting file is a valid PDF document.
-*/
-- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/* @abstract Create WebKit web archive data representing the current web content of the WKWebView
-@param completionHandler A block to invoke when the web archive data is ready.
-@discussion WebKit web archive data represents a snapshot of web content.
-It can be used to represent web content on a pasteboard, loaded into a WKWebView directly, and saved to a file for later use.
-The uniform type identifier kUTTypeWebArchive can be used get the related pasteboard type and MIME type.
-*/
-- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
  @discussion The default value is NO.
@@ -298,42 +277,11 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 
 #endif
 
-/* @abstract The factor by which page content is scaled relative to the viewport.
-@discussion The default value is 1.0.
- Changing this value is equivalent to web content setting the CSS "zoom"
- property on all page content.
-*/
-@property (nonatomic) CGFloat pageZoom WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/* @abstract Searches the page contents for the given string.
- @param string The string to search for.
- @param configuration A set of options configuring the search.
- @param completionHandler A block to invoke when the search completes.
- @discussion If the WKFindConfiguration is nil, all of the default WKFindConfiguration values will be used.
-  A match found by the search is selected and the page is scrolled to reveal the selection.
-  The completion handler is called after the search completes.
-*/
-- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
  */
 + (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-
-/* @abstract The media type for the WKWebView
- @discussion The value of mediaType will override the normal value of the CSS media property.
- Setting the value to nil will restore the normal value.
- The default value is nil.
-*/
-@property (nonatomic, nullable, copy) NSString *mediaType;
-
-#if !TARGET_OS_IPHONE
-/* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
-@param printInfo The print info object used to configure the resulting print operation.
-*/
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo WK_API_AVAILABLE(macos(WK_MAC_TBA));
-#endif
 @end
 
 #if !TARGET_OS_IPHONE
