@@ -555,7 +555,6 @@ public:
     static constexpr GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
     static constexpr GPRReg argumentGPR3 = ARMRegisters::r3; // regT3
     static constexpr GPRReg nonArgGPR0 = ARMRegisters::r4; // regT7
-    static constexpr GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
     static constexpr GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static constexpr GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
@@ -649,7 +648,6 @@ public:
     static constexpr GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
     static constexpr GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
     static constexpr GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8
-    static constexpr GPRReg nonArgGPR1 = ARM64Registers::x9; // regT9
     static constexpr GPRReg returnValueGPR = ARM64Registers::x0; // regT0
     static constexpr GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
     static constexpr GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
