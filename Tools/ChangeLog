@@ -1,3 +1,12 @@
+2020-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, disable new DragAndDropTests.DragAndDropOnEmptyView API test on iOS.
+
+        The test was added for macOS and times out on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TEST):
+
 2020-02-26  Youenn Fablet  <youenn@apple.com>
 
         Use WebPageProxy preferences for capture instead of WebProcessPool configuration parameters
