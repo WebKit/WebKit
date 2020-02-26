@@ -614,6 +614,99 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
         return None
 
 
+class ValidateCommiterAndReviewer(buildstep.BuildStep):
+    name = 'validate-commiter-and-reviewer'
+    descriptionDone = ['Validated commiter and reviewer']
+    url = 'https://trac.webkit.org/browser/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json'
+    url_text = '{}?format=txt'.format(url)
+    contributors = {}
+
+    def load_contributors(self):
+        try:
+            response = requests.get(self.url_text)
+            if response.status_code != 200:
+                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(self.url_text, response.status_code))
+                return {}
+        except Exception as e:
+            self._addToLog('stdio', 'Failed to access {url}\n'.format(url=self.url_text))
+            return {}
+
+        contributors_json = response.json()
+        contributors = {}
+        for key, value in contributors_json.iteritems():
+            emails = value.get('emails')
+            for email in emails:
+                contributors[email] = {'name': key, 'status': value.get('status')}
+        return contributors
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': unicode(self.descriptionDone)}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    def fail_build(self, email, status):
+        reason = '{} does not have {} permissions'.format(email, status)
+        comment = '{} does not have {} permissions according to {}.'.format(email, status, self.url)
+        comment += '\n\nRejecting attachment {} from commit queue.'.format(self.getProperty('patch_id', ''))
+        self.setProperty('bugzilla_comment_text', comment)
+
+        self._addToLog('stdio', reason)
+        self.setProperty('build_finish_summary', reason)
+        self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        self.finished(FAILURE)
+        self.descriptionDone = reason
+
+    def is_reviewer(self, email):
+        contributor = self.contributors.get(email)
+        return contributor and contributor['status'] == 'reviewer'
+
+    def is_committer(self, email):
+        contributor = self.contributors.get(email)
+        return contributor and contributor['status'] in ['reviewer', 'committer']
+
+    def full_name_from_email(self, email):
+        contributor = self.contributors.get(email)
+        if not contributor:
+            return ''
+        return contributor.get('name')
+
+    def start(self):
+        self.contributors = self.load_contributors()
+        if not self.contributors:
+            self.finished(FAILURE)
+            self.descriptionDone = 'Failed to get contributors information'
+            self.build.buildFinished(['Failed to get contributors information'], FAILURE)
+            return None
+        patch_committer = self.getProperty('patch_committer', '')
+        if not self.is_committer(patch_committer):
+            self.fail_build(patch_committer, 'committer')
+            return None
+        self._addToLog('stdio', '{} is a valid commiter.\n'.format(patch_committer))
+
+        patch_reviewer = self.getProperty('patch_reviewer', '')
+        if not patch_reviewer:
+            # Patch does not have r+ flag. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
+            self.descriptionDone = 'Validated committer'
+            self.finished(SUCCESS)
+            return None
+
+        self.setProperty('patch_reviewer_full_name', self.full_name_from_email(patch_reviewer))
+        if not self.is_reviewer(patch_reviewer):
+            self.fail_build(patch_reviewer, 'reviewer')
+            return None
+        self._addToLog('stdio', '{} is a valid reviewer.\n'.format(patch_reviewer))
+        self.finished(SUCCESS)
+        return None
+
+
 class ValidateChangeLogAndReviewer(shell.ShellCommand):
     name = 'validate-changelog-and-reviewer'
     descriptionDone = ['Validated ChangeLog and Reviewer']

@@ -1,3 +1,21 @@
+2020-02-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should verify patch committer and reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=206532
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidateCommiterAndReviewer): Build step to validate patch commiter and reviewer.
+        (ValidateCommiterAndReviewer._addToLog):
+        (ValidateCommiterAndReviewer.getResultSummary):
+        (ValidateCommiterAndReviewer.fail_build):
+        (ValidateCommiterAndReviewer.load_contributors): Load contributors information.
+        (ValidateCommiterAndReviewer.is_reviewer):
+        (ValidateCommiterAndReviewer.is_committer):
+        (ValidateCommiterAndReviewer.full_name_from_email):
+        (ValidateCommiterAndReviewer.start):
+
 2020-02-26  Daniel Bates  <dabates@apple.com>
 
         [iOS] Send focus update immediately on becoming or resigning first responder
