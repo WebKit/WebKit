@@ -46,7 +46,7 @@ class CSSTransition;
 class DeclarativeAnimation;
 class Element;
 
-class AnimationTimeline : public RefCounted<AnimationTimeline> {
+class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
 public:
     virtual bool isDocumentTimeline() const { return false; }
 

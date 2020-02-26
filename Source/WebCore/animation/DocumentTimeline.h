@@ -38,7 +38,7 @@ namespace WebCore {
 class AnimationEventBase;
 class RenderElement;
 
-class DocumentTimeline final : public AnimationTimeline, public CanMakeWeakPtr<DocumentTimeline>
+class DocumentTimeline final : public AnimationTimeline
 {
 public:
     static Ref<DocumentTimeline> create(Document&);
