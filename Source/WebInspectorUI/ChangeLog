@@ -1,3 +1,69 @@
+2020-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: AXI: buttons should be focusable when navigating by pressing Tab
+        https://bugs.webkit.org/show_bug.cgi?id=208163
+        <rdar://problem/59745448>
+
+        Reviewed by Brian Burg.
+
+        Buttons now accessible with Tab navigation. The focused button has the native focus outline.
+
+        Clicking on the button does NOT move the focus. For example, when you're focused on the
+        console prompt, clicking on the icon to hide the right sidebar keeps you focused where
+        you were — the console prompt. This behavior matches macOS.
+
+        Convert WI.NavigationItem with role=button from `<div>` to `<button>` elements.
+        Button elements have implicit tabIndex=0. When focused, pressing Space or Enter
+        triggers "click" event.
+
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WI.ActivateButtonNavigationItem.prototype.set activated):
+        Add "aria-pressed" and "aria-label" attributes for VoiceOver.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button:not(.image-only):focus,):
+        (.navigation-bar .item.button.image-only:focus):
+        (.navigation-bar .item.button:not(.disabled):matches(.activate.activated, .radio.selected) > .glyph):
+        (.navigation-bar .item.button:not(.disabled):active:matches(.activate.activated, .radio.selected) > .glyph):
+        Before this patch, focused button looked the same as activated buttons.
+        For example, the focused (non-active) bullseye icon looked exactly the
+        same as unfocused active bullseye icon, which was misleading.
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WI.ButtonNavigationItem):
+        (WI.ButtonNavigationItem.prototype._mouseClicked):
+        (WI.ButtonNavigationItem.prototype._handleMouseDown):
+        Clicking on a button shouldn't move focus. For example, when you're focused on the console prompt,
+        clicking on the icon to hide the right sidebar should keep you focused where you were - the console prompt.
+
+        (WI.ButtonNavigationItem.prototype._handleKeyDown):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button):
+        Adjust outline offset to remove the gap between the outline and the border of the button.
+
+        (.toolbar .item.button:not(.disabled).activate.activated):
+        (@media (prefers-color-scheme: dark) body:not(.window-inactive) .toolbar .item.button:not(.disabled).activate.activated > .glyph):
+        * UserInterface/Views/ControlToolbarItem.css:
+        (.toolbar .item.control:focus):
+        (.toolbar .item.control:focus > .glyph):
+        Draw the outline around the X (close button) glyph, not the button itself (which is much wider than the glyph).
+
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item):
+        (.navigation-bar .item:focus):
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar):
+        "focus" and "blur" events don't bubble. These event handlers didn't capture the event.
+
+        (WI.NavigationBar.prototype._mouseDown):
+        (WI.NavigationBar.prototype._keyDown):
+        * UserInterface/Views/NavigationItem.js:
+        (WI.NavigationItem):
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button:focus):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .item):
+
 2020-02-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: safari app extension isolated worlds and injected files use the extension's identifier instead of its name

@@ -37,12 +37,11 @@ WI.NavigationItem = class NavigationItem extends WI.Object
         this._visibilityPriority = WI.NavigationItem.VisibilityPriority.Normal;
         this._cachedWidth = NaN;
 
-        if (role)
-            this._element.setAttribute("role", role);
         if (label)
             this._element.setAttribute("aria-label", label);
 
         this._element.classList.add(...this._classNames);
+        this._element.role = role;
         this._element.navigationItem = this;
     }
 

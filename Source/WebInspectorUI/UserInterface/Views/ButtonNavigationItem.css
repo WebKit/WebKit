@@ -28,6 +28,15 @@
     color: hsl(0, 0%, 18%);
 }
 
+.navigation-bar .item.button:not(.image-only):focus,
+.navigation-bar .item.button.image-only:focus > .glyph {
+    outline: auto -webkit-focus-ring-color;
+}
+
+.navigation-bar .item.button.image-only:focus {
+    outline: none;
+}
+
 .navigation-bar .item.button.image-only {
     width: 26px;
 }
@@ -61,11 +70,11 @@
     color: var(--glyph-color-pressed);
 }
 
-.navigation-bar .item.button:not(.disabled):matches(:focus, .activate.activated, .radio.selected) > .glyph {
+.navigation-bar .item.button:not(.disabled):matches(.activate.activated, .radio.selected) > .glyph {
     color: var(--glyph-color-active);
 }
 
-.navigation-bar .item.button:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) > .glyph {
+.navigation-bar .item.button:not(.disabled):active:matches(.activate.activated, .radio.selected) > .glyph {
     color: var(--glyph-color-active-pressed);
 }
 

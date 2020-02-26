@@ -36,11 +36,10 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (label)
             this.element.setAttribute("aria-label", label);
 
-        this.element.addEventListener("focus", this._focus.bind(this), false);
-        this.element.addEventListener("blur", this._blur.bind(this), false);
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
-        this.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
+        this.element.addEventListener("mousedown", this._mouseDown.bind(this), true);
 
+        this._role = role;
         this._mouseMovedEventListener = this._mouseMoved.bind(this);
         this._mouseUpEventListener = this._mouseUp.bind(this);
 
@@ -288,14 +287,17 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (event.button !== 0)
             return;
 
-        // Remove the tabIndex so clicking the navigation bar does not give it focus.
-        // Only keep the tabIndex if already focused from keyboard navigation. This matches Xcode.
-        if (!this._focused)
-            this.element.removeAttribute("tabindex");
-
         var itemElement = event.target.closest("." + WI.RadioButtonNavigationItem.StyleClassName);
         if (!itemElement || !itemElement.navigationItem)
             return;
+
+        if (this._role === "tablist") {
+            if (this.element.contains(document.activeElement)) {
+                // If clicking on a tab, stop the event from being handled by the button element. Instead,
+                // pass focus to the selected tab. Otherwise, let the button become activated normally.
+                event.stopPropagation();
+            }
+        }
 
         this._previousSelectedNavigationItem = this.selectedNavigationItem;
         this.selectedNavigationItem = itemElement.navigationItem;
@@ -310,8 +312,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         // Register these listeners on the document so we can track the mouse if it leaves the navigation bar.
         document.addEventListener("mousemove", this._mouseMovedEventListener, false);
         document.addEventListener("mouseup", this._mouseUpEventListener, false);
-
-        event.stopPropagation();
     }
 
     _mouseMoved(event)
@@ -373,9 +373,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     _keyDown(event)
     {
-        if (!this._focused)
-            return;
-
         if (event.keyIdentifier !== "Left" && event.keyIdentifier !== "Right")
             return;
 
@@ -401,16 +398,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
             return;
 
         this.selectedNavigationItem = this._navigationItems[selectedNavigationItemIndex];
-    }
-
-    _focus(event)
-    {
-        this._focused = true;
-    }
-
-    _blur(event)
-    {
-        this._focused = false;
+        this.selectedNavigationItem?.element.focus();
     }
 
     _calculateMinimumWidth()

@@ -27,7 +27,8 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 {
     constructor(identifier, toolTipOrLabel, image, imageWidth, imageHeight, role, label)
     {
-        super(identifier, role || "button");
+        role = role || "button";
+        super(identifier, role);
 
         console.assert(identifier);
         console.assert(toolTipOrLabel);
@@ -35,6 +36,14 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         this._enabled = true;
 
         this.element.addEventListener("click", this._mouseClicked.bind(this));
+
+        // Don't move the focus on the button when clicking on it. This matches macOS behavior.
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
+
+        if (role === "button") {
+            this.element.tabIndex = 0;
+            this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        }
 
         if (label)
             this.element.setAttribute("aria-label", label);
@@ -141,6 +150,25 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     // Private
 
     _mouseClicked(event)
+    {
+        this._buttonPressed(event);
+    }
+
+    _handleMouseDown(event)
+    {
+        // Clicking on a button should NOT focus on it.
+        event.stop();
+    }
+
+    _handleKeyDown(event)
+    {
+        if (event.code === "Enter" || event.code === "Space") {
+            event.stop();
+            this._buttonPressed(event);
+        }
+    }
+
+    _buttonPressed(event)
     {
         if (!this.enabled)
             return;

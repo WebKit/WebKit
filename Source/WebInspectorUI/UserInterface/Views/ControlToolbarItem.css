@@ -52,6 +52,14 @@
     background-position: center center;
 }
 
+.toolbar .item.control:focus {
+    outline: none;
+}
+
+.toolbar .item.control:focus > .glyph {
+    outline: auto -webkit-focus-ring-color;
+}
+
 body.window-inactive .toolbar .item.control {
     opacity: 0.35;
 }

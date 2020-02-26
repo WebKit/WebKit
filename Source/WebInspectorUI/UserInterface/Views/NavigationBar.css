@@ -46,7 +46,11 @@
     flex-wrap: wrap;
 
     height: auto;
-    outline: none;
+    outline-offset: -4px;
+}
+
+.navigation-bar .item:focus {
+    outline: auto -webkit-focus-ring-color;
 }
 
 .navigation-bar .item.force-hidden {

@@ -95,7 +95,6 @@ body.mac-platform:not(.docked) {
 
 .toolbar .item {
     display: flex;
-    outline: none;
 }
 
 .toolbar .search-bar {

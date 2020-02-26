@@ -31,13 +31,14 @@
     padding: 0 10px;
 
     color: hsl(0, 0%, 45%);
+    outline-offset: -2px;
 }
 
 .toolbar .item.button:not(.disabled):active {
     color: hsl(0, 0%, 30%);
 }
 
-.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) {
+.toolbar .item.button:not(.disabled).activate.activated {
     color: var(--glyph-color-active);
 }
 
@@ -69,7 +70,7 @@ body.window-inactive .toolbar .item.button.disabled {
         background: var(--button-background-color-pressed);
     }
 
-    body:not(.window-inactive) .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph {
+    body:not(.window-inactive) .toolbar .item.button:not(.disabled).activate.activated > .glyph {
         filter: brightness(1.35);
     }
 }
