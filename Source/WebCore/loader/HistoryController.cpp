@@ -381,14 +381,14 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     FrameLoader& frameLoader = m_frame.loader();
 
-    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
+    bool usesEphemeralSession = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = frameLoader.documentLoader()->urlForHistory();
 
     if (!frameLoader.documentLoader()->isClientRedirect()) {
         if (!historyURL.isEmpty()) {
             if (updateType != UpdateAllExceptBackForwardList)
                 updateBackForwardListClippedAtTarget(true);
-            if (!needPrivacy) {
+            if (!usesEphemeralSession) {
                 frameLoader.client().updateGlobalHistory();
                 frameLoader.documentLoader()->setDidCreateGlobalHistoryEntry(true);
                 if (frameLoader.documentLoader()->unreachableURL().isEmpty())
@@ -400,7 +400,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
         updateCurrentItem();
     }
 
-    if (!historyURL.isEmpty() && !needPrivacy) {
+    if (!historyURL.isEmpty() && !usesEphemeralSession) {
         if (Page* page = m_frame.page())
             addVisitedLink(*page, historyURL);
 
@@ -413,14 +413,14 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 {
     LOG(History, "HistoryController %p updateForRedirectWithLockedBackForwardList: Updating History for redirect load in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
     
-    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
+    bool usesEphemeralSession = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
     if (m_frame.loader().documentLoader()->isClientRedirect()) {
         if (!m_currentItem && !m_frame.tree().parent()) {
             if (!historyURL.isEmpty()) {
                 updateBackForwardListClippedAtTarget(true);
-                if (!needPrivacy) {
+                if (!usesEphemeralSession) {
                     m_frame.loader().client().updateGlobalHistory();
                     m_frame.loader().documentLoader()->setDidCreateGlobalHistoryEntry(true);
                     if (m_frame.loader().documentLoader()->unreachableURL().isEmpty())
@@ -436,7 +436,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
             parentFrame->loader().history().currentItem()->setChildItem(createItem());
     }
 
-    if (!historyURL.isEmpty() && !needPrivacy) {
+    if (!historyURL.isEmpty() && !usesEphemeralSession) {
         if (Page* page = m_frame.page())
             addVisitedLink(*page, historyURL);
 
@@ -456,10 +456,10 @@ void HistoryController::updateForClientRedirect()
         m_currentItem->clearScrollPosition();
     }
 
-    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
+    bool usesEphemeralSession = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
-    if (!historyURL.isEmpty() && !needPrivacy) {
+    if (!historyURL.isEmpty() && !usesEphemeralSession) {
         if (Page* page = m_frame.page())
             addVisitedLink(*page, historyURL);
     }
@@ -551,15 +551,16 @@ void HistoryController::updateForSameDocumentNavigation()
     if (!page)
         return;
 
-    if (page->usesEphemeralSession())
-        return;
+    bool usesEphemeralSession = page->usesEphemeralSession();
+    if (!usesEphemeralSession)
+        addVisitedLink(*page, m_frame.document()->url());
 
-    addVisitedLink(*page, m_frame.document()->url());
     m_frame.mainFrame().loader().history().recursiveUpdateForSameDocumentNavigation();
 
     if (m_currentItem) {
         m_currentItem->setURL(m_frame.document()->url());
-        m_frame.loader().client().updateGlobalHistory();
+        if (!usesEphemeralSession)
+            m_frame.loader().client().updateGlobalHistory();
     }
 }
 
