@@ -1,5 +1,16 @@
 2020-02-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r257471.
+
+        Causes crashes on the bots
+
+        Reverted changeset:
+
+        "Unreviewed, fix debug asserts on the bots after r257389."
+        https://trac.webkit.org/changeset/257471
+
+2020-02-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r257389.
 
         Reverted changeset:

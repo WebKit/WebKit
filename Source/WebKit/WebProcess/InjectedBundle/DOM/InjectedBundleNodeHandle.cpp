@@ -95,9 +95,7 @@ Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node& node)
 
 Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::create(Node& node)
 {
-    auto handle = adoptRef(*new InjectedBundleNodeHandle(node));
-    handle->suspendIfNeeded();
-    return handle;
+    return adoptRef(*new InjectedBundleNodeHandle(node));
 }
 
 InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node& node)
