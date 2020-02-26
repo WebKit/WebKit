@@ -1,5 +1,38 @@
 2020-02-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r257264. rdar://problem/59778922
+
+    [iOS] Use one telemetry decoration for each sandbox rule
+    https://bugs.webkit.org/show_bug.cgi?id=207897
+    
+    Reviewed by Brent Fulgham.
+    
+    Currently, we are using the decorations '(with telemetry)' and '(with telemetry-backtrace)' for some sandbox rules
+    in the WebContent process' sandbox. Only one of the two decorations should be used.
+    
+    No new tests, no behavior change.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257264 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-24  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Use one telemetry decoration for each sandbox rule
+            https://bugs.webkit.org/show_bug.cgi?id=207897
+
+            Reviewed by Brent Fulgham.
+
+            Currently, we are using the decorations '(with telemetry)' and '(with telemetry-backtrace)' for some sandbox rules
+            in the WebContent process' sandbox. Only one of the two decorations should be used.
+
+            No new tests, no behavior change.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-02-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r257254. rdar://problem/59787318
 
     Temporarily disable in-process cookie cache as it seems to be causing hangs on iOS
