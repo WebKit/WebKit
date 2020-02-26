@@ -8,7 +8,7 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/pixelbufferobjec
 [ 5: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_triangles: gl.createProgram()
 [ 6: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_clears: gl.createProgram()
 [ 7: FAIL ] pixel_buffer_object.renderbuffer.rgba8ui_triangles: useProgram failed
-[ 8: PASS ] pixel_buffer_object.renderbuffer.rgba8ui_clears: rgba8ui_clears
+[ 8: FAIL ] pixel_buffer_object.renderbuffer.rgba8ui_clears: rgba8ui_clears
 [ 9: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_triangles: gl.createProgram()
 [ 10: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_clears: gl.createProgram()
 [ 11: FAIL ] pixel_buffer_object.renderbuffer.rgba16ui_triangles: useProgram failed
@@ -46,5 +46,5 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/pixelbufferobjec
 [ 43: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_triangles: gl.createProgram()
 [ 44: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_clears: gl.createProgram()
 [ 45: PASS ] successfullyParsed is true
-[ FAIL ] 39 failures reported
+[ FAIL ] 40 failures reported
 
