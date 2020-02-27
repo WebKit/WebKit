@@ -1,4 +1,16 @@
 =================
+WebKitGTK 2.27.91
+=================
+
+What's new in WebKitGTK 2.27.91?
+
+  - Update user agent quirks to fix the unsupported browser message in several google services.
+  - Fix several compile warnings with GCC 10.
+  - Fix the build with GCC 10.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Chinese
+
+=================
 WebKitGTK 2.27.90
 =================
 
