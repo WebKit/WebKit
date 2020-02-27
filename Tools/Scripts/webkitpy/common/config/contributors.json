@@ -847,6 +847,15 @@
          "benm"
       ]
    },
+   "Ben Nham" : {
+      "emails" : [
+         "nham@apple.com"
+      ],
+      "nicks" : [
+         "nham"
+      ],
+      "status" : "committer"
+   },
    "Ben Wells" : {
       "emails" : [
          "benwells@chromium.org"
