@@ -165,7 +165,6 @@ public:
         TextChecker,
         URLSchemeTask,
         UserContentController,
-        UserContentWorld,
         UserInitiatedAction,
         UserMediaPermissionCheck,
         UserMediaPermissionRequest,

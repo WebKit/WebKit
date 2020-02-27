@@ -44,14 +44,15 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-TEST(UserContentWorld, NormalWorld)
+TEST(ContentWorld, NormalWorld)
 {
     RetainPtr<WKUserScript> basicUserScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
-    EXPECT_EQ([basicUserScript _userContentWorld], [_WKUserContentWorld normalWorld]);
+    EXPECT_NE([basicUserScript _userContentWorld], [_WKUserContentWorld normalWorld]);
+    EXPECT_WK_STREQ([basicUserScript _userContentWorld].name, [_WKUserContentWorld normalWorld].name);
     EXPECT_NULL([basicUserScript _userContentWorld].name);
 }
 
-TEST(UserContentWorld, NormalWorldUserScript)
+TEST(ContentWorld, NormalWorldUserScript)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -76,16 +77,17 @@ TEST(UserContentWorld, NormalWorldUserScript)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(UserContentWorld, IsolatedWorld)
+TEST(ContentWorld, IsolatedWorld)
 {
     RetainPtr<_WKUserContentWorld> isolatedWorld = [_WKUserContentWorld worldWithName:@"TestWorld"];
     EXPECT_WK_STREQ([isolatedWorld name], @"TestWorld");
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:isolatedWorld.get()]);
-    EXPECT_EQ([userScript _userContentWorld], isolatedWorld.get());
+    EXPECT_NE([userScript _userContentWorld], isolatedWorld.get());
+    EXPECT_WK_STREQ([userScript _userContentWorld].name, [isolatedWorld name]);
 }
 
-TEST(UserContentWorld, IsolatedWorldUserScript)
+TEST(ContentWorld, IsolatedWorldUserScript)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 

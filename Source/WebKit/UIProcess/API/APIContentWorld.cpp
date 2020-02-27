@@ -26,14 +26,13 @@
 #include "config.h"
 #include "APIContentWorld.h"
 
-#include "APIUserContentWorld.h"
 #include "ContentWorldShared.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {
 
-ContentWorldBase::ContentWorldBase(const WTF::String& name)
+ContentWorld::ContentWorld(const WTF::String& name)
     : m_name(name)
 {
     static std::once_flag once;
@@ -74,21 +73,6 @@ ContentWorld& ContentWorld::defaultClientWorld()
 {
     static NeverDestroyed<RefPtr<ContentWorld>> world(adoptRef(new ContentWorld(WTF::String { })));
     return *world.get();
-}
-
-ContentWorld::ContentWorld(const WTF::String& name)
-    : ContentWorldBase(name)
-{
-}
-
-ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
-    : ContentWorldBase(identifier)
-{
-}
-
-ContentWorld::ContentWorld(const UserContentWorld& userContentWorld)
-    : ContentWorldBase(userContentWorld.identifier(), userContentWorld.name())
-{
 }
 
 ContentWorld::~ContentWorld()

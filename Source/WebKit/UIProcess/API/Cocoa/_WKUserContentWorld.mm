@@ -26,38 +26,58 @@
 #import "config.h"
 #import "_WKUserContentWorldInternal.h"
 
+#import "WKContentWorldInternal.h"
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation _WKUserContentWorld
 
+- (instancetype)_initWithName:(NSString *)name
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _contentWorld = [WKContentWorld worldWithName:name];
+    return self;
+}
+
+- (instancetype)_init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _contentWorld = [WKContentWorld pageWorld];
+    return self;
+}
+
+- (instancetype)_initWithContentWorld:(WKContentWorld *)world
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _contentWorld = world;
+    return self;
+}
+
 + (_WKUserContentWorld *)worldWithName:(NSString *)name
 {
-    return wrapper(API::UserContentWorld::worldWithName(name));
+    return [[[_WKUserContentWorld alloc] _initWithName:name] autorelease];
 }
 
 + (_WKUserContentWorld *)normalWorld
 {
-    return wrapper(API::UserContentWorld::normalWorld());
-}
-
-- (void)dealloc
-{
-    _userContentWorld->~UserContentWorld();
-
-    [super dealloc];
+    return [[[_WKUserContentWorld alloc] _init] autorelease];
 }
 
 - (NSString *)name
 {
-    if (_userContentWorld.get() == &API::UserContentWorld::normalWorld())
-        return nil;
-    return _userContentWorld->name();
+    return [_contentWorld name];
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *_userContentWorld;
+    return [_contentWorld _apiObject];
 }
 
 @end

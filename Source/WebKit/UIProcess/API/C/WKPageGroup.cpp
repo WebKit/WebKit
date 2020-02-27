@@ -28,7 +28,7 @@
 
 #include "APIArray.h"
 #include "APIContentRuleList.h"
-#include "APIUserContentWorld.h"
+#include "APIContentWorld.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "InjectUserScriptImmediately.h"
@@ -77,7 +77,7 @@ void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourc
     auto whitelist = toImpl(whitelistedURLPatterns);
     auto blacklist = toImpl(blacklistedURLPatterns);
 
-    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? WTF::blankURL() :  URL(URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::UserContentWorld::normalWorld());
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? WTF::blankURL() :  URL(URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
 
     toImpl(pageGroupRef)->userContentController().addUserStyleSheet(userStyleSheet.get());
 }
@@ -99,7 +99,7 @@ void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef
     auto blacklist = toImpl(blacklistedURLPatterns);
     
     auto url = baseURLString.isEmpty() ? WTF::blankURL() :  URL(URL(), baseURLString);
-    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames) }, API::UserContentWorld::normalWorld());
+    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames) }, API::ContentWorld::pageContentWorld());
     toImpl(pageGroupRef)->userContentController().addUserScript(userScript.get(), InjectUserScriptImmediately::No);
 }
 

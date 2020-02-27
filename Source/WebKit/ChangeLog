@@ -1,3 +1,113 @@
+2020-02-26  Alex Christensen  <achristensen@webkit.org>
+
+        _WKUserContentWorld should be a wrapper around WKContentWorld
+        https://bugs.webkit.org/show_bug.cgi?id=208274
+
+        Reviewed by Brady Eidson.
+
+        Various SPIs were getting confused between the two.
+        Updated API tests which expected pointer equality, which is no longer true or important.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Sources.txt:
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::ContentWorld):
+        (API::ContentWorldBase::ContentWorldBase): Deleted.
+        * UIProcess/API/APIContentWorld.h:
+        (API::ContentWorldBase::identifier const): Deleted.
+        (API::ContentWorldBase::name const): Deleted.
+        (API::ContentWorldBase::worldData const): Deleted.
+        (API::ContentWorldBase::ContentWorldBase): Deleted.
+        * UIProcess/API/APIUserContentWorld.cpp: Removed.
+        * UIProcess/API/APIUserContentWorld.h: Removed.
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::UserScript):
+        * UIProcess/API/APIUserScript.h:
+        * UIProcess/API/APIUserStyleSheet.cpp:
+        (API::UserStyleSheet::UserStyleSheet):
+        * UIProcess/API/APIUserStyleSheet.h:
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/C/WKUserScriptRef.cpp:
+        (WKUserScriptCreateWithSource):
+        * UIProcess/API/Cocoa/WKContentWorld.mm:
+        (-[WKContentWorld _userContentWorld]):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController addScriptMessageHandler:name:]):
+        (-[WKUserContentController removeScriptMessageHandlerForName:]):
+        (-[WKUserContentController _removeAllUserScriptsAssociatedWithUserContentWorld:]):
+        (-[WKUserContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:]):
+        (-[WKUserContentController _addScriptMessageHandler:name:userContentWorld:]):
+        (-[WKUserContentController _removeScriptMessageHandlerForName:userContentWorld:]):
+        (-[WKUserContentController _removeAllScriptMessageHandlersAssociatedWithUserContentWorld:]):
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript initWithSource:injectionTime:forMainFrameOnly:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:userContentWorld:]):
+        (-[WKUserScript _userContentWorld]):
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm:
+        (-[_WKUserContentWorld _initWithName:]):
+        (-[_WKUserContentWorld _init]):
+        (-[_WKUserContentWorld _initWithContentWorld:]):
+        (+[_WKUserContentWorld worldWithName:]):
+        (+[_WKUserContentWorld normalWorld]):
+        (-[_WKUserContentWorld name]):
+        (-[_WKUserContentWorld _apiObject]):
+        (-[_WKUserContentWorld dealloc]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+        * UIProcess/UserContent/WebScriptMessageHandler.cpp:
+        (WebKit::WebScriptMessageHandler::create):
+        (WebKit::WebScriptMessageHandler::WebScriptMessageHandler):
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        (WebKit::WebScriptMessageHandler::world):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::shouldSendRemoveContentWorldsMessage):
+        (WebKit::WebUserContentControllerProxy::removeContentWorldUses):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse): Deleted.
+        (WebKit::WebUserContentControllerProxy::shouldSendRemoveUserContentWorldsMessage): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeUserContentWorldUses): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentWorld):
+        (WebKit::WebUserContentController::addContentWorlds):
+        (WebKit::WebUserContentController::removeContentWorlds):
+        (WebKit::WebUserContentController::addUserScripts):
+        (WebKit::WebUserContentController::removeUserScript):
+        (WebKit::WebUserContentController::removeAllUserScripts):
+        (WebKit::WebUserContentController::addUserStyleSheets):
+        (WebKit::WebUserContentController::removeUserStyleSheet):
+        (WebKit::WebUserContentController::removeAllUserStyleSheets):
+        (WebKit::WebUserContentController::addUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::removeUserScriptMessageHandler):
+        (WebKit::WebUserContentController::removeAllUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::addUserContentWorld): Deleted.
+        (WebKit::WebUserContentController::addUserContentWorlds): Deleted.
+        (WebKit::WebUserContentController::removeUserContentWorlds): Deleted.
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+        (WebKit::WebPage::runJavaScriptInMainFrameScriptWorld):
+
 2020-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Create AudioDestination in the GPU process

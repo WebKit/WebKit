@@ -21,7 +21,7 @@
 #define WebKitUserContentPrivate_h
 
 #include "APIContentRuleList.h"
-#include "APIUserContentWorld.h"
+#include "APIContentWorld.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "WebKitUserContent.h"
@@ -30,7 +30,7 @@
 
 API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript*);
 API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
-API::UserContentWorld& webkitUserContentWorld(const char*);
+API::ContentWorld& webkitContentWorld(const char*);
 API::ContentRuleList& webkitUserContentFilterGetContentRuleList(WebKitUserContentFilter*);
 WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&&);
 

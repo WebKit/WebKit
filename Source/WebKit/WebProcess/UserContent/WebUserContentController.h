@@ -66,8 +66,8 @@ public:
 
     InjectedBundleScriptWorld* worldForIdentifier(ContentWorldIdentifier);
 
-    void addUserContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>&);
-    void addUserContentWorld(const std::pair<ContentWorldIdentifier, String>&);
+    void addContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>&);
+    void addContentWorld(const std::pair<ContentWorldIdentifier, String>&);
     void addUserScripts(Vector<WebUserScriptData>&&, InjectUserScriptImmediately);
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
@@ -91,7 +91,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void removeUserContentWorlds(const Vector<ContentWorldIdentifier>&);
+    void removeContentWorlds(const Vector<ContentWorldIdentifier>&);
 
     void removeUserScript(ContentWorldIdentifier, uint64_t userScriptIdentifier);
     void removeAllUserScripts(const Vector<ContentWorldIdentifier>&);

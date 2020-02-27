@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "APIContentWorld.h"
 #include "APIObject.h"
-#include "APIUserContentWorld.h"
 #include <WebCore/UserStyleSheet.h>
 #include <wtf/Identified.h>
 
@@ -36,21 +36,21 @@ class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, pu
 public:
     static WTF::URL generateUniqueURL();
 
-    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
+    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
     {
         return adoptRef(*new UserStyleSheet(WTFMove(userStyleSheet), world));
     }
 
-    UserStyleSheet(WebCore::UserStyleSheet, API::UserContentWorld&);
+    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&);
 
     const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
 
-    UserContentWorld& userContentWorld() { return m_world; }
-    const UserContentWorld& userContentWorld() const { return m_world; }
+    ContentWorld& contentWorld() { return m_world; }
+    const ContentWorld& contentWorld() const { return m_world; }
 
 private:
     WebCore::UserStyleSheet m_userStyleSheet;
-    Ref<UserContentWorld> m_world;
+    Ref<ContentWorld> m_world;
 };
 
 } // namespace API

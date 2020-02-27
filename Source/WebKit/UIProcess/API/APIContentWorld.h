@@ -31,32 +31,7 @@
 
 namespace API {
 
-class UserContentWorld;
-
-class ContentWorldBase {
-public:
-    virtual ~ContentWorldBase() = default;
-
-    WebKit::ContentWorldIdentifier identifier() const { return m_identifier; }
-    const WTF::String& name() const { return m_name; }
-    std::pair<WebKit::ContentWorldIdentifier, WTF::String> worldData() const { return { m_identifier, m_name }; }
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
-
-protected:
-    ContentWorldBase(const WTF::String& name);
-    ContentWorldBase(WebKit::ContentWorldIdentifier identifier)
-        : m_identifier(identifier) { }
-    ContentWorldBase(WebKit::ContentWorldIdentifier identifier, const WTF::String& name)
-        : m_identifier(identifier)
-        , m_name(name) { }
-private:
-    WebKit::ContentWorldIdentifier m_identifier;
-    WTF::String m_name;
-};
-
-class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld>, public ContentWorldBase {
+class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld> {
 public:
     static Ref<ContentWorld> sharedWorldWithName(const WTF::String&);
     static ContentWorld& pageContentWorld();
@@ -64,13 +39,17 @@ public:
 
     virtual ~ContentWorld();
 
-    void ref() const final { ObjectImpl::ref(); }
-    void deref() const final { ObjectImpl::deref(); }
+    WebKit::ContentWorldIdentifier identifier() const { return m_identifier; }
+    const WTF::String& name() const { return m_name; }
+    std::pair<WebKit::ContentWorldIdentifier, WTF::String> worldData() const { return { m_identifier, m_name }; }
 
 private:
     explicit ContentWorld(const WTF::String&);
-    explicit ContentWorld(WebKit::ContentWorldIdentifier);
-    explicit ContentWorld(const UserContentWorld&);
+    explicit ContentWorld(WebKit::ContentWorldIdentifier identifier)
+        : m_identifier(identifier) { }
+
+    WebKit::ContentWorldIdentifier m_identifier;
+    WTF::String m_name;
 };
 
 } // namespace API

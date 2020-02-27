@@ -709,7 +709,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     for (const auto& iterator : parameters.urlSchemeHandlers)
         registerURLSchemeHandler(iterator.value, iterator.key);
 
-    m_userContentController->addUserContentWorlds(parameters.userContentWorlds);
+    m_userContentController->addContentWorlds(parameters.userContentWorlds);
     m_userContentController->addUserScripts(WTFMove(parameters.userScripts), InjectUserScriptImmediately::No);
     m_userContentController->addUserStyleSheets(parameters.userStyleSheets);
     m_userContentController->addUserScriptMessageHandlers(parameters.messageHandlers);
@@ -3444,7 +3444,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
 {
-    m_userContentController->addUserContentWorld(worldData);
+    m_userContentController->addContentWorld(worldData);
     runJavaScript(mainWebFrame(), WTFMove(parameters), worldData.first, callbackID);
 }
 

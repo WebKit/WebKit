@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "APIContentWorld.h"
 #include "APIObject.h"
-#include "APIUserContentWorld.h"
 #include <WebCore/UserScript.h>
 #include <wtf/Identified.h>
 
@@ -36,21 +36,21 @@ class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Ide
 public:
     static WTF::URL generateUniqueURL();
 
-    static Ref<UserScript> create(WebCore::UserScript userScript, API::UserContentWorld& world)
+    static Ref<UserScript> create(WebCore::UserScript userScript, API::ContentWorld& world)
     {
         return adoptRef(*new UserScript(WTFMove(userScript), world));
     }
 
-    UserScript(WebCore::UserScript, API::UserContentWorld&);
+    UserScript(WebCore::UserScript, API::ContentWorld&);
 
     const WebCore::UserScript& userScript() const { return m_userScript; }
     
-    UserContentWorld& userContentWorld() { return m_world; }
-    const UserContentWorld& userContentWorld() const { return m_world; }
+    ContentWorld& contentWorld() { return m_world; }
+    const ContentWorld& contentWorld() const { return m_world; }
     
 private:
     WebCore::UserScript m_userScript;
-    Ref<UserContentWorld> m_world;
+    Ref<ContentWorld> m_world;
 };
 
 } // namespace API
