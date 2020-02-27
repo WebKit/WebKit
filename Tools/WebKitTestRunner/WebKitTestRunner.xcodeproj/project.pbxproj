@@ -316,7 +316,6 @@
 		4429FC611627089600F66D8B /* WorkQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueManager.h; sourceTree = "<group>"; };
 		4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedTouchesDebugWindow.mm; sourceTree = "<group>"; };
 		4430AE181F82C4EF0099915A /* GeneratedTouchesDebugWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedTouchesDebugWindow.h; sourceTree = "<group>"; };
-		49AEEF692407278200C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
@@ -463,7 +462,6 @@
 		08FB7794FE84155DC02AAC07 /* WebKitTestRunner */ = {
 			isa = PBXGroup;
 			children = (
-				49AEEF692407278200C87E4C /* Info.plist */,
 				0F18E71A1D6BC4BC0027E547 /* TestRunnerShared */,
 				BC952EC511F3C10F003398B4 /* DerivedSources.make */,
 				2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */,
