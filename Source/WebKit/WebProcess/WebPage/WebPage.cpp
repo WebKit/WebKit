@@ -101,6 +101,7 @@
 #include "WebInspectorUIMessages.h"
 #include "WebLoaderStrategy.h"
 #include "WebMediaKeyStorageManager.h"
+#include "WebMediaStrategy.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
@@ -199,6 +200,7 @@
 #include <WebCore/PingLoader.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PointerCaptureController.h>
 #include <WebCore/PrintContext.h>
@@ -3696,6 +3698,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         m_drawingArea->updatePreferences(store);
 
 #if ENABLE(GPU_PROCESS)
+    // FIXME: useGPUProcessForMedia should be a RuntimeEnabledFeature since it's global.
+    static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMedia());
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
 #endif
 }

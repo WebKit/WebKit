@@ -28,12 +28,15 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
+#include "GPUProcessConnection.h"
 #include "LayerHostingContext.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebProcess.h"
+#include <WebCore/RemoteVideoSample.h>
 
 namespace WebKit {
 using namespace WebCore;

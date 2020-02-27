@@ -48,6 +48,11 @@ PasteboardStrategy* NetworkProcessPlatformStrategies::createPasteboardStrategy()
     return nullptr;
 }
 
+MediaStrategy* NetworkProcessPlatformStrategies::createMediaStrategy()
+{
+    return nullptr;
+}
+
 BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
 {
     using namespace WebCore;

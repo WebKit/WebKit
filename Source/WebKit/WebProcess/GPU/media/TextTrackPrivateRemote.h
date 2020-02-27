@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DataReference.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
@@ -48,6 +49,10 @@ class MediaPlayerPrivateRemote;
 class TextTrackPrivateRemote final : public WebCore::InbandTextTrackPrivate {
     WTF_MAKE_NONCOPYABLE(TextTrackPrivateRemote)
 public:
+    using GenericCueData = WebCore::GenericCueData;
+    using ISOWebVTTCue = WebCore::ISOWebVTTCue;
+    using SerializedPlatformDataCueValue = WebCore::SerializedPlatformDataCueValue;
+
     static Ref<TextTrackPrivateRemote> create(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
         return adoptRef(*new TextTrackPrivateRemote(player, idendifier, WTFMove(configuration)));

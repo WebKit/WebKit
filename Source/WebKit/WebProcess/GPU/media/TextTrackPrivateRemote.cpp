@@ -139,21 +139,21 @@ void TextTrackPrivateRemote::addDataCueWithType(MediaTime&& start, MediaTime&& e
 {
     ASSERT(client());
     if (auto* client = this->client())
-        client->addDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)), type);
+        client->addDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)), type);
 }
 
 void TextTrackPrivateRemote::updateDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue)
 {
     ASSERT(client());
     if (auto* client = this->client())
-        client->updateDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)));
+        client->updateDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)));
 }
 
 void TextTrackPrivateRemote::removeDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&& dataValue)
 {
     ASSERT(client());
     if (auto* client = this->client())
-        client->removeDataCue(WTFMove(start), WTFMove(end), SerializedPlatformDataCue::create(WTFMove(dataValue)));
+        client->removeDataCue(WTFMove(start), WTFMove(end), WebCore::SerializedPlatformDataCue::create(WTFMove(dataValue)));
 }
 #endif
 

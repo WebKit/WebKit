@@ -39,16 +39,19 @@
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebLoaderStrategy.h"
+#include "WebMediaStrategy.h"
 #include "WebPage.h"
 #include "WebPasteboardOverrides.h"
 #include "WebPasteboardProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/AudioDestination.h>
 #include <WebCore/Color.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/LoaderStrategy.h>
+#include <WebCore/MediaStrategy.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -73,6 +76,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+class RemoteAudioDestination;
+
 void WebPlatformStrategies::initialize()
 {
     static NeverDestroyed<WebPlatformStrategies> platformStrategies;
@@ -91,6 +96,11 @@ LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 {
     return this;
+}
+
+MediaStrategy* WebPlatformStrategies::createMediaStrategy()
+{
+    return new WebMediaStrategy;
 }
 
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()

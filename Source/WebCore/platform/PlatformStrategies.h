@@ -29,6 +29,7 @@ namespace WebCore {
 
 class BlobRegistry;
 class LoaderStrategy;
+class MediaStrategy;
 class PasteboardStrategy;
 
 class PlatformStrategies {
@@ -39,12 +40,19 @@ public:
             m_loaderStrategy = createLoaderStrategy();
         return m_loaderStrategy;
     }
-    
+
     PasteboardStrategy* pasteboardStrategy()
     {
         if (!m_pasteboardStrategy)
             m_pasteboardStrategy = createPasteboardStrategy();
         return m_pasteboardStrategy;
+    }
+
+    MediaStrategy& mediaStrategy()
+    {
+        if (!m_mediaStrategy)
+            m_mediaStrategy = createMediaStrategy();
+        return *m_mediaStrategy;
     }
 
     BlobRegistry* blobRegistry()
@@ -64,10 +72,12 @@ protected:
 private:
     virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
+    virtual MediaStrategy* createMediaStrategy() = 0;
     virtual BlobRegistry* createBlobRegistry() = 0;
 
     LoaderStrategy* m_loaderStrategy { };
     PasteboardStrategy* m_pasteboardStrategy { };
+    MediaStrategy* m_mediaStrategy { };
     BlobRegistry* m_blobRegistry { };
 };
 

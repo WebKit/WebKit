@@ -27,9 +27,11 @@
 
 #include "WebFrameNetworkingContext.h"
 #include "WebResourceLoadScheduler.h"
+#include <WebCore/AudioDestination.h>
 #include <WebCore/BlobRegistry.h>
 #include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/MediaStrategy.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -58,6 +60,22 @@ LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 {
     return nullptr;
+}
+
+class WebMediaStrategy final : public MediaStrategy {
+private:
+#if ENABLE(WEB_AUDIO)
+    std::unique_ptr<AudioDestination> createAudioDestination(AudioIOCallback& callback, const String& inputDeviceId,
+        unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override
+    {
+        return AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    }
+#endif
+};
+
+MediaStrategy* WebPlatformStrategies::createMediaStrategy()
+{
+    return new WebMediaStrategy;
 }
 
 class WebBlobRegistry final : public BlobRegistry {

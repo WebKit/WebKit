@@ -1410,8 +1410,14 @@
 		9B02E0CB235EB953004044B2 /* _WKTextManipulationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0C9235EB62D004044B2 /* _WKTextManipulationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0CC235EB957004044B2 /* _WKTextManipulationItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0CA235EB884004044B2 /* _WKTextManipulationItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0D7235FC94F004044B2 /* _WKTextManipulationToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0CD235EB967004044B2 /* _WKTextManipulationToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */; };
+		9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */; };
+		9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */; };
 		9B5499AD2362A6F900DF8BA5 /* _WKTextManipulationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499AC2362A6F600DF8BA5 /* _WKTextManipulationConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B5499B22362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */; };
+		9B5BEC2A240101580070C6EF /* RemoteAudioDestinationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */; };
+		9B5BEC31240102220070C6EF /* RemoteAudioBusData.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9B5BEC30240102220070C6EF /* RemoteAudioBusData.h */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
 		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
@@ -2066,6 +2072,7 @@
 				2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
 				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
+				9B5BEC31240102220070C6EF /* RemoteAudioBusData.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4403,10 +4410,20 @@
 		9B02E0CD235EB967004044B2 /* _WKTextManipulationToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationToken.h; sourceTree = "<group>"; };
 		9B02E0CE235EBB14004044B2 /* _WKTextManipulationToken.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationToken.mm; sourceTree = "<group>"; };
 		9B02E0D0235EBCCA004044B2 /* _WKTextManipulationItem.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationItem.mm; sourceTree = "<group>"; };
+		9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationManager.h; sourceTree = "<group>"; };
+		9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationManager.cpp; sourceTree = "<group>"; };
+		9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationManager.messages.in; sourceTree = "<group>"; };
+		9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationIdentifier.h; sourceTree = "<group>"; };
 		9B5499AC2362A6F600DF8BA5 /* _WKTextManipulationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationConfiguration.h; sourceTree = "<group>"; };
 		9B5499AE2362A7A700DF8BA5 /* _WKTextManipulationConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationConfiguration.mm; sourceTree = "<group>"; };
 		9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationExclusionRule.h; sourceTree = "<group>"; };
 		9B5499B12362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationExclusionRule.mm; sourceTree = "<group>"; };
+		9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMediaStrategy.h; sourceTree = "<group>"; };
+		9B5BEC252400F4A90070C6EF /* WebMediaStrategy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaStrategy.cpp; sourceTree = "<group>"; };
+		9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationProxy.h; sourceTree = "<group>"; };
+		9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationProxy.cpp; sourceTree = "<group>"; };
+		9B5BEC2E2401018C0070C6EF /* RemoteAudioDestinationProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationProxy.messages.in; sourceTree = "<group>"; };
+		9B5BEC30240102220070C6EF /* RemoteAudioBusData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioBusData.h; sourceTree = "<group>"; };
 		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
 		9BC59D6D1EFCDC6D001E8D09 /* OptionalCallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionalCallbackID.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessMac.mm; sourceTree = "<group>"; };
@@ -5288,6 +5305,10 @@
 				07923132239B3B0C009598E2 /* MediaPlayerPrivateRemote.h */,
 				07B1D04B23D38FCE00399A6E /* MediaPlayerPrivateRemote.messages.in */,
 				0792314E239D5F53009598E2 /* MediaPlayerPrivateRemoteIdentifier.h */,
+				9B5BEC30240102220070C6EF /* RemoteAudioBusData.h */,
+				9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */,
+				9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */,
+				9B5BEC2E2401018C0070C6EF /* RemoteAudioDestinationProxy.messages.in */,
 				07B93FF523AF0CB80036F8EA /* RemoteMediaPlayerConfiguration.h */,
 				07923130239B3B0C009598E2 /* RemoteMediaPlayerManager.cpp */,
 				07923134239B3B0C009598E2 /* RemoteMediaPlayerManager.h */,
@@ -5303,6 +5324,8 @@
 				1DFDD0E223F610F000E9B490 /* VideoLayerRemote.h */,
 				071BC58323CC2BD500680D7C /* VideoTrackPrivateRemote.cpp */,
 				071BC58223CC2BD300680D7C /* VideoTrackPrivateRemote.h */,
+				9B5BEC252400F4A90070C6EF /* WebMediaStrategy.cpp */,
+				9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */,
 			);
 			path = media;
 			sourceTree = "<group>";
@@ -5311,6 +5334,9 @@
 			isa = PBXGroup;
 			children = (
 				1D0ECEA923FC84BB00D172F6 /* cocoa */,
+				9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */,
+				9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */,
+				9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */,
 				071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */,
 				071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */,
 				0725EFAD239B024500A538A9 /* RemoteMediaPlayerManagerProxy.cpp */,
@@ -5771,6 +5797,7 @@
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
+				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
 				F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
@@ -10591,6 +10618,9 @@
 				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
 				A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */,
 				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
+				9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */,
+				9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */,
+				9B5BEC2A240101580070C6EF /* RemoteAudioDestinationProxy.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
@@ -10843,6 +10873,7 @@
 				C98C48A61B6FD4C300145103 /* WebMediaSessionFocusManager.h in Headers */,
 				C9C1833C1B74026D007036A7 /* WebMediaSessionFocusManagerClient.h in Headers */,
 				C9CD43981B4B001D00239E33 /* WebMediaSessionMetadata.h in Headers */,
+				9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */,
 				2D3EF4431917646300034184 /* WebMemoryPressureHandler.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
 				513FFB91201459C6002596EA /* WebMessagePortChannelProvider.h in Headers */,
@@ -12288,6 +12319,7 @@
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
 				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
+				9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */,
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,
 				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,

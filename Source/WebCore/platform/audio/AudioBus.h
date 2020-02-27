@@ -66,10 +66,10 @@ public:
     // allocate indicates whether or not to initially have the AudioChannels created with managed storage.
     // Normal usage is to pass true here, in which case the AudioChannels will memory-manage their own storage.
     // If allocate is false then setChannelMemory() has to be called later on for each channel before the AudioBus is useable...
-    static RefPtr<AudioBus> create(unsigned numberOfChannels, size_t length, bool allocate = true);
+    WEBCORE_EXPORT static RefPtr<AudioBus> create(unsigned numberOfChannels, size_t length, bool allocate = true);
 
     // Tells the given channel to use an externally allocated buffer.
-    void setChannelMemory(unsigned channelIndex, float* storage, size_t length);
+    WEBCORE_EXPORT void setChannelMemory(unsigned channelIndex, float* storage, size_t length);
 
     // Channels
     unsigned numberOfChannels() const { return m_channels.size(); }
@@ -126,7 +126,7 @@ public:
 
     // Copies the samples from the source bus to this one.
     // This is just a simple per-channel copy if the number of channels match, otherwise an up-mix or down-mix is done.
-    void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
+    WEBCORE_EXPORT void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
 
     // Sums the samples from the source bus to this one.
     // This is just a simple per-channel summing if the number of channels match, otherwise an up-mix or down-mix is done.

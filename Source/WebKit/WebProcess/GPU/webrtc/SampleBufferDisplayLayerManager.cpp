@@ -26,6 +26,9 @@
 #include "config.h"
 #include "SampleBufferDisplayLayerManager.h"
 
+#include "Decoder.h"
+#include <WebCore/IntSize.h>
+
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {

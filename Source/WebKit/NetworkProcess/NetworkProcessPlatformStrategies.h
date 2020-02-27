@@ -38,6 +38,7 @@ private:
     // WebCore::PlatformStrategies
     WebCore::LoaderStrategy* createLoaderStrategy() override;
     WebCore::PasteboardStrategy* createPasteboardStrategy() override;
+    WebCore::MediaStrategy* createMediaStrategy() override;
     WebCore::BlobRegistry* createBlobRegistry() override;
 };
 

@@ -950,6 +950,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MIMETypeRegistry.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
+    platform/MediaStrategy.h
     platform/NotImplemented.h
     platform/OrientationNotifier.h
     platform/PODInterval.h
@@ -1021,7 +1022,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/animation/AnimationUtilities.h
     platform/animation/TimingFunction.h
 
+    platform/audio/AudioArray.h
+    platform/audio/AudioBus.h
+    platform/audio/AudioChannel.h
+    platform/audio/AudioDestination.h
     platform/audio/AudioHardwareListener.h
+    platform/audio/AudioIOCallback.h
     platform/audio/AudioSession.h
     platform/audio/AudioSourceProvider.h
     platform/audio/AudioStreamDescription.h

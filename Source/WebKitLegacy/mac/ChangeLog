@@ -1,3 +1,17 @@
+2020-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Create AudioDestination in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=208179
+
+        Reviewed by Jer Noble.
+
+        Added WebMediaStrategy which is a wrapper around AudioDestination::create.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebMediaStrategy): Added.
+        (WebPlatformStrategies::createMediaStrategy):
+
 2020-02-25  Megan Gardner  <megan_gardner@apple.com>
 
         Build Fix

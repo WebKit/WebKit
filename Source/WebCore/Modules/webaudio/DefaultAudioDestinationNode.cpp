@@ -31,6 +31,8 @@
 #include "AudioContext.h"
 #include "AudioDestination.h"
 #include "Logging.h"
+#include "MediaStrategy.h"
+#include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -84,8 +86,8 @@ void DefaultAudioDestinationNode::createDestination()
 {
     float hardwareSampleRate = AudioDestination::hardwareSampleRate();
     LOG(WebAudio, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
-    
-    m_destination = AudioDestination::create(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), hardwareSampleRate);
+
+    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), hardwareSampleRate);
 }
 
 void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)

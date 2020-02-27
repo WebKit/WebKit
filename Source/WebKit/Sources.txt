@@ -538,11 +538,13 @@ WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackend.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
+WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
 WebProcess/GPU/media/TextTrackPrivateRemote.cpp
 WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
+WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
 WebProcess/GPU/webrtc/MediaRecorderProvider.cpp

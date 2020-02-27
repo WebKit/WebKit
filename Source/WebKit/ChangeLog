@@ -1,3 +1,114 @@
+2020-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Create AudioDestination in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=208179
+
+        Reviewed by Jer Noble.
+
+        Create AudioDestination in the GPU process instead of the WebContent process for WebAudio API when
+        the Media-in-GPU-process feature is enabled.
+
+        To do this, WebMediaStrategy, a concrete implementation of MediaStrategy, in the WebContent process gets
+        a boolean flag indicating whether the GPU process should be used for AudioDestination or not. When the flag
+        is set, we create RemoteAudioDestinationProxy instead of AudioDestination in WebContent process.
+
+        Each RemoteAudioDestinationProxy talks to RemoteAudioDestinationManager in the GPU process and creates
+        a corresponding RemoteAudioDestination which in turn creates WebCore's AudioDestination in the GPU process.
+
+        RemoteAudioDestination is itself an AudioIOCallback for AudioDestination it creates, and delegates
+        its callback to WebContent process' RemoteAudioDestinationProxy as needed.
+
+        In this initial patch, we send RemoteAudioDestinationProxy::RenderBuffer IPC call to the WebContent process
+        for each render call we get from CoreAudio for simplicity using newly introduced RemoteAudioBusData,
+        which holds a SharedMemory for each channel in the audio bus.
+
+        We will eliminate this IPC overhead in a follow up patch using CARingBuffer.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::remoteAudioDestinationManager): Added.
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage): Added the code to dispatch messages to
+        RemoteAudioDestinationManager.
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage): Ditto.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp: Added.
+        (WebKit::RemoteAudioDestination): Added. This class is the backing object which creates WebCore's
+        AudioDestination and actually talks to CoreAudio in GPU process.
+        (WebKit::RemoteAudioDestination::create): Added.
+
+        (WebKit::RemoteAudioDestination::~RemoteAudioDestination): Added.
+        (WebKit::RemoteAudioDestination::scheduleGracefulShutdownIfNeeded): Delays the deletion of this object
+        until the audio threads stops running.
+        (WebKit::RemoteAudioDestination::start): Added.
+        (WebKit::RemoteAudioDestination::stop): Added.
+        (WebKit::RemoteAudioDestination::isPlaying): Added.
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination): Added.
+        (WebKit::RemoteAudioDestination::render): Sends a sync IPC to the WebContent process'
+        RemoteAudioDestinationProxy to fill the audio buffer. Note that this function gets called in audio thread.
+        (WebKit::RemoteAudioDestination::isPlayingDidChange): Added.
+        (WebKit::RemoteAudioDestinationManager): Added. This class manages all RemoteAudioDestination objects owned
+        by a single WebContent process.
+        (WebKit::RemoteAudioDestinationManager::RemoteAudioDestinationManager): Added.
+        (WebKit::RemoteAudioDestinationManager::~RemoteAudioDestinationManager): Added.
+        (WebKit::RemoteAudioDestinationManager::createAudioDestination): Added.
+        (WebKit::RemoteAudioDestinationManager::deleteAudioDestination): Added.
+        (WebKit::RemoteAudioDestinationManager::startAudioDestination): Added.
+        (WebKit::RemoteAudioDestinationManager::stopAudioDestination): Added.
+        * GPUProcess/media/RemoteAudioDestinationManager.h: Added.
+        (WebKit::RemoteAudioDestinationManager): Added.
+        (WebKit::RemoteAudioDestinationManager::didReceiveSyncMessageFromWebProcess): Added.
+        (WebKit::RemoteAudioDestinationManager::didReceiveMessageFromWebProcess): Added.
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in: Added.
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createMediaStrategy): Added. Returns nullptr since Networking
+        process has no business running AudioDestination.
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        (WebKit::NetworkProcessPlatformStrategies):
+        * PlatformMac.cmake:
+        * Scripts/webkit/messages.py:
+        * Shared/RemoteAudioDestinationIdentifier.h: Added.
+        (WebKit::RemoteAudioDestinationIdentifierType): Added.
+        (WebKit::RemoteAudioDestinationIdentifier): Added. The identifier for each RemoteAudioDestination
+        and RemoteAudioDestinationProxy (corresponding objects of each class use the same ID to communicate).
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteAudioBusData.h: Added.
+        (WebKit::RemoteAudioBusData): Added. Encodes the information about each render call.
+        (WebKit::RemoteAudioBusData::encode const): Added.
+        (WebKit::RemoteAudioBusData::decode): Added.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp: Added.
+        (WebKit::RemoteAudioDestinationProxy): Added.
+        (WebKit::RemoteAudioDestinationProxy::create): Added.
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy): Added.
+        (WebKit::RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy): Added.
+        (WebKit::RemoteAudioDestinationProxy::start): Added.
+        (WebKit::RemoteAudioDestinationProxy::stop): Added.
+        (WebKit::RemoteAudioDestinationProxy::renderBuffer): Added. Calls WebCore's AudioIOCallback to fill
+        the audio buffer given by the GPU process.
+        (WebKit::RemoteAudioDestinationProxy::didChangeIsPlaying):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h: Added.
+        (WebKit::RemoteAudioDestinationProxy::didReceiveMessageFromGPUProcess): Added.
+        (WebKit::RemoteAudioDestinationProxy::isPlaying): Added.
+        (WebKit::RemoteAudioDestinationProxy::sampleRate): Added.
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in: Added.
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp: Fixed the unified builds.
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h: Ditto.
+        * WebProcess/GPU/media/WebMediaStrategy.cpp: Added.
+        (WebKit::WebMediaStrategy::createAudioDestination): Added.
+        * WebProcess/GPU/media/WebMediaStrategy.h: Added.
+        (WebKit::WebMediaStrategy): Added.
+        (WebKit::WebMediaStrategy::setUseGPUProcess): Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp: Fixed the unified builds.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp: Fixed the unified builds.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createMediaStrategy): Added.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Sets WebMediaStrategy's flag to use GPU process.
+
 2020-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement the remote RenderingBackend
