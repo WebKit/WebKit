@@ -1,3 +1,12 @@
+2020-02-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=208328
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-02-27  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] webgpu/whlsl/textures-sample.html is flaky failing.

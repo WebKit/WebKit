@@ -1289,6 +1289,7 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Failure Crash ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html [ Failure ]
+webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 
 webkit.org/b/206657 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
 
@@ -1392,7 +1393,7 @@ webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass Failure ]
 
 webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
-webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
+webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Failure Pass ]
 
 # See also webkit.org/b/141699
 webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]
@@ -2653,6 +2654,7 @@ webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animatio
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ] 
 
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
+webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Failure Pass ]
 
 webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
 webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure Pass ]
@@ -2676,6 +2678,41 @@ webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/status.html
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/vary.html [ Failure Pass ]
 
 webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
+
+webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Pass Timeout ]
+
+webkit.org/b/208291 webanimations/accelerated-animation-renderer-change.html [ Pass Timeout ]
+
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-request-source.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.worker.html [ Failure Pass ]
+webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
+
+webkit.org/b/208293 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure Pass ]
+webkit.org/b/208293 media/video-ended-event-negative-playback.html [ Failure Pass ]
+webkit.org/b/208293 media/video-play-audio-require-user-gesture.html [ Failure Pass ]
+webkit.org/b/208293 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure Pass ]
+
+webkit.org/b/208299 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout Pass ]
+
+webkit.org/b/208300 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeatx.outside.html [ Failure Pass ]
+
+webkit.org/b/208301 editing/pasteboard/4922709.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/5028447.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/paste-before-tab-span.html [ Failure Pass ]
+
+webkit.org/b/208304 http/tests/cache/disk-cache/speculative-validation/validation-request.html [ Failure Pass ]
+
+webkit.org/b/208305 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Failure Pass ]
+
+webkit.org/b/208307 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-null-opener.html [ Failure Pass ]
+
+webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout Pass Crash ]
+
+webkit.org/b/208326 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer.html [ Failure Pass ]
+
+webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html [ Failure Pass ]
+webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
