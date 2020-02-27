@@ -953,3 +953,5 @@ webkit.org/b/208065 [ Debug ] legacy-animation-engine/animations/animation-direc
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
+
+webkit.org/b/208345 fast/canvas/webgl/canvas-webgl-page-cache.html [ Pass Crash ]
