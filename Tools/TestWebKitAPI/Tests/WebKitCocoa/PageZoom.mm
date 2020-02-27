@@ -30,6 +30,10 @@
 #import "TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
+@interface WKWebView (Details)
+@property (nonatomic) CGFloat pageZoom;
+@end
+
 namespace TestWebKitAPI {
 
 TEST(WKWebView, PageZoom)
