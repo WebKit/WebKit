@@ -40,6 +40,10 @@
 #include <stdio.h>
 #include <thread>
 
+#if BPLATFORM(PLAYSTATION)
+#include <pthread_np.h>
+#endif
+
 namespace bmalloc {
 
 static constexpr bool verbose = false;
@@ -513,7 +517,7 @@ void Scavenger::threadRunLoop()
 void Scavenger::setThreadName(const char* name)
 {
     BUNUSED(name);
-#if BOS(DARWIN)
+#if BOS(DARWIN) || BPLATFORM(PLAYSTATION)
     pthread_setname_np(name);
 #elif BOS(LINUX)
     // Truncate the given name since Linux limits the size of the thread name 16 including null terminator.

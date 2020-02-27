@@ -1,3 +1,15 @@
+2020-02-26  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc][PlayStation] Set Scavenger's thread name.
+        https://bugs.webkit.org/show_bug.cgi?id=208268
+
+        Reviewed by Alex Christensen.
+
+        We also need to have our thread with proper name.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::setThreadName):
+
 2020-02-25  Saam Barati  <sbarati@apple.com>
 
         Update stale comment about PackedAlignedPtr
