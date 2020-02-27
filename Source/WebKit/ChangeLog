@@ -1,3 +1,11 @@
+2020-02-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed unified source builds fix.
+
+        > NetworkProcess\WebStorage\LocalStorageDatabase.cpp(59): error C2653: 'RunLoop': is not a class or namespace name
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+
 2020-02-26  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, rolling out r257508.

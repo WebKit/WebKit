@@ -31,6 +31,7 @@
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutReplacedBox.h"
 #include "LengthFunctions.h"
 
 namespace WebCore {

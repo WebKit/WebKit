@@ -39,6 +39,7 @@
 #include "ServiceWorker.h"
 #include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerThread.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {

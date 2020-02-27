@@ -34,6 +34,7 @@
 #include <WebCore/SuddenTermination.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
