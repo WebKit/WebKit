@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-intl.numberformat.prototype.formattoparts
-description: Checks handling of the compactDisplay option to the NumberFormat constructor.
+description: Checks handling of the signDisplay option to the NumberFormat constructor.
 locale: [zh-TW]
 features: [Intl.NumberFormat-unified]
 ---*/
@@ -22,49 +22,64 @@ function verifyFormatParts(actual, expected, message) {
 const tests = [
   [
     "auto",
+    [{"type":"minusSign","value":"-"},{"type":"infinity","value":"∞"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"987"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"987"}],
+    [{"type":"infinity","value":"∞"}],
+    [{"type":"nan","value":"非數值"}],
   ],
   [
     "always",
+    [{"type":"minusSign","value":"-"},{"type":"infinity","value":"∞"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"987"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"plusSign","value":"+"},{"type":"integer","value":"0"}],
     [{"type":"plusSign","value":"+"},{"type":"integer","value":"0"}],
     [{"type":"plusSign","value":"+"},{"type":"integer","value":"987"}],
+    [{"type":"plusSign","value":"+"},{"type":"infinity","value":"∞"}],
+    [{"type":"plusSign","value":"+"},{"type":"nan","value":"非數值"}],
   ],
   [
     "never",
+    [{"type":"infinity","value":"∞"}],
     [{"type":"integer","value":"987"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
     [{"type":"integer","value":"987"}],
+    [{"type":"infinity","value":"∞"}],
+    [{"type":"nan","value":"非數值"}],
   ],
   [
     "exceptZero",
+    [{"type":"minusSign","value":"-"},{"type":"infinity","value":"∞"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"987"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"minusSign","value":"-"},{"type":"integer","value":"0"}],
     [{"type":"integer","value":"0"}],
-    [{"type":"plusSign","value":"+"},{"type":"integer","value":"0"}],
+    [{"type":"integer","value":"0"}],
     [{"type":"plusSign","value":"+"},{"type":"integer","value":"987"}],
+    [{"type":"plusSign","value":"+"},{"type":"infinity","value":"∞"}],
+    [{"type":"nan","value":"非數值"}],
   ],
 ];
 
-for (const [signDisplay, negative, negativeNearZero, negativeZero, zero, positiveNearZero, positive] of tests) {
+for (const [signDisplay, ...expected] of tests) {
   const nf = new Intl.NumberFormat("zh-TW", {signDisplay});
-  verifyFormatParts(nf.formatToParts(-987), negative);
-  verifyFormatParts(nf.formatToParts(-0.0001), negativeNearZero);
-  verifyFormatParts(nf.formatToParts(-0), negativeZero);
-  verifyFormatParts(nf.formatToParts(0), zero);
-  verifyFormatParts(nf.formatToParts(0.0001), positiveNearZero);
-  verifyFormatParts(nf.formatToParts(987), positive);
+  verifyFormatParts(nf.formatToParts(-Infinity), expected[0], `-Infinity (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(-987), expected[1], `-987 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(-0.0001), expected[2], `-0.0001 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(-0), expected[3], `-0 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(0), expected[4], `0 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(0.0001), expected[5], `0.0001 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(987), expected[6], `987 (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(Infinity), expected[7], `Infinity (${signDisplay})`);
+  verifyFormatParts(nf.formatToParts(NaN), expected[8], `NaN (${signDisplay})`);
 }
 

@@ -17,7 +17,7 @@ const toNumberResults = [
   [undefined, NaN],
   [null, +0],
   [true, 1],
-  [false, 0],
+  [false, +0],
   ['42', 42],
   ['foo', NaN]
 ];

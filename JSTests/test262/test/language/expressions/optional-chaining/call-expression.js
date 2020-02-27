@@ -22,7 +22,7 @@ const obj = {
 }
 assert.sameValue(33, fn()?.a);
 assert.sameValue(undefined, fn()?.b);
-assert.sameValue(44, obj.fn());
+assert.sameValue(44, obj?.fn());
 
 // CallExpression SuperCall
 class A {}

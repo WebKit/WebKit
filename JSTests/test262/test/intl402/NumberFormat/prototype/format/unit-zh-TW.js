@@ -13,56 +13,56 @@ const tests = [
   [
     -987,
     {
-      "short": "-987 公尺",
-      "narrow": "-987公尺",
-      "long": "-987 公尺",
+      "short": "-987 公里/小時",
+      "narrow": "-987公里/小時",
+      "long": "每小時 -987 公里",
     }
   ],
   [
     -0.001,
     {
-      "short": "-0.001 公尺",
-      "narrow": "-0.001公尺",
-      "long": "-0.001 公尺",
+      "short": "-0.001 公里/小時",
+      "narrow": "-0.001公里/小時",
+      "long": "每小時 -0.001 公里",
     }
   ],
   [
     -0,
     {
-      "short": "-0 公尺",
-      "narrow": "-0公尺",
-      "long": "-0 公尺",
+      "short": "-0 公里/小時",
+      "narrow": "-0公里/小時",
+      "long": "每小時 -0 公里",
     }
   ],
   [
     0,
     {
-      "short": "0 公尺",
-      "narrow": "0公尺",
-      "long": "0 公尺",
+      "short": "0 公里/小時",
+      "narrow": "0公里/小時",
+      "long": "每小時 0 公里",
     }
   ],
   [
     0.001,
     {
-      "short": "0.001 公尺",
-      "narrow": "0.001公尺",
-      "long": "0.001 公尺",
+      "short": "0.001 公里/小時",
+      "narrow": "0.001公里/小時",
+      "long": "每小時 0.001 公里",
     }
   ],
   [
     987,
     {
-      "short": "987 公尺",
-      "narrow": "987公尺",
-      "long": "987 公尺",
+      "short": "987 公里/小時",
+      "narrow": "987公里/小時",
+      "long": "每小時 987 公里",
     }
   ],
 ];
 
 for (const [number, expectedData] of tests) {
   for (const [unitDisplay, expected] of Object.entries(expectedData)) {
-    const nf = new Intl.NumberFormat("zh-TW", { style: "unit", unit: "meter", unitDisplay });
+    const nf = new Intl.NumberFormat("zh-TW", { style: "unit", unit: "kilometer-per-hour", unitDisplay });
     assert.sameValue(nf.format(number), expected);
   }
 }

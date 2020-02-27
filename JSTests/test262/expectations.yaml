@@ -615,90 +615,21 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/AggregateError/errors-iterabletolist-failures.js:
-  default: 'Test262Error: get Symbol.iterator Expected a Test262Error but got a ReferenceError'
-  strict mode: 'Test262Error: get Symbol.iterator Expected a Test262Error but got a ReferenceError'
-test/built-ins/AggregateError/errors-iterabletolist.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/length.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/message-method-prop-cast.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/message-method-prop.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/message-tostring-abrupt-symbol.js:
-  default: 'Test262Error: toPrimitive Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: toPrimitive Expected a TypeError but got a ReferenceError'
-test/built-ins/AggregateError/message-tostring-abrupt.js:
-  default: 'Test262Error: toPrimitive Expected a Test262Error but got a ReferenceError'
-  strict mode: 'Test262Error: toPrimitive Expected a Test262Error but got a ReferenceError'
-test/built-ins/AggregateError/message-undefined-no-prop.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/name.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/newtarget-proto-custom.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/newtarget-proto-fallback.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/newtarget-proto.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prop-desc.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/AggregateError/proto.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/constructor.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/invoked-as-accessor.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
-test/built-ins/AggregateError/prototype/errors/invoked-as-func.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/length.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/name.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/prop-desc.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/return-from-iterable-errors.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/return-new-array-from-list.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/this-has-no-typedarrayname-internal.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/errors/this-is-not-object.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/message.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/name.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/prop-desc.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
-test/built-ins/AggregateError/prototype/proto.js:
-  default: "ReferenceError: Can't find variable: AggregateError"
-  strict mode: "ReferenceError: Can't find variable: AggregateError"
+test/built-ins/Array/from/iter-set-elem-prop-err.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/from/iter-set-elem-prop-non-writable.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/from/source-object-length-set-elem-prop-err.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/from/source-object-length-set-elem-prop-non-writable.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/of/does-not-use-set-for-indices.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/of/return-abrupt-from-data-property.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -711,9 +642,45 @@ test/built-ins/Array/proto-from-ctor-realm-two.js:
 test/built-ins/Array/proto-from-ctor-realm-zero.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
+test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
+  default: 'Test262Error: Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
+test/built-ins/Array/prototype/concat/create-species-with-non-configurable-property-spreadable.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/prototype/concat/create-species-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/prototype/concat/create-species-with-non-writable-property-spreadable.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/concat/create-species-with-non-writable-property.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/concat/is-concat-spreadable-get-order.js:
+  default: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
+  strict mode: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
+test/built-ins/Array/prototype/filter/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/flat/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/prototype/flat/target-array-with-non-writable-property.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/flatMap/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Array/prototype/flatMap/target-array-with-non-writable-property.js:
+  default: 'TypeError: Attempted to assign to readonly property.'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Array/prototype/map/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/map/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -747,6 +714,9 @@ test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-arra
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
   strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
+test/built-ins/Array/prototype/slice/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -771,6 +741,9 @@ test/built-ins/Array/prototype/splice/length-exceeding-integer-limit-shrink-arra
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
   default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
   strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
+test/built-ins/Array/prototype/splice/target-array-with-non-configurable-property.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/splice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -1122,6 +1095,9 @@ test/built-ins/JSON/parse/reviver-array-non-configurable-prop-create.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
+test/built-ins/JSON/stringify/replacer-function-object-deleted-property.js:
+  default: 'Test262Error: Expected SameValue(«{"a":1}», «{"a":1,"b":"<replaced>"}») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«{"a":1}», «{"a":1,"b":"<replaced>"}») to be true'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
@@ -1189,6 +1165,9 @@ test/built-ins/Promise/executor-function-nonconstructor.js:
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Promise]», «[object Promise]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Promise]», «[object Promise]») to be true'
+test/built-ins/Promise/prototype/finally/invokes-then-with-function.js:
+  default: 'Test262Error: fulfillment handler is not constructor'
+  strict mode: 'Test262Error: fulfillment handler is not constructor'
 test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
@@ -1833,198 +1812,30 @@ test/intl402/Collator/usage-de.js:
 test/intl402/DateTimeFormat/constructor-calendar-numberingSystem-order.js:
   default: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
   strict mode: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
-test/intl402/DateTimeFormat/constructor-options-dayPeriod-invalid.js:
-  default: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-dayPeriod-valid.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «long») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «long») to be true'
-test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-invalid.js:
-  default: 'Test262Error: new Intl.DateTimeFormat("en", { fractionalSecondDigits: "LONG" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { fractionalSecondDigits: "LONG" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
-test/intl402/DateTimeFormat/constructor-options-order-dayPeriod.js:
-  default: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. '
-  strict mode: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. '
-test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
-  strict mode: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
-test/intl402/DateTimeFormat/constructor-options-throwing-getters-dayPeriod.js:
-  default: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-throwing-getters-fractionalSecondDigits.js:
-  default: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Exception from fractionalSecondDigits getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/invalid-numbering-system-calendar-options.js:
+  default: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
 test/intl402/DateTimeFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js:
-  default: 'Test262Error: 00:00, long format Expected SameValue(«12/12/2017», «at night») to be true'
-  strict mode: 'Test262Error: 00:00, long format Expected SameValue(«12/12/2017», «at night») to be true'
-test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js:
-  default: 'Test262Error: 00:00, narrow format Expected SameValue(«12/12/2017», «at night») to be true'
-  strict mode: 'Test262Error: 00:00, narrow format Expected SameValue(«12/12/2017», «at night») to be true'
-test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
-  default: 'Test262Error: 00:00, short format Expected SameValue(«12/12/2017», «at night») to be true'
-  strict mode: 'Test262Error: 00:00, short format Expected SameValue(«12/12/2017», «at night») to be true'
-test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js:
-  default: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(«02:03», «02:03.2») to be true'
-  strict mode: 'Test262Error: 1 fractionalSecondDigits round down Expected SameValue(«02:03», «02:03.2») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
-  default: 'Test262Error: length should be 1, 00:00, long format Expected SameValue(«5», «1») to be true'
-  strict mode: 'Test262Error: length should be 1, 00:00, long format Expected SameValue(«5», «1») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
-  default: 'Test262Error: length should be 1, 00:00, narrow format Expected SameValue(«5», «1») to be true'
-  strict mode: 'Test262Error: length should be 1, 00:00, narrow format Expected SameValue(«5», «1») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
-  default: 'Test262Error: length should be 1, 00:00, short format Expected SameValue(«5», «1») to be true'
-  strict mode: 'Test262Error: length should be 1, 00:00, short format Expected SameValue(«5», «1») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js:
-  default: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(«3», «5») to be true'
-  strict mode: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(«3», «5») to be true'
+test/intl402/DateTimeFormat/prototype/format/related-year-zh.js:
+  default: 'Test262Error: Expected SameValue(«36年», «2019己亥年») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«36年», «2019己亥年») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/pattern-on-calendar.js:
   default: 'Test262Error: Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/related-year-zh.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«2», «3») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«2», «3») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/related-year.js:
   default: 'Test262Error: Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, hour, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, hour, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
-test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
-test/intl402/DisplayNames/ctor-custom-get-prototype-poison-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/ctor-custom-prototype.js:
-  default: 'TypeError: Reflect.construct requires the first argument be a constructor'
-  strict mode: 'TypeError: Reflect.construct requires the first argument be a constructor'
-test/intl402/DisplayNames/ctor-default-prototype.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames()')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames()')"
-test/intl402/DisplayNames/instance-extensible.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames()')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames()')"
-test/intl402/DisplayNames/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/DisplayNames/locales-length-poison-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/locales-length-tolength-throws.js:
-  default: 'Test262Error: poisoned valueOf for ToNumber Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: poisoned valueOf for ToNumber Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/locales-symbol-length.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames(symbol)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames(symbol)')"
-test/intl402/DisplayNames/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/DisplayNames/options-fallback-abrupt-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-fallback-invalid-throws.js:
-  default: 'Test262Error: err Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: err Expected a RangeError but got a TypeError'
-test/intl402/DisplayNames/options-fallback-toString-abrupt-throws.js:
-  default: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-fallback-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-test/intl402/DisplayNames/options-localeMatcher-abrupt-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-localeMatcher-invalid-throws.js:
-  default: 'Test262Error: bestfit Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: bestfit Expected a RangeError but got a TypeError'
-test/intl402/DisplayNames/options-localeMatcher-toString-abrupt-throws.js:
-  default: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-localeMatcher-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-test/intl402/DisplayNames/options-random-properties-unchecked.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-test/intl402/DisplayNames/options-style-abrupt-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-style-invalid-throws.js:
-  default: 'Test262Error: small Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: small Expected a RangeError but got a TypeError'
-test/intl402/DisplayNames/options-style-toString-abrupt-throws.js:
-  default: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-style-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-test/intl402/DisplayNames/options-type-abrupt-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-type-invalid-throws.js:
-  default: 'Test262Error: lang Expected a RangeError but got a TypeError'
-  strict mode: 'Test262Error: lang Expected a RangeError but got a TypeError'
-test/intl402/DisplayNames/options-type-toString-abrupt-throws.js:
-  default: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: from toString Expected a Test262Error but got a TypeError'
-test/intl402/DisplayNames/options-type-valid.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en', options)')"
-test/intl402/DisplayNames/prop-desc.js:
-  default: "Test262Error: `typeof Intl.DisplayNames` is `'function'` Expected SameValue(«undefined», «function») to be true"
-  strict mode: "Test262Error: `typeof Intl.DisplayNames` is `'function'` Expected SameValue(«undefined», «function») to be true"
-test/intl402/DisplayNames/proto-from-ctor-realm.js:
-  default: 'TypeError: Reflect.construct requires the first argument be a constructor'
-  strict mode: 'TypeError: Reflect.construct requires the first argument be a constructor'
-test/intl402/DisplayNames/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Intl.DisplayNames)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Intl.DisplayNames)')"
-test/intl402/DisplayNames/prototype/Symbol.toStringTag.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-test/intl402/DisplayNames/prototype/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/intl402/DisplayNames/prototype/resolvedOptions/default-option-values.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US')')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US')')"
-test/intl402/DisplayNames/prototype/resolvedOptions/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-test/intl402/DisplayNames/prototype/resolvedOptions/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-test/intl402/DisplayNames/prototype/resolvedOptions/option-fallback.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { fallback })')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { fallback })')"
-test/intl402/DisplayNames/prototype/resolvedOptions/option-style.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { style })')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { style })')"
-test/intl402/DisplayNames/prototype/resolvedOptions/option-type.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { type })')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US', { type })')"
-test/intl402/DisplayNames/prototype/resolvedOptions/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-test/intl402/DisplayNames/prototype/resolvedOptions/return-object.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US')')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Intl.DisplayNames('en-US')')"
-test/intl402/DisplayNames/prototype/resolvedOptions/this-not-object-throws.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-test/intl402/DisplayNames/prototype/resolvedOptions/this-object-lacks-internal-throws.js:
-  default: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Intl.DisplayNames.prototype')"
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
@@ -2049,6 +1860,9 @@ test/intl402/NumberFormat/constructor-numberingSystem-order.js:
 test/intl402/NumberFormat/constructor-options-throwing-getters.js:
   default: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+test/intl402/NumberFormat/invalid-numbering-system-options.js:
+  default: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/numbering-system-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
@@ -2240,7 +2054,6 @@ test/language/eval-code/indirect/var-env-global-lex-non-strict.js:
   strict mode: 'Test262Error: Expected SameValue(«function TypeError() {'
 test/language/expressions/arrow-function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
@@ -2410,13 +2223,11 @@ test/language/expressions/async-generator/early-errors-expression-yield-as-funct
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/async-generator/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
 test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2448,12 +2259,6 @@ test/language/expressions/call/tco-non-eval-global.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-with.js:
   default: 'RangeError: Maximum call stack size exceeded.'
-test/language/expressions/class/async-gen-method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/class/async-gen-method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -2473,12 +2278,6 @@ test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-
 test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
   default: "SyntaxError: Cannot declare a generator function named 'constructor'."
   strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
-test/language/expressions/class/gen-method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/class/gen-method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/class/ident-name-method-def-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
@@ -2608,12 +2407,6 @@ test/language/expressions/class/ident-name-method-def-while-escaped.js:
 test/language/expressions/class/ident-name-method-def-with-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
-test/language/expressions/class/method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/class/method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/class/poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
@@ -2776,14 +2569,12 @@ test/language/expressions/conditional/in-branch-1.js:
   strict mode: "SyntaxError: Unexpected keyword 'in'. Expected ':' in ternary operator."
 test/language/expressions/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/generators/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
@@ -3176,7 +2967,6 @@ test/language/expressions/object/ident-name-prop-name-literal-with-escaped.js:
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
 test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/method-definition/escaped-get.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -3185,10 +2975,8 @@ test/language/expressions/object/method-definition/escaped-set.js:
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/object/method-definition/gen-meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:
@@ -3260,9 +3048,6 @@ test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
 test/language/expressions/super/call-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
-test/language/expressions/super/call-proto-not-ctor.js:
-  default: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(«true», «false») to be true'
-  strict mode: 'Test262Error: did not perform ArgumentsListEvaluation Expected SameValue(«true», «false») to be true'
 test/language/expressions/super/prop-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
@@ -3281,10 +3066,6 @@ test/language/expressions/yield/star-rhs-iter-rtrn-res-done-no-value.js:
 test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   default: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
-test/language/function-code/each-param-has-own-non-shared-eval-scope.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/function-code/each-param-has-own-scope.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/global-code/script-decl-func-err-non-configurable.js:
   default: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3383,16 +3164,9 @@ test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/statements/async-generator/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
-test/language/statements/class/async-gen-method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/class/async-gen-method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -3412,12 +3186,6 @@ test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-m
 test/language/statements/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
   default: "SyntaxError: Cannot declare a generator function named 'constructor'."
   strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
-test/language/statements/class/gen-method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/class/gen-method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/class/ident-name-method-def-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
@@ -3547,12 +3315,6 @@ test/language/statements/class/ident-name-method-def-while-escaped.js:
 test/language/statements/class/ident-name-method-def-with-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
-test/language/statements/class/method-static/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/class/method/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/class/poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
@@ -3562,9 +3324,6 @@ test/language/statements/class/subclass/bound-function.js:
 test/language/statements/class/subclass/builtin-objects/ArrayBuffer/regular-subclassing.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/statements/class/subclass/class-definition-null-proto-super.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
 test/language/statements/class/subclass/class-definition-superclass-generator.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3586,13 +3345,7 @@ test/language/statements/for-in/12.6.4-2.js:
 test/language/statements/for-in/dstr/array-elem-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-elem-nested-memberexpr-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/array-elem-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/array-elem-put-obj-literal-optchain-prop-ref.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/array-elem-target-simple-strict.js:
@@ -3619,12 +3372,6 @@ test/language/statements/for-in/dstr/array-rest-nested-obj-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/obj-id-simple-strict.js:
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-prop-elem-target-memberexpr-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/dstr/obj-prop-elem-target-obj-literal-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/obj-prop-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3683,13 +3430,7 @@ test/language/statements/for-of/dstr/array-elem-iter-thrw-close.js:
 test/language/statements/for-of/dstr/array-elem-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-elem-nested-memberexpr-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-elem-nested-obj-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/array-elem-put-obj-literal-optchain-prop-ref.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-elem-target-simple-strict.js:
@@ -3771,12 +3512,6 @@ test/language/statements/for-of/dstr/obj-id-put-let.js:
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/obj-id-simple-strict.js:
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/obj-prop-elem-target-memberexpr-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/dstr/obj-prop-elem-target-obj-literal-optchain-prop-ref.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/obj-prop-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -3818,14 +3553,12 @@ test/language/statements/for/scope-body-lex-open.js:
   strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/statements/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/generators/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'

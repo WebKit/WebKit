@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/meth.template
+// - src/function-forms/error-no-strict/meth.template
 /*---
-description: sloppy direct eval in params introduces var (method)
+description: sloppy direct eval in params introduces var (method in sloppy code)
 esid: sec-runtime-semantics-definemethod
 features: [default-parameters]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     MethodDefinition : PropertyName ( StrictFormalParameters ) { FunctionBody }
 

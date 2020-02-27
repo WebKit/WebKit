@@ -27,15 +27,9 @@ info: |
   SuperCall : super Arguments
 
   [...]
-  3. Let func be ? GetSuperConstructor().
-  4. Let argList be ArgumentListEvaluation of Arguments.
-  [...]
-
-  12.3.5.2 Runtime Semantics: GetSuperConstructor ( )
-
-  [...]
-  5. Let superConstructor be ! activeFunction.[[GetPrototypeOf]]().
-  6. If IsConstructor(superConstructor) is false, throw a TypeError exception.
+  3. Let func be ! GetSuperConstructor().
+  4. Let argList be ? ArgumentListEvaluation of Arguments.
+  5. If IsConstructor(func) is false, throw a TypeError exception.
   [...]
 ---*/
 
@@ -45,7 +39,7 @@ var reachable = 0;
 class C extends null {
   constructor() {
     reachable += 1;
-    super(unreachable += 1);
+    super();
     unreachable += 1;
   }
 }

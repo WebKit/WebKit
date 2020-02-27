@@ -13,56 +13,56 @@ const tests = [
   [
     -987,
     {
-      "short": "-987 m",
-      "narrow": "-987 m",
-      "long": "-987 Meter",
+      "short": "-987 km/h",
+      "narrow": "-987 km/h",
+      "long": "-987 Kilometer pro Stunde",
     }
   ],
   [
     -0.001,
     {
-      "short": "-0,001 m",
-      "narrow": "-0,001 m",
-      "long": "-0,001 Meter",
+      "short": "-0,001 km/h",
+      "narrow": "-0,001 km/h",
+      "long": "-0,001 Kilometer pro Stunde",
     }
   ],
   [
     -0,
     {
-      "short": "-0 m",
-      "narrow": "-0 m",
-      "long": "-0 Meter",
+      "short": "-0 km/h",
+      "narrow": "-0 km/h",
+      "long": "-0 Kilometer pro Stunde",
     }
   ],
   [
     0,
     {
-      "short": "0 m",
-      "narrow": "0 m",
-      "long": "0 Meter",
+      "short": "0 km/h",
+      "narrow": "0 km/h",
+      "long": "0 Kilometer pro Stunde",
     }
   ],
   [
     0.001,
     {
-      "short": "0,001 m",
-      "narrow": "0,001 m",
-      "long": "0,001 Meter",
+      "short": "0,001 km/h",
+      "narrow": "0,001 km/h",
+      "long": "0,001 Kilometer pro Stunde",
     }
   ],
   [
     987,
     {
-      "short": "987 m",
-      "narrow": "987 m",
-      "long": "987 Meter",
+      "short": "987 km/h",
+      "narrow": "987 km/h",
+      "long": "987 Kilometer pro Stunde",
     }
   ],
 ];
 
 for (const [number, expectedData] of tests) {
   for (const [unitDisplay, expected] of Object.entries(expectedData)) {
-    const nf = new Intl.NumberFormat("de-DE", { style: "unit", unit: "meter", unitDisplay });
+    const nf = new Intl.NumberFormat("de-DE", { style: "unit", unit: "kilometer-per-hour", unitDisplay });
     assert.sameValue(nf.format(number), expected);
   }
 }

@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/async-func-decl.template
+// - src/function-forms/error-no-strict/async-func-decl.template
 /*---
-description: sloppy direct eval in params introduces var (async function declaration)
+description: sloppy direct eval in params introduces var (async function declaration in sloppy code)
 esid: sec-async-function-definitions
 features: [default-parameters, async-functions]
-flags: [generated, async]
+flags: [generated, async, noStrict]
 info: |
     14.6 Async Function Definitions
 

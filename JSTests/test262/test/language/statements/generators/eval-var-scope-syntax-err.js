@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/gen-func-decl.template
+// - src/function-forms/error-no-strict/gen-func-decl.template
 /*---
-description: sloppy direct eval in params introduces var (generator function declaration)
+description: sloppy direct eval in params introduces var (generator function declaration in sloppy code)
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
 features: [default-parameters, generators]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     GeneratorDeclaration : function * ( FormalParameters ) { GeneratorBody }
 

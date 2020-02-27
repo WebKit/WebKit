@@ -34,6 +34,15 @@ new Intl.RelativeTimeFormat([], {
       }
     };
   },
+  get numberingSystem() {
+    callOrder.push("numberingSystem");
+    return {
+      toString() {
+        callOrder.push("numberingSystem toString");
+        return "abc";
+      }
+    };
+  },
   get numeric() {
     callOrder.push("numeric");
     return {
@@ -48,6 +57,8 @@ new Intl.RelativeTimeFormat([], {
 assert.compareArray(callOrder, [
   "localeMatcher",
   "localeMatcher toString",
+  "numberingSystem",
+  "numberingSystem toString",
   "style",
   "style toString",
   "numeric",

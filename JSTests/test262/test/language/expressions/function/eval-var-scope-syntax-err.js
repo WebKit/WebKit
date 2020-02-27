@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/func-expr.template
+// - src/function-forms/error-no-strict/func-expr.template
 /*---
-description: sloppy direct eval in params introduces var (function expression)
+description: sloppy direct eval in params introduces var (function expression in sloppy code)
 esid: sec-function-definitions-runtime-semantics-evaluation
 features: [default-parameters]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     FunctionExpression : function ( FormalParameters ) { FunctionBody }
 

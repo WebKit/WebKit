@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/async-gen-named-func-expr.template
+// - src/function-forms/error-no-strict/async-gen-named-func-expr.template
 /*---
-description: sloppy direct eval in params introduces var (async generator named function expression)
+description: sloppy direct eval in params introduces var (async generator named function expression in sloppy code)
 esid: sec-asyncgenerator-definitions-evaluation
 features: [default-parameters, async-iteration]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     AsyncGeneratorExpression : async [no LineTerminator here] function * BindingIdentifier
         ( FormalParameters ) { AsyncGeneratorBody }

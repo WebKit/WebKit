@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/async-arrow-function.template
+// - src/function-forms/error-no-strict/async-arrow-function.template
 /*---
-description: sloppy direct eval in params introduces var (async arrow function expression)
+description: sloppy direct eval in params introduces var (async arrow function expression in sloppy code)
 esid: sec-async-arrow-function-definitions
 features: [default-parameters, async-functions]
-flags: [generated, async]
+flags: [generated, async, noStrict]
 info: |
     14.7 Async Arrow Function Definitions
 

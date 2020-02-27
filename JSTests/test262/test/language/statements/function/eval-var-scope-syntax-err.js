@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/func-decl.template
+// - src/function-forms/error-no-strict/func-decl.template
 /*---
-description: sloppy direct eval in params introduces var (function declaration)
+description: sloppy direct eval in params introduces var (function declaration in sloppy code)
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 features: [default-parameters]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     FunctionDeclaration :
         function BindingIdentifier ( FormalParameters ) { FunctionBody }

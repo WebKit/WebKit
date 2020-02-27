@@ -5,16 +5,16 @@ description: >
     Collection of functions used to capture references cleanup from garbage collectors
 features: [Symbol, async-functions]
 flags: [non-deterministic]
-features: [FinalizationGroup]
+features: [FinalizationRegistry]
 defines: [asyncGC, asyncGCDeref, resolveAsyncGC]
 ---*/
 
 function asyncGC(...targets) {
-  var fg = new FinalizationGroup(() => {});
+  var finalizationRegistry = new FinalizationRegistry(() => {});
   var length = targets.length;
 
   for (let target of targets) {
-    fg.register(target, 'target');
+    finalizationRegistry.register(target, 'target');
     target = null;
   }
 
@@ -24,7 +24,7 @@ function asyncGC(...targets) {
     var names;
 
     // consume iterator to capture names
-    fg.cleanupSome(iter => { names = [...iter]; });
+    finalizationRegistry.cleanupSome(iter => { names = [...iter]; });
 
     if (!names || names.length != length) {
       throw asyncGC.notCollected;

@@ -59,6 +59,18 @@ const tests = [
     0.00159,
     [{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"0016"}],
   ],
+  [
+    -Infinity,
+    [{"type":"minusSign","value":"-"},{"type":"infinity","value":"∞"}],
+  ],
+  [
+    Infinity,
+    [{"type":"infinity","value":"∞"}],
+  ],
+  [
+    NaN,
+    [{"type":"nan","value":"NaN"}],
+  ],
 ];
 
 for (const [number, short, long = short] of tests) {

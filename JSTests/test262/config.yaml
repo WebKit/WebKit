@@ -19,9 +19,13 @@ skip:
     - host-gc-required
     - regexp-match-indices
     - top-level-await
-    - FinalizationGroup
+    - AggregateError
+    - FinalizationRegistry
     - Intl.DateTimeFormat-datetimestyle
+    - Intl.DateTimeFormat-dayPeriod
     - Intl.DateTimeFormat-formatRange
+    - Intl.DateTimeFormat-fractionalSecondDigits
+    - Intl.DisplayNames
     - Intl.ListFormat
     - Intl.Locale
     - Intl.NumberFormat-unified

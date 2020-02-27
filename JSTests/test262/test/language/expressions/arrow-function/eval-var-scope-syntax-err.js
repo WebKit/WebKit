@@ -1,11 +1,11 @@
 // This file was procedurally generated from the following sources:
 // - src/function-forms/eval-var-scope-syntax-err.case
-// - src/function-forms/error/arrow-function.template
+// - src/function-forms/error-no-strict/arrow-function.template
 /*---
-description: sloppy direct eval in params introduces var (arrow function expression)
+description: sloppy direct eval in params introduces var (arrow function expression in sloppy code)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 features: [default-parameters]
-flags: [generated]
+flags: [generated, noStrict]
 info: |
     ArrowFunction : ArrowParameters => ConciseBody
 

@@ -2,17 +2,15 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-super-keyword
-es6id: 12.3.5
-description: Prototype of active function object must be a constructor
+description: SuperCall should evaluate Arguments prior to checking IsConstructor
 info: |
-  [...]
-  3. Let func be ? GetSuperConstructor().
-
-  12.3.5.2 Runtime Semantics: GetSuperConstructor
+  SuperCall : `super` Arguments
 
   [...]
-  4. Let superConstructor be ? activeFunction.[[GetPrototypeOf]]().
-  5. If IsConstructor(superConstructor) is false, throw a TypeError exception.
+  3. Let _func_ be ! GetSuperConstructor().
+  4. Let _argList_ be ? ArgumentListEvaluation of |Arguments|.
+  5. If IsConstructor(_func_) is *false*, throw a *TypeError* exception.
+  [...]
 features: [class]
 ---*/
 
@@ -40,6 +38,4 @@ try {
 
 assert.sameValue(typeof caught, 'object');
 assert.sameValue(caught.constructor, TypeError);
-assert.sameValue(
-  evaluatedArg, false, 'did not perform ArgumentsListEvaluation'
-);
+assert(evaluatedArg, 'performs ArgumentsListEvaluation');
