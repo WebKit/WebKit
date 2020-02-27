@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Kelvin W Sherlock (ksherlock@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -346,7 +346,7 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    if (!ctx) {
+    if (!ctx || !object) {
         ASSERT_NOT_REACHED();
         return 0;
     }
