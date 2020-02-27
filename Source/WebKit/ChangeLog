@@ -1,3 +1,13 @@
+2020-02-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed unified source builds fix.
+        https://bugs.webkit.org/show_bug.cgi?id=207198
+
+        Include header files for types referenced in RemoteRenderingBackend.h.
+
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h:
+
 2020-02-27  Tim Monroe  <timmon@apple.com>
 
         Add GPU Process support for accessLog et al.

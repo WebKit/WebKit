@@ -33,7 +33,10 @@
 #include "MessageSender.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/RenderingMode.h>
+#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
