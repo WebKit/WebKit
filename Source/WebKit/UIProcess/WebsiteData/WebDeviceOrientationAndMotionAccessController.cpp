@@ -35,8 +35,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, WebCore::SecurityOriginData&& originData, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
+void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
+    SecurityOriginData originData = frameInfo.securityOrigin;
     auto currentPermission = cachedDeviceOrientationPermission(originData);
     if (currentPermission != DeviceOrientationOrMotionPermissionState::Prompt || !mayPrompt)
         return completionHandler(currentPermission);
@@ -48,7 +49,7 @@ void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPagePro
     if (pendingRequests.size() > 1)
         return;
 
-    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTFMove(originData), [this, weakThis = makeWeakPtr(this), originData](bool granted) mutable {
+    page.uiClient().shouldAllowDeviceOrientationAndMotionAccess(page, frame, WTFMove(frameInfo), [this, weakThis = makeWeakPtr(this), originData](bool granted) mutable {
         if (!weakThis)
             return;
         m_deviceOrientationPermissionDecisions.set(originData, granted);

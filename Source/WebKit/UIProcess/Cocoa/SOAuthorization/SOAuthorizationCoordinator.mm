@@ -76,7 +76,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
         return;
     }
 
-    auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler), targetFrame->handle().frameID()) : RedirectSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler));
+    auto session = subframeNavigation ? SubFrameSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler), targetFrame->handle()->frameID()) : RedirectSOAuthorizationSession::create(m_soAuthorization.get(), WTFMove(navigationAction), page, WTFMove(completionHandler));
     [m_soAuthorizationDelegate setSession:WTFMove(session)];
 }
 

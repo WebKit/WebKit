@@ -1582,6 +1582,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return _page->pageLoadState().hasNegotiatedLegacyTLS();
 }
 
+- (void)_allFrames:(void (^)(NSArray<WKFrameInfo *> *))completionHandler
+{
+    _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRefPtr(_page.get())] (Vector<WebKit::FrameInfoData>&& frames) {
+        NSMutableArray<WKFrameInfo *> *apiFrames = [NSMutableArray arrayWithCapacity:frames.size()];
+        for (auto& frame : WTFMove(frames))
+            [apiFrames addObject:wrapper(API::FrameInfo::create(WTFMove(frame), page.get()))];
+        completionHandler(apiFrames);
+    });
+}
+
 - (BOOL)_isEditable
 {
     return _page && _page->isEditable();
