@@ -42,7 +42,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
 
     if (marginType == MarginType::Before)
-        return positiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
+        return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
     return positiveNegativeMarginAfter(layoutBox, nonCollapsedMargin);
 }
 
