@@ -36,12 +36,13 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebFrameProxy;
+struct FrameInfoData;
 
 class WebDeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<WebDeviceOrientationAndMotionAccessController> {
 public:
     WebDeviceOrientationAndMotionAccessController() = default;
 
-    void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+    void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
     void clearPermissions();
 
     WebCore::DeviceOrientationOrMotionPermissionState cachedDeviceOrientationPermission(const WebCore::SecurityOriginData&) const;

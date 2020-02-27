@@ -1745,6 +1745,16 @@ WebPage& WebPage::fromCorePage(Page& page)
     return static_cast<WebChromeClient&>(page.chrome().client()).page();
 }
 
+void WebPage::getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&& completionHandler)
+{
+    Vector<FrameInfoData> data;
+    for (auto* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* webFrame = WebFrame::fromCoreFrame(*frame))
+            data.append(webFrame->info());
+    }
+    completionHandler(WTFMove(data));
+}
+
 void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
     if (m_viewSize == viewSize)
@@ -6698,9 +6708,9 @@ void WebPage::clearPrevalentDomains()
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebPage::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameID, WebCore::SecurityOriginData&& origin, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
+void WebPage::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameID, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::ShouldAllowDeviceOrientationAndMotionAccess(frameID, WTFMove(origin), mayPrompt), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPageProxy::ShouldAllowDeviceOrientationAndMotionAccess(frameID, WTFMove(frameInfo), mayPrompt), WTFMove(completionHandler));
 }
 #endif
     

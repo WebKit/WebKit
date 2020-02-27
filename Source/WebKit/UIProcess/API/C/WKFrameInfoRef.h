@@ -34,7 +34,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKFrameInfoGetTypeID();
 
-WK_EXPORT WKFrameHandleRef WKFrameInfoGetFrameHandleRef(WKFrameInfoRef);
+WK_EXPORT WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfo);
 
 #ifdef __cplusplus
 }

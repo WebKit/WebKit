@@ -37,7 +37,7 @@ WKTypeID WKFrameInfoGetTypeID()
     return toAPI(API::FrameInfo::APIType);
 }
 
-WKFrameHandleRef WKFrameInfoGetFrameHandleRef(WKFrameInfoRef frameInfoRef)
+WKFrameHandleRef WKFrameInfoCreateFrameHandleRef(WKFrameInfoRef frameInfoRef)
 {
-    return toAPI(&toImpl(frameInfoRef)->handle());
+    return toAPI(&toImpl(frameInfoRef)->handle().leakRef());
 }

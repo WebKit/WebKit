@@ -44,6 +44,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
+struct FrameInfoData;
 struct WebAuthenticationRequestData;
 
 class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver {
@@ -61,8 +62,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
-    void getAssertion(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, RequestCompletionHandler&&);
+    void makeCredential(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
+    void getAssertion(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
