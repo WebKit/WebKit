@@ -3031,6 +3031,10 @@ static const char* mediaTypeBytes = R"PSONRESOURCE(
 </body>
 )PSONRESOURCE";
 
+@interface WKWebView (Details)
+@property (nonatomic, nullable, copy) NSString *mediaType;
+@end
+
 TEST(ProcessSwap, MediaTypeAfterSwap)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
