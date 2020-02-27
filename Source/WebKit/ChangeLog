@@ -1,3 +1,12 @@
+2020-02-26  Brady Eidson  <beidson@apple.com>
+
+        Annotate mediaType with an availability macro.
+        https://bugs.webkit.org/show_bug.cgi?id=208284
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
 2020-02-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused WebsiteDataStore::setSourceApplicationBundleIdentifier
