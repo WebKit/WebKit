@@ -63,6 +63,10 @@ NSString *testPage = @"<style>\n"
 "<div class='ShowForPrinting'>Print</div>\n"
 "<div class='ShowForLavaLamp'>LavaLamp</div>\n";
 
+@interface WKWebView (Details)
+@property (nonatomic, nullable, copy) NSString *mediaType;
+@end
+
 TEST(WKWebView, MediaType)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);

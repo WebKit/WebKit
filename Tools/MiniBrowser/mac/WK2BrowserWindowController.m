@@ -47,6 +47,14 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 
+@class WKPDFConfiguration;
+@interface WKWebView (Details)
+- (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler;
+- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
+@property (nonatomic) CGFloat pageZoom;
+@end
+
 @interface MiniBrowserNSTextFinder : NSTextFinder
 
 @property (nonatomic, copy) dispatch_block_t hideInterfaceCallback;

@@ -1008,9 +1008,9 @@
 		513FFB8D201459B0002596EA /* UIMessagePortChannelProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 513FFB8B201459A7002596EA /* UIMessagePortChannelProvider.h */; };
 		513FFB91201459C6002596EA /* WebMessagePortChannelProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 513FFB8F201459C2002596EA /* WebMessagePortChannelProvider.h */; };
 		514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 514129921C6428100059E714 /* WebIDBConnectionToServer.h */; };
-		51489CC32370DBFA0044E68A /* WKFindResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 51489CC12370DACC0044E68A /* WKFindResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		51489CC32370DBFA0044E68A /* WKFindResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 51489CC12370DACC0044E68A /* WKFindResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51489CC7237237800044E68A /* WKFindResultInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51489CC6237237780044E68A /* WKFindResultInternal.h */; };
-		514AB9F02360D2A900EDC396 /* WKFindConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AB9EF235FA59B00EDC396 /* WKFindConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		514AB9F02360D2A900EDC396 /* WKFindConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 514AB9EF235FA59B00EDC396 /* WKFindConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BDED216C98EDD00E4E25E /* StatisticsRequest.h */; };
 		514D9F5719119D35000063A7 /* ServicesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 514D9F5519119D35000063A7 /* ServicesController.h */; };
 		515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 515262BB1FB951310070E579 /* WebSWServerToContextConnectionMessages.h */; };
@@ -1058,7 +1058,7 @@
 		51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130501382EAC000351EDD /* SecItemRequestData.h */; };
 		51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130521382EAC000351EDD /* SecItemResponseData.h */; };
-		51D7E0AD2356555E00A67D3A /* WKPDFConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		51D7E0AD2356555E00A67D3A /* WKPDFConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
 		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
