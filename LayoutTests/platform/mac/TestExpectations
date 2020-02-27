@@ -1548,8 +1548,6 @@ webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-co
 [ Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
 [ Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
 
-webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
-
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 [ Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
