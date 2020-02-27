@@ -289,10 +289,12 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
             scriptCharset(),
             m_element.localName(),
-            m_element.isInUserAgentShadowTree());
+            m_element.isInUserAgentShadowTree(),
+            hasAsyncAttribute());
 
         auto scriptURL = m_element.document().completeURL(sourceURL);
         m_element.document().willLoadScriptElement(scriptURL);
+
         if (script->load(m_element.document(), scriptURL)) {
             m_loadableScript = WTFMove(script);
             m_isExternalScript = true;

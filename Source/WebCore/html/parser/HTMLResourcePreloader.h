@@ -55,6 +55,7 @@ public:
     void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
     void setCrossOriginMode(const String& mode) { m_crossOriginMode = mode; }
     void setNonce(const String& nonce) { m_nonceAttribute = nonce; }
+    void setScriptIsAsync(bool value) { m_scriptIsAsync = value; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
@@ -68,6 +69,7 @@ private:
     String m_mediaAttribute;
     String m_crossOriginMode;
     String m_nonceAttribute;
+    bool m_scriptIsAsync { false };
     ModuleScript m_moduleScript;
     ReferrerPolicy m_referrerPolicy;
 };

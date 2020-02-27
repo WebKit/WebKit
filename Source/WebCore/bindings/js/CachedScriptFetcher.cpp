@@ -42,10 +42,10 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const String& charset)
 
 CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, String&& integrity) const
 {
-    return requestScriptWithCache(document, sourceURL, String { }, WTFMove(integrity));
+    return requestScriptWithCache(document, sourceURL, String { }, WTFMove(integrity), { });
 }
 
-CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, const String& crossOriginMode, String&& integrity) const
+CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, const String& crossOriginMode, String&& integrity, Optional<ResourceLoadPriority> resourceLoadPriority) const
 {
     if (!document.settings().isScriptEnabled())
         return nullptr;
@@ -61,8 +61,10 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     auto request = createPotentialAccessControlRequest(sourceURL, WTFMove(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setCharset(m_charset);
+    request.setPriority(WTFMove(resourceLoadPriority));
     if (!m_initiatorName.isNull())
         request.setInitiator(m_initiatorName);
+
     return document.cachedResourceLoader().requestScript(WTFMove(request)).value_or(nullptr);
 }
 

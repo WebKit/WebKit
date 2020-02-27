@@ -63,6 +63,11 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
         options.referrerPolicy = m_referrerPolicy;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiator(m_initiator);
+
+    // FIXME: Put priorities for various cases to some central place where they are easy to see.
+    if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_moduleScript == ModuleScript::No)
+        request.setPriority(ResourceLoadPriority::Low);
+
     return request;
 }
 

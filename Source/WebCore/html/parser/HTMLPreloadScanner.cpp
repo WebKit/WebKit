@@ -171,6 +171,7 @@ public:
         auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript, m_referrerPolicy);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
+        request->setScriptIsAsync(m_scriptIsAsync);
 
         // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
         // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
@@ -257,6 +258,9 @@ private:
                 break;
             } else if (match(attributeName, nomoduleAttr)) {
                 m_scriptIsNomodule = true;
+                break;
+            } else if (match(attributeName, asyncAttr)) {
+                m_scriptIsAsync = true;
                 break;
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
@@ -394,6 +398,7 @@ private:
     bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;
     bool m_scriptIsNomodule { false };
+    bool m_scriptIsAsync { false };
     float m_deviceScaleFactor;
     PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };

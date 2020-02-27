@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
 {
-    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
+    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, isAsync));
 }
 
 LoadableClassicScript::~LoadableClassicScript()
@@ -126,7 +126,15 @@ void LoadableClassicScript::execute(ScriptElement& scriptElement)
 bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = requestScriptWithCache(document, sourceURL, crossOriginMode(), String { m_integrity });
+
+    auto priority = [&]() -> Optional<ResourceLoadPriority> {
+        if (m_isAsync)
+            return ResourceLoadPriority::Low;
+        // Use default.
+        return { };
+    };
+
+    m_cachedScript = requestScriptWithCache(document, sourceURL, crossOriginMode(), String { m_integrity }, priority());
     if (!m_cachedScript)
         return false;
     m_cachedScript->addClient(*this);
