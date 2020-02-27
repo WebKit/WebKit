@@ -35,9 +35,8 @@
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, Client& client, bool hideRootLayer, IntSize size)
 {

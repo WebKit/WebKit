@@ -32,6 +32,10 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 
+namespace IPC {
+class DataReference;
+}
+
 namespace WebCore {
 class GenericCueData;
 class ISOWebVTTCue;
@@ -52,9 +56,9 @@ public:
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&, String&&);
-    void updateDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);
-    void removeDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);
+    void addDataCueWithType(MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&, String&&);
+    void updateDataCue(MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
+    void removeDataCue(MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
 #endif
 
     void addGenericCue(WebCore::GenericCueData&);

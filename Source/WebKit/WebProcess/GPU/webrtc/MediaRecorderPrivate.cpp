@@ -39,9 +39,8 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 MediaRecorderPrivate::MediaRecorderPrivate(const MediaStreamPrivate& stream)
     : m_identifier(MediaRecorderIdentifier::generate())

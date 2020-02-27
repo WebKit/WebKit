@@ -36,6 +36,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RenderingMode.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -839,6 +840,18 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
     WebCore::ColorSpace::SRGB,
     WebCore::ColorSpace::LinearRGB,
     WebCore::ColorSpace::DisplayP3
+    >;
+};
+
+template<> struct EnumTraits<WebCore::RenderingMode> {
+    using values = EnumValues<
+    WebCore::RenderingMode,
+    WebCore::RenderingMode::Accelerated,
+    WebCore::RenderingMode::Unaccelerated,
+    WebCore::RenderingMode::DisplayListAccelerated,
+    WebCore::RenderingMode::DisplayListUnaccelerated,
+    WebCore::RenderingMode::RemoteAccelerated,
+    WebCore::RenderingMode::RemoteUnaccelerated
     >;
 };
 

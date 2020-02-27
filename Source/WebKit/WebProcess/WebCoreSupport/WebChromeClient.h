@@ -37,6 +37,7 @@ enum class StorageAccessWasGranted : bool;
 
 namespace WebKit {
 
+class RemoteRenderingBackend;
 class WebFrame;
 class WebPage;
 
@@ -122,8 +123,6 @@ private:
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
-
-    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace) const final;
 
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
 
@@ -232,6 +231,10 @@ private:
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
+#endif
+
+#if ENABLE(GPU_PROCESS)
+    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace) const final;
 #endif
 
     CompositingTriggerFlags allowedCompositingTriggers() const final
@@ -390,7 +393,9 @@ private:
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
-
+#if ENABLE(GPU_PROCESS)
+    mutable std::unique_ptr<RemoteRenderingBackend> m_remoteRenderingBackend;
+#endif
     WebPage& m_page;
 };
 

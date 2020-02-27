@@ -33,9 +33,8 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if !RELEASE_LOG_DISABLED
 static const void* nextLogIdentifier()

@@ -39,6 +39,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
+#include "RemoteRenderingBackend.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
@@ -880,30 +881,22 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     if (auto* drawingArea = m_page.drawingArea())
         return drawingArea->createDisplayRefreshMonitor(displayID);
     return nullptr;
 }
-
 #endif
 
-std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize&, RenderingMode renderingMode, float, ColorSpace) const
+#if ENABLE(GPU_PROCESS)
+std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace) const
 {
-    switch (renderingMode) {
-    case RenderingMode::RemoteAccelerated:
-    case RenderingMode::RemoteUnaccelerated:
-        // FIXME: Create the remote ImageBuffer
-        return nullptr;
-
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    return nullptr;
+    if (!m_remoteRenderingBackend)
+        m_remoteRenderingBackend = RemoteRenderingBackend::create();
+    return m_remoteRenderingBackend->createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
 }
+#endif
 
 void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* layer)
 {

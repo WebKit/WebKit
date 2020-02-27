@@ -34,9 +34,8 @@
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RemoteVideoSample.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection, bool hideRootLayer, IntSize size)
 {

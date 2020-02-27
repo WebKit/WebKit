@@ -28,13 +28,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "GPUConnectionToWebProcessMessagesReplies.h"
-#include <WebCore/DisplayListItems.h>
+#include "GPUConnectionToWebProcessMessages.h"
+#include "MessageReceiverMap.h"
+#include "RemoteRenderingBackendProxy.h"
+#include "RenderingBackendIdentifier.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
-#include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class PlatformMediaSessionManager;
@@ -53,18 +55,20 @@ class UserMediaCaptureManagerProxy;
 
 class GPUConnectionToWebProcess
     : public RefCounted<GPUConnectionToWebProcess>
+    , public CanMakeWeakPtr<GPUConnectionToWebProcess>
     , IPC::Connection::Client {
 public:
     static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
     virtual ~GPUConnectionToWebProcess();
 
     IPC::Connection& connection() { return m_connection.get(); }
+    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
+    WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
-    WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
     Logger& logger();
@@ -95,6 +99,8 @@ private:
     RemoteSampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 #endif
+    void createRenderingBackend(RenderingBackendIdentifier);
+    void releaseRenderingBackend(RenderingBackendIdentifier);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;
@@ -102,9 +108,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
+
     RefPtr<Logger> m_logger;
 
     Ref<IPC::Connection> m_connection;
+    IPC::MessageReceiverMap m_messageReceiverMap;
     Ref<GPUProcess> m_gpuProcess;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
     std::unique_ptr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
@@ -122,6 +132,9 @@ private:
     std::unique_ptr<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;
 #endif
     std::unique_ptr<WebCore::PlatformMediaSessionManager> m_sessionManager;
+    
+    using RemoteRenderingBackendProxyMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendProxy>>;
+    RemoteRenderingBackendProxyMap m_remoteRenderingBackendProxyMap;
 };
 
 } // namespace WebKit

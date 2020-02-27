@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "MessageReceiverMap.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -47,6 +48,7 @@ public:
     ~GPUProcessConnection();
     
     IPC::Connection& connection() { return m_connection.get(); }
+    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
 #if HAVE(AUDIT_TOKEN)
     void setAuditToken(Optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
@@ -62,10 +64,15 @@ private:
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;
+    IPC::MessageReceiverMap m_messageReceiverMap;
 
 #if HAVE(AUDIT_TOKEN)
     Optional<audit_token_t> m_auditToken;

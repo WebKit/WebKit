@@ -34,6 +34,7 @@
 #include <WebCore/ExceptionData.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 RemoteMediaRecorderManager::RemoteMediaRecorderManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)

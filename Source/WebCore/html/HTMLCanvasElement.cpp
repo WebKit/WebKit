@@ -895,8 +895,13 @@ void HTMLCanvasElement::createImageBuffer() const
     // FIXME: Add a new setting for DisplayList drawing on canvas.
     bool usesDisplayListDrawing = m_usesDisplayListDrawing.valueOr(document().settings().displayListDrawingEnabled());
 
+    // FIXME: Add a new setting for remote drawing on canvas.
+    bool usesRemoteDrawing = false;
+
     RenderingMode renderingMode;
-    if (usesDisplayListDrawing)
+    if (usesRemoteDrawing)
+        renderingMode = shouldAccelerate(size()) ? RenderingMode::RemoteAccelerated : RenderingMode::RemoteUnaccelerated;
+    else if (usesDisplayListDrawing)
         renderingMode = shouldAccelerate(size()) ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
     else
         renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;

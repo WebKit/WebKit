@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> GPUProcessConnection {
+messages -> GPUProcessConnection WantsDispatchMessage {
 
 }
 

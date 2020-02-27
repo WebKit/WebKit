@@ -35,9 +35,8 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, int width, int height)
 {

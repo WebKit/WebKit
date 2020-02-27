@@ -31,9 +31,8 @@
 #include "MediaRecorderPrivate.h"
 #include <WebCore/MediaRecorderPrivate.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(const MediaStreamPrivate& stream)
 {

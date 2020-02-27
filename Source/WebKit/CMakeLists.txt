@@ -80,6 +80,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/Gamepad"
     "${WEBKIT_DIR}/WebProcess/Geolocation"
     "${WEBKIT_DIR}/WebProcess/GPU"
+    "${WEBKIT_DIR}/WebProcess/GPU/graphics"
     "${WEBKIT_DIR}/WebProcess/GPU/media"
     "${WEBKIT_DIR}/WebProcess/GPU/webrtc"
     "${WEBKIT_DIR}/WebProcess/IconDatabase"

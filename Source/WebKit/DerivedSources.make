@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2) \
     $(WebKit2)/GPUProcess \
+    $(WebKit2)/GPUProcess/graphics \
     $(WebKit2)/GPUProcess/mac \
     $(WebKit2)/GPUProcess/media \
     $(WebKit2)/GPUProcess/webrtc \
@@ -51,6 +52,7 @@ VPATH = \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/GPU \
+    $(WebKit2)/WebProcess/GPU/graphics \
     $(WebKit2)/WebProcess/GPU/media \
     $(WebKit2)/WebProcess/GPU/webrtc \
     $(WebKit2)/WebProcess/IconDatabase \
@@ -154,6 +156,8 @@ MESSAGE_RECEIVERS = \
     RemoteMediaRecorderManager \
     RemoteMediaResourceManager \
     RemoteObjectRegistry \
+    RemoteRenderingBackend \
+    RemoteRenderingBackendProxy \
     RemoteSampleBufferDisplayLayer \
     RemoteSampleBufferDisplayLayerManager \
     RemoteScrollingCoordinator \

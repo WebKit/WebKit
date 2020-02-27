@@ -22,7 +22,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> GPUConnectionToWebProcess {
+messages -> GPUConnectionToWebProcess WantsDispatchMessage {
+    void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
+    void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
 }
 
 #endif // ENABLE(GPU_PROCESS)

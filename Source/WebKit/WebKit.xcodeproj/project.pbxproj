@@ -3803,6 +3803,14 @@
 		53CFBBC62224D1B000266546 /* TextCheckerCompletion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckerCompletion.cpp; sourceTree = "<group>"; };
 		53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
 		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkActivityTracker.cpp; sourceTree = "<group>"; };
+		5506409D2407160900AAE045 /* RemoteRenderingBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackend.cpp; sourceTree = "<group>"; };
+		5506409E2407160900AAE045 /* RemoteRenderingBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackend.h; sourceTree = "<group>"; };
+		5506409F2407196A00AAE045 /* RenderingBackendIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingBackendIdentifier.h; sourceTree = "<group>"; };
+		550640A0240719E100AAE045 /* RemoteRenderingBackend.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteRenderingBackend.messages.in; sourceTree = "<group>"; };
+		550640A224071A6100AAE045 /* RemoteRenderingBackendProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackendProxy.cpp; sourceTree = "<group>"; };
+		550640A324071A6100AAE045 /* RemoteRenderingBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendProxy.h; sourceTree = "<group>"; };
+		550640A424071C2100AAE045 /* RemoteRenderingBackendProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteRenderingBackendProxy.messages.in; sourceTree = "<group>"; };
+		550640A524071CC000AAE045 /* ImageBufferIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferIdentifier.h; sourceTree = "<group>"; };
 		570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecKeyProxyStore.h; sourceTree = "<group>"; };
 		570AB90020B2517400B8BE87 /* AuthenticationChallengeProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeProxyCocoa.mm; sourceTree = "<group>"; };
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
@@ -6552,6 +6560,7 @@
 		2D7E43BF23752CD900EA5CA0 /* GPU */ = {
 			isa = PBXGroup;
 			children = (
+				5506409C240715AA00AAE045 /* graphics */,
 				0792312F239B3B0C009598E2 /* media */,
 				4172198823B6126100AE5686 /* webrtc */,
 				2D7E43C023752CD900EA5CA0 /* GPUProcessConnection.cpp */,
@@ -6566,6 +6575,7 @@
 			isa = PBXGroup;
 			children = (
 				2D9FB20D2375209D0049F936 /* EntryPoint */,
+				550640A124071A2900AAE045 /* graphics */,
 				2D9FB2042375209D0049F936 /* ios */,
 				2D9FB2062375209D0049F936 /* mac */,
 				07C75C172399A3DB0088E65B /* media */,
@@ -7696,6 +7706,28 @@
 				51E949961D761CC700EC9EB9 /* UIGamepadProviderIOS.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		5506409C240715AA00AAE045 /* graphics */ = {
+			isa = PBXGroup;
+			children = (
+				550640A524071CC000AAE045 /* ImageBufferIdentifier.h */,
+				5506409D2407160900AAE045 /* RemoteRenderingBackend.cpp */,
+				5506409E2407160900AAE045 /* RemoteRenderingBackend.h */,
+				550640A0240719E100AAE045 /* RemoteRenderingBackend.messages.in */,
+				5506409F2407196A00AAE045 /* RenderingBackendIdentifier.h */,
+			);
+			path = graphics;
+			sourceTree = "<group>";
+		};
+		550640A124071A2900AAE045 /* graphics */ = {
+			isa = PBXGroup;
+			children = (
+				550640A224071A6100AAE045 /* RemoteRenderingBackendProxy.cpp */,
+				550640A324071A6100AAE045 /* RemoteRenderingBackendProxy.h */,
+				550640A424071C2100AAE045 /* RemoteRenderingBackendProxy.messages.in */,
+			);
+			path = graphics;
 			sourceTree = "<group>";
 		};
 		570AB8F620AE81AB00B8BE87 /* cocoa */ = {

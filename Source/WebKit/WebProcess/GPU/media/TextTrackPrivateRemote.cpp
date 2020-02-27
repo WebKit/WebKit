@@ -29,11 +29,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DataReference.h"
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 TextTrackPrivateRemote::TextTrackPrivateRemote(MediaPlayerPrivateRemote& player, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)

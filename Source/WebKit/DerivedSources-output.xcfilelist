@@ -154,6 +154,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteRenderingBackendProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteSampleBufferDisplayLayerManagerMessagesReplies.h

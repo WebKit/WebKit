@@ -27,6 +27,7 @@ import sys
 from webkit import parser
 
 WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
+WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
@@ -204,6 +205,7 @@ def types_that_cannot_be_forward_declared():
     return frozenset([
         'MachSendRight',
         'String',
+        'WebCore::ColorSpace',
         'WebCore::DocumentIdentifier',
         'WebCore::DocumentOrWorkerIdentifier',
         'WebCore::FetchIdentifier',
@@ -213,6 +215,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PointerID',
         'WebCore::ProcessIdentifier',
         'WebCore::RealtimeMediaSourceIdentifier',
+        'WebCore::RenderingMode',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerJobIdentifier',
         'WebCore::ServiceWorkerOrClientData',
@@ -222,12 +225,14 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererIdentifier',
         'WebKit::ContentWorldIdentifier',
+        'WebKit::ImageBufferIdentifier',
         'WebKit::LayerHostingContextID',
         'WebKit::LibWebRTCResolverIdentifier',
         'WebKit::MDNSRegisterIdentifier',
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::MediaRecorderIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
+        'WebKit::RenderingBackendIdentifier',
         'WebKit::RTCDecoderIdentifier',
         'WebKit::RTCEncoderIdentifier',
         'WebKit::SampleBufferDisplayLayerIdentifier',
@@ -779,13 +784,16 @@ def generate_message_handler(receiver):
         else:
             async_messages.append(message)
 
-    if async_messages:
+    if async_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
         result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    auto protectedThis = makeRef(*this);\n')
 
         result += [async_message_statement(receiver, message) for message in async_messages]
+        if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
+            result.append('    if (dispatchMessage(connection, decoder))\n')
+            result.append('        return;\n')
         if (receiver.superclass):
             result.append('    %s::didReceiveMessage(connection, decoder);\n' % (receiver.superclass))
         else:
@@ -794,13 +802,16 @@ def generate_message_handler(receiver):
             result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
-    if sync_messages:
+    if sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
         result.append('\n')
         result.append('void %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    auto protectedThis = makeRef(*this);\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
+        if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
+            result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
+            result.append('        return;\n')
         result.append('    UNUSED_PARAM(connection);\n')
         result.append('    UNUSED_PARAM(decoder);\n')
         result.append('    UNUSED_PARAM(replyEncoder);\n')

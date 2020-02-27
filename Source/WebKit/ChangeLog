@@ -1,3 +1,106 @@
+2020-02-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement the remote RenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=207198
+
+        Reviewed by Simon Fraser.
+
+        RemoteRenderingBackend and RemoteRenderingBackendProxy will be responsible
+        for  creating the two parts of the ImageBuffer: RemoteImageBuffer and
+        RemoteImageBufferProxy. They will also be responsible for sending and
+        receiving the messages for the remote the ImageBuffers.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        (WebKit::GPUConnectionToWebProcess::releaseRenderingBackend):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage): Deleted.
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage): Deleted.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::messageReceiverMap):
+        (WebKit::GPUConnectionToWebProcess::webProcessIdentifier const):
+        GPUConnectionToWebProcess dispatches messages to RemoteRenderingBackendProxy.
+
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        Adding the 'WantsDispatchMessage' attribute will force the messages.py
+        to generate code which calls dispatchMessage() and didReceiveSyncMessage()
+        when messages are received.
+
+        * GPUProcess/graphics: Added.
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp: Added.
+        (WebKit::RemoteRenderingBackendProxy::create):
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderDestinationID const):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::releaseImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h: Added.
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in: Added.
+        RemoteRenderingBackendProxy is responsible for creating the remote
+        ImageBuffer proxy in the GPUProcess side. It holds it in a HashMap of
+        std::unique_ptr<ImageBuffer> indexed by the ImageBufferIdentifier.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        Unified sources gardening.
+
+        * Scripts/webkit/messages.py:
+        Handle 'WantsDispatchMessage' attribute.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        (WebKit::GPUProcessConnection::dispatchSyncMessage):
+        (WebKit::GPUProcessConnection::didReceiveMessage): Deleted.
+        * WebProcess/GPU/GPUProcessConnection.h:
+        (WebKit::GPUProcessConnection::messageReceiverMap):
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        GPUConnection dispatches messages to RemoteRenderingBackend.
+
+        * WebProcess/GPU/graphics: Added.
+        * WebProcess/GPU/graphics/ImageBufferIdentifier.h: Added.
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp: Added.
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackend::messageSenderDestinationID const):
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::releaseImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h: Added.
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in: Added.
+        * WebProcess/GPU/graphics/RenderingBackendIdentifier.h: Added.
+        RemoteRenderingBackend is responsible for creating the remote ImageBuffer
+        in the WebProcess side. It holds it in a HashMap of ImageBuffer* indexed
+        by the ImageBufferIdentifier.
+
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp:
+        Unified sources gardening.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDisplayRefreshMonitor const):
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Create the remote ImageBuffer.
+
 2020-02-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebsiteDataStore::setSourceApplicationSecondaryIdentifier

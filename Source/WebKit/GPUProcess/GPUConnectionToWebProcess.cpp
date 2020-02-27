@@ -189,79 +189,94 @@ LibWebRTCCodecsProxy& GPUConnectionToWebProcess::libWebRTCCodecsProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
+{
+    auto addResult = m_remoteRenderingBackendProxyMap.ensure(renderingBackendIdentifier, [&]() {
+        return RemoteRenderingBackendProxy::create(*this, renderingBackendIdentifier);
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
+{
+    bool found = m_remoteRenderingBackendProxyMap.remove(renderingBackendIdentifier);
+    ASSERT_UNUSED(found, found);
+}
+
+bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
-    } else if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerProxy::messageReceiverName()) {
+        return true;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceivePlayerMessage(connection, decoder);
-        return;
-    } else if (decoder.messageReceiverName() == Messages::RemoteMediaResourceManager::messageReceiverName()) {
+        return true;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteMediaResourceManager::messageReceiverName()) {
         remoteMediaResourceManager().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 #if ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::RemoteMediaRecorderManager::messageReceiverName()) {
         mediaRecorderManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::RemoteMediaRecorder::messageReceiverName()) {
         mediaRecorderManager().didReceiveRemoteMediaRecorderMessage(connection, decoder);
-        return;
+        return true;
     }
 #if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
     if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName()) {
         audioTrackRendererManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRenderer::messageReceiverName()) {
         audioTrackRendererManager().didReceiveRendererMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayer::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
-        return;
+        return true;
     }
 #endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecsProxy::messageReceiverName()) {
         libWebRTCCodecsProxy().didReceiveMessageFromWebProcess(connection, decoder);
-        return;
+        return true;
     }
 #endif
+    return messageReceiverMap().dispatchMessage(connection, decoder);
 }
 
-void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return;
+        return true;
     }
-
 #if ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveSyncMessageFromGPUProcess(connection, decoder, replyEncoder);
-        return;
+        return true;
     }
 #if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
     if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return;
+        return true;
     }
 #endif
 #endif
-
-    ASSERT_NOT_REACHED();
+    return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
 const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
