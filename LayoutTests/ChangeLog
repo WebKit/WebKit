@@ -1,3 +1,12 @@
+2020-02-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] webgpu/whlsl/textures-sample.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208340
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-02-27  Ben Nham  <nham@apple.com>
 
         Fix flaky enter/exit PIP test
