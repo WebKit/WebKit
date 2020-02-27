@@ -40,6 +40,9 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 #include <WebCore/AsyncScrollingCoordinator.h>
+#endif
+
+#if ENABLE(SCROLLING_THREAD)
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/ThreadedScrollingTree.h>
 #endif
@@ -62,7 +65,7 @@ EventDispatcher::~EventDispatcher()
 {
 }
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(SCROLLING_THREAD)
 void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 {
     LockHolder locker(m_scrollingTreesMutex);
@@ -90,7 +93,7 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
 
 void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
-#if PLATFORM(COCOA) || ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(COCOA) || ENABLE(SCROLLING_THREAD)
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
 #endif
 
@@ -113,7 +116,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
     }
 #endif
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(SCROLLING_THREAD)
     LockHolder locker(m_scrollingTreesMutex);
     if (RefPtr<ThreadedScrollingTree> scrollingTree = m_scrollingTrees.get(pageID)) {
         // FIXME: It's pretty horrible that we're updating the back/forward state here.

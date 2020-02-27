@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventDispatcher_h
-#define EventDispatcher_h
+#pragma once
 
 #include "CallbackID.h"
 #include "Connection.h"
@@ -56,7 +55,7 @@ public:
     static Ref<EventDispatcher> create();
     ~EventDispatcher();
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(SCROLLING_THREAD)
     void addScrollingTreeForPage(WebPage*);
     void removeScrollingTreeForPage(WebPage*);
 #endif
@@ -101,7 +100,7 @@ private:
 
     Ref<WorkQueue> m_queue;
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(SCROLLING_THREAD)
     Lock m_scrollingTreesMutex;
     HashMap<WebCore::PageIdentifier, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
@@ -113,5 +112,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // EventDispatcher_h

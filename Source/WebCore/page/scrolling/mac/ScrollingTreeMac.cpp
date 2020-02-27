@@ -34,7 +34,7 @@
 #include "ScrollingTreePositionedNode.h"
 #include "ScrollingTreeStickyNode.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
 using namespace WebCore;
 
@@ -71,4 +71,4 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     return ScrollingTreeFixedNode::create(*this, nodeID);
 }
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
 #import "ScrollingCoordinatorMac.h"
 
@@ -153,4 +153,4 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

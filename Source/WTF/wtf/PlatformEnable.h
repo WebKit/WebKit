@@ -822,6 +822,14 @@
 #define ENABLE_KINETIC_SCROLLING 1
 #endif
 
+#if !defined(ENABLE_SCROLLING_THREAD)
+#if USE(NICOSIA)
+#define ENABLE_SCROLLING_THREAD 1
+#else
+#define ENABLE_SCROLLING_THREAD 0
+#endif
+#endif
+
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
    OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.

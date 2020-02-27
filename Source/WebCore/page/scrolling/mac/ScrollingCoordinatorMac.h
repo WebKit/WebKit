@@ -25,17 +25,11 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
 #include "AsyncScrollingCoordinator.h"
 
 namespace WebCore {
-
-class Scrollbar;
-class ScrollingStateNode;
-class ScrollingStateScrollingNode;
-class ScrollingStateTree;
-class ThreadedScrollingTree;
 
 class ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
 public:
@@ -61,4 +55,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
