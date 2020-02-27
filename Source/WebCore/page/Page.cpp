@@ -2985,9 +2985,14 @@ void Page::recomputeTextAutoSizingInAllFrames()
     forEachDocument([] (Document& document) {
         if (auto* renderView = document.renderView()) {
             for (auto& renderer : descendantsOfType<RenderElement>(*renderView)) {
+                // Use the fact that descendantsOfType() returns parent nodes before child nodes.
+                // The adjustment is only valid if the parent nodes have already been updated.
                 if (auto* element = renderer.element()) {
-                    if (Style::Adjuster::adjustForTextAutosizing(renderer.mutableStyle(), *element))
-                        renderer.setNeedsLayout();
+                    if (auto adjustment = Style::Adjuster::adjustmentForTextAutosizing(renderer.style(), *element)) {
+                        auto newStyle = RenderStyle::clone(renderer.style());
+                        Style::Adjuster::adjustForTextAutosizing(newStyle, *element, adjustment);
+                        renderer.setStyle(WTFMove(newStyle));
+                    }
                 }
             }
         }

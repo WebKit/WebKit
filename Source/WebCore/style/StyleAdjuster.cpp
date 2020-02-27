@@ -568,15 +568,20 @@ static bool hasTextChild(const Element& element)
     return false;
 }
 
-bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& element)
+auto Adjuster::adjustmentForTextAutosizing(const RenderStyle& style, const Element& element) -> AdjustmentForTextAutosizing
 {
+    AdjustmentForTextAutosizing adjustmentForTextAutosizing;
+
     auto& document = element.document();
     if (!document.settings().textAutosizingEnabled() || !document.settings().textAutosizingUsesIdempotentMode())
-        return false;
+        return adjustmentForTextAutosizing;
 
-    AutosizeStatus::updateStatus(style);
+    auto newStatus = AutosizeStatus::computeStatus(style);
+    if (newStatus != style.autosizeStatus())
+        adjustmentForTextAutosizing.newStatus = newStatus;
+
     if (style.textSizeAdjust().isNone())
-        return false;
+        return adjustmentForTextAutosizing;
 
     float initialScale = document.page() ? document.page()->initialScale() : 1;
     auto adjustLineHeightIfNeeded = [&](auto computedFontSize) {
@@ -593,26 +598,24 @@ bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& elemen
         if (AutosizeStatus::probablyContainsASmallFixedNumberOfLines(style))
             return;
 
-        style.setLineHeight({ minimumLineHeight, Fixed });
+        adjustmentForTextAutosizing.newLineHeight = minimumLineHeight;
     };
 
     auto fontDescription = style.fontDescription();
     auto initialComputedFontSize = fontDescription.computedSize();
     auto specifiedFontSize = fontDescription.specifiedSize();
-    bool isCandidate = style.isIdempotentTextAutosizingCandidate();
+    bool isCandidate = style.isIdempotentTextAutosizingCandidate(newStatus);
     if (!isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, specifiedFontSize))
-        return false;
+        return adjustmentForTextAutosizing;
 
     auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
     if (isCandidate && WTF::areEssentiallyEqual(initialComputedFontSize, adjustedFontSize))
-        return false;
+        return adjustmentForTextAutosizing;
 
     if (!hasTextChild(element))
-        return false;
+        return adjustmentForTextAutosizing;
 
-    fontDescription.setComputedSize(isCandidate ? adjustedFontSize : specifiedFontSize);
-    style.setFontDescription(WTFMove(fontDescription));
-    style.fontCascade().update(&document.fontSelector());
+    adjustmentForTextAutosizing.newFontSize = isCandidate ? adjustedFontSize : specifiedFontSize;
 
     // FIXME: We should restore computed line height to its original value in the case where the element is not
     // an idempotent text autosizing candidate; otherwise, if an element that is a text autosizing candidate contains
@@ -620,7 +623,28 @@ bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& elemen
     if (isCandidate)
         adjustLineHeightIfNeeded(adjustedFontSize);
 
-    return true;
+    return adjustmentForTextAutosizing;
+}
+
+bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& element, AdjustmentForTextAutosizing adjustment)
+{
+    AutosizeStatus::updateStatus(style);
+    if (auto newFontSize = adjustment.newFontSize) {
+        auto fontDescription = style.fontDescription();
+        fontDescription.setComputedSize(*newFontSize);
+        style.setFontDescription(WTFMove(fontDescription));
+        style.fontCascade().update(&element.document().fontSelector());
+    }
+    if (auto newLineHeight = adjustment.newLineHeight)
+        style.setLineHeight({ *newLineHeight, Fixed });
+    if (auto newStatus = adjustment.newStatus)
+        style.setAutosizeStatus(*newStatus);
+    return adjustment.newFontSize || adjustment.newLineHeight;
+}
+
+bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& element)
+{
+    return adjustForTextAutosizing(style, element, adjustmentForTextAutosizing(style, element));
 }
 #endif
 

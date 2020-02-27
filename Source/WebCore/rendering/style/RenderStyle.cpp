@@ -502,10 +502,13 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && m_rareNonInheritedData->textOverflow == other.m_rareNonInheritedData->textOverflow;
 }
 
-bool RenderStyle::isIdempotentTextAutosizingCandidate() const
+bool RenderStyle::isIdempotentTextAutosizingCandidate(Optional<AutosizeStatus> overrideStatus) const
 {
     // Refer to <rdar://problem/51826266> for more information regarding how this function was generated.
     auto fields = OptionSet<AutosizeStatus::Fields>::fromRaw(m_inheritedFlags.autosizeStatus);
+    if (overrideStatus)
+        fields = overrideStatus->fields();
+
     if (fields.contains(AutosizeStatus::Fields::AvoidSubtree))
         return false;
 
