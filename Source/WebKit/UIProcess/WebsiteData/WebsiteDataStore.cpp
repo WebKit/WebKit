@@ -2190,14 +2190,6 @@ void WebsiteDataStore::didCreateNetworkProcess()
 {
 }
 
-bool WebsiteDataStore::setSourceApplicationSecondaryIdentifier(String&& identifier)
-{
-    if (m_networkingHasBegun)
-        return false;
-    m_resolvedConfiguration->setSourceApplicationSecondaryIdentifier(WTFMove(identifier));
-    return true;
-}
-
 bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
 {
     if (m_networkingHasBegun)

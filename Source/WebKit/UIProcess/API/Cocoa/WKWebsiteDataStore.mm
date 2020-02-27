@@ -354,13 +354,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (NSString *)_sourceApplicationSecondaryIdentifier
 {
-    return _websiteDataStore->sourceApplicationSecondaryIdentifier();
+    return nil;
 }
 
 - (void)_setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
-    if (!_websiteDataStore->setSourceApplicationSecondaryIdentifier(identifier))
-        [NSException raise:NSGenericException format:@"_setSourceApplicationSecondaryIdentifier cannot be called after networking has begun"];
 }
 
 - (void)_setAllowsTLSFallback:(BOOL)allows

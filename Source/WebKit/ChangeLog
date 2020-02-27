@@ -1,5 +1,22 @@
 2020-02-26  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebsiteDataStore::setSourceApplicationSecondaryIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=206452
+
+        Reviewed by Chris Dumez.
+
+        Its replacement on WebsiteDataStoreConfiguration was adopted in rdar://problem/58671704
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _sourceApplicationSecondaryIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationSecondaryIdentifier:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setSourceApplicationSecondaryIdentifier): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::sourceApplicationSecondaryIdentifier const):
+
+2020-02-26  Alex Christensen  <achristensen@webkit.org>
+
         Remove WebsiteDataStore setters for allowsCellularAccess, proxyConfiguration, and boundInterfaceIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=206390
 

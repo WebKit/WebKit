@@ -228,7 +228,6 @@ public:
     bool setSourceApplicationBundleIdentifier(String&&);
 
     const String& sourceApplicationSecondaryIdentifier() const { return m_resolvedConfiguration->sourceApplicationSecondaryIdentifier(); }
-    bool setSourceApplicationSecondaryIdentifier(String&&);
 
     void networkingHasBegun() { m_networkingHasBegun = true; }
 
