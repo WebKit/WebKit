@@ -281,7 +281,10 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         addHeaderButton.className = "add-header";
         addHeaderButton.textContent = WI.UIString("Add Header");
         addHeaderButton.addEventListener("click", (event) => {
-            let newNode = new WI.DataGridNode({name: "Header", value: "value"});
+            let newNode = new WI.DataGridNode({
+                name: WI.UIString("Header", "Header @ Local Override Popover New Headers Data Grid Item", "Placeholder text in an editable field for the name of a HTTP header"),
+                value: WI.UIString("value", "value @ Local Override Popover New Headers Data Grid Item", "Placeholder text in an editable field for the value of a HTTP header"),
+            });
             this._headersDataGrid.appendChild(newNode);
             this._headersDataGrid.updateLayoutIfNeeded();
             this.update();

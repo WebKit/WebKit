@@ -607,6 +607,8 @@ localizedStrings["HAR Import"] = "HAR Import";
 localizedStrings["HAR Import Error: %s"] = "HAR Import Error: %s";
 localizedStrings["HTML"] = "HTML";
 localizedStrings["HTML Attributes"] = "HTML Attributes";
+/* Placeholder text in an editable field for the name of a HTTP header */
+localizedStrings["Header @ Local Override Popover New Headers Data Grid Item"] = "Header";
 localizedStrings["Headers"] = "Headers";
 localizedStrings["Headers:"] = "Headers:";
 localizedStrings["Heading Level"] = "Heading Level";
@@ -1437,3 +1439,5 @@ localizedStrings["unsupported %s"] = "unsupported %s";
 localizedStrings["unsupported HAR version"] = "unsupported HAR version";
 localizedStrings["unsupported version"] = "unsupported version";
 localizedStrings["value"] = "value";
+/* Placeholder text in an editable field for the value of a HTTP header */
+localizedStrings["value @ Local Override Popover New Headers Data Grid Item"] = "value";
