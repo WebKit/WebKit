@@ -1226,10 +1226,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
     
     // Get the row and column range, so we can use them to find the headers.
-    std::pair<unsigned, unsigned> rowRange;
-    std::pair<unsigned, unsigned> columnRange;
-    tableCell->rowIndexRange(rowRange);
-    tableCell->columnIndexRange(columnRange);
+    auto rowRange = tableCell->rowIndexRange();
+    auto columnRange = tableCell->columnIndexRange();
 
     auto rowHeaders = table->rowHeaders();
     auto columnHeaders = table->columnHeaders();
@@ -1250,8 +1248,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     for (const auto& rowHeader : rowHeaders) {
         if (!is<AccessibilityTableCell>(*rowHeader))
             break;
-        std::pair<unsigned, unsigned> rowHeaderRange;
-        downcast<AccessibilityTableCell>(*rowHeader).rowIndexRange(rowHeaderRange);
+        auto rowHeaderRange = rowHeader->rowIndexRange();
         if (rowRangeIndex >= rowHeaderRange.first && rowRangeIndex < rowHeaderRange.first + rowHeaderRange.second) {
             if (AccessibilityObjectWrapper* wrapper = rowHeader->wrapper())
                 [headers addObject:wrapper];
@@ -1364,9 +1361,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     AccessibilityTableCell* tableCell = [self tableCellParent];
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
-    
-    std::pair<unsigned, unsigned> rowRange;
-    tableCell->rowIndexRange(rowRange);
+
+    auto rowRange = tableCell->rowIndexRange();
     return NSMakeRange(rowRange.first, rowRange.second);
 }
 
@@ -1378,9 +1374,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     AccessibilityTableCell* tableCell = [self tableCellParent];
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
-    
-    std::pair<unsigned, unsigned> columnRange;
-    tableCell->columnIndexRange(columnRange);
+
+    auto columnRange = tableCell->columnIndexRange();
     return NSMakeRange(columnRange.first, columnRange.second);
 }
 

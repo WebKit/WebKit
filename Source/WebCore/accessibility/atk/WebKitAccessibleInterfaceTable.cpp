@@ -120,8 +120,7 @@ static gint webkitAccessibleTableGetColumnAtIndex(AtkTable* table, gint index)
 
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
     if (axCell) {
-        std::pair<unsigned, unsigned> columnRange;
-        axCell->columnIndexRange(columnRange);
+        auto columnRange = axCell->columnIndexRange();
         return columnRange.first;
     }
     return -1;
@@ -134,8 +133,7 @@ static gint webkitAccessibleTableGetRowAtIndex(AtkTable* table, gint index)
 
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
     if (axCell) {
-        std::pair<unsigned, unsigned> rowRange;
-        axCell->rowIndexRange(rowRange);
+        auto rowRange = axCell->rowIndexRange();
         return rowRange.first;
     }
     return -1;
@@ -178,8 +176,7 @@ static gint webkitAccessibleTableGetColumnExtentAt(AtkTable* table, gint row, gi
 
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (axCell) {
-        std::pair<unsigned, unsigned> columnRange;
-        axCell->columnIndexRange(columnRange);
+        auto columnRange = axCell->columnIndexRange();
         return columnRange.second;
     }
     return 0;
@@ -192,8 +189,7 @@ static gint webkitAccessibleTableGetRowExtentAt(AtkTable* table, gint row, gint 
 
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (axCell) {
-        std::pair<unsigned, unsigned> rowRange;
-        axCell->rowIndexRange(rowRange);
+        auto rowRange = axCell->rowIndexRange();
         return rowRange.second;
     }
     return 0;
@@ -209,8 +205,7 @@ static AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint col
         auto columnHeaders = downcast<AccessibilityTable>(*accTable).columnHeaders();
 
         for (const auto& columnHeader : columnHeaders) {
-            std::pair<unsigned, unsigned> columnRange;
-            downcast<AccessibilityTableCell>(*columnHeader).columnIndexRange(columnRange);
+            auto columnRange = columnHeader->columnIndexRange();
             if (columnRange.first <= static_cast<unsigned>(column) && static_cast<unsigned>(column) < columnRange.first + columnRange.second)
                 return ATK_OBJECT(columnHeader->wrapper());
         }
@@ -228,8 +223,7 @@ static AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
         auto rowHeaders = downcast<AccessibilityTable>(*accTable).rowHeaders();
 
         for (const auto& rowHeader : rowHeaders) {
-            std::pair<unsigned, unsigned> rowRange;
-            downcast<AccessibilityTableCell>(*rowHeader).rowIndexRange(rowRange);
+            auto rowRange = rowHeader->rowIndexRange();
             if (rowRange.first <= static_cast<unsigned>(row) && static_cast<unsigned>(row) < rowRange.first + rowRange.second)
                 return ATK_OBJECT(rowHeader->wrapper());
         }

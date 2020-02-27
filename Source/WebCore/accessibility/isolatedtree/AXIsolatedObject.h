@@ -99,7 +99,9 @@ private:
         ARIARoleAttribute,
         ARIAOwnsElements,
         AXColumnCount,
+        AXColumnIndex,
         AXRowCount,
+        AXRowIndex,
         BlockquoteLevel,
         BoundingBoxRect,
         CanHaveSelectedChildren,
@@ -123,6 +125,7 @@ private:
         ColumnHeader,
         ColumnHeaders,
         ColumnIndex,
+        ColumnIndexRange,
         ComputedLabel,
         ComputedRoleString,
         CurrentState,
@@ -284,6 +287,7 @@ private:
         Rows,
         RowCount,
         RowHeaders,
+        RowIndexRange,
         SelectedChildren,
         SelectedRadioButton,
         SelectedTabItem,
@@ -330,8 +334,8 @@ private:
         AccessibilityTextSource textSource;
         Vector<AXID> textElements;
     };
-    
-    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>>;
+
+    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
@@ -350,6 +354,7 @@ private:
     template<typename T> T rectAttributeValue(AXPropertyName) const;
     template<typename T> Vector<T> vectorAttributeValue(AXPropertyName) const;
     template<typename T> OptionSet<T> optionSetAttributeValue(AXPropertyName) const;
+    template<typename T> std::pair<T, T> pairAttributeValue(AXPropertyName) const;
 
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
@@ -400,6 +405,15 @@ private:
     int axColumnCount() const override { return intAttributeValue(AXPropertyName::AXColumnCount); }
     int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
 
+    // Table cell support.
+    bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
+    // Returns the start location and row span of the cell.
+    std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
+    // Returns the start location and column span of the cell.
+    std::pair<unsigned, unsigned> columnIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::ColumnIndexRange); }
+    int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
+    int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
+
     bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
 
     // Table column support.
@@ -407,7 +421,6 @@ private:
     unsigned columnIndex() const override { return unsignedAttributeValue(AXPropertyName::ColumnIndex); }
     AXCoreObject* columnHeader() override { return objectAttributeValue(AXPropertyName::ColumnHeader); }
 
-    bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isGroup() const override { return boolAttributeValue(AXPropertyName::IsGroup); }
     bool isARIATreeGridRow() const override { return boolAttributeValue(AXPropertyName::IsARIATreeGridRow); }

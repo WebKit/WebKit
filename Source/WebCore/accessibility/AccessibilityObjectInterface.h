@@ -552,14 +552,21 @@ public:
     virtual int axColumnCount() const = 0;
     virtual int axRowCount() const = 0;
 
+    // Table cell support.
+    virtual bool isTableCell() const = 0;
+    // Returns the start location and row span of the cell.
+    virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
+    // Returns the start location and column span of the cell.
+    virtual std::pair<unsigned, unsigned> columnIndexRange() const = 0;
+    virtual int axColumnIndex() const = 0;
+    virtual int axRowIndex() const = 0;
+
     virtual bool isTableRow() const = 0;
 
     // Table column support.
     virtual bool isTableColumn() const = 0;
     virtual unsigned columnIndex() const = 0;
     virtual AXCoreObject* columnHeader() = 0;
-
-    virtual bool isTableCell() const = 0;
 
     virtual bool isFieldset() const = 0;
     virtual bool isGroup() const = 0;

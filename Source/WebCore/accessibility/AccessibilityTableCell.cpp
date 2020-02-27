@@ -165,8 +165,7 @@ bool AccessibilityTableCell::isColumnHeaderCell() const
         if (parentNode->hasTagName(tfootTag))
             return false;
         if (parentNode->hasTagName(tableTag) || parentNode->hasTagName(tbodyTag)) {
-            std::pair<unsigned, unsigned> rowRange;
-            rowIndexRange(rowRange);
+            auto rowRange = rowIndexRange();
             if (!rowRange.first)
                 return true;
             return false;
@@ -190,8 +189,7 @@ bool AccessibilityTableCell::isRowHeaderCell() const
     // Checking tableTag allows to check the case of direct row placement in the table and lets stop the loop at the table level.
     for (Node* parentNode = node(); parentNode; parentNode = parentNode->parentNode()) {
         if (parentNode->hasTagName(tfootTag) || parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tableTag)) {
-            std::pair<unsigned, unsigned> colRange;
-            columnIndexRange(colRange);
+            auto colRange = columnIndexRange();
             if (!colRange.first)
                 return true;
             return false;
@@ -222,12 +220,9 @@ bool AccessibilityTableCell::isTableCellInSameRowGroup(AccessibilityTableCell* o
 
 bool AccessibilityTableCell::isTableCellInSameColGroup(AccessibilityTableCell* tableCell)
 {
-    std::pair<unsigned, unsigned> colRange;
-    columnIndexRange(colRange);
-    
-    std::pair<unsigned, unsigned> otherColRange;
-    tableCell->columnIndexRange(otherColRange);
-    
+    auto colRange = columnIndexRange();
+    auto otherColRange = tableCell->columnIndexRange();
+
     if (colRange.first <= (otherColRange.first + otherColRange.second))
         return true;
     return false;
@@ -255,21 +250,15 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
     // If the headers attribute returned valid values, then do not further search for column headers.
     if (!headers.isEmpty())
         return headers;
-    
-    std::pair<unsigned, unsigned> rowRange;
-    rowIndexRange(rowRange);
-    
-    std::pair<unsigned, unsigned> colRange;
-    columnIndexRange(colRange);
-    
+
+    auto rowRange = rowIndexRange();
+    auto colRange = columnIndexRange();
+
     for (unsigned row = 0; row < rowRange.first; row++) {
         AccessibilityTableCell* tableCell = parent->cellForColumnAndRow(colRange.first, row);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
 
-        std::pair<unsigned, unsigned> childRowRange;
-        tableCell->rowIndexRange(childRowRange);
-            
         const AtomString& scope = tableCell->getAttribute(scopeAttr);
         if (scope == "colgroup" && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
@@ -287,11 +276,8 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
     if (!parent)
         return headers;
 
-    std::pair<unsigned, unsigned> rowRange;
-    rowIndexRange(rowRange);
-
-    std::pair<unsigned, unsigned> colRange;
-    columnIndexRange(colRange);
+    auto rowRange = rowIndexRange();
+    auto colRange = columnIndexRange();
 
     for (unsigned column = 0; column < colRange.first; column++) {
         AccessibilityTableCell* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
@@ -316,11 +302,12 @@ AccessibilityTableRow* AccessibilityTableCell::parentRow() const
     return downcast<AccessibilityTableRow>(parent);
 }
 
-void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const
+std::pair<unsigned, unsigned> AccessibilityTableCell::rowIndexRange() const
 {
+    std::pair<unsigned, unsigned> rowRange { 0, 1 };
     if (!is<RenderTableCell>(renderer()))
-        return;
-    
+        return rowRange;
+
     RenderTableCell& renderCell = downcast<RenderTableCell>(*m_renderer);
 
     // ARIA 1.1's aria-rowspan attribute is intended for cells and gridcells which are not contained
@@ -332,13 +319,16 @@ void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRan
     
     if (AccessibilityTableRow* parentRow = this->parentRow())
         rowRange.first = parentRow->rowIndex();
+
+    return rowRange;
 }
     
-void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
+std::pair<unsigned, unsigned> AccessibilityTableCell::columnIndexRange() const
 {
+    std::pair<unsigned, unsigned> columnRange { 0, 1 };
     if (!is<RenderTableCell>(renderer()))
-        return;
-    
+        return columnRange;
+
     const RenderTableCell& cell = downcast<RenderTableCell>(*m_renderer);
     columnRange.first = cell.table()->colToEffCol(cell.col());
 
@@ -347,9 +337,11 @@ void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& col
     // native host language value for the colspan, expose the ARIA value.
     columnRange.second = axColumnSpan();
     if (static_cast<int>(columnRange.second) != -1)
-        return;
+        return columnRange;
 
     columnRange.second = cell.table()->colToEffCol(cell.col() + cell.colSpan()) - columnRange.first;
+
+    return columnRange;
 }
     
 AccessibilityObject* AccessibilityTableCell::titleUIElement() const

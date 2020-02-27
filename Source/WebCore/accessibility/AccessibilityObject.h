@@ -171,13 +171,21 @@ public:
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
 
+    // Table cell support.
+    bool isTableCell() const override { return false; }
+    // Returns the start location and row span of the cell.
+    std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
+    // Returns the start location and column span of the cell.
+    std::pair<unsigned, unsigned> columnIndexRange() const override { return { 0, 1 }; }
+    int axColumnIndex() const override { return -1; }
+    int axRowIndex() const override { return -1; }
+
     bool isTableRow() const override { return false; }
 
     bool isTableColumn() const override { return false; }
     unsigned columnIndex() const override { return 0; }
     AXCoreObject* columnHeader() override { return nullptr; }
 
-    bool isTableCell() const override { return false; }
     bool isFieldset() const override { return false; }
     bool isGroup() const override { return false; }
     bool isARIATreeGridRow() const override { return false; }

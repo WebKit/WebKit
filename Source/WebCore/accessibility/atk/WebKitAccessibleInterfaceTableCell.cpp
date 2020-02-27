@@ -85,10 +85,7 @@ gint webkitAccessibleTableCellGetColumnSpan(AtkTableCell* cell)
     if (!is<AccessibilityTableCell>(axObject))
         return 0;
 
-    std::pair<unsigned, unsigned> columnRange;
-    downcast<AccessibilityTableCell>(*axObject).columnIndexRange(columnRange);
-
-    return columnRange.second;
+    return axObject->columnIndexRange().second;
 }
 
 gint webkitAccessibleTableCellGetRowSpan(AtkTableCell* cell)
@@ -100,10 +97,7 @@ gint webkitAccessibleTableCellGetRowSpan(AtkTableCell* cell)
     if (!is<AccessibilityTableCell>(axObject))
         return 0;
 
-    std::pair<unsigned, unsigned> rowRange;
-    downcast<AccessibilityTableCell>(*axObject).rowIndexRange(rowRange);
-
-    return rowRange.second;
+    return axObject->rowIndexRange().second;
 }
 
 gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gint* column)
@@ -115,23 +109,18 @@ gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gin
     if (!is<AccessibilityTableCell>(axObject))
         return false;
 
-    std::pair<unsigned, unsigned> columnRowRange;
     if (row) {
         // aria-rowindex is 1-based.
-        int rowIndex = downcast<AccessibilityTableCell>(*axObject).axRowIndex() - 1;
-        if (rowIndex <= -1) {
-            downcast<AccessibilityTableCell>(*axObject).rowIndexRange(columnRowRange);
-            rowIndex = columnRowRange.first;
-        }
+        int rowIndex = axObject->axRowIndex() - 1;
+        if (rowIndex <= -1)
+            rowIndex = axObject->rowIndexRange().first;
         *row = rowIndex;
     }
     if (column) {
         // aria-colindex is 1-based.
-        int columnIndex = downcast<AccessibilityTableCell>(*axObject).axColumnIndex() - 1;
-        if (columnIndex <= -1) {
-            downcast<AccessibilityTableCell>(*axObject).columnIndexRange(columnRowRange);
-            columnIndex = columnRowRange.first;
-        }
+        int columnIndex = axObject->axColumnIndex() - 1;
+        if (columnIndex <= -1)
+            columnIndex = axObject->columnIndexRange().first;
         *column = columnIndex;
     }
 

@@ -2758,29 +2758,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    if (is<AccessibilityTableCell>(*backingObject)) {
-        auto& cell = downcast<AccessibilityTableCell>(*backingObject);
+    if (backingObject->isTableCell()) {
         if ([attributeName isEqualToString:NSAccessibilityRowIndexRangeAttribute]) {
-            std::pair<unsigned, unsigned> rowRange;
-            cell.rowIndexRange(rowRange);
+            auto rowRange = backingObject->rowIndexRange();
             return [NSValue valueWithRange:NSMakeRange(rowRange.first, rowRange.second)];
         }
+
         if ([attributeName isEqualToString:NSAccessibilityColumnIndexRangeAttribute]) {
-            std::pair<unsigned, unsigned> columnRange;
-            cell.columnIndexRange(columnRange);
+            auto columnRange = backingObject->columnIndexRange();
             return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
         }
+
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute])
-            return convertToNSArray(cell.columnHeaders());
+            return convertToNSArray(backingObject->columnHeaders());
 
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute])
-            return convertToNSArray(cell.rowHeaders());
+            return convertToNSArray(backingObject->rowHeaders());
 
         if ([attributeName isEqualToString:NSAccessibilityARIAColumnIndexAttribute])
-            return @(cell.axColumnIndex());
+            return @(backingObject->axColumnIndex());
 
         if ([attributeName isEqualToString:NSAccessibilityARIARowIndexAttribute])
-            return @(cell.axRowIndex());
+            return @(backingObject->axRowIndex());
     }
 
     if (backingObject->isTree()) {

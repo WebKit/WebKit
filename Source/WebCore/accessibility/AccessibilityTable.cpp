@@ -637,19 +637,16 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
             ASSERT(is<AccessibilityTableCell>(*child));
             if (!is<AccessibilityTableCell>(*child))
                 continue;
-            
-            std::pair<unsigned, unsigned> columnRange;
-            std::pair<unsigned, unsigned> rowRange;
-            auto& tableCellChild = downcast<AccessibilityTableCell>(*child);
-            tableCellChild.columnIndexRange(columnRange);
-            tableCellChild.rowIndexRange(rowRange);
-            
+
+            auto columnRange = child->columnIndexRange();
+            auto rowRange = child->rowIndexRange();
+
             if ((column >= columnRange.first && column < (columnRange.first + columnRange.second))
                 && (row >= rowRange.first && row < (rowRange.first + rowRange.second)))
-                return &tableCellChild;
+                return downcast<AccessibilityTableCell>(child);
         }
     }
-    
+
     return nullptr;
 }
 

@@ -51,10 +51,10 @@ public:
     void appendChild(AccessibilityObject*);
     
     void addChildren() override;
-    
-    int axColumnIndex() const;
-    int axRowIndex() const;
-    
+
+    int axColumnIndex() const override;
+    int axRowIndex() const override;
+
 protected:
     explicit AccessibilityTableRow(RenderObject*);
 

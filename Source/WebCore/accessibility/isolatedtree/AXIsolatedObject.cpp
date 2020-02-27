@@ -114,7 +114,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
-    setProperty(AXPropertyName::IsTableCell, object.isTableCell());
     setProperty(AXPropertyName::IsTableRow, object.isTableRow());
     setProperty(AXPropertyName::IsTextControl, object.isTextControl());
     setProperty(AXPropertyName::IsTree, object.isTree());
@@ -234,6 +233,16 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
         setProperty(AXPropertyName::AXRowCount, object.axRowCount());
+    }
+
+    if (object.isTableCell()) {
+        setProperty(AXPropertyName::IsTableCell, object.isTableCell());
+        setProperty(AXPropertyName::ColumnIndexRange, object.columnIndexRange());
+        setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
+        setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
+        setObjectVectorProperty(AXPropertyName::RowHeaders, object.rowHeaders());
+        setProperty(AXPropertyName::AXColumnIndex, object.axColumnIndex());
+        setProperty(AXPropertyName::AXRowIndex, object.axRowIndex());
     }
 
     if (object.isTableColumn()) {
@@ -739,6 +748,16 @@ OptionSet<T> AXIsolatedObject::optionSetAttributeValue(AXPropertyName propertyNa
     return WTF::switchOn(value,
         [] (T& typedValue) { return typedValue; },
         [] (auto&) { return OptionSet<T>(); }
+    );
+}
+
+template<typename T>
+std::pair<T, T> AXIsolatedObject::pairAttributeValue(AXPropertyName propertyName) const
+{
+    auto value = m_attributeMap.get(propertyName);
+    return WTF::switchOn(value,
+        [] (std::pair<T, T>& typedValue) { return typedValue; },
+        [] (auto&) { return std::pair<T, T>(0, 1); }
     );
 }
 
