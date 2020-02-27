@@ -1,3 +1,12 @@
+2020-02-27  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk2 ] webgpu/whlsl/return-local-variable.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207700
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations: Correcting test expectations.
+
 2020-02-27  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION (r256910?) [ Mac wk1 ] fast/canvas/webgl/canvas-webgl-page-cache.html is flaky crashing.
