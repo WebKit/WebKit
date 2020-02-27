@@ -33,6 +33,9 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
+@interface WKWebView (Details)
+- (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler;
+@end
 
 TEST(WKWebView, FindAPIForwardsNoMatch)
 {
