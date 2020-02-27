@@ -4106,9 +4106,9 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-bor
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-letter-space-not-selected.html [ ImageOnlyFailure ]
 
-webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Crash ]
-webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Crash ]
-webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Crash ]
+webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Skip ]
+webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Skip ]
+webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
 
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ ImageOnlyFailure ]

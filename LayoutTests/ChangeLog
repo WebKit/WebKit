@@ -1,3 +1,11 @@
+2020-02-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CSS Backgrounds] Skip WPT tests always crashing in Debug.
+
+        Unreviewed gardening. See https://webkit.org/b/206579#c1
+
+        * TestExpectations:
+
 2020-02-27  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for images
