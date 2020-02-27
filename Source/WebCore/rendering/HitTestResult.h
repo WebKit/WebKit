@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006, 2014, 2020 Apple Inc.
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -21,14 +21,10 @@
 
 #pragma once
 
-#include "FloatRect.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
-#include "LayoutRect.h"
-#include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -44,7 +40,7 @@ enum class HitTestProgress { Stop, Continue };
 class HitTestResult {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef ListHashSet<RefPtr<Node>> NodeSet;
+    using NodeSet = ListHashSet<RefPtr<Node>>;
 
     WEBCORE_EXPORT HitTestResult();
     WEBCORE_EXPORT explicit HitTestResult(const LayoutPoint&);
@@ -53,14 +49,25 @@ public:
     WEBCORE_EXPORT explicit HitTestResult(const HitTestLocation&);
     WEBCORE_EXPORT HitTestResult(const HitTestResult&);
     WEBCORE_EXPORT ~HitTestResult();
+
     WEBCORE_EXPORT HitTestResult& operator=(const HitTestResult&);
 
+    WEBCORE_EXPORT void setInnerNode(Node*);
     Node* innerNode() const { return m_innerNode.get(); }
+
+    void setInnerNonSharedNode(Node*);
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
+
     WEBCORE_EXPORT Element* innerNonSharedElement() const;
+
+    void setURLElement(Element*);
     Element* URLElement() const { return m_innerURLElement.get(); }
+
+    void setScrollbar(Scrollbar*);
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
+
     bool isOverWidget() const { return m_isOverWidget; }
+    void setIsOverWidget(bool isOverWidget) { m_isOverWidget = isOverWidget; }
 
     WEBCORE_EXPORT String linkSuggestedFilename() const;
 
@@ -83,12 +90,6 @@ public:
     void setToNonUserAgentShadowAncestor();
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
-
-    WEBCORE_EXPORT void setInnerNode(Node*);
-    void setInnerNonSharedNode(Node*);
-    void setURLElement(Element*);
-    void setScrollbar(Scrollbar*);
-    void setIsOverWidget(bool b) { m_isOverWidget = b; }
 
     WEBCORE_EXPORT Frame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
@@ -158,7 +159,7 @@ private:
                               // determine where inside the renderer we hit on subsequent operations.
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
-    bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
+    bool m_isOverWidget { false }; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
 
     mutable std::unique_ptr<NodeSet> m_listBasedTestResult;
 };
