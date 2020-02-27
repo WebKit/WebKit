@@ -1822,8 +1822,10 @@ void AccessibilityObject::ariaTreeItemContent(AccessibilityChildrenVector& resul
     }
 }
 
-void AccessibilityObject::ariaTreeItemDisclosedRows(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
 {
+    AccessibilityChildrenVector result;
+
     for (const auto& obj : children()) {
         // Add tree items as the rows.
         if (obj->roleValue() == AccessibilityRole::TreeItem)
@@ -1831,9 +1833,11 @@ void AccessibilityObject::ariaTreeItemDisclosedRows(AccessibilityChildrenVector&
         // If it's not a tree item, then descend into the group to find more tree items.
         else 
             obj->ariaTreeRows(result);
-    }    
+    }
+
+    return result;
 }
-    
+
 const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRole role)
 {
     switch (role) {

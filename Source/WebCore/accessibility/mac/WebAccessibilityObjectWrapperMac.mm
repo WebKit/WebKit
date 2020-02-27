@@ -2818,25 +2818,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
             return nil;
         }
-        if (is<AccessibilityTableRow>(*backingObject)) {
-            if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-                return [NSNumber numberWithInt:downcast<AccessibilityTableRow>(*backingObject).rowIndex()];
-        }
+
+        if (backingObject->isTableRow())
+            return [NSNumber numberWithInt:backingObject->rowIndex()];
     }
 
     // The rows that are considered inside this row.
     if ([attributeName isEqualToString:NSAccessibilityDisclosedRowsAttribute]) {
-        if (backingObject->isTreeItem()) {
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            backingObject->ariaTreeItemDisclosedRows(rowsCopy);
-            return convertToNSArray(rowsCopy);
-        }
-
-        if (is<AccessibilityARIAGridRow>(*backingObject)) {
-            AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            downcast<AccessibilityARIAGridRow>(*backingObject).disclosedRows(rowsCopy);
-            return convertToNSArray(rowsCopy);
-        }
+        if (backingObject->isTreeItem() || backingObject->isARIATreeGridRow())
+            return convertToNSArray(backingObject->disclosedRows());
     }
 
     // The row that contains this row. It should be the same as the first parent that is a treeitem.
@@ -2854,11 +2844,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return nil;
         }
 
-        if (is<AccessibilityARIAGridRow>(*backingObject)) {
-            AXCoreObject* row = downcast<AccessibilityARIAGridRow>(*backingObject).disclosedByRow();
-            if (!row)
-                return nil;
-            return row->wrapper();
+        if (backingObject->isARIATreeGridRow()) {
+            auto* row = backingObject->disclosedByRow();
+            return row ? row->wrapper() : nil;
         }
     }
 

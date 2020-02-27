@@ -94,7 +94,6 @@ private:
         ARIAFlowToElements,
         ARIALandmarkRoleDescription,
         ARIATreeItemContent,
-        ARIATreeItemDisclosedRows,
         ARIATreeRows,
         ARIARoleAttribute,
         ARIAOwnsElements,
@@ -133,6 +132,8 @@ private:
         DatetimeAttributeValue,
         DecrementButton,
         Description,
+        DisclosedByRow,
+        DisclosedRows,
         DocumentEncoding,
         DocumentURI,
         EditableAncestor,
@@ -287,6 +288,7 @@ private:
         Rows,
         RowCount,
         RowHeaders,
+        RowIndex,
         RowIndexRange,
         SelectedChildren,
         SelectedRadioButton,
@@ -414,16 +416,22 @@ private:
     int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
     int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
 
-    bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
-
     // Table column support.
     bool isTableColumn() const override { return boolAttributeValue(AXPropertyName::IsTableColumn); }
     unsigned columnIndex() const override { return unsignedAttributeValue(AXPropertyName::ColumnIndex); }
     AXCoreObject* columnHeader() override { return objectAttributeValue(AXPropertyName::ColumnHeader); }
 
+    // Table row support.
+    bool isTableRow() const override { return boolAttributeValue(AXPropertyName::IsTableRow); }
+    unsigned rowIndex() const override { return unsignedAttributeValue(AXPropertyName::RowIndex); }
+
+    // ARIA tree/grid row support.
+    bool isARIATreeGridRow() const override { return boolAttributeValue(AXPropertyName::IsARIATreeGridRow); }
+    AccessibilityChildrenVector disclosedRows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DisclosedRows)); }
+    AXCoreObject* disclosedByRow() const override { return objectAttributeValue(AXPropertyName::DisclosedByRow); }
+
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isGroup() const override { return boolAttributeValue(AXPropertyName::IsGroup); }
-    bool isARIATreeGridRow() const override { return boolAttributeValue(AXPropertyName::IsARIATreeGridRow); }
     bool isMenuList() const override { return boolAttributeValue(AXPropertyName::IsMenuList); }
     bool isMenuListPopup() const override { return boolAttributeValue(AXPropertyName::IsMenuListPopup); }
     bool isMenuListOption() const override { return boolAttributeValue(AXPropertyName::IsMenuListOption); }
@@ -526,7 +534,6 @@ private:
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const override { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     void ariaTreeRows(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }
-    void ariaTreeItemDisclosedRows(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeItemDisclosedRows, children); }
     void ariaTreeItemContent(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeItemContent, children); }
     URL url() const override { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const override { return stringAttributeValue(AXPropertyName::AccessKey); }

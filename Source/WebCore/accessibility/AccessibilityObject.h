@@ -180,15 +180,22 @@ public:
     int axColumnIndex() const override { return -1; }
     int axRowIndex() const override { return -1; }
 
-    bool isTableRow() const override { return false; }
-
+    // Table column support.
     bool isTableColumn() const override { return false; }
     unsigned columnIndex() const override { return 0; }
     AXCoreObject* columnHeader() override { return nullptr; }
 
+    // Table row support.
+    bool isTableRow() const override { return false; }
+    unsigned rowIndex() const override { return 0; }
+
+    // ARIA tree/grid row support.
+    bool isARIATreeGridRow() const override { return false; }
+    AccessibilityChildrenVector disclosedRows() override; // ARIATreeItem implementation. AccessibilityARIAGridRow overrides this method.
+    AXCoreObject* disclosedByRow() const override { return nullptr; }
+
     bool isFieldset() const override { return false; }
     bool isGroup() const override { return false; }
-    bool isARIATreeGridRow() const override { return false; }
     bool isImageMapLink() const override { return false; }
     bool isMenuList() const override { return false; }
     bool isMenuListPopup() const override { return false; }
@@ -600,8 +607,6 @@ public:
 
     // Used by an ARIA tree to get all its rows.
     void ariaTreeRows(AccessibilityChildrenVector&) override;
-    // Used by an ARIA tree item to get all of its direct rows that it can disclose.
-    void ariaTreeItemDisclosedRows(AccessibilityChildrenVector&) override;
     // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
     void ariaTreeItemContent(AccessibilityChildrenVector&) override;
 

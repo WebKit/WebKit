@@ -60,7 +60,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::ElementRect, object.elementRect());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::IsARIATreeGridRow, object.isARIATreeGridRow());
     setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
     setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
@@ -114,7 +113,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
-    setProperty(AXPropertyName::IsTableRow, object.isTableRow());
     setProperty(AXPropertyName::IsTextControl, object.isTextControl());
     setProperty(AXPropertyName::IsTree, object.isTree());
     setProperty(AXPropertyName::IsUnorderedList, object.isUnorderedList());
@@ -217,7 +215,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
 
     if (object.isTable()) {
-        setProperty(AXPropertyName::IsTable, object.isTable());
+        setProperty(AXPropertyName::IsTable, true);
         setProperty(AXPropertyName::IsExposable, object.isExposable());
         setProperty(AXPropertyName::IsDataTable, object.isDataTable());
         setProperty(AXPropertyName::TableLevel, object.tableLevel());
@@ -236,7 +234,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     }
 
     if (object.isTableCell()) {
-        setProperty(AXPropertyName::IsTableCell, object.isTableCell());
+        setProperty(AXPropertyName::IsTableCell, true);
         setProperty(AXPropertyName::ColumnIndexRange, object.columnIndexRange());
         setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
         setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
@@ -246,10 +244,22 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     }
 
     if (object.isTableColumn()) {
-        setProperty(AXPropertyName::IsTableColumn, object.isTableColumn());
+        setProperty(AXPropertyName::IsTableColumn, true);
         setProperty(AXPropertyName::ColumnIndex, object.columnIndex());
         setProperty(AXPropertyName::ColumnHeader, object.columnHeader());
+    } else if (object.isTableRow()) {
+        setProperty(AXPropertyName::IsTableRow, true);
+        setProperty(AXPropertyName::RowIndex, object.rowIndex());
     }
+
+    if (object.isARIATreeGridRow()) {
+        setProperty(AXPropertyName::IsARIATreeGridRow, true);
+        setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
+        setProperty(AXPropertyName::DisclosedByRow, object.disclosedByRow());
+    }
+
+    if (object.isTreeItem())
+        setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
 
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
@@ -269,10 +279,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     AccessibilityChildrenVector ariaTreeRows;
     object.ariaTreeRows(ariaTreeRows);
     setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
-
-    AccessibilityChildrenVector ariaTreeItemDisclosedRows;
-    object.ariaTreeItemDisclosedRows(ariaTreeItemDisclosedRows);
-    setObjectVectorProperty(AXPropertyName::ARIATreeItemDisclosedRows, ariaTreeItemDisclosedRows);
 
     AccessibilityChildrenVector ariaTreeItemContent;
     object.ariaTreeItemContent(ariaTreeItemContent);

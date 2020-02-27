@@ -55,19 +55,20 @@ bool AccessibilityARIAGridRow::isARIATreeGridRow() const
     return parent->isTreeGrid();
 }
     
-void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclosedRows)
+AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRows()
 {
+    AccessibilityChildrenVector disclosedRows;
     // The contiguous disclosed rows will be the rows in the table that 
     // have an aria-level of plus 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
     if (!is<AccessibilityTable>(*parent) || !downcast<AccessibilityTable>(*parent).isExposable())
-        return;
+        return disclosedRows;
 
     // Search for rows that match the correct level. 
     // Only take the subsequent rows from this one that are +1 from this row's level.
     int index = rowIndex();
     if (index < 0)
-        return;
+        return disclosedRows;
 
     unsigned level = hierarchicalLevel();
     auto allRows = parent->rows();
@@ -80,6 +81,8 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
 
         disclosedRows.append(row);
     }
+
+    return disclosedRows;
 }
     
 AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
