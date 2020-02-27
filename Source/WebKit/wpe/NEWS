@@ -1,4 +1,21 @@
 ==================
+WPE WebKit 2.27.91
+==================
+
+What's new in WPE WebKit 2.27.91?
+
+  - Add support for 2D-axis smooth motion input events.
+  - Add support for exporting decoded frames as DMA-BUF directly to the video
+    sink when GStreamer places them in EGL memory.
+  - Update User-Agent quirks to fix the "Unsupported browser" message in
+    several Google services.
+  - Install the QtWPE QML plug-in in a standard location.
+  - Fix QtWPE API headers.
+  - Fix several compilation warnings with GCC 10.
+  - Fix the build with GCC 10.
+  - Fix several crashes and rendering issues.
+
+==================
 WPE WebKit 2.27.90
 ==================
 
