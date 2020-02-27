@@ -1550,6 +1550,8 @@ String WebFrameLoaderClient::userAgent(const URL& url)
 
 NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAction& action, WebCore::FormState* formState) const
 {
+    using namespace WebCore;
+
     unsigned modifierFlags = 0;
 #if !PLATFORM(IOS_FAMILY)
     auto keyStateEventData = action.keyStateEventData();
@@ -1577,8 +1579,9 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
         nil];
 
     if (auto mouseEventData = action.mouseEventData()) {
+        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::DisallowUserAgentShadowContent | WebCore::HitTestRequest::AllowChildFrameContent)];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)];
         [result setObject:element forKey:WebActionElementKey];
         [element release];
 

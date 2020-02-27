@@ -143,11 +143,14 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
 {
-    WebCore::Frame* coreFrame = core([_webView _selectedOrMainFrame]);
+    using namespace WebCore;
+
+    auto* coreFrame = core([_webView _selectedOrMainFrame]);
     if (!coreFrame)
         return;
 
-    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(viewPoint), WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::DisallowUserAgentShadowContent | WebCore::HitTestRequest::AllowChildFrameContent);
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(viewPoint), hitType);
     coreFrame->mainFrame().eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::PerformedHitTest);
 
     if (auto* element = _hitTestResult.targetElement())

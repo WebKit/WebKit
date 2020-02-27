@@ -7080,14 +7080,17 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
     return [self elementAtPoint:point allowShadowContent:NO];
 }
 
-- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allowShadowContent
 {
+    using namespace WebCore;
+
     auto* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
-    WebCore::HitTestRequest::HitTestRequestType hitType = WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::AllowChildFrameContent
-        | (allow ? 0 : WebCore::HitTestRequest::DisallowUserAgentShadowContent);
-    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(point), hitType)] autorelease];
+    OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    if (!allowShadowContent)
+        hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
+    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint { point }, hitType)] autorelease];
 }
 
 - (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches

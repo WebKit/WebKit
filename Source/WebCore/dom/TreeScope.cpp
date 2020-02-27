@@ -395,13 +395,9 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     if (!absolutePoint)
         return elements;
 
-    HitTestRequest request(HitTestRequest::ReadOnly
-        | HitTestRequest::Active
-        | HitTestRequest::DisallowUserAgentShadowContent
-        | HitTestRequest::CollectMultipleElements
-        | HitTestRequest::IncludeAllElementsUnderPoint);
-    HitTestResult result(absolutePoint.value());
-    documentScope().hitTest(request, result);
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::CollectMultipleElements, HitTestRequest::IncludeAllElementsUnderPoint };
+    HitTestResult result { absolutePoint.value() };
+    documentScope().hitTest(hitType, result);
 
     Node* lastNode = nullptr;
     for (const auto& listBasedNode : result.listBasedTestResult()) {

@@ -2206,19 +2206,19 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 
     Node* innerNode = nullptr;
     
-    // locate the node containing the point
+    // Locate the node containing the point
+    // FIXME: Remove this loop and instead add HitTestRequest::AllowVisibleChildFrameContentOnly to the hit test request type.
     LayoutPoint pointResult;
     while (1) {
-        LayoutPoint ourpoint;
+        LayoutPoint pointToUse;
 #if PLATFORM(MAC)
-        ourpoint = frameView->screenToContents(point);
+        pointToUse = frameView->screenToContents(point);
 #else
-        ourpoint = point;
+        pointToUse = point;
 #endif
-        HitTestRequest request(HitTestRequest::ReadOnly |
-                               HitTestRequest::Active);
-        HitTestResult result(ourpoint);
-        renderView->document().hitTest(request, result);
+        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active };
+        HitTestResult result { pointToUse };
+        renderView->document().hitTest(hitType, result);
         innerNode = result.innerNode();
         if (!innerNode)
             return VisiblePosition();
@@ -2427,9 +2427,9 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
 
     RenderLayer* layer = downcast<RenderBox>(*m_renderer).layer();
      
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
-    HitTestResult hitTestResult = HitTestResult(point);
-    layer->hitTest(request, hitTestResult);
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AccessibilityHitTest };
+    HitTestResult hitTestResult { point };
+    layer->hitTest(hitType, hitTestResult);
     Node* node = hitTestResult.innerNode();
     if (!node)
         return nullptr;
