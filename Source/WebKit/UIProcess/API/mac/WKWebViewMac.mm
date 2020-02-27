@@ -1543,7 +1543,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo
 {
-    return [self printOperationWithPrintInfo:printInfo];
+    if (auto webFrameProxy = _page->mainFrame())
+        return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
+    return nil;
 }
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle
