@@ -134,6 +134,8 @@ private:
         PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
         PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeValues(const Box&, MarginType) const;
 
+        PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values, PositiveAndNegativeVerticalMargin::Values) const;
+
         bool hasClearance(const Box&) const;
 
         LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }

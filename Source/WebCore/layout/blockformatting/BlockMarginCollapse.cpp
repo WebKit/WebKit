@@ -427,7 +427,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
     return true;
 }
 
-static PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values a, PositiveAndNegativeVerticalMargin::Values b)
+PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values a, PositiveAndNegativeVerticalMargin::Values b) const
 {
     PositiveAndNegativeVerticalMargin::Values computedValues;
     if (a.positive && b.positive)
@@ -491,9 +491,9 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
         auto previousSiblingPositiveNegativeMargin = blockFormattingState.positiveAndNegativeVerticalMargin(previousSibling);
         auto positiveNegativeMarginBefore = blockFormattingState.positiveAndNegativeVerticalMargin(*currentBox).before;
 
-        previousSiblingPositiveNegativeMargin.after = computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, previousSiblingPositiveNegativeMargin.after);
+        previousSiblingPositiveNegativeMargin.after = marginCollapse.computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, previousSiblingPositiveNegativeMargin.after);
         if (marginsCollapseThrough) {
-            previousSiblingPositiveNegativeMargin.before = computedPositiveAndNegativeMargin(previousSiblingPositiveNegativeMargin.before, previousSiblingPositiveNegativeMargin.after);
+            previousSiblingPositiveNegativeMargin.before = marginCollapse.computedPositiveAndNegativeMargin(previousSiblingPositiveNegativeMargin.before, previousSiblingPositiveNegativeMargin.after);
             previousSiblingPositiveNegativeMargin.after = previousSiblingPositiveNegativeMargin.before;
         }
         blockFormattingState.setPositiveAndNegativeVerticalMargin(previousSibling, previousSiblingPositiveNegativeMargin);
