@@ -157,7 +157,7 @@ NS_ASSUME_NONNULL_END
 @dynamic delegate;
 - (__nullable id<NSURLSessionDelegate>)delegate
 {
-    return _delegate.get();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<NSURLSessionDelegate>)delegate

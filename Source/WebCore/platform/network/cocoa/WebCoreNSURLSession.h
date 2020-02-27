@@ -32,6 +32,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @class NSNetService;
 @class NSOperationQueue;
@@ -58,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @private
     RefPtr<WebCore::PlatformMediaResourceLoader> _loader;
-    RetainPtr<id<NSURLSessionDelegate>> _delegate;
+    WeakObjCPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
     RetainPtr<NSString> _sessionDescription;
     HashSet<RetainPtr<CFTypeRef>> _dataTasks;
@@ -71,7 +72,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 }
 - (id)initWithResourceLoader:(WebCore::PlatformMediaResourceLoader&)loader delegate:(id<NSURLSessionTaskDelegate>)delegate delegateQueue:(NSOperationQueue*)queue;
 @property (readonly, retain) NSOperationQueue *delegateQueue;
-@property (nullable, readonly, retain) id <NSURLSessionDelegate> delegate;
+@property (nullable, readonly) id <NSURLSessionDelegate> delegate;
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
 @property (copy) NSString *sessionDescription;
 @property (readonly) BOOL didPassCORSAccessChecks;
