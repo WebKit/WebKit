@@ -116,6 +116,35 @@ TEST(DragAndDropTests, ExposeMultipleURLsInDataTransfer)
     EXPECT_WK_STREQ("https://webkit.org/\nhttps://apple.com/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
 }
 
+TEST(DragAndDropTests, DragAndDropOnEmptyView)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    simulator.get().dragDestinationAction = WKDragDestinationActionAny;
+    auto webView = [simulator webView];
+
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard writeObjects:@[ url ]];
+    [simulator setExternalDragPasteboard:pasteboard];
+#else
+    auto urlItem = adoptNS([[NSItemProvider alloc] initWithObject:url]);
+    urlItem.get().preferredPresentationStyle = UIPreferredPresentationStyleInline;
+    [simulator setExternalItemProviders:@[ urlItem.get() ]];
+#endif
+
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
+
+    __block bool finished = false;
+    [webView performAfterLoading:^{
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+
+    EXPECT_WK_STREQ("Simple HTML file.", [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
+}
+
 TEST(DragAndDropTests, PreventingMouseDownShouldPreventDragStart)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);

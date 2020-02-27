@@ -1,3 +1,44 @@
+2020-02-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r257364. rdar://problem/59826931
+
+    REGRESSION (r256882): Can't drag an HTML file into a new (empty) Safari tab
+    https://bugs.webkit.org/show_bug.cgi?id=208199
+    <rdar://problem/59746887>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    Make sure we launch the initial WKWebView's WebProcess when a drag enters the view, so that the drag & drop
+    logic still works on empty views.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::dragEntered):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257364 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-25  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r256882): Can't drag an HTML file into a new (empty) Safari tab
+            https://bugs.webkit.org/show_bug.cgi?id=208199
+            <rdar://problem/59746887>
+
+            Reviewed by Alex Christensen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+            (TEST):
+
 2020-02-21  Jonathan Bedard  <jbedard@apple.com>
 
         Build DumpRenderTree and WebKitTestRunner for macCatalyst

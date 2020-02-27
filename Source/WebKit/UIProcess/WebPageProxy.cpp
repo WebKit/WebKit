@@ -2329,6 +2329,7 @@ void WebPageProxy::layerTreeCommitComplete()
 #if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName)
 {
+    launchInitialProcessIfNecessary();
     performDragControllerAction(DragControllerAction::Entered, dragData, dragStorageName, { }, { });
 }
 
