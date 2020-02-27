@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 include(WebKitCommon)
 include(target/TargetWTF)
 include(target/TargetJavaScriptCore)
+include(target/PAL)
 set_property(DIRECTORY . PROPERTY FOLDER "WebKitLegacy")
 
 set(WebKitLegacy_SOURCES
@@ -29,9 +30,9 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(WebKitLegacy_PRIVATE_LIBRARIES
-    WebKit::JavaScriptCore
     WebCore${DEBUG_SUFFIX}
-    PAL${DEBUG_SUFFIX}
+    WebKit::JavaScriptCore
+    WebKit::PAL
 )
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)

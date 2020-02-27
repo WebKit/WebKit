@@ -1,5 +1,16 @@
 2020-02-27  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] Add WebKit::PAL target
+        https://bugs.webkit.org/show_bug.cgi?id=198493
+
+        Reviewed by Michael Catanzaro.
+
+        Define WebKit::PAL target for Apple internal Windows builds.
+
+        * Source/cmake/target/PAL.cmake: Added.
+
+2020-02-27  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Use WEBKIT_EXECUTABLE in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=206894
 

@@ -1,3 +1,16 @@
+2020-02-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::PAL target
+        https://bugs.webkit.org/show_bug.cgi?id=198493
+
+        Reviewed by Michael Catanzaro.
+
+        Define WebKit::PAL target.
+
+        * pal/CMakeLists.txt:
+        * pal/PlatformFTW.cmake:
+        * pal/PlatformWinCairo.cmake:
+
 2020-02-22  Jer Noble  <jer.noble@apple.com>
 
         Stop using QTKit for rendering WK1 video fullscreen controls

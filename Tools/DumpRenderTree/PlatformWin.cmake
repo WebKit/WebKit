@@ -61,6 +61,8 @@ list(APPEND TestNetscapePlugIn_LIBRARIES
 )
 
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
+    # FIXME: Remove this when cleaning up dependencies https://bugs.webkit.org/show_bug.cgi?id=196734
+    ${PAL_FRAMEWORK_HEADERS_DIR}
     win
     TestNetscapePlugIn
     TestNetscapePlugIn/ForwardingHeaders
