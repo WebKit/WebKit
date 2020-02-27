@@ -321,27 +321,24 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_setBoundInterfaceIdentifier:(NSString *)identifier
 {
-    _websiteDataStore->setBoundInterfaceIdentifier(identifier);
 }
 
 - (NSString *)_boundInterfaceIdentifier
 {
-    return _websiteDataStore->boundInterfaceIdentifier();
+    return nil;
 }
 
 - (void)_setAllowsCellularAccess:(BOOL)allows
 {
-    _websiteDataStore->setAllowsCellularAccess(allows ? WebKit::AllowsCellularAccess::Yes : WebKit::AllowsCellularAccess::No);
 }
 
 - (BOOL)_allowsCellularAccess
 {
-    return _websiteDataStore->allowsCellularAccess() == WebKit::AllowsCellularAccess::Yes;
+    return YES;
 }
 
 - (void)_setProxyConfiguration:(NSDictionary *)configuration
 {
-    _websiteDataStore->setProxyConfiguration((__bridge CFDictionaryRef)configuration);
 }
 
 - (NSString *)_sourceApplicationBundleIdentifier
@@ -377,7 +374,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (NSDictionary *)_proxyConfiguration
 {
-    return (__bridge NSDictionary *)_websiteDataStore->proxyConfiguration();
+    return nil;
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory

@@ -150,9 +150,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
-        boundInterfaceIdentifier(),
-        allowsCellularAccess(),
-        proxyConfiguration(),
+        configuration().boundInterfaceIdentifier(),
+        configuration().allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No,
+        configuration().proxyConfiguration(),
         sourceApplicationBundleIdentifier(),
         sourceApplicationSecondaryIdentifier(),
         shouldLogCookieInformation,

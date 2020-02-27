@@ -235,7 +235,7 @@ IPC::Connection* WebPageProxy::paymentCoordinatorConnection(const WebPaymentCoor
 
 const String& WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().boundInterfaceIdentifier();
+    return websiteDataStore().configuration().boundInterfaceIdentifier();
 }
 
 const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)

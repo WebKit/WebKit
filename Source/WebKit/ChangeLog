@@ -1,3 +1,33 @@
+2020-02-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WebsiteDataStore setters for allowsCellularAccess, proxyConfiguration, and boundInterfaceIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=206390
+
+        Reviewed by Chris Dumez.
+
+        The WKWebsiteDataStore SPI was deprecated with replacement on _WKWebsiteDataStoreConfiguration,
+        and the replacements were adopted in rdar://problem/58359766
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setBoundInterfaceIdentifier:]):
+        (-[WKWebsiteDataStore _boundInterfaceIdentifier]):
+        (-[WKWebsiteDataStore _setAllowsCellularAccess:]):
+        (-[WKWebsiteDataStore _allowsCellularAccess]):
+        (-[WKWebsiteDataStore _setProxyConfiguration:]):
+        (-[WKWebsiteDataStore _proxyConfiguration]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::networkingHasBegun):
+        (WebKit::WebsiteDataStore::setBoundInterfaceIdentifier): Deleted.
+        (WebKit::WebsiteDataStore::boundInterfaceIdentifier): Deleted.
+        (WebKit::WebsiteDataStore::setAllowsCellularAccess): Deleted.
+        (WebKit::WebsiteDataStore::allowsCellularAccess): Deleted.
+        (WebKit::WebsiteDataStore::setProxyConfiguration): Deleted.
+        (WebKit::WebsiteDataStore::proxyConfiguration): Deleted.
+
 2020-02-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed unified source builds fix.

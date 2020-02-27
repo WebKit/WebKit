@@ -224,9 +224,6 @@ public:
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
 
-    void setBoundInterfaceIdentifier(String&& identifier) { m_resolvedConfiguration->setBoundInterfaceIdentifier(WTFMove(identifier)); }
-    const String& boundInterfaceIdentifier() { return m_resolvedConfiguration->boundInterfaceIdentifier(); }
-
     const String& sourceApplicationBundleIdentifier() const { return m_resolvedConfiguration->sourceApplicationBundleIdentifier(); }
     bool setSourceApplicationBundleIdentifier(String&&);
 
@@ -234,14 +231,6 @@ public:
     bool setSourceApplicationSecondaryIdentifier(String&&);
 
     void networkingHasBegun() { m_networkingHasBegun = true; }
-    
-    void setAllowsCellularAccess(AllowsCellularAccess allows) { m_resolvedConfiguration->setAllowsCellularAccess(allows == AllowsCellularAccess::Yes); }
-    AllowsCellularAccess allowsCellularAccess() { return m_resolvedConfiguration->allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No; }
-
-#if PLATFORM(COCOA)
-    void setProxyConfiguration(CFDictionaryRef configuration) { m_resolvedConfiguration->setProxyConfiguration(configuration); }
-    CFDictionaryRef proxyConfiguration() { return m_resolvedConfiguration->proxyConfiguration(); }
-#endif
 
 #if USE(CURL)
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
