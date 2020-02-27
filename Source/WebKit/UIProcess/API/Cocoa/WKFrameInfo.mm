@@ -56,9 +56,7 @@
 
 - (WKSecurityOrigin *)securityOrigin
 {
-    auto& data = _frameInfo->securityOrigin();
-    auto apiOrigin = API::SecurityOrigin::create(data.protocol, data.host, data.port);
-    return [[wrapper(apiOrigin.get()) retain] autorelease];
+    return wrapper(_frameInfo->securityOrigin());
 }
 
 - (WKWebView *)webView
@@ -86,23 +84,7 @@
 
 - (_WKFrameHandle *)_handle
 {
-    return [[wrapper(_frameInfo->handle()) retain] autorelease];
-}
-
-- (_WKFrameHandle *)_parentFrameHandle
-{
-    return [[wrapper(_frameInfo->parentFrameHandle()) retain] autorelease];
-}
-
-- (NSArray<_WKFrameHandle *> *)_childFrameHandles
-{
-    const auto& handles = _frameInfo->childFrameHandles();
-    if (!handles.size())
-        return nil;
-    NSMutableArray<_WKFrameHandle *> *set = [NSMutableArray arrayWithCapacity:handles.size()];
-    for (auto& handle : handles)
-        [set addObject:wrapper(handle.get())];
-    return set;
+    return wrapper(_frameInfo->handle());
 }
 
 @end

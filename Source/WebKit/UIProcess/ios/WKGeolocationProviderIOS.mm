@@ -35,7 +35,7 @@
 #import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegatePrivate.h"
-#import "WKWebViewInternal.h"
+#import "WKWebView.h"
 #import "WebFrameProxy.h"
 #import "WebGeolocationManagerProxy.h"
 #import "WebProcessPool.h"
@@ -72,7 +72,8 @@ void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const
 };
 
 struct GeolocationRequestData {
-    WebKit::FrameInfoData frameInfo;
+    RefPtr<WebCore::SecurityOrigin> origin;
+    RefPtr<WebKit::WebFrameProxy> frame;
     Function<void(bool)> completionHandler;
     RetainPtr<WKWebView> view;
 };
@@ -158,11 +159,12 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     return self;
 }
 
-- (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
+- (void)decidePolicyForGeolocationRequestFromOrigin:(WebCore::SecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
 {
     // Step 1: ask the user if the app can use Geolocation.
     GeolocationRequestData geolocationRequestData;
-    geolocationRequestData.frameInfo = WTFMove(frameInfo);
+    geolocationRequestData.origin = &origin;
+    geolocationRequestData.frame = &frame;
     geolocationRequestData.completionHandler = WTFMove(completionHandler);
     geolocationRequestData.view = contentView;
     _requestsWaitingForCoreLocationAuthorization.append(WTFMove(geolocationRequestData));
@@ -183,8 +185,8 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
         id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([request.view UIDelegate]);
         if ([uiDelegate respondsToSelector:@selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:)]) {
-            URL requestFrameURL = request.frameInfo.request.url();
-            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(WTFMove(request.frameInfo), request.view->_page.get()));
+            URL requestFrameURL(URL(), request.frame->url());
+            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(*request.frame.get(), WebCore::SecurityOriginData { request.origin->data() }));
             auto checker = WebKit::CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:));
             WKWebView *viewFromRequest = request.view.get();
             [uiDelegate _webView:viewFromRequest requestGeolocationAuthorizationForURL:requestFrameURL frame:frameInfo.get() decisionHandler:makeBlockPtr([request = WTFMove(request), checker = WTFMove(checker)](BOOL authorized) {
@@ -197,9 +199,10 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:shouldRequestGeolocationAuthorizationForURL:isMainFrame:mainFrameURL:)]) {
-            bool isMainFrame = request.frameInfo.isMainFrame;
-            URL requestFrameURL = request.frameInfo.request.url();
-            URL mainFrameURL = request.view.get().URL;
+            const WebKit::WebFrameProxy* mainFrame = request.frame->page()->mainFrame();
+            bool isMainFrame = request.frame == mainFrame;
+            URL requestFrameURL(URL(), request.frame->url());
+            URL mainFrameURL(URL(), mainFrame->url());
             requiresUserAuthorization = [uiDelegate _webView:request.view.get()
                  shouldRequestGeolocationAuthorizationForURL:requestFrameURL
                                                  isMainFrame:isMainFrame
@@ -208,7 +211,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
         if (requiresUserAuthorization) {
             RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(request.completionHandler)]);
-            WebKit::decidePolicyForGeolocationRequestFromOrigin(request.frameInfo.securityOrigin.securityOrigin().ptr(), request.frameInfo.request.url(), policyListener.get(), request.view.get());
+            WebKit::decidePolicyForGeolocationRequestFromOrigin(request.origin.get(), request.frame->url(), policyListener.get(), request.view.get());
         } else
             request.completionHandler(true);
     }

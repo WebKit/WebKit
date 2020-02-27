@@ -44,8 +44,6 @@ struct FrameInfoData {
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
     Optional<WebCore::FrameIdentifier> frameID;
-    Optional<WebCore::FrameIdentifier> parentFrameID;
-    Vector<WebCore::FrameIdentifier> childFrameIDs;
 };
 
 }

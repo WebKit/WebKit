@@ -195,7 +195,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Callbacks.
     GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames, WebKit::CallbackID callbackID)
-    GetAllFrames() -> (Vector<WebKit::FrameInfoData> frames) Async
 #if PLATFORM(COCOA)
     GetContentsAsAttributedString() -> (struct WebKit::AttributedString result) Async
 #endif

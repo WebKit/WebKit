@@ -32,7 +32,6 @@
 namespace WebKit {
 class WebFrameProxy;
 class WebProcessPool;
-struct FrameInfoData;
 }
 
 namespace WebCore {
@@ -43,7 +42,7 @@ class SecurityOrigin;
 
 @interface WKGeolocationProviderIOS : NSObject
 -(id)initWithProcessPool:(WebKit::WebProcessPool&)processPool;
--(void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)view;
+-(void)decidePolicyForGeolocationRequestFromOrigin:(WebCore::SecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)view;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

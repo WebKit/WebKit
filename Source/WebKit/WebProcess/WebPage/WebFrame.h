@@ -79,7 +79,6 @@ public:
 
     FrameInfoData info() const;
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    Vector<WebCore::FrameIdentifier> childFrameIDs() const;
 
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);

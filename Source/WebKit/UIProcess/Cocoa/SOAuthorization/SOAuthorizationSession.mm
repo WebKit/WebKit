@@ -171,7 +171,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
 
     auto initiatorOrigin = emptyString();
     if (m_navigationAction->sourceFrame())
-        initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin()->toString();
+        initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().toString();
     if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
         initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
     NSDictionary *authorizationOptions = @{

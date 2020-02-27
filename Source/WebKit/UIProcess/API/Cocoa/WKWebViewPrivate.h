@@ -105,7 +105,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @class WKBrowsingContextHandle;
 @class WKWebpagePreferences;
-@class WKFrameInfo;
 @class _WKApplicationManifest;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
@@ -171,8 +170,6 @@ has been loaded over a connection using TLS 1.0 or TLS 1.1.
 for this property.
 */
 @property (nonatomic, readonly) BOOL _negotiatedLegacyTLS WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-- (void)_allFrames:(void (^)(NSArray<WKFrameInfo *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include "FrameInfoData.h"
 #include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 
@@ -47,20 +46,22 @@ class SecurityOrigin;
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
     static Ref<FrameInfo> create(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
+    static Ref<FrameInfo> create(const WebKit::WebFrameProxy&, WebCore::SecurityOriginData&&);
     virtual ~FrameInfo();
 
-    bool isMainFrame() const { return m_data.isMainFrame; }
-    const WebCore::ResourceRequest& request() const { return m_data.request; }
-    WebCore::SecurityOriginData& securityOrigin() { return m_data.securityOrigin; }
-    Ref<FrameHandle> handle() const;
-    RefPtr<FrameHandle> parentFrameHandle() const;
-    Vector<Ref<FrameHandle>> childFrameHandles() const;
+    bool isMainFrame() const { return m_isMainFrame; }
+    const WebCore::ResourceRequest& request() const { return m_request; }
+    SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
+    API::FrameHandle& handle() { return m_handle.get(); }
     WebKit::WebPageProxy* page() { return m_page.get(); }
 
 private:
-    FrameInfo(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
+    FrameInfo(const WebKit::FrameInfoData&, WebKit::WebPageProxy*);
 
-    WebKit::FrameInfoData m_data;
+    bool m_isMainFrame;
+    WebCore::ResourceRequest m_request;
+    Ref<SecurityOrigin> m_securityOrigin;
+    Ref<FrameHandle> m_handle;
     RefPtr<WebKit::WebPageProxy> m_page;
 };
 

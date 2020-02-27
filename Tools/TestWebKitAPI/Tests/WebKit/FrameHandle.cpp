@@ -24,48 +24,47 @@
  */
 
 #include "config.h"
-#include "FrameInfoData.h"
 
-#include "WebCoreArgumentCoders.h"
+#if WK_HAVE_C_SPI
 
-namespace WebKit {
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
+#include "Test.h"
+#include <WebKit/WKFrameHandleRef.h>
+#include <WebKit/WKFrameInfoRef.h>
+#include <WebKit/WKRetainPtr.h>
 
-void FrameInfoData::encode(IPC::Encoder& encoder) const
+namespace TestWebKitAPI {
+
+static bool done;
+
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
-    encoder << isMainFrame;
-    encoder << request;
-    encoder << securityOrigin;
-    encoder << frameID;
+    done = true;
 }
 
-Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
+TEST(WebKit, FrameHandle)
 {
-    Optional<bool> isMainFrame;
-    decoder >> isMainFrame;
-    if (!isMainFrame)
-        return WTF::nullopt;
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
 
-    Optional<WebCore::ResourceRequest> request;
-    decoder >> request;
-    if (!request)
-        return WTF::nullopt;
+    WKPageNavigationClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    Optional<WebCore::SecurityOriginData> securityOrigin;
-    decoder >> securityOrigin;
-    if (!securityOrigin)
-        return WTF::nullopt;
+    WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
+    Util::run(&done);
 
-    Optional<Optional<WebCore::FrameIdentifier>> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
+    auto frame = WKPageGetMainFrame(webView.page());
+    auto frameInfo = adoptWK(WKFrameCreateFrameInfo(frame));
+    auto handleFromInfo = WKFrameInfoGetFrameHandleRef(frameInfo.get());
+    auto handleFromFrame = adoptWK(WKFrameCreateFrameHandle(frame));
 
-    return {{
-        WTFMove(*isMainFrame),
-        WTFMove(*request),
-        WTFMove(*securityOrigin),
-        WTFMove(*frameID)
-    }};
+    EXPECT_EQ(WKFrameHandleGetFrameID(handleFromInfo), WKFrameHandleGetFrameID(handleFromFrame.get()));
 }
 
-}
+} // namespace TestWebKitAPI
+
+#endif

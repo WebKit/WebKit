@@ -2753,8 +2753,9 @@ String TestController::saltForOrigin(WKFrameRef frame, String originHash)
 {
     auto& settings = settingsForOrigin(originHash);
     auto& ephemeralSalts = settings.ephemeralSalts();
-    auto frameHandle = adoptWK(WKFrameCreateFrameHandle(frame));
-    uint64_t frameIdentifier = WKFrameHandleGetFrameID(frameHandle.get());
+    auto frameInfo = adoptWK(WKFrameCreateFrameInfo(frame));
+    auto frameHandle = WKFrameInfoGetFrameHandleRef(frameInfo.get());
+    uint64_t frameIdentifier = WKFrameHandleGetFrameID(frameHandle);
     String frameSalt = ephemeralSalts.get(frameIdentifier);
 
     if (settings.persistentPermission()) {
