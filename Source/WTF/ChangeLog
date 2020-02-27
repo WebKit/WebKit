@@ -1,3 +1,7 @@
+2020-02-26  Alan Coon  <alancoon@apple.com>
+
+        Revert r256784. rdar://problem/59818035
+
 2020-02-21  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r257072): MotionMark | Mac | -10%

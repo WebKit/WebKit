@@ -1,3 +1,7 @@
+2020-02-26  Alan Coon  <alancoon@apple.com>
+
+        Revert r256784. rdar://problem/59818035
+
 2020-02-21  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.serviceworker.html is flaky failing.
