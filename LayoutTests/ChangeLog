@@ -1,3 +1,16 @@
+2020-02-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: (257072) [ Mac wk2 Release ] fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208264
+        <rdar://problem/59821552>
+
+        Reviewed by Simon Fraser.
+
+        * fast/harness/uiscriptcontroller/concurrent-ui-side-scripts-expected.txt:
+        * fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html:
+
+        There is no guarantee that two independent async UI scripts finish in particular order. Order the output instead.
+
 2020-02-27  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] crypto/subtle/rsa-indexeddb-non-exportable-private.html is flaky timing out.

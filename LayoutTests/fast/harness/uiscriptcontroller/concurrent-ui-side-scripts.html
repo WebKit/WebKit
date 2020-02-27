@@ -40,20 +40,23 @@
             testRunner.waitUntilDone();
         }
 
+        let script1Result;
+        let script2Result;
+
         var outstandingScripts = 2;
         function runTest()
         {
             if (testRunner.runUIScript) {
                 var uiScript = document.getElementById('ui-script1').text;
                 testRunner.runUIScript(uiScript, function(result) {
-                    document.getElementById('results').textContent += 'Script 1:\n' + result;
+                    script1Result = result;
                     --outstandingScripts;
                     checkIfScriptsComplete();
                 });
 
                 var uiScript2 = document.getElementById('ui-script2').text;
                 testRunner.runUIScript(uiScript2, function(result) {
-                    document.getElementById('results').textContent += 'Script 2:\n' + result;
+                    script2Result = result;
                     --outstandingScripts;
                     checkIfScriptsComplete();
                 });
@@ -64,6 +67,8 @@
         {
             if (outstandingScripts)
                 return;
+
+            document.getElementById('results').textContent += 'Script 1:\n' + script1Result + 'Script 2:\n' + script2Result;
 
             testRunner.notifyDone();
         }
