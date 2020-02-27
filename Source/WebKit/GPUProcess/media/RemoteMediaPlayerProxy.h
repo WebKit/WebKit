@@ -76,6 +76,18 @@ public:
     MediaPlayerPrivateRemoteIdentifier idendifier() const { return m_id; }
     void invalidate();
 
+    void updateVideoFullscreenInlineImage();
+    void setVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode);
+
+    void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy);
+
+    void videoFullscreenStandbyChanged();
+
+#if PLATFORM(IOS_FAMILY)
+    String accessLog();
+    String errorLog();
+#endif
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);

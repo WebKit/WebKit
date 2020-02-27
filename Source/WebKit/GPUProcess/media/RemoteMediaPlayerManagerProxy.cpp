@@ -192,6 +192,66 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
     completionHandler(result);
 }
 
+void RemoteMediaPlayerManagerProxy::updateVideoFullscreenInlineImage(MediaPlayerPrivateRemoteIdentifier playerIdentifier)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->updateVideoFullscreenInlineImage();
+}
+
+void RemoteMediaPlayerManagerProxy::setVideoFullscreenFrame(MediaPlayerPrivateRemoteIdentifier playerIdentifier, FloatRect frame)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->setVideoFullscreenFrame(frame);
+}
+
+void RemoteMediaPlayerManagerProxy::setVideoFullscreenGravity(MediaPlayerPrivateRemoteIdentifier playerIdentifier, MediaPlayer::VideoGravity gravity)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->setVideoFullscreenGravity(gravity);
+}
+
+void RemoteMediaPlayerManagerProxy::setVideoFullscreenMode(MediaPlayerPrivateRemoteIdentifier playerIdentifier, MediaPlayer::VideoFullscreenMode mode)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->setVideoFullscreenMode(mode);
+}
+
+void RemoteMediaPlayerManagerProxy::setVolume(MediaPlayerPrivateRemoteIdentifier playerIdentifier, double volume)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->setVolume(volume);
+}
+
+void RemoteMediaPlayerManagerProxy::setBufferingPolicy(MediaPlayerPrivateRemoteIdentifier playerIdentifier, WebCore::MediaPlayer::BufferingPolicy policy)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->setBufferingPolicy(policy);
+}
+
+void RemoteMediaPlayerManagerProxy::videoFullscreenStandbyChanged(MediaPlayerPrivateRemoteIdentifier playerIdentifier)
+{
+    if (auto player = m_proxies.get(playerIdentifier))
+        player->videoFullscreenStandbyChanged();
+}
+
+#if PLATFORM(IOS_FAMILY)
+void RemoteMediaPlayerManagerProxy::accessLog(MediaPlayerPrivateRemoteIdentifier playerIdentifier, CompletionHandler<void(String)>&& completionHandler)
+{
+    if (auto player = m_proxies.get(playerIdentifier)) {
+        String log = player->accessLog();
+        completionHandler(log);
+    }
+}
+
+void RemoteMediaPlayerManagerProxy::errorLog(MediaPlayerPrivateRemoteIdentifier playerIdentifier, CompletionHandler<void(String)>&& completionHandler)
+{
+    if (auto player = m_proxies.get(playerIdentifier)) {
+        String log = player->errorLog();
+        completionHandler(log);
+    }
+}
+#endif
+
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))

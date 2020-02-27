@@ -240,6 +240,38 @@ void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remote
 }
 
 // MediaPlayerClient
+void RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage()
+{
+    m_player->updateVideoFullscreenInlineImage();
+}
+
+void RemoteMediaPlayerProxy::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
+{
+    m_player->setVideoFullscreenMode(mode);
+}
+
+void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
+{
+    m_player->setBufferingPolicy(policy);
+}
+
+void RemoteMediaPlayerProxy::videoFullscreenStandbyChanged()
+{
+    m_player->videoFullscreenStandbyChanged();
+}
+
+#if PLATFORM(IOS_FAMILY)
+String RemoteMediaPlayerProxy::accessLog()
+{
+    return m_player->accessLog();
+}
+
+String RemoteMediaPlayerProxy::errorLog()
+{
+    return m_player->errorLog();
+}
+#endif
+
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
     updateCachedState();

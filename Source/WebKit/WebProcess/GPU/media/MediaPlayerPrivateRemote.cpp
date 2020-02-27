@@ -599,17 +599,17 @@ void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer*, WTF::Func
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::UpdateVideoFullscreenInlineImage(), m_id);
 }
 
-void MediaPlayerPrivateRemote::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode)
+void MediaPlayerPrivateRemote::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenMode(mode), m_id);
 }
 
 void MediaPlayerPrivateRemote::videoFullscreenStandbyChanged()
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::VideoFullscreenStandbyChanged(), m_id);
 }
 #endif
 
@@ -622,20 +622,28 @@ NSArray* MediaPlayerPrivateRemote::timedMetadata() const
 
 String MediaPlayerPrivateRemote::accessLog() const
 {
-    notImplemented();
-    return emptyString();
+    String log;
+    
+    if (!connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::AccessLog(m_id), Messages::RemoteMediaPlayerManagerProxy::AccessLog::Reply(log), m_id))
+        return emptyString();
+
+    return log;
 }
 
 String MediaPlayerPrivateRemote::errorLog() const
 {
-    notImplemented();
-    return emptyString();
+    String log;
+    
+    if (!connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::ErrorLog(m_id), Messages::RemoteMediaPlayerManagerProxy::ErrorLog::Reply(log), m_id))
+        return emptyString();
+
+    return log;
 }
 #endif
 
-void MediaPlayerPrivateRemote::setBufferingPolicy(MediaPlayer::BufferingPolicy)
+void MediaPlayerPrivateRemote::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::SetBufferingPolicy(policy), m_id);
 }
 
 bool MediaPlayerPrivateRemote::canSaveMediaData() const
