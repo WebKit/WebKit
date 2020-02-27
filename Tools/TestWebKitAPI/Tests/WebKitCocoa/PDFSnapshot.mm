@@ -37,6 +37,10 @@
 
 using WebCore::Color;
 
+@interface WKWebView (Details)
+- (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler;
+@end
+
 namespace TestWebKitAPI {
 
 TEST(PDFSnapshot, FullContent)
