@@ -496,10 +496,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultDataStoreParameters.pendingCookies = copyToVector(m_websiteDataStore->pendingCookies());
         m_websiteDataStore->clearPendingCookies();
 #if PLATFORM(COCOA)
-        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->sourceApplicationBundleIdentifier();
-        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->sourceApplicationSecondaryIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->configuration().sourceApplicationBundleIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->configuration().sourceApplicationSecondaryIdentifier();
 #endif
-        m_websiteDataStore->networkingHasBegun();
     }
 
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();

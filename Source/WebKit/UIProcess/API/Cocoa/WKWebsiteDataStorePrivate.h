@@ -55,8 +55,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @property (nonatomic, setter=_setBoundInterfaceIdentifier:) NSString *_boundInterfaceIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.boundInterfaceIdentifier", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 @property (nonatomic, setter=_setAllowsCellularAccess:) BOOL _allowsCellularAccess WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.allowsCellularAccess", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 @property (nonatomic, setter=_setProxyConfiguration:) NSDictionary *_proxyConfiguration WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.proxyConfiguration", macos(10.14, WK_MAC_TBA), ios(12.0, WK_IOS_TBA));
-@property (nonatomic, copy, setter=_setSourceApplicationBundleIdentifier:) NSString *_sourceApplicationBundleIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.sourceApplicationBundleIdentifier", macos(10.14.4, WK_MAC_TBA), ios(12.2, WK_IOS_TBA));
-@property (nonatomic, copy, setter=_setSourceApplicationSecondaryIdentifier:) NSString *_sourceApplicationSecondaryIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.setSourceApplicationSecondaryIdentifier", macos(10.14.4, WK_MAC_TBA), ios(12.2, WK_IOS_TBA));
 @property (nonatomic, setter=_setAllowsTLSFallback:) BOOL _allowsTLSFallback WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @property (nonatomic, readonly) NSURL *_indexedDBDatabaseDirectory;

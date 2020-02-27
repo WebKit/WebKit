@@ -501,31 +501,6 @@ TEST(WebKit, DoLoadWithNonDefaultDataStoreAfterTerminatingNetworkProcess)
     [webView _test_waitForDidFinishNavigation];
 }
 
-TEST(WebKit, ApplicationIdentifiers)
-{
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    [websiteDataStoreConfiguration setSourceApplicationBundleIdentifier:@"testidentifier"];
-
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
-    EXPECT_TRUE([websiteDataStore._sourceApplicationBundleIdentifier isEqualToString:@"testidentifier"]);
-    [websiteDataStore _setSourceApplicationBundleIdentifier:@"otheridentifier"];
-
-    [webViewConfiguration setWebsiteDataStore:websiteDataStore];
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
-    
-    RetainPtr<NSException> exception;
-    @try {
-        [websiteDataStore _setSourceApplicationBundleIdentifier:@"settingShouldFailNow"];
-    } @catch(NSException *caught) {
-        exception = caught;
-    }
-    EXPECT_TRUE([[exception reason] isEqualToString:@"_setSourceApplicationBundleIdentifier cannot be called after networking has begun"]);
-    EXPECT_TRUE([websiteDataStore._sourceApplicationBundleIdentifier isEqualToString:@"otheridentifier"]);
-    EXPECT_TRUE([[websiteDataStoreConfiguration sourceApplicationBundleIdentifier] isEqualToString:@"testidentifier"]);
-}
-
 TEST(WebKit, WebsiteDataStoreConfigurationPathNull)
 {
     EXPECT_TRUE([[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease] _indexedDBDatabaseDirectory]);

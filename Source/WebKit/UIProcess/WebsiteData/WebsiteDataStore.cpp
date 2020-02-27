@@ -2190,14 +2190,6 @@ void WebsiteDataStore::didCreateNetworkProcess()
 {
 }
 
-bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
-{
-    if (m_networkingHasBegun)
-        return false;
-    m_resolvedConfiguration->setSourceApplicationBundleIdentifier(WTFMove(identifier));
-    return true;
-}
-
 void WebsiteDataStore::getLocalStorageDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&& completionHandler)
 {
     if (!isPersistent()) {

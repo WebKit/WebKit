@@ -341,26 +341,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
 }
 
-- (NSString *)_sourceApplicationBundleIdentifier
-{
-    return _websiteDataStore->sourceApplicationBundleIdentifier();
-}
-
-- (void)_setSourceApplicationBundleIdentifier:(NSString *)identifier
-{
-    if (!_websiteDataStore->setSourceApplicationBundleIdentifier(identifier))
-        [NSException raise:NSGenericException format:@"_setSourceApplicationBundleIdentifier cannot be called after networking has begun"];
-}
-
-- (NSString *)_sourceApplicationSecondaryIdentifier
-{
-    return nil;
-}
-
-- (void)_setSourceApplicationSecondaryIdentifier:(NSString *)identifier
-{
-}
-
 - (void)_setAllowsTLSFallback:(BOOL)allows
 {
 }

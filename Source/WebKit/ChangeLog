@@ -1,5 +1,22 @@
 2020-02-26  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused WebsiteDataStore::setSourceApplicationBundleIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=206456
+
+        Reviewed by Brady Eidson.
+
+        The replacement on WebsiteDataStoreConfiguration has been adopted.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _sourceApplicationBundleIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationBundleIdentifier:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setSourceApplicationBundleIdentifier): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::sourceApplicationBundleIdentifier const):
+
+2020-02-26  Alex Christensen  <achristensen@webkit.org>
+
         _WKUserContentWorld should be a wrapper around WKContentWorld
         https://bugs.webkit.org/show_bug.cgi?id=208274
 

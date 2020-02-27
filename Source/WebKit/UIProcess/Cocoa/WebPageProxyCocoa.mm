@@ -240,12 +240,12 @@ const String& WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier(const Web
 
 const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().sourceApplicationBundleIdentifier();
+    return websiteDataStore().configuration().sourceApplicationBundleIdentifier();
 }
 
 const String& WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().sourceApplicationSecondaryIdentifier();
+    return websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
 }
 
 void WebPageProxy::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference& messageReceiverName, IPC::MessageReceiver& messageReceiver)

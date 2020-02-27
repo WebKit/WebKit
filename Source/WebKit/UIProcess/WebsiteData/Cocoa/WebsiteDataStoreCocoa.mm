@@ -153,8 +153,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         configuration().boundInterfaceIdentifier(),
         configuration().allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No,
         configuration().proxyConfiguration(),
-        sourceApplicationBundleIdentifier(),
-        sourceApplicationSecondaryIdentifier(),
+        configuration().sourceApplicationBundleIdentifier(),
+        configuration().sourceApplicationSecondaryIdentifier(),
         shouldLogCookieInformation,
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
@@ -182,7 +182,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->allowsServerPreconnect(),
         isInAppBrowserPrivacyEnabled
     };
-    networkingHasBegun();
 
     auto cookieFile = resolvedCookieStorageFile();
 
@@ -194,8 +193,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
-    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier();
-    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier();
+    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
+    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = configuration().sourceApplicationSecondaryIdentifier();
 
     parameters.pendingCookies = copyToVector(m_pendingCookies);
 

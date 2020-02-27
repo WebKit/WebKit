@@ -224,13 +224,6 @@ public:
     void removePendingCookie(const WebCore::Cookie&);
     void clearPendingCookies();
 
-    const String& sourceApplicationBundleIdentifier() const { return m_resolvedConfiguration->sourceApplicationBundleIdentifier(); }
-    bool setSourceApplicationBundleIdentifier(String&&);
-
-    const String& sourceApplicationSecondaryIdentifier() const { return m_resolvedConfiguration->sourceApplicationSecondaryIdentifier(); }
-
-    void networkingHasBegun() { m_networkingHasBegun = true; }
-
 #if USE(CURL)
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
@@ -342,8 +335,6 @@ private:
     HashSet<WebCore::Cookie> m_pendingCookies;
     
     WeakHashSet<WebProcessProxy> m_processes;
-
-    bool m_networkingHasBegun { false };
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;
