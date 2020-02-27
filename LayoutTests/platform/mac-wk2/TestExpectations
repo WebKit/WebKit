@@ -1073,5 +1073,3 @@ webkit.org/b/208167 [ Debug ] inspector/dom-debugger/attribute-modified-style.ht
 webkit.org/b/208222 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
 
 webkit.org/b/208264 [ Release ] fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html [ Pass Failure ]
-
-webkit.org/b/208272 media/modern-media-controls/pip-support/pip-support-click.html [ Pass Timeout ]

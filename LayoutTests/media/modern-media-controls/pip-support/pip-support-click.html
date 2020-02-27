@@ -13,7 +13,7 @@
     }
     
 </style>
-<video src="../../content/test.mp4" autoplay controls></video>
+<video controls></video>
 <div id="host"></div>
 <script type="text/javascript">
 
@@ -36,10 +36,15 @@ media.addEventListener("webkitpresentationmodechanged", () => {
     finishMediaControlsTest();
 });
 
-shouldBecomeDifferent("mediaController.controls.pipButton.element.getBoundingClientRect().width", "0", () => {
-    media.pause();
-    pressOnElement(mediaController.controls.pipButton.element);
+media.addEventListener("playing", () => {
+    shouldBecomeDifferent("mediaController.controls.pipButton.element.getBoundingClientRect().width", "0", () => {
+        media.pause();
+        pressOnElement(mediaController.controls.pipButton.element);
+    });
 });
+
+media.src = "../../content/test.mp4";
+media.play();
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
