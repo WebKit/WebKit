@@ -1,3 +1,17 @@
+2020-02-26  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Web platform tests for Web Share API fail incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=208083
+
+        Reviewed by Alex Christensen.
+
+        Fixed expected for updated wpts.
+
+        * web-platform-tests/web-share/share-without-user-gesture.https-expected.txt:
+        * web-platform-tests/web-share/canShare-files.https-expected.txt:
+        * web-platform-tests/web-share/canShare.https-expected.txt:
+        * web-platform-tests/web-share/idlharness.https.window-expected.txt:
+
 2020-02-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Add canShare function for Web Share API v2

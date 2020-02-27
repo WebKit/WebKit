@@ -1,3 +1,26 @@
+2020-02-26  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Web platform tests for Web Share API fail incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=208083
+
+        Reviewed by Alex Christensen.
+
+        Removed duplicate tests for corresponding wpts, fixed expected
+        for new wpts. Modified TestExpectations to now run all web-share
+        wpts except for those testing secure context behavior, which is not
+        supported by the current wpt infrastructure.
+
+        * TestExpectations:
+        * fast/web-share/canShare-expected.txt: Removed.
+        * fast/web-share/canShare-files-expected.txt: Removed.
+        * fast/web-share/canShare-files.html: Removed.
+        * fast/web-share/canShare.html: Removed.
+        * fast/web-share/share-empty-expected.txt: Removed.
+        * fast/web-share/share-empty.html: Removed.
+        * fast/web-share/share-url-invalid-expected.txt: Removed.
+        * fast/web-share/share-without-user-gesture-expected.txt: Removed.
+        * fast/web-share/share-without-user-gesture.html: Removed.
+
 2020-02-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPadOS] REGRESSION(r247667): Autosizing style changes don't invalidate RenderText's preferred logical widths
