@@ -1,3 +1,16 @@
+2020-02-28  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: Make upload format valid
+        https://bugs.webkit.org/show_bug.cgi?id=208341
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/run-javascriptcore-tests:
+        (uploadResults): Remove. FIXME.
+        * Scripts/webkitdirs.pm:
+        (splitVersionString): Handle case where the subminor version number has a - in it.
+        * Scripts/webkitperl/webkitdirs_unittest/splitVersion.pl: Add unit tests.
+
 2020-02-28  youenn fablet  <youenn@apple.com>
 
         [MacOS/iOS] Enable audio/video capture in GPUProcess by default
