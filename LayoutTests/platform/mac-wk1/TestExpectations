@@ -955,3 +955,5 @@ webkit.org/b/208065 [ Debug ] legacy-animation-engine/animations/animation-direc
 http/wpt/prefetch [ Skip ]
 
 webkit.org/b/208345 fast/canvas/webgl/canvas-webgl-page-cache.html [ Pass Crash ]
+
+webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html [ Pass Failure ]
