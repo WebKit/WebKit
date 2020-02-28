@@ -277,6 +277,16 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
             continue;
         if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
+
+        const RenderStyle& style = renderer->style();
+        if (is<ReferenceClipPathOperation>(style.clipPath())) {
+            auto& clipPath = downcast<ReferenceClipPathOperation>(*style.clipPath());
+            AtomString id(clipPath.fragment());
+            RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document(), id);
+            if (clipper == this)
+                continue;
+        }
+
         IntPoint hitPoint;
         HitTestResult result(hitPoint);
         constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::SVGClipContent, HitTestRequest::DisallowUserAgentShadowContent };

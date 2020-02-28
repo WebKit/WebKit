@@ -1,3 +1,13 @@
+2020-02-27  Doug Kelly  <dougk@apple.com>
+
+        Hit test with clipPath referencing parent element causes infinite recursion
+        https://bugs.webkit.org/show_bug.cgi?id=208279
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/hittest/svg-clip-path-child-element-expected.txt: Added.
+        * svg/hittest/svg-clip-path-child-element.html: Added.
+
 2020-02-27  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band generic cues when loading media in the GPU Process
