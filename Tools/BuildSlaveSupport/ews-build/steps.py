@@ -1567,12 +1567,12 @@ class KillOldProcesses(shell.Compile):
         super(KillOldProcesses, self).__init__(timeout=60, logEnviron=False, **kwargs)
 
     def evaluateCommand(self, cmd):
-        if cmd.didFail():
+        if self.results in [FAILURE, EXCEPTION]:
             self.build.buildFinished(['Failed to kill old processes, retrying build'], RETRY)
         return shell.Compile.evaluateCommand(self, cmd)
 
     def getResultSummary(self):
-        if self.results == FAILURE:
+        if self.results in [FAILURE, EXCEPTION]:
             return {u'step': u'Failed to kill old processes'}
         return shell.Compile.getResultSummary(self)
 
