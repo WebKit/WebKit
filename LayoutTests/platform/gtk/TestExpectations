@@ -4569,8 +4569,6 @@ webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005
 
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
-imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html [ Pass ]
-
 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html [ Pass ]
 
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]

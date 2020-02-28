@@ -1063,8 +1063,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         return;
 
     auto& input = downcast<HTMLInputElement>(*o.node());
-
-    if (!input.list())
+    if (!input.isRangeControl() || !input.list())
         return;
 
     auto& dataList = downcast<HTMLDataListElement>(*input.list());

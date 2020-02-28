@@ -1,3 +1,15 @@
+2020-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Test imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=190613
+
+        Reviewed by Wenson Hsieh.
+
+        Remove test expectations.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-02-27  Doug Kelly  <dougk@apple.com>
 
         Hit test with clipPath referencing parent element causes infinite recursion
