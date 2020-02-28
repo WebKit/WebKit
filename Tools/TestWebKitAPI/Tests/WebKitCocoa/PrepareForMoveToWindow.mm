@@ -76,4 +76,25 @@ TEST(WKWebView, PrepareForMoveToWindowThenClose)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+TEST(WKWebView, PrepareForMoveToWindowCrashAfterNotMovingToWindow)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+
+    [webView _prepareForMoveToWindow:window.get() completionHandler:^{ }];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [webView _prepareForMoveToWindow:window.get() completionHandler:^{ }];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [window setFrame:NSMakeRect(0, 0, 10, 10) display:YES];
+            isDone = true;
+        });
+    });
+
+    webView = nil;
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 #endif
