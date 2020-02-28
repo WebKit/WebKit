@@ -23,6 +23,7 @@
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
+    -webkit-box-shadow: none !important;
     width: 1em;
     height: 1em;
     content: url("data:image/svg+xml;utf-8, \
@@ -41,6 +42,7 @@ input[type="search"]::-webkit-search-results-decoration:hover {
 
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
+    -webkit-box-shadow: none !important;
     width: 1em;
     height: 1em;
     content: url("data:image/svg+xml;utf-8, \
@@ -51,6 +53,7 @@ input[type="search"]::-webkit-search-cancel-button {
 
 body[dir="rtl"] input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
+    -webkit-box-shadow: none !important;
     content: url("data:image/svg+xml;utf-8, \
         <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
           <path d='M10 2l6 6-6 6H.965A1.03 1.03 0 0 1 0 13V3c0-.53.346-1 1.009-1zM9 5H7.969a1.04 1.04 0 0 0-.688.313L6 6.593l-1.313-1.28C4.423 5.082 4.242 5.006 4 5H3v1c0 .286.034.55.25.75l1.281 1.281-1.25 1.25A1.015 1.015 0 0 0 3 10v1h1c.265 0 .53-.093.719-.281L6 9.438l1.281 1.28c.188.189.454.282.719.282h1v-1c0-.265-.093-.53-.281-.719l-1.281-1.25 1.28-1.281A.909.909 0 0 0 9 6z' style='marker:none' color='#000' overflow='visible' fill='#474747'/> \
