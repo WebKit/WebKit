@@ -2460,7 +2460,7 @@ void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left
         append(Move, Arg::bigImm(static_cast<uint64_t>(min)), minTmp);
         append(op, Arg::relCond(MacroAssembler::Equal), left, minTmp, minTmp);
 
-        append(Move, Arg::imm(-1), negOne);
+        append(Move, Arg::isValidImmForm(-1) ? Arg::imm(-1) : Arg::bigImm(-1) , negOne);
         append(op, Arg::relCond(MacroAssembler::Equal), right, negOne, negOne);
 
         emitCheck([&] {

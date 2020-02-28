@@ -1,3 +1,16 @@
+2020-02-27  Saam Barati  <sbarati@apple.com>
+
+        Fix debug arm64 Wasm tests
+        https://bugs.webkit.org/show_bug.cgi?id=208362
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitChecksForModOrDiv):
+
+        We were assuming that "-1" is a valid imm on arm64, but it's not, we need
+        to use big imm.
+
 2020-02-27  Justin Michaud  <justin_michaud@apple.com>
 
         Poly proto should work with property delete transitions
