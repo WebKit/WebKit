@@ -83,6 +83,11 @@ void RunLoop::iterate()
     }
 }
 
+void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
+{
+    RunLoop::current().m_wakeUpCallback = WTFMove(function);
+}
+
 void RunLoop::stop()
 {
     // RunLoop::stop() can be called from threads unrelated to this RunLoop.
@@ -118,6 +123,9 @@ void RunLoop::wakeUp()
     // FIXME: No need to wake up the run loop if we've already called dispatch
     // before the run loop has had the time to respond.
     ::PostMessage(m_runLoopMessageWindow, PerformWorkMessage, reinterpret_cast<WPARAM>(this), 0);
+
+    if (m_wakeUpCallback)
+        m_wakeUpCallback();
 }
 
 RunLoop::CycleResult RunLoop::cycle(RunLoopMode)

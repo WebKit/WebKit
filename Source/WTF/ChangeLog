@@ -1,3 +1,21 @@
+2020-02-27  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo] Fix RemoteInspector reconnect issue
+        https://bugs.webkit.org/show_bug.cgi?id=208256
+
+        Reviewed by Devin Rousso.
+
+        Added wakeupCallback to RunLoop. In case of RunLook::iterate, we need to wake up worker thread
+        when RunLoop is waking up.
+
+        * wtf/RunLoop.h:
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::setWakeUpCallback):
+        (WTF::RunLoop::wakeUp):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::setWakeUpCallback):
+        (WTF::RunLoop::wakeUp):
+
 2020-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE(SCROLLING_THREAD) and use it to turn off some code we don't need for iOS

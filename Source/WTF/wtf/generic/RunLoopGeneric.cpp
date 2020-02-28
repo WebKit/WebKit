@@ -189,6 +189,11 @@ void RunLoop::iterate()
     RunLoop::current().runImpl(RunMode::Iterate);
 }
 
+void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
+{
+    RunLoop::current().m_wakeUpCallback = WTFMove(function);
+}
+
 // RunLoop operations are thread-safe. These operations can be called from outside of the RunLoop's thread.
 // For example, WorkQueue::{dispatch, dispatchAfter} call the operations of the WorkQueue thread's RunLoop
 // from the caller's thread.
@@ -210,6 +215,9 @@ void RunLoop::wakeUp(const AbstractLocker&)
 {
     m_pendingTasks = true;
     m_readyToRun.notifyOne();
+
+    if (m_wakeUpCallback)
+        m_wakeUpCallback();
 }
 
 void RunLoop::wakeUp()
