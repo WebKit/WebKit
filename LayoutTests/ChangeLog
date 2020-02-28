@@ -1,3 +1,12 @@
+2020-02-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS wk2 ] LayoutTest/fast/animation/request-animation-frame-time-unit.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=171957
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-02-27  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] webgpu/whlsl/return-local-variable.html is flaky failing

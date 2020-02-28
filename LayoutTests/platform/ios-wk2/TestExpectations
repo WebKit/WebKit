@@ -1192,7 +1192,7 @@ webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches
 
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
 
-webkit.org/b/171957 [ Debug ] fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
+webkit.org/b/171957 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
 webkit.org/b/172772 [ Release ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Skip ]
 
