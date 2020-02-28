@@ -27,24 +27,24 @@ layer at (0,0) size 800x600
             text run at (0,0) width 80: "Test Button"
       RenderText {#text} at (408,6) size 5x17
         text run at (408,6) width 5: " "
-      RenderButton {INPUT} at (414,4) size 93x23 [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (6,2) size 80x18
-          RenderText at (0,0) size 80x17
-            text run at (0,0) width 80: "Test Button"
-      RenderText {#text} at (508,6) size 5x17
-        text run at (508,6) width 5: " "
-      RenderButton {INPUT} at (514,4) size 92x23 [color=#FF0000] [bgcolor=#C0C0C0]
-        RenderBlock (anonymous) at (6,2) size 80x18
-          RenderText at (0,0) size 80x17
-            text run at (0,0) width 80: "Test Button"
-      RenderText {#text} at (607,6) size 5x17
-        text run at (607,6) width 5: " "
-      RenderButton {INPUT} at (613,2) size 96x27 [bgcolor=#008000] [border: (2px outset #C0C0C0)]
+      RenderButton {INPUT} at (414,2) size 97x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 80x18
           RenderText at (0,0) size 80x17
             text run at (0,0) width 80: "Test Button"
-      RenderText {#text} at (710,6) size 5x17
-        text run at (710,6) width 5: " "
+      RenderText {#text} at (512,6) size 5x17
+        text run at (512,6) width 5: " "
+      RenderButton {INPUT} at (518,2) size 96x27 [color=#FF0000] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 80x18
+          RenderText at (0,0) size 80x17
+            text run at (0,0) width 80: "Test Button"
+      RenderText {#text} at (615,6) size 5x17
+        text run at (615,6) width 5: " "
+      RenderButton {INPUT} at (621,2) size 96x27 [bgcolor=#008000] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 80x18
+          RenderText at (0,0) size 80x17
+            text run at (0,0) width 80: "Test Button"
+      RenderText {#text} at (718,6) size 5x17
+        text run at (718,6) width 5: " "
       RenderButton {INPUT} at (2,33) size 96x27 [color=#FF0000] [bgcolor=#008000] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 80x18
           RenderText at (0,0) size 80x17

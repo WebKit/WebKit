@@ -4485,8 +4485,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ 
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
 
-webkit.org/b/188972 fast/css/button-height.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
