@@ -1,3 +1,30 @@
+2020-02-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Support in-band generic cues when loading media in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208080
+        <rdar://problem/59687943>
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::addGenericCue):
+        (WebKit::RemoteTextTrackProxy::updateGenericCue):
+        (WebKit::RemoteTextTrackProxy::removeGenericCue):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * Scripts/webkit/messages.py:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::addGenericCue):
+        (WebKit::MediaPlayerPrivateRemote::updateGenericCue):
+        (WebKit::MediaPlayerPrivateRemote::removeGenericCue):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::addGenericCue):
+        (WebKit::TextTrackPrivateRemote::updateGenericCue):
+        (WebKit::TextTrackPrivateRemote::removeGenericCue):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+
 2020-02-27  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue mach sandbox extensions to the WebContent process for a set of specific services

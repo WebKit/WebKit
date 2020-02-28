@@ -81,7 +81,7 @@ public:
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*, CueFormat);
 
-    void processCueAttributes(CFAttributedStringRef, GenericCueData&);
+    Ref<InbandGenericCue> processCueAttributes(CFAttributedStringRef);
     void processAttributedStrings(CFArrayRef, const MediaTime&);
     void processNativeSamples(CFArrayRef, const MediaTime&);
     void removeCompletedCues();
@@ -96,7 +96,7 @@ private:
     MediaTime m_currentCueStartTime;
     MediaTime m_currentCueEndTime;
 
-    Vector<RefPtr<GenericCueData>> m_cues;
+    Vector<Ref<InbandGenericCue>> m_cues;
     AVFInbandTrackParent* m_owner;
 
     enum PendingCueStatus {

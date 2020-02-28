@@ -2435,7 +2435,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 {
     ASSERT(entry);
 
-    auto cue = GenericCueData::create();
+    auto cue = InbandGenericCue::create();
 
     gint64 start = -1, stop = -1;
     gst_toc_entry_get_start_stop_times(entry, &start, &stop);

@@ -35,17 +35,16 @@ namespace WebCore {
 
 class GenericTextTrackCueMap {
 public:
-    void add(GenericCueData&, TextTrackCueGeneric&);
+    void add(InbandGenericCueIdentifier, TextTrackCueGeneric&);
 
     void remove(TextTrackCue&);
-    void remove(GenericCueData&);
+    void remove(InbandGenericCueIdentifier);
 
-    GenericCueData* find(TextTrackCue&);
-    TextTrackCueGeneric* find(GenericCueData&);
+    TextTrackCueGeneric* find(InbandGenericCueIdentifier);
 
 private:
-    using CueToDataMap = HashMap<RefPtr<TextTrackCue>, RefPtr<GenericCueData>>;
-    using CueDataToCueMap = HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric>>;
+    using CueToDataMap = HashMap<TextTrackCue*, InbandGenericCueIdentifier>;
+    using CueDataToCueMap = HashMap<InbandGenericCueIdentifier, RefPtr<TextTrackCueGeneric>>;
 
     CueToDataMap m_cueToDataMap;
     CueDataToCueMap m_dataToCueMap;
@@ -60,12 +59,12 @@ public:
 private:
     InbandGenericTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
 
-    void addGenericCue(GenericCueData&) final;
-    void updateGenericCue(GenericCueData&) final;
-    void removeGenericCue(GenericCueData&) final;
+    void addGenericCue(InbandGenericCue&) final;
+    void updateGenericCue(InbandGenericCue&) final;
+    void removeGenericCue(InbandGenericCue&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;
 
-    void updateCueFromCueData(TextTrackCueGeneric&, GenericCueData&);
+    void updateCueFromCueData(TextTrackCueGeneric&, InbandGenericCue&);
 
     WebVTTParser& parser();
     void parseWebVTTCueData(ISOWebVTTCue&&) final;

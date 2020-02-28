@@ -84,7 +84,7 @@ static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
     return true;
 }
 
-void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, GenericCueData& cueData)
+Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString)
 {
     using namespace PAL;
     // Some of the attributes we translate into per-cue WebVTT settings are repeated on each part of an attributed string so only
@@ -99,11 +99,13 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
     };
     unsigned processed = 0;
 
+    auto cueData = InbandGenericCue::create();
     StringBuilder content;
     String attributedStringValue = CFAttributedStringGetString(attributedString);
     CFIndex length = attributedStringValue.length();
     if (!length)
-        return;
+        return cueData;
+
 
     CFRange effectiveRange = CFRangeMake(0, 0);
     while ((effectiveRange.location + effectiveRange.length) < length) {
@@ -135,11 +137,11 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 processed |= Align;
 
                 if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_Start, 0) == kCFCompareEqualTo)
-                    cueData.setAlign(GenericCueData::Start);
+                    cueData->setAlign(GenericCueData::Alignment::Start);
                 else if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_Middle, 0) == kCFCompareEqualTo)
-                    cueData.setAlign(GenericCueData::Middle);
+                    cueData->setAlign(GenericCueData::Alignment::Middle);
                 else if (CFStringCompare(valueString, kCMTextMarkupAlignmentType_End, 0) == kCFCompareEqualTo)
-                    cueData.setAlign(GenericCueData::End);
+                    cueData->setAlign(GenericCueData::Alignment::End);
                 else
                     ASSERT_NOT_REACHED();
 
@@ -183,7 +185,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double line;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &line);
-                cueData.setLine(line);
+                cueData->setLine(line);
                 continue;
             }
 
@@ -197,7 +199,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double position;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &position);
-                cueData.setPosition(position);
+                cueData->setPosition(position);
                 continue;
             }
 
@@ -211,7 +213,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double size;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &size);
-                cueData.setSize(size);
+                cueData->setSize(size);
                 continue;
             }
 
@@ -234,7 +236,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double baseFontSize;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &baseFontSize);
-                cueData.setBaseFontSize(baseFontSize);
+                cueData->setBaseFontSize(baseFontSize);
                 continue;
             }
 
@@ -245,7 +247,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double relativeFontSize;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &relativeFontSize);
-                cueData.setRelativeFontSize(relativeFontSize);
+                cueData->setRelativeFontSize(relativeFontSize);
                 continue;
             }
 
@@ -257,7 +259,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                     continue;
                 processed |= FontName;
                 
-                cueData.setFontName(valueString);
+                cueData->setFontName(valueString);
                 continue;
             }
 
@@ -269,7 +271,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 RGBA32 color;
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
-                cueData.setForegroundColor(color);
+                cueData->setForegroundColor(color);
                 continue;
             }
             
@@ -281,7 +283,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 RGBA32 color;
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
-                cueData.setBackgroundColor(color);
+                cueData->setBackgroundColor(color);
                 continue;
             }
 
@@ -293,7 +295,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 RGBA32 color;
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
-                cueData.setHighlightColor(color);
+                cueData->setHighlightColor(color);
                 continue;
             }
         }
@@ -304,7 +306,9 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
     }
 
     if (content.length())
-        cueData.setContent(content.toString());
+        cueData->setContent(content.toString());
+
+    return cueData;
 }
 
 void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, const MediaTime& time)
@@ -323,7 +327,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
     if (count)
         INFO_LOG(LOGIDENTIFIER, "added ", count, count > 1 ? " cues" : " cue", " at time ", time);
 
-    Vector<Ref<GenericCueData>> arrivingCues;
+    Vector<Ref<InbandGenericCue>> arrivingCues;
     if (count) {
         for (CFIndex i = 0; i < count; i++) {
             CFAttributedStringRef attributedString = static_cast<CFAttributedStringRef>(CFArrayGetValueAtIndex(attributedStrings, i));
@@ -331,8 +335,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
             if (!attributedString || !CFAttributedStringGetLength(attributedString))
                 continue;
 
-            auto cueData = GenericCueData::create();
-            processCueAttributes(attributedString, cueData.get());
+            auto cueData = processCueAttributes(attributedString);
             if (!cueData->content().length())
                 continue;
 
@@ -344,7 +347,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
             if (cueData->position() >= 0 && cueData->size() > 0)
                 cueData->setPosition(cueData->position() - cueData->size() / 2);
 
-            cueData->setStatus(GenericCueData::Partial);
+            cueData->setStatus(GenericCueData::Status::Partial);
 
             arrivingCues.append(WTFMove(cueData));
         }
@@ -357,12 +360,12 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
         if (m_currentCueEndTime >= m_currentCueStartTime) {
             for (auto& cueData : m_cues) {
                 // See if one of the newly-arrived cues is an extension of this cue.
-                Vector<Ref<GenericCueData>> nonExtensionCues;
+                Vector<Ref<InbandGenericCue>> nonExtensionCues;
                 for (auto& arrivingCue : arrivingCues) {
-                    if (!arrivingCue->doesExtendCueData(*cueData))
+                    if (!arrivingCue->doesExtendCueData(cueData))
                         nonExtensionCues.append(WTFMove(arrivingCue));
                     else
-                        INFO_LOG(LOGIDENTIFIER, "found an extension cue ", *cueData);
+                        INFO_LOG(LOGIDENTIFIER, "found an extension cue ", cueData.get());
                 }
 
                 bool currentCueIsExtended = (arrivingCues.size() != nonExtensionCues.size());
@@ -374,15 +377,15 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
 
                 if (m_pendingCueStatus == Valid) {
                     cueData->setEndTime(m_currentCueEndTime);
-                    cueData->setStatus(GenericCueData::Complete);
+                    cueData->setStatus(GenericCueData::Status::Complete);
 
-                    INFO_LOG(LOGIDENTIFIER, "updating cue ", *cueData);
+                    INFO_LOG(LOGIDENTIFIER, "updating cue ", cueData.get());
 
-                    client()->updateGenericCue(*cueData);
+                    client()->updateGenericCue(cueData);
                 } else {
                     // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
                     // see every cue, so DO NOT update cue duration while seeking.
-                    INFO_LOG(LOGIDENTIFIER, "ignoring cue delivered during seek ", *cueData);
+                    INFO_LOG(LOGIDENTIFIER, "ignoring cue delivered during seek ", cueData.get());
                 }
             }
         } else
@@ -397,7 +400,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
     m_currentCueStartTime = time;
 
     for (auto& cueData : arrivingCues) {
-        m_cues.append(cueData.ptr());
+        m_cues.append(cueData.get());
         INFO_LOG(LOGIDENTIFIER, "adding cue ", cueData.get());
         client()->addGenericCue(cueData);
     }
@@ -426,10 +429,10 @@ void InbandTextTrackPrivateAVF::removeCompletedCues()
         long currentCue = m_cues.size() - 1;
         for (; currentCue >= 0; --currentCue) {
             auto& cue = m_cues[currentCue];
-            if (cue->status() != GenericCueData::Complete)
+            if (cue->status() != GenericCueData::Status::Complete)
                 continue;
 
-            INFO_LOG(LOGIDENTIFIER, "removing cue ", *cue);
+            INFO_LOG(LOGIDENTIFIER, "removing cue ", cue.get());
 
             m_cues.remove(currentCue);
         }
@@ -449,7 +452,7 @@ void InbandTextTrackPrivateAVF::resetCueValues()
 
     if (auto* client = this->client()) {
         for (auto& cue : m_cues)
-            client->removeGenericCue(*cue);
+            client->removeGenericCue(cue);
     }
 
     m_cues.shrink(0);

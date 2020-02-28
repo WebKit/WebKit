@@ -118,19 +118,19 @@ void RemoteTextTrackProxy::removeDataCue(const MediaTime& start, const MediaTime
 }
 #endif
 
-void RemoteTextTrackProxy::addGenericCue(GenericCueData&)
+void RemoteTextTrackProxy::addGenericCue(InbandGenericCue& cue)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::AddGenericCue(m_identifier, cue.cueData()), m_player.idendifier());
 }
 
-void RemoteTextTrackProxy::updateGenericCue(GenericCueData&)
+void RemoteTextTrackProxy::updateGenericCue(InbandGenericCue& cue)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::UpdateGenericCue(m_identifier, cue.cueData()), m_player.idendifier());
 }
 
-void RemoteTextTrackProxy::removeGenericCue(GenericCueData&)
+void RemoteTextTrackProxy::removeGenericCue(InbandGenericCue& cue)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RemoveGenericCue(m_identifier, cue.cueData()), m_player.idendifier());
 }
 
 void RemoteTextTrackProxy::parseWebVTTFileHeader(String&& header)

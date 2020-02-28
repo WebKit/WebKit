@@ -116,18 +116,17 @@ void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, co
     if (url.isLocalFile()) {
         SandboxExtension::Handle handle;
         auto fileSystemPath = url.fileSystemPath();
-        bool createdExtension = false;
 
+        auto createExtension = [&] {
 #if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
-        auto auditToken = m_manager.gpuProcessConnection().auditToken();
-        ASSERT(auditToken);
-        if (auditToken)
-            createdExtension = SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value(), handle);
-        else
+            if (auto auditToken = m_manager.gpuProcessConnection().auditToken())
+                return SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value(), handle);
 #endif
-        createdExtension = SandboxExtension::createHandle(fileSystemPath, SandboxExtension::Type::ReadOnly, handle);
 
-        if (!createdExtension) {
+            return SandboxExtension::createHandle(fileSystemPath, SandboxExtension::Type::ReadOnly, handle);
+        };
+
+        if (!createExtension()) {
             WTFLogAlways("Unable to create sandbox extension handle for GPUProcess url.\n");
             m_cachedState.networkState = MediaPlayer::NetworkState::FormatError;
             m_player->networkStateChanged();
@@ -432,7 +431,7 @@ void MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged(TrackPrivate
 {
     ASSERT(m_audioTracks.contains(identifier));
 
-    if (const auto& track = m_audioTracks.get(identifier))
+    if (auto track = m_audioTracks.get(identifier))
         track->updateConfiguration(WTFMove(configuration));
 }
 
@@ -463,7 +462,7 @@ void MediaPlayerPrivateRemote::remoteTextTrackConfigurationChanged(TrackPrivateR
 {
     ASSERT(m_textTracks.contains(id));
 
-    if (const auto& track = m_textTracks.get(id))
+    if (auto track = m_textTracks.get(id))
         track->updateConfiguration(WTFMove(configuration));
 }
 
@@ -471,7 +470,7 @@ void MediaPlayerPrivateRemote::parseWebVTTFileHeader(TrackPrivateRemoteIdentifie
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->parseWebVTTFileHeader(WTFMove(header));
 }
 
@@ -479,7 +478,7 @@ void MediaPlayerPrivateRemote::parseWebVTTCueData(TrackPrivateRemoteIdentifier i
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->parseWebVTTCueData(WTFMove(data));
 }
 
@@ -487,7 +486,7 @@ void MediaPlayerPrivateRemote::parseWebVTTCueDataStruct(TrackPrivateRemoteIdenti
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->parseWebVTTCueDataStruct(WTFMove(data));
 }
 
@@ -495,7 +494,7 @@ void MediaPlayerPrivateRemote::addDataCue(TrackPrivateRemoteIdentifier identifie
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->addDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
 }
 
@@ -504,7 +503,7 @@ void MediaPlayerPrivateRemote::addDataCueWithType(TrackPrivateRemoteIdentifier i
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->addDataCueWithType(WTFMove(start), WTFMove(end), WTFMove(data), WTFMove(type));
 }
 
@@ -512,7 +511,7 @@ void MediaPlayerPrivateRemote::updateDataCue(TrackPrivateRemoteIdentifier identi
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->updateDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
 }
 
@@ -520,10 +519,34 @@ void MediaPlayerPrivateRemote::removeDataCue(TrackPrivateRemoteIdentifier identi
 {
     ASSERT(m_textTracks.contains(identifier));
 
-    if (const auto& track = m_textTracks.get(identifier))
+    if (auto track = m_textTracks.get(identifier))
         track->removeDataCue(WTFMove(start), WTFMove(end), WTFMove(data));
 }
 #endif
+
+void MediaPlayerPrivateRemote::addGenericCue(TrackPrivateRemoteIdentifier identifier, GenericCueData&& cueData)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (auto track = m_textTracks.get(identifier))
+        track->addGenericCue(InbandGenericCue::create(WTFMove(cueData)));
+}
+
+void MediaPlayerPrivateRemote::updateGenericCue(TrackPrivateRemoteIdentifier identifier, GenericCueData&& cueData)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (auto track = m_textTracks.get(identifier))
+        track->updateGenericCue(InbandGenericCue::create(WTFMove(cueData)));
+}
+
+void MediaPlayerPrivateRemote::removeGenericCue(TrackPrivateRemoteIdentifier identifier, GenericCueData&& cueData)
+{
+    ASSERT(m_textTracks.contains(identifier));
+
+    if (auto track = m_textTracks.get(identifier))
+        track->removeGenericCue(InbandGenericCue::create(WTFMove(cueData)));
+}
 
 void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier identifier, TrackPrivateRemoteConfiguration&& configuration)
 {
@@ -552,7 +575,7 @@ void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivate
 {
     ASSERT(m_videoTracks.contains(id));
 
-    if (const auto& track = m_videoTracks.get(id))
+    if (auto track = m_videoTracks.get(id))
         track->updateConfiguration(WTFMove(configuration));
 }
 

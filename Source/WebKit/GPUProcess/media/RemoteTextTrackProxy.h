@@ -61,9 +61,9 @@ private:
     virtual void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
 #endif
 
-    virtual void addGenericCue(GenericCueData&);
-    virtual void updateGenericCue(GenericCueData&);
-    virtual void removeGenericCue(GenericCueData&);
+    virtual void addGenericCue(InbandGenericCue&);
+    virtual void updateGenericCue(InbandGenericCue&);
+    virtual void removeGenericCue(InbandGenericCue&);
 
     virtual void parseWebVTTFileHeader(String&&);
     virtual void parseWebVTTCueData(const char* data, unsigned length);

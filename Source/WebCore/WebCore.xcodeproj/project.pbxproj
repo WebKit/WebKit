@@ -85,6 +85,7 @@
 		0704A4081D6DE9F10086DCDB /* OverconstrainedError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */; };
 		0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */; };
 		0704A4161D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */; };
+		0706A0D9240830A700E93818 /* InbandGenericCueIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0707568C142262D600414161 /* HTMLTrackElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 07075689142262D600414161 /* HTMLTrackElement.h */; };
 		070756951422668D00414161 /* JSTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0707568F1422668C00414161 /* JSTextTrack.h */; };
 		070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756D214239A4E00414161 /* JSHTMLTrackElement.h */; };
@@ -145,6 +146,7 @@
 		0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0783228318013ED800999E0C /* MediaStreamAudioSource.h */; };
 		07846343145B151A00A58DF1 /* JSTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846341145B151A00A58DF1 /* JSTrackEvent.h */; };
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
+		078633E923FF347B0087AE21 /* InbandGenericCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 078633DE23FEDF220087AE21 /* InbandGenericCue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */; };
 		078E091517D14D1C00420AA1 /* MediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B4D17CEC32700848E51 /* MediaStream.h */; };
 		078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5517CEC32700848E51 /* MediaStreamTrack.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5339,6 +5341,7 @@
 		0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedError.h; sourceTree = "<group>"; };
 		0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverconstrainedErrorEvent.cpp; sourceTree = "<group>"; };
 		0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedErrorEvent.h; sourceTree = "<group>"; };
+		0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandGenericCueIdentifier.h; sourceTree = "<group>"; };
 		07075688142262D600414161 /* HTMLTrackElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTrackElement.cpp; sourceTree = "<group>"; };
 		07075689142262D600414161 /* HTMLTrackElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTrackElement.h; sourceTree = "<group>"; };
 		0707568A142262D600414161 /* HTMLTrackElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTrackElement.idl; sourceTree = "<group>"; };
@@ -5497,6 +5500,8 @@
 		07846341145B151A00A58DF1 /* JSTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackEvent.h; sourceTree = "<group>"; };
 		07846384145B1B8E00A58DF1 /* JSTrackCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackCustom.h; sourceTree = "<group>"; };
 		078633D723FE09640087AE21 /* SerializedPlatformDataCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedPlatformDataCue.cpp; sourceTree = "<group>"; };
+		078633DE23FEDF220087AE21 /* InbandGenericCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InbandGenericCue.h; sourceTree = "<group>"; };
+		078633F8240715D20087AE21 /* InbandGenericCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InbandGenericCue.cpp; sourceTree = "<group>"; };
 		0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackSupportedConstraints.cpp; sourceTree = "<group>"; };
 		0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaTrackSupportedConstraints.h; sourceTree = "<group>"; };
 		078E094817D1709600420AA1 /* MediaStreamAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioDestinationNode.cpp; sourceTree = "<group>"; };
@@ -25081,6 +25086,9 @@
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
+				078633F8240715D20087AE21 /* InbandGenericCue.cpp */,
+				078633DE23FEDF220087AE21 /* InbandGenericCue.h */,
+				0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */,
 				07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */,
 				07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */,
 				2D46F04D17B96FBD005647F0 /* IntPoint.cpp */,
@@ -30325,6 +30333,8 @@
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
 				BE961C5518AD338C00D07DC5 /* InbandDataTextTrack.h in Headers */,
+				078633E923FF347B0087AE21 /* InbandGenericCue.h in Headers */,
+				0706A0D9240830A700E93818 /* InbandGenericCueIdentifier.h in Headers */,
 				BE16C59317CFE17200852C04 /* InbandGenericTextTrack.h in Headers */,
 				07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */,
 				07941792166E855F009416C2 /* InbandTextTrack.h in Headers */,

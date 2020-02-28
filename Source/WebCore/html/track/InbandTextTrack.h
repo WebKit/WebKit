@@ -77,9 +77,9 @@ private:
     void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override  { ASSERT_NOT_REACHED(); }
 #endif
 
-    void addGenericCue(GenericCueData&) override { ASSERT_NOT_REACHED(); }
-    void updateGenericCue(GenericCueData&) override { ASSERT_NOT_REACHED(); }
-    void removeGenericCue(GenericCueData&) override { ASSERT_NOT_REACHED(); }
+    void addGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
+    void updateGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
+    void removeGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
 
     void parseWebVTTFileHeader(String&&) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(const char*, unsigned) override { ASSERT_NOT_REACHED(); }

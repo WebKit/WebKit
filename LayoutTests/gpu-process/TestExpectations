@@ -232,6 +232,13 @@ http/tests/media/hls/hls-webvtt-tracks.html [ Pass ]
 http/tests/media/track-in-band-hls-metadata.html [ Pass ]
 http/tests/media/track-in-band-hls-metadata-crash.html [ Pass ]
 
+media/track/track-in-band-cues-added-once.html [ Pass ]
+media/track/track-in-band-style.html [ Pass ]
+media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass ]
+media/track/track-in-band-legacy-api.html [ Pass ]
+media/track/track-in-band.html [ Pass ]
+media/track/track-in-band-metadata-display-order.html [ Pass ]
+
 accessibility/media-element.html [ Skip ]
 fast/block/float/list-marker-is-float-crash.html [ Skip ]
 fast/css/relative-position-replaced-in-table-display-crash.html [ Skip ]

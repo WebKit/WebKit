@@ -51,7 +51,7 @@ public:
         client()->addDataCue(start, end, data, length);
     }
 
-    void addGenericCue(GenericCueData& data)
+    void addGenericCue(InbandGenericCue& data)
     {
         ASSERT(cueFormat() == CueFormat::Generic);
         client()->addGenericCue(data);

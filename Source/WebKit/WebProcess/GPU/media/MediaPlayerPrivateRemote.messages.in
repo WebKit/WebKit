@@ -57,9 +57,9 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     RemoveDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
 #endif
 
-    ## AddGenericCue(WebCore::GenericCueData cue)
-    ## UpdateGenericCue(WebCore::GenericCueData cue)
-    ## RemoveGenericCue(WebCore::GenericCueData cue)
+    AddGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+    UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+    RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
 
     AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
     RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)

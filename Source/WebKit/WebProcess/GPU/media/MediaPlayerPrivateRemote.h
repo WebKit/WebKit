@@ -43,6 +43,7 @@ class MachSendRight;
 }
 
 namespace WebCore {
+struct GenericCueData;
 class ISOWebVTTCue;
 class SerializedPlatformDataCueValue;
 }
@@ -121,6 +122,10 @@ public:
     void updateDataCue(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
     void removeDataCue(TrackPrivateRemoteIdentifier, MediaTime&& start, MediaTime&& end, WebCore::SerializedPlatformDataCueValue&&);
 #endif
+
+    void addGenericCue(TrackPrivateRemoteIdentifier, WebCore::GenericCueData&&);
+    void updateGenericCue(TrackPrivateRemoteIdentifier, WebCore::GenericCueData&&);
+    void removeGenericCue(TrackPrivateRemoteIdentifier, WebCore::GenericCueData&&);
 
     void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions, CompletionHandler<void()>&&);
     void removeResource(RemoteMediaResourceIdentifier);

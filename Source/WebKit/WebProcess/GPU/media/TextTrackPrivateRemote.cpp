@@ -90,21 +90,26 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
     m_isDefault = configuration.isDefault;
 }
 
-void TextTrackPrivateRemote::addGenericCue(GenericCueData&)
+void TextTrackPrivateRemote::addGenericCue(Ref<InbandGenericCue> cue)
 {
-    notImplemented();
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->addGenericCue(cue);
 }
 
-void TextTrackPrivateRemote::updateGenericCue(GenericCueData&)
+void TextTrackPrivateRemote::updateGenericCue(Ref<InbandGenericCue> cue)
 {
-    notImplemented();
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->updateGenericCue(cue);
 }
 
-void TextTrackPrivateRemote::removeGenericCue(GenericCueData&)
+void TextTrackPrivateRemote::removeGenericCue(Ref<InbandGenericCue> cue)
 {
-    notImplemented();
+    ASSERT(client());
+    if (auto* client = this->client())
+        client->removeGenericCue(cue);
 }
-
 
 void TextTrackPrivateRemote::parseWebVTTFileHeader(String&& header)
 {
