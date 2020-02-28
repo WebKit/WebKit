@@ -203,7 +203,8 @@ void logMemoryStatisticsAtTimeOfDeath()
     RELEASE_LOG(MemoryPressure, "Page count: %u", pageCount());
     RELEASE_LOG(MemoryPressure, "Document count: %u", Document::allDocuments().size());
     RELEASE_LOG(MemoryPressure, "Live JavaScript objects:");
-    for (auto& it : *vm.heap.objectTypeCounts())
+    auto typeCounts = vm.heap.objectTypeCounts();
+    for (auto& it : *typeCounts)
         RELEASE_LOG(MemoryPressure, "  %s: %d", it.key, it.value);
 #endif
 }
