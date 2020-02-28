@@ -222,6 +222,15 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     FloatRect fieldRect = zoomedRect;
+    if (fieldRect.width() != fieldRect.height()) {
+        auto buttonSize = std::min(fieldRect.width(), fieldRect.height());
+        fieldRect.setSize({ buttonSize, buttonSize });
+        if (fieldRect.width() != zoomedRect.width())
+            fieldRect.move((zoomedRect.width() - fieldRect.width()) / 2.0, 0);
+        else
+            fieldRect.move(0, (zoomedRect.height() - fieldRect.height()) / 2.0);
+    }
+
     FloatSize corner(2, 2);
     Path path;
     path.addRoundedRect(fieldRect, corner);
@@ -275,6 +284,15 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     FloatRect fieldRect = zoomedRect;
+    if (fieldRect.width() != fieldRect.height()) {
+        auto buttonSize = std::min(fieldRect.width(), fieldRect.height());
+        fieldRect.setSize({ buttonSize, buttonSize });
+        if (fieldRect.width() != zoomedRect.width())
+            fieldRect.move((zoomedRect.width() - fieldRect.width()) / 2.0, 0);
+        else
+            fieldRect.move(0, (zoomedRect.height() - fieldRect.height()) / 2.0);
+    }
+
     Path path;
     path.addEllipse(fieldRect);
     fieldRect.inflate(-buttonBorderSize);
