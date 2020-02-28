@@ -202,6 +202,22 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let generalSettingsView = new WI.SettingsView("general", WI.UIString("General"));
 
+        if (CSS.supports("color-scheme", "light") && CSS.supports("color-scheme", "dark")) {
+            const appearanceValues = [
+                ["system", WI.UIString("System", "System @ Settings General Appearance", "Label of dropdown item used for forcing Web Inspector to be shown using the system's theme")],
+                [WI.SettingEditor.SelectSpacerKey, null],
+                ["light", WI.UIString("Light", "Light @ Settings General Appearance", "Label of dropdown item used for forcing Web Inspector to be shown using a light theme")],
+                ["dark", WI.UIString("Dark", "Dark @ Settings General Appearance", "Label of dropdown item used for forcing Web Inspector to be shown using a dark theme")],
+            ];
+            let appearanceEditor = generalSettingsView.addGroupWithCustomSetting(WI.UIString("Appearance:"), WI.SettingEditor.Type.Select, {values: appearanceValues});
+            appearanceEditor.value = WI.settings.frontendAppearance.value;
+            appearanceEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => {
+                WI.settings.frontendAppearance.value = appearanceEditor.value;
+            }, WI.settings.frontendAppearance);
+
+            generalSettingsView.addSeparator();
+        }
+
         const indentValues = [WI.UIString("Tabs"), WI.UIString("Spaces")];
         let indentEditor = generalSettingsView.addGroupWithCustomSetting(WI.UIString("Prefer indent using:"), WI.SettingEditor.Type.Select, {values: indentValues});
         indentEditor.value = indentValues[WI.settings.indentWithTabs.value ? 0 : 1];

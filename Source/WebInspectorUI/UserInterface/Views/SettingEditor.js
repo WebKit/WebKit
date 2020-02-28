@@ -159,6 +159,11 @@ WI.SettingEditor = class SettingEditor extends WI.Object
                 keyValuePairs = options.values.map((value) => [value, value]);
 
             for (let [key, value] of keyValuePairs) {
+                if (key === WI.SettingEditor.SelectSpacerKey) {
+                    editorElement.appendChild(document.createElement("hr"));
+                    continue;
+                }
+
                 let optionElement = editorElement.appendChild(document.createElement("option"));
                 optionElement.value = key;
                 optionElement.textContent = value;
@@ -182,6 +187,8 @@ WI.SettingEditor.Type = {
     Numeric: "setting-editor-type-numeric",
     Select: "setting-editor-type-select",
 };
+
+WI.SettingEditor.SelectSpacerKey = Symbol("setting-editor-select-spacer-key");
 
 WI.SettingEditor.Event = {
     ValueDidChange: "value-did-change",

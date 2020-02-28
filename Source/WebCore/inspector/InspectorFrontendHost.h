@@ -68,6 +68,8 @@ public:
     void setZoomFactor(float);
     float zoomFactor();
 
+    void setForcedAppearance(String);
+
     String userInterfaceLayoutDirection();
 
     void requestSetDockSide(const String&);

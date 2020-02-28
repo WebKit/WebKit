@@ -188,6 +188,7 @@ WI.loaded = function()
     // State.
     WI.printStylesEnabled = false;
     WI.setZoomFactor(WI.settings.zoomFactor.value);
+    InspectorFrontendHost.setForcedAppearance(WI.settings.frontendAppearance.value);
     WI.mouseCoords = {x: 0, y: 0};
     WI.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     WI.visible = false;
@@ -539,6 +540,10 @@ WI.contentLoaded = function()
     }
     WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, updateConsoleSavedResultPrefixCSSVariable);
     updateConsoleSavedResultPrefixCSSVariable();
+
+    WI.settings.frontendAppearance.addEventListener(WI.Setting.Event.Changed, (event) => {
+        InspectorFrontendHost.setForcedAppearance(WI.settings.frontendAppearance.value);
+    }, WI);
 
     // Signal that the frontend is now ready to receive messages.
     WI._backendTargetAvailablePromise.promise.then(() => {

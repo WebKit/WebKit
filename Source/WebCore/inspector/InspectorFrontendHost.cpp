@@ -232,6 +232,19 @@ float InspectorFrontendHost::zoomFactor()
     return 1.0;
 }
 
+void InspectorFrontendHost::setForcedAppearance(String appearance)
+{
+    if (!m_frontendPage)
+        return;
+
+    if (appearance == "light"_s)
+        m_frontendPage->setUseDarkAppearanceOverride(false);
+    else if (appearance == "dark"_s)
+        m_frontendPage->setUseDarkAppearanceOverride(true);
+    else
+        m_frontendPage->setUseDarkAppearanceOverride(WTF::nullopt);
+}
+
 String InspectorFrontendHost::userInterfaceLayoutDirection()
 {
     if (m_client && m_client->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::RTL)

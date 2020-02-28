@@ -138,6 +138,7 @@ localizedStrings["Anonymous Script %d"] = "Anonymous Script %d";
 localizedStrings["Anonymous Scripts"] = "Anonymous Scripts";
 localizedStrings["Anonymous Style Sheet %d"] = "Anonymous Style Sheet %d";
 localizedStrings["Anonymous Style Sheets"] = "Anonymous Style Sheets";
+localizedStrings["Appearance:"] = "Appearance:";
 localizedStrings["Application Cache"] = "Application Cache";
 /* Approximate count of events */
 localizedStrings["Approximate Number"] = "~%s";
@@ -348,6 +349,8 @@ localizedStrings["DOM Event \u201C%s\u201D"] = "DOM Event \u201C%s\u201D";
 localizedStrings["DOM Events"] = "DOM Events";
 localizedStrings["DOM Nodes:"] = "DOM Nodes:";
 localizedStrings["Damping"] = "Damping";
+/* Label of dropdown item used for forcing Web Inspector to be shown using a dark theme */
+localizedStrings["Dark @ Settings General Appearance"] = "Dark";
 localizedStrings["Data"] = "Data";
 localizedStrings["Data Bindings"] = "Data Bindings";
 localizedStrings["Data returned from the database is too large."] = "Data returned from the database is too large.";
@@ -692,6 +695,8 @@ localizedStrings["Layout & Rendering"] = "Layout & Rendering";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";
 localizedStrings["Layout Invalidated"] = "Layout Invalidated";
+/* Label of dropdown item used for forcing Web Inspector to be shown using a light theme */
+localizedStrings["Light @ Settings General Appearance"] = "Light";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
 localizedStrings["Line Number"] = "Line Number";
@@ -1163,6 +1168,8 @@ localizedStrings["Subject"] = "Subject";
 /* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
 localizedStrings["Subtree Modified"] = "Subtree Modified";
 localizedStrings["Summary"] = "Summary";
+/* Label of dropdown item used for forcing Web Inspector to be shown using the system's theme */
+localizedStrings["System @ Settings General Appearance"] = "System";
 localizedStrings["TCP"] = "TCP";
 localizedStrings["TIFF"] = "TIFF";
 localizedStrings["Tab width:"] = "Tab width:";
