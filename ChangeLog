@@ -1,3 +1,19 @@
+2020-02-28  Keith Miller  <keith_miller@apple.com>
+
+        Fix issue in cmake build for checking ccache
+        https://bugs.webkit.org/show_bug.cgi?id=208377
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        If either of the "readlink" or "which" commands fail when looking for the ccache prefix
+        the output variables will be empty and an invalid expression will be provided to CMake.
+        e.g. we will get something like:
+        if ("0" "EQUAL" "0" "AND" "1" "EQUAL" "0" "AND" "STREQUAL" "/usr/local/bin/ccache")
+
+        The fix is to wrap the output variables in the quotes when unboxing them in the if.
+
+        * Source/cmake/WebKitCCache.cmake:
+
 2020-02-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build
