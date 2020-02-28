@@ -545,7 +545,6 @@
        (ipc-posix-name-prefix "apple.cfprefs."))
  
 (allow mach-lookup (with telemetry-backtrace)
-    (global-name "com.apple.lsd.open")
     (global-name "com.apple.lsd.mapdb"))
 
 ;; <rdar://problem/12413942>
