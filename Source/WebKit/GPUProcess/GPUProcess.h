@@ -39,6 +39,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 struct GPUProcessCreationParameters;
 struct GPUProcessSessionParameters;
+class LayerHostingContext;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess>, public CanMakeWeakPtr<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
@@ -98,6 +99,10 @@ private:
 #endif
     };
     HashMap<PAL::SessionID, GPUSession> m_sessions;
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
+    bool m_canShowWhileLocked { false };
+#endif
 };
 
 } // namespace WebKit

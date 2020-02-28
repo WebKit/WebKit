@@ -799,6 +799,7 @@ private:
 
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesPlayingAudibleMedia;
     std::unique_ptr<ProcessAssertion> m_uiProcessMediaPlaybackAssertion;
+    std::unique_ptr<ProcessAssertion> m_gpuProcessMediaPlaybackAssertion;
 
 #if PLATFORM(IOS)
     // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).

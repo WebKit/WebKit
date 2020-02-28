@@ -304,8 +304,13 @@ public:
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     virtual void didCreateContextForVisibilityPropagation(LayerHostingContextID) { }
+    virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
 #endif
-    
+
+#if ENABLE(GPU_PROCESS)
+    virtual void gpuProcessCrashed() { }
+#endif
+
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) = 0;

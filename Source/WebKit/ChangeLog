@@ -1,3 +1,57 @@
+2020-02-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] The GPU process never runs as a foreground process
+        https://bugs.webkit.org/show_bug.cgi?id=208250
+
+        Reviewed by Chris Dumez.
+
+        Currently, the GPU process always runs in the background, and never goes into the foreground mode, which is required for media
+        playback on iOS. This is addressed by creating a layer in the GPU process, whose context ID is used to create a visibility
+        propagation view in the UI process. This is done in the same way as it is done for the WebContent process. This makes it
+        possible for the system to determine the visibility of the GPU process. In addition, create foreground process assertions
+        when media is being played.
+
+        No new tests, covered by existing tests.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/ios/GPUProcessIOS.mm:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+        (WebKit::GPUProcessProxy::didCreateContextForVisibilityPropagation):
+        (WebKit::GPUProcessProxy::contextIDForVisibilityPropagation const):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didCreateContextInGPUProcessForVisibilityPropagation):
+        (WebKit::PageClient::gpuProcessCrashed):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessCrashed):
+        (WebKit::WebProcessPool::setWebProcessIsPlayingAudibleMedia):
+        (WebKit::WebProcessPool::clearWebProcessIsPlayingAudibleMedia):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessCrashed):
+        (WebKit::WebProcessProxy::didCreateContextInGPUProcessForVisibilityPropagation):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation):
+        (WebKit::PageClientImpl::gpuProcessCrashed):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView _setupVisibilityPropagationViewForGPUProcess]):
+        (-[WKContentView _removeVisibilityPropagationViewForGPUProcess]):
+        (-[WKContentView _gpuProcessCrashed]):
+        (-[WKContentView _gpuProcessDidCreateContextForVisibilityPropagation]):
+
 2020-02-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement ImageBuffer shareable backends

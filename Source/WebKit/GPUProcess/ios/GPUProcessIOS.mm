@@ -29,6 +29,8 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "GPUProcessCreationParameters.h"
+#import "GPUProcessProxyMessages.h"
+#import "LayerHostingContext.h"
 #import "SandboxInitializationParameters.h"
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>

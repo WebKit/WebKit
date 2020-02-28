@@ -72,6 +72,10 @@ private:
     void didRelaunchProcess() override;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(LayerHostingContextID) override;
+    void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) override;
+#endif
+#if ENABLE(GPU_PROCESS)
+    void gpuProcessCrashed() override;
 #endif
     void pageClosed() override;
     void preferencesDidChange() override;

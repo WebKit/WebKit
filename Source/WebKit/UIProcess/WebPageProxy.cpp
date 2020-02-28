@@ -9936,6 +9936,13 @@ void WebPageProxy::clearPrevalentDomains()
 }
 #endif
 
+#if ENABLE(GPU_PROCESS)
+void WebPageProxy::gpuProcessCrashed()
+{
+    pageClient().gpuProcessCrashed();
+}
+#endif
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

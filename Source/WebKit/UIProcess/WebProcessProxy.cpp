@@ -706,6 +706,12 @@ void WebProcessProxy::getGPUProcessConnection(Messages::WebProcessProxy::GetGPUP
 {
     m_processPool->getGPUProcessConnection(*this, WTFMove(reply));
 }
+
+void WebProcessProxy::gpuProcessCrashed()
+{
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
+        page->gpuProcessCrashed();
+}
 #endif
 
 #if !PLATFORM(COCOA)
@@ -1744,6 +1750,14 @@ void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerI
     updateServiceWorkerProcessAssertion();
 #endif
 }
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void WebProcessProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
+        page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+}
+#endif
 
 } // namespace WebKit
 

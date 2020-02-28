@@ -724,6 +724,9 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 {
     m_client.gpuProcessDidCrash(this, identifier);
+    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
+    for (auto& process : processes)
+        process->gpuProcessCrashed();
     terminateAllWebContentProcesses();
 }
 
@@ -2387,6 +2390,10 @@ void WebProcessPool::setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifi
 
         ASSERT(!m_uiProcessMediaPlaybackAssertion);
         m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+#if ENABLE(GPU_PROCESS)
+        if (GPUProcessProxy::singletonIfCreated())
+            m_gpuProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+#endif
     }
 
     auto result = m_processesPlayingAudibleMedia.add(processID, nullptr);
@@ -2409,6 +2416,7 @@ void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdenti
 
         ASSERT(m_uiProcessMediaPlaybackAssertion);
         m_uiProcessMediaPlaybackAssertion = nullptr;
+        m_gpuProcessMediaPlaybackAssertion = nullptr;
     }
 }
 

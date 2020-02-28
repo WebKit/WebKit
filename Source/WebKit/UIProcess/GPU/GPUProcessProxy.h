@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcessProxy.h"
 #include "GPUProcessProxyMessagesReplies.h"
+#include "LayerHostingContext.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
@@ -66,6 +67,10 @@ public:
 
     void removeSession(PAL::SessionID);
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    LayerHostingContextID contextIDForVisibilityPropagation() const;
+#endif
+
 private:
     explicit GPUProcessProxy();
     ~GPUProcessProxy();
@@ -92,8 +97,13 @@ private:
     void openGPUProcessConnection(ConnectionRequestIdentifier, WebProcessProxy&);
 
     // IPC::Connection::Client
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+#endif
 
     static GPUProcessProxy* m_singleton;
 
@@ -111,6 +121,11 @@ private:
     uint64_t m_orientation { 0 };
 #endif
     HashSet<PAL::SessionID> m_sessionIDs;
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
+    Vector<WeakPtr<WebProcessProxy>> m_processesPendingVisibilityPropagationNotification;
+#endif
 };
 
 } // namespace WebKit

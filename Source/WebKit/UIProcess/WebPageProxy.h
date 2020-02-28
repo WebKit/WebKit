@@ -1168,7 +1168,12 @@ public:
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+    void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID);
     LayerHostingContextID contextIDForVisibilityPropagation() const { return m_contextIDForVisibilityPropagation; }
+#endif
+
+#if ENABLE(GPU_PROCESS)
+    void gpuProcessCrashed();
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);

@@ -55,6 +55,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WeakHashSet.h>
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+#include "LayerHostingContext.h"
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -362,6 +366,14 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
     bool hasIssuedAttachmentElementRelatedSandboxExtensions() const { return m_hasIssuedAttachmentElementRelatedSandboxExtensions; }
     void setHasIssuedAttachmentElementRelatedSandboxExtensions() { m_hasIssuedAttachmentElementRelatedSandboxExtensions = true; }
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID);
+#endif
+
+#if ENABLE(GPU_PROCESS)
+    void gpuProcessCrashed();
 #endif
 
 protected:

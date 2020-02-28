@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "AccessibilityIOS.h"
 #import "FullscreenClient.h"
+#import "GPUProcessProxy.h"
 #import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
 #import "PageClientImplIOS.h"
@@ -134,6 +135,7 @@
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<_UILayerHostView> _visibilityPropagationView;
+    RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
 #endif
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
@@ -199,6 +201,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _setupVisibilityPropagationView];
+    [self _setupVisibilityPropagationViewForGPUProcess];
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
@@ -229,6 +232,24 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self addSubview:_visibilityPropagationView.get()];
 }
 
+- (void)_setupVisibilityPropagationViewForGPUProcess
+{
+    if (!WebKit::GPUProcessProxy::singletonIfCreated())
+        return;
+    auto processIdentifier = WebKit::GPUProcessProxy::singleton().processIdentifier();
+    auto contextID = WebKit::GPUProcessProxy::singleton().contextIDForVisibilityPropagation();
+    if (!processIdentifier || !contextID)
+        return;
+
+    if (_visibilityPropagationViewForGPUProcess)
+        return;
+
+    // Propagate the view's visibility state to the GPU process so that it is marked as "Foreground Running" when necessary.
+    _visibilityPropagationViewForGPUProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID: %u) for GPU process with PID %d", _visibilityPropagationViewForGPUProcess.get(), contextID, processIdentifier);
+    [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
+}
+
 - (void)_removeVisibilityPropagationView
 {
     if (!_visibilityPropagationView)
@@ -237,6 +258,16 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationView.get());
     [_visibilityPropagationView removeFromSuperview];
     _visibilityPropagationView = nullptr;
+}
+
+- (void)_removeVisibilityPropagationViewForGPUProcess
+{
+    if (!_visibilityPropagationViewForGPUProcess)
+        return;
+
+    RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationViewForGPUProcess.get());
+    [_visibilityPropagationViewForGPUProcess removeFromSuperview];
+    _visibilityPropagationViewForGPUProcess = nullptr;
 }
 #endif
 
@@ -591,6 +622,13 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     _isPrintingToPDF = NO;
 }
 
+#if ENABLE(GPU_PROCESS)
+- (void)_gpuProcessCrashed
+{
+    [self _removeVisibilityPropagationViewForGPUProcess];
+}
+#endif
+
 - (void)_processWillSwap
 {
     // FIXME: Should we do something differently?
@@ -610,6 +648,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_processDidCreateContextForVisibilityPropagation
 {
     [self _setupVisibilityPropagationView];
+}
+
+- (void)_gpuProcessDidCreateContextForVisibilityPropagation
+{
+    [self _setupVisibilityPropagationViewForGPUProcess];
 }
 #endif
 

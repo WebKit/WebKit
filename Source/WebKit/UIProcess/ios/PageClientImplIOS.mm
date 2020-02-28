@@ -219,6 +219,18 @@ void PageClientImpl::didCreateContextForVisibilityPropagation(LayerHostingContex
 {
     [m_contentView _processDidCreateContextForVisibilityPropagation];
 }
+
+void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID)
+{
+    [m_contentView _gpuProcessDidCreateContextForVisibilityPropagation];
+}
+#endif
+
+#if ENABLE(GPU_PROCESS)
+void PageClientImpl::gpuProcessCrashed()
+{
+    [m_contentView _gpuProcessCrashed];
+}
 #endif
 
 void PageClientImpl::pageClosed()

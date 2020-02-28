@@ -96,10 +96,14 @@ class WebProcessPool;
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;
+#if ENABLE(GPU_PROCESS)
+- (void)_gpuProcessCrashed;
+#endif
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 - (void)_processDidCreateContextForVisibilityPropagation;
+- (void)_gpuProcessDidCreateContextForVisibilityPropagation;
 #endif
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 

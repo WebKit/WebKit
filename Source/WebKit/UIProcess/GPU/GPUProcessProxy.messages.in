@@ -23,6 +23,11 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUProcessProxy NotRefCounted {
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
+#endif
+
 }
 
 #endif // ENABLE(GPU_PROCESS)

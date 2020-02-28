@@ -123,6 +123,13 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 #endif
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
+        m_canShowWhileLocked
+    });
+    send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
+#endif
+
     WebCore::setPresentingApplicationPID(parameters.parentPID);
 }
 

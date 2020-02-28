@@ -307,6 +307,11 @@ void WebPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextI
     m_contextIDForVisibilityPropagation = contextID;
     pageClient().didCreateContextForVisibilityPropagation(contextID);
 }
+
+void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    pageClient().didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+}
 #endif
 
 } // namespace WebKit
