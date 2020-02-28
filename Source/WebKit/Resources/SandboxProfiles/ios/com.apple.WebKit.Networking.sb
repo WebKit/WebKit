@@ -663,6 +663,7 @@
     (ipc-posix-name "containermanagerd.fb_check"))
 
 (allow file-read*
+    (literal "/dev/aes_0")
     (literal "/dev/random")
     (literal "/dev/urandom"))
 

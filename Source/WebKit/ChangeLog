@@ -1,3 +1,15 @@
+2020-02-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Unblock read access to aes_0 device
+        https://bugs.webkit.org/show_bug.cgi?id=208344
+        <rdar://problem/59746108>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Logging needs access to /dev/aes_0 to generate random identifiers. We should unblock this service.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-02-28  youenn fablet  <youenn@apple.com>
 
         [MacOS/iOS] Enable audio/video capture in GPUProcess by default
