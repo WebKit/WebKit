@@ -157,7 +157,7 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     _handleMouseDown(event)
     {
         // Clicking on a button should NOT focus on it.
-        event.stop();
+        event.preventDefault();
     }
 
     _handleKeyDown(event)
