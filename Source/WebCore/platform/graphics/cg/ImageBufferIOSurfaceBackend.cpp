@@ -35,6 +35,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -79,7 +80,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferIOSurfaceBackend>(new ImageBufferIOSurfaceBackend(size, backendSize, resolutionScale, colorSpace, WTFMove(surface)));
+    return makeUnique<ImageBufferIOSurfaceBackend>(size, backendSize, resolutionScale, colorSpace, WTFMove(surface));
 }
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const FloatSize& size, const GraphicsContext& context)

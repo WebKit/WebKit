@@ -39,9 +39,8 @@
 #include <WebCore/WebSocketChannelClient.h>
 #include <wtf/CheckedArithmetic.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebSocketChannel> WebSocketChannel::create(Document& document, WebSocketChannelClient& client)
 {

@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
+#include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "RemoteMediaRecorderManagerMessages.h"
 #include "RemoteMediaRecorderMessages.h"

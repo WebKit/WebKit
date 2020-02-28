@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcessConnection.h"
 #include "RemoteAudioDestinationManager.h"
 #include "RemoteAudioDestinationManagerMessages.h"
 #include "RemoteAudioDestinationProxyMessages.h"

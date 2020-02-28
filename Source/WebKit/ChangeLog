@@ -1,3 +1,54 @@
+2020-02-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement ImageBuffer shareable backends
+        https://bugs.webkit.org/show_bug.cgi?id=207233
+
+        Reviewed by Simon Fraser.
+
+        RemoteImageBufferProxy will create a shareable backend in the GPUProcess.
+        Then it will give access to this backend to RemoteImageBuffer in the
+        WebProcess by sending an ImageBufferBackendHandle.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h: Added.
+        This is variant of shareable handles to the ImageBufferBackend data.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp: Added.
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        The first create method will be called to create the backend of 
+        RemoteImageBufferProxy GPUProcess. The second create method will be called
+        to create the backend of RemoteImageBuffer in the WebProcess.
+
+        (WebKit::ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend):
+        (WebKit::ImageBufferShareableBitmapBackend::createImageBufferBackendHandle const):
+        Creates an ImageBufferBackendHandle which will be sent from the GPUProcess
+        to the WebProcess.
+
+        (WebKit::ImageBufferShareableBitmapBackend::copyNativeImage const):
+        (WebKit::ImageBufferShareableBitmapBackend::copyImage const):
+        (WebKit::ImageBufferShareableBitmapBackend::toBGRAData const):
+        (WebKit::ImageBufferShareableBitmapBackend::getImageData const):
+        (WebKit::ImageBufferShareableBitmapBackend::putImageData):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h: Added.
+
+        * WebProcess/GPU/graphics/PlatformImageBufferShareableBackend.h: Added.
+        Defines the platform shareable ImageBufferBackend types.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp: Added.
+        (WebKit::ImageBufferShareableIOSurfaceBackend::create):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::createImageBufferBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h: Added.
+        Because ImageBufferBackendHandle has to be defined in WebKit, sharing
+        the IOSurface backend has to be implemented in WebKit.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.h:
+        Unified sources gardening.
+
 2020-02-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r257575.

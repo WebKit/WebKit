@@ -557,6 +557,8 @@ WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
 
+WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp
+
 WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp

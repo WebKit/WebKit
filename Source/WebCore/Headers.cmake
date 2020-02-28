@@ -1133,6 +1133,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Pattern.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImageBuffer.h
+    platform/graphics/PlatformImageBufferBackend.h
     platform/graphics/PlatformLayer.h
     platform/graphics/PlatformMediaResourceLoader.h
     platform/graphics/PlatformTextTrack.h

@@ -43,6 +43,8 @@ public:
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, const HostWindow*);
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const FloatSize&, const GraphicsContext&);
 
+    ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, std::unique_ptr<IOSurface>&&);
+
     GraphicsContext& context() const override;
     void flushContext() override;
 
@@ -60,8 +62,6 @@ public:
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint) override;
 
 protected:
-    ImageBufferIOSurfaceBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, std::unique_ptr<IOSurface>&&);
-
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
     ColorFormat backendColorFormat() const override;

@@ -56,7 +56,7 @@ private:
 
     void createPixmap();
 
-    Display* m_display { nullptr };
+    ::Display* m_display { nullptr };
     WebCore::XUniqueWindow m_window;
     WebCore::XUniqueWindow m_parentWindow;
     WebCore::XUniquePixmap m_pixmap;
