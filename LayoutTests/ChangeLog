@@ -1,3 +1,18 @@
+2020-02-27  Ben Nham  <nham@apple.com>
+
+        REGRESSION (r257391-257396): [ iOS ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=208323
+
+        Unreviewed test gardening.
+
+        scroll-restoration-order.html has always failed on iOS. Before r257394, we didn't properly
+        restore the scroll position before the hashchange event. After r257394, we now properly
+        restore the scroll position, but do it too early (it's restored before popstate, rather than
+        between popstate and hashchange). If anything, the new state seems less broken than before,
+        so this just updates the expected results to reflect the current status of our tests.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order-expected.txt:
+
 2020-02-27  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Layout test gardening
