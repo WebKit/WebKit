@@ -34,6 +34,7 @@
 #include "CDMKeySystemConfiguration.h"
 #include "CDMRestrictions.h"
 #include "CDMSessionType.h"
+#include "InitDataRegistry.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include <algorithm>
@@ -290,10 +291,13 @@ bool CDMFactoryClearKey::supportsKeySystem(const String& keySystem)
 CDMPrivateClearKey::CDMPrivateClearKey() = default;
 CDMPrivateClearKey::~CDMPrivateClearKey() = default;
 
-bool CDMPrivateClearKey::supportsInitDataType(const AtomString& initDataType) const
+Vector<AtomString> CDMPrivateClearKey::supportedInitDataTypes() const
 {
-    // `keyids` and 'cenc' are the only supported init data type.
-    return (equalLettersIgnoringASCIICase(initDataType, "keyids") || equalLettersIgnoringASCIICase(initDataType, "cenc") || equalLettersIgnoringASCIICase(initDataType, "webm"));
+    return {
+        InitDataRegistry::keyidsName(),
+        InitDataRegistry::cencName(),
+        InitDataRegistry::webmName(),
+    };
 }
 
 static bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
@@ -337,7 +341,7 @@ bool CDMPrivateClearKey::supportsConfigurationWithRestrictions(const CDMKeySyste
     return true;
 }
 
-bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
+bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(const CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
 {
     // Only support the 'temporary' and 'persistent-license' session types.
     if (sessionType != CDMSessionType::Temporary && sessionType != CDMSessionType::PersistentLicense)
@@ -345,10 +349,10 @@ bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(CDMSessionType& se
     return supportsConfiguration(configuration);
 }
 
-bool CDMPrivateClearKey::supportsRobustness(const String& robustness) const
+Vector<AtomString> CDMPrivateClearKey::supportedRobustnesses() const
 {
     // Only empty `robustness` string is supported.
-    return robustness.isEmpty();
+    return { emptyAtom() };
 }
 
 CDMRequirement CDMPrivateClearKey::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions& restrictions) const
@@ -432,34 +436,20 @@ Optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) 
 
 CDMInstanceClearKey::~CDMInstanceClearKey() = default;
 
-CDMInstance::SuccessValue CDMInstanceClearKey::initializeWithConfiguration(const CDMKeySystemConfiguration&)
+void CDMInstanceClearKey::initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
 {
-    // No-op.
-    return Succeeded;
+    SuccessValue succeeded = (distinctiveIdentifiers == AllowDistinctiveIdentifiers::No && persistentState == AllowPersistentState::No) ? Succeeded : Failed;
+    callback(succeeded);
 }
 
-CDMInstance::SuccessValue CDMInstanceClearKey::setDistinctiveIdentifiersAllowed(bool allowed)
-{
-    // Reject setting distinctive identifiers as allowed.
-    return !allowed ? Succeeded : Failed;
-}
-
-CDMInstance::SuccessValue CDMInstanceClearKey::setPersistentStateAllowed(bool allowed)
-{
-    // Reject setting persistent state as allowed.
-    return !allowed ? Succeeded : Failed;
-}
-
-CDMInstance::SuccessValue CDMInstanceClearKey::setServerCertificate(Ref<SharedBuffer>&&)
+void CDMInstanceClearKey::setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&& callback)
 {
     // Reject setting any server certificate.
-    return Failed;
+    callback(Failed);
 }
 
-CDMInstance::SuccessValue CDMInstanceClearKey::setStorageDirectory(const String& storageDirectory)
+void CDMInstanceClearKey::setStorageDirectory(const String&)
 {
-    // Reject any persistent state storage.
-    return storageDirectory.isEmpty() ? Succeeded : Failed;
 }
 
 const String& CDMInstanceClearKey::keySystem() const
@@ -498,7 +488,7 @@ void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& i
         });
 }
 
-void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback&& callback)
+void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
 #if LOG_DISABLED
     // We only use the sesion ID for debug logging. The verbose preprocessor checks are because

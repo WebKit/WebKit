@@ -2561,15 +2561,25 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA)
+void HTMLMediaElement::updateShouldContinueAfterNeedKey()
+{
+    if (!m_player)
+        return;
+    bool shouldContinue = hasEventListeners("webkitneedkey") || (RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled() && !document().quirks().hasBrokenEncryptedMediaAPISupportQuirk());
+    m_player->setShouldContinueAfterKeyNeeded(shouldContinue);
+}
+#endif
+
 RefPtr<ArrayBuffer> HTMLMediaElement::mediaPlayerCachedKeyForKeyId(const String& keyId) const
 {
     return m_webKitMediaKeys ? m_webKitMediaKeys->cachedKeyForKeyId(keyId) : nullptr;
 }
 
-bool HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
+void HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().legacyEncryptedMediaAPIEnabled())
-        return false;
+        return;
 
     if (!hasEventListeners("webkitneedkey")
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -2580,14 +2590,12 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
         ) {
         m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED);
         scheduleEvent(eventNames().errorEvent);
-        return false;
+        return;
     }
 
     auto event = WebKitMediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initData);
     event->setTarget(this);
     m_asyncEventQueue->enqueueEvent(WTFMove(event));
-
-    return true;
 }
 
 String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
@@ -5129,6 +5137,10 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     scheduleUpdateMediaState();
 #endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    updateShouldContinueAfterNeedKey();
+#endif
 }
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()
@@ -5891,6 +5903,11 @@ void HTMLMediaElement::dispatchEvent(Event& event)
 
 bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    if (eventType == eventNames().webkitneedkeyEvent)
+        updateShouldContinueAfterNeedKey();
+#endif
+
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), options);
 
@@ -5912,6 +5929,11 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
 
 bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
 {
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    if (eventType == eventNames().webkitneedkeyEvent)
+        updateShouldContinueAfterNeedKey();
+#endif
+
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::removeEventListener(eventType, listener, options);
 

@@ -180,7 +180,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;
-    bool mediaPlayerKeyNeeded(Uint8Array*) final;
+    void mediaPlayerKeyNeeded(Uint8Array*) final;
     String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
@@ -263,6 +263,10 @@ private:
     bool m_renderingCanBeAccelerated { true };
     WebCore::LayoutRect m_videoContentBoxRect;
     float m_videoContentScale { 1.0 };
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    bool m_shouldContinueAfterKeyNeeded { false };
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

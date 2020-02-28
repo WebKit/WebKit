@@ -247,9 +247,9 @@ bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
 CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming() = default;
 CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 
-bool CDMPrivateFairPlayStreaming::supportsInitDataType(const AtomString& initDataType) const
+Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 {
-    return validInitDataTypes().contains(initDataType);
+    return copyToVector(validInitDataTypes());
 }
 
 bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
@@ -305,7 +305,7 @@ bool CDMPrivateFairPlayStreaming::supportsConfigurationWithRestrictions(const CD
     return supportsConfiguration(configuration);
 }
 
-bool CDMPrivateFairPlayStreaming::supportsSessionTypeWithConfiguration(CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
+bool CDMPrivateFairPlayStreaming::supportsSessionTypeWithConfiguration(const CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
 {
     if (sessionType == CDMSessionType::Temporary) {
         if (configuration.persistentState == CDMRequirement::Required)
@@ -316,13 +316,10 @@ bool CDMPrivateFairPlayStreaming::supportsSessionTypeWithConfiguration(CDMSessio
     return supportsConfiguration(configuration);
 }
 
-bool CDMPrivateFairPlayStreaming::supportsRobustness(const String& robustness) const
+Vector<AtomString> CDMPrivateFairPlayStreaming::supportedRobustnesses() const
 {
-    if (robustness.isEmpty())
-        return true;
-
     // FIXME: Determine an enumerated list of robustness values supported by FPS.
-    return false;
+    return { emptyAtom() };
 }
 
 CDMRequirement CDMPrivateFairPlayStreaming::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
@@ -366,7 +363,7 @@ bool CDMPrivateFairPlayStreaming::supportsSessions() const
 
 bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
 {
-    if (!supportsInitDataType(initDataType))
+    if (!validInitDataTypes().contains(initDataType))
         return false;
 
     if (initDataType == sinfName()) {

@@ -234,6 +234,10 @@ public:
     virtual bool waitingForKey() const { return false; }
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    virtual void setShouldContinueAfterKeyNeeded(bool) { }
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }

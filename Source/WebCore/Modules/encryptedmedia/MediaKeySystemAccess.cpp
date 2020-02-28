@@ -81,34 +81,29 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
         }
 
         // 2.6. Initialize instance to enable, disable and/or select Key System features using configuration.
-        if (instance->initializeWithConfiguration(*m_configuration) == CDMInstance::Failed) {
-            promise->reject(NotAllowedError);
-            return;
-        }
-
         // 2.7. If use distinctive identifier is false, prevent instance from using Distinctive Identifier(s) and Distinctive Permanent Identifier(s).
-        if (!useDistinctiveIdentifier && instance->setDistinctiveIdentifiersAllowed(false) == CDMInstance::Failed) {
-            promise->reject(NotAllowedError);
-            return;
-        }
-
         // 2.8. If persistent state allowed is false, prevent instance from persisting any state related to the application or origin of this object's Document.
-        if (!persistentStateAllowed && instance->setPersistentStateAllowed(false) == CDMInstance::Failed) {
-            promise->reject(NotAllowedError);
-            return;
-        }
+        auto allowDistinctiveIdentifiers = useDistinctiveIdentifier ? CDMInstance::AllowDistinctiveIdentifiers::Yes : CDMInstance::AllowDistinctiveIdentifiers::No;
+        auto allowPersistentState = persistentStateAllowed ? CDMInstance::AllowPersistentState::Yes : CDMInstance::AllowPersistentState::No;
 
-        // 2.9. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
-        // 2.10. Let media keys be a new MediaKeys object, and initialize it as follows:
-        // 2.10.1. Let the use distinctive identifier value be use distinctive identifier.
-        // 2.10.2. Let the persistent state allowed value be persistent state allowed.
-        // 2.10.3. Let the supported session types value be be the value of configuration's sessionTypes member.
-        // 2.10.4. Let the cdm implementation value be this object's cdm implementation value.
-        // 2.10.5. Let the cdm instance value be instance.
-        auto mediaKeys = MediaKeys::create(useDistinctiveIdentifier, persistentStateAllowed, m_configuration->sessionTypes, m_implementation.copyRef(), instance.releaseNonNull());
+        instance->initializeWithConfiguration(*m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [sessionTypes = m_configuration->sessionTypes, implementation = m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
+            if (successValue == CDMInstance::Failed) {
+                promise->reject(NotAllowedError);
+                return;
+            }
 
-        // 2.11. Resolve promise with media keys.
-        promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTFMove(mediaKeys));
+            // 2.9. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
+            // 2.10. Let media keys be a new MediaKeys object, and initialize it as follows:
+            // 2.10.1. Let the use distinctive identifier value be use distinctive identifier.
+            // 2.10.2. Let the persistent state allowed value be persistent state allowed.
+            // 2.10.3. Let the supported session types value be be the value of configuration's sessionTypes member.
+            // 2.10.4. Let the cdm implementation value be this object's cdm implementation value.
+            // 2.10.5. Let the cdm instance value be instance.
+            auto mediaKeys = MediaKeys::create(useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTFMove(implementation), WTFMove(instance));
+
+            // 2.11. Resolve promise with media keys.
+            promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTFMove(mediaKeys));
+        });
     });
 
     // 3. Return promise.

@@ -55,11 +55,11 @@ public:
     CDMPrivateFairPlayStreaming();
     virtual ~CDMPrivateFairPlayStreaming();
 
-    bool supportsInitDataType(const AtomString&) const override;
+    Vector<AtomString> supportedInitDataTypes() const override;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const override;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
-    bool supportsSessionTypeWithConfiguration(CDMSessionType&, const CDMKeySystemConfiguration&) const override;
-    bool supportsRobustness(const String&) const override;
+    bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const override;
+    Vector<AtomString> supportedRobustnesses() const override;
     CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const override;

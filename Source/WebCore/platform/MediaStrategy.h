@@ -31,12 +31,16 @@ namespace WebCore {
 
 class AudioDestination;
 class AudioIOCallback;
+class CDMFactory;
 
 class WEBCORE_EXPORT MediaStrategy {
 public:
 #if ENABLE(WEB_AUDIO)
     virtual std::unique_ptr<AudioDestination> createAudioDestination(
         AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) = 0;
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual void registerCDMFactories(Vector<CDMFactory*>&) = 0;
 #endif
 protected:
     virtual ~MediaStrategy() = default;

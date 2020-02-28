@@ -42,6 +42,9 @@ private:
     std::unique_ptr<WebCore::AudioDestination> createAudioDestination(WebCore::AudioIOCallback&,
         const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    void registerCDMFactories(Vector<WebCore::CDMFactory*>&) override;
+#endif
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcess { false };

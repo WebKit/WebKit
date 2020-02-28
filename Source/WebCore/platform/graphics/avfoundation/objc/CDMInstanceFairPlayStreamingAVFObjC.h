@@ -74,11 +74,9 @@ public:
 
     ImplementationType implementationType() const final { return ImplementationType::FairPlayStreaming; }
 
-    SuccessValue initializeWithConfiguration(const CDMKeySystemConfiguration&) final;
-    SuccessValue setDistinctiveIdentifiersAllowed(bool) final;
-    SuccessValue setPersistentStateAllowed(bool) final;
-    SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
-    SuccessValue setStorageDirectory(const String&) final;
+    void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
+    void setStorageDirectory(const String&) final;
     RefPtr<CDMInstanceSession> createSession() final;
 
     const String& keySystem() const final;
@@ -120,7 +118,7 @@ public:
 
     // CDMInstanceSession
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;

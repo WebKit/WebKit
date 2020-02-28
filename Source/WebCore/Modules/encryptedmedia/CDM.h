@@ -80,29 +80,6 @@ public:
 private:
     CDM(Document&, const String& keySystem);
 
-    enum class ConfigurationStatus {
-        Supported,
-        NotSupported,
-        ConsentDenied,
-    };
-
-    enum class ConsentStatus {
-        ConsentDenied,
-        InformUser,
-        Allowed,
-    };
-
-    enum class AudioVideoType {
-        Audio,
-        Video,
-    };
-
-    void doSupportedConfigurationStep(MediaKeySystemConfiguration&& candidateConfiguration, MediaKeysRestrictions&&, SupportedConfigurationCallback&&);
-    Optional<MediaKeySystemConfiguration>  getSupportedConfiguration(const MediaKeySystemConfiguration& candidateConfiguration, MediaKeysRestrictions&);
-    Optional<Vector<MediaKeySystemMediaCapability>> getSupportedCapabilitiesForAudioVideoType(AudioVideoType, const Vector<MediaKeySystemMediaCapability>& requestedCapabilities, const MediaKeySystemConfiguration& partialConfiguration, MediaKeysRestrictions&);
-
-    using ConsentStatusCallback = WTF::Function<void(ConsentStatus, MediaKeySystemConfiguration&&, MediaKeysRestrictions&&)>;
-    void getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguration, MediaKeysRestrictions&&, ConsentStatusCallback&&);
     String m_keySystem;
     std::unique_ptr<CDMPrivate> m_private;
 };

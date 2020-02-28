@@ -1823,6 +1823,7 @@ platform/audio/VectorMath.cpp
 platform/audio/ZeroPole.cpp
 
 platform/encryptedmedia/CDMFactory.cpp
+platform/encryptedmedia/CDMPrivate.cpp
 platform/encryptedmedia/CDMProxy.cpp
 
 platform/graphics/ANGLEWebKitBridge.cpp

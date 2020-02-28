@@ -1,3 +1,17 @@
+2020-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement Modern EME API in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208090
+
+        Reviewed by Eric Carlson.
+
+        Adopt changes to PlatformStrategies.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerKeyNeeded):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
 2020-02-27  Daniel Bates  <dabates@apple.com>
 
         Change HitTestRequestType to an OptionSet

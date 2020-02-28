@@ -48,6 +48,67 @@ struct CDMKeySystemConfiguration {
     CDMRequirement distinctiveIdentifier { CDMRequirement::Optional };
     CDMRequirement persistentState { CDMRequirement::Optional };
     Vector<CDMSessionType> sessionTypes;
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << label;
+        encoder << initDataTypes;
+        encoder << audioCapabilities;
+        encoder << videoCapabilities;
+        encoder << distinctiveIdentifier;
+        encoder << persistentState;
+        encoder << sessionTypes;
+    }
+
+    template <class Decoder>
+    static Optional<CDMKeySystemConfiguration> decode(Decoder& decoder)
+    {
+        Optional<String> label;
+        decoder >> label;
+        if (!label)
+            return WTF::nullopt;
+
+        Optional<Vector<String>> initDataTypes;
+        decoder >> initDataTypes;
+        if (!initDataTypes)
+            return WTF::nullopt;
+
+        Optional<Vector<CDMMediaCapability>> audioCapabilities;
+        decoder >> audioCapabilities;
+        if (!audioCapabilities)
+            return WTF::nullopt;
+
+        Optional<Vector<CDMMediaCapability>> videoCapabilities;
+        decoder >> videoCapabilities;
+        if (!videoCapabilities)
+            return WTF::nullopt;
+
+        Optional<CDMRequirement> distinctiveIdentifier;
+        decoder >> distinctiveIdentifier;
+        if (!distinctiveIdentifier)
+            return WTF::nullopt;
+        
+        Optional<CDMRequirement> persistentState;
+        decoder >> persistentState;
+        if (!persistentState)
+            return WTF::nullopt;
+
+        Optional<Vector<CDMSessionType>> sessionTypes;
+        decoder >> sessionTypes;
+        if (!sessionTypes)
+            return WTF::nullopt;
+
+        return {{
+            WTFMove(*label),
+            WTFMove(*initDataTypes),
+            WTFMove(*audioCapabilities),
+            WTFMove(*videoCapabilities),
+            *distinctiveIdentifier,
+            *persistentState,
+            WTFMove(*sessionTypes),
+        }};
+    }
 };
 
 } // namespace WebCore

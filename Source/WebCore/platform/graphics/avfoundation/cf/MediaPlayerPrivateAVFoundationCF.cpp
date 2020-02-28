@@ -1931,9 +1931,7 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
 
         unsigned byteLength = initDataBuffer->byteLength();
         auto initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
-        if (!m_owner->player()->keyNeeded(initData.ptr()))
-            return false;
-
+        m_owner->player()->keyNeeded(initData.ptr());
         setRequestForKey(keyURI, avRequest);
         return true;
     }

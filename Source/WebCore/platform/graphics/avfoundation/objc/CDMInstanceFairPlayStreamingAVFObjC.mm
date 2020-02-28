@@ -268,72 +268,63 @@ bool CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(const CDMMedia
     return true;
 }
 
-CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMKeySystemConfiguration& configuration)
+void CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
 {
     // FIXME: verify that FairPlayStreaming does not (and cannot) expose a distinctive identifier to the client
-    if (configuration.distinctiveIdentifier == CDMRequirement::Required)
-        return Failed;
+    auto initialize = [&] () {
+        if (configuration.distinctiveIdentifier == CDMRequirement::Required)
+            return Failed;
 
-    if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes.contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)))
-        return Failed;
+        if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes.contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)))
+            return Failed;
 
-    if (configuration.persistentState == CDMRequirement::Required && !m_storageURL)
-        return Failed;
+        if (configuration.persistentState == CDMRequirement::Required && !m_storageURL)
+            return Failed;
 
-    if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
-        return Failed;
+        if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
+            return Failed;
 
-    if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
-        return Failed;
+        if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())
+            return Failed;
 
-    return Succeeded;
+        m_persistentStateAllowed = persistentState == AllowPersistentState::Yes;
+        return Succeeded;
+    };
+    callback(initialize());
 }
 
-CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setDistinctiveIdentifiersAllowed(bool)
-{
-    // FIXME: verify that FairPlayStreaming does not (and cannot) expose a distinctive identifier to the client
-    return Succeeded;
-}
-
-CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setPersistentStateAllowed(bool persistentStateAllowed)
-{
-    m_persistentStateAllowed = persistentStateAllowed;
-    return Succeeded;
-}
-
-CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate(Ref<SharedBuffer>&& serverCertificate)
+void CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate(Ref<SharedBuffer>&& serverCertificate, SuccessCallback&& callback)
 {
     m_serverCertificate = WTFMove(serverCertificate);
-    return Succeeded;
+    callback(Succeeded);
 }
 
-CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& storageDirectory)
+void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& storageDirectory)
 {
     if (storageDirectory.isEmpty()) {
         m_storageURL = nil;
-        return Succeeded;
+        return;
     }
 
     auto storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
 
     if (!FileSystem::fileExists(storageDirectory)) {
         if (!FileSystem::makeAllDirectories(storageDirectory))
-            return Failed;
+            return;
     } else if (!FileSystem::fileIsDirectory(storageDirectory, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
         auto tempDirectory = FileSystem::createTemporaryDirectory(@"MediaKeys");
         if (!tempDirectory)
-            return Failed;
+            return;
 
         auto tempStoragePath = FileSystem::pathByAppendingComponent(tempDirectory, FileSystem::pathGetFileName(storagePath));
         if (!FileSystem::moveFile(storageDirectory, tempStoragePath))
-            return Failed;
+            return;
 
         if (!FileSystem::moveFile(tempDirectory, storageDirectory))
-            return Failed;
+            return;
     }
 
     m_storageURL = adoptNS([[NSURL alloc] initFileURLWithPath:storagePath isDirectory:NO]);
-    return Succeeded;
 }
 
 RefPtr<CDMInstanceSession> CDMInstanceFairPlayStreamingAVFObjC::createSession()
@@ -580,7 +571,7 @@ static bool isEqual(const SharedBuffer& data, const String& value)
     return stringOrException.returnValue() == value;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, const SharedBuffer& responseData, LicenseUpdateCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, Ref<SharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
 {
     if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_s)) {
         auto expiredSessions = adoptNS([[NSMutableArray alloc] init]);
@@ -711,7 +702,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             }
         }
     } else
-        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData.createNSData().get()]];
+        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData->createNSData().get()]];
 
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
     struct objc_method_description method = protocol_getMethodDescription(@protocol(AVContentKeySessionDelegate), @selector(contentKeySession:contentKeyRequestDidSucceed:), NO, YES);
@@ -1140,7 +1131,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData
         return;
 
     m_sessionId = sessionId;
-    m_client->sessionIdChanged(m_sessionId);
+    if (m_client)
+        m_client->sessionIdChanged(m_sessionId);
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup* group, NSData *sessionIdentifier)

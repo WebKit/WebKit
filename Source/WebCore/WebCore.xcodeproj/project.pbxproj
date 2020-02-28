@@ -4071,6 +4071,19 @@
 		CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495617A9D01B00274E42 /* MediaSource.h */; };
 		CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495917A9D01B00274E42 /* SourceBuffer.h */; };
 		CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495C17A9D01B00274E42 /* SourceBufferList.h */; };
+		CD3CE0F82401AAD9004BA01D /* CDMEncryptionScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7569B215C23A400EFCB50 /* CDMEncryptionScheme.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0F92401AAD9004BA01D /* CDMFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FA2401AAD9004BA01D /* CDMInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5CE1F71CB6A00F525C5 /* CDMInstance.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FB2401AAD9004BA01D /* CDMInstanceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9D375A215163E40049657B /* CDMInstanceSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FC2401AAD9004BA01D /* CDMKeyStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FD2401AAD9004BA01D /* CDMKeySystemConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FE2401AAD9004BA01D /* CDMMediaCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE0FF2401AADA004BA01D /* CDMMessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE1002401AADA004BA01D /* CDMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE1012401AADA004BA01D /* CDMProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5CF1F71CB6100F525C5 /* CDMProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE1022401AADA004BA01D /* CDMRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE1032401AADA004BA01D /* CDMRestrictions.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD3CE1042401AADA004BA01D /* CDMSessionType.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E21DD2183444A00E66F55 /* ImageBufferUtilitiesCG.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E251C18046B0600E27F56 /* GridArea.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E251B18046B0600E27F56 /* GridArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3E252218046BCD00E27F56 /* CSSGridTemplateAreasValue.h */; };
@@ -4202,7 +4215,7 @@
 		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDE02E918B3DFC700CF7FF1 /* LegacyCDMSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF4B7151E00B7E500E235A2 /* CDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7131E00B7E500E235A2 /* CDM.cpp */; };
-		CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7141E00B7E500E235A2 /* CDM.h */; };
+		CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7141E00B7E500E235A2 /* CDM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF4B7181E01CB9100E235A2 /* MediaKeysRestrictions.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */; };
 		CDF4B71A1E01D3D000E235A2 /* MediaKeySessionType.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */; };
 		CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */; };
@@ -13779,6 +13792,7 @@
 		CD3A495B17A9D01B00274E42 /* SourceBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBufferList.cpp; sourceTree = "<group>"; };
 		CD3A495C17A9D01B00274E42 /* SourceBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferList.h; sourceTree = "<group>"; };
 		CD3A495D17A9D01B00274E42 /* SourceBufferList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBufferList.idl; sourceTree = "<group>"; };
+		CD3CE11C240451AF004BA01D /* CDMPrivate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CDMPrivate.cpp; sourceTree = "<group>"; };
 		CD3E21DB21833F5100E66F55 /* ImageBufferUtilitiesCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferUtilitiesCG.h; sourceTree = "<group>"; };
 		CD3E251B18046B0600E27F56 /* GridArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridArea.h; sourceTree = "<group>"; };
 		CD3E252118046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGridTemplateAreasValue.cpp; sourceTree = "<group>"; };
@@ -26303,6 +26317,7 @@
 				CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */,
 				CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */,
 				CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */,
+				CD3CE11C240451AF004BA01D /* CDMPrivate.cpp */,
 				CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */,
 				CD94A5CF1F71CB6100F525D5 /* CDMProxy.cpp */,
 				CD94A5CF1F71CB6100F525C5 /* CDMProxy.h */,
@@ -29279,9 +29294,22 @@
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
 				CD94A5DE1F72F57B00F525C5 /* CDMClient.h in Headers */,
+				CD3CE0F82401AAD9004BA01D /* CDMEncryptionScheme.h in Headers */,
+				CD3CE0F92401AAD9004BA01D /* CDMFactory.h in Headers */,
 				CDB7045A1F7465A1003923DF /* CDMFairPlayStreaming.h in Headers */,
+				CD3CE0FA2401AAD9004BA01D /* CDMInstance.h in Headers */,
+				CD3CE0FB2401AAD9004BA01D /* CDMInstanceSession.h in Headers */,
+				CD3CE0FC2401AAD9004BA01D /* CDMKeyStatus.h in Headers */,
+				CD3CE0FD2401AAD9004BA01D /* CDMKeySystemConfiguration.h in Headers */,
+				CD3CE0FE2401AAD9004BA01D /* CDMMediaCapability.h in Headers */,
+				CD3CE0FF2401AADA004BA01D /* CDMMessageType.h in Headers */,
+				CD3CE1002401AADA004BA01D /* CDMPrivate.h in Headers */,
 				CD318623199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.h in Headers */,
+				CD3CE1012401AADA004BA01D /* CDMProxy.h in Headers */,
+				CD3CE1022401AADA004BA01D /* CDMRequirement.h in Headers */,
+				CD3CE1032401AADA004BA01D /* CDMRestrictions.h in Headers */,
 				CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */,
+				CD3CE1042401AADA004BA01D /* CDMSessionType.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
 				91B8F0B521953D65000C2B00 /* CertificateInfoBase.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,

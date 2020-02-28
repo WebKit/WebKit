@@ -48,7 +48,7 @@ public:
 
     // Platform-specific function that's called when the list of
     // registered CDMFactory objects is queried for the first time.
-    static void platformRegisterFactories(Vector<CDMFactory*>&);
+    WEBCORE_EXPORT static void platformRegisterFactories(Vector<CDMFactory*>&);
 };
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #import "WebResourceLoadScheduler.h"
 #import <WebCore/AudioDestination.h>
 #import <WebCore/BlobRegistryImpl.h>
+#import <WebCore/CDMFactory.h>
 #import <WebCore/Color.h>
 #import <WebCore/Frame.h>
 #import <WebCore/MediaStrategy.h>
@@ -71,6 +72,12 @@ private:
         unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override
     {
         return AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    }
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    void registerCDMFactories(Vector<CDMFactory*>& factories) override
+    {
+        return WebCore::CDMFactory::platformRegisterFactories(factories);
     }
 #endif
 };

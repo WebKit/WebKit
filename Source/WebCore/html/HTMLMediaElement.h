@@ -680,7 +680,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const final;
-    bool mediaPlayerKeyNeeded(Uint8Array*) final;
+    void mediaPlayerKeyNeeded(Uint8Array*) final;
     String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
@@ -693,6 +693,10 @@ private:
 
     // CDMClient
     void cdmClientAttemptToResumePlaybackIfNecessary() final;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    void updateShouldContinueAfterNeedKey();
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1166,6 +1170,7 @@ private:
     MediaProvider m_mediaProvider;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    bool m_hasNeedkeyListener { false };
     RefPtr<WebKitMediaKeys> m_webKitMediaKeys;
 #endif
 

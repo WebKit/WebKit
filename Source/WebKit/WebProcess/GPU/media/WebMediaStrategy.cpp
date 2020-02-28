@@ -30,6 +30,7 @@
 #include "RemoteAudioDestinationProxy.h"
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
+#include <WebCore/CDMFactory.h>
 
 namespace WebKit {
 
@@ -44,6 +45,13 @@ std::unique_ptr<WebCore::AudioDestination> WebMediaStrategy::createAudioDestinat
         return RemoteAudioDestinationProxy::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
 #endif
     return WebCore::AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void WebMediaStrategy::registerCDMFactories(Vector<WebCore::CDMFactory*>& factories)
+{
+    return WebCore::CDMFactory::platformRegisterFactories(factories);
 }
 #endif
 

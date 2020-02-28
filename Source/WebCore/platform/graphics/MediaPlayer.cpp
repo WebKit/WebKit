@@ -657,6 +657,14 @@ void MediaPlayer::attemptToDecryptWithInstance(CDMInstance& instance)
 
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayer::setShouldContinueAfterKeyNeeded(bool should)
+{
+    m_shouldContinueAfterKeyNeeded = should;
+    m_private->setShouldContinueAfterKeyNeeded(should);
+}
+#endif
+
 MediaTime MediaPlayer::duration() const
 {
     return m_private->durationMediaTime();
@@ -1289,9 +1297,9 @@ RefPtr<ArrayBuffer> MediaPlayer::cachedKeyForKeyId(const String& keyId) const
     return client().mediaPlayerCachedKeyForKeyId(keyId);
 }
 
-bool MediaPlayer::keyNeeded(Uint8Array* initData)
+void MediaPlayer::keyNeeded(Uint8Array* initData)
 {
-    return client().mediaPlayerKeyNeeded(initData);
+    client().mediaPlayerKeyNeeded(initData);
 }
 
 String MediaPlayer::mediaKeysStorageDirectory() const

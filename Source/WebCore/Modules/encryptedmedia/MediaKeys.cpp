@@ -81,7 +81,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     return session;
 }
 
-void MediaKeys::setServerCertificate(ScriptExecutionContext& context, const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
+void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
     // W3C Editor's Draft 09 November 2016
@@ -106,16 +106,14 @@ void MediaKeys::setServerCertificate(ScriptExecutionContext& context, const Buff
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
 
-    context.eventLoop().queueTask(TaskSource::Networking, [this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
-        // 5.1. Use this object's cdm instance to process certificate.
-        if (m_instance->setServerCertificate(WTFMove(certificate)) == CDMInstance::Failed) {
-            // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
+    // 5.1. Use this object's cdm instance to process certificate.
+    m_instance->setServerCertificate(WTFMove(certificate), [promise = WTFMove(promise)] (auto success) {
+        // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
+        // 5.1. [Else,] Resolve promise with true.
+        if (success == CDMInstance::Failed)
             promise->reject(InvalidStateError);
-            return;
-        }
-
-        // 5.1. Resolve promise with true.
-        promise->resolve<IDLBoolean>(true);
+        else
+            promise->resolve<IDLBoolean>(true);
     });
 
     // 6. Return promise.

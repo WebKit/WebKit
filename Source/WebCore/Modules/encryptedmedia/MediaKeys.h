@@ -58,7 +58,7 @@ public:
     ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(ScriptExecutionContext&, MediaKeySessionType);
-    void setServerCertificate(ScriptExecutionContext&, const BufferSource&, Ref<DeferredPromise>&&);
+    void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
 
     void attachCDMClient(CDMClient&);
     void detachCDMClient(CDMClient&);

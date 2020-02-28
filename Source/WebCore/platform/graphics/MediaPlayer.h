@@ -200,7 +200,7 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const { return nullptr; }
-    virtual bool mediaPlayerKeyNeeded(Uint8Array*) { return false; }
+    virtual void mediaPlayerKeyNeeded(Uint8Array*) { }
     virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
 
@@ -366,6 +366,11 @@ public:
     void attemptToDecryptWithInstance(CDMInstance&);
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    void setShouldContinueAfterKeyNeeded(bool);
+    bool shouldContinueAfterKeyNeeded() const { return m_shouldContinueAfterKeyNeeded; }
+#endif
+
     bool paused() const;
     bool seeking() const;
 
@@ -510,7 +515,7 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
-    bool keyNeeded(Uint8Array* initData);
+    void keyNeeded(Uint8Array* initData);
     String mediaKeysStorageDirectory() const;
 #endif
 
@@ -655,6 +660,9 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStreamPrivate> m_mediaStream;
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    bool m_shouldContinueAfterKeyNeeded { false };
 #endif
 };
 

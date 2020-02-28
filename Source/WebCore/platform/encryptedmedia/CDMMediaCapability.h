@@ -39,6 +39,39 @@ struct CDMMediaCapability {
     String contentType;
     String robustness;
     Optional<CDMEncryptionScheme> encryptionScheme;
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << contentType;
+        encoder << robustness;
+        encoder << encryptionScheme;
+    }
+
+    template <class Decoder>
+    static Optional<CDMMediaCapability> decode(Decoder& decoder)
+    {
+        Optional<String> contentType;
+        decoder >> contentType;
+        if (!contentType)
+            return WTF::nullopt;
+
+        Optional<String> robustness;
+        decoder >> robustness;
+        if (!robustness)
+            return WTF::nullopt;
+
+        Optional<Optional<CDMEncryptionScheme>> encryptionScheme;
+        decoder >> encryptionScheme;
+        if (!encryptionScheme)
+            return WTF::nullopt;
+
+        return {{
+            WTFMove(*contentType),
+            WTFMove(*robustness),
+            WTFMove(*encryptionScheme),
+        }};
+    }
 };
 
 } // namespace WebCore

@@ -72,9 +72,9 @@ public:
     using KeyStatusVector = CDMInstanceSessionClient::KeyStatusVector;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;
     using LicenseUpdateCallback = CompletionHandler<void(bool sessionWasClosed, Optional<KeyStatusVector>&& changedKeys, Optional<double>&& changedExpiration, Optional<Message>&& message, SuccessValue succeeded)>;
-    virtual void updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback&&) = 0;
+    virtual void updateLicense(const String& sessionId, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&&) = 0;
 
-    enum class SessionLoadFailure {
+    enum class SessionLoadFailure : uint8_t {
         None,
         NoSessionData,
         MismatchedSessionType,

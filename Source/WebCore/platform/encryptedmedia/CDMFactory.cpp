@@ -30,6 +30,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "MediaStrategy.h"
+#include "PlatformStrategies.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
@@ -40,7 +42,9 @@ Vector<CDMFactory*>& CDMFactory::registeredFactories()
 {
     static NeverDestroyed<Vector<CDMFactory*>> factories;
     static std::once_flag once;
-    std::call_once(once, [&] { platformRegisterFactories(factories); });
+    std::call_once(once, [&] {
+        platformStrategies()->mediaStrategy().registerCDMFactories(factories);
+    });
 
     return factories;
 }

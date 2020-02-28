@@ -30,9 +30,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
-enum class CDMMessageType {
+enum class CDMMessageType : uint8_t {
     LicenseRequest,
     LicenseRenewal,
     LicenseRelease,
@@ -40,5 +42,19 @@ enum class CDMMessageType {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CDMMessageType> {
+    using values = EnumValues<
+        WebCore::CDMMessageType,
+        WebCore::CDMMessageType::LicenseRequest,
+        WebCore::CDMMessageType::LicenseRenewal,
+        WebCore::CDMMessageType::LicenseRelease,
+        WebCore::CDMMessageType::IndividualizationRequest
+    >;
+};
+
+}
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

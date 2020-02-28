@@ -401,7 +401,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
         // 6.5. Let session closed be false.
         // 6.6. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 6.7. Use the cdm to execute the following steps:
-        m_instanceSession->updateLicense(m_sessionId, m_sessionType, *sanitizedResponse, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (bool sessionWasClosed, Optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, Optional<double>&& changedExpiration, Optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->updateLicense(m_sessionId, m_sessionType, sanitizedResponse.releaseNonNull(), [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (bool sessionWasClosed, Optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, Optional<double>&& changedExpiration, Optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 

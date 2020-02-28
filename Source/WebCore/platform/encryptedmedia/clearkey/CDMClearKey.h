@@ -74,11 +74,11 @@ public:
     CDMPrivateClearKey();
     virtual ~CDMPrivateClearKey();
 
-    bool supportsInitDataType(const AtomString&) const final;
+    Vector<AtomString> supportedInitDataTypes() const final;
+    Vector<AtomString> supportedRobustnesses() const final;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
-    bool supportsSessionTypeWithConfiguration(CDMSessionType&, const CDMKeySystemConfiguration&) const final;
-    bool supportsRobustness(const String&) const final;
+    bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const final;
     CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
     CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const final;
@@ -97,11 +97,9 @@ public:
 
     // CDMInstance
     ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
-    SuccessValue initializeWithConfiguration(const CDMKeySystemConfiguration&) final;
-    SuccessValue setDistinctiveIdentifiersAllowed(bool) final;
-    SuccessValue setPersistentStateAllowed(bool) final;
-    SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
-    SuccessValue setStorageDirectory(const String&) final;
+    void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
+    void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
+    void setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
 };
@@ -111,7 +109,7 @@ public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
         : m_parentInstance(parent) { }
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback&&) final;
+    void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;

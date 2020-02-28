@@ -30,9 +30,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
-enum class CDMKeyStatus {
+enum class CDMKeyStatus : uint8_t {
     Usable,
     Expired,
     Released,
@@ -44,4 +46,20 @@ enum class CDMKeyStatus {
 
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CDMKeyStatus> {
+    using values = EnumValues<
+    WebCore::CDMKeyStatus,
+    WebCore::CDMKeyStatus::Usable,
+    WebCore::CDMKeyStatus::Expired,
+    WebCore::CDMKeyStatus::Released,
+    WebCore::CDMKeyStatus::OutputRestricted,
+    WebCore::CDMKeyStatus::OutputDownscaled,
+    WebCore::CDMKeyStatus::StatusPending,
+    WebCore::CDMKeyStatus::InternalError
+    >;
+};
+
+}
 #endif // ENABLE(ENCRYPTED_MEDIA)

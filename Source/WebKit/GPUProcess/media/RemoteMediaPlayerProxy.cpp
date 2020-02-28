@@ -522,10 +522,9 @@ RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const S
     return nullptr;
 }
 
-bool RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array*)
+void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array*)
 {
     notImplemented();
-    return false;
 }
 #endif
 
