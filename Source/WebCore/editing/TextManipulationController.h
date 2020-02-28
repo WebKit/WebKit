@@ -108,6 +108,7 @@ public:
     WEBCORE_EXPORT ManipulationResult completeManipulation(ItemIdentifier, const Vector<ManipulationToken>&);
 
 private:
+    bool isInManipulatedElement(Element&);
     void observeParagraphs(VisiblePosition& start, VisiblePosition& end);
     void scheduleObservartionUpdate();
 
@@ -121,8 +122,8 @@ private:
     ManipulationResult replace(const ManipulationItem&, const Vector<ManipulationToken>&);
 
     WeakPtr<Document> m_document;
-    WeakHashSet<Element> m_mutatedElements;
-    WeakHashSet<Element> m_recentlyInsertedElements;
+    WeakHashSet<Element> m_elementsWithNewRenderer;
+    WeakHashSet<Element> m_manipulatedElements;
     ManipulationItemCallback m_callback;
     Vector<ExclusionRule> m_exclusionRules;
     HashMap<ItemIdentifier, ManipulationItem> m_items;

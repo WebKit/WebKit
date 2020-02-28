@@ -941,6 +941,52 @@ TEST(TextManipulation, CompleteTextManipulationDoesNotCreateMoreTextManipulation
     EXPECT_WK_STREQ("<p>bar <strong>garply</strong> foo</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentDoesNotCreateTextManipulationItem)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p><b>hey</b> dude</p></body></html>"];
+
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+
+    auto* firstItem = items.firstObject;
+    EXPECT_EQ(firstItem.tokens.count, 2UL);
+    EXPECT_STREQ("hey", firstItem.tokens[0].content.UTF8String);
+    EXPECT_STREQ(" dude", firstItem.tokens[1].content.UTF8String);
+
+    __block BOOL foundNewItemAfterCompletingTextManipulation = false;
+    [delegate setItemCallback:^(_WKTextManipulationItem *) {
+        foundNewItemAfterCompletingTextManipulation = true;
+    }];
+
+    done = false;
+    [webView _completeTextManipulation:(_WKTextManipulationItem *)createItem(firstItem.identifier, {
+        { firstItem.tokens[0].identifier, @"hello," },
+        { firstItem.tokens[1].identifier, @" world" },
+    }).get() completion:^(BOOL success) {
+        EXPECT_TRUE(success);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    [webView stringByEvaluatingJavaScript:@"span = document.createElement('span'); span.textContent = ' WebKit!'; document.querySelector('b').after(span);"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(foundNewItemAfterCompletingTextManipulation);
+    EXPECT_WK_STREQ("<p><b>hello,</b><span> WebKit!</span> world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);

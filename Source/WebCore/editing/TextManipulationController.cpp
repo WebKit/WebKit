@@ -112,6 +112,17 @@ TextManipulationController::TextManipulationController(Document& document)
 {
 }
 
+bool TextManipulationController::isInManipulatedElement(Element& element)
+{
+    if (!m_manipulatedElements.capacity())
+        return false; // Fast path for startObservingParagraphs.
+    for (auto& ancestorOrSelf : lineageOfType<Element>(element)) {
+        if (m_manipulatedElements.contains(ancestorOrSelf))
+            return true;
+    }
+    return false;
+}
+
 void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules)
 {
     auto document = makeRefPtr(m_document.get());
@@ -143,6 +154,13 @@ void TextManipulationController::observeParagraphs(VisiblePosition& start, Visib
 
         if (startOfCurrentParagraph.isNull())
             startOfCurrentParagraph = iterator.range()->startPosition();
+
+        if (auto* currentNode = iterator.node()) {
+            if (RefPtr<Element> currentElementAncestor = is<Element>(currentNode) ? downcast<Element>(currentNode) : currentNode->parentOrShadowHostElement()) {
+                if (isInManipulatedElement(*currentElementAncestor))
+                    return; // We can exit early here because scheduleObservartionUpdate calls this function on each paragraph separately.
+            }
+        }
 
         size_t endOfLastNewLine = 0;
         size_t offsetOfNextNewLine = 0;
@@ -178,17 +196,17 @@ void TextManipulationController::observeParagraphs(VisiblePosition& start, Visib
 
 void TextManipulationController::didCreateRendererForElement(Element& element)
 {
-    if (m_recentlyInsertedElements.contains(element))
+    if (isInManipulatedElement(element))
         return;
 
-    if (m_mutatedElements.computesEmpty())
+    if (m_elementsWithNewRenderer.computesEmpty())
         scheduleObservartionUpdate();
 
     if (is<PseudoElement>(element)) {
         if (auto* host = downcast<PseudoElement>(element).hostElement())
-            m_mutatedElements.add(*host);
+            m_elementsWithNewRenderer.add(*host);
     } else
-        m_mutatedElements.add(element);
+        m_elementsWithNewRenderer.add(element);
 }
 
 using PositionTuple = std::tuple<RefPtr<Node>, unsigned, unsigned>;
@@ -213,9 +231,9 @@ void TextManipulationController::scheduleObservartionUpdate()
             return;
 
         HashSet<Ref<Element>> mutatedElements;
-        for (auto& weakElement : controller->m_mutatedElements)
+        for (auto& weakElement : controller->m_elementsWithNewRenderer)
             mutatedElements.add(weakElement);
-        controller->m_mutatedElements.clear();
+        controller->m_elementsWithNewRenderer.clear();
 
         HashSet<Ref<Element>> filteredElements;
         for (auto& element : mutatedElements) {
@@ -402,12 +420,8 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
         else
             insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
         if (is<Element>(insertion.child.get()))
-            m_recentlyInsertedElements.add(downcast<Element>(insertion.child.get()));
+            m_manipulatedElements.add(downcast<Element>(insertion.child.get()));
     }
-    m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this)] {
-        if (auto strongThis = weakThis.get())
-            strongThis->m_recentlyInsertedElements.clear();
-    });
 
     return ManipulationResult::Success;
 }
