@@ -209,7 +209,7 @@ void FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLay
         return;
 
 
-    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(videoElement->platformLayer());
+    auto videoLayer = PlatformCALayer::platformCALayerForLayer(videoElement->platformLayer());
     if (!videoLayer || videoLayer->superlayer() != layer)
         return;
 
@@ -290,7 +290,7 @@ void FullscreenVideoController::enterFullscreen()
 #if USE(CA)
     m_fullscreenWindow->setRootChildLayer(*m_rootChild);
 
-    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_videoElement->platformLayer());
+    auto videoLayer = PlatformCALayer::platformCALayerForLayer(m_videoElement->platformLayer());
     ASSERT(videoLayer);
     m_rootChild->appendSublayer(*videoLayer);
     m_rootChild->setNeedsLayout();

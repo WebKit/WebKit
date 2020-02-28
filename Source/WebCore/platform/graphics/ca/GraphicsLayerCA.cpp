@@ -1216,8 +1216,15 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     // PlatformCALayer is using a user data pointer in the raw layer, and
     // the creator of the raw layer is using it for some other purpose.
     // For now we don't support such a case.
-    PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(platformLayer);
-    m_contentsLayer = platformLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(platformLayer, this).ptr()) : nullptr;
+    if (platformLayer) {
+        auto platformCALayer = PlatformCALayer::platformCALayerForLayer(platformLayer);
+        if (platformCALayer)
+            m_contentsLayer = WTFMove(platformCALayer);
+        else
+            m_contentsLayer = createPlatformCALayer(platformLayer, this);
+    } else
+        m_contentsLayer = nullptr;
+
     m_contentsLayerPurpose = platformLayer ? purpose : ContentsLayerPurpose::None;
 
     if (m_contentsClippingLayer && m_contentsLayer)

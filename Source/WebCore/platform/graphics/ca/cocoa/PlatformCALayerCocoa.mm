@@ -69,6 +69,22 @@
 
 namespace WebCore {
 
+using LayerToPlatformCALayerMap = HashMap<void*, PlatformCALayer*>;
+
+static LayerToPlatformCALayerMap& layerToPlatformLayerMap()
+{
+    static NeverDestroyed<LayerToPlatformCALayerMap> layerMap;
+    return layerMap;
+}
+
+RefPtr<PlatformCALayer> PlatformCALayer::platformCALayerForLayer(void* platformLayer)
+{
+    if (!platformLayer)
+        return 0;
+
+    return layerToPlatformLayerMap().get(platformLayer);
+}
+
 Ref<PlatformCALayerCocoa> PlatformCALayerCocoa::create(LayerType layerType, PlatformCALayerClient* owner)
 {
     return adoptRef(*new PlatformCALayerCocoa(layerType, owner));
@@ -77,20 +93,6 @@ Ref<PlatformCALayerCocoa> PlatformCALayerCocoa::create(LayerType layerType, Plat
 Ref<PlatformCALayerCocoa> PlatformCALayerCocoa::create(void* platformLayer, PlatformCALayerClient* owner)
 {
     return adoptRef(*new PlatformCALayerCocoa((__bridge CALayer *)platformLayer, owner));
-}
-
-static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
-PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
-{
-    if (!platformLayer)
-        return 0;
-
-    // Pointer to PlatformCALayer is kept in a key of the CALayer
-    PlatformCALayer* platformCALayer = nil;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    platformCALayer = static_cast<PlatformCALayer*>([[(__bridge CALayer *)platformLayer valueForKey:platformCALayerPointer] pointerValue]);
-    END_BLOCK_OBJC_EXCEPTIONS
-    return platformCALayer;
 }
 
 static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
@@ -297,8 +299,8 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(PlatformLayer* layer, PlatformCALayer
 void PlatformCALayerCocoa::commonInit()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    // Save a pointer to 'this' in the CALayer
-    [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
+
+    layerToPlatformLayerMap().add(m_layer.get(), this);
     
     // Clear all the implicit animations on the CALayer
     if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeContentsProvidedLayer || m_layerType == LayerTypeScrollContainerLayer || m_layerType == LayerTypeCustom)
@@ -378,7 +380,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
 
 PlatformCALayerCocoa::~PlatformCALayerCocoa()
 {
-    [m_layer setValue:nil forKey:platformCALayerPointer];
+    layerToPlatformLayerMap().remove(m_layer.get());
     
     // Remove the owner pointer from the delegate in case there is a pending animationStarted event.
     [static_cast<WebAnimationDelegate*>(m_delegate.get()) setOwner:nil];
@@ -432,7 +434,7 @@ void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 
 PlatformCALayer* PlatformCALayerCocoa::superlayer() const
 {
-    return platformCALayer((__bridge void*)[m_layer superlayer]);
+    return platformCALayerForLayer((__bridge void*)[m_layer superlayer]).get();
 }
 
 void PlatformCALayerCocoa::removeFromSuperlayer()

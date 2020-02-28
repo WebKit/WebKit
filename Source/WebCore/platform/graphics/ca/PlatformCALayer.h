@@ -92,7 +92,7 @@ public:
 
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
-    static PlatformCALayer* platformCALayer(void* platformLayer);
+    static RefPtr<PlatformCALayer> platformCALayerForLayer(void* platformLayer);
 
     virtual PlatformLayer* platformLayer() const { return m_layer.get(); }
 

@@ -23,6 +23,24 @@
         (WebView::gestureNotify):
         (WebView::elementAtPoint):
 
+2020-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Stop using -[CALayer setValue:forKey:] to store back pointers to PlatformCALayer*
+        https://bugs.webkit.org/show_bug.cgi?id=208358
+
+        Reviewed by Tim Horton.
+
+        We used -[CAlayer setValue:forKey:@"WKPlatformCALayer"] to store associate PlatformCALayer*
+        with CALayers. However, this has some performance cost, and won't work for a near-future world
+        where the scrolling thread needs to get at PlatformCALayers.
+
+        Replace with a static HashMap<> of CALayer* to PlatformCALayer*. Also rename platformCALayer()
+        to platformCALayerForLayer() so it's easier to find.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLayer):
+        (FullscreenVideoController::enterFullscreen):
+
 2020-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Create AudioDestination in the GPU process

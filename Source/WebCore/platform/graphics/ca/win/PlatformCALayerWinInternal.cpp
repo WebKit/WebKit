@@ -207,7 +207,7 @@ void PlatformCALayerWinInternal::getSublayers(PlatformCALayerList& list) const
 
     list.resize(count);
     for (size_t arrayIndex = 0; arrayIndex < count; ++arrayIndex)
-        list[arrayIndex] = PlatformCALayer::platformCALayer(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, arrayIndex)));
+        list[arrayIndex] = PlatformCALayer::platformCALayerForLayer(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, arrayIndex)));
 }
 
 void PlatformCALayerWinInternal::removeAllSublayers()
@@ -257,7 +257,7 @@ PlatformCALayer* PlatformCALayerWinInternal::sublayerAtIndex(int index) const
     if (!sublayers || index < 0 || CFArrayGetCount(sublayers) <= index)
         return nullptr;
     
-    return PlatformCALayer::platformCALayer(static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, index))));
+    return PlatformCALayer::platformCALayerForLayer(static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, index)))).get();
 }
 
 void PlatformCALayerWinInternal::setBounds(const FloatRect& rect)

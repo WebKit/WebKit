@@ -179,9 +179,9 @@ static void freeData(void *, const void *data, size_t /* size */)
 #endif
 
     _context->markLayerComposited();
-    WebCore::PlatformCALayer* layer = WebCore::PlatformCALayer::platformCALayer((__bridge void*)self);
+    auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner())
-        layer->owner()->platformCALayerLayerDidDisplay(layer);
+        layer->owner()->platformCALayerLayerDidDisplay(layer.get());
 }
 
 #if USE(ANGLE)
