@@ -257,11 +257,6 @@ private:
 
     bool hasAvailableVideoFrame() const final;
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    void enterFullscreen() final;
-    void exitFullscreen() final;
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     String wirelessPlaybackTargetName() const final;
     WebCore::MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
@@ -274,10 +269,6 @@ private:
     void setWirelessPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
 
     void setShouldPlayToPlaybackTarget(bool) final;
-#endif
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    bool canEnterFullscreen() const final;
 #endif
 
     bool supportsAcceleratedRendering() const final;

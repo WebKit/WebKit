@@ -778,18 +778,6 @@ bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
     return false;
 }
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-void MediaPlayerPrivateRemote::enterFullscreen()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivateRemote::exitFullscreen()
-{
-    notImplemented();
-}
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 String MediaPlayerPrivateRemote::wirelessPlaybackTargetName() const
 {
@@ -833,14 +821,6 @@ void MediaPlayerPrivateRemote::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget
 void MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetShouldPlayToPlaybackTarget(shouldPlay), m_id);
-}
-#endif
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-bool MediaPlayerPrivateRemote::canEnterFullscreen() const
-{
-    notImplemented();
-    return false;
 }
 #endif
 

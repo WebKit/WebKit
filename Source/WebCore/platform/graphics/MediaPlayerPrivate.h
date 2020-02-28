@@ -164,11 +164,6 @@ public:
 
     virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::ReadyState::HaveCurrentData; }
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    virtual void enterFullscreen() { }
-    virtual void exitFullscreen() { }
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
     virtual String wirelessPlaybackTargetName() const { return emptyString(); }
@@ -182,10 +177,6 @@ public:
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
 
     virtual void setShouldPlayToPlaybackTarget(bool) { }
-#endif
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    virtual bool canEnterFullscreen() const { return false; }
 #endif
 
     // whether accelerated rendering is supported by the media engine for the current media.

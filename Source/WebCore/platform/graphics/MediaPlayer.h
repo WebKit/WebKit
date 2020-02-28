@@ -455,11 +455,6 @@ public:
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    void enterFullscreen();
-    void exitFullscreen();
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     enum WirelessPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
     WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
@@ -481,10 +476,6 @@ public:
 
     double minFastReverseRate() const;
     double maxFastForwardRate() const;
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    bool canEnterFullscreen() const;
-#endif
 
     // whether accelerated rendering is supported by the media engine for the current media.
     bool supportsAcceleratedRendering() const;

@@ -1005,20 +1005,6 @@ bool MediaPlayer::supportsPictureInPicture() const
     return m_private->supportsPictureInPicture();
 }
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-
-void MediaPlayer::enterFullscreen()
-{
-    m_private->enterFullscreen();
-}
-
-void MediaPlayer::exitFullscreen()
-{
-    m_private->exitFullscreen();
-}
-
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool MediaPlayer::isCurrentPlaybackTargetWireless() const
@@ -1077,15 +1063,6 @@ double MediaPlayer::minFastReverseRate() const
 {
     return m_private->minFastReverseRate();
 }
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-
-bool MediaPlayer::canEnterFullscreen() const
-{
-    return m_private->canEnterFullscreen();
-}
-
-#endif
 
 void MediaPlayer::acceleratedRenderingStateChanged()
 {
