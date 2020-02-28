@@ -171,7 +171,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             style.setHeight(WTFMove(controlSize.height));
 
         // Min-Width / Min-Height
-        LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), style.effectiveZoom());
+        LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), { style.minWidth(), style.minHeight() }, style.effectiveZoom());
         if (minControlSize.width != style.minWidth())
             style.setMinWidth(WTFMove(minControlSize.width));
         if (minControlSize.height != style.minHeight())

@@ -49,7 +49,7 @@ private:
     Optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const final;
 
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-    LengthSize minimumControlSize(ControlPart, const FontCascade&, float zoomFactor) const final;
+    LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;
 
     LengthBox controlPadding(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
     LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;

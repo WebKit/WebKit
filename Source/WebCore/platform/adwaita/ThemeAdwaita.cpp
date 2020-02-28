@@ -179,6 +179,19 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
     return Theme::controlSize(part, fontCascade, zoomedSize, zoomFactor);
 }
 
+LengthSize ThemeAdwaita::minimumControlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float) const
+{
+    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
+        return zoomedSize;
+
+    LengthSize minSize = zoomedSize;
+    if (minSize.width.isIntrinsicOrAuto())
+        minSize.width = Length(0, Fixed);
+    if (minSize.height.isIntrinsicOrAuto())
+        minSize.height = Length(0, Fixed);
+    return minSize;
+}
+
 LengthBox ThemeAdwaita::controlBorder(ControlPart part, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
 {
     switch (part) {

@@ -840,7 +840,7 @@ LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, cons
     }
 }
 
-LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& font, float zoomFactor) const
+LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor) const
 {
     switch (part) {
     case SquareButtonPart:
@@ -856,7 +856,7 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& fon
             { static_cast<int>(base.height() * zoomFactor), Fixed } };
     }
     default:
-        return Theme::minimumControlSize(part, font, zoomFactor);
+        return Theme::minimumControlSize(part, font, zoomedSize, zoomFactor);
     }
 }
 
