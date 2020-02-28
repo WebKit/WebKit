@@ -1381,6 +1381,9 @@ void FontCache::platformPurgeInactiveFontData()
     }
     for (auto& font : toRemove)
         fallbackDedupSet().remove(font);
+
+    FontDatabase::singletonAllowingUserInstalledFonts().clear();
+    FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 }
 
 #if PLATFORM(IOS_FAMILY)
