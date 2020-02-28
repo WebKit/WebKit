@@ -448,11 +448,13 @@ Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneSource(Source& source)
 Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& source)
 {
     auto id = RealtimeMediaSourceIdentifier::generate();
-    if (!m_process.send(Messages::UserMediaCaptureManagerProxy::Clone { source.sourceID(), id }, 0))
+    if (!source.connection()->send(Messages::UserMediaCaptureManagerProxy::Clone { source.sourceID(), id }, 0))
         return makeRef(source);
 
     auto settings = source.settings();
     auto cloneSource = adoptRef(*new Source(String::number(id.toUInt64()), source.type(), source.deviceType(), String { settings.label().string() }, source.deviceIDHashSalt(), id, *this));
+    if (source.shouldCaptureInGPUProcess())
+        cloneSource->setShouldCaptureInGPUProcess(true);
     cloneSource->setSettings(WTFMove(settings));
     m_sources.add(id, cloneSource.copyRef());
     return cloneSource;

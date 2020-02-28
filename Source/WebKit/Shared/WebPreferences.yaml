@@ -1535,7 +1535,7 @@ GenericCueAPIEnabled:
 
 CaptureVideoInUIProcessEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_CAPTURE_VIDEO_IN_UIPROCESS
   humanReadableName: "Capture video in UI Process"
   humanReadableDescription: "Enable video capture in UI Process"
   category: experimental
@@ -1544,7 +1544,7 @@ CaptureVideoInUIProcessEnabled:
 
 CaptureVideoInGPUProcessEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_CAPTURE_VIDEO_IN_GPUPROCESS
   humanReadableName: "Capture video in GPU Process"
   humanReadableDescription: "Enable video capture in GPU Process"
   category: internal
@@ -1743,7 +1743,7 @@ CaptureAudioInUIProcessEnabled:
 
 CaptureAudioInGPUProcessEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_CAPTURE_AUDIO_IN_GPUPROCESS
   humanReadableName: "Capture Audio in GPU Process"
   humanReadableDescription: "Enable audio capture in GPU Process"
   category: internal

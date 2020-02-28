@@ -1,3 +1,14 @@
+2020-02-28  youenn fablet  <youenn@apple.com>
+
+        [MacOS/iOS] Enable audio/video capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=208130
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/TestOptions.h:
+        Use GPU process to capture by default.
+        We will remove this option once done verifying that every test works smoothly.
+
 2020-02-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit queue should skip building and testing for rollout patches

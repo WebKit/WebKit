@@ -1,3 +1,18 @@
+2020-02-28  youenn fablet  <youenn@apple.com>
+
+        [MacOS/iOS] Enable audio/video capture in GPUProcess by default
+        https://bugs.webkit.org/show_bug.cgi?id=208130
+
+        Reviewed by Eric Carlson.
+
+        Disable video capture in GPUProcess as cloning mechanism does not work well with the idea of a single video or audio source in a process.
+        A follow-up patch should fix this.
+
+        * fast/mediastream/MediaStream-clone.html:
+        * fast/mediastream/MediaStreamTrack-clone.html:
+        * fast/mediastream/mediastreamtrack-video-clone.html:
+        * webrtc/multi-video.html:
+
 2020-02-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations
