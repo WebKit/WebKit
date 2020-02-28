@@ -210,6 +210,9 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
             self.finished(FAILURE)
             return None
 
+        patch_reviewer_name = self.getProperty('patch_reviewer_full_name', '')
+        if patch_reviewer_name:
+            self.command.extend(['--reviewer', patch_reviewer_name])
         d = self.downloadFileContentToWorker('.buildbot-diff', patch)
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 

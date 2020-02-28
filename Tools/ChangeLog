@@ -1,3 +1,13 @@
+2020-02-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should update the ChangeLog with Reviewer name
+        https://bugs.webkit.org/show_bug.cgi?id=206535
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ApplyPatch.start): Update the patch with the patch reviewer name if available.
+
 2020-02-28  Jonathan Bedard  <jbedard@apple.com>
 
         run-javascriptcore-tests: Make upload format valid
