@@ -1,5 +1,15 @@
 2020-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Remove platform/gtk/fast/forms/number/number-size-spinbutton-nocover.html
+
+        This tested the behavior of spin buttons with the old GTK theming code.
+
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.png: Removed.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover.html: Removed.
+
+2020-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Test imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html fails
         https://bugs.webkit.org/show_bug.cgi?id=190613
 
