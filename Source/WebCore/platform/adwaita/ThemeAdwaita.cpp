@@ -173,6 +173,21 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
     return Theme::controlSize(part, fontCascade, zoomedSize, zoomFactor);
 }
 
+LengthBox ThemeAdwaita::controlBorder(ControlPart part, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
+{
+    switch (part) {
+    case PushButtonPart:
+    case DefaultButtonPart:
+    case ButtonPart:
+    case SquareButtonPart:
+        return zoomedBox;
+    default:
+        break;
+    }
+
+    return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
+}
+
 void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float, float, bool, bool)
 {
     switch (part) {

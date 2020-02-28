@@ -49,6 +49,7 @@ public:
 
 private:
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
+    LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox&, float) const final;
     void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool) final;
 
     void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, float);
