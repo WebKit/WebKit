@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Szeged
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,11 @@ public:
 private:
     static int verifyCallback(int, X509_STORE_CTX*);
     void collectInfo(X509_STORE_CTX*);
+
+#if ENABLE(TLS_DEBUG)
+    static void infoCallback(const SSL*, int, int);
+    void logTLSKey(const SSL*);
+#endif
 
     int m_sslErrors { 0 };
     CertificateInfo m_certificateInfo;

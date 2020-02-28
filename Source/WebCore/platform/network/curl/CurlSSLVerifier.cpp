@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 University of Szeged
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,10 @@ CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
     const auto& curvesList = sslHandle.getCurvesList();
     if (!curvesList.isEmpty())
         SSL_CTX_set1_curves_list(ctx, curvesList.utf8().data());
+
+#if ENABLE(TLS_DEBUG)
+    SSL_CTX_set_info_callback(ctx, infoCallback);
+#endif
 }
 
 void CurlSSLVerifier::collectInfo(X509_STORE_CTX* ctx)
@@ -78,6 +82,62 @@ int CurlSSLVerifier::verifyCallback(int preverified, X509_STORE_CTX* ctx)
     // whether the verification of the certificate in question was passed (preverified=1) or not (preverified=0)
     return preverified;
 }
+
+#if ENABLE(TLS_DEBUG)
+
+void CurlSSLVerifier::infoCallback(const SSL* ssl, int where, int)
+{
+    auto sslCtx = SSL_get_SSL_CTX(ssl);
+    auto verifier = static_cast<CurlSSLVerifier*>(SSL_CTX_get_app_data(sslCtx));
+
+    if (where & SSL_CB_HANDSHAKE_DONE)
+        verifier->logTLSKey(ssl);
+}
+
+void CurlSSLVerifier::logTLSKey(const SSL* ssl)
+{
+    // See https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/Key_Log_Format
+
+    if (!CurlContext::singleton().shouldLogTLSKey())
+        return;
+
+    auto* session = SSL_get_session(ssl);
+    if (!session)
+        return;
+
+    auto& version = session->ssl_version;
+    if (version != TLS1_VERSION && version != TLS1_1_VERSION && version != TLS1_2_VERSION)
+        return;
+
+    auto requiredSize = SSL_get_client_random(ssl, nullptr, 0);
+    Vector<uint8_t> clientRandom(requiredSize);
+    if (SSL_get_client_random(ssl, clientRandom.data(), clientRandom.size()) != clientRandom.size())
+        return;
+
+    requiredSize = SSL_SESSION_get_master_key(session, nullptr, 0);
+    Vector<uint8_t> masterKey(requiredSize);
+    if (SSL_SESSION_get_master_key(session, masterKey.data(), masterKey.size()) != masterKey.size())
+        return;
+
+    auto fp = fopen(CurlContext::singleton().tlsKeyLogFilePath().utf8().data(), "a");
+    if (!fp)
+        return;
+
+    fprintf(fp, "CLIENT_RANDOM ");
+
+    for (size_t i = 0; i < clientRandom.size(); i++)
+        fprintf(fp, "%02X", clientRandom[i]);
+
+    fprintf(fp, " ");
+
+    for (size_t i = 0; i < masterKey.size(); i++)
+        fprintf(fp, "%02X", masterKey[i]);
+
+    fprintf(fp, "\n");
+    fclose(fp);
+}
+
+#endif
 
 static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned sslError)
 {

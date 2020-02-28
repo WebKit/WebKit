@@ -1,3 +1,21 @@
+2020-02-28  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Add TLS debugging feature to log encryption keys
+        https://bugs.webkit.org/show_bug.cgi?id=208192
+
+        Reviewed by Fujii Hironori.
+
+        This patch enables recording encryption keys on curl port.
+        When you set key log file path to environment variable SSLKEYLOGFILE on curl port, network process writes encryption keys into the path.
+        The key log file follows the NSS key log format and this feature is as same as Chrome and Firefox have.
+
+        See also: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/Key_Log_Format
+
+        Test: No tests for this debugging feature. We have to check manually if the log file is generate.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWin.cmake:
+
 2020-02-28  Keith Miller  <keith_miller@apple.com>
 
         Fix issue in cmake build for checking ccache
