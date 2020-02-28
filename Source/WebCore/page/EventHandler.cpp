@@ -1981,9 +1981,10 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     // Treat any mouse move events as readonly if the user is currently touching the screen.
-    if (m_touchPressed)
+    if (m_touchPressed) {
         hitType.add(HitTestRequest::Active);
         hitType.add(HitTestRequest::ReadOnly);
+    }
 #endif
     HitTestRequest request(hitType);
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);
