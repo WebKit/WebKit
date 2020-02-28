@@ -1,3 +1,10 @@
+2020-02-28  Daniel Bates  <dabates@apple.com>
+
+        Update my watch list preferences and contributor's entry.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2020-02-27  Don Olmstead  <don.olmstead@sony.com>
 
         Fix WebCore export macros for declspec
