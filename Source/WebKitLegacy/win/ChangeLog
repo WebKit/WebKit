@@ -1,3 +1,14 @@
+2020-02-27  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix WebCore export macros for declspec
+        https://bugs.webkit.org/show_bug.cgi?id=208363
+
+        Reviewed by Konstantin Tokarev.
+
+        Remove setting of WEBCORE_EXPORT from the header files.
+
+        * WebKitPrefix.h:
+
 2020-02-27  Daniel Bates  <dabates@apple.com>
 
         Change HitTestRequestType to an OptionSet

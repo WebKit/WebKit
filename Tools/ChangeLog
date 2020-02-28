@@ -1,3 +1,24 @@
+2020-02-27  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix WebCore export macros for declspec
+        https://bugs.webkit.org/show_bug.cgi?id=208363
+
+        Reviewed by Konstantin Tokarev.
+
+        Remove setting of WEBCORE_EXPORT and WEBCORE_TESTSUPPORT_EXPORT from the header
+        files. Removed precompiled headers that were empty.
+
+        * DumpRenderTree/DumpRenderTreePrefix.h:
+        * DumpRenderTree/win/DefaultPolicyDelegate.cpp: Added a missing config.h.
+        * MiniBrowser/win/stdafx.h:
+        * TestWebKitAPI/win/TestWebKitAPIPrefix.cpp: Removed.
+        * TestWebKitAPI/win/TestWebKitAPIPrefix.h: Removed.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerInjectedBundlePrefix.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerInjectedBundlePrefix.h: Removed.
+        * WebKitTestRunner/PlatformFTW.cmake:
+        * WebKitTestRunner/PlatformWin.cmake:
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+
 2020-02-27  Tim Horton  <timothy_horton@apple.com>
 
         UIProcess crash after using _prepareForMoveToWindow, then deallocating the WKWebView before moving to the window

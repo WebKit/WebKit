@@ -31,17 +31,18 @@
 
 #include <wtf/ExportMacros.h>
 
-#if USE(EXPORT_MACROS)
-
-#if !PLATFORM(WIN)
+#if !defined(WEBCORE_EXPORT)
+#if defined(BUILDING_WebCore) || defined(STATICALLY_LINKED_WITH_WebCore)
 #define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
-#define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT_DECLARATION
 #else
-// Windows must set this per-project
+#define WEBCORE_EXPORT WTF_IMPORT_DECLARATION
+#endif
 #endif
 
-#else // !USE(EXPORT_MACROS)
-#define WEBCORE_EXPORT
-#define WEBCORE_TESTSUPPORT_EXPORT
-
-#endif // USE(EXPORT_MACROS)
+#if !defined(WEBCORE_TESTSUPPORT_EXPORT)
+#if defined(BUILDING_WebCoreTestSupport) || defined(STATICALLY_LINKED_WITH_WebCoreTestSupport)
+#define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT_DECLARATION
+#else
+#define WEBCORE_TESTSUPPORT_EXPORT WTF_IMPORT_DECLARATION
+#endif
+#endif

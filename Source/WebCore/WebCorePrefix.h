@@ -41,12 +41,9 @@
 #endif
 #endif
 
-#if PLATFORM(WIN)
-#undef WEBCORE_EXPORT
-#define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
-#else
+#if !OS(WINDOWS)
 #include <pthread.h>
-#endif // PLATFORM(WIN)
+#endif // !OS(WINDOWS)
 
 #include <sys/types.h>
 #include <fcntl.h>

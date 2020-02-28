@@ -57,8 +57,10 @@
 #include <tchar.h>
 #include <windows.h>
 #include <wininet.h>
-#include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
+
+#include <JavaScriptCore/JSExportMacros.h>
+#include <WebCore/PlatformExportMacros.h>
 
 #if 0
 // Visual Studio Leak Detection
@@ -69,5 +71,3 @@
 #include <crtdbg.h>
 #endif
 #endif
-
-#define WEBCORE_EXPORT WTF_IMPORT_DECLARATION

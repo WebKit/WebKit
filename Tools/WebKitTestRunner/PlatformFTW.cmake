@@ -53,10 +53,6 @@ WEBKIT_ADD_PRECOMPILED_HEADER(WebKitTestRunnerPrefix.h
     ${WEBKIT_TESTRUNNER_DIR}/win/WebKitTestRunnerPrefix.cpp
     WebKitTestRunnerLib_SOURCES
 )
-WEBKIT_ADD_PRECOMPILED_HEADER(TestRunnerInjectedBundlePrefix.h
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/TestRunnerInjectedBundlePrefix.cpp
-    WebKitTestRunnerInjectedBundle_SOURCES
-)
 
 list(APPEND
     WebKitTestRunnerLib_SOURCES

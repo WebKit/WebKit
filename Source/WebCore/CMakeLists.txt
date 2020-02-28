@@ -1991,6 +1991,7 @@ endif ()
 
 add_library(WebCoreTestSupport ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
 add_dependencies(WebCoreTestSupport WebCore WebCoreTestSupportBindings)
+target_compile_definitions(WebCoreTestSupport PRIVATE "BUILDING_WebCoreTestSupport")
 target_include_directories(WebCoreTestSupport PUBLIC ${WebCoreTestSupport_INCLUDE_DIRECTORIES} ${WebCore_INCLUDE_DIRECTORIES})
 target_include_directories(WebCoreTestSupport PRIVATE ${WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES} ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WebCoreTestSupport SYSTEM PUBLIC ${WebCoreTestSupport_SYSTEM_INCLUDE_DIRECTORIES} ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
