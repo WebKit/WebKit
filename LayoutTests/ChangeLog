@@ -1,3 +1,18 @@
+2020-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [ iOS wk2 Release ] fast/text-autosizing/ios/idempotentmode/viewport-change-relayout.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208245
+        <rdar://problem/59856625>
+
+        The test was still actually passing, it was just displaying differently.
+        Change the test to be more robust.
+
+        Unreviewed test gardening.
+
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout-expected.html: Removed.
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout-expected.txt: Added.
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout.html:
+
 2020-02-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 ] imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html is flakey failing.
