@@ -934,5 +934,9 @@ sub uploadResults
         return 0;
     }
     print "Upload to $report failed\n";
+
+    # FIXME: This is for temporary debugging and should be removed https://bugs.webkit.org/show_bug.cgi?id=208341
+    print "Attempted to upload:\n";
+    print "$encodedUpload\n";
     return 1;
 }
