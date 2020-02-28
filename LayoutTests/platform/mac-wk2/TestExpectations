@@ -1077,3 +1077,5 @@ webkit.org/b/208264 [ Release ] fast/harness/uiscriptcontroller/concurrent-ui-si
 webkit.org/b/208340 webgpu/whlsl/textures-sample.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208390 [ Debug ] fast/css-custom-paint/delay-repaint.html [ Pass Failure ]
+
+webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
