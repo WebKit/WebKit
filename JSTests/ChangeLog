@@ -1,3 +1,19 @@
+2020-02-27  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/59870336
+
+    2020-02-27  Justin Michaud  <justin_michaud@apple.com>
+
+            Poly proto should work with property delete transitions
+            https://bugs.webkit.org/show_bug.cgi?id=208261
+
+            Reviewed by Saam Barati.
+
+            * stress/delete-property-poly-proto.js: Added.
+            (A.prototype.set x):
+            (A):
+            (B):
+
 2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/59654262
