@@ -1,3 +1,16 @@
+2020-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove logging for sysctl access to properties used by NSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=208346
+        <rdar://problem/59862967>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Telemetry and logging indicate that two sysctl calls are needed by [NSURLSession sessionWithConfiguration].
+        We no longer need to log these well understood uses.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-02-27  Eric Carlson  <eric.carlson@apple.com>
 
         Support in-band generic cues when loading media in the GPU Process

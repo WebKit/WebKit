@@ -484,8 +484,6 @@
     (sysctl-name-prefix "kern.monotonicclock")
     (sysctl-name "kern.monotoniclock_offset_usecs")
     (sysctl-name "kern.ngroups")
-    (sysctl-name "kern.osrelease")
-    (sysctl-name "kern.ostype")
     (sysctl-name "kern.saved_ids")
     (sysctl-name "kern.usrstack")
     (sysctl-name "kern.usrstack64")
@@ -569,6 +567,8 @@
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
+        "kern.ostype" ;; Needed by NSURLSession
+        "kern.osrelease" ;; Ditto.
         "kern.osvariant_status" ;; Needed for bundle loading
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
