@@ -156,8 +156,14 @@ LengthSize ThemeAdwaita::controlSize(ControlPart part, const FontCascade& fontCa
 
     switch (part) {
     case CheckboxPart:
-    case RadioPart:
-        return LengthSize { Length(12, Fixed), Length(12, Fixed) };
+    case RadioPart: {
+        LengthSize buttonSize = zoomedSize;
+        if (buttonSize.width.isIntrinsicOrAuto())
+            buttonSize.width = Length(12, Fixed);
+        if (buttonSize.height.isIntrinsicOrAuto())
+            buttonSize.height = Length(12, Fixed);
+        return buttonSize;
+    }
     case InnerSpinButtonPart: {
         LengthSize spinButtonSize = zoomedSize;
         if (spinButtonSize.width.isIntrinsicOrAuto())
