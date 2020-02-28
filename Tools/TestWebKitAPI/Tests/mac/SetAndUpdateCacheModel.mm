@@ -35,8 +35,15 @@
 
 namespace TestWebKitAPI {
 
+static void resetTestState()
+{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"WebKitCacheModelPreferenceKey"];
+}
+
 TEST(WebKitLegacy, SetAndUpdateCacheModelInitialModel)
 {
+    resetTestState();
+
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
@@ -46,6 +53,8 @@ TEST(WebKitLegacy, SetAndUpdateCacheModelInitialModel)
 
 TEST(WebKitLegacy, SetAndUpdateCacheModelStandardPreferenceChange)
 {
+    resetTestState();
+
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
@@ -60,6 +69,8 @@ TEST(WebKitLegacy, SetAndUpdateCacheModelStandardPreferenceChange)
 
 TEST(WebKitLegacy, SetAndUpdateCacheModelPreferencesChangeMix)
 {
+    resetTestState();
+
     // On change, the cache model always take the highest value of any preference bound to a WebView.
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 

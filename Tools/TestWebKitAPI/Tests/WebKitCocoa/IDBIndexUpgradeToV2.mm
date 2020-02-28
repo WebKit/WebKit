@@ -65,7 +65,7 @@ TEST(IndexedDB, IndexUpgradeToV2)
     NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"blob" subdirectory:@"TestWebKitAPI.resources"];
 
     NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test");
-    NSString *originDirectory = @"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
+    NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
     NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash] stringByExpandingTildeInPath];
     NSURL *targetURL = [NSURL fileURLWithPath:databaseDirectory];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];

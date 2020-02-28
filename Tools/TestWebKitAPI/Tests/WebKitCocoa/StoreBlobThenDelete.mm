@@ -67,7 +67,7 @@ TEST(IndexedDB, StoreBlobThenDelete)
     EXPECT_WK_STREQ(@"Success", (NSString *)[lastScriptMessage body]);
 
     NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("StoreBlobToBeDeleted");
-    NSString *originDirectory = @"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
+    NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
     NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash] stringByExpandingTildeInPath];
     NSString *blobFilePath = [databaseDirectory stringByAppendingPathComponent:@"1.blob"];
     NSString *databaseFilePath = [databaseDirectory stringByAppendingPathComponent:@"IndexedDB.sqlite3"];

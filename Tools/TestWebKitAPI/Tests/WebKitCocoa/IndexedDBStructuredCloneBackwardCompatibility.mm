@@ -87,7 +87,7 @@ TEST(IndexedDB, StructuredCloneBackwardCompatibility)
     NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"IndexedDBStructuredCloneBackwardCompatibility" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *url3 = [[NSBundle mainBundle] URLForResource:@"IndexedDBStructuredCloneBackwardCompatibility" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
 
-    NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath]];
+    NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
 

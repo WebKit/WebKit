@@ -100,7 +100,7 @@ TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *fileURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
     [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:statisticsDirectoryURL error:nil];
@@ -187,7 +187,7 @@ TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *fileURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
     [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:statisticsDirectoryURL error:nil];
@@ -264,7 +264,7 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
     NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -369,7 +369,7 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
     NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -434,7 +434,7 @@ TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
 
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
-    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
 
     ensureITPFileIsCreated();

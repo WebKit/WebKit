@@ -28,6 +28,7 @@
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 
 PRODUCT_NAME = WebKitTestRunner;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebKitTestRunner;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -lWebKitTestRunner -framework Carbon -framework Cocoa -framework JavaScriptCore -framework WebKit;
 STRIP_STYLE = debugging;
@@ -46,3 +47,6 @@ CODE_SIGN_IDENTITY_Release = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
 CODE_SIGN_IDENTITY_YES = $(WK_ENGINEERING_CODE_SIGN_IDENTITY);
 CODE_SIGN_IDENTITY_Production = $(CODE_SIGN_IDENTITY_Production_$(USE_INTERNAL_SDK));
 CODE_SIGN_IDENTITY_Production_YES = -;
+
+CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+INFOPLIST_FILE = $(SRCROOT)/Info.plist;

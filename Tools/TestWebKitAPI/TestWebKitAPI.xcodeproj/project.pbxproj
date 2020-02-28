@@ -1847,6 +1847,7 @@
 		46EBD846237231E600223A6E /* RestoreScrollPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreScrollPosition.mm; sourceTree = "<group>"; };
 		46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderMap.cpp; sourceTree = "<group>"; };
 		46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "beforeunload-slow.html"; sourceTree = "<group>"; };
+		49AEEF682407276F00C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMedia.cpp; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia.html; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ondevicechange.html; sourceTree = "<group>"; };
@@ -2801,6 +2802,7 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				49AEEF682407276F00C87E4C /* Info.plist */,
 				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
 				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,

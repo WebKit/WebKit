@@ -1,3 +1,56 @@
+2020-02-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        TestWebKitAPI and WebKitTestRunner should have bundle identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=208260
+        <rdar://problem/59820107>
+
+        Reviewed by Tim Horton.
+
+        Followed instructions for adding an Info.plist for Single-File Tools
+        found on https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html
+
+        The default WebsiteDataStore file path will change with this test to
+        reflect the new bundleID so we must change expectations for any api
+        tests which rely on knowing the path.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBDeleteRecovery.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBStructuredCloneBackwardCompatibility.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileURL.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageClear.mm:
+        (TEST):
+        (defaultWebsiteCacheDirectory):
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageNullEntries.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobThenDelete.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+        (TEST):
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm:
+        (TestWebKitAPI::resetTestState):
+        Now that we set a bundleID, we have to reset the cache model between
+        tests, otherwise it gets stored between tests.
+
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2020-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         TextManipulationController should not generate a new item for content in manipulated paragraphs

@@ -60,7 +60,7 @@ TEST(WKWebView, LoadTwoFiles)
 
     // Load a second file: resource that is in a completely different directory from the above
     file = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/simple2.html" stringByExpandingTildeInPath]];
+    NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/simple2.html" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL.URLByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
     [[NSFileManager defaultManager] copyItemAtURL:file toURL:targetURL error:nil];
