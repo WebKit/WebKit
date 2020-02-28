@@ -40,6 +40,8 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
+class RemoteVideoSample;
+
 class ImageTransferSessionVT {
 public:
     static std::unique_ptr<ImageTransferSessionVT> create(uint32_t pixelFormat)
@@ -53,6 +55,9 @@ public:
 
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
     WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+#if ENABLE(MEDIA_STREAM)
+    WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(const RemoteVideoSample&);
+#endif
 #endif
 
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)

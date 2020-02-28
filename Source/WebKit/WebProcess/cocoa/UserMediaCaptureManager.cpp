@@ -181,7 +181,7 @@ public:
             return;
         }
 
-        auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size());
+        auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample);
         if (!sampleRef) {
             ASSERT_NOT_REACHED();
             return;

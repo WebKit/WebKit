@@ -106,7 +106,7 @@ void RemoteSampleBufferDisplayLayer::enqueueSample(WebCore::RemoteVideoSample&& 
     if (!m_imageTransferSession)
         return;
 
-    auto sample = m_imageTransferSession->createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size());
+    auto sample = m_imageTransferSession->createMediaSample(remoteSample);
 
     ASSERT(sample);
     if (!sample)
