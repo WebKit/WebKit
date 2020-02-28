@@ -1,3 +1,18 @@
+2020-02-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit queue should skip building and testing for rollout patches
+        https://bugs.webkit.org/show_bug.cgi?id=208329
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin._is_patch_obsolete): Set rollout property appropriately.
+        (CompileWebKit.doStepIf): Skip tests for rollout patches on commit-queue.
+        (RunWebKit1Tests.doStepIf): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestCompileWebKit.test_skip_for_rollout_patches_on_commit_queue): Added unit-test.
+        (TestRunWebKit1Tests.test_skip_for_rollout_patches_on_commit_queue): Ditto.
+
 2020-02-28  Daniel Bates  <dabates@apple.com>
 
         Update my watch list preferences and contributor's entry.

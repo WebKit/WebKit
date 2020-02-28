@@ -984,6 +984,14 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.runStep()
 
+    def test_skip_for_rollout_patches_on_commit_queue(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('rollout', True)
+        self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
+        return self.runStep()
+
 
 class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -1737,6 +1745,15 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.runStep()
+
+    def test_skip_for_rollout_patches_on_commit_queue(self):
+        self.setupStep(RunWebKit1Tests())
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('fullPlatform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('rollout', True)
+        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 
 

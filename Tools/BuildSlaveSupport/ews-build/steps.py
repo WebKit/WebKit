@@ -325,6 +325,7 @@ class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
+    rollout_preamble = 'ROLLOUT of r'
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -388,6 +389,9 @@ class BugzillaMixin(object):
 
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
+        patch_title = patch_json.get('summary')
+        if patch_title.startswith(self.rollout_preamble):
+            self.setProperty('rollout', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
         return patch_json.get('is_obsolete')
@@ -1201,6 +1205,9 @@ class CompileWebKit(shell.Compile):
         self.skipUpload = skipUpload
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
+    def doStepIf(self, step):
+        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
+
     def start(self):
         platform = self.getProperty('platform')
         buildOnly = self.getProperty('buildOnly')
@@ -1585,6 +1592,7 @@ class RunWebKitTests(shell.Test):
 
     def __init__(self, **kwargs):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
+        self.incorrectLayoutLines = []
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
@@ -1592,7 +1600,6 @@ class RunWebKitTests(shell.Test):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
 
-        self.incorrectLayoutLines = []
         platform = self.getProperty('platform')
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
@@ -1891,6 +1898,9 @@ class RunWebKit1Tests(RunWebKitTests):
     def start(self):
         self.setProperty('use-dump-render-tree', True)
         return RunWebKitTests.start(self)
+
+    def doStepIf(self, step):
+        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
