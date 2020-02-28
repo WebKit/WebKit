@@ -246,6 +246,16 @@ bool RenderThemeAdwaita::paintSearchField(const RenderObject& renderObject, cons
     return paintTextField(renderObject, paintInfo, rect);
 }
 
+void RenderThemeAdwaita::adjustMenuListStyle(RenderStyle& style, const Element*) const
+{
+    style.setLineHeight(RenderStyle::initialLineHeight());
+}
+
+void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
+{
+    adjustMenuListStyle(style, element);
+}
+
 LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.appearance() == NoControlPart)
