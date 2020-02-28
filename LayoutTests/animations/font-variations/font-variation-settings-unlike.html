@@ -37,11 +37,7 @@ var expectedValues = [
 
 var promises = [];
 
-document.fonts.forEach(function(f) {
-    promises.push(f.loaded);
-});
-
-Promise.all(promises).then(function() {
+document.fonts.ready.then(function() {
     document.getElementById("box").style.animationName = "TheAnimation";
     runAnimationTest(expectedValues, undefined, undefined, undefined, false, undefined);
 });
