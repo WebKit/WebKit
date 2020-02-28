@@ -2053,7 +2053,7 @@ webkit.org/b/186672 imported/w3c/web-platform-tests/mathml/relations/text-and-ma
 
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pass ]
 
-webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
+webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass Timeout ]
 
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
@@ -2687,9 +2687,11 @@ webkit.org/b/208291 webanimations/accelerated-animation-renderer-change.html [ P
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-request-source.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.worker.html [ Failure Pass ]
-webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
+webkit.org/b/208292 storage/indexeddb/modern/blob-cursor.html [ Failure Pass ]
+webkit.org/b/208292 storage/indexeddb/modern/blob-svg-image.html [ Failure Pass ]
 
 webkit.org/b/208293 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure Pass ]
 webkit.org/b/208293 media/video-ended-event-negative-playback.html [ Failure Pass ]
@@ -2716,6 +2718,10 @@ webkit.org/b/208326 imported/w3c/web-platform-tests/html/browsers/windows/norefe
 
 webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html [ Failure Pass ]
 webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
+
+webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
+
+webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2847,6 +2853,8 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/as
 webkit.org/b/207246 fast/forms/image/image-error-event-modifies-type-crash.html [ Slow ]
 webkit.org/b/207246 http/tests/contentextensions/make-https.html [ Slow ]
 webkit.org/b/207246 js/dom/custom-constructors.html [ Slow ]
+
+fast/frames/lots-of-iframes.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
@@ -3093,7 +3101,7 @@ webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ]
 webkit.org/b/207711 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Timeout ]
-webkit.org/b/207711 [ Debug ] imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Timeout ]
+webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass Timeout ]
 
 # Web inspector related tests are very slow or timeout in debug.
 webkit.org/b/208000 [ Debug ] http/tests/inspector [ Slow ]
@@ -4317,6 +4325,7 @@ webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-custom-response.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream.https.html [ Failure Pass ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
 
 webkit.org/b/201982 fast/images/exif-orientation-background.html [ ImageOnlyFailure ]
