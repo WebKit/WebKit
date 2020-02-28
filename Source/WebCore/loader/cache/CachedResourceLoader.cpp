@@ -95,7 +95,10 @@
 #endif
 
 #undef RELEASE_LOG_IF_ALLOWED
+#define PAGE_ID(frame) (frame.pageID().valueOr(PageIdentifier()).toUInt64())
+#define FRAME_ID(frame) (frame.frameID().valueOr(FrameIdentifier()).toUInt64())
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED_WITH_FRAME(fmt, frame, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResourceLoader::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -819,7 +822,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
 
     if (!url.isValid()) {
-        RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", &frame);
+        RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: URL is invalid", frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
     }
 
@@ -827,7 +830,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request, forPreload)) {
-        RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", &frame);
+        RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: Not allowed to request resource", frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }
 
@@ -839,7 +842,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         bool madeHTTPS = results.summary.madeHTTPS;
         request.applyResults(WTFMove(results), &page);
         if (blockedLoad) {
-            RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", &frame);
+            RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: Resource blocked by content blocker", frame);
             if (type == CachedResource::Type::MainResource) {
                 CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), page.sessionID(), &page.cookieJar());
                 ASSERT(resource);
@@ -1490,3 +1493,8 @@ bool CachedResourceLoader::isAlwaysOnLoggingAllowed() const
 }
 
 }
+
+#undef PAGE_ID
+#undef FRAME_ID
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_IF_ALLOWED_WITH_FRAME

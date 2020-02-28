@@ -151,10 +151,10 @@
 #include "RuntimeApplicationChecks.h"
 #endif
 
-#define FRAMELOADER_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [frame=%p, main=%d] FrameLoader::" fmt, this, &m_frame, m_frame.isMainFrame(), ##__VA_ARGS__)
-#define FRAMELOADER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG(channel, "%p - [frame=%p, main=%d] FrameLoader::" fmt, this, &m_frame, m_frame.isMainFrame(), ##__VA_ARGS__)
-#define FRAMELOADER_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [frame=%p, main=%d] FrameLoader::" fmt, this, &m_frame, m_frame.isMainFrame(), ##__VA_ARGS__)
-#define FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [frame=%p, main=%d] FrameLoader::" fmt, this, &m_frame, m_frame.isMainFrame(), ##__VA_ARGS__)
+#define PAGE_ID ((pageID().valueOr(PageIdentifier())).toUInt64())
+#define FRAME_ID ((frameID().valueOr(FrameIdentifier())).toUInt64())
+#define FRAMELOADER_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
+#define FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -376,6 +376,16 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
 
     m_networkingContext = m_client.createNetworkingContext();
     m_progressTracker = makeUnique<FrameProgressTracker>(m_frame);
+}
+
+Optional<PageIdentifier> FrameLoader::pageID() const
+{
+    return client().pageID();
+}
+
+Optional<FrameIdentifier> FrameLoader::frameID() const
+{
+    return client().frameID();
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -3891,7 +3901,7 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
         loadDifferentDocumentItem(*item, history().currentItem(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
     else {
         ASSERT_NOT_REACHED();
-        FRAMELOADER_RELEASE_LOG_ERROR(ResourceLoading, "retryAfterFailedCacheOnlyMainResourceLoad: Retrying load after failed cache-only main resource load failed because there is no provisional history item.");
+        FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED(ResourceLoading, "retryAfterFailedCacheOnlyMainResourceLoad: Retrying load after failed cache-only main resource load failed because there is no provisional history item.");
     }
 }
 
@@ -4204,3 +4214,6 @@ bool FrameLoader::shouldSuppressTextInputFromEditing() const
 }
 
 } // namespace WebCore
+
+#undef PAGE_ID
+#undef FRAME_ID

@@ -637,6 +637,16 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     m_script->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), URL(script.url())), world);
 }
 
+Optional<PageIdentifier> Frame::pageID() const
+{
+    return loader().pageID();
+}
+
+Optional<FrameIdentifier> Frame::frameID() const
+{
+    return loader().frameID();
+}
+
 RenderView* Frame::contentRenderer() const
 {
     return document() ? document()->renderView() : nullptr;

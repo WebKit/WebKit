@@ -111,7 +111,7 @@ void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, Res
         if (loader)
             scheduleLoad(*loader, resource.get(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
         else
-            RELEASE_LOG_IF_ALLOWED("loadResource: Unable to create SubresourceLoader (frame=%p", &frame);
+            RELEASE_LOG_IF(RELEASE_LOG_IS_ALLOWED, Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 "] WebLoaderStrategy::loadResource: Unable to create SubresourceLoader", this, frame->pageID().valueOr(PageIdentifier()).toUInt64(), frame->frameID().valueOr(FrameIdentifier()).toUInt64());
         completionHandler(WTFMove(loader));
     });
 }

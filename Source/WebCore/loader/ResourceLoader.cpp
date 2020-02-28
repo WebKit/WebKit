@@ -64,7 +64,9 @@
 #endif
 
 #undef RELEASE_LOG_IF_ALLOWED
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [frame=%p, frameLoader=%p, resourceID=%lu] ResourceLoader::" fmt, this, frame(), frameLoader(), identifier(), ##__VA_ARGS__)
+#define PAGE_ID ((frame() ? frame()->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
+#define FRAME_ID ((frame() ? frame()->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%lu] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -831,4 +833,7 @@ bool ResourceLoader::isAlwaysOnLoggingAllowed() const
     return frameLoader() && frameLoader()->isAlwaysOnLoggingAllowed();
 }
 
-}
+} // namespace WebCore
+
+#undef PAGE_ID
+#undef FRAME_ID

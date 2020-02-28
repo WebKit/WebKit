@@ -132,7 +132,9 @@
 #include "LayoutContext.h"
 #endif
 
-#define FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), channel, "%p - [frame=%p, main=%d] FrameView::" fmt, this, &frame(), frame().isMainFrame(), ##__VA_ARGS__)
+#define PAGE_ID frame().pageID().valueOr(PageIdentifier()).toUInt64()
+#define FRAME_ID frame().frameID().valueOr(FrameIdentifier()).toUInt64()
+#define FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameView::" fmt, this, PAGE_ID, FRAME_ID, frame().isMainFrame(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -5319,3 +5321,6 @@ bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
 }
 
 } // namespace WebCore
+
+#undef PAGE_ID
+#undef FRAME_ID

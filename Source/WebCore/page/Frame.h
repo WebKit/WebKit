@@ -29,7 +29,9 @@
 
 #include "AbstractFrame.h"
 #include "AdjustViewSizeOrNot.h"
+#include "FrameIdentifier.h"
 #include "FrameTree.h"
+#include "PageIdentifier.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/HashSet.h>
@@ -170,7 +172,10 @@ public:
     const CSSAnimationController& animation() const { return m_animationController; }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
-    
+
+    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
+    WEBCORE_EXPORT Optional<FrameIdentifier> frameID() const;
+
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 

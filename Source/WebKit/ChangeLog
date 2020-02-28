@@ -1,3 +1,19 @@
+2020-02-28  Keith Rollin  <krollin@apple.com>
+
+        Convert frame address in logging statements to pageID+frameID
+        https://bugs.webkit.org/show_bug.cgi?id=208325
+        <rdar://problem/59850768>
+
+        Reviewed by Alex Christensen.
+
+        Some old logging prints the address of the associated frame object.
+        Annotating logging statements this way makes it difficult to match up
+        that logging with other logging that uses pageID+frameID. Update the
+        logging to consistently use the latter format.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+
 2020-02-28  Eric Carlson  <eric.carlson@apple.com>
 
         No port uses USE_NATIVE_FULLSCREEN_VIDEO, remove it

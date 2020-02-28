@@ -33,10 +33,12 @@
 
 #include "AdClickAttribution.h"
 #include "CachePolicy.h"
+#include "FrameIdentifier.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
 #include "MixedContentChecker.h"
+#include "PageIdentifier.h"
 #include "PolicyChecker.h"
 #include "ReferrerPolicy.h"
 #include "ResourceLoadNotifier.h"
@@ -225,6 +227,9 @@ public:
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 
     FrameLoaderClient& client() const { return m_client; }
+
+    WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
+    WEBCORE_EXPORT Optional<FrameIdentifier> frameID() const;
 
     void setDefersLoading(bool);
 
