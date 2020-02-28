@@ -531,6 +531,8 @@ void Internals::resetToConsistentState(Page& page)
     page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::Unknown);
 #endif
 
+    MediaResourceLoader::recordResponsesForTesting();
+
     page.setShowAllPlugins(false);
     page.setLowPowerModeEnabledOverrideForTesting(WTF::nullopt);
 

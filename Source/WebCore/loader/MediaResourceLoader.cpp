@@ -41,6 +41,13 @@
 
 namespace WebCore {
 
+static bool shouldRecordResponsesForTesting = false;
+
+void MediaResourceLoader::recordResponsesForTesting()
+{
+    shouldRecordResponsesForTesting = true;
+}
+
 MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& mediaElement, const String& crossOriginMode)
     : ContextDestructionObserver(&document)
     , m_document(makeWeakPtr(document))
@@ -118,7 +125,7 @@ void MediaResourceLoader::removeResource(MediaResource& mediaResource)
 void MediaResourceLoader::addResponseForTesting(const ResourceResponse& response)
 {
     const auto maximumResponsesForTesting = 5;
-    if (m_responsesForTesting.size() > maximumResponsesForTesting)
+    if (!shouldRecordResponsesForTesting || m_responsesForTesting.size() > maximumResponsesForTesting)
         return;
     m_responsesForTesting.append(response);
 }

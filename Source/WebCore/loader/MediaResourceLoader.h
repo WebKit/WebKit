@@ -55,6 +55,7 @@ public:
     Document* document() { return m_document.get(); }
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
+    WEBCORE_EXPORT static void recordResponsesForTesting();
     Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
     void addResponseForTesting(const ResourceResponse&);
 
