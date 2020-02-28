@@ -2382,7 +2382,6 @@ webkit.org/b/198830 media/video-playing-and-pause.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata_noautoplay.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html [ Pass Crash ]
-webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadedmetadata.html [ Pass Crash ]
 webkit.org/b/198830 http/tests/media/autoplay-if-audio-is-playing.html [ Pass Crash ]
@@ -2541,6 +2540,8 @@ webkit.org/b/198830 [ Release ] media/video-reverse-play-duration.html [ Pass Cr
 webkit.org/b/198830 [ Release ] media/video-unmuted-after-play-holds-sleep-assertion.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html [ ImageOnlyFailure Crash ] 
 
+webkit.org/b/198830 webkit.org/b/76280 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Pass Crash Failure ]
+
 webkit.org/b/207927 [ Release ] media/audio-playback-restriction-removed-muted.html [ Pass Crash ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure Timeout ]
@@ -2687,6 +2688,8 @@ webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-que
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-request-source.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.worker.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
 
 webkit.org/b/208293 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure Pass ]
 webkit.org/b/208293 media/video-ended-event-negative-playback.html [ Failure Pass ]
@@ -4481,6 +4484,8 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+
+webkit.org/b/188972 fast/css/button-height.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
