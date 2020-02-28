@@ -75,7 +75,7 @@ String InbandGenericCue::toJSONString() const
         object->setDouble("position"_s, m_cueData.m_position);
 
     if (m_cueData.m_align != GenericCueData::Alignment::None) {
-        const char* align;
+        const char* align = "";
         switch (m_cueData.m_align) {
         case GenericCueData::Alignment::Start:
             align = "Start";
