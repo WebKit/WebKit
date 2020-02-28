@@ -184,7 +184,7 @@ private:
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
-    RefPtr<CSSFontSelector> m_fontSelector; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=196437 There's a retain cycle: CSSFontSelector -> CSSFontFaceSet -> CSSFontFace -> CSSFontSelector
+    WeakPtr<CSSFontSelector> m_fontSelector; // FIXME: Ideally this data member would go away (https://bugs.webkit.org/show_bug.cgi?id=208351).
     RefPtr<StyleRuleFontFace> m_cssConnection;
     HashSet<Client*> m_clients;
     WeakPtr<FontFace> m_wrapper;
