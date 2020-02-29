@@ -165,6 +165,8 @@ public:
 #endif
     void setErrorState();
 
+    Document* document() const;
+
 private:
     CSSFontFace(CSSFontSelector*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
 

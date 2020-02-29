@@ -1,3 +1,15 @@
+2020-02-28  Chris Dumez  <cdumez@apple.com>
+
+        Garbage collection prevents FontFace.loaded promise from getting resolved
+        https://bugs.webkit.org/show_bug.cgi?id=208382
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage. Thanks to Alexey Proskuryakov for writing the test.
+
+        * fast/text/font-promises-gc-expected.txt: Added.
+        * fast/text/font-promises-gc.html: Added.
+
 2020-02-28  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] compositing/absolute-inside-out-of-view-fixed.html is flaky timing out and crashing.

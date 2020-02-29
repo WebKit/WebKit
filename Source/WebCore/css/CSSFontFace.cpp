@@ -449,6 +449,11 @@ void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
     ASSERT(!m_sourcesPopulated);
 }
 
+Document* CSSFontFace::document() const
+{
+    return m_fontSelector ? m_fontSelector->document() : nullptr;
+}
+
 AllowUserInstalledFonts CSSFontFace::allowUserInstalledFonts() const
 {
     if (m_fontSelector && m_fontSelector->document())
