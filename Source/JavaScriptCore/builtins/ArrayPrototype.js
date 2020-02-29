@@ -555,7 +555,7 @@ function concatSlowPath()
     var argIndex = 0;
 
     do {
-        var spreadable = @isObject(currentElement) && currentElement.@isConcatSpreadableSymbol;
+        var spreadable = @isObject(currentElement) && currentElement.@@isConcatSpreadable;
         if ((spreadable === @undefined && @isArray(currentElement)) || spreadable) {
             var length = @toLength(currentElement.length);
             if (length + resultIndex > @MAX_ARRAY_INDEX)
@@ -588,8 +588,8 @@ function concat(first)
 
     if (@argumentCount() === 1
         && @isJSArray(this)
-        && this.@isConcatSpreadableSymbol === @undefined
-        && (!@isObject(first) || (!@isProxyObject(first) && first.@isConcatSpreadableSymbol === @undefined))) {
+        && this.@@isConcatSpreadable === @undefined
+        && (!@isObject(first) || (!@isProxyObject(first) && first.@@isConcatSpreadable === @undefined))) {
 
         var result = @concatMemcpy(this, first);
         if (result !== null)

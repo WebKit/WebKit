@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedTypes.h"
 
+#include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "JSCInlines.h"
@@ -702,14 +703,17 @@ public:
     {
         m_isAtomic = string.isAtom();
         m_isSymbol = string.isSymbol();
+        m_isWellKnownSymbol = false;
         RefPtr<StringImpl> impl = const_cast<StringImpl*>(&string);
 
         if (m_isSymbol) {
             SymbolImpl* symbol = static_cast<SymbolImpl*>(impl.get());
             if (!symbol->isNullSymbol()) {
                 // We have special handling for well-known symbols.
-                if (!symbol->isPrivate())
-                    impl = encoder.vm().propertyNames->getPublicName(encoder.vm(), symbol).impl();
+                if (!symbol->isPrivate()) {
+                    m_isWellKnownSymbol = true;
+                    impl = symbol->substring(strlen("Symbol."));
+                }
             }
         }
 
@@ -738,10 +742,19 @@ public:
             if (!m_isSymbol)
                 return AtomStringImpl::add(buffer, m_length).leakRef();
 
-            Identifier ident = Identifier::fromString(decoder.vm(), buffer, m_length);
-            String str = decoder.vm().propertyNames->lookUpPrivateName(ident);
+            SymbolImpl* symbol;
+            if (m_isWellKnownSymbol)
+                symbol = decoder.vm().propertyNames->builtinNames().lookUpWellKnownSymbol(buffer, m_length);
+            else
+                symbol = decoder.vm().propertyNames->builtinNames().lookUpPrivateName(buffer, m_length);
+            RELEASE_ASSERT(symbol);
+            String str = symbol;
             StringImpl* impl = str.releaseImpl().get();
             ASSERT(impl->isSymbol());
+            if (m_isWellKnownSymbol)
+                ASSERT(static_cast<SymbolImpl*>(impl)->isPrivate());
+            else
+                ASSERT(!static_cast<SymbolImpl*>(impl)->isPrivate());
             return static_cast<UniquedStringImpl*>(impl);
         };
 
@@ -759,6 +772,7 @@ public:
 private:
     bool m_is8Bit : 1;
     bool m_isSymbol : 1;
+    bool m_isWellKnownSymbol : 1;
     bool m_isAtomic : 1;
     unsigned m_length;
 };

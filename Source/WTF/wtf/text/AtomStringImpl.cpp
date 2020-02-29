@@ -123,27 +123,6 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters)
     return addToStringTable<const LChar*, CStringTranslator>(characters);
 }
 
-template<typename CharacterType>
-struct HashTranslatorCharBuffer {
-    const CharacterType* characters;
-    unsigned length;
-    unsigned hash;
-
-    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length)
-        : characters(characters)
-        , length(length)
-        , hash(StringHasher::computeHashAndMaskTop8Bits(characters, length))
-    {
-    }
-
-    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length, unsigned hash)
-        : characters(characters)
-        , length(length)
-        , hash(hash)
-    {
-    }
-};
-
 using UCharBuffer = HashTranslatorCharBuffer<UChar>;
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)

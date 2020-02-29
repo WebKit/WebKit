@@ -540,6 +540,27 @@ using StaticStringImpl = StringImpl::StaticStringImpl;
 
 static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 
+template<typename CharacterType>
+struct HashTranslatorCharBuffer {
+    const CharacterType* characters;
+    unsigned length;
+    unsigned hash;
+
+    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length)
+        : characters(characters)
+        , length(length)
+        , hash(StringHasher::computeHashAndMaskTop8Bits(characters, length))
+    {
+    }
+
+    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length, unsigned hash)
+        : characters(characters)
+        , length(length)
+        , hash(hash)
+    {
+    }
+};
+
 #if ASSERT_ENABLED
 
 // StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency

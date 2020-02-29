@@ -319,9 +319,6 @@ namespace JSC {
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL
 
-        SymbolImpl* lookUpPrivateName(const Identifier&) const;
-        Identifier getPublicName(VM&, SymbolImpl*) const;
-
         // Callers of this method should make sure that identifiers given to this method 
         // survive the lifetime of CommonIdentifiers and related VM.
         JS_EXPORT_PRIVATE void appendExternalName(const Identifier& publicName, const Identifier& privateName);

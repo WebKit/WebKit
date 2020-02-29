@@ -52,23 +52,21 @@ SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_f
 } // namespace Symbols
 
 #define INITIALIZE_BUILTIN_NAMES_IN_JSC(name) , m_##name(JSC::Identifier::fromString(vm, #name))
-#define INITIALIZE_BUILTIN_SYMBOLS_IN_JSC(name) , m_##name##Symbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##Symbol))), m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name "Symbol"))
+#define INITIALIZE_BUILTIN_SYMBOLS_IN_JSC(name) \
+    , m_##name##Symbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##Symbol))) \
+    , m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name))
 
 #define INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY(name) \
     do { \
         SymbolImpl* symbol = &static_cast<SymbolImpl&>(JSC::Symbols::name##PrivateName); \
-        checkPublicToPrivateMapConsistency(m_##name.impl(), symbol); \
-        m_publicToPrivateMap.add(m_##name.impl(), symbol); \
+        checkPublicToPrivateMapConsistency(symbol); \
+        m_privateNameSet.add(symbol); \
     } while (0);
 
-// We commandeer the publicToPrivateMap to allow us to convert private symbol names into the appropriate symbol.
-// e.g. @iteratorSymbol points to Symbol.iterator in this map rather than to a an actual private name.
-// FIXME: This is a weird hack and we shouldn't need to do this.
-#define INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) \
+#define INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) \
     do { \
         SymbolImpl* symbol = static_cast<SymbolImpl*>(m_##name##Symbol.impl()); \
-        checkPublicToPrivateMapConsistency(m_##name##SymbolPrivateIdentifier.impl(), symbol); \
-        m_publicToPrivateMap.add(m_##name##SymbolPrivateIdentifier.impl(), symbol); \
+        m_wellKnownSymbolsMap.add(m_##name##SymbolPrivateIdentifier.impl(), symbol); \
     } while (0);
 
 // We treat the dollarVM name as a special case below for $vm (because CommonIdentifiers does not
@@ -84,14 +82,98 @@ BuiltinNames::BuiltinNames(VM& vm, CommonIdentifiers* commonIdentifiers)
 {
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY)
-    m_publicToPrivateMap.add(m_dollarVMName.impl(), static_cast<SymbolImpl*>(m_dollarVMPrivateName.impl()));
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY)
+    m_privateNameSet.add(static_cast<SymbolImpl*>(m_dollarVMPrivateName.impl()));
 }
 
 #undef INITIALIZE_BUILTIN_NAMES_IN_JSC
 #undef INITIALIZE_BUILTIN_SYMBOLS_IN_JSC
 #undef INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY
-#undef INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY
+#undef INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY
+
+
+using LCharBuffer = WTF::HashTranslatorCharBuffer<LChar>;
+using UCharBuffer = WTF::HashTranslatorCharBuffer<UChar>;
+
+template<typename CharacterType>
+struct CharBufferSeacher {
+    using Buffer = WTF::HashTranslatorCharBuffer<CharacterType>;
+    static unsigned hash(const Buffer& buf)
+    {
+        return buf.hash;
+    }
+
+    static bool equal(const String& str, const Buffer& buf)
+    {
+        return WTF::equal(str.impl(), buf.characters, buf.length);
+    }
+};
+
+template<typename CharacterType>
+static PrivateSymbolImpl* lookUpPrivateNameImpl(const HashSet<String>& set, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
+{
+    auto iterator = set.find<CharBufferSeacher<CharacterType>>(buffer);
+    if (iterator == set.end())
+        return nullptr;
+    StringImpl* impl = iterator->impl();
+    ASSERT(impl->isSymbol());
+    SymbolImpl* symbol = static_cast<SymbolImpl*>(impl);
+    ASSERT(symbol->isPrivate());
+    return static_cast<PrivateSymbolImpl*>(symbol);
+}
+
+template<typename CharacterType>
+static SymbolImpl* lookUpWellKnownSymbolImpl(const HashMap<String, SymbolImpl*>& map, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
+{
+    auto iterator = map.find<CharBufferSeacher<CharacterType>>(buffer);
+    if (iterator == map.end())
+        return nullptr;
+    return iterator->value;
+}
+
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const LChar* characters, unsigned length) const
+{
+    LCharBuffer buffer { characters, length };
+    return lookUpPrivateNameImpl(m_privateNameSet, buffer);
+}
+
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const UChar* characters, unsigned length) const
+{
+    UCharBuffer buffer { characters, length };
+    return lookUpPrivateNameImpl(m_privateNameSet, buffer);
+}
+
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const String& string) const
+{
+    if (string.is8Bit()) {
+        LCharBuffer buffer { string.characters8(), string.length(), string.hash() };
+        return lookUpPrivateNameImpl(m_privateNameSet, buffer);
+    }
+    UCharBuffer buffer { string.characters16(), string.length(), string.hash() };
+    return lookUpPrivateNameImpl(m_privateNameSet, buffer);
+}
+
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const LChar* characters, unsigned length) const
+{
+    LCharBuffer buffer { characters, length };
+    return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
+}
+
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const UChar* characters, unsigned length) const
+{
+    UCharBuffer buffer { characters, length };
+    return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
+}
+
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const String& string) const
+{
+    if (string.is8Bit()) {
+        LCharBuffer buffer { string.characters8(), string.length(), string.hash() };
+        return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
+    }
+    UCharBuffer buffer { string.characters16(), string.length(), string.hash() };
+    return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
+}
 
 } // namespace JSC
 

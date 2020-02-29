@@ -941,8 +941,15 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     }
     
     bool isPrivateName = m_current == '@' && m_parsingBuiltinFunction;
-    if (isPrivateName)
+    bool isWellKnownSymbol = false;
+    if (isPrivateName) {
+        ASSERT(m_parsingBuiltinFunction);
         shift();
+        if (m_current == '@') {
+            isWellKnownSymbol = true;
+            shift();
+        }
+    }
     
     const LChar* identifierStart = currentSourcePtr();
     unsigned identifierLineStart = currentLineStartOffset();
@@ -959,18 +966,23 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         int identifierLength = currentSourcePtr() - identifierStart;
-        ident = makeIdentifier(identifierStart, identifierLength);
-        if (m_parsingBuiltinFunction) {
-            if (!isSafeBuiltinIdentifier(m_vm, ident) && !isPrivateName) {
-                m_lexErrorMessage = makeString("The use of '", ident->string(), "' is disallowed in builtin functions.");
-                return ERRORTOK;
-            }
-            if (isPrivateName)
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->lookUpPrivateName(*ident));
-            else if (*ident == m_vm.propertyNames->undefinedKeyword)
-                tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
+        if (m_parsingBuiltinFunction && isPrivateName) {
+            if (isWellKnownSymbol)
+                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierStart, identifierLength));
+            else
+                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierStart, identifierLength));
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
+        } else {
+            ident = makeIdentifier(identifierStart, identifierLength);
+            if (m_parsingBuiltinFunction) {
+                if (!isSafeBuiltinIdentifier(m_vm, ident)) {
+                    m_lexErrorMessage = makeString("The use of '", ident->string(), "' is disallowed in builtin functions.");
+                    return ERRORTOK;
+                }
+                if (*ident == m_vm.propertyNames->undefinedKeyword)
+                    tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
+            }
         }
         tokenData->ident = ident;
     } else
@@ -1006,8 +1018,16 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     }
     
     bool isPrivateName = m_current == '@' && m_parsingBuiltinFunction;
-    if (isPrivateName)
+    bool isWellKnownSymbol = false;
+    if (isPrivateName) {
+        ASSERT(m_parsingBuiltinFunction);
         shift();
+        if (m_current == '@') {
+            isWellKnownSymbol = true;
+            shift();
+        }
+    }
+
 
     const UChar* identifierStart = currentSourcePtr();
     int identifierLineStart = currentLineStartOffset();
@@ -1034,21 +1054,26 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         int identifierLength = currentSourcePtr() - identifierStart;
-        if (isAll8Bit)
-            ident = makeIdentifierLCharFromUChar(identifierStart, identifierLength);
-        else
-            ident = makeIdentifier(identifierStart, identifierLength);
-        if (m_parsingBuiltinFunction) {
-            if (!isSafeBuiltinIdentifier(m_vm, ident) && !isPrivateName) {
-                m_lexErrorMessage = makeString("The use of '", ident->string(), "' is disallowed in builtin functions.");
-                return ERRORTOK;
-            }
-            if (isPrivateName)
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->lookUpPrivateName(*ident));
-            else if (*ident == m_vm.propertyNames->undefinedKeyword)
-                tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
+        if (m_parsingBuiltinFunction && isPrivateName) {
+            if (isWellKnownSymbol)
+                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierStart, identifierLength));
+            else
+                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierStart, identifierLength));
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
+        } else {
+            if (isAll8Bit)
+                ident = makeIdentifierLCharFromUChar(identifierStart, identifierLength);
+            else
+                ident = makeIdentifier(identifierStart, identifierLength);
+            if (m_parsingBuiltinFunction) {
+                if (!isSafeBuiltinIdentifier(m_vm, ident)) {
+                    m_lexErrorMessage = makeString("The use of '", ident->string(), "' is disallowed in builtin functions.");
+                    return ERRORTOK;
+                }
+                if (*ident == m_vm.propertyNames->undefinedKeyword)
+                    tokenData->ident = &m_vm.propertyNames->undefinedPrivateName;
+            }
         }
         tokenData->ident = ident;
     } else

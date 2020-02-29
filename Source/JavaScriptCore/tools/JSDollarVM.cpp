@@ -27,6 +27,7 @@
 #include "JSDollarVM.h"
 
 #include "BuiltinExecutableCreator.h"
+#include "BuiltinNames.h"
 #include "CodeBlock.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
@@ -2379,8 +2380,9 @@ static EncodedJSValue JSC_HOST_CALL functionGetPrivateProperty(JSGlobalObject* g
         return encodedJSUndefined();
 
     String str = asString(callFrame->argument(1))->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SymbolImpl* symbol = vm.propertyNames->lookUpPrivateName(Identifier::fromString(vm, str));
+    SymbolImpl* symbol = vm.propertyNames->builtinNames().lookUpPrivateName(str);
     if (!symbol)
         return throwVMError(globalObject, scope, "Unknown private name.");
 

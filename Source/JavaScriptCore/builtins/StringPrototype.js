@@ -33,14 +33,14 @@ function match(regexp)
         @throwTypeError("String.prototype.match requires that |this| not be null or undefined");
 
     if (regexp != null) {
-        var matcher = regexp.@matchSymbol;
+        var matcher = regexp.@@match;
         if (matcher != @undefined)
             return matcher.@call(regexp, this);
     }
 
     var thisString = @toString(this);
     var createdRegExp = @regExpCreate(regexp, @undefined);
-    return createdRegExp.@matchSymbol(thisString);
+    return createdRegExp.@@match(thisString);
 }
 
 function matchAll(arg)
@@ -54,14 +54,14 @@ function matchAll(arg)
         if (@isRegExp(arg) && !@stringIncludesInternal.@call(@toString(arg.flags), "g"))
             @throwTypeError("String.prototype.matchAll argument must not be a non-global regular expression");
 
-        var matcher = arg.@matchAllSymbol;
+        var matcher = arg.@@matchAll;
         if (!@isUndefinedOrNull(matcher))
             return matcher.@call(arg, this);
     }
 
     var string = @toString(this);
     var regExp = @regExpCreate(arg, "g");
-    return regExp.@matchAllSymbol(string);
+    return regExp.@@matchAll(string);
 }
 
 @globalPrivate
@@ -246,7 +246,7 @@ function replace(search, replace)
         @throwTypeError("String.prototype.replace requires that |this| not be null or undefined");
 
     if (search != null) {
-        var replacer = search.@replaceSymbol;
+        var replacer = search.@@replace;
         if (replacer !== @undefined) {
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
@@ -270,7 +270,7 @@ function replaceAll(search, replace)
         if (@isRegExp(search) && !@stringIncludesInternal.@call(@toString(search.flags), "g"))
             @throwTypeError("String.prototype.replaceAll argument must not be a non-global regular expression");
 
-        var replacer = search.@replaceSymbol;
+        var replacer = search.@@replace;
         if (replacer !== @undefined) {
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
@@ -291,14 +291,14 @@ function search(regexp)
         @throwTypeError("String.prototype.search requires that |this| not be null or undefined");
 
     if (regexp != null) {
-        var searcher = regexp.@searchSymbol;
+        var searcher = regexp.@@search;
         if (searcher != @undefined)
             return searcher.@call(regexp, this);
     }
 
     var thisString = @toString(this);
     var createdRegExp = @regExpCreate(regexp, @undefined);
-    return createdRegExp.@searchSymbol(thisString);
+    return createdRegExp.@@search(thisString);
 }
 
 function split(separator, limit)
@@ -309,7 +309,7 @@ function split(separator, limit)
         @throwTypeError("String.prototype.split requires that |this| not be null or undefined");
     
     if (separator != null) {
-        var splitter = separator.@splitSymbol;
+        var splitter = separator.@@split;
         if (splitter != @undefined)
             return splitter.@call(separator, this, limit);
     }

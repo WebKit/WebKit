@@ -42,7 +42,7 @@ function typedArraySpeciesConstructor(value)
     if (!@isObject(constructor))
         @throwTypeError("|this|.constructor is not an Object or undefined");
 
-    constructor = constructor.@speciesSymbol;
+    constructor = constructor.@@species;
     if (@isUndefinedOrNull(constructor))
         return @typedArrayGetOriginalConstructor(value);
     // The lack of an @isConstructor(constructor) check here is not observable because
@@ -318,7 +318,7 @@ function map(callback /*, thisArg */)
     if (constructor === @undefined)
         result = new (@typedArrayGetOriginalConstructor(this))(length);
     else {
-        var speciesConstructor = constructor.@speciesSymbol;
+        var speciesConstructor = constructor.@@species;
         if (@isUndefinedOrNull(speciesConstructor))
             result = new (@typedArrayGetOriginalConstructor(this))(length);
         else {
@@ -359,7 +359,7 @@ function filter(callback /*, thisArg */)
     if (constructor === @undefined)
         result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
     else {
-        var speciesConstructor = constructor.@speciesSymbol;
+        var speciesConstructor = constructor.@@species;
         if (@isUndefinedOrNull(speciesConstructor))
             result = new (@typedArrayGetOriginalConstructor(this))(resultLength);
         else {

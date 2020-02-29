@@ -1076,7 +1076,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate(BytecodeG
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
     ASSERT(node->m_expr->isString());
-    SymbolImpl* symbol = generator.vm().propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
+    SymbolImpl* symbol = generator.vm().propertyNames->builtinNames().lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
     ASSERT(symbol);
     ASSERT(!node->m_next);
     return generator.emitDirectGetById(generator.finalDestination(dst), base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol));
@@ -1263,7 +1263,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate(BytecodeG
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
     ASSERT(node->m_expr->isString());
-    SymbolImpl* symbol = generator.vm().propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
+    SymbolImpl* symbol = generator.vm().propertyNames->builtinNames().lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
     ASSERT(symbol);
     node = node->m_next;
     RefPtr<RegisterID> value = generator.emitNode(node);

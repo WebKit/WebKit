@@ -1,3 +1,81 @@
+2020-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BuiltinNames' HashMap should be small
+        https://bugs.webkit.org/show_bug.cgi?id=208404
+
+        Reviewed by Mark Lam.
+
+        This patch converts public-to-private-name-map from HashMap<RefPtr<UniquedStringImpl>, SymbolImpl*> to HashSet<String> to save half of memory.
+        The key is that private names have the same string content to the public names. We can just query with string content to the HashSet of
+        private names, and we can get private names.
+
+        The problem is that we also have a hack inserting string <-> non-private well-known Symbol mappings into this table. These symbols do not have
+        the same content to the public string. So the above assumption is broken.
+
+        To make the above assumption valid, we have a separate small HashMap which holds string <-> non-private well-known Symbol mappings. Since # of
+        well-known Symbols are only 13, this new HashMap is taking at most 512B for entries, which is much smaller compared to the saved memory by
+        converting HashMap to HashSet for private names (32KB).
+
+        To allow it, we introduce new well-known Symbol identifier syntax to builtin JS, which is "@@iterator" format. If there is two "@", we parse this
+        identifier as a well-known Symbol.
+
+        * builtins/ArrayConstructor.js:
+        (from.wrapper.iterator):
+        (from):
+        (from.wrapper.iteratorSymbol): Deleted.
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.concatSlowPath):
+        (concat):
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        (JSC::CharBufferSeacher::hash):
+        (JSC::CharBufferSeacher::equal):
+        (JSC::lookUpPrivateNameImpl):
+        (JSC::lookUpWellKnownSymbolImpl):
+        (JSC::BuiltinNames::lookUpPrivateName const):
+        (JSC::BuiltinNames::lookUpWellKnownSymbol const):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::lookUpPrivateName const):
+        (JSC::BuiltinNames::lookUpWellKnownSymbol const):
+        (JSC::BuiltinNames::checkPublicToPrivateMapConsistency):
+        (JSC::BuiltinNames::appendExternalName):
+        (JSC::BuiltinNames::getPublicName const): Deleted.
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesConstructor):
+        * builtins/IteratorHelpers.js:
+        (performIteration):
+        * builtins/StringPrototype.js:
+        (match):
+        (matchAll):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (replaceAll):
+        (search):
+        (split):
+        * builtins/TypedArrayConstructor.js:
+        (from.wrapper.iterator):
+        (from):
+        (from.wrapper.iteratorSymbol): Deleted.
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArraySpeciesConstructor):
+        (map):
+        (filter):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUniquedStringImplBase::encode):
+        (JSC::CachedUniquedStringImplBase::decode const):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        (JSC::CommonIdentifiers::lookUpPrivateName const): Deleted.
+        (JSC::CommonIdentifiers::getPublicName const): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGetPrivateProperty):
+
 2020-02-28  Saam Barati  <sbarati@apple.com>
 
         Clean up code with how we choose Gigacage sizes and whether or not to use Wasm fast memory

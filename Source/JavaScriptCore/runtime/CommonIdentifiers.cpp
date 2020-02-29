@@ -40,7 +40,7 @@ CommonIdentifiers::CommonIdentifiers(VM& vm)
     , thisIdentifier(Identifier::fromString(vm, "this"))
     , useStrictIdentifier(Identifier::fromString(vm, "use strict"))
     , timesIdentifier(Identifier::fromString(vm, "*"))
-    , m_builtinNames(new BuiltinNames(vm, this))
+    , m_builtinNames(makeUnique<BuiltinNames>(vm, this))
     JSC_PARSER_PRIVATE_NAMES(INITIALIZE_PRIVATE_NAME)
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
@@ -50,16 +50,6 @@ CommonIdentifiers::CommonIdentifiers(VM& vm)
 
 CommonIdentifiers::~CommonIdentifiers()
 {
-}
-
-SymbolImpl* CommonIdentifiers::lookUpPrivateName(const Identifier& ident) const
-{
-    return m_builtinNames->lookUpPrivateName(ident);
-}
-
-Identifier CommonIdentifiers::getPublicName(VM& vm, SymbolImpl* symbol) const
-{
-    return m_builtinNames->getPublicName(vm, symbol);
 }
 
 void CommonIdentifiers::appendExternalName(const Identifier& publicName, const Identifier& privateName)

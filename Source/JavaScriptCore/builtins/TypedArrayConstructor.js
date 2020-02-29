@@ -61,7 +61,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     var arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
 
-    var iteratorMethod = items.@iteratorSymbol;
+    var iteratorMethod = items.@@iterator;
     if (iteratorMethod != null) {
         if (typeof iteratorMethod !== "function")
             @throwTypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
@@ -75,7 +75,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         // it could be observable if the user defines a getter for @@iterator.
         // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
         var wrapper = {};
-        wrapper.@iteratorSymbol = function() { return iterator; }
+        wrapper.@@iterator = function() { return iterator; }
 
         for (var value of wrapper) {
             if (mapFn)
