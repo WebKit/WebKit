@@ -127,7 +127,7 @@ Optional<PositionInContextRoot> FloatingState::top(const ContainerBox& formattin
 
         auto floatTop = floatItem.rectWithMargin().top();
         if (top) {
-            top = std::max<PositionInContextRoot>(*top, { floatTop });
+            top = std::min<PositionInContextRoot>(*top, { floatTop });
             continue;
         }
         top = PositionInContextRoot { floatTop };
