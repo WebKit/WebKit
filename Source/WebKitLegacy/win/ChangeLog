@@ -1,3 +1,10 @@
+2020-02-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Windows build after r257645.
+
+        * WebView.cpp:
+        (WebView::setAcceleratedCompositing):
+
 2020-02-27  Don Olmstead  <don.olmstead@sony.com>
 
         Fix WebCore export macros for declspec
