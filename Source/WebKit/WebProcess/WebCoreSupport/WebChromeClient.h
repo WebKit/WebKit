@@ -234,6 +234,7 @@ private:
 #endif
 
 #if ENABLE(GPU_PROCESS)
+    std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::ShouldAccelerate, WebCore::ShouldUseDisplayList, WebCore::RenderingPurpose, float resolutionScale, WebCore::ColorSpace) const final;
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace) const final;
 #endif
 

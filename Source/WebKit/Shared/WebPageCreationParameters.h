@@ -216,6 +216,7 @@ struct WebPageCreationParameters {
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureVideoInGPUProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
+    bool shouldRenderCanvasInGPUProcess { false };
 
 #if PLATFORM(GTK)
     String themeName;

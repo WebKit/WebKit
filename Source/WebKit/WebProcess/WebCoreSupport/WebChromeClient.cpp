@@ -890,13 +890,27 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 #endif
 
 #if ENABLE(GPU_PROCESS)
+
 std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace) const
 {
     if (!m_remoteRenderingBackend)
         m_remoteRenderingBackend = RemoteRenderingBackend::create();
     return m_remoteRenderingBackend->createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
 }
-#endif
+
+std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
+{
+    RenderingMode mode;
+    if (m_page.shouldUseRemoteRenderingFor(purpose))
+        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::RemoteAccelerated : RenderingMode::RemoteUnaccelerated;
+    else if (shouldUseDisplayList == ShouldUseDisplayList::Yes)
+        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
+    else
+        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    return createImageBuffer(size, mode, resolutionScale, colorSpace);
+}
+
+#endif // ENABLE(GPU_PROCESS)
 
 void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* layer)
 {

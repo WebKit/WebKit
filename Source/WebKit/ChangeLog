@@ -1,3 +1,35 @@
+2020-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an internal setting to enable or disable canvas rendering in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208375
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        Consult the new internal feature when creating a new web process.
+
+        * Shared/WebPreferences.yaml:
+
+        Add a new internal setting to enable using the GPU process for rendering canvases.
+
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::shouldUseRemoteRenderingFor):
+
+        Add a helper method that WebChromeClient can use to determine whether it should opt into either
+        RemoteAccelerated or RemoteUnaccelerated.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2020-02-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS 13] Crash in NetworkProcessProxy::takeUploadAssertion

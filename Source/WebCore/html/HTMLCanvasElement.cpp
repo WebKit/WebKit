@@ -892,21 +892,10 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
 
+    auto accelerate = shouldAccelerate(size()) ? ShouldAccelerate::Yes : ShouldAccelerate::No;
     // FIXME: Add a new setting for DisplayList drawing on canvas.
-    bool usesDisplayListDrawing = m_usesDisplayListDrawing.valueOr(document().settings().displayListDrawingEnabled());
-
-    // FIXME: Add a new setting for remote drawing on canvas.
-    bool usesRemoteDrawing = false;
-
-    RenderingMode renderingMode;
-    if (usesRemoteDrawing)
-        renderingMode = shouldAccelerate(size()) ? RenderingMode::RemoteAccelerated : RenderingMode::RemoteUnaccelerated;
-    else if (usesDisplayListDrawing)
-        renderingMode = shouldAccelerate(size()) ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
-    else
-        renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-
-    setImageBuffer(ImageBuffer::create(size(), renderingMode, 1, ColorSpace::SRGB, hostWindow));
+    auto useDisplayList = m_usesDisplayListDrawing.valueOr(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
+    setImageBuffer(ImageBuffer::create(size(), accelerate, useDisplayList, RenderingPurpose::Canvas, 1, ColorSpace::SRGB, hostWindow));
 
     if (buffer() && buffer()->drawingContext())
         buffer()->drawingContext()->setTracksDisplayListReplay(m_tracksDisplayListReplay);

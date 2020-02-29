@@ -1750,6 +1750,14 @@ CaptureAudioInGPUProcessEnabled:
   webcoreBinding: none
   condition: ENABLE(MEDIA_STREAM)
 
+RenderCanvasInGPUProcessEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Render canvas in GPU Process"
+  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  category: internal
+  webcoreBinding: none
+
 RestrictedHTTPResponseAccess:
   type: bool
   defaultValue: true

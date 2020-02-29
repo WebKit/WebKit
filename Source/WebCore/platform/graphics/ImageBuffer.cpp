@@ -38,6 +38,24 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
+std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
+{
+    std::unique_ptr<ImageBuffer> imageBuffer;
+    if (hostWindow)
+        imageBuffer = hostWindow->createImageBuffer(size, shouldAccelerate, shouldUseDisplayList, purpose, resolutionScale, colorSpace);
+
+    if (!imageBuffer) {
+        RenderingMode mode;
+        if (shouldUseDisplayList == ShouldUseDisplayList::Yes)
+            mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
+        else
+            mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+        imageBuffer = ImageBuffer::create(size, mode, resolutionScale, colorSpace, hostWindow);
+    }
+
+    return imageBuffer;
+}
+
 std::unique_ptr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow)
 {
     std::unique_ptr<ImageBuffer> imageBuffer;

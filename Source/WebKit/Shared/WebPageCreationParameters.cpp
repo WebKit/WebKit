@@ -145,6 +145,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInUIProcess;
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
+    encoder << shouldRenderCanvasInGPUProcess;
 
 #if PLATFORM(GTK)
     encoder << themeName;
@@ -461,6 +462,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.shouldCaptureDisplayInUIProcess))
+        return WTF::nullopt;
+
+    if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))
         return WTF::nullopt;
 
 #if PLATFORM(GTK)

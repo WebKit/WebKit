@@ -391,6 +391,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_viewSize(parameters.viewSize)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
+    , m_shouldRenderCanvasInGPUProcess { parameters.shouldRenderCanvasInGPUProcess }
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
@@ -7035,6 +7036,21 @@ void WebPage::setOverriddenMediaType(const String& mediaType)
 void WebPage::setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+}
+
+bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
+{
+#if ENABLE(GPU_PROCESS)
+    switch (purpose) {
+    case RenderingPurpose::Canvas:
+        return m_shouldRenderCanvasInGPUProcess;
+    default:
+        break;
+    }
+#else
+    UNUSED_PARAM(purpose);
+#endif
+    return false;
 }
 
 } // namespace WebKit

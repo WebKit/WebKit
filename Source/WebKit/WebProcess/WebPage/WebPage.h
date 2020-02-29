@@ -73,6 +73,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerID.h>
+#include <WebCore/RenderingMode.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/TextManipulationController.h>
@@ -1293,6 +1294,8 @@ public:
 
     void setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain);
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
+
+    bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
     
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -1742,6 +1745,8 @@ private:
 
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
+
+    bool m_shouldRenderCanvasInGPUProcess { false };
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin { false };
