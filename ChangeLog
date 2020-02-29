@@ -1,3 +1,15 @@
+2020-02-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, rolling out r257565.
+
+        It broke WinCairo MiniBrowser
+
+        Reverted changeset:
+
+        "[CMake] Use WEBKIT_EXECUTABLE in MiniBrowser"
+        https://bugs.webkit.org/show_bug.cgi?id=206894
+        https://trac.webkit.org/changeset/257565
+
 2020-02-28  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Add TLS debugging feature to log encryption keys

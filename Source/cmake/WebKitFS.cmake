@@ -47,7 +47,6 @@ set(WebDriver_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebDriver"
 set(WebKitLegacy_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKitLegacy")
 set(WebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
 set(WebInspectorUI_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebInspectorUI")
-set(MiniBrowser_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/MiniBrowser")
 
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
 
