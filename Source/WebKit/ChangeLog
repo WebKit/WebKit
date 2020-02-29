@@ -1,3 +1,16 @@
+2020-02-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS 13] Crash in NetworkProcessProxy::takeUploadAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=204796
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setWebProcessHasUploads):
+        If the network process has previously crashed, WebProcessPool::m_networkProcess may be null
+        when WebProcessPool::setWebProcessHasUploads() is called. As a result, we should call
+        ensureNetworkProcess() instead of dereferencing m_networkProcess unconditionally.
+
 2020-02-28  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Modern EME API in the GPU Process

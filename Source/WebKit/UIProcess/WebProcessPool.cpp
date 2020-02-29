@@ -2343,8 +2343,7 @@ void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
     if (m_processesWithUploads.isEmpty()) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessHasUploads: The number of uploads in progress is now one. Taking Networking and UI process assertions.");
 
-        ASSERT(m_networkProcess);
-        m_networkProcess->takeUploadAssertion();
+        ensureNetworkProcess().takeUploadAssertion();
         
         ASSERT(!m_uiProcessUploadAssertion);
         m_uiProcessUploadAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
