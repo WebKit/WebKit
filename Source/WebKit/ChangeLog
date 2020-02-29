@@ -1,3 +1,10 @@
+2020-02-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified soures builds fix.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::readOrMakeSalt): Add missing namespace to FileSystem::fileExists() call.
+
 2020-02-28  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Modern EME API in the GPU Process

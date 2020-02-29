@@ -144,7 +144,7 @@ static Salt makeSalt()
 
 Optional<Salt> readOrMakeSalt(const String& path)
 {
-    if (fileExists(path)) {
+    if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
         Salt salt;
         auto bytesRead = FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size());
