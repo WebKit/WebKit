@@ -99,14 +99,16 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 {
     auto scale = m_player->playerContentsScale();
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale), [weakThis = makeWeakPtr(*this), this](auto contextId) mutable {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale), [weakThis = makeWeakPtr(*this), this](auto inlineLayerHostingContextId, auto fullscreenLayerHostingContextId) mutable {
         if (!weakThis)
             return;
 
-        if (!contextId)
+        if (!inlineLayerHostingContextId)
             return;
 
-        m_videoInlineLayer = createVideoLayerRemote(this, contextId.value());
+        m_videoInlineLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value());
+
+        m_fullscreenLayerHostingContextId = fullscreenLayerHostingContextId;
     }, m_id);
 }
 
@@ -339,6 +341,11 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
     return m_configuration.supportsAcceleratedRendering;
 }
 
+void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_player->supportsAcceleratedRendering()), m_id);
+}
+
 bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
 {
     return m_configuration.canPlayToWirelessPlaybackTarget;
@@ -377,21 +384,6 @@ void MediaPlayerPrivateRemote::setVisible(bool visible)
 void MediaPlayerPrivateRemote::setShouldMaintainAspectRatio(bool maintainRatio)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetShouldMaintainAspectRatio(maintainRatio), m_id);
-}
-
-void MediaPlayerPrivateRemote::setVideoFullscreenFrame(WebCore::FloatRect rect)
-{
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenFrame(rect), m_id);
-}
-
-void MediaPlayerPrivateRemote::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
-{
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenGravity(gravity), m_id);
-}
-
-void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
-{
-    connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_player->supportsAcceleratedRendering()), m_id);
 }
 
 void MediaPlayerPrivateRemote::setShouldDisableSleep(bool disable)
@@ -615,14 +607,31 @@ PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 }
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&&)
+
+void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
-    notImplemented();
+    if (!videoFullscreenLayer) {
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::ExitFullscreen(), WTFMove(completionHandler), m_id);
+        return;
+    }
+
+    ASSERT(m_videoFullscreenLayer.get() == videoFullscreenLayer);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::EnterFullscreen(), WTFMove(completionHandler), m_id);
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::UpdateVideoFullscreenInlineImage(), m_id);
+}
+
+void MediaPlayerPrivateRemote::setVideoFullscreenFrameFenced(const WebCore::FloatRect& rect, const WTF::MachSendRight& sendRight)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenFrameFenced(rect, sendRight), m_id);
+}
+
+void MediaPlayerPrivateRemote::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoFullscreenGravity(gravity), m_id);
 }
 
 void MediaPlayerPrivateRemote::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)

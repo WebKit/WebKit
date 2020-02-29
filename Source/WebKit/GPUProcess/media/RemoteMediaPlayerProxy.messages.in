@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerProxy NotRefCounted {
-    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> layerHostingContextId) Async
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId, Optional<WebKit::LayerHostingContextID> fullscreenLayerHostingContextId) Async
 
     Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
     CancelLoad()
@@ -47,7 +47,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     PrepareForRendering()
     SetVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
-    SetVideoFullscreenFrame(WebCore::FloatRect rect)
+    SetVideoFullscreenFrameFenced(WebCore::FloatRect rect, MachSendRight machSendRight)
     SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
@@ -66,6 +66,9 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if PLATFORM(COCOA)
     SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
 #endif
+
+    EnterFullscreen() -> () Async
+    ExitFullscreen() -> () Async
 
     # Paint
     # PaintCurrentFrameInContext

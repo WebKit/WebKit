@@ -271,10 +271,9 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     bool allowsPictureInPicture = videoElement.webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
 
     if (!interface->layerHostingContext()->rootLayer()) {
-        PlatformLayer* videoLayer = [CALayer layer];
+        auto videoLayer = model->createVideoFullscreenLayer();
         [videoLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-
-        [videoLayer setName:@"Web video fullscreen manager layer"];
+        [videoLayer setName:@"Web Video Fullscreen Layer"];
         [videoLayer setPosition:CGPointMake(0, 0)];
         [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
 
@@ -283,7 +282,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         float hostingScaleFactor = m_page->deviceScaleFactor();
         [videoLayer setTransform:CATransform3DMakeScale(hostingScaleFactor, hostingScaleFactor, 1)];
 
-        interface->layerHostingContext()->setRootLayer(videoLayer);
+        interface->layerHostingContext()->setRootLayer(videoLayer.get());
     }
 
     m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby));

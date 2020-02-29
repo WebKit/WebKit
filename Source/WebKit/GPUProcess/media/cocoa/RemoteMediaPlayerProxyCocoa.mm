@@ -29,20 +29,69 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #import "LayerHostingContext.h"
+#import "MediaPlayerPrivateRemoteMessages.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/IntSize.h>
 #import <wtf/MachSendRight.h>
 
 namespace WebKit {
 
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId, Optional<LayerHostingContextID>&& fullscreenLayerHostingContextId)>&& completionHandler)
+{
+    m_player->setPrivateBrowsingMode(privateMode);
+    m_player->setPreload(preload);
+    m_player->setPreservesPitch(preservesPitch);
+    m_player->prepareForRendering();
+    m_videoContentScale = videoContentScale;
+    if (!m_inlineLayerHostingContext)
+        m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+    if (!m_fullscreenLayerHostingContext)
+        m_fullscreenLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+    completionHandler(m_inlineLayerHostingContext->contextID(), m_fullscreenLayerHostingContext->contextID());
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
+{
+    // Initially the size of the platformLayer will be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
+    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
+{
+    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+}
+
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& size, const WTF::MachSendRight& machSendRight)
 {
-    m_layerHostingContext->setFencePort(machSendRight.sendRight());
+    m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
     // We do not want animations here
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [m_layerHostingContext->rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
+    [m_inlineLayerHostingContext->rootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
     [CATransaction commit];
+}
+
+void RemoteMediaPlayerProxy::enterFullscreen(CompletionHandler<void()>&& completionHandler)
+{
+    auto videoFullscreenLayer = m_player->createVideoFullscreenLayer();
+    [videoFullscreenLayer setName:@"Web Video Fullscreen Layer (remote)"];
+    [videoFullscreenLayer setPosition:CGPointZero];
+    m_fullscreenLayerHostingContext->setRootLayer(videoFullscreenLayer.get());
+
+    m_player->setVideoFullscreenLayer(videoFullscreenLayer.get(), WTFMove(completionHandler));
+}
+
+void RemoteMediaPlayerProxy::exitFullscreen(CompletionHandler<void()>&& completionHandler)
+{
+    m_player->setVideoFullscreenLayer(nullptr, WTFMove(completionHandler));
+    m_fullscreenLayerHostingContext->setRootLayer(nullptr);
+}
+
+void RemoteMediaPlayerProxy::setVideoFullscreenFrameFenced(const WebCore::FloatRect& rect, const WTF::MachSendRight& machSendRight)
+{
+    m_fullscreenLayerHostingContext->setFencePort(machSendRight.sendRight());
+    m_player->setVideoFullscreenFrame(rect);
 }
 
 } // namespace WebKit

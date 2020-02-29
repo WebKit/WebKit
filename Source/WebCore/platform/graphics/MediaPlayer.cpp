@@ -752,6 +752,11 @@ PlatformLayer* MediaPlayer::platformLayer() const
     
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+RetainPtr<PlatformLayer> MediaPlayer::createVideoFullscreenLayer()
+{
+    return m_private->createVideoFullscreenLayer();
+}
+
 void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer, WTF::Function<void()>&& completionHandler)
 {
     m_private->setVideoFullscreenLayer(layer, WTFMove(completionHandler));

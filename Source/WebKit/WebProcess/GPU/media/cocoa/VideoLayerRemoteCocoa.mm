@@ -156,14 +156,9 @@ RetainPtr<CALayer> createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPlayerP
     // Initially, all the layers will be empty (both width and height are 0) and invisible.
     // The renderer will change the sizes of WKVideoLayerRemote to trigger layout of sublayers and make them visible.
     auto videoLayerRemote = adoptNS([[WKVideoLayerRemote alloc] init]);
-#ifndef NDEBUG
     [videoLayerRemote setName:@"WKVideoLayerRemote"];
-#endif
-
     [videoLayerRemote setMediaPlayerPrivateRemote:mediaPlayerPrivateRemote];
-
-    auto videoSublayer = LayerHostingContext::createPlatformLayerForHostingContext(contextId);
-    [videoLayerRemote addSublayer:videoSublayer.get()];
+    [videoLayerRemote addSublayer:LayerHostingContext::createPlatformLayerForHostingContext(contextId).get()];
 
     return videoLayerRemote;
 }

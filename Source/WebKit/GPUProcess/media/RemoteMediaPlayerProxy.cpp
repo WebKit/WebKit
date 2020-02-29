@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
-#include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioTrackProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -107,17 +106,6 @@ void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&
     completionHandler(WTFMove(configuration));
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& contextId)>&& completionHandler)
-{
-    m_player->setPrivateBrowsingMode(privateMode);
-    m_player->setPreload(preload);
-    m_player->setPreservesPitch(preservesPitch);
-    m_player->prepareForRendering();
-    m_videoContentScale = videoContentScale;
-    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-    completionHandler(m_layerHostingContext->contextID());
-}
-
 void RemoteMediaPlayerProxy::cancelLoad()
 {
     m_updateCachedStateMessageTimer.stop();
@@ -192,11 +180,6 @@ void RemoteMediaPlayerProxy::setVisible(bool visible)
 void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)
 {
     m_player->setShouldMaintainAspectRatio(maintainRatio);
-}
-
-void RemoteMediaPlayerProxy::setVideoFullscreenFrame(WebCore::FloatRect rect)
-{
-    m_player->setVideoFullscreenFrame(rect);
 }
 
 void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
@@ -496,18 +479,6 @@ void RemoteMediaPlayerProxy::mediaPlayerSizeChanged()
 void RemoteMediaPlayerProxy::mediaPlayerEngineUpdated()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::EngineUpdated(), m_id);
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
-{
-    // Initially the size of the platformLayer will be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
-    m_layerHostingContext->setRootLayer(m_player->platformLayer());
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
-{
-    m_layerHostingContext->setRootLayer(m_player->platformLayer());
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()

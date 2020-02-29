@@ -92,7 +92,7 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&&)>&&);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId, Optional<LayerHostingContextID>&& fullscreenLayerHostingContextId)>&&);
     void prepareForRendering();
 
     void load(URL&&, Optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
@@ -115,7 +115,9 @@ public:
 
     void setVisible(bool);
     void setShouldMaintainAspectRatio(bool);
-    void setVideoFullscreenFrame(WebCore::FloatRect);
+    void enterFullscreen(CompletionHandler<void()>&&);
+    void exitFullscreen(CompletionHandler<void()>&&);
+    void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
     void setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity);
     void acceleratedRenderingStateChanged(bool);
     void setShouldDisableSleep(bool);
@@ -251,7 +253,8 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
-    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
+    std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;
     RemoteMediaPlayerManagerProxy& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;

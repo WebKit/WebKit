@@ -2704,6 +2704,7 @@
 		1D4D736C23A9DF6000717A25 /* RemoteMediaResourceManagerMessages.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessages.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4D737523A9EB6800717A25 /* RemoteMediaResourceManagerMessagesReplies.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = RemoteMediaResourceManagerMessagesReplies.h; path = DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D67B338212E1F6100FAA786 /* ShareSheetCallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareSheetCallbackID.h; sourceTree = "<group>"; };
+		1D97EC7D240898D200466FFA /* MediaPlayerPrivateRemoteCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateRemoteCocoa.mm; sourceTree = "<group>"; };
 		1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceManager.h; sourceTree = "<group>"; };
 		1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResourceManager.cpp; sourceTree = "<group>"; };
 		1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKShareSheet.mm; sourceTree = "<group>"; };
@@ -6222,6 +6223,7 @@
 		1DAF5A4D23EC9F7900B7B518 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1D97EC7D240898D200466FFA /* MediaPlayerPrivateRemoteCocoa.mm */,
 				1DFDD0E023F60E1F00E9B490 /* VideoLayerRemoteCocoa.h */,
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);

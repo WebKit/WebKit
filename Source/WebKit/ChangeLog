@@ -1,3 +1,72 @@
+2020-02-28  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU process] Implement the video fullscreen and Picture-in-Picture support
+        https://bugs.webkit.org/show_bug.cgi?id=208252
+
+        Reviewed by Simon Fraser.
+
+        The RemoteMediaPlayerProxy in the GPU process creates a LayerHostingContext and
+        share the context ID with the MediaPlayerPrivateRemote in the Web process,
+        which in turn creates a remote layer used by the VideoFullscreenManager.
+
+        Those functions regarding video fullscreen and picture-in-picture have been
+        moved to RemoteMediaPlayerProxy.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::updateVideoFullscreenInlineImage): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenFrame): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenGravity): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVideoFullscreenMode): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setVolume): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::setBufferingPolicy): Deleted.
+        (WebKit::RemoteMediaPlayerManagerProxy::videoFullscreenStandbyChanged): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+
+        [GPU process]
+        Add two asynchronous IPC messages (EnterFullscreen and ExitFullscreen) in RemoteMediaPlayerProxy
+        and replace the message SetVideoFullscreenFrame with SetVideoFullscreenFrameFenced.
+        Create the CALayer for the video fullscreen and picture-in-picture features.
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenFrame): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable): Deleted.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced):
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen):
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenFrameFenced):
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        [Web process]
+        Create a hosting layer in the Web process corresponding to the CALayer in the
+        GPU process for video fullscreen and picture-in-picture.
+        Synchronize the properties of the layers cross process boundary with MachSendRight.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenLayer):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrameFenced):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm: Added.
+        (WebKit::MediaPlayerPrivateRemote::createVideoFullscreenLayer):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm:
+        (WebKit::createVideoLayerRemote):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+
+        Fix unified build failures.
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+
 2020-02-28  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed unified build fix; Add include header for IPC::DataReference.

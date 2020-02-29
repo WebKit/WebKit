@@ -307,6 +307,7 @@ public:
     PlatformLayer* platformLayer() const;
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
     void setVideoFullscreenFrame(FloatRect);
     void updateVideoFullscreenInlineImage();

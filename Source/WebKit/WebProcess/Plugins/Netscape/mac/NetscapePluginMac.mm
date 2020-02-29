@@ -28,6 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#import "LayerTreeContext.h"
 #import "NetscapeBrowserFuncs.h"
 #import "PluginController.h"
 #import "WebEvent.h"

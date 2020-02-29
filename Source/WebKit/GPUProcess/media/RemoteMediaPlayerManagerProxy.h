@@ -84,16 +84,6 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, Vector<WebCore::SecurityOriginData>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
-    void updateVideoFullscreenInlineImage(MediaPlayerPrivateRemoteIdentifier);
-    void setVideoFullscreenFrame(MediaPlayerPrivateRemoteIdentifier, WebCore::FloatRect);
-    void setVideoFullscreenGravity(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayer::VideoGravity);
-    void setVideoFullscreenMode(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayer::VideoFullscreenMode);
-
-    void videoFullscreenStandbyChanged(MediaPlayerPrivateRemoteIdentifier);
-
-    void setVolume(MediaPlayerPrivateRemoteIdentifier, double);
-    void setBufferingPolicy(MediaPlayerPrivateRemoteIdentifier, WebCore::MediaPlayer::BufferingPolicy);
-
 #if PLATFORM(IOS_FAMILY)
     void accessLog(MediaPlayerPrivateRemoteIdentifier, CompletionHandler<void(String)>&&);
     void errorLog(MediaPlayerPrivateRemoteIdentifier, CompletionHandler<void(String)>&&);

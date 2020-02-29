@@ -1083,6 +1083,11 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
     m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
 }
 
+RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscreenLayer()
+{
+    return adoptNS([[CALayer alloc] init]);
+}
+
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
     updateLastImage(UpdateType::UpdateSynchronously);

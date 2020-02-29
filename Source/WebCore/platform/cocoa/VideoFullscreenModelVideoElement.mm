@@ -110,6 +110,11 @@ void VideoFullscreenModelVideoElement::willExitFullscreen()
         m_videoElement->willExitFullscreen();
 }
 
+RetainPtr<PlatformLayer> VideoFullscreenModelVideoElement::createVideoFullscreenLayer()
+{
+    return m_videoElement->createVideoFullscreenLayer();
+}
+
 void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer, WTF::Function<void()>&& completionHandler)
 {
     if (m_videoFullscreenLayer == videoLayer) {
