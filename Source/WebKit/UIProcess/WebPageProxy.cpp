@@ -6917,13 +6917,13 @@ void WebPageProxy::voidCallback(CallbackID callbackID)
     callback->performCallback();
 }
 
-void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, CallbackID callbackID)
+void WebPageProxy::dataCallback(const IPC::SharedBufferDataReference& dataReference, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<DataCallback>(callbackID);
     if (!callback)
         return;
 
-    callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
+    callback->performCallbackWithReturnValue(API::Data::create(reinterpret_cast<const uint8_t*>(dataReference.data()), dataReference.size()).ptr());
 }
 
 void WebPageProxy::boolCallback(bool result, CallbackID callbackID)
@@ -9092,7 +9092,7 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
     });
 }
 
-void WebPageProxy::finishedLoadingIcon(CallbackID callbackID, const IPC::DataReference& data)
+void WebPageProxy::finishedLoadingIcon(CallbackID callbackID, const IPC::SharedBufferDataReference& data)
 {
     dataCallback(data, callbackID);
 }
@@ -9323,7 +9323,7 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
     send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference), callbackID));
 }
 
-void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)
+void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::SharedBufferDataReference& data)
 {
     MESSAGE_CHECK(m_process, IdentifierToAttachmentMap::isValidKey(identifier));
 
@@ -9430,7 +9430,7 @@ WebPageProxy::ShouldUpdateAttachmentAttributes WebPageProxy::willUpdateAttachmen
 
 #if !PLATFORM(COCOA)
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String&, const IPC::DataReference&)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String&, const IPC::SharedBufferDataReference&)
 {
 }
 

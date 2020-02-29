@@ -1,3 +1,64 @@
+2020-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement Modern EME API in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208090
+
+        Reviewed by Alex Christensen.
+
+        IPC::SharedBufferDataReference is made more efficient by using the same encode/decode path as is used in
+        WebCoreArgumentCoders: the SharedBuffer is copied into shared memory, and only a handle is passed across
+        the XPC boundary. This requires existing users to handle receiving a IPC::SharedBufferDataHandle on the
+        remote side of the XPC boundary, but this is trivial, and many call sites require a SharedBuffer on the
+        remote side in the first place. This code could be improved by allowing the SharedMemory object be adopted
+        by the SharedBuffer object at creation time, potentially leading to zero-copy decoding, but is not done in
+        this patch.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBuffer):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::didReceiveSharedBuffer):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in:
+        * Platform/IPC/HandleMessage.h:
+        * Platform/IPC/SharedBufferDataReference.h:
+        (IPC::SharedBufferDataReference::SharedBufferDataReference):
+        (IPC::SharedBufferDataReference::buffer):
+        (IPC::SharedBufferDataReference::buffer const):
+        (IPC::SharedBufferDataReference::data const):
+        (IPC::SharedBufferDataReference::size const):
+        (IPC::SharedBufferDataReference::isEmpty const):
+        (IPC::SharedBufferDataReference::encode const):
+        (IPC::SharedBufferDataReference::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::encode):
+        (IPC::ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveSharedBuffer):
+        (WebKit::WebResourceLoader::didReceiveData):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::finishedLoadingIcon):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::drawPagesToPDF):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-02-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified soures builds fix.

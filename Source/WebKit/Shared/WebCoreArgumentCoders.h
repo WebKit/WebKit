@@ -101,6 +101,7 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
+class SharedBuffer;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class StickyPositionViewportConstraints;
@@ -829,6 +830,11 @@ template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
     static Optional<WebCore::SerializedPlatformDataCueValue> decodePlatformData(Decoder&, WebCore::SerializedPlatformDataCueValue::PlatformType);
 };
 #endif
+
+template<> struct ArgumentCoder<RefPtr<WebCore::SharedBuffer>> {
+    static void encode(Encoder&, const RefPtr<WebCore::SharedBuffer>&);
+    static Optional<RefPtr<WebCore::SharedBuffer>> decode(Decoder&);
+};
 
 } // namespace IPC
 

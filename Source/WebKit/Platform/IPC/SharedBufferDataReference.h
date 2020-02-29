@@ -25,40 +25,45 @@
 
 #pragma once
 
-#include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/SharedBuffer.h>
-#include <wtf/Variant.h>
 
 namespace IPC {
 
 class SharedBufferDataReference {
 public:
     SharedBufferDataReference() = default;
+    SharedBufferDataReference(RefPtr<WebCore::SharedBuffer>&& buffer) : m_buffer(WTFMove(buffer)) { }
+    SharedBufferDataReference(Ref<WebCore::SharedBuffer>&& buffer) : m_buffer(WTFMove(buffer)) { }
     SharedBufferDataReference(const WebCore::SharedBuffer& buffer)
-        : m_data(buffer) { }
-    SharedBufferDataReference(const uint8_t* data, size_t size)
-        : m_data(std::make_pair(data, size)) { }
+        : m_buffer(WebCore::SharedBuffer::create())
+    {
+        m_buffer->append(buffer);
+    }
+
+    RefPtr<WebCore::SharedBuffer>& buffer() { return m_buffer; }
+    const RefPtr<WebCore::SharedBuffer>& buffer() const { return m_buffer; }
+
+    const char* data() const { return m_buffer ? m_buffer->data() : nullptr; }
+    size_t size() const { return m_buffer ? m_buffer->size() : 0; }
+    bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
 
     void encode(Encoder& encoder) const
     {
-        switchOn(m_data,
-            [encoder = &encoder] (const Ref<const WebCore::SharedBuffer>& buffer) mutable {
-                uint64_t bufferSize = buffer->size();
-                encoder->reserve(bufferSize + sizeof(uint64_t));
-                *encoder << bufferSize;
-                for (const auto& element : buffer.get())
-                    encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
-            }, [encoder = &encoder] (const std::pair<const uint8_t*, size_t>& pair) mutable {
-                uint64_t bufferSize = pair.second;
-                encoder->reserve(bufferSize + sizeof(uint64_t));
-                *encoder << bufferSize;
-                encoder->encodeFixedLengthData(pair.first, pair.second, 1);
-            }
-        );
+        encoder << m_buffer;
+    }
+
+    static Optional<SharedBufferDataReference> decode(Decoder& decoder)
+    {
+        Optional<RefPtr<WebCore::SharedBuffer>> buffer;
+        decoder >> buffer;
+        if (!buffer)
+            return WTF::nullopt;
+        return { WTFMove(*buffer) };
     }
 
 private:
-    Variant<std::pair<const uint8_t*, size_t>, Ref<const WebCore::SharedBuffer>> m_data;
+    RefPtr<WebCore::SharedBuffer> m_buffer;
 };
 
 }

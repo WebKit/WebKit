@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WebResourceLoader.h"
 
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoaderMessages.h"
+#include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
@@ -190,27 +190,47 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     m_coreLoader->didReceiveResponse(response, WTFMove(policyDecisionCompletionHandler));
 }
 
-void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
+void WebResourceLoader::didReceiveSharedBuffer(IPC::SharedBufferDataReference&& data, int64_t encodedDataLength)
+{
+    LOG(Network, "(WebProcess) WebResourceLoader::didReceiveSharedBuffer of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
+    ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
+
+    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
+        deferReceivingSharedBuffer(WTFMove(data), encodedDataLength);
+        return;
+    }
+
+    processReceivedData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength);
+}
+
+void WebResourceLoader::didReceiveData(IPC::DataReference&& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        auto buffer = WebCore::SharedBuffer::create(data.data(), data.size());
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), buffer = WTFMove(buffer), encodedDataLength]() mutable {
-            IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-            if (m_coreLoader)
-                didReceiveData(data, encodedDataLength);
-        });
+        deferReceivingSharedBuffer({ WebCore::SharedBuffer::create(data.data(), data.size()) }, encodedDataLength);
         return;
     }
+    processReceivedData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength);
+}
 
+void WebResourceLoader::deferReceivingSharedBuffer(IPC::SharedBufferDataReference&& data, int64_t encodedDataLength)
+{
+    m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = makeRef(*this), data = WTFMove(data), encodedDataLength]() mutable {
+        if (m_coreLoader)
+            didReceiveSharedBuffer(WTFMove(data), encodedDataLength);
+    });
+}
+
+void WebResourceLoader::processReceivedData(const char* data, size_t size, int64_t encodedDataLength)
+{
     if (!m_numBytesReceived) {
         RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data");
     }
-    m_numBytesReceived += data.size();
+    m_numBytesReceived += size;
 
-    m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
+    m_coreLoader->didReceiveData(data, size, encodedDataLength, DataPayloadBytes);
 }
 
 void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkLoadMetrics)
