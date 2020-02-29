@@ -1,3 +1,9 @@
+2020-02-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed unified build fix; Add include header for IPC::DataReference.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+
 2020-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an internal setting to enable or disable canvas rendering in the GPU Process
