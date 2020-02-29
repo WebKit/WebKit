@@ -192,9 +192,15 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
     ASSERT(layoutBox.isFloatAvoider());
     if (floatingContext.isEmpty())
         return { };
-    // Vertical static position is not computed yet, so let's just pre-compute it for now.
-    precomputeVerticalPositionForAncestors(layoutBox, horizontalConstraints, verticalConstraints);
+    // Float clear pushes the block level box either below the floats, or just one side below but the other side could overlap.
+    // What it means is that the used available width always matches the containing block's constraint.
+    if (layoutBox.hasFloatClear())
+        return { };
+
+    ASSERT(layoutBox.establishesFormattingContext());
+    // Vertical static position is not computed yet for this formatting context root, so let's just pre-compute it for now.
     precomputeVerticalPosition(layoutBox, horizontalConstraints.containingBlock, verticalConstraints.containingBlock);
+    precomputeVerticalPositionForAncestors(layoutBox, horizontalConstraints, verticalConstraints);
 
     auto mapLogicalTopToFormattingContextRoot = [&] {
         auto& formattingContextRoot = root();
@@ -346,6 +352,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     displayBox.setTop(*verticalPositionAndClearance.position);
     if (verticalPositionAndClearance.clearance)
         displayBox.setHasClearance();
+    // FIXME: Reset the margin values on the ancestors/previous siblings now that the float avoider with clearance does not margin collapse anymore.
 }
 
 void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair<HorizontalConstraints>& horizontalConstraintsPair, const ConstraintsPair<VerticalConstraints>& verticalConstraintsPair)
