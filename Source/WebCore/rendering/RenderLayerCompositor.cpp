@@ -4229,8 +4229,8 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
         return 0;
     
     backing->setScrollingNodeIDForRole(nodeID, role);
-    m_scrollingNodeToLayerMap.add(nodeID, &layer);
-    
+    m_scrollingNodeToLayerMap.add(nodeID, makeWeakPtr(layer));
+
     return nodeID;
 }
 
@@ -4264,8 +4264,8 @@ void RenderLayerCompositor::detachScrollCoordinatedLayerWithRole(RenderLayer& la
     auto unregisterNode = [&](ScrollingNodeID nodeID) {
         auto childNodes = scrollingCoordinator.childrenOfNode(nodeID);
         for (auto childNodeID : childNodes) {
-            if (auto* layer = m_scrollingNodeToLayerMap.get(childNodeID))
-                layer->setNeedsScrollingTreeUpdate();
+            if (auto weakLayer = m_scrollingNodeToLayerMap.get(childNodeID))
+                weakLayer->setNeedsScrollingTreeUpdate();
         }
 
         m_scrollingNodeToLayerMap.remove(nodeID);
@@ -4613,7 +4613,7 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingN
     if (!nodeID)
         return nullptr;
 
-    return m_scrollingNodeToLayerMap.get(nodeID);
+    return m_scrollingNodeToLayerMap.get(nodeID).get();
 }
 
 void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)
