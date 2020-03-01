@@ -1,3 +1,24 @@
+2020-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Many tests in canvas and fast/canvas are asserting after r257677
+        https://bugs.webkit.org/show_bug.cgi?id=208431
+        <rdar://problem/59911910>
+
+        Reviewed by Tim Horton.
+
+        RemoteRenderingBackend asserts that it should never be created with a RenderingMode that isn't either
+        RemoteAccelerated or RemoteUnaccelerated. This was previously the case before r257677, because
+        ImageBuffer::create() would only call into the host window (i.e. the chrome and, in turn, chrome client) to
+        create the remote image buffer if the rendering mode is RemoteAccelerated or RemoteUnaccelerated. However, since
+        we want to move away from any references to RemoteAccelerated or RemoteUnaccelerated rendering modes in WebCore,
+        we should instead fix this by adding a similar check in the client (WebKit) layer.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+
+        Don't bother creating a RemoteRenderingBackend and telling it to create an image buffer, if the given
+        RenderingMode isn't one of RemoteAccelerated or RemoteUnaccelerated.
+
 2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove std::lock_guard

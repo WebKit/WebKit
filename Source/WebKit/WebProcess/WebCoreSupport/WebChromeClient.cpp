@@ -893,6 +893,9 @@ RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(Platf
 
 std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace) const
 {
+    if (renderingMode != RenderingMode::RemoteAccelerated && renderingMode != RenderingMode::RemoteUnaccelerated)
+        return nullptr;
+
     if (!m_remoteRenderingBackend)
         m_remoteRenderingBackend = RemoteRenderingBackend::create();
     return m_remoteRenderingBackend->createImageBuffer(size, renderingMode, resolutionScale, colorSpace);
