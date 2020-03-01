@@ -78,7 +78,7 @@ static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
         return;
     }
     auto& impl = heap.impl();
-    std::lock_guard<bmalloc::Mutex> locker(impl.lock);
+    std::scoped_lock<bmalloc::Mutex> locker(impl.lock);
     impl.forEachLiveObject(
         locker,
         [&] (void* object) {
@@ -95,7 +95,7 @@ static void assertHasOnlyObjects(IsoHeap<heapType>& heap, std::set<void*> pointe
         return;
     }
     auto& impl = heap.impl();
-    std::lock_guard<bmalloc::Mutex> locker(impl.lock);
+    std::scoped_lock<bmalloc::Mutex> locker(impl.lock);
     impl.forEachLiveObject(
         locker,
         [&] (void* object) {

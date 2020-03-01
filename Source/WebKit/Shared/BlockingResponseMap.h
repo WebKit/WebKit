@@ -57,7 +57,7 @@ public:
 
     void didReceiveResponse(uint64_t requestID, std::unique_ptr<T> response)
     {
-        std::lock_guard<Lock> lock(m_mutex);
+        auto locker = holdLock(m_mutex);
         ASSERT(!m_responses.contains(requestID));
 
         m_responses.set(requestID, WTFMove(response));

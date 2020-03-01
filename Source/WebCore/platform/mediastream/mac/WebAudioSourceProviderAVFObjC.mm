@@ -59,7 +59,7 @@ WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(MediaStreamTrackPri
 
 WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    auto locker = holdLock(m_mutex);
 
     if (m_connected && m_captureSource)
         m_captureSource->removeObserver(*this);
@@ -122,7 +122,7 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 
 void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& format)
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    auto locker = holdLock(m_mutex);
 
     LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p)", this);
 
@@ -153,7 +153,7 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& f
 
 void WebAudioSourceProviderAVFObjC::unprepare()
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    auto locker = holdLock(m_mutex);
 
     m_inputDescription = WTF::nullopt;
     m_outputDescription = WTF::nullopt;

@@ -57,7 +57,7 @@ CFRunLoopRef loaderRunLoop()
     if (!loaderRunLoopObject) {
         Thread::create("WebCore: CFNetwork Loader", [] {
             {
-                std::lock_guard<Lock> lock(loaderRunLoopMutex);
+                auto locker = holdLock(loaderRunLoopMutex);
 
                 loaderRunLoopObject = CFRunLoopGetCurrent();
 

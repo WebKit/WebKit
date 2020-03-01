@@ -52,7 +52,7 @@ public:
 
     void setCompleted()
     {
-        std::lock_guard<Lock> lock(m_stateMutex);
+        auto locker = holdLock(m_stateMutex);
 
         ASSERT(!m_completed);
         m_completed = true;
@@ -124,7 +124,7 @@ static void HandleRunSource(void *info)
 
     WebThreadRunQueue queueCopy;
     {
-        std::lock_guard<Lock> lock(runQueueMutex);
+        auto locker = holdLock(runQueueMutex);
         queueCopy = *runQueue;
         runQueue->clear();
     }
@@ -148,7 +148,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
         state = new WebThreadBlockState;
 
     {
-        std::lock_guard<Lock> lock(runQueueMutex);
+        auto locker = holdLock(runQueueMutex);
         runQueue->append(WebThreadBlock(block, state));
     }
 

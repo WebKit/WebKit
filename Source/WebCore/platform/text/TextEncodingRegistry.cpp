@@ -155,7 +155,7 @@ static void pruneBlacklistedCodecs()
     }
 }
 
-static void buildBaseTextCodecMaps(const std::lock_guard<Lock>&)
+static void buildBaseTextCodecMaps(const AbstractLocker&)
 {
     ASSERT(!textCodecMap);
     ASSERT(!textEncodingNameMap);
@@ -243,7 +243,7 @@ static void extendTextCodecMaps()
 
 std::unique_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
 {
-    std::lock_guard<Lock> lock(encodingRegistryMutex);
+    auto locker = holdLock(encodingRegistryMutex);
 
     ASSERT(textCodecMap);
     auto result = textCodecMap->find(encoding.name());
@@ -256,10 +256,10 @@ const char* atomCanonicalTextEncodingName(const char* name)
     if (!name || !name[0])
         return nullptr;
 
-    std::lock_guard<Lock> lock(encodingRegistryMutex);
+    auto locker = holdLock(encodingRegistryMutex);
 
     if (!textEncodingNameMap)
-        buildBaseTextCodecMaps(lock);
+        buildBaseTextCodecMaps(locker);
 
     if (const char* atomName = textEncodingNameMap->get(name))
         return atomName;

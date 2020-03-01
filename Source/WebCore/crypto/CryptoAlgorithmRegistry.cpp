@@ -52,7 +52,7 @@ Optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const St
     if (name.isEmpty())
         return WTF::nullopt;
 
-    std::lock_guard<Lock> lock(registryMutex);
+    auto locker = holdLock(registryMutex);
 
     // FIXME: How is it helpful to call isolatedCopy on the argument to find?
     auto identifier = m_identifiers.find(name.isolatedCopy());
@@ -64,7 +64,7 @@ Optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const St
 
 String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
 {
-    std::lock_guard<Lock> lock(registryMutex);
+    auto locker = holdLock(registryMutex);
 
     auto contructor = m_constructors.find(static_cast<unsigned>(identifier));
     if (contructor == m_constructors.end())
@@ -75,7 +75,7 @@ String CryptoAlgorithmRegistry::name(CryptoAlgorithmIdentifier identifier)
 
 RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
-    std::lock_guard<Lock> lock(registryMutex);
+    auto locker = holdLock(registryMutex);
 
     auto contructor = m_constructors.find(static_cast<unsigned>(identifier));
     if (contructor == m_constructors.end())
@@ -86,7 +86,7 @@ RefPtr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifie
 
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
-    std::lock_guard<Lock> lock(registryMutex);
+    auto locker = holdLock(registryMutex);
 
     ASSERT(!m_identifiers.contains(name));
     ASSERT(!m_constructors.contains(static_cast<unsigned>(identifier)));

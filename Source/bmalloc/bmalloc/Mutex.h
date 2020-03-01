@@ -38,7 +38,7 @@ namespace bmalloc {
 class Mutex;
 
 using UniqueLockHolder = std::unique_lock<Mutex>;
-using LockHolder = std::lock_guard<Mutex>;
+using LockHolder = std::scoped_lock<Mutex>;
 
 class Mutex {
 public:

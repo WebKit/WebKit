@@ -56,7 +56,7 @@ static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<Lock> lock(wrapperCacheLock);
+    auto locker = holdLock(wrapperCacheLock);
 #endif
     return wrapperCache().get(impl);
 }
@@ -64,7 +64,7 @@ NSObject* getDOMWrapper(DOMObjectInternal* impl)
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<Lock> lock(wrapperCacheLock);
+    auto locker = holdLock(wrapperCacheLock);
 #endif
     wrapperCache().set(impl, wrapper);
 }
@@ -72,7 +72,7 @@ void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<Lock> lock(wrapperCacheLock);
+    auto locker = holdLock(wrapperCacheLock);
 #endif
     wrapperCache().remove(impl);
 }

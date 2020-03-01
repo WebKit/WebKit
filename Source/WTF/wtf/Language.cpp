@@ -103,7 +103,7 @@ static Vector<String> isolatedCopy(const Vector<String>& strings)
 Vector<String> userPreferredLanguages()
 {
     {
-        std::lock_guard<Lock> lock(userPreferredLanguagesMutex);
+        auto locker = holdLock(userPreferredLanguagesMutex);
         Vector<String>& override = preferredLanguagesOverride();
         if (!override.isEmpty())
             return isolatedCopy(override);

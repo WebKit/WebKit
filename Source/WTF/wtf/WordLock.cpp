@@ -236,7 +236,7 @@ NEVER_INLINE void WordLock::unlockSlow()
     {
         // Be sure to hold the lock across our call to notify_one() because a spurious wakeup could
         // cause the thread at the head of the queue to exit and delete queueHead.
-        std::lock_guard<std::mutex> locker(queueHead->parkingLock);
+        std::scoped_lock<std::mutex> locker(queueHead->parkingLock);
         queueHead->shouldPark = false;
 
         // Doesn't matter if we notify_all() or notify_one() here since the only thread that could be

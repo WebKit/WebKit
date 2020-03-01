@@ -40,13 +40,13 @@ static Lock transactionInProgressMutex;
 
 void setClient(SQLiteDatabaseTrackerClient* client)
 {
-    std::lock_guard<Lock> lock(transactionInProgressMutex);
+    auto locker = holdLock(transactionInProgressMutex);
     s_staticSQLiteDatabaseTrackerClient = client;
 }
 
 void incrementTransactionInProgressCount()
 {
-    std::lock_guard<Lock> lock(transactionInProgressMutex);
+    auto locker = holdLock(transactionInProgressMutex);
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
@@ -57,7 +57,7 @@ void incrementTransactionInProgressCount()
 
 void decrementTransactionInProgressCount()
 {
-    std::lock_guard<Lock> lock(transactionInProgressMutex);
+    auto locker = holdLock(transactionInProgressMutex);
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
@@ -70,7 +70,7 @@ void decrementTransactionInProgressCount()
 
 bool hasTransactionInProgress()
 {
-    std::lock_guard<Lock> lock(transactionInProgressMutex);
+    auto locker = holdLock(transactionInProgressMutex);
     return !s_staticSQLiteDatabaseTrackerClient || s_transactionInProgressCounter > 0;
 }
 

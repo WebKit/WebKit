@@ -416,7 +416,7 @@ void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     AudioContext::AutoLocker contextLocker(context());
     
     // This synchronizes with process().
-    std::lock_guard<Lock> lock(m_processMutex);
+    auto locker = holdLock(m_processMutex);
     
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.

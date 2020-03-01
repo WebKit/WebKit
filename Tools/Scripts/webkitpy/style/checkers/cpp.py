@@ -2505,6 +2505,26 @@ def check_wtf_make_unique(clean_lines, line_number, file_state, error):
               "Use 'WTF::makeUnique<{typename}>' instead of 'std::make_unique<{typename}>'.".format(typename=typename))
 
 
+def check_lock_guard(clean_lines, line_number, file_state, error):
+    """Looks for use of 'std::lock_guard<>' which should be replaced with 'WTF::Locker'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_std_lock_guard_search = search(r'\bstd::lock_guard\s*<([^(]+)', line)
+    if not using_std_lock_guard_search:
+        return
+
+    error(line_number, 'runtime/lock_guard', 4, "Use 'auto locker = holdLock(mutex)' instead of 'std::lock_guard<>'.")
+
+
 def check_ctype_functions(clean_lines, line_number, file_state, error):
     """Looks for use of the standard functions in ctype.h and suggest they be replaced
        by use of equivilent ones in <wtf/ASCIICType.h>?.
@@ -3065,6 +3085,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_optional(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
+    check_lock_guard(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, file_state, error)
@@ -4226,6 +4247,7 @@ class CppChecker(object):
         'runtime/int',
         'runtime/invalid_increment',
         'runtime/leaky_pattern',
+        'runtime/lock_guard',
         'runtime/max_min_macros',
         'runtime/memset',
         'runtime/printf',

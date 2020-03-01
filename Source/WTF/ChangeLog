@@ -1,3 +1,51 @@
+2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove std::lock_guard
+        https://bugs.webkit.org/show_bug.cgi?id=206451
+
+        Reviewed by Anders Carlsson.
+
+        Remove use of std::lock_guard. This is deprecated in C++17.
+
+        1. For particularly low-level usage (like, bmalloc, std::mutex), use std::scoped_lock.
+        2. For the other purpose, use holdLock.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::invalidateIterators):
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        * wtf/Language.cpp:
+        (WTF::userPreferredLanguages):
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        (WTF::callOnMainAndWait):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        * wtf/WordLock.cpp:
+        (WTF::WordLock::unlockSlow):
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::invalidate):
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::platformLanguage):
+
 2020-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BuiltinNames' HashMap should be small

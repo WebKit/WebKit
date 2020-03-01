@@ -306,7 +306,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
     ASSERT(isMainThread());
     
     // This synchronizes with process().
-    std::lock_guard<Lock> lock(m_processMutex);
+    auto locker = holdLock(m_processMutex);
     m_periodicWave = periodicWave;
     m_type = Type::Custom;
 }

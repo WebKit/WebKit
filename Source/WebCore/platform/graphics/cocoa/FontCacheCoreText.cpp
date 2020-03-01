@@ -934,7 +934,7 @@ public:
     {
         auto folded = FontCascadeDescription::foldedFamilyName(familyName);
         {
-            std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+            auto locker = holdLock(m_familyNameToFontDescriptorsLock);
             auto it = m_familyNameToFontDescriptors.find(folded);
             if (it != m_familyNameToFontDescriptors.end())
                 return it->value;
@@ -960,7 +960,7 @@ public:
             return InstalledFontFamily();
         }();
 
-        std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+        auto locker = holdLock(m_familyNameToFontDescriptorsLock);
         return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
@@ -984,7 +984,7 @@ public:
     void clear()
     {
         {
-            std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
+            auto locker = holdLock(m_familyNameToFontDescriptorsLock);
             m_familyNameToFontDescriptors.clear();
         }
         m_postScriptNameToFontDescriptors.clear();

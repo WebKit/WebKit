@@ -1,3 +1,28 @@
+2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove std::lock_guard
+        https://bugs.webkit.org/show_bug.cgi?id=206451
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        * API/glib/JSCVirtualMachine.cpp:
+        (addWrapper):
+        (removeWrapper):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::analyzeNode):
+        (JSC::HeapSnapshotBuilder::analyzeEdge):
+        (JSC::HeapSnapshotBuilder::analyzePropertyNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeVariableNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeIndexEdge):
+        (JSC::HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::timerDidFire):
+
 2020-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BuiltinNames' HashMap should be small

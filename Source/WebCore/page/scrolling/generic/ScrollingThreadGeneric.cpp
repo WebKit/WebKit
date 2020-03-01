@@ -35,7 +35,7 @@ namespace WebCore {
 void ScrollingThread::initializeRunLoop()
 {
     {
-        std::lock_guard<Lock> lock(m_initializeRunLoopMutex);
+        auto locker = holdLock(m_initializeRunLoopMutex);
         m_runLoop = &RunLoop::current();
         m_initializeRunLoopConditionVariable.notifyAll();
     }

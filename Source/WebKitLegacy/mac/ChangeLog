@@ -1,3 +1,15 @@
+2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove std::lock_guard
+        https://bugs.webkit.org/show_bug.cgi?id=206451
+
+        Reviewed by Anders Carlsson.
+
+        * DOM/DOMInternal.mm:
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (removeDOMWrapper):
+
 2020-02-28  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Modern EME API in the GPU Process

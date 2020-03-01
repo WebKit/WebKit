@@ -181,13 +181,13 @@ ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(Document& d
 
 void DatabaseManager::addProposedDatabase(ProposedDatabase& database)
 {
-    std::lock_guard<Lock> lock { m_proposedDatabasesMutex };
+    auto locker = holdLock(m_proposedDatabasesMutex);
     m_proposedDatabases.add(&database);
 }
 
 void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
 {
-    std::lock_guard<Lock> lock { m_proposedDatabasesMutex };
+    auto locker = holdLock(m_proposedDatabasesMutex);
     m_proposedDatabases.remove(&database);
 }
 
@@ -237,7 +237,7 @@ void DatabaseManager::stopDatabases(Document& document, DatabaseTaskSynchronizer
 String DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, const String& name, bool createIfDoesNotExist)
 {
     {
-        std::lock_guard<Lock> lock { m_proposedDatabasesMutex };
+        auto locker = holdLock(m_proposedDatabasesMutex);
         for (auto* proposedDatabase : m_proposedDatabases) {
             if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(&origin))
                 return String();
@@ -249,7 +249,7 @@ String DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, const String
 DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin& origin)
 {
     {
-        std::lock_guard<Lock> lock { m_proposedDatabasesMutex };
+        auto locker = holdLock(m_proposedDatabasesMutex);
         for (auto* proposedDatabase : m_proposedDatabases) {
             if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(&origin)) {
                 ASSERT(&proposedDatabase->details().thread() == &Thread::current() || isMainThread());

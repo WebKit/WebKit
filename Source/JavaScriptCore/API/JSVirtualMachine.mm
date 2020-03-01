@@ -70,13 +70,13 @@ static NSMapTable *wrapperCache()
 
 + (void)addWrapper:(JSVirtualMachine *)wrapper forJSContextGroupRef:(JSContextGroupRef)group
 {
-    std::lock_guard<Lock> lock(wrapperCacheMutex);
+    auto locker = holdLock(wrapperCacheMutex);
     NSMapInsert(wrapperCache(), group, (__bridge void*)wrapper);
 }
 
 + (JSVirtualMachine *)wrapperForJSContextGroupRef:(JSContextGroupRef)group
 {
-    std::lock_guard<Lock> lock(wrapperCacheMutex);
+    auto locker = holdLock(wrapperCacheMutex);
     return (__bridge JSVirtualMachine *)NSMapGet(wrapperCache(), group);
 }
 

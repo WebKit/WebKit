@@ -135,7 +135,7 @@ ReverbConvolver::~ReverbConvolver()
 
         // Wake up thread so it can return
         {
-            std::lock_guard<Lock> lock(m_backgroundThreadMutex);
+            auto locker = holdLock(m_backgroundThreadMutex);
             m_moreInputBuffered = true;
             m_backgroundThreadConditionVariable.notifyOne();
         }

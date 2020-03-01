@@ -137,7 +137,7 @@ void AXThread::dispatch(Function<void()>&& function)
     axThread.createThreadIfNeeded();
 
     {
-        std::lock_guard<Lock> lock(axThread.m_functionsMutex);
+        auto locker = holdLock(axThread.m_functionsMutex);
         axThread.m_functions.append(WTFMove(function));
     }
 
@@ -185,7 +185,7 @@ void AXThread::dispatchFunctionsFromAXThread()
     Vector<Function<void()>> functions;
 
     {
-        std::lock_guard<Lock> lock(m_functionsMutex);
+        auto locker = holdLock(m_functionsMutex);
         functions = WTFMove(m_functions);
     }
 

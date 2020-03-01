@@ -1495,7 +1495,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
     {
-        std::lock_guard<Lock> lock(*m_mutex);
+        auto locker = holdLock(*m_mutex);
         const_iterator* next;
         for (const_iterator* p = m_iterators; p; p = next) {
             next = p->m_next;
@@ -1517,7 +1517,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         if (!table) {
             it->m_next = 0;
         } else {
-            std::lock_guard<Lock> lock(*table->m_mutex);
+            auto locker = holdLock(*table->m_mutex);
             ASSERT(table->m_iterators != it);
             it->m_next = table->m_iterators;
             table->m_iterators = it;
@@ -1536,7 +1536,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             ASSERT(!it->m_next);
             ASSERT(!it->m_previous);
         } else {
-            std::lock_guard<Lock> lock(*it->m_table->m_mutex);
+            auto locker = holdLock(*it->m_table->m_mutex);
             if (it->m_next) {
                 ASSERT(it->m_next->m_previous == it);
                 it->m_next->m_previous = it->m_previous;

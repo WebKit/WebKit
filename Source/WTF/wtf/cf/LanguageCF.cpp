@@ -83,7 +83,7 @@ static String httpStyleLanguageCode(CFStringRef language)
 static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     {
-        std::lock_guard<Lock> lock(preferredLanguagesMutex);
+        auto locker = holdLock(preferredLanguagesMutex);
         preferredLanguages().clear();
     }
     
@@ -100,7 +100,7 @@ Vector<String> platformUserPreferredLanguages()
     });
 #endif
 
-    std::lock_guard<Lock> lock(preferredLanguagesMutex);
+    auto locker = holdLock(preferredLanguagesMutex);
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
     if (userPreferredLanguages.isEmpty()) {

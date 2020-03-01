@@ -94,7 +94,7 @@ void ConvolverNode::process(size_t framesToProcess)
 
 void ConvolverNode::reset()
 {
-    std::lock_guard<Lock> lock(m_processMutex);
+    auto locker = holdLock(m_processMutex);
     if (m_reverb)
         m_reverb->reset();
 }
@@ -150,7 +150,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
 
     {
         // Synchronize with process().
-        std::lock_guard<Lock> lock(m_processMutex);
+        auto locker = holdLock(m_processMutex);
         m_reverb = WTFMove(reverb);
         m_buffer = buffer;
     }

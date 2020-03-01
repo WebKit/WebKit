@@ -49,7 +49,7 @@ void ScrollingThread::dispatch(Function<void ()>&& function)
     scrollingThread.createThreadIfNeeded();
 
     {
-        std::lock_guard<Lock> lock(scrollingThread.m_functionsMutex);
+        auto locker = holdLock(scrollingThread.m_functionsMutex);
         scrollingThread.m_functions.append(WTFMove(function));
     }
 
@@ -96,7 +96,7 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
     Vector<Function<void ()>> functions;
     
     {
-        std::lock_guard<Lock> lock(m_functionsMutex);
+        auto locker = holdLock(m_functionsMutex);
         functions = WTFMove(m_functions);
     }
 

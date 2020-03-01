@@ -76,7 +76,7 @@ static Lock isDatabaseOpeningForbiddenMutex;
 
 void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
 {
-    std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
+    auto locker = holdLock(isDatabaseOpeningForbiddenMutex);
     isDatabaseOpeningForbidden = isForbidden;
 }
 
@@ -94,7 +94,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     close();
 
     {
-        std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
+        auto locker = holdLock(isDatabaseOpeningForbiddenMutex);
         if (isDatabaseOpeningForbidden) {
             m_openErrorMessage = "opening database is forbidden";
             return false;

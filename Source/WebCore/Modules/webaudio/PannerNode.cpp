@@ -182,7 +182,7 @@ void PannerNode::setPanningModel(PanningModelType model)
 {
     if (!m_panner.get() || model != m_panningModel) {
         // This synchronizes with process().
-        std::lock_guard<Lock> lock(m_pannerMutex);
+        auto locker = holdLock(m_pannerMutex);
 
         m_panner = Panner::create(model, sampleRate(), m_hrtfDatabaseLoader.get());
         m_panningModel = model;

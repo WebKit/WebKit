@@ -88,7 +88,7 @@ void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
     if (previousSnapshotHasNodeForCell(cell, identifier))
         return;
 
-    std::lock_guard<Lock> lock(m_buildingNodeMutex);
+    auto locker = holdLock(m_buildingNodeMutex);
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
 
@@ -101,7 +101,7 @@ void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::Roo
     if (from == to)
         return;
 
-    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+    auto locker = holdLock(m_buildingEdgeMutex);
 
     if (m_snapshotType == SnapshotType::GCDebuggingSnapshot && !from) {
         if (rootMarkReason == SlotVisitor::RootMarkReason::None && m_snapshotType == SnapshotType::GCDebuggingSnapshot)
@@ -120,7 +120,7 @@ void HeapSnapshotBuilder::analyzePropertyNameEdge(JSCell* from, JSCell* to, Uniq
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+    auto locker = holdLock(m_buildingEdgeMutex);
 
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Property, propertyName));
 }
@@ -130,7 +130,7 @@ void HeapSnapshotBuilder::analyzeVariableNameEdge(JSCell* from, JSCell* to, Uniq
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+    auto locker = holdLock(m_buildingEdgeMutex);
 
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Variable, variableName));
 }
@@ -140,7 +140,7 @@ void HeapSnapshotBuilder::analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t in
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+    auto locker = holdLock(m_buildingEdgeMutex);
 
     m_edges.append(HeapSnapshotEdge(from, to, index));
 }
@@ -150,7 +150,7 @@ void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, c
     if (!reason || !*reason || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
         return;
 
-    std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+    auto locker = holdLock(m_buildingEdgeMutex);
 
     m_rootData.ensure(cell, [] () -> RootData {
         return { };

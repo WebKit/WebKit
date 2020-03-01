@@ -962,7 +962,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
                     traverseOperation.handler(&record, info);
                 }
 
-                std::lock_guard<Lock> lock(traverseOperation.activeMutex);
+                auto locker = holdLock(traverseOperation.activeMutex);
                 --traverseOperation.activeCount;
                 traverseOperation.activeCondition.notifyOne();
             });

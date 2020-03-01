@@ -5373,6 +5373,24 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_optional] [4]",
             'foo.cpp')
 
+    def test_lock_guard(self):
+        self.assert_lint(
+            'auto locker = holdLock(mutex);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'std::lock_guard<Lock> locker(mutex);',
+            "Use 'auto locker = holdLock(mutex)' instead of 'std::lock_guard<>'."
+            "  [runtime/lock_guard] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'std::lock_guard<Lock> locker(mutex);',
+            "Use 'auto locker = holdLock(mutex)' instead of 'std::lock_guard<>'."
+            "  [runtime/lock_guard] [4]",
+            'foo.mm')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',

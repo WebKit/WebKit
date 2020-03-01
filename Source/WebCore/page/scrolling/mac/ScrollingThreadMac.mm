@@ -36,7 +36,7 @@ void ScrollingThread::initializeRunLoop()
 {
     // Initialize the run loop.
     {
-        std::lock_guard<Lock> lock(m_initializeRunLoopMutex);
+        auto locker = holdLock(m_initializeRunLoopMutex);
 
         m_threadRunLoop = CFRunLoopGetCurrent();
 
