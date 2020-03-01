@@ -1,3 +1,17 @@
+2020-03-01  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Re-add the patch used to work around gtest linking failure on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=208409
+
+        Reviewed by Michael Catanzaro.
+
+        The patch was added in https://bugs.webkit.org/show_bug.cgi?id=138420 to
+        fix gtest linking error on FreeBSD. However, it was accidentally dropped
+        in r235613, the commit updating gtest, causing the error to happen
+        again. Re-add it to fix the build on FreeBSD.
+
+        * gtest/src/gtest-death-test.cc:
+
 2020-01-24  Sergio Villar Senin  <svillar@igalia.com>
 
         Remove WebVR from the tree
