@@ -1,3 +1,9 @@
+2020-02-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed unified build fix; add include macro for LayerHostingContext.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+
 2020-02-28  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU process] Implement the video fullscreen and Picture-in-Picture support

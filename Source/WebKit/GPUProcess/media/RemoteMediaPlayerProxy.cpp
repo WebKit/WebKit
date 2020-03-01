@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioTrackProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
