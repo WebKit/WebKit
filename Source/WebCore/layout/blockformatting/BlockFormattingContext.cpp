@@ -423,13 +423,16 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     // 1. Compute collapsed margins.
     // 2. Adjust vertical position using the collapsed values
     // 3. Adjust previous in-flow sibling margin after using this margin.
-    auto collapsedMargin = marginCollapse().collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);
-    auto verticalMargin = UsedVerticalMargin { contentHeightAndMargin.nonCollapsedMargin, collapsedMargin };
-    auto& displayBox = formattingState().displayBox(layoutBox);
+    auto marginCollapse = this->marginCollapse();
+    auto collapsedAndPositiveNegativeValues = marginCollapse.collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);
+    // Cache the computed positive and negative margin value pair.
+    formattingState().setPositiveAndNegativeVerticalMargin(layoutBox, collapsedAndPositiveNegativeValues.positiveAndNegativeVerticalValues);
+    auto verticalMargin = UsedVerticalMargin { contentHeightAndMargin.nonCollapsedMargin, collapsedAndPositiveNegativeValues.collapsedValues };
 
     // Out of flow boxes don't need vertical adjustment after margin collapsing.
     if (layoutBox.isOutOfFlowPositioned()) {
         ASSERT(!hasPrecomputedMarginBefore(layoutBox));
+        auto& displayBox = formattingState().displayBox(layoutBox);
         displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
         displayBox.setVerticalMargin(verticalMargin);
         return;
@@ -437,12 +440,10 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
 
     ASSERT(!hasPrecomputedMarginBefore(layoutBox) || precomputedMarginBefore(layoutBox).usedValue() == verticalMargin.before());
     removePrecomputedMarginBefore(layoutBox);
+    auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setTop(verticalPositionWithMargin(layoutBox, verticalMargin, verticalConstraints));
     displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
     displayBox.setVerticalMargin(verticalMargin);
-
-    auto marginCollapse = this->marginCollapse();
-    formattingState().setPositiveAndNegativeVerticalMargin(layoutBox, marginCollapse.resolvedPositiveNegativeMarginValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin));
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, layoutBox);
 }

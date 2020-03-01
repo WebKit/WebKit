@@ -86,8 +86,8 @@ struct PrecomputedMarginBefore {
 // This only matters in case of collapse through margins when they collapse into another sibling box.
 // <div style="margin: 1px"></div><div style="margin: 10px"></div> <- the second div's before/after marings collapse through and the same time they collapse into
 // the first div. When the parent computes its before margin, it should see the second div's collapsed through margin as the value to collapse width (adjoining margin value).
-// So while the first div's before margin is not 10px, the cached value is 10px so that when we compute the parent's margin we just need to check the fist
-// inflow child's cached margin value.
+// So while the first div's before margin is not 10px, the cached value is 10px so that when we compute the parent's margin we just need to check the first
+// inflow child's cached margin values.
 struct PositiveAndNegativeVerticalMargin {
     struct Values {
         bool isNonZero() const { return positive.valueOr(0) || negative.valueOr(0); }

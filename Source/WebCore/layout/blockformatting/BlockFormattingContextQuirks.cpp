@@ -88,7 +88,7 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
     bodyBoxContentHeight -= bodyBoxGeometry.verticalBorder() + bodyBoxGeometry.verticalPadding().valueOr(0);
     // Body box never collapses its vertical margins with the document box but it might collapse its margin with its descendants.
     auto nonCollapsedMargin = contentHeightAndMargin.nonCollapsedMargin;
-    auto collapsedMargin = formattingContext.marginCollapse().collapsedVerticalValues(layoutBox, nonCollapsedMargin);
+    auto collapsedMargin = formattingContext.marginCollapse().collapsedVerticalValues(layoutBox, nonCollapsedMargin).collapsedValues;
     auto usedVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
     usedVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     bodyBoxContentHeight -= usedVerticalMargin;

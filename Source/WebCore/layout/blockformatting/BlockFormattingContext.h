@@ -101,12 +101,15 @@ private:
     // This class implements margin collapsing for block formatting context.
     class MarginCollapse {
     public:
-        UsedVerticalMargin::CollapsedValues collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
+        struct CollapsedAndPositiveNegativeValues {
+            UsedVerticalMargin::CollapsedValues collapsedValues;
+            PositiveAndNegativeVerticalMargin positiveAndNegativeVerticalValues;
+        };
+        CollapsedAndPositiveNegativeValues collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
         PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
         LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
         static void updateMarginAfterForPreviousSibling(BlockFormattingContext&, const MarginCollapse&, const Box&);
-        PositiveAndNegativeVerticalMargin resolvedPositiveNegativeMarginValues(const Box&, const UsedVerticalMargin::NonCollapsedValues&);
 
         bool marginBeforeCollapsesWithParentMarginBefore(const Box&) const;
         bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const Box&) const;
