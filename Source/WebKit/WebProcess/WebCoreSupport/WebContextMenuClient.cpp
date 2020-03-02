@@ -67,7 +67,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 
     if (Page* page = frame->page()) {
         UserGestureIndicator indicator(ProcessingUserGesture);
-        page->mainFrame().loader().urlSelected(URL { URL { }, url }, { }, nullptr, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+        page->mainFrame().loader().urlSelected(URL { URL { }, url }, { }, nullptr, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     }
 }
 

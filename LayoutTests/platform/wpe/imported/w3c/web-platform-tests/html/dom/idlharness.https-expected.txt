@@ -738,7 +738,7 @@ PASS HTMLAnchorElement interface: attribute relList
 PASS HTMLAnchorElement interface: attribute hreflang 
 PASS HTMLAnchorElement interface: attribute type 
 PASS HTMLAnchorElement interface: attribute text 
-FAIL HTMLAnchorElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS HTMLAnchorElement interface: attribute referrerPolicy 
 PASS HTMLAnchorElement interface: attribute coords 
 PASS HTMLAnchorElement interface: attribute charset 
 PASS HTMLAnchorElement interface: attribute name 
@@ -766,7 +766,7 @@ PASS HTMLAnchorElement interface: document.createElement("a") must inherit prope
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "hreflang" with the proper type 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "type" with the proper type 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "text" with the proper type 
-FAIL HTMLAnchorElement interface: document.createElement("a") must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "referrerPolicy" with the proper type 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "coords" with the proper type 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "charset" with the proper type 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "name" with the proper type 

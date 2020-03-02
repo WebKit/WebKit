@@ -421,13 +421,13 @@ void FrameLoader::changeLocation(FrameLoadRequest&& request)
     urlSelected(WTFMove(request), nullptr);
 }
 
-void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, Optional<AdClickAttribution>&& adClickAttribution)
+void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, Optional<AdClickAttribution>&& adClickAttribution)
 {
     auto* frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
 
-    NewFrameOpenerPolicy newFrameOpenerPolicy = openerPolicy.valueOr(shouldSendReferrer == NeverSendReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    urlSelected(FrameLoadRequest(*m_frame.document(), m_frame.document()->securityOrigin(), { url }, passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, shouldOpenExternalURLsPolicy, initiatedByMainFrame, DoNotReplaceDocumentIfJavaScriptURL, downloadAttribute, systemPreviewInfo), triggeringEvent, WTFMove(adClickAttribution));
+    NewFrameOpenerPolicy newFrameOpenerPolicy = openerPolicy.valueOr(referrerPolicy == ReferrerPolicy::NoReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
+    urlSelected(FrameLoadRequest(*m_frame.document(), m_frame.document()->securityOrigin(), { url }, passedTarget, lockHistory, lockBackForwardList, referrerPolicy, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, shouldOpenExternalURLsPolicy, initiatedByMainFrame, DoNotReplaceDocumentIfJavaScriptURL, downloadAttribute, systemPreviewInfo), triggeringEvent, WTFMove(adClickAttribution));
 }
 
 void FrameLoader::urlSelected(FrameLoadRequest&& frameRequest, Event* triggeringEvent, Optional<AdClickAttribution>&& adClickAttribution)
@@ -993,7 +993,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
     auto* lexicalFrame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = lexicalFrame && lexicalFrame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
 
-    FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, "_self"_s, LockHistory::No, LockBackForwardList::Yes, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, ShouldOpenExternalURLsPolicy::ShouldNotAllow, initiatedByMainFrame };
+    FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, "_self"_s, LockHistory::No, LockBackForwardList::Yes, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, ShouldOpenExternalURLsPolicy::ShouldNotAllow, initiatedByMainFrame };
     childFrame->loader().loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, { }, WTF::nullopt, [] { });
 }
 
@@ -1270,9 +1270,10 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     if (argsReferrer.isEmpty())
         argsReferrer = outgoingReferrer();
 
-    String referrer = SecurityPolicy::generateReferrerHeader(m_frame.document()->referrerPolicy(), url, argsReferrer);
-    if (request.shouldSendReferrer() == NeverSendReferrer)
-        referrer = String();
+    ReferrerPolicy referrerPolicy = request.referrerPolicy();
+    if (referrerPolicy == ReferrerPolicy::EmptyString)
+        referrerPolicy = m_frame.document()->referrerPolicy();
+    String referrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, url, argsReferrer);
 
     FrameLoadType loadType;
     if (request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData)

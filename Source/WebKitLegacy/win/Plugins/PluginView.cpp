@@ -248,7 +248,7 @@ bool PluginView::start()
     m_isStarted = true;
 
     if (!m_url.isEmpty() && !m_loadManually) {
-        FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, { }, LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+        FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, { }, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
         frameLoadRequest.resourceRequest().setHTTPMethod("GET");
         frameLoadRequest.resourceRequest().setURL(m_url);
         load(WTFMove(frameLoadRequest), false, nullptr);
@@ -527,7 +527,7 @@ static URL makeURL(const URL& baseURL, const char* relativeURLString)
 
 NPError PluginView::getURLNotify(const char* url, const char* target, void* notifyData)
 {
-    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
 
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
@@ -537,7 +537,7 @@ NPError PluginView::getURLNotify(const char* url, const char* target, void* noti
 
 NPError PluginView::getURL(const char* url, const char* target)
 {
-    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
 
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
@@ -1080,7 +1080,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
         }
     }
 
-    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { *m_parentFrame->document(), m_parentFrame->document()->securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
     frameLoadRequest.resourceRequest().setHTTPMethod("POST");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
     frameLoadRequest.resourceRequest().setHTTPHeaderFields(WTFMove(headerFields));

@@ -61,6 +61,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/ReferrerPolicy.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
@@ -989,7 +990,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
     // Call to the frame loader because this is where our security checks are made.
     auto* frame = core([dataSource webFrame]);
-    WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::LockHistory::No, WebCore::LockBackForwardList::No, WebCore::NeverSendReferrer, WebCore::AllowNavigationToInvalidURL::Yes, WebCore::NewFrameOpenerPolicy::Allow, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, WebCore::InitiatedByMainFrame::Unknown };
+    WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::LockHistory::No, WebCore::LockBackForwardList::No, WebCore::ReferrerPolicy::NoReferrer, WebCore::AllowNavigationToInvalidURL::Yes, WebCore::NewFrameOpenerPolicy::Allow, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, WebCore::InitiatedByMainFrame::Unknown };
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.get(), nullptr);
 }
 

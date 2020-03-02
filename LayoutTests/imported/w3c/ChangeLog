@@ -1,3 +1,15 @@
+2020-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for anchors
+        https://bugs.webkit.org/show_bug.cgi?id=208424
+
+        Reviewed by Darin Adler.
+
+        Update improved test results.
+
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * web-platform-tests/html/dom/reflection-text-expected.txt:
+
 2020-02-27  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for images

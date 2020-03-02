@@ -4179,6 +4179,19 @@ webkit.org/b/189194 http/tests/referrer-policy-img/strict-origin-when-cross-orig
 webkit.org/b/189194 http/tests/referrer-policy-img/strict-origin/cross-origin-http-http.html [ Failure ]
 webkit.org/b/189194 http/tests/referrer-policy-img/strict-origin/same-origin.html [ Failure ]
 
+webkit.org/b/189194 http/tests/referrer-policy-anchor/no-referrer/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/no-referrer/same-origin.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http.https.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/origin/same-origin.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/same-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin/same-origin.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html [ Failure ]
+
 webkit.org/b/189550 fast/text/variations/ipc2.html [ Skip ]
 
 webkit.org/b/189834 css-custom-properties-api/registerProperty.html [ Failure ]

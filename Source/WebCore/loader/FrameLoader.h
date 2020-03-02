@@ -130,7 +130,7 @@ public:
     unsigned long loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     void changeLocation(FrameLoadRequest&&);
-    WEBCORE_EXPORT void urlSelected(const URL&, const String& target, Event*, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> = WTF::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, Optional<AdClickAttribution>&& = WTF::nullopt);
+    WEBCORE_EXPORT void urlSelected(const URL&, const String& target, Event*, LockHistory, LockBackForwardList, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> = WTF::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, Optional<AdClickAttribution>&& = WTF::nullopt);
     void submitForm(Ref<FormSubmission>&&);
 
     WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { });

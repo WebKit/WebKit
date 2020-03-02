@@ -73,6 +73,10 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewLink() const;
 #endif
 
+    void setReferrerPolicyForBindings(const AtomString&);
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const;
+
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
 

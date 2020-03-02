@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
+#include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
@@ -38,7 +39,7 @@ class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, ShouldSendReferrer, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, InitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, const ReferrerPolicy&, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, InitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
@@ -76,7 +77,7 @@ public:
     const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; }
     void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
 
-    ShouldSendReferrer shouldSendReferrer() const { return m_shouldSendReferrer; }
+    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
     AllowNavigationToInvalidURL allowNavigationToInvalidURL() const { return m_allowNavigationToInvalidURL; }
     NewFrameOpenerPolicy newFrameOpenerPolicy() const { return m_newFrameOpenerPolicy; }
 
@@ -109,7 +110,7 @@ private:
     bool m_shouldTreatAsContinuingLoad { false };
     LockHistory m_lockHistory;
     LockBackForwardList m_lockBackForwardList;
-    ShouldSendReferrer m_shouldSendReferrer;
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     AllowNavigationToInvalidURL m_allowNavigationToInvalidURL;
     NewFrameOpenerPolicy m_newFrameOpenerPolicy;
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL;

@@ -24,6 +24,7 @@ PASS a["target"] is
 PASS a["type"] is 
 PASS a["text"] is nerget
 PASS a["relList"] is 
+PASS a["referrerPolicy"] is 
 PASS a["origin"] is file://
 PASS a["protocol"] is file:
 PASS a["username"] is 
@@ -45,7 +46,7 @@ PASS a["innerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 714
+PASS a["offsetTop"] is 729
 PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18

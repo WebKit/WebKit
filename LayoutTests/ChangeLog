@@ -1,3 +1,74 @@
+2020-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for anchors
+        https://bugs.webkit.org/show_bug.cgi?id=208424
+
+        Reviewed by Darin Adler.
+
+        Add tests for anchors with various referrerpolicy attribute values and
+        update improved test results.
+
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/no-referrer/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/origin/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/same-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/same-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/strict-origin/same-origin.html: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy-anchor/unsafe-url/same-origin.html: Added.
+        * http/tests/referrer-policy/resources/check-referrer.php: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2020-03-02  youenn fablet  <youenn@apple.com>
 
         ASSERTION FAILED: Completion handler should always be called on inspector/dom-debugger/attribute-modified-style.html

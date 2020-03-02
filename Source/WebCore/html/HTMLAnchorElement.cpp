@@ -494,7 +494,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
+    auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : this->referrerPolicy();
 
     auto effectiveTarget = this->effectiveTarget();
     Optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
@@ -508,7 +508,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     // created. Thus, it should be empty for now.
     ASSERT(!adClickAttribution || adClickAttribution->url().isNull());
     
-    frame->loader().urlSelected(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(adClickAttribution));
+    frame->loader().urlSelected(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(adClickAttribution));
 
     sendPings(completedURL);
 }
@@ -602,6 +602,23 @@ void HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown(Element* e
 
     rootEditableElementMap().set(this, element);
     m_hasRootEditableElementForSelectionOnMouseDown = true;
+}
+
+void HTMLAnchorElement::setReferrerPolicyForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(referrerpolicyAttr, value);
+}
+
+String HTMLAnchorElement::referrerPolicyForBindings() const
+{
+    return referrerPolicyToString(referrerPolicy());
+}
+
+ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().referrerPolicyAttributeEnabled())
+        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+    return ReferrerPolicy::EmptyString;
 }
 
 }

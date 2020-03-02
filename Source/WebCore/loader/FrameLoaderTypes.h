@@ -160,11 +160,6 @@ enum UnloadEventPolicy {
     UnloadEventPolicyUnloadAndPageHide
 };
 
-enum ShouldSendReferrer {
-    MaybeSendReferrer,
-    NeverSendReferrer
-};
-
 // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
 // to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
 // replace the document. It is a FIXME to eliminate this extra parameter from

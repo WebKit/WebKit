@@ -36,6 +36,8 @@ interface HTMLAnchorElement : HTMLElement {
     [CEReactions] attribute DOMString text;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
+
+    [EnabledAtRuntime=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 };
 
 HTMLAnchorElement implements HTMLHyperlinkElementUtils;

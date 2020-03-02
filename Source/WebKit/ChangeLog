@@ -1,3 +1,25 @@
+2020-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Add referrerpolicy attribute support for anchors
+        https://bugs.webkit.org/show_bug.cgi?id=208424
+
+        Reviewed by Darin Adler.
+
+        Adjust to FrameLoadRequest API change.
+
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2020-03-01  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Fix the build when Wayland target is disabled
