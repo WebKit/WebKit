@@ -50,19 +50,21 @@ public:
     void layerErrorDidChange();
     void rootLayerBoundsDidChange();
 
+    CGRect bounds() const;
+
     PlatformLayer* displayLayer();
 
     PlatformLayer* rootLayer() final;
 
-    void updateRootLayerBoundsAndPosition(CGRect, CGPoint);
+    enum class ShouldUpdateRootLayer { No, Yes };
+    void updateRootLayerBoundsAndPosition(CGRect, MediaSample::VideoRotation, ShouldUpdateRootLayer);
 
     bool didFail() const final;
 
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
 
-    CGRect bounds() const final;
     void updateAffineTransform(CGAffineTransform)  final;
-    void updateBoundsAndPosition(CGRect, CGPoint) final;
+    void updateBoundsAndPosition(CGRect, MediaSample::VideoRotation) final;
 
     void flush() final;
     void flushAndRemoveImage() final;

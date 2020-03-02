@@ -56,7 +56,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
     manager.addLayer(*this);
 
     Optional<LayerHostingContextID> contextId;
-    if (!m_connection->sendSync(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer::Reply { contextId, m_bounds }, 0))
+    if (!m_connection->sendSync(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer::Reply { contextId }, 0))
         return;
 
     if (!contextId)
@@ -82,20 +82,14 @@ void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hid
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateDisplayMode { hideDisplayLayer, hideRootLayer }, m_identifier);
 }
 
-CGRect SampleBufferDisplayLayer::bounds() const
-{
-    return m_bounds;
-}
-
 void SampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform transform)
 {
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateAffineTransform { transform }, m_identifier);
 }
 
-void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, CGPoint position)
+void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation)
 {
-    m_bounds = bounds;
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, position }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, rotation }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::flush()

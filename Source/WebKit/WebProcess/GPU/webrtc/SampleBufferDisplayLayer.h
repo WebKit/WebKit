@@ -51,9 +51,8 @@ private:
     // WebCore::SampleBufferDisplayLayer
     bool didFail() const final;
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
-    CGRect bounds() const final;
     void updateAffineTransform(CGAffineTransform) final;
-    void updateBoundsAndPosition(CGRect, CGPoint) final;
+    void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation) final;
     void flush() final;
     void flushAndRemoveImage() final;
     void enqueueSample(WebCore::MediaSample&) final;
@@ -67,7 +66,6 @@ private:
     SampleBufferDisplayLayerIdentifier m_identifier;
 
     RetainPtr<PlatformLayer> m_videoLayer;
-    CGRect m_bounds;
     bool m_didFail { false };
 };
 

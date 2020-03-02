@@ -249,21 +249,26 @@ void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tran
     });
 }
 
-void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect videoBounds, CGPoint position)
+void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation)
 {
-    runWithoutAnimations([&] {
-        m_sampleBufferDisplayLayer.get().bounds = videoBounds;
-        m_sampleBufferDisplayLayer.get().position = position;
-    });
+    updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }
 
-void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect videoBounds, CGPoint position)
+void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
 {
     runWithoutAnimations([&] {
-        m_rootLayer.get().bounds = videoBounds;
-        m_rootLayer.get().position = position;
-        m_sampleBufferDisplayLayer.get().bounds = videoBounds;
+        CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
+
+        if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes) {
+            m_rootLayer.get().position = position;
+            m_rootLayer.get().bounds = bounds;
+        }
+
+        if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
+            std::swap(bounds.size.width, bounds.size.height);
+
         m_sampleBufferDisplayLayer.get().position = position;
+        m_sampleBufferDisplayLayer.get().bounds = bounds;
     });
 }
 

@@ -80,9 +80,9 @@ void RemoteSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tra
     m_sampleBufferDisplayLayer->updateAffineTransform(transform);
 }
 
-void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, CGPoint position)
+void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
 {
-    m_sampleBufferDisplayLayer->updateRootLayerBoundsAndPosition(bounds, position);
+    m_sampleBufferDisplayLayer->updateRootLayerBoundsAndPosition(bounds, rotation, LocalSampleBufferDisplayLayer::ShouldUpdateRootLayer::Yes);
 }
 
 void RemoteSampleBufferDisplayLayer::flush()

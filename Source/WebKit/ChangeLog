@@ -1,3 +1,25 @@
+2020-03-02  Youenn Fablet  <youenn@apple.com>
+
+        LocalSampleBufferDisplayLayer is not computing the correct bounds/position in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=208370
+
+        Reviewed by Eric Carlson.
+
+        Remove the bounds getter logic.
+        Make use of new LocalSampleBufferDisplayLayer routine to properly update the layer bounds.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::updateBoundsAndPosition):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::updateBoundsAndPosition):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
 2020-03-02  youenn fablet  <youenn@apple.com>
 
         Enable audio MediaStreamTrack rendering in GPUProcess if audio capture happens in GPUProcess

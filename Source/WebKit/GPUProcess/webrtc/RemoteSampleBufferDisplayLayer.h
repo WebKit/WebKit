@@ -59,7 +59,7 @@ private:
 
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void updateAffineTransform(CGAffineTransform);
-    void updateBoundsAndPosition(CGRect, CGPoint);
+    void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation);
     void flush();
     void flushAndRemoveImage();
     void enqueueSample(WebCore::RemoteVideoSample&&);

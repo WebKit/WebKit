@@ -1046,12 +1046,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
     if (!m_sampleBufferDisplayLayer)
         return;
 
-    auto bounds = rootLayer().bounds;
-    auto videoBounds = bounds;
-    if (m_videoRotation == MediaSample::VideoRotation::Right || m_videoRotation == MediaSample::VideoRotation::Left)
-        std::swap(videoBounds.size.width, videoBounds.size.height);
-
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(videoBounds, { bounds.size.width / 2, bounds.size.height / 2});
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(rootLayer().bounds, m_videoRotation);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "MediaSample.h"
 #include "PlatformLayer.h"
 #include <wtf/WeakPtr.h>
 
@@ -55,9 +56,8 @@ public:
 
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;
 
-    virtual CGRect bounds() const = 0;
     virtual void updateAffineTransform(CGAffineTransform) = 0;
-    virtual void updateBoundsAndPosition(CGRect, CGPoint) = 0;
+    virtual void updateBoundsAndPosition(CGRect, MediaSample::VideoRotation) = 0;
 
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;

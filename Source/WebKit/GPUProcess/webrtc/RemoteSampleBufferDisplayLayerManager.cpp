@@ -53,9 +53,9 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
     ASSERT(!m_layers.contains(identifier));
     auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef(), hideRootLayer, size);
     if (!layer)
-        return reply({ }, { });
+        return reply({ });
 
-    reply(layer->contextID(), layer->bounds());
+    reply(layer->contextID());
     m_layers.add(identifier, WTFMove(layer));
 }
 

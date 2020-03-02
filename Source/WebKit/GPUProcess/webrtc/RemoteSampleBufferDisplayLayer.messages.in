@@ -26,7 +26,7 @@
 messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
     UpdateAffineTransform(CGAffineTransform transform)
-    UpdateBoundsAndPosition(CGRect bounds, CGPoint position)
+    UpdateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
     Flush()
     FlushAndRemoveImage()
     EnqueueSample(WebCore::RemoteVideoSample sample)
