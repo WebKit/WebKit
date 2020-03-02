@@ -214,7 +214,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(JSGlobalObject* globalO
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
-        repatchGetBy(globalObject, codeBlock, baseValue, ident, slot, *stubInfo, GetByKind::Try);
+        repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Try);
 
     return JSValue::encode(slot.getPureResult());
 }
@@ -270,7 +270,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(JSGlobalObject* glob
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
-        repatchGetBy(globalObject, codeBlock, baseValue, ident, slot, *stubInfo, GetByKind::Direct);
+        repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Direct);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, ident) : jsUndefined()));
 }
@@ -330,7 +330,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(JSGlobalObject* globalObje
         
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
-            repatchGetBy(globalObject, codeBlock, baseValue, ident, slot, *stubInfo, GetByKind::Normal);
+            repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Normal);
         return found ? slot.getValue(globalObject, ident) : jsUndefined();
     }));
 }
@@ -387,7 +387,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(JSGlobalObject* gl
         
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
-            repatchGetBy(globalObject, codeBlock, baseValue, ident, slot, *stubInfo, GetByKind::WithThis);
+            repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::WithThis);
         return found ? slot.getValue(globalObject, ident) : jsUndefined();
     }));
 }
@@ -2022,7 +2022,7 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject* globalObj
                 LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(vm), propertyName, baseValue == slot.slotBase())); 
                 
                 if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull(), propertyName.impl()))
-                    repatchGetBy(globalObject, codeBlock, baseValue, subscript.asCell(), slot, *stubInfo, GetByKind::NormalByVal);
+                    repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromCell(subscript.asCell()), slot, *stubInfo, GetByKind::NormalByVal);
                 return found ? slot.getValue(globalObject, propertyName) : jsUndefined();
             }));
         }
@@ -2172,13 +2172,13 @@ size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, S
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (baseValue.isObject()) {
-        const Identifier propertyName = Identifier::fromUid(vm, uid);
+        const Identifier ident = Identifier::fromUid(vm, uid);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        if (!parseIndex(propertyName)) {
+        if (!parseIndex(ident)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
-                repatchDelBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, *stubInfo, DelByKind::Normal);
+                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), *stubInfo, DelByKind::Normal);
         }
     }
 
@@ -2240,7 +2240,7 @@ size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, 
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             if (stubInfo->considerCaching(vm, codeBlock, baseValue.structureOrNull()))
-                repatchDelBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, *stubInfo, DelByKind::NormalByVal);
+                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, CacheableIdentifier::createFromCell(subscript.asCell()), *stubInfo, DelByKind::NormalByVal);
         }
     }
 

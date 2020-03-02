@@ -1,3 +1,30 @@
+2020-03-02  Justin Michaud  <justin_michaud@apple.com>
+
+        Delete by val caching does not keep the subscript alive
+        https://bugs.webkit.org/show_bug.cgi?id=208393
+
+        Reviewed by Yusuke Suzuki.
+
+        Before, the provided test case crashed with asan because we did not keep deleteByVal
+        subscripts alive. This patch changes CacheableIdentifier to make this mistake harder
+        to make again, by making the constructor calls more explicit when CacheableIdentifier
+        will not keep an Identifier alive.
+
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheDeleteBy):
+        (JSC::repatchDeleteBy):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        (JSC::tryCacheDelBy): Deleted.
+        (JSC::repatchDelBy): Deleted.
+        * jit/Repatch.h:
+        * runtime/CacheableIdentifier.h:
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::createFromIdentifierOwnedByCodeBlock):
+        (JSC::CacheableIdentifier::createFromCell):
+
 2020-03-02  Paulo Matos  <pmatos@igalia.com>
 
         Fix JSC 32bit alignment increase gcc warning

@@ -46,8 +46,9 @@ class SlotVisitor;
 class CacheableIdentifier {
 public:
     CacheableIdentifier() = default;
-    inline CacheableIdentifier(const Identifier&);
-    inline CacheableIdentifier(JSCell* identifier);
+
+    static inline CacheableIdentifier createFromCell(JSCell* identifier);
+    static inline CacheableIdentifier createFromIdentifierOwnedByCodeBlock(const Identifier&);
 
     CacheableIdentifier(const CacheableIdentifier&) = default;
     CacheableIdentifier(CacheableIdentifier&&) = default;
@@ -83,6 +84,9 @@ public:
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:
+    explicit inline CacheableIdentifier(const Identifier&);
+    explicit inline CacheableIdentifier(JSCell* identifier);
+
     inline void setCellBits(JSCell*);
     inline void setUidBits(UniquedStringImpl*);
 
