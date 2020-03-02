@@ -1,3 +1,14 @@
+2020-03-02  Dean Jackson  <dino@apple.com>
+
+        maps.google.com is not loading properly, screen flickers when zooming
+        https://bugs.webkit.org/show_bug.cgi?id=208331
+        <rdar://problem/59790757>
+
+        Reviewed by Antoine Quint.
+
+        * platform/ios/TestExpectations: remove failing expectation for:
+        webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+
 2020-03-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html is flaky failing.
