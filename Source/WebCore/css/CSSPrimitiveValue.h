@@ -127,12 +127,6 @@ public:
 
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
 
-    // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
-    // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
-    // When the quirky value is used, if you're in quirks mode, the margin will collapse away
-    // inside a table cell.
-    static Ref<CSSPrimitiveValue> createAllowingMarginQuirk(double value, CSSUnitType);
-
     ~CSSPrimitiveValue();
 
     void cleanup();
@@ -187,9 +181,6 @@ public:
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
     String customCSSText() const;
-
-    // FIXME-NEWPARSER: Can ditch the boolean and just use the unit type once old parser is gone.
-    bool isQuirkValue() const { return m_isQuirkValue || primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
 
     bool equals(const CSSPrimitiveValue&) const;
 
@@ -292,13 +283,6 @@ inline bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
 {
     return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
-}
-
-inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::createAllowingMarginQuirk(double value, CSSUnitType type)
-{
-    auto result = adoptRef(*new CSSPrimitiveValue(value, type));
-    result->m_isQuirkValue = true;
-    return result;
 }
 
 template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const

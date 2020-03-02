@@ -203,7 +203,7 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     if (primitiveValue.isLength()) {
         Length length = primitiveValue.computeLength<Length>(conversionData);
-        length.setHasQuirk(primitiveValue.isQuirkValue());
+        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EMS);
         return length;
     }
 

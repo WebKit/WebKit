@@ -115,7 +115,6 @@ template<CSSValueID head, CSSValueID... tail> inline bool identMatches(CSSValueI
     return id == head || identMatches<tail...>(id);
 }
 
-// FIXME-NEWPARSER - converted to a RefPtr return type from a raw ptr.
 template<CSSValueID... names> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))

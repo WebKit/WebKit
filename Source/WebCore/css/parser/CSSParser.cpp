@@ -182,8 +182,7 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    CSSTokenizer tokenizer(string);
-    selectorList = CSSSelectorParser::parseSelector(tokenizer.tokenRange(), m_context, nullptr);
+    selectorList = parseCSSSelector(CSSTokenizer(string).tokenRange(), m_context, nullptr);
 }
 
 Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element* element)

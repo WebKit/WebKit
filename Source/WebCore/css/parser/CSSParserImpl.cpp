@@ -689,7 +689,7 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 
 RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    CSSSelectorList selectorList = CSSSelectorParser::parseSelector(prelude, m_context, m_styleSheet.get());
+    CSSSelectorList selectorList = parseCSSSelector(prelude, m_context, m_styleSheet.get());
     if (!selectorList.isValid())
         return nullptr; // Parse error, invalid selector list
 

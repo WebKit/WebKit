@@ -237,7 +237,6 @@ protected:
     explicit CSSValue(ClassType classType)
         : m_primitiveUnitType(0)
         , m_hasCachedCSSText(false)
-        , m_isQuirkValue(false)
         , m_valueListSeparator(SpaceSeparator)
         , m_classType(classType)
     {
@@ -263,7 +262,6 @@ protected:
     // CSSPrimitiveValue bits:
     unsigned m_primitiveUnitType : 7; // CSSUnitType
     mutable unsigned m_hasCachedCSSText : 1;
-    unsigned m_isQuirkValue : 1;
 
     unsigned m_valueListSeparator : ValueListSeparatorBits;
 
