@@ -95,45 +95,65 @@ Path::Path(RetainPtr<CGMutablePathRef> p)
 Path::~Path()
 {
     if (m_path)
-        CGPathRelease(m_path);
+        CFRelease(m_path);
 }
 
 PlatformPathPtr Path::ensurePlatformPath()
 {
-    if (!m_path)
-        m_path = CGPathCreateMutable();
+    initializeOrCopyPlatformPathIfNeeded();
     return m_path;
 }
 
 Path::Path(const Path& other)
 {
-    m_path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : 0;
+    m_path = { other.m_path };
+    if (m_path) {
+        m_copyPathBeforeMutation = true;
+        other.m_copyPathBeforeMutation = true;
+        CFRetain(m_path);
+    }
 }
 
 Path::Path(Path&& other)
+    : m_path(std::exchange(other.m_path, nullptr))
+    , m_copyPathBeforeMutation(std::exchange(other.m_copyPathBeforeMutation, false))
 {
-    m_path = other.m_path;
-    other.m_path = nullptr;
 }
-    
+
+void Path::swap(Path& otherPath)
+{
+    std::swap(m_path, otherPath.m_path);
+    std::swap(m_copyPathBeforeMutation, otherPath.m_copyPathBeforeMutation);
+}
+
+void Path::initializeOrCopyPlatformPathIfNeeded()
+{
+    if (!m_path) {
+        m_path = CGPathCreateMutable();
+        return;
+    }
+
+    if (m_copyPathBeforeMutation) {
+        if (CFGetRetainCount(m_path) > 1) {
+            auto pathToCopy = m_path;
+            m_path = CGPathCreateMutableCopy(pathToCopy);
+            CFRelease(pathToCopy);
+        }
+        m_copyPathBeforeMutation = false;
+    }
+}
+
 Path& Path::operator=(const Path& other)
 {
-    if (this == &other)
-        return *this;
-    if (m_path)
-        CGPathRelease(m_path);
-    m_path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : nullptr;
+    Path copy { other };
+    swap(copy);
     return *this;
 }
 
 Path& Path::operator=(Path&& other)
 {
-    if (this == &other)
-        return *this;
-    if (m_path)
-        CGPathRelease(m_path);
-    m_path = other.m_path;
-    other.m_path = nullptr;
+    Path copy { WTFMove(other) };
+    swap(copy);
     return *this;
 }
 
@@ -222,8 +242,9 @@ void Path::transform(const AffineTransform& transform)
 #else
     CGMutablePathRef path = CGPathCreateMutableCopyByTransformingPath(m_path, &transformCG);
 #endif
-    CGPathRelease(m_path);
+    CFRelease(m_path);
     m_path = path;
+    m_copyPathBeforeMutation = false;
 }
 
 FloatRect Path::boundingRect() const
@@ -348,14 +369,16 @@ void Path::closeSubpath()
     if (isNull())
         return;
 
-    CGPathCloseSubpath(m_path);
+    CGPathCloseSubpath(ensurePlatformPath());
 }
 
 void Path::addArc(const FloatPoint& p, float radius, float startAngle, float endAngle, bool clockwise)
 {
     // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle
-    if (std::isfinite(startAngle) && std::isfinite(endAngle))
-        CGPathAddArc(ensurePlatformPath(), nullptr, p.x(), p.y(), radius, startAngle, endAngle, clockwise);
+    if (!std::isfinite(startAngle) || !std::isfinite(endAngle))
+        return;
+
+    CGPathAddArc(ensurePlatformPath(), nullptr, p.x(), p.y(), radius, startAngle, endAngle, clockwise);
 }
 
 void Path::addRect(const FloatRect& r)
@@ -394,17 +417,17 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     }
     CGPathRef pathCopy = CGPathCreateCopy(path.platformPath());
     CGPathAddPath(ensurePlatformPath(), &transformCG, pathCopy);
-    CGPathRelease(pathCopy);
+    CFRelease(pathCopy);
 }
-
 
 void Path::clear()
 {
     if (isNull())
         return;
 
-    CGPathRelease(m_path);
+    CFRelease(m_path);
     m_path = CGPathCreateMutable();
+    m_copyPathBeforeMutation = false;
 }
 
 bool Path::isEmpty() const

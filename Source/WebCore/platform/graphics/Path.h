@@ -214,13 +214,22 @@ public:
     template<class Decoder> static Optional<Path> decode(Decoder&);
 
 private:
+#if USE(CG)
+    void swap(Path&);
+    void initializeOrCopyPlatformPathIfNeeded();
+#endif
+
 #if USE(DIRECT2D)
     Vector<ID2D1Geometry*> m_geometries;
     COMPtr<ID2D1GeometryGroup> m_path;
     mutable COMPtr<ID2D1GeometrySink> m_activePath;
     mutable bool m_figureIsOpened { false };
 #else
-    PlatformPathPtr m_path { nullptr };
+    mutable PlatformPathPtr m_path { nullptr };
+#endif
+
+#if USE(CG)
+    mutable bool m_copyPathBeforeMutation { false };
 #endif
 };
 
