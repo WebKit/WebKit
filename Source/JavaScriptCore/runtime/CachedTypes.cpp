@@ -752,9 +752,9 @@ public:
             StringImpl* impl = str.releaseImpl().get();
             ASSERT(impl->isSymbol());
             if (m_isWellKnownSymbol)
-                ASSERT(static_cast<SymbolImpl*>(impl)->isPrivate());
-            else
                 ASSERT(!static_cast<SymbolImpl*>(impl)->isPrivate());
+            else
+                ASSERT(static_cast<SymbolImpl*>(impl)->isPrivate());
             return static_cast<UniquedStringImpl*>(impl);
         };
 

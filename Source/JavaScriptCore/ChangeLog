@@ -1,3 +1,12 @@
+2020-03-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix wrong assertion
+        https://bugs.webkit.org/show_bug.cgi?id=208404
+        <rdar://problem/59956592>
+
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUniquedStringImplBase::decode const):
+
 2020-03-01  Charles Turner  <cturner@igalia.com>
 
         undefined reference to `JSC::ExecutableBase::hasJITCodeForCall() const'
