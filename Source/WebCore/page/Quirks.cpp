@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
 #include "JSEventListener.h"
@@ -625,6 +626,19 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (topURL.protocolIs("https") && equalLettersIgnoringASCIICase(host, "vimeo.com")) {
         if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    // Google Docs used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
+    // We started caching such content in r250437 but the Google Docs index page unfortunately is not currently compatible
+    // because it puts an overlay (with class "docs-homescreen-freeze-el-full") over the page when navigating away and fails
+    // to remove it when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/57670064>.
+    // Note that this does not check for docs.google.com host because of hosted G Suite apps.
+    static NeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full", AtomString::ConstructFromLiteral);
+    auto* firstChildInBody = m_document->body() ? m_document->body()->firstChild() : nullptr;
+    if (is<HTMLDivElement>(firstChildInBody)) {
+        auto& div = downcast<HTMLDivElement>(*firstChildInBody);
+        if (div.hasClass() && div.classNames().contains(googleDocsOverlayDivClass))
+            return true;
     }
 
     return false;
