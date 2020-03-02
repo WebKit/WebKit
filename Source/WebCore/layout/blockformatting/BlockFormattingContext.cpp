@@ -274,10 +274,7 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
     //
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top position.
     // FIXME: we currently don't account for the "clear" property when computing the final position for an ancestor.
-    for (auto* ancestor = &layoutBox; ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
-        // FIXME: with incremental layout, we might actually have a valid (non-precomputed) margin top as well.
-        if (hasPrecomputedMarginBefore(*ancestor))
-            return;
+    for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = ancestor->containingBlock()) {
         auto horizontalConstraintsForAncestor = [&] {
             auto* containingBlock = ancestor->containingBlock();
             return containingBlock == &root() ? horizontalConstraints.root : Geometry::horizontalConstraintsForInFlow(geometryForBox(*containingBlock));
@@ -290,15 +287,16 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
         auto computedVerticalMargin = geometry().computedVerticalMargin(*ancestor, horizontalConstraintsForAncestor());
         auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
         auto precomputedMarginBefore = marginCollapse().precomputedMarginBefore(*ancestor, usedNonCollapsedMargin);
-        setPrecomputedMarginBefore(*ancestor, precomputedMarginBefore);
+        formattingState().setPositiveAndNegativeVerticalMargin(*ancestor, { precomputedMarginBefore.positiveAndNegativeMarginBefore, { } });
 
         auto& displayBox = formattingState().displayBox(*ancestor);
         auto nonCollapsedValues = UsedVerticalMargin::NonCollapsedValues { precomputedMarginBefore.nonCollapsedValue, { } };
-        auto collapsedValues = UsedVerticalMargin::CollapsedValues { precomputedMarginBefore.collapsedValue, { }, precomputedMarginBefore.isCollapsedThrough };
+        auto collapsedValues = UsedVerticalMargin::CollapsedValues { precomputedMarginBefore.collapsedValue, { }, false };
         auto verticalMargin = UsedVerticalMargin { nonCollapsedValues, collapsedValues };
         displayBox.setVerticalMargin(verticalMargin);
         displayBox.setTop(verticalPositionWithMargin(*ancestor, verticalMargin, verticalConstraintsForAncestor()));
 #if ASSERT_ENABLED
+        setPrecomputedMarginBefore(*ancestor, precomputedMarginBefore);
         displayBox.setHasPrecomputedMarginBefore();
 #endif
     }
@@ -438,8 +436,19 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
         return;
     }
 
-    ASSERT(!hasPrecomputedMarginBefore(layoutBox) || precomputedMarginBefore(layoutBox).usedValue() == verticalMargin.before());
-    removePrecomputedMarginBefore(layoutBox);
+#if ASSERT_ENABLED
+    if (hasPrecomputedMarginBefore(layoutBox) && precomputedMarginBefore(layoutBox).usedValue() != verticalMargin.before()) {
+        // When the pre-computed margin turns out to be incorrect, we need to re-layout this subtree with the correct margin values.
+        // <div style="float: left"></div>
+        // <div>
+        //   <div style="margin-bottom: 200px"></div>
+        // </div>
+        // The float box triggers margin before computation on the ancestor chain to be able to intersect with other floats in the same floating context.
+        // However in some cases the parent margin-top collapses with some next siblings (nephews) and there's no way to be able to properly
+        // account for that without laying out every node in the FC (in the example, the margin-bottom pushes down the float).
+        ASSERT_NOT_IMPLEMENTED_YET();
+    }
+#endif
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setTop(verticalPositionWithMargin(layoutBox, verticalMargin, verticalConstraints));
     displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
@@ -551,20 +560,6 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
         return containingBlockContentBoxTop;
 
     return containingBlockContentBoxTop + verticalMargin.before();
-}
-
-void BlockFormattingContext::setPrecomputedMarginBefore(const Box& layoutBox, const PrecomputedMarginBefore& precomputedMarginBefore)
-{
-    // Can't cross formatting context boundary.
-    ASSERT(&layoutState().formattingStateForBox(layoutBox) == &formattingState());
-    m_precomputedMarginBeforeList.set(&layoutBox, precomputedMarginBefore);
-}
-
-bool BlockFormattingContext::hasPrecomputedMarginBefore(const Box& layoutBox) const
-{
-    // Can't cross formatting context boundary.
-    ASSERT(&layoutState().formattingStateForBox(layoutBox) == &formattingState());
-    return m_precomputedMarginBeforeList.contains(&layoutBox);
 }
 
 }

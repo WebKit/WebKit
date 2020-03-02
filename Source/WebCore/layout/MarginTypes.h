@@ -75,13 +75,6 @@ struct UsedHorizontalMargin {
     LayoutUnit end;
 };
 
-struct PrecomputedMarginBefore {
-    LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
-    LayoutUnit nonCollapsedValue;
-    Optional<LayoutUnit> collapsedValue;
-    bool isCollapsedThrough { false };
-};
-
 // FIXME: This structure might need to change to indicate that the cached value is not necessarily the same as the box's computed margin value.
 // This only matters in case of collapse through margins when they collapse into another sibling box.
 // <div style="margin: 1px"></div><div style="margin: 10px"></div> <- the second div's before/after marings collapse through and the same time they collapse into
@@ -98,6 +91,13 @@ struct PositiveAndNegativeVerticalMargin {
     };
     Values before;
     Values after;
+};
+
+struct PrecomputedMarginBefore {
+    LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
+    LayoutUnit nonCollapsedValue;
+    Optional<LayoutUnit> collapsedValue;
+    PositiveAndNegativeVerticalMargin::Values positiveAndNegativeMarginBefore;
 };
 
 inline UsedVerticalMargin::UsedVerticalMargin(UsedVerticalMargin::NonCollapsedValues nonCollapsedValues, UsedVerticalMargin::CollapsedValues collapsedValues)

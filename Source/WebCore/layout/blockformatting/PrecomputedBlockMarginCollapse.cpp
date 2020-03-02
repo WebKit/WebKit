@@ -36,14 +36,16 @@
 namespace WebCore {
 namespace Layout {
 
-PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox, MarginType marginType) const
+PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox) const
 {
-    auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, Geometry::horizontalConstraintsForInFlow(formattingContext().geometryForBox(*layoutBox.containingBlock())));
-    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
+    auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
+    if (blockFormattingState.hasPositiveAndNegativeVerticalMargin(layoutBox))
+        return blockFormattingState.positiveAndNegativeVerticalMargin(layoutBox).before;
 
-    if (marginType == MarginType::Before)
-        return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
-    return positiveNegativeMarginAfter(layoutBox, nonCollapsedMargin);
+    auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(formattingContext().geometryForBox(*layoutBox.containingBlock()));
+    auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, horizontalConstraints);
+    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+    return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
 }
 
 PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
@@ -51,13 +53,15 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     auto firstChildCollapsedMarginBefore = [&]() -> PositiveAndNegativeVerticalMargin::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
-        return precomputedPositiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild(), MarginType::Before);
+        return precomputedPositiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild());
     };
 
     auto previouSiblingCollapsedMarginAfter = [&]() -> PositiveAndNegativeVerticalMargin::Values {
         if (!marginBeforeCollapsesWithPreviousSiblingMarginAfter(layoutBox))
             return { };
-        return precomputedPositiveNegativeValues(*layoutBox.previousInFlowSibling(), MarginType::After);
+        auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
+        auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
+        return blockFormattingState.positiveAndNegativeVerticalMargin(previousInFlowSibling).after;
     };
 
     // 1. Gather positive and negative margin values from first child if margins are adjoining.
@@ -83,13 +87,9 @@ PrecomputedMarginBefore BlockFormattingContext::MarginCollapse::precomputedMargi
     ASSERT(layoutBox.isInFlow() || layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.isReplacedBox());
 
-    auto marginsCollapseThrough = this->marginsCollapseThrough(layoutBox);
     auto positiveNegativeMarginBefore = precomputedPositiveNegativeMarginBefore(layoutBox, usedNonCollapsedMargin);
-
-    auto collapsedMarginBefore = marginValue(!marginsCollapseThrough ? positiveNegativeMarginBefore
-        : computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, positiveNegativeMarginAfter(layoutBox, usedNonCollapsedMargin)));
-
-    return { usedNonCollapsedMargin.before, collapsedMarginBefore, marginsCollapseThrough };
+    auto collapsedMarginBefore = marginValue(positiveNegativeMarginBefore);
+    return { usedNonCollapsedMargin.before, collapsedMarginBefore, positiveNegativeMarginBefore };
 }
 
 }

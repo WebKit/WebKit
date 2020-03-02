@@ -134,7 +134,7 @@ private:
         PositiveAndNegativeVerticalMargin::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
 
         PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
-        PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeValues(const Box&, MarginType) const;
+        PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeValues(const Box&) const;
 
         PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values, PositiveAndNegativeVerticalMargin::Values) const;
         Optional<LayoutUnit> marginValue(PositiveAndNegativeVerticalMargin::Values) const;
@@ -167,17 +167,16 @@ private:
     };
     BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
-    void setPrecomputedMarginBefore(const Box&, const PrecomputedMarginBefore&);
-    void removePrecomputedMarginBefore(const Box& layoutBox) { m_precomputedMarginBeforeList.remove(&layoutBox); }
-    bool hasPrecomputedMarginBefore(const Box&) const;
     Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-#if ASSERT_ENABLED
-    PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
-#endif
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
+#if ASSERT_ENABLED
+    void setPrecomputedMarginBefore(const Box& layoutBox, const PrecomputedMarginBefore& precomputedMarginBefore) { m_precomputedMarginBeforeList.set(&layoutBox, precomputedMarginBefore); }
+    PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
+    bool hasPrecomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.contains(&layoutBox); }
+#endif
 private:
     HashMap<const Box*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 };
