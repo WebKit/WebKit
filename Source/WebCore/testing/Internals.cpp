@@ -5474,11 +5474,6 @@ String Internals::encodedPreferenceValue(const String& domain, const String& key
 {
     return emptyString();
 }
-
-String Internals::getUTIFromMIMEType(const String& mimeType)
-{
-    return emptyString();
-}
 #endif
 
 String Internals::mediaMIMETypeForExtension(const String& extension)

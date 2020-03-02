@@ -1,3 +1,16 @@
+2020-03-02  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Unreviewed, rolling out r257687.
+
+        This commit caused debug tests to crash for macOS & iOS
+
+        Reverted changeset:
+
+        "[Cocoa] Mapping from MIME type to UTI type should be done in
+        the UI process"
+        https://bugs.webkit.org/show_bug.cgi?id=208415
+        https://trac.webkit.org/changeset/257687
+
 2020-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r257618.

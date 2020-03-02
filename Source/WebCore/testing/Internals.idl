@@ -846,8 +846,6 @@ enum CompositingPolicy {
     DOMString encodedPreferenceValue(DOMString domain, DOMString key);
 
     DOMString mediaMIMETypeForExtension(DOMString extension);
-
-    DOMString getUTIFromMIMEType(DOMString mimeType);
-
+    
     boolean supportsPictureInPicture();
 };
