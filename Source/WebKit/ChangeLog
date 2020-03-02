@@ -1,3 +1,90 @@
+2020-03-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement the remote ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=207221
+
+        Reviewed by Jon Lee.
+
+        RemoteImageBuffer and RemoteImageBufferProxy represent a single remote
+        ImageBuffer. The back end should be created by RemoteImageBufferProxy in
+        GPUProcess and shared with the RemoteImageBuffer in the WebProcess.
+        Flushing the DrawingContext will be done in GPUProcess. But creating the
+        native image out of the back end will be in GPUProcess.
+
+        RemoteRenderingBackend and RemoteRenderingBackendProxy are central points
+        for receiving and sending all the messages of the RemoteImageBuffer and
+        RemoteImageBufferProxy.
+
+        * GPUProcess/graphics/PlatformRemoteImageBufferProxy.h: Added.
+        Defines the platform types of RemoteImageBufferProxy.
+
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.cpp: Added.
+        (WebKit::RemoteImageBufferMessageHandlerProxy::RemoteImageBufferMessageHandlerProxy):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::createBackend):
+        (WebKit::RemoteImageBufferMessageHandlerProxy::commitFlushContext):
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h: Added.
+        Manages sending and receiving the messages of RemoteImageBufferProxy
+
+        * GPUProcess/graphics/RemoteImageBufferProxy.h: Added.
+        (WebKit::RemoteImageBufferProxy::create):
+        (WebKit::RemoteImageBufferProxy::RemoteImageBufferProxy):
+        It is responsible for creating a shared back end and replaying back drawing
+        commands.
+
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::releaseImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::flushImageBufferDrawingContext):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in:
+        Handle or dispatch messages received from RemoteRenderingBackend.
+
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferFlushIdentifier.h: Added.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        Although hostWindow isn't used, this is what ConcreteImageBuffer::create
+        expects from the creator of the backend.
+
+        * WebProcess/GPU/graphics/PlatformRemoteImageBuffer.h: Added.
+        Defines the platform types of RemoteImageBuffer.
+
+        * WebProcess/GPU/graphics/RemoteImageBuffer.h: Added.
+        (WebKit::RemoteImageBuffer::create):
+        (WebKit::RemoteImageBuffer::RemoteImageBuffer):
+        It is responsible for creating RemoteImageBufferProxy and performing the
+        drawing commands in the GPUProcess.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp: Added.
+        (WebKit::RemoteImageBufferMessageHandler::RemoteImageBufferMessageHandler):
+        (WebKit::RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandler::commitFlushContext):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h: Added.
+        (WebKit::RemoteImageBufferMessageHandler::imageBufferIdentifier const):
+        Manages sending and receiving the messages of RemoteImageBuffer.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::releaseImageBuffer):
+        (WebKit::RemoteRenderingBackend::createImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::commitImageBufferFlushContext):
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::renderingBackendIdentifier const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in:
+        Handle or dispatch messages received from RemoteRenderingBackendProxy.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+        Although hostWindow isn't used, this is what ConcreteImageBuffer::create
+        expects from the creator of the backend.
+
 2020-03-02  John Wilander  <wilander@apple.com>
 
         ResourceLoadStatistics: Enable cookie blocking and the Storage Access API in ephemeral sessions

@@ -37,7 +37,7 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
 
-std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace)
+std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow*)
 {
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())

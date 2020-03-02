@@ -1747,6 +1747,9 @@
 		556C7C4B22123997009B06CA /* RenderingUpdateScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 556C7C4722123942009B06CA /* RenderingUpdateScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 5576A5631D88A70800CCC04C /* ImageFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		55AD093E2408963500DE4D2F /* DisplayListImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72EA09F723FCCB3D008504A5 /* DisplayListImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		55AD09402408964000DE4D2F /* DisplayListDrawingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 72EA09F923FCCC6A008504A5 /* DisplayListDrawingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		55AD09412408964A00DE4D2F /* ConcreteImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BAC3A723E17328008D741C /* ConcreteImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55AF14E61EAAC59B0026EEAA /* UTIRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55DCC52822407B2000C26E32 /* SVGPrimitiveList.h in Headers */ = {isa = PBXBuildFile; fileRef = 55DCC5252240749E00C26E32 /* SVGPrimitiveList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55DCC52922407B2A00C26E32 /* SVGList.h in Headers */ = {isa = PBXBuildFile; fileRef = 55DCC523224073FE00C26E32 /* SVGList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -29372,6 +29375,7 @@
 				F442C35923E3ADD200499582 /* CompositionHighlight.h in Headers */,
 				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
 				7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */,
+				55AD09412408964A00DE4D2F /* ConcreteImageBuffer.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
@@ -29717,6 +29721,8 @@
 				112FB352239C23C40087054A /* DisplayInlineRect.h in Headers */,
 				6FB47E632277425A00C7BCB0 /* DisplayLineBox.h in Headers */,
 				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
+				55AD09402408964000DE4D2F /* DisplayListDrawingContext.h in Headers */,
+				55AD093E2408963500DE4D2F /* DisplayListImageBuffer.h in Headers */,
 				0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */,
 				0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */,
 				0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */,

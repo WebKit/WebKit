@@ -42,7 +42,7 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace)
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow*)
 {
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
     if (backendSize.isEmpty())
