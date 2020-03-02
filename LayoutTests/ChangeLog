@@ -1,3 +1,12 @@
+2020-03-02  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac ] webanimations/accelerated-animation-renderer-change.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208450
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-03-02  Dean Jackson  <dino@apple.com>
 
         maps.google.com is not loading properly, screen flickers when zooming
