@@ -651,7 +651,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     continue;
 
                 auto* inlineCallFrame = codeOrigin->inlineCallFrame();
-                addSideState(reinterpret_cast<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
+                addSideState(reinterpret_cast_ptr<CallFrame*>(reinterpret_cast<char*>(callFrame) + inlineCallFrame->returnPCOffset() - sizeof(CPURegister)), callBytecodeIndex, inlineCallFrame->tmpOffset);
             }
 
             if (!codeOrigin)

@@ -580,14 +580,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         static constexpr int deletedCountOffset = -4;
         static constexpr unsigned metadataSize = 4 * sizeof(unsigned);
 
-        unsigned tableSize() const { return m_table ? reinterpret_cast<unsigned*>(m_table)[tableSizeOffset] : 0; }
-        void setTableSize(unsigned size) const { ASSERT(m_table); reinterpret_cast<unsigned*>(m_table)[tableSizeOffset] = size; }
-        unsigned tableSizeMask() const { ASSERT(m_table); return m_table ? reinterpret_cast<unsigned*>(m_table)[tableSizeMaskOffset] : 0; }
-        void setTableSizeMask(unsigned mask) { ASSERT(m_table); reinterpret_cast<unsigned*>(m_table)[tableSizeMaskOffset] = mask; }
-        unsigned keyCount() const { return m_table ? reinterpret_cast<unsigned*>(m_table)[keyCountOffset] : 0; }
-        void setKeyCount(unsigned count) const { ASSERT(m_table); reinterpret_cast<unsigned*>(m_table)[keyCountOffset] = count; }
-        unsigned deletedCount() const { ASSERT(m_table); return reinterpret_cast<unsigned*>(m_table)[deletedCountOffset]; }
-        void setDeletedCount(unsigned count) const { ASSERT(m_table); reinterpret_cast<unsigned*>(m_table)[deletedCountOffset] = count; }
+        unsigned tableSize() const { return m_table ? reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeOffset] : 0; }
+        void setTableSize(unsigned size) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeOffset] = size; }
+        unsigned tableSizeMask() const { ASSERT(m_table); return m_table ? reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeMaskOffset] : 0; }
+        void setTableSizeMask(unsigned mask) { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[tableSizeMaskOffset] = mask; }
+        unsigned keyCount() const { return m_table ? reinterpret_cast_ptr<unsigned*>(m_table)[keyCountOffset] : 0; }
+        void setKeyCount(unsigned count) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[keyCountOffset] = count; }
+        unsigned deletedCount() const { ASSERT(m_table); return reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset]; }
+        void setDeletedCount(unsigned count) const { ASSERT(m_table); reinterpret_cast_ptr<unsigned*>(m_table)[deletedCountOffset] = count; }
 
         ValueType* m_table { nullptr };
 
@@ -1207,9 +1207,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         // would use a template member function with explicit specializations here, but
         // gcc doesn't appear to support that
         if (Traits::emptyValueIsZero)
-            return reinterpret_cast<ValueType*>(static_cast<char*>(HashTableMalloc::zeroedMalloc(metadataSize + size * sizeof(ValueType))) + metadataSize);
+            return reinterpret_cast_ptr<ValueType*>(static_cast<char*>(HashTableMalloc::zeroedMalloc(metadataSize + size * sizeof(ValueType))) + metadataSize);
 
-        ValueType* result = reinterpret_cast<ValueType*>(static_cast<char*>(HashTableMalloc::malloc(metadataSize + size * sizeof(ValueType))) + metadataSize);
+        ValueType* result = reinterpret_cast_ptr<ValueType*>(static_cast<char*>(HashTableMalloc::malloc(metadataSize + size * sizeof(ValueType))) + metadataSize);
         for (unsigned i = 0; i < size; i++)
             initializeBucket(result[i]);
         return result;
@@ -1218,7 +1218,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType* table)
     {
-        unsigned size = reinterpret_cast<unsigned*>(table)[tableSizeOffset];
+        unsigned size = reinterpret_cast_ptr<unsigned*>(table)[tableSizeOffset];
         for (unsigned i = 0; i < size; ++i) {
             if (!isDeletedBucket(table[i]))
                 table[i].~ValueType();
