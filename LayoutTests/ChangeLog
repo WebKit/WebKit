@@ -1,5 +1,90 @@
 2020-03-01  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, update TestExpectations and baselines
+        https://bugs.webkit.org/show_bug.cgi?id=208433
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/wpe/css3/flexbox/button-expected.txt:
+        * platform/wpe/fast/block/float/float-avoidance-expected.txt:
+        * platform/wpe/fast/canvas/fallback-content-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/draw-elements-out-of-bounds-uint-index-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/webgl-drawarrays-crash-2-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/webgl-drawarrays-crash-expected.txt: Added.
+        * platform/wpe/fast/css/continuationCrash-expected.txt:
+        * platform/wpe/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/wpe/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/wpe/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/wpe/fast/css/rtl-ordering-expected.txt:
+        * platform/wpe/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/wpe/fast/css/text-overflow-input-expected.txt:
+        * platform/wpe/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/wpe/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt:
+        * platform/wpe/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt:
+        * platform/wpe/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/wpe/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/wpe/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/wpe/fast/dom/Range/getBoundingClientRect-expected.txt:
+        * platform/wpe/fast/html/details-replace-summary-child-expected.txt:
+        * platform/wpe/fast/html/details-replace-text-expected.txt:
+        * platform/wpe/fast/layers/video-layer-expected.txt:
+        * platform/wpe/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/wpe/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/wpe/fast/replaced/replaced-breaking-expected.txt:
+        * platform/wpe/fast/replaced/table-percent-height-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-button-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-radio-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/wpe/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * platform/wpe/fetch/fetch-url-serialization-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-transitions/before-load-001-expected.txt:
+        * platform/wpe/storage/domstorage/sessionstorage/blocked-file-access-expected.txt: Added.
+        * platform/wpe/svg/custom/foreign-object-skew-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug92647-2-expected.txt:
+        * platform/wpe/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/wpe/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/wpe/tables/mozilla/other/move_row-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/wpe/webanimations/partly-accelerated-transition-by-removing-property-expected.txt:
+        * platform/wpe/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance2/buffers/bound-buffer-size-change-test-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/buffers/buffer-copying-contents-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/misc/object-deletion-behaviour-2-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/transform_feedback/unwritten-output-defaults-to-zero-expected.txt:
+
+2020-03-01  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=208430
 

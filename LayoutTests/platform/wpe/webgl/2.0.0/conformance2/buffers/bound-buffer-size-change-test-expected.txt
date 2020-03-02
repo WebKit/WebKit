@@ -2,7 +2,7 @@ This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/bound-buffer-size-change-test.html
 [ 1: PASS ] getError was expected value: NO_ERROR : Calling bindBufferBase on a buffer where no storage is allocated should succeed.
-[ 2: FAIL ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) should be [object WebGLBuffer]. Was null.
+[ 2: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is buffer1
 [ 3: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) should be [object WebGLBuffer]. Was null.
 [ 4: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_SIZE, 0) should be 0 (of type number). Was null (of type object).
 [ 5: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_START, 0) should be 0 (of type number). Was null (of type object).
@@ -20,7 +20,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/bound-buffer-size-ch
 [ 17: FAIL ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_START, 1) should be 0 (of type number). Was null (of type object).
 [ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
 [ 19: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Calling bindBufferRange on a buffer where no storage is allocated should succeed.
-[ 20: FAIL ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) should be [object WebGLBuffer]. Was null.
+[ 20: FAIL ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) should be [object WebGLBuffer]. Was [object WebGLBuffer].
 [ 21: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) should be [object WebGLBuffer]. Was null.
 [ 22: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_SIZE, 0) should be 8 (of type number). Was null (of type object).
 [ 23: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_START, 0) should be 4 (of type number). Was null (of type object).
@@ -44,5 +44,5 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/bound-buffer-size-ch
 [ 41: FAIL ] gl.getIndexedParameter(gl.UNIFORM_BUFFER_START, 1) should be 32 (of type number). Was null (of type object).
 [ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
 [ 43: PASS ] successfullyParsed is true
-[ FAIL ] 41 failures reported
+[ FAIL ] 40 failures reported
 

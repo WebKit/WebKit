@@ -537,9 +537,6 @@ webkit.org/b/172811 fast/css/input-search-padding.html [ Failure ]
 
 webkit.org/b/177527 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
-
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
 
@@ -968,11 +965,12 @@ webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html
 
 webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
 
+webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
+webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
+
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
 webkit.org/b/204112 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
-webkit.org/b/204112 editing/async-clipboard/clipboard-read-text-from-platform.html [ Crash ]
-webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-writing.html [ Crash ]
 
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Crash ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Crash ]
@@ -1025,7 +1023,8 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/pipe-through.
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/transform-streams.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
-webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
+webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure Timeout ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 
 Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
@@ -1131,7 +1130,7 @@ webkit.org/b/201981 http/tests/workers/service/ServiceWorkerGlobalScope_register
 webkit.org/b/201981 http/tests/workers/service/registration-updateViaCache-none-importScripts.html [ Failure Pass ]
 webkit.org/b/201981 http/tests/workers/service/service-worker-crossorigin-fetch.html [ Failure Pass ]
 webkit.org/b/201981 http/tests/workers/service/service-worker-importScript.html [ Failure Pass ]
-webkit.org/b/201981 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Pass ]
+webkit.org/b/201981 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Timeout Pass ]
 webkit.org/b/201981 http/tests/workers/service/shift-reload-navigation.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/fetchEvent.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/navigation-redirect.https.html [ Failure Pass ]
@@ -1303,6 +1302,16 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 
 webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure Pass ]
 
+webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
+webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Failure Pass ]
+
+webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
+webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure ]
+
+webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
+
+webkit.org/b/208326 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1351,8 +1360,6 @@ webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Tim
 webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
 webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
-webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Timeout ]
-
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
@@ -1360,11 +1367,10 @@ webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
 webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
 
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
-webkit.org/b/207711 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Timeout ]
+webkit.org/b/207711 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure Timeout ]
 webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Timeout ]
-webkit.org/b/207711 [ Release ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 
 webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
@@ -1584,8 +1590,6 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
-
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
@@ -1842,8 +1846,6 @@ webkit.org/b/178577 http/tests/dom/document-attributes-null-handling.html [ Fail
 webkit.org/b/178578 http/tests/images/hidpi-srcset-copy.html [ Failure ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
-
-http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure Timeout ]
 
 Bug(WPE) svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 Bug(WPE) svg/animations/animations-paused-in-background-page.html [ Skip ]

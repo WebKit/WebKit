@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x250
-  RenderBlock {HTML} at (0,0) size 800x250
-    RenderBody {BODY} at (8,8) size 784x234
+layer at (0,0) size 800x258
+  RenderBlock {HTML} at (0,0) size 800x258
+    RenderBody {BODY} at (8,8) size 784x242
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 765x35
           text run at (0,0) width 403: "Test for empty buttons, which inherit from RenderFlexibleBox. "
@@ -14,22 +14,22 @@ layer at (0,0) size 800x250
         RenderText {#text} at (563,18) size 4x17
           text run at (563,18) width 4: "."
       RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,54) size 784x66
+      RenderBlock (anonymous) at (0,54) size 784x70
         RenderText {#text} at (0,0) size 79x17
           text run at (0,0) width 79: "Simple case."
         RenderBR {BR} at (79,0) size 0x17
         RenderButton {BUTTON} at (2,28) size 16x9 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBR {BR} at (20,18) size 0x17
-        RenderButton {INPUT} at (2,41) size 12x23 [bgcolor=#C0C0C0]
-        RenderBR {BR} at (16,47) size 0x17
-      RenderBlock {HR} at (0,128) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,138) size 784x96
+        RenderButton {INPUT} at (2,41) size 16x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBR {BR} at (20,49) size 0x17
+      RenderBlock {HR} at (0,132) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,142) size 784x100
         RenderText {#text} at (0,0) size 778x17
           text run at (0,0) width 778: "Empty <button> and <input type=button> with overflow: scroll;. The presence of the scrollbar should not shrink the button."
         RenderBR {BR} at (778,0) size 0x17
         RenderBR {BR} at (35,18) size 0x17
-        RenderBR {BR} at (31,62) size 0x17
-layer at (10,174) size 31x24 clip at (12,176) size 12x5
+        RenderBR {BR} at (35,64) size 0x17
+layer at (10,178) size 31x24 clip at (12,180) size 12x5
   RenderButton {BUTTON} at (2,28) size 31x24 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-layer at (10,202) size 27x38 clip at (10,202) size 12x23
-  RenderButton {INPUT} at (2,56) size 27x38 [bgcolor=#C0C0C0]
+layer at (10,206) size 31x42 clip at (12,208) size 12x23
+  RenderButton {INPUT} at (2,56) size 31x42 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
