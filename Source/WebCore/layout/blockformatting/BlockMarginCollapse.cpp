@@ -450,7 +450,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     return computedValues;
 }
 
-static Optional<LayoutUnit> marginValue(PositiveAndNegativeVerticalMargin::Values marginValues)
+Optional<LayoutUnit> BlockFormattingContext::MarginCollapse::marginValue(PositiveAndNegativeVerticalMargin::Values marginValues) const
 {
     // When two or more margins collapse, the resulting margin width is the maximum of the collapsing margins' widths.
     // In the case of negative margins, the maximum of the absolute values of the negative adjoining margins is deducted from the maximum

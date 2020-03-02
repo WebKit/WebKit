@@ -137,6 +137,7 @@ private:
         PositiveAndNegativeVerticalMargin::Values precomputedPositiveNegativeValues(const Box&, MarginType) const;
 
         PositiveAndNegativeVerticalMargin::Values computedPositiveAndNegativeMargin(PositiveAndNegativeVerticalMargin::Values, PositiveAndNegativeVerticalMargin::Values) const;
+        Optional<LayoutUnit> marginValue(PositiveAndNegativeVerticalMargin::Values) const;
 
         bool hasClearance(const Box&) const;
 
