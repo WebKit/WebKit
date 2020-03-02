@@ -83,6 +83,8 @@ void RemoteMediaPlayerProxy::invalidate()
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)
 {
     configuration.engineDescription = m_player->engineDescription();
+    auto maxDuration = m_player->maximumDurationToCacheMediaTime();
+    configuration.maximumDurationToCacheMediaTime = maxDuration ? maxDuration : 0.2;
     configuration.supportsScanning = m_player->supportsScanning();
     configuration.supportsFullscreen = m_player->supportsFullscreen();
     configuration.supportsPictureInPicture = m_player->supportsPictureInPicture();
@@ -245,14 +247,14 @@ void RemoteMediaPlayerProxy::videoFullscreenStandbyChanged()
 }
 
 #if PLATFORM(IOS_FAMILY)
-String RemoteMediaPlayerProxy::accessLog()
+void RemoteMediaPlayerProxy::accessLog(CompletionHandler<void(String)>&& completionHandler)
 {
-    return m_player->accessLog();
+    completionHandler(m_player->accessLog());
 }
 
-String RemoteMediaPlayerProxy::errorLog()
+void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(String)>&& completionHandler)
 {
-    return m_player->errorLog();
+    completionHandler(m_player->errorLog());
 }
 #endif
 
@@ -265,7 +267,17 @@ void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
     updateCachedState();
+    m_cachedState.canSaveMediaData = m_player->canSaveMediaData();
+    m_cachedState.startDate = m_player->getStartDate();
+    m_cachedState.startTime = m_player->startTime();
     m_cachedState.naturalSize = m_player->naturalSize();
+    m_cachedState.maxFastForwardRate = m_player->maxFastForwardRate();
+    m_cachedState.minFastReverseRate = m_player->minFastReverseRate();
+    m_cachedState.hasAvailableVideoFrame = m_player->hasAvailableVideoFrame();
+    m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
+    m_cachedState.hasSingleSecurityOrigin = m_player->hasSingleSecurityOrigin();
+    m_cachedState.didPassCORSAccessCheck = m_player->didPassCORSAccessCheck();
+
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ReadyStateChanged(m_cachedState), m_id);
 }
 
@@ -369,12 +381,22 @@ void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
 {
-    m_seekableChanged = true;
+    m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
+    m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
+    m_cachedState.seekableTimeRangesLastModifiedTime = m_player->seekableTimeRangesLastModifiedTime();
+    m_cachedState.liveUpdateInterval = m_player->liveUpdateInterval();
+
+    if (!m_updateCachedStateMessageTimer.isActive())
+        sendCachedState();
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CharacteristicChanged(m_player->hasAudio(), m_player->hasVideo(), m_player->movieLoadType()), m_id);
+    updateCachedState();
+    m_cachedState.hasClosedCaptions = m_player->hasClosedCaptions();
+    m_cachedState.languageOfPrimaryAudioTrack = m_player->languageOfPrimaryAudioTrack();
+
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CharacteristicChanged(m_cachedState), m_id);
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
@@ -515,12 +537,16 @@ void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void RemoteMediaPlayerProxy::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
 {
+    m_cachedState.wirelessPlaybackTargetName = m_player->wirelessPlaybackTargetName();
+    m_cachedState.wirelessPlaybackTargetType = m_player->wirelessPlaybackTargetType();
+    sendCachedState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless), m_id);
 }
 
 void RemoteMediaPlayerProxy::setWirelessVideoPlaybackDisabled(bool disabled)
 {
     m_player->setWirelessVideoPlaybackDisabled(disabled);
+    m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
 }
 
 void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -553,16 +579,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreenPermitted() const
 float RemoteMediaPlayerProxy::mediaPlayerContentsScale() const
 {
     return m_videoContentScale;
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerPause()
-{
-    notImplemented();
-}
-
-void RemoteMediaPlayerProxy::mediaPlayerPlay()
-{
-    notImplemented();
 }
 
 bool RemoteMediaPlayerProxy::mediaPlayerPlatformVolumeConfigurationRequired() const
@@ -659,12 +675,6 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.paused = m_player->paused();
     m_cachedState.loadingProgressed = m_player->didLoadingProgress();
 
-    if (m_seekableChanged) {
-        m_seekableChanged = false;
-        m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
-        m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
-    }
-
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
         m_cachedState.bufferedRanges = *m_player->buffered();
@@ -708,6 +718,21 @@ void RemoteMediaPlayerProxy::applicationWillResignActive()
 void RemoteMediaPlayerProxy::applicationDidBecomeActive()
 {
     m_player->applicationDidBecomeActive();
+}
+
+void RemoteMediaPlayerProxy::notifyTrackModeChanged()
+{
+    m_player->notifyTrackModeChanged();
+}
+
+void RemoteMediaPlayerProxy::tracksChanged()
+{
+    m_player->tracksChanged();
+}
+
+void RemoteMediaPlayerProxy::syncTextTrackBounds()
+{
+    m_player->syncTextTrackBounds();
 }
 
 } // namespace WebKit

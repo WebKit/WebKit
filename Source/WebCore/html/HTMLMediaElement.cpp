@@ -7092,16 +7092,6 @@ float HTMLMediaElement::mediaPlayerContentsScale() const
     return 1;
 }
 
-void HTMLMediaElement::mediaPlayerPause()
-{
-    pause();
-}
-
-void HTMLMediaElement::mediaPlayerPlay()
-{
-    play();
-}
-
 bool HTMLMediaElement::mediaPlayerPlatformVolumeConfigurationRequired() const
 {
     return !m_volumeInitialized;

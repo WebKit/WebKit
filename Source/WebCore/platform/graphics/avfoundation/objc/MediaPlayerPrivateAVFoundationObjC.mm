@@ -2619,7 +2619,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 // AVPlayerItem.tracks is empty during AirPlay so if AirPlay is activated immediately
 // after the item is created, we don't know if it has audio or video and state reported
-// to the WebMediaSessionManager is incorrect. AirPlay can't actually be active is an item
+// to the WebMediaSessionManager is incorrect. AirPlay can't actually be active if an item
 // doesn't have audio or video, so lie during AirPlay.
 
 bool MediaPlayerPrivateAVFoundationObjC::hasVideo() const
@@ -2661,26 +2661,26 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetType() const
 {
     if (!m_avPlayer)
-        return MediaPlayer::TargetTypeNone;
+        return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone;
 
 #if PLATFORM(IOS_FAMILY)
     if (!PAL::isAVFoundationFrameworkAvailable())
-        return MediaPlayer::TargetTypeNone;
+        return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone;
 
     switch ([m_avPlayer externalPlaybackType]) {
     case AVPlayerExternalPlaybackTypeNone:
-        return MediaPlayer::TargetTypeNone;
+        return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone;
     case AVPlayerExternalPlaybackTypeAirPlay:
-        return MediaPlayer::TargetTypeAirPlay;
+        return MediaPlayer::WirelessPlaybackTargetType::TargetTypeAirPlay;
     case AVPlayerExternalPlaybackTypeTVOut:
-        return MediaPlayer::TargetTypeTVOut;
+        return MediaPlayer::WirelessPlaybackTargetType::TargetTypeTVOut;
     }
 
     ASSERT_NOT_REACHED();
-    return MediaPlayer::TargetTypeNone;
+    return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone;
 
 #else
-    return MediaPlayer::TargetTypeAirPlay;
+    return MediaPlayer::WirelessPlaybackTargetType::TargetTypeAirPlay;
 #endif
 }
     

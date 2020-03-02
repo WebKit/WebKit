@@ -35,7 +35,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     PlaybackStateChanged(bool paused)
     EngineFailedToLoad(int platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
-    CharacteristicChanged(bool hasAudio, bool hasVideo, enum:uint8_t WebCore::MediaPlayerEnums::MovieLoadType movieLoadType)
+    CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
 
     AddRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)

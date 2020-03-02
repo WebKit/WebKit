@@ -84,11 +84,12 @@ public:
     void videoFullscreenStandbyChanged();
 
 #if PLATFORM(IOS_FAMILY)
-    String accessLog();
-    String errorLog();
+    void accessLog(CompletionHandler<void(String)>&&);
+    void errorLog(CompletionHandler<void(String)>&&);
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
@@ -148,6 +149,10 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
 
+    void notifyTrackModeChanged();
+    void tracksChanged();
+    void syncTextTrackBounds();
+
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
 
@@ -201,8 +206,6 @@ private:
     bool mediaPlayerIsFullscreenPermitted() const final;
     bool mediaPlayerIsVideo() const final;
     float mediaPlayerContentsScale() const final;
-    void mediaPlayerPause() final;
-    void mediaPlayerPlay() final;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
     WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() final;
     RefPtr<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
@@ -261,7 +264,6 @@ private:
     RunLoop::Timer<RemoteMediaPlayerProxy> m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;
     RemoteMediaPlayerProxyConfiguration m_configuration;
-    bool m_seekableChanged { true };
     bool m_bufferedChanged { true };
     bool m_renderingCanBeAccelerated { true };
     WebCore::LayoutRect m_videoContentBoxRect;

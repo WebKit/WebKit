@@ -722,8 +722,6 @@ private:
     bool mediaPlayerIsVideo() const override;
     LayoutRect mediaPlayerContentBoxRect() const override;
     float mediaPlayerContentsScale() const override;
-    void mediaPlayerPause() override;
-    void mediaPlayerPlay() override;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const override;
     bool mediaPlayerIsLooping() const override;
     CachedResourceLoader* mediaPlayerCachedResourceLoader() override;

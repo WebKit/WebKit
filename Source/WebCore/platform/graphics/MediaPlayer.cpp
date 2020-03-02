@@ -1087,11 +1087,6 @@ bool MediaPlayer::supportsAcceleratedRendering() const
     return m_private->supportsAcceleratedRendering();
 }
 
-bool MediaPlayer::shouldMaintainAspectRatio() const
-{
-    return m_private->shouldMaintainAspectRatio();
-}
-
 void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
 {
     m_private->setShouldMaintainAspectRatio(maintainAspectRatio);

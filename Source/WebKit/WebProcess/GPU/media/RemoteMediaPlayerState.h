@@ -39,12 +39,32 @@ struct RemoteMediaPlayerState {
     MediaTime duration;
     MediaTime minTimeSeekable;
     MediaTime maxTimeSeekable;
+    MediaTime startDate;
+    MediaTime startTime;
+    String languageOfPrimaryAudioTrack;
+    String wirelessPlaybackTargetName;
     WebCore::PlatformTimeRanges bufferedRanges;
     WebCore::MediaPlayerEnums::NetworkState networkState { WebCore::MediaPlayerEnums::NetworkState::Empty };
     WebCore::MediaPlayerEnums::ReadyState readyState { WebCore::MediaPlayerEnums::ReadyState::HaveNothing };
+    WebCore::MediaPlayerEnums::MovieLoadType movieLoadType { WebCore::MediaPlayerEnums::MovieLoadType::Unknown };
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType { WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeNone };
     WebCore::FloatSize naturalSize;
+    double maxFastForwardRate { 0 };
+    double minFastReverseRate { 0 };
+    double seekableTimeRangesLastModifiedTime { 0 };
+    double liveUpdateInterval { 0 };
+    unsigned long long totalBytes { 0 };
     bool paused { true };
     bool loadingProgressed { false };
+    bool canSaveMediaData { false };
+    bool hasAudio { false };
+    bool hasVideo { false };
+    bool hasClosedCaptions { false };
+    bool hasAvailableVideoFrame { false };
+    bool wirelessVideoPlaybackDisabled { false };
+    bool hasSingleSecurityOrigin { false };
+    bool didPassCORSAccessCheck { false };
+    bool requiresTextTrackRepresentation { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -53,12 +73,32 @@ struct RemoteMediaPlayerState {
         encoder << duration;
         encoder << minTimeSeekable;
         encoder << maxTimeSeekable;
+        encoder << startDate;
+        encoder << startTime;
+        encoder << languageOfPrimaryAudioTrack;
+        encoder << wirelessPlaybackTargetName;
         encoder << bufferedRanges;
         encoder.encodeEnum(networkState);
         encoder.encodeEnum(readyState);
+        encoder.encodeEnum(movieLoadType);
+        encoder.encodeEnum(wirelessPlaybackTargetType);
         encoder << naturalSize;
+        encoder << maxFastForwardRate;
+        encoder << minFastReverseRate;
+        encoder << seekableTimeRangesLastModifiedTime;
+        encoder << liveUpdateInterval;
+        encoder << totalBytes;
         encoder << paused;
         encoder << loadingProgressed;
+        encoder << canSaveMediaData;
+        encoder << hasAudio;
+        encoder << hasVideo;
+        encoder << hasClosedCaptions;
+        encoder << hasAvailableVideoFrame;
+        encoder << wirelessVideoPlaybackDisabled;
+        encoder << hasSingleSecurityOrigin;
+        encoder << didPassCORSAccessCheck;
+        encoder << requiresTextTrackRepresentation;
     }
 
     template <class Decoder>
@@ -84,6 +124,26 @@ struct RemoteMediaPlayerState {
         if (!maxTimeSeekable)
             return WTF::nullopt;
 
+        Optional<MediaTime> startDate;
+        decoder >> startDate;
+        if (!startDate)
+            return WTF::nullopt;
+
+        Optional<MediaTime> startTime;
+        decoder >> startTime;
+        if (!startTime)
+            return WTF::nullopt;
+
+        Optional<String> languageOfPrimaryAudioTrack;
+        decoder >> languageOfPrimaryAudioTrack;
+        if (!languageOfPrimaryAudioTrack)
+            return WTF::nullopt;
+
+        Optional<String> wirelessPlaybackTargetName;
+        decoder >> wirelessPlaybackTargetName;
+        if (!wirelessPlaybackTargetName)
+            return WTF::nullopt;
+
         Optional<WebCore::PlatformTimeRanges> bufferedRanges;
         decoder >> bufferedRanges;
         if (!bufferedRanges)
@@ -97,9 +157,42 @@ struct RemoteMediaPlayerState {
         if (!decoder.decodeEnum(readyState))
             return WTF::nullopt;
 
+        WebCore::MediaPlayerEnums::MovieLoadType movieLoadType;
+        if (!decoder.decodeEnum(movieLoadType))
+            return WTF::nullopt;
+
+        WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType;
+        if (!decoder.decodeEnum(wirelessPlaybackTargetType))
+            return WTF::nullopt;
+
         Optional<WebCore::FloatSize> naturalSize;
         decoder >> naturalSize;
         if (!naturalSize)
+            return WTF::nullopt;
+
+        Optional<double> maxFastForwardRate;
+        decoder >> maxFastForwardRate;
+        if (!maxFastForwardRate)
+            return WTF::nullopt;
+
+        Optional<double> minFastReverseRate;
+        decoder >> minFastReverseRate;
+        if (!minFastReverseRate)
+            return WTF::nullopt;
+
+        Optional<double> seekableTimeRangesLastModifiedTime;
+        decoder >> seekableTimeRangesLastModifiedTime;
+        if (!seekableTimeRangesLastModifiedTime)
+            return WTF::nullopt;
+
+        Optional<double> liveUpdateInterval;
+        decoder >> liveUpdateInterval;
+        if (!liveUpdateInterval)
+            return WTF::nullopt;
+
+        Optional<unsigned long long> totalBytes;
+        decoder >> totalBytes;
+        if (!totalBytes)
             return WTF::nullopt;
 
         Optional<bool> paused;
@@ -112,17 +205,83 @@ struct RemoteMediaPlayerState {
         if (!loadingProgressed)
             return WTF::nullopt;
 
+        Optional<bool> canSaveMediaData;
+        decoder >> canSaveMediaData;
+        if (!canSaveMediaData)
+            return WTF::nullopt;
+
+        Optional<bool> hasAudio;
+        decoder >> hasAudio;
+        if (!hasAudio)
+            return WTF::nullopt;
+
+        Optional<bool> hasVideo;
+        decoder >> hasVideo;
+        if (!hasVideo)
+            return WTF::nullopt;
+
+        Optional<bool> hasClosedCaptions;
+        decoder >> hasClosedCaptions;
+        if (!hasClosedCaptions)
+            return WTF::nullopt;
+
+        Optional<bool> hasAvailableVideoFrame;
+        decoder >> hasAvailableVideoFrame;
+        if (!hasAvailableVideoFrame)
+            return WTF::nullopt;
+
+        Optional<bool> wirelessVideoPlaybackDisabled;
+        decoder >> wirelessVideoPlaybackDisabled;
+        if (!wirelessVideoPlaybackDisabled)
+            return WTF::nullopt;
+
+        Optional<bool> hasSingleSecurityOrigin;
+        decoder >> hasSingleSecurityOrigin;
+        if (!hasSingleSecurityOrigin)
+            return WTF::nullopt;
+
+        Optional<bool> didPassCORSAccessCheck;
+        decoder >> didPassCORSAccessCheck;
+        if (!didPassCORSAccessCheck)
+            return WTF::nullopt;
+
+        Optional<bool> requiresTextTrackRepresentation;
+        decoder >> requiresTextTrackRepresentation;
+        if (!requiresTextTrackRepresentation)
+            return WTF::nullopt;
+
         return {{
             WTFMove(*currentTime),
             WTFMove(*duration),
             WTFMove(*minTimeSeekable),
             WTFMove(*maxTimeSeekable),
+            WTFMove(*startDate),
+            WTFMove(*startTime),
+            WTFMove(*languageOfPrimaryAudioTrack),
+            WTFMove(*wirelessPlaybackTargetName),
             WTFMove(*bufferedRanges),
             networkState,
             readyState,
+            movieLoadType,
+            wirelessPlaybackTargetType,
             WTFMove(*naturalSize),
+            *maxFastForwardRate,
+            *minFastReverseRate,
+            *seekableTimeRangesLastModifiedTime,
+            *liveUpdateInterval,
+            *totalBytes,
             *paused,
-            *loadingProgressed }};
+            *loadingProgressed,
+            *canSaveMediaData,
+            *hasAudio,
+            *hasVideo,
+            *hasClosedCaptions,
+            *hasAvailableVideoFrame,
+            *wirelessVideoPlaybackDisabled,
+            *hasSingleSecurityOrigin,
+            *didPassCORSAccessCheck,
+            *requiresTextTrackRepresentation,
+        }};
     }
 
 };

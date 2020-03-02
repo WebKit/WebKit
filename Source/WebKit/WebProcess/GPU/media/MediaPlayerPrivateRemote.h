@@ -94,7 +94,7 @@ public:
     void playbackStateChanged(bool);
     void engineFailedToLoad(long);
     void updateCachedState(RemoteMediaPlayerState&&);
-    void characteristicChanged(bool hasAudio, bool hasVideo, WebCore::MediaPlayerEnums::MovieLoadType);
+    void characteristicChanged(RemoteMediaPlayerState&&);
     void sizeChanged(WebCore::FloatSize);
     void firstVideoFrameAvailable();
 #if PLATFORM(COCOA)
@@ -277,7 +277,6 @@ private:
     bool supportsAcceleratedRendering() const final;
     void acceleratedRenderingStateChanged() final;
 
-    bool shouldMaintainAspectRatio() const final;
     void setShouldMaintainAspectRatio(bool) final;
 
     bool hasSingleSecurityOrigin() const final;
@@ -334,10 +333,6 @@ private:
 
     size_t extraMemoryCost() const final;
 
-    unsigned long long fileSize() const final;
-
-    bool ended() const final;
-
     Optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
 #if ENABLE(AVF_CAPTIONS)
@@ -378,9 +373,6 @@ private:
     double m_volume { 1 };
     double m_rate { 1 };
     long m_platformErrorCode { 0 };
-    WebCore::MediaPlayerEnums::MovieLoadType m_movieLoadType { WebCore::MediaPlayerEnums::MovieLoadType::Unknown };
-    bool m_hasAudio { false };
-    bool m_hasVideo { false };
     bool m_muted { false };
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };

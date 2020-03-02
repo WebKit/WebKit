@@ -168,7 +168,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
     virtual String wirelessPlaybackTargetName() const { return emptyString(); }
-    virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::TargetTypeNone; }
+    virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone; }
 
     virtual bool wirelessVideoPlaybackDisabled() const { return true; }
     virtual void setWirelessVideoPlaybackDisabled(bool) { }
@@ -185,7 +185,6 @@ public:
     // called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() { }
 
-    virtual bool shouldMaintainAspectRatio() const { return true; }
     virtual void setShouldMaintainAspectRatio(bool) { }
 
     virtual bool hasSingleSecurityOrigin() const { return false; }

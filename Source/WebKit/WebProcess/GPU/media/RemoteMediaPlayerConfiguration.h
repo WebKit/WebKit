@@ -35,6 +35,7 @@ namespace WebKit {
 
 struct RemoteMediaPlayerConfiguration {
     String engineDescription;
+    double maximumDurationToCacheMediaTime;
     bool supportsScanning { false };
     bool supportsFullscreen { false };
     bool supportsPictureInPicture { false };
@@ -46,6 +47,7 @@ struct RemoteMediaPlayerConfiguration {
     void encode(Encoder& encoder) const
     {
         encoder << engineDescription;
+        encoder << maximumDurationToCacheMediaTime;
         encoder << supportsScanning;
         encoder << supportsFullscreen;
         encoder << supportsPictureInPicture;
@@ -60,6 +62,11 @@ struct RemoteMediaPlayerConfiguration {
         Optional<String> engineDescription;
         decoder >> engineDescription;
         if (!engineDescription)
+            return WTF::nullopt;
+
+        Optional<double> maximumDurationToCacheMediaTime;
+        decoder >> maximumDurationToCacheMediaTime;
+        if (!maximumDurationToCacheMediaTime)
             return WTF::nullopt;
 
         Optional<bool> supportsScanning;
@@ -94,6 +101,7 @@ struct RemoteMediaPlayerConfiguration {
 
         return {{
             WTFMove(*engineDescription),
+            *maximumDurationToCacheMediaTime,
             *supportsScanning,
             *supportsPictureInPicture,
             *supportsAcceleratedRendering,

@@ -194,7 +194,7 @@ protected:
     PlatformLayer* platformLayer() const override { return 0; }
     bool supportsAcceleratedRendering() const override = 0;
     void acceleratedRenderingStateChanged() override;
-    bool shouldMaintainAspectRatio() const override { return m_shouldMaintainAspectRatio; }
+    bool shouldMaintainAspectRatio() const { return m_shouldMaintainAspectRatio; }
     void setShouldMaintainAspectRatio(bool) override;
     bool canSaveMediaData() const override;
 

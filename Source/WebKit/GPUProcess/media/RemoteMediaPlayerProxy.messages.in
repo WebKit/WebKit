@@ -94,6 +94,15 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     ApplicationWillResignActive()
     ApplicationDidBecomeActive()
+
+    NotifyTrackModeChanged()
+    TracksChanged()
+    SyncTextTrackBounds()
+
+#if PLATFORM(IOS_FAMILY)
+    ErrorLog() -> (String errorLog) Synchronous
+    AccessLog() -> (String accessLog) Synchronous
+#endif
 }
 
 #endif

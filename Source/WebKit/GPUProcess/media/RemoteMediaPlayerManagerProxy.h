@@ -84,11 +84,6 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, Vector<WebCore::SecurityOriginData>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
-#if PLATFORM(IOS_FAMILY)
-    void accessLog(MediaPlayerPrivateRemoteIdentifier, CompletionHandler<void(String)>&&);
-    void errorLog(MediaPlayerPrivateRemoteIdentifier, CompletionHandler<void(String)>&&);
-#endif
-
     HashMap<MediaPlayerPrivateRemoteIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 

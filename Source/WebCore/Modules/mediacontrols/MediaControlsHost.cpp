@@ -248,11 +248,11 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
     }
     
     switch (player->wirelessPlaybackTargetType()) {
-    case MediaPlayer::TargetTypeNone:
+    case MediaPlayer::WirelessPlaybackTargetType::TargetTypeNone:
         return DeviceType::None;
-    case MediaPlayer::TargetTypeAirPlay:
+    case MediaPlayer::WirelessPlaybackTargetType::TargetTypeAirPlay:
         return DeviceType::Airplay;
-    case MediaPlayer::TargetTypeTVOut:
+    case MediaPlayer::WirelessPlaybackTargetType::TargetTypeTVOut:
         return DeviceType::Tvout;
     }
 

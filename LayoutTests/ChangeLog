@@ -1,3 +1,13 @@
+2020-03-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Plumb through more MediaPlayer methods
+        https://bugs.webkit.org/show_bug.cgi?id=208423
+        <rdar://problem/59924386>
+
+        Reviewed by Youenn Fablet.
+
+        * gpu-process/TestExpectations: Unskip ~1200 media tests.
+
 2020-03-02  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for anchors

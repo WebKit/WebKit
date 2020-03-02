@@ -99,6 +99,13 @@ public:
         MediaFoundation,
         MockMSE,
     };
+
+    enum class WirelessPlaybackTargetType : uint8_t {
+        TargetTypeNone,
+        TargetTypeAirPlay,
+        TargetTypeTVOut
+    };
+
 };
 
 String convertEnumerationToString(MediaPlayerEnums::ReadyState);
@@ -221,6 +228,15 @@ template<> struct EnumTraits<WebCore::MediaPlayerEnums::MediaEngineIdentifier> {
         WebCore::MediaPlayerEnums::MediaEngineIdentifier::HolePunch,
         WebCore::MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation,
         WebCore::MediaPlayerEnums::MediaEngineIdentifier::MockMSE
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MediaPlayerEnums::WirelessPlaybackTargetType> {
+using values = EnumValues<
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType,
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeNone,
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeAirPlay,
+    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeTVOut
     >;
 };
 

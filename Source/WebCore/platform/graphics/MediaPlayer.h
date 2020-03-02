@@ -222,8 +222,6 @@ public:
     virtual bool mediaPlayerIsVideo() const { return false; }
     virtual LayoutRect mediaPlayerContentBoxRect() const { return LayoutRect(); }
     virtual float mediaPlayerContentsScale() const { return 1; }
-    virtual void mediaPlayerPause() { }
-    virtual void mediaPlayerPlay() { }
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return nullptr; }
@@ -461,8 +459,8 @@ public:
     bool hasAvailableVideoFrame() const;
     void prepareForRendering();
 
+    using MediaPlayerEnums::WirelessPlaybackTargetType;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    enum WirelessPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
     WirelessPlaybackTargetType wirelessPlaybackTargetType() const;
 
     String wirelessPlaybackTargetName() const;
@@ -488,7 +486,6 @@ public:
     // called when the rendering system flips the into or out of accelerated rendering mode.
     void acceleratedRenderingStateChanged();
 
-    bool shouldMaintainAspectRatio() const;
     void setShouldMaintainAspectRatio(bool);
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)

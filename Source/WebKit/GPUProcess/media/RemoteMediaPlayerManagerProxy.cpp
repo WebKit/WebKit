@@ -192,24 +192,6 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
     completionHandler(result);
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RemoteMediaPlayerManagerProxy::accessLog(MediaPlayerPrivateRemoteIdentifier playerIdentifier, CompletionHandler<void(String)>&& completionHandler)
-{
-    if (auto player = m_proxies.get(playerIdentifier)) {
-        String log = player->accessLog();
-        completionHandler(log);
-    }
-}
-
-void RemoteMediaPlayerManagerProxy::errorLog(MediaPlayerPrivateRemoteIdentifier playerIdentifier, CompletionHandler<void(String)>&& completionHandler)
-{
-    if (auto player = m_proxies.get(playerIdentifier)) {
-        String log = player->errorLog();
-        completionHandler(log);
-    }
-}
-#endif
-
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerPrivateRemoteIdentifierType>(decoder.destinationID())))
