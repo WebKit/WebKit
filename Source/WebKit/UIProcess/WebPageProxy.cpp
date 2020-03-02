@@ -5129,7 +5129,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     auto userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    logFrameNavigation(frame, URL(URL(), m_pageLoadState.url()), request, redirectResponse.url(), !!userInitiatedActivity);
+    if (!sessionID().isEphemeral())
+        logFrameNavigation(frame, URL(URL(), m_pageLoadState.url()), request, redirectResponse.url(), !!userInitiatedActivity);
 #endif
 
     if (m_policyClient)

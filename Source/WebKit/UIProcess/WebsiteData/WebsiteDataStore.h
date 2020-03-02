@@ -122,6 +122,7 @@ public:
     bool resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
+    void isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&&) const;
 
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;

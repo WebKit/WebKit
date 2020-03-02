@@ -97,6 +97,7 @@ messages -> NetworkProcess LegacyReceiver {
     MergeStatisticForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain1, WebCore::RegistrableDomain topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, uint64_t dataRecordsRemoved) -> () Async
     SetPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
+    IsResourceLoadStatisticsEphemeral(PAL::SessionID sessionID) -> (bool isEphemeral) Async
     HadUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction) Async
     IsRelationshipOnlyInDatabaseOnce(PAL::SessionID sessionID, WebCore::RegistrableDomain subDomain, WebCore::RegistrableDomain topDomain) -> (bool hadUserInteraction) Async
     HasLocalStorage(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction) Async

@@ -164,7 +164,7 @@ void TestInvocation::invoke()
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
-    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::defaultWebsiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
     // FIXME: We should clear out visited links here.
 
@@ -906,7 +906,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "SetCacheModel")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t model = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(TestController::websiteDataStore(), model);
+        WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(TestController::defaultWebsiteDataStore(), model);
         return nullptr;
     }
 
@@ -968,7 +968,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "DeleteAllIndexedDatabases")) {
-        WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::websiteDataStore(), nullptr, { });
+        WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::defaultWebsiteDataStore(), nullptr, { });
         return nullptr;
     }
 
@@ -1118,6 +1118,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
         TestController::singleton().setStatisticsEnabled(WKBooleanGetValue(value));
         return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsEphemeral")) {
+        bool isEphemeral = TestController::singleton().isStatisticsEphemeral();
+        WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(isEphemeral));
+        return result;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode")) {

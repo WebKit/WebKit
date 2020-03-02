@@ -164,12 +164,9 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (m_resourceLoadStatistics)
         return;
 
-    // FIXME(193728): Support ResourceLoadStatistics for ephemeral sessions, too.
-    if (m_sessionID.isEphemeral())
-        return;
-
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
-    m_resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
+    if (!m_sessionID.isEphemeral())
+        m_resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
 
     if (m_enableResourceLoadStatisticsDebugMode == EnableResourceLoadStatisticsDebugMode::Yes)
         m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(true, [] { });
@@ -182,9 +179,12 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
 {
     destroyResourceLoadStatistics();
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
-    m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
     forwardResourceLoadStatisticsSettings();
+    if (!m_sessionID.isEphemeral())
+        m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void NetworkSession::forwardResourceLoadStatisticsSettings()

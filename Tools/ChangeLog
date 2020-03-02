@@ -1,3 +1,114 @@
+2020-03-02  John Wilander  <wilander@apple.com>
+
+        ResourceLoadStatistics: Enable cookie blocking and the Storage Access API in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208399
+        <rdar://problem/24731650>
+
+        Reviewed by Brent Fulgham.
+
+        The majority of the changes in WTR::TestController is (partially) fixing a bug
+        where the TestRunner would statically use the default website datastore instead
+        of the website data store configure for the page. This worked for persistent
+        storage testing but not for ephemeral sessions which is what this patch is all
+        about. The previous TestController::websiteDataStore() is now called
+        TestController::defaultWebsiteDataStore() and the new
+        TestController::websiteDataStore() returns the configured website data store.
+        Most of the use of the default website data store should probably change but
+        that's not really for this patch to deal with. I did however move all of
+        resource load statistics' use to the new TestController::websiteDataStore().
+
+        A new TestRunner function was added: isStatisticsEphemeral()
+        It allows test cases to query the ephemeral status of resource load statistics.
+
+        One problem that is mitigated in this patch but not fully fixed is that for
+        Cocoa platforms, the TestRunner sets up two ephemeral sessions, once in
+        TestController::generatePageConfiguration() via C API 
+        WKPageConfigurationSetWebsiteDataStore(), and then again in 
+        TestControllerCocoa's initializeWebViewConfiguration() via Cocoa API
+        [copiedConfiguration setWebsiteDataStore:ephemeralWebsiteDataStore].
+        I tried removing the latter since one session for all platforms should be
+        Enough but got broken behavior as a result. So now both are still there
+        and both enable resource load statistics.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::isStatisticsEphemeral):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::defaultWebsiteDataStore):
+        (WTR::TestController::websiteDataStore):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestController::decidePolicyForNavigationAction):
+        (WTR::TestController::platformAdjustContext):
+        (WTR::TestController::clearServiceWorkerRegistrations):
+        (WTR::TestController::clearDOMCache):
+        (WTR::TestController::clearDOMCaches):
+        (WTR::TestController::clearIndexedDatabases):
+        (WTR::TestController::clearLocalStorage):
+        (WTR::TestController::hasDOMCache):
+        (WTR::TestController::domCacheSize):
+        (WTR::TestController::setStatisticsEnabled):
+        (WTR::TestController::isStatisticsEphemeral):
+        (WTR::TestController::setStatisticsDebugMode):
+        (WTR::TestController::setStatisticsPrevalentResourceForDebugMode):
+        (WTR::TestController::setStatisticsLastSeen):
+        (WTR::TestController::setStatisticsMergeStatistic):
+        (WTR::TestController::setStatisticsPrevalentResource):
+        (WTR::TestController::setStatisticsVeryPrevalentResource):
+        (WTR::TestController::dumpResourceLoadStatistics):
+        (WTR::TestController::isStatisticsPrevalentResource):
+        (WTR::TestController::isStatisticsVeryPrevalentResource):
+        (WTR::TestController::isStatisticsRegisteredAsSubresourceUnder):
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestController::setStatisticsHasHadUserInteraction):
+        (WTR::TestController::isStatisticsHasHadUserInteraction):
+        (WTR::TestController::isStatisticsOnlyInDatabaseOnce):
+        (WTR::TestController::setStatisticsGrandfathered):
+        (WTR::TestController::isStatisticsGrandfathered):
+        (WTR::TestController::setUseITPDatabase):
+        (WTR::TestController::setStatisticsSubframeUnderTopFrameOrigin):
+        (WTR::TestController::setStatisticsSubresourceUnderTopFrameOrigin):
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectTo):
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectFrom):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectTo):
+        (WTR::TestController::setStatisticsTopFrameUniqueRedirectFrom):
+        (WTR::TestController::setStatisticsCrossSiteLoadWithLinkDecoration):
+        (WTR::TestController::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestController::statisticsUpdateCookieBlocking):
+        (WTR::TestController::statisticsSubmitTelemetry):
+        (WTR::TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestController::setStatisticsIsRunningTest):
+        (WTR::TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WTR::TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        (WTR::TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WTR::TestController::setStatisticsGrandfatheringTime):
+        (WTR::TestController::setStatisticsMaxStatisticsEntries):
+        (WTR::TestController::setStatisticsPruneEntriesDownTo):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::TestController::statisticsDeleteCookiesForHost):
+        (WTR::TestController::isStatisticsHasLocalStorage):
+        (WTR::TestController::setStatisticsCacheMaxAgeCap):
+        (WTR::TestController::hasStatisticsIsolatedSession):
+        (WTR::TestController::setStatisticsShouldDowngradeReferrer):
+        (WTR::TestController::setStatisticsShouldBlockThirdPartyCookies):
+        (WTR::TestController::setStatisticsFirstPartyWebsiteDataRemovalMode):
+        (WTR::TestController::statisticsResetToConsistentState):
+        (WTR::TestController::clearAdClickAttributionsThroughWebsiteDataRemoval):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformCreateWebView):
+
 2020-03-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Mapping from MIME type to UTI type should be done in the UI process

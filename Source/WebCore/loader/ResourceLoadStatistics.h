@@ -99,6 +99,8 @@ struct ResourceLoadStatistics {
     unsigned timesAccessedAsFirstPartyDueToUserInteraction { 0 };
     unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI { 0 };
 
+    enum class IsEphemeral : bool { No, Yes };
+
     enum class NavigatorAPI : uint64_t {
         AppVersion = 1 << 0,
         UserAgent = 1 << 1,

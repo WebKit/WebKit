@@ -689,6 +689,10 @@ http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-r
 [ HighSierra+ ] http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip ]
 [ HighSierra+ ] http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture-database.html [ Skip ]
 
+# Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
+http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html [ Skip ]
+http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html [ Skip ]
+
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 

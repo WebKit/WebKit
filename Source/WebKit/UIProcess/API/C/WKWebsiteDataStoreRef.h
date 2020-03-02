@@ -45,6 +45,8 @@ WK_EXPORT WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDat
 
 WK_EXPORT bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable);
+typedef void (*WKWebsiteDataStoreStatisticsEphemeralFunction)(bool isEphemeral, void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef dataStoreRef, bool enable);
 typedef void (*WKWebsiteDataStoreStatisticsDebugModeFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler);

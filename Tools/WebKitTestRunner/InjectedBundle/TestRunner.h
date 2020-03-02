@@ -381,6 +381,7 @@ public:
     
     // Resource Load Statistics
     void setStatisticsEnabled(bool value);
+    bool isStatisticsEphemeral();
     void installStatisticsDidModifyDataRecordsCallback(JSValueRef callback);
     void installStatisticsDidScanDataRecordsCallback(JSValueRef callback);
     void installStatisticsDidRunTelemetryCallback(JSValueRef callback);

@@ -71,6 +71,17 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef da
     WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsEnabled(enable);
 }
 
+void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->isResourceLoadStatisticsEphemeral([context, completionHandler](bool isEphemeral) {
+        completionHandler(isEphemeral, context);
+    });
+#else
+    completionHandler(false, context);
+#endif
+}
+
 bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef)
 {
     return WebKit::toImpl(dataStoreRef)->resourceLoadStatisticsEnabled();

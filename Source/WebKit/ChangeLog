@@ -1,3 +1,118 @@
+2020-03-02  John Wilander  <wilander@apple.com>
+
+        ResourceLoadStatistics: Enable cookie blocking and the Storage Access API in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208399
+        <rdar://problem/24731650>
+
+        Reviewed by Brent Fulgham.
+
+        This patch enables resource load statistics, or ITP, in ephemeral sessions.
+
+        Since full third-party cookie blocking is stateless, it can now be enabled in
+        ephemeral sessions. User interaction as a gate for calling the Storage Access
+        API can be captured in an ephemeral fashion as well to allow authenticated
+        embeds.
+
+        No actual statistics are captured which means that the constructor for
+        WebKit::WebResourceLoadStatisticsStore skips setting up the memory store,
+        the persistent store, and the database store.
+
+        The functionality that is supported is instead carried out in a set of
+        private "*Ephemeral()" functions, for instance hasStorageAccessEphemeral().
+        The public functions check ephemeral status and route accordingly.
+
+        A release assertion in WebResourceLoadStatisticsStore::postTask()
+        guarantees that we never make use of the statistics layer in ephemeral
+        sessions.
+
+        Early returns for ephemeral sessions has been removed in several places.
+        WebKit::WebResourceLoadObserver now accepts being instantiated in an
+        ephemeral session but is told whether it is and skips all statistics
+        collection except user interaction which is needed to gate the
+        Storage Access API. A release assertion in
+        WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain()
+        makes sure that we never start collecting statistics in ephemeral mode.
+
+        A selection of test cases have been added with an ephemeral setting and
+        a new test function isResourceLoadStatisticsEphemeral() has been added
+        so that layout tests can make sure that an ephemeral setup is running.
+        This last bit is important since test cases will likely still pass if a
+        regression were to make the test session persistent.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setIsRunningTest):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::postTask):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccessEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccessEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode):
+        (WebKit::WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteractionEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteractionEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteractionEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemoryEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+            Added a comment on why this function is not applicable to ephemeral sessions.
+        (WebKit::WebResourceLoadStatisticsStore::resume):
+            Added a comment on why this function is not applicable to ephemeral sessions.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::isResourceLoadStatisticsEphemeral const):
+        (WebKit::NetworkProcess::prepareToSuspend):
+            Skipped call to suspend ITP if it's running in ephemeral mode.
+        (WebKit::void NetworkProcess::resume):
+            Skipped call to resume ITP if it's running in ephemeral mode.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreIsStatisticsEphemeral):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::isResourceLoadStatisticsEphemeral):
+        (WebKit::NetworkProcessProxy::addSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::isResourceLoadStatisticsEphemeral const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::WebResourceLoadObserver):
+        (WebKit::WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::WebResourceLoadObserver::logFontLoad):
+        (WebKit::WebResourceLoadObserver::logCanvasRead):
+        (WebKit::WebResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebKit::WebResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logScreenAPIAccessed):
+        (WebKit::WebResourceLoadObserver::logSubresourceLoading):
+        (WebKit::WebResourceLoadObserver::logWebSocketLoading):
+        (WebKit::WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebKit::WebResourceLoadObserver::logSubresourceLoadingForTesting):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+
 2020-03-02  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Mapping from MIME type to UTI type should be done in the UI process

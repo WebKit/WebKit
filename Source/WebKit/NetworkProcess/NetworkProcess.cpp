@@ -1208,6 +1208,18 @@ void NetworkProcess::setResourceLoadStatisticsDebugMode(PAL::SessionID sessionID
     }
 }
 
+void NetworkProcess::isResourceLoadStatisticsEphemeral(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            completionHandler(resourceLoadStatistics->isEphemeral());
+            return;
+        }
+    } else
+        ASSERT_NOT_REACHED();
+    completionHandler(false);
+}
+
 void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
@@ -2136,8 +2148,10 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     forEachNetworkSession([&callbackAggregator](auto& networkSession) {
-        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics())
-            resourceLoadStatistics->suspend([callbackAggregator] { });
+        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics()) {
+            if (!resourceLoadStatistics->isEphemeral())
+                resourceLoadStatistics->suspend([callbackAggregator] { });
+        }
     });
 #endif
 
@@ -2185,8 +2199,10 @@ void NetworkProcess::resume()
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     forEachNetworkSession([](auto& networkSession) {
-        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics())
-            resourceLoadStatistics->resume();
+        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics()) {
+            if (!resourceLoadStatistics->isEphemeral())
+                resourceLoadStatistics->resume();
+        }
     });
 #endif
     

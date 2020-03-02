@@ -61,8 +61,9 @@ static bool is3xxRedirect(const ResourceResponse& response)
     return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
 }
 
-WebResourceLoadObserver::WebResourceLoadObserver()
-    : m_notificationTimer(*this, &WebResourceLoadObserver::updateCentralStatisticsStore)
+WebResourceLoadObserver::WebResourceLoadObserver(ResourceLoadStatistics::IsEphemeral isEphemeral)
+    : m_isEphemeral(isEphemeral)
+    , m_notificationTimer(*this, &WebResourceLoadObserver::updateCentralStatisticsStore)
 {
 }
 
@@ -90,6 +91,8 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
     
 ResourceLoadStatistics& WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
 {
+    RELEASE_ASSERT(!isEphemeral());
+
     return m_resourceStatisticsMap.ensure(domain, [&domain] {
         return ResourceLoadStatistics(domain);
     }).iterator->value;
@@ -140,6 +143,9 @@ void WebResourceLoadObserver::clearState()
 
 void WebResourceLoadObserver::logFontLoad(const Document& document, const String& familyName, bool loadStatus)
 {
+    if (isEphemeral())
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -165,6 +171,9 @@ void WebResourceLoadObserver::logFontLoad(const Document& document, const String
     
 void WebResourceLoadObserver::logCanvasRead(const Document& document)
 {
+    if (isEphemeral())
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -179,6 +188,9 @@ void WebResourceLoadObserver::logCanvasRead(const Document& document)
 
 void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, const String& textWritten)
 {
+    if (isEphemeral())
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -198,6 +210,9 @@ void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, 
     
 void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, const ResourceLoadStatistics::NavigatorAPI functionName)
 {
+    if (isEphemeral())
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -219,6 +234,9 @@ void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, 
     
 void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, const ResourceLoadStatistics::ScreenAPI functionName)
 {
+    if (isEphemeral())
+        return;
+
 #if ENABLE(WEB_API_STATISTICS)
     RegistrableDomain registrableDomain { document.url() };
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
@@ -240,6 +258,9 @@ void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, con
 
 void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse, FetchDestinationIsScriptLike isScriptLike)
 {
+    if (isEphemeral())
+        return;
+
     ASSERT(frame->page());
 
     if (!frame)
@@ -295,6 +316,9 @@ void WebResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Re
 
 void WebResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL)
 {
+    if (isEphemeral())
+        return;
+
     auto targetHost = targetURL.host();
     auto mainFrameHost = mainFrameURL.host();
     
@@ -330,10 +354,12 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 
     m_lastReportedUserInteractionMap.set(topFrameDomain, newTime);
 
-    auto& statistics = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-    statistics.hadUserInteraction = true;
-    statistics.lastSeen = newTime;
-    statistics.mostRecentUserInteractionTime = newTime;
+    if (!isEphemeral()) {
+        auto& statistics = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
+        statistics.hadUserInteraction = true;
+        statistics.lastSeen = newTime;
+        statistics.mostRecentUserInteractionTime = newTime;
+    }
 
     if (auto* frame = document.frame()) {
         if (auto* opener = frame->loader().opener()) {
@@ -372,6 +398,9 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 
 void WebResourceLoadObserver::logSubresourceLoadingForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification)
 {
+    if (isEphemeral())
+        return;
+
     auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(thirdPartyDomain);
     auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
     targetStatistics.lastSeen = lastSeen;

@@ -29,6 +29,7 @@
 
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadObserver.h>
+#include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 
@@ -38,7 +39,7 @@ class WebPage;
 
 class WebResourceLoadObserver final : public WebCore::ResourceLoadObserver {
 public:
-    WebResourceLoadObserver();
+    WebResourceLoadObserver(WebCore::ResourceLoadStatistics::IsEphemeral);
     ~WebResourceLoadObserver();
 
     void logSubresourceLoading(const WebCore::Frame*, const WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse, FetchDestinationIsScriptLike) final;
@@ -67,6 +68,10 @@ private:
 
     Vector<WebCore::ResourceLoadStatistics> takeStatistics();
     void requestStorageAccessUnderOpener(const WebCore::RegistrableDomain& domainInNeedOfStorageAccess, WebPage& openerPage, WebCore::Document& openerDocument);
+
+    bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; }
+
+    WebCore::ResourceLoadStatistics::IsEphemeral m_isEphemeral { WebCore::ResourceLoadStatistics::IsEphemeral::No };
 
     HashMap<WebCore::RegistrableDomain, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
     HashMap<WebCore::RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;

@@ -803,6 +803,8 @@ void NetworkConnectionToWebProcess::logUserInteraction(const RegistrableDomain& 
 void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics)
 {
     if (auto* networkSession = this->networkSession()) {
+        if (networkSession->sessionID().isEphemeral())
+            return;
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
     }

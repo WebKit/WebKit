@@ -972,6 +972,16 @@ void NetworkProcessProxy::setResourceLoadStatisticsDebugMode(PAL::SessionID sess
     sendWithAsyncReply(Messages::NetworkProcess::SetResourceLoadStatisticsDebugMode(sessionID, debugMode), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::isResourceLoadStatisticsEphemeral(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::IsResourceLoadStatisticsEphemeral(sessionID), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

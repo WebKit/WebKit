@@ -489,8 +489,8 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_thirdPartyCookieBlockingMode = parameters.thirdPartyCookieBlockingMode;
-    if (parameters.resourceLoadStatisticsEnabled && !parameters.sessionID.isEphemeral() && !ResourceLoadObserver::sharedIfExists())
-        ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
+    if (parameters.resourceLoadStatisticsEnabled && !ResourceLoadObserver::sharedIfExists())
+        ResourceLoadObserver::setShared(*new WebResourceLoadObserver(parameters.sessionID.isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
 #endif
 
     resetPlugInAutoStartOriginHashes(WTFMove(parameters.plugInAutoStartOriginHashes));
@@ -1651,12 +1651,12 @@ StorageAreaMap* WebProcess::storageAreaMap(StorageAreaIdentifier identifier) con
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled || (m_sessionID && m_sessionID->isEphemeral()))
+    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled)
         return;
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enabled);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (enabled && !ResourceLoadObserver::sharedIfExists())
-        WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
+        WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver(m_sessionID && m_sessionID->isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
 #endif
 }
 

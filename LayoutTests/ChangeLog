@@ -1,3 +1,41 @@
+2020-03-02  John Wilander  <wilander@apple.com>
+
+        ResourceLoadStatistics: Enable cookie blocking and the Storage Access API in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=208399
+        <rdar://problem/24731650>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html:
+            Just moved the <!-- webkit-test-runner [ useFlexibleViewport=true useEphemeralSession=true ] -->
+            header up to the top.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database.html: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html: Added.
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-ephemeral.html: Added.
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html:
+            Added explicit disabling of resource load statistics. However, something enables it again. See
+            Comment under TestExpectation files below.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-ephemeral.html: Added.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie-ephemeral.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture-ephemeral.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+            These two test cases are now being skipped because resource load statistics are on in ephemeral sessions:
+            http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.html
+            http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html
+            https://bugs.webkit.org/show_bug.cgi?id=208400 tracks the work to figure out how this can be tested
+            since some bug in the TestRunner is re-enabling resource load statistics as soon as you turn it off
+            in ephemeral sessions.
+
 2020-03-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to distributed notifications in the WebContent process

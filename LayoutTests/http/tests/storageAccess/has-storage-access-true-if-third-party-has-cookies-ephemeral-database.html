@@ -25,14 +25,15 @@
         const statisticsUrl = "http://" + hostUnderTest;
         function runTest() {
             testRunner.setUseITPDatabase(true);
-            // This test should not call setEnableFeature(true) because ephemeral sessions do not use ITP.
             if (document.location.hash !== "#firstPartyCookieSet") {
                 document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html#firstPartyCookieSet";
             } else {
-                let iframeElement = document.createElement("iframe");
-                iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                iframeElement.src = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
-                document.body.appendChild(iframeElement);
+                setEnableFeature(false, function () {
+                    let iframeElement = document.createElement("iframe");
+                    iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                    iframeElement.src = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldGrantAccess";
+                    document.body.appendChild(iframeElement);
+                });
             }
         }
     </script>

@@ -2006,7 +2006,7 @@ bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (m_sessionID.isEphemeral() || enabled == resourceLoadStatisticsEnabled())
+    if (enabled == resourceLoadStatisticsEnabled())
         return;
 
     if (enabled) {
@@ -2061,6 +2061,27 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 #else
     UNUSED_PARAM(enabled);
     UNUSED_PARAM(completionHandler);
+#endif
+}
+
+void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(bool)>&& completionHandler) const
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!resourceLoadStatisticsEnabled() || !m_sessionID.isEphemeral()) {
+        completionHandler(false);
+        return;
+    }
+
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->isResourceLoadStatisticsEphemeral(m_sessionID, WTFMove(completionHandler));
+            ASSERT(processPools().size() == 1);
+            break;
+        }
+    }
+    ASSERT(!completionHandler);
+#else
+    completionHandler(false);
 #endif
 }
 

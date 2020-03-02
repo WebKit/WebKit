@@ -37,6 +37,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceLoadObserver.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -98,9 +99,9 @@ public:
     using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
     using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
 
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost));
+        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -251,6 +252,7 @@ struct ThirdPartyData {
     void submitTelemetry(CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
+    void clearInMemoryEphemeral(CompletionHandler<void()>&&);
 
     void setTimeToLiveUserInteraction(Seconds, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds, CompletionHandler<void()>&&);
@@ -289,14 +291,25 @@ struct ThirdPartyData {
     void aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
     void suspend(CompletionHandler<void()>&&);
     void resume();
+    
+    bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; };
 
 private:
-    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);
+    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral);
 
     void postTask(WTF::Function<void()>&&);
     static void postTaskReply(WTF::Function<void()>&&);
 
     void performDailyTasks();
+
+    void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
+    void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void requestStorageAccessUnderOpenerEphemeral(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
+    void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+
+    void logUserInteractionEphemeral(const TopFrameDomain&, CompletionHandler<void()>&&);
+    void clearUserInteractionEphemeral(const RegistrableDomain&, CompletionHandler<void()>&&);
+    void hasHadUserInteractionEphemeral(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
 
     StorageAccessStatus storageAccessStatus(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain);
 
@@ -308,6 +321,9 @@ private:
     std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
 
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
+
+    WebCore::ResourceLoadStatistics::IsEphemeral m_isEphemeral { WebCore::ResourceLoadStatistics::IsEphemeral::No };
+    HashSet<RegistrableDomain> m_domainsWithEphemeralUserInteraction;
 
     bool m_hasScheduledProcessStats { false };
 

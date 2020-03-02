@@ -1420,6 +1420,15 @@ void TestRunner::setStatisticsEnabled(bool value)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+bool TestRunner::isStatisticsEphemeral()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("IsStatisticsEphemeral"));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
 void TestRunner::setStatisticsDebugMode(bool value, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(SetStatisticsDebugModeCallbackID, completionHandler);

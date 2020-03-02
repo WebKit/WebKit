@@ -88,7 +88,7 @@ private:
 class TestController {
 public:
     static TestController& singleton();
-    static WKWebsiteDataStoreRef websiteDataStore();
+    static WKWebsiteDataStoreRef defaultWebsiteDataStore();
 
     static const unsigned viewWidth;
     static const unsigned viewHeight;
@@ -110,6 +110,8 @@ public:
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKContextRef context() { return m_context.get(); }
     WKUserContentControllerRef userContentController() { return m_userContentController.get(); }
+
+    WKWebsiteDataStoreRef websiteDataStore();
 
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
 
@@ -208,6 +210,7 @@ public:
     void setShouldAllowDeviceOrientationAndMotionAccess(bool value) { m_shouldAllowDeviceOrientationAndMotionAccess = value; }
 
     void setStatisticsEnabled(bool value);
+    bool isStatisticsEphemeral();
     void setStatisticsDebugMode(bool value);
     void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
     void setStatisticsLastSeen(WKStringRef hostName, double seconds);
