@@ -134,10 +134,9 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
-    frame.loader().addExtraFieldsToSubresourceRequest(request);
-
     auto& sourceOrigin = document.securityOrigin();
-    FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin.toString());
+    FrameLoader::addHTTPOriginIfNeeded(request, SecurityPolicy::generateOriginHeader(document.referrerPolicy(), request.url(), sourceOrigin));
+    frame.loader().addExtraFieldsToSubresourceRequest(request);
     request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL);
     if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer()))
         request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url());

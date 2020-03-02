@@ -1,5 +1,38 @@
 2020-03-02  Rob Buis  <rbuis@igalia.com>
 
+        Fix behavior of pings regarding Origin header
+        https://bugs.webkit.org/show_bug.cgi?id=207102
+
+        Reviewed by Youenn Fablet.
+
+        Import relevant tests.
+
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer-when-downgrade-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer-when-downgrade.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin-when-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin-when-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-same-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-same-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin-when-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin-when-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-unsafe-url-expected.txt: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin-unsafe-url.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin.html: Added.
+        * web-platform-tests/html/semantics/links/downloading-resources/header-origin.js: Added.
+        (testOriginHeader):
+        (pollResult.return.new.Promise.):
+        (pollResult.return.new.Promise):
+        * web-platform-tests/html/semantics/links/downloading-resources/w3c-import.log:
+
+2020-03-02  Rob Buis  <rbuis@igalia.com>
+
         Add referrerpolicy attribute support for anchors
         https://bugs.webkit.org/show_bug.cgi?id=208424
 

@@ -14,6 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer-when-downgrade.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-no-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin-when-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin-when-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-strict-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin-unsafe-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer-when-downgrade.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-referrer-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/downloading-resources/header-referrer-origin-when-cross-origin.html
