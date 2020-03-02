@@ -23,18 +23,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef UTIUtilities_h
+#define UTIUtilities_h
 
-#include <wtf/text/WTFString.h>
+#import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
-
 WEBCORE_EXPORT String MIMETypeFromUTI(const String&);
 String MIMETypeFromUTITree(const String&);
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
-
-WEBCORE_EXPORT void setUTIFromMIMETypeMap(HashMap<String, String>&&);
-WEBCORE_EXPORT const HashMap<String, String>& createUTIFromMIMETypeMap();
-WEBCORE_EXPORT const Vector<String>& mimeTypes();
 }
+
+#endif // UTIUtilities_h

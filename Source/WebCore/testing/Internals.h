@@ -938,8 +938,6 @@ public:
 
     String mediaMIMETypeForExtension(const String& extension);
 
-    String getUTIFromMIMEType(const String& mimeType);
-
     bool supportsPictureInPicture();
 
     String focusRingColor();
