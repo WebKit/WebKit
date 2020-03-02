@@ -30,7 +30,9 @@
     var notifyName = 0;
     // The order of notifications should be Row Count, Row Collapsed, Row Count, Row Expanded
     function notifyCallback(element, notification) {  
-        if (notification == "AXLoadComplete" || notification == "AXLayoutComplete")
+        if (notification == "AXLoadComplete"
+            || notification == "AXLayoutComplete"
+            || notification == "AXFocusChanged")
             return;
         notifyName = notification;
         if (notifyCount == 0)

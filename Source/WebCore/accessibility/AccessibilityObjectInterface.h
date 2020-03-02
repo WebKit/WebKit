@@ -1160,6 +1160,7 @@ public:
     virtual AXCoreObject* highestEditableAncestor() = 0;
 
     virtual const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const = 0;
+    virtual AXCoreObject* webAreaObject() const = 0;
 
     virtual void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData&) = 0;
     virtual void clearIsIgnoredFromParentData() = 0;

@@ -92,7 +92,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
         [obj->wrapper() accessibilityPostedNotification:notificationString];
 }
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
+void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
 {
     postPlatformNotification(object, AXSelectedTextChanged);
 }
@@ -102,12 +102,12 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     postPlatformNotification(object, AXValueChanged);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&)
+void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* object, AXTextEditType, const String&, AXTextEditType, const String&, const VisiblePosition&)
 {
     postPlatformNotification(object, AXValueChanged);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&, HTMLTextFormControlElement&)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* object, const String&, const String&, HTMLTextFormControlElement&)
 {
     postPlatformNotification(object, AXValueChanged);
 }

@@ -46,6 +46,9 @@ Ref<AccessibilityController> AccessibilityController::create()
 
 AccessibilityController::AccessibilityController()
 {
+#if PLATFORM(COCOA)
+    m_useAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
+#endif
 }
 
 AccessibilityController::~AccessibilityController()
@@ -77,11 +80,6 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
-
-    // Now that we have a root and the isolated tree is generated, set
-    // m_useAXThread to true for next request to be handled in the secondary thread.
-    if (WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page()))
-        m_useAXThread = true;
 
     return AccessibilityUIElement::create(root);
 }

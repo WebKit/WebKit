@@ -41,7 +41,7 @@ public:
 
     virtual ~AccessibilityScrollView();
 
-    AccessibilityObject* webAreaObject() const;
+    AccessibilityObject* webAreaObject() const override;
 
 private:
     explicit AccessibilityScrollView(ScrollView*);
@@ -71,7 +71,7 @@ private:
     LayoutRect elementRect() const override;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
-    
+
     AccessibilityObject* firstChild() const override { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);

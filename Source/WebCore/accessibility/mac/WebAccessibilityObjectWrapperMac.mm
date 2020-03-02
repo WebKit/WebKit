@@ -1334,7 +1334,11 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
 
 - (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
 {
-    return textMarkerRangeFromVisiblePositions(self.axBackingObject->axObjectCache(), startPosition, endPosition);
+    auto* backingObject = self.updateObjectBackingStore;
+    if (!backingObject)
+        return nil;
+
+    return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), startPosition, endPosition);
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -1955,17 +1959,18 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
 - (id)associatedPluginParent
 {
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
-        if (!protectedSelf.get().axBackingObject || !protectedSelf.get().axBackingObject->hasApplePDFAnnotationAttribute())
+        auto* backingObject = protectedSelf.get().axBackingObject;
+        if (!backingObject || !backingObject->hasApplePDFAnnotationAttribute())
             return nil;
-    
-        if (!protectedSelf.get().axBackingObject->document()->isPluginDocument())
+
+        if (!backingObject->document()->isPluginDocument())
             return nil;
-        
-        Widget* pluginWidget = static_cast<PluginDocument*>(protectedSelf.get().axBackingObject->document())->pluginWidget();
+
+        Widget* pluginWidget = static_cast<PluginDocument*>(backingObject->document())->pluginWidget();
         if (!pluginWidget || !pluginWidget->isPluginViewBase())
             return nil;
-        
-        return static_cast<PluginViewBase*>(pluginWidget)->accessibilityAssociatedPluginParentForElement(protectedSelf.get().axBackingObject->element());
+
+        return static_cast<PluginViewBase*>(pluginWidget)->accessibilityAssociatedPluginParentForElement(backingObject->element());
     });
 }
 
@@ -3071,7 +3076,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"])
         return [self baseAccessibilitySpeechHint];
 
-    // Used by DRT to find an accessible node by its element id.
+    // Used by TestRunner and DRT AccessibilityController to find an accessible node by its element id.
     if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
         return backingObject->identifierAttribute();
 
@@ -3987,8 +3992,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXStringForTextMarkerRange"]) {
-        RefPtr<Range> range = [self rangeForTextMarkerRange:textMarkerRange];
-        return backingObject->stringForRange(range);
+        return Accessibility::retrieveValueFromMainThread<String>([&textMarkerRange, protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> String {
+            RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
+            auto* backingObject = protectedSelf.get().axBackingObject;
+            return backingObject ? backingObject->stringForRange(range) : String();
+        });
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerForPosition"]) {

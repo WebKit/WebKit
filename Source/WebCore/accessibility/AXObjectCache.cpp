@@ -1364,6 +1364,10 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
         }
     }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(object, AXSelectedTextChanged);
+#endif
+
     postTextStateChangeNotification(object, intent, selection);
 #else
     postTextStateChangeNotification(node, intent, selection);
@@ -3139,6 +3143,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification noti
     switch (notification) {
     case AXCheckedStateChanged:
     case AXChildrenChanged:
+    case AXSelectedTextChanged:
     case AXValueChanged: {
         tree->removeSubtree(object->objectID());
         auto* parent = object->parentObject();
@@ -3239,12 +3244,12 @@ bool isNodeAriaVisible(Node* node)
     return !requiresAriaHiddenFalse || ariaHiddenFalsePresent;
 }
 
-AccessibilityObject* AXObjectCache::rootWebArea()
+AXCoreObject* AXObjectCache::rootWebArea()
 {
     AXCoreObject* rootObject = this->rootObject();
     if (!rootObject || !rootObject->isAccessibilityScrollView())
         return nullptr;
-    return downcast<AccessibilityScrollView>(*rootObject).webAreaObject();
+    return rootObject->webAreaObject();
 }
 
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)

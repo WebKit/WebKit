@@ -59,6 +59,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::ElementRect, object.elementRect());
+    setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
+    setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object.hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
     setProperty(AXPropertyName::IsActiveDescendantOfFocusedContainer, object.isActiveDescendantOfFocusedContainer());
@@ -206,7 +208,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::HierarchicalLevel, object.hierarchicalLevel());
     setProperty(AXPropertyName::Language, object.language());
     setProperty(AXPropertyName::CanHaveSelectedChildren, object.canHaveSelectedChildren());
-    setProperty(AXPropertyName::HasARIAValueNow, object.hasARIAValueNow());
     setProperty(AXPropertyName::TagName, object.tagName().isolatedCopy());
     setProperty(AXPropertyName::SupportsLiveRegion, object.supportsLiveRegion());
     setProperty(AXPropertyName::IsInsideLiveRegion, object.isInsideLiveRegion());
@@ -378,6 +379,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     }
     
     if (isRoot) {
+        setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
         setProperty(AXPropertyName::SessionID, object.sessionID());
         setProperty(AXPropertyName::DocumentURI, object.documentURI());
@@ -862,6 +864,15 @@ void AXIsolatedObject::updateBackingStore()
         if (auto tree = this->tree())
             tree->applyPendingChanges();
     }
+}
+
+String AXIsolatedObject::stringForRange(RefPtr<Range> range) const
+{
+    return Accessibility::retrieveValueFromMainThread<String>([&range, this] () -> String {
+        if (auto* object = associatedAXObject())
+            return object->stringForRange(range);
+        return String();
+    });
 }
 
 Vector<RefPtr<Range>> AXIsolatedObject::findTextRanges(AccessibilitySearchTextCriteria const& criteria) const
@@ -1868,12 +1879,6 @@ AccessibilityObjectInclusion AXIsolatedObject::accessibilityPlatformIncludesObje
 {
     ASSERT_NOT_REACHED();
     return AccessibilityObjectInclusion::DefaultBehavior;
-}
-
-bool AXIsolatedObject::hasApplePDFAnnotationAttribute() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 const AccessibilityScrollView* AXIsolatedObject::ancestorAccessibilityScrollView(bool) const

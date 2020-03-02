@@ -55,10 +55,10 @@ static void coreRootObjectWrapperDetachedCallback(AtkObject* wrapper, const char
 
 static AccessibilityObjectWrapper* rootWebAreaWrapper(AXCoreObject& rootObject)
 {
-    if (!rootObject.isAccessibilityScrollView())
+    if (!rootObject.isScrollView())
         return nullptr;
 
-    if (auto* webAreaObject = downcast<AccessibilityScrollView>(rootObject).webAreaObject())
+    if (auto* webAreaObject = rootObject.webAreaObject())
         return webAreaObject->wrapper();
 
     return nullptr;

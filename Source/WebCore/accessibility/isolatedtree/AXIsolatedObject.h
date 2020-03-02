@@ -144,6 +144,7 @@ private:
         FileUploadButtonReturnsValueInTitle,
         FocusableAncestor,
         HasARIAValueNow,
+        HasApplePDFAnnotationAttribute,
         HasChildren,
         HasPopup,
         HeaderContainer,
@@ -328,6 +329,7 @@ private:
         VerticalScrollBar,
         VisibleChildren,
         VisibleRows,
+        WebArea,
     };
     
     typedef std::pair<AXID, AXID> AccessibilityIsolatedTreeMathMultiscriptPair;
@@ -643,7 +645,7 @@ private:
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override { return VisiblePositionRange(); }
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override { return VisiblePositionRange(); }
     RefPtr<Range> rangeForPlainTextRange(const PlainTextRange&) const override { return nullptr; }
-    String stringForRange(RefPtr<Range>) const override { return String(); }
+    String stringForRange(RefPtr<Range>) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
     IntRect boundsForRange(const RefPtr<Range>) const override { return IntRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const override { return 0; }
@@ -875,8 +877,9 @@ private:
     void overrideAttachmentParent(AXCoreObject* parent) override;
     bool accessibilityIgnoreAttachment() const override;
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const override;
-    bool hasApplePDFAnnotationAttribute() const override;
+    bool hasApplePDFAnnotationAttribute() const override { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const override;
+    AXCoreObject* webAreaObject() const override { return objectAttributeValue(AXPropertyName::WebArea); }
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData&) override;
     void clearIsIgnoredFromParentData() override;
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;

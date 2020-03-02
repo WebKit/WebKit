@@ -1492,7 +1492,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 
 bool AccessibilityRenderObject::isLoaded() const
 {
-    return !m_renderer->document().parser();
+    return m_renderer ? !m_renderer->document().parser() : false;
 }
 
 double AccessibilityRenderObject::estimatedLoadingProgress() const
@@ -1572,9 +1572,13 @@ String AccessibilityRenderObject::selectedText() const
 
 String AccessibilityRenderObject::accessKey() const
 {
+    if (!m_renderer)
+        return String();
+
     Node* node = m_renderer->node();
     if (!is<Element>(node))
-        return nullAtom();
+        return String();
+
     return downcast<Element>(*node).attributeWithoutSynchronization(accesskeyAttr);
 }
 
