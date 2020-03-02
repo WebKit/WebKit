@@ -28,9 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "AudioMediaStreamTrackRenderer.h"
 #include "MediaPlayerPrivateRemote.h"
-#include "RemoteAudioMediaStreamTrackRenderer.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -253,7 +251,6 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
     if (settings.useGPUProcessForMedia()) {
-        WebCore::AudioMediaStreamTrackRenderer::setCreator(WebKit::AudioMediaStreamTrackRenderer::create);
         WebCore::SampleBufferDisplayLayer::setCreator([](auto& client, bool hideRootLayer, auto size) {
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client, hideRootLayer, size);
         });

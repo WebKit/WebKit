@@ -1,3 +1,19 @@
+2020-03-02  youenn fablet  <youenn@apple.com>
+
+        Enable audio MediaStreamTrack rendering in GPUProcess if audio capture happens in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=208435
+
+        Reviewed by Eric Carlson.
+
+        Instead of enabling audio track rendering in GPUProcess based on media flag,
+        use the audio capture flag.
+        This makes sure things work properly on iOS, where an audio session might interrupt other sessions.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::setupCaptureProcesses):
+
 2020-03-02  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for anchors
