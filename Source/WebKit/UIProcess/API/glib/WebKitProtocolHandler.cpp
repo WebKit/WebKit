@@ -286,7 +286,14 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "  <td><div class=\"titlename\">Type</div></td>"
         "  <td>%s</td>"
         " </tbody></tr>",
-        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland ? "Wayland" : "X11");
+#if PLATFORM(WAYLAND)
+        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland ? "Wayland" :
+#endif
+#if PLATFORM(X11)
+        PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11 ? "X11" :
+#endif
+        "Unknown"
+    );
 #endif
 
     auto rect = IntRect(screenRect(nullptr));

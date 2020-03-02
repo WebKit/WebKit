@@ -144,7 +144,10 @@ private:
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
         // Position a toplevel window is not supported under wayland.
-        if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland) {
+#if PLATFORM(WAYLAND)
+        if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
+#endif
+        {
             gtk_window_get_position(window, &geometry.x, &geometry.y);
             if (geometry.x != targetGeometry->x || geometry.y != targetGeometry->y)
                 return FALSE;
@@ -172,7 +175,10 @@ private:
         if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
             bool needsMove = false;
             // Position a toplevel window is not supported under wayland.
-            if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland) {
+#if PLATFORM(WAYLAND)
+            if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
+#endif
+            {
                 if (geometry.x >= 0 && geometry.y >= 0) {
                     int x, y;
                     gtk_window_get_position(GTK_WINDOW(window), &x, &y);

@@ -1,3 +1,19 @@
+2020-03-01  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] Fix the build when Wayland target is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=208407
+
+        Reviewed by Darin Adler.
+
+        Values in the enum WebCore::PlatformDisplay::Type are only defined when
+        their corresponding platform targets are enabled, so we need #if checks
+        around uses of them.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::windowConfigureEventCallback):
+
 2020-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r257618.
