@@ -48,6 +48,15 @@ HitTestLocation::HitTestLocation(const FloatPoint& point, const FloatQuad& quad)
 {
 }
 
+HitTestLocation::HitTestLocation(const LayoutRect& rect)
+    : m_point { rect.center() } // Rounded to an integer point; it may not be the exact center.
+    , m_boundingBox { rect }
+    , m_transformedPoint { rect.center() }
+    , m_transformedRect { FloatQuad { m_boundingBox } }
+    , m_isRectBased { true }
+{
+}
+
 HitTestLocation::HitTestLocation(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
     : m_point(centerPoint)
     , m_boundingBox(rectForPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding))

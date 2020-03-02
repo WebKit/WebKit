@@ -128,7 +128,6 @@
 #include "VoidCallback.h"
 #include "WheelEventDeltaFilter.h"
 #include "Widget.h"
-#include <wtf/Deque.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -927,26 +926,29 @@ static bool isEditableTextInputElement(const Element& element)
 
 Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
 {
+    auto frameView = makeRefPtr(mainFrame().view());
+    if (!frameView)
+        return { };
+
+    auto document = makeRefPtr(mainFrame().document());
+    if (!document)
+        return { };
+
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::CollectMultipleElements, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    LayoutRect searchRectInMainFrameCoordinates = frameView->rootViewToContents(roundedIntRect(searchRectInRootViewCoordinates));
+    HitTestResult hitTestResult { searchRectInMainFrameCoordinates };
+    if (!document->hitTest(hitType, hitTestResult))
+        return { };
+
     Vector<Ref<Element>> result;
-    forEachDocument([&] (Document& document) {
-        Deque<Node*> nodesToSearch;
-        nodesToSearch.append(&document);
-        while (!nodesToSearch.isEmpty()) {
-            auto* node = nodesToSearch.takeFirst();
-
-            // It is possible to have nested text input contexts (e.g. <input type='text'> inside contenteditable) but
-            // in this case we just take the outermost context and skip the rest.
-            if (!is<Element>(node) || !isEditableTextInputElement(downcast<Element>(*node))) {
-                for (auto* child = node->firstChild(); child; child = child->nextSibling())
-                    nodesToSearch.append(child);
-                continue;
-            }
-
-            auto& element = downcast<Element>(*node);
-            if (searchRectInRootViewCoordinates.intersects(element.clientRect()))
-                result.append(element);
+    auto& nodeSet = hitTestResult.listBasedTestResult();
+    result.reserveInitialCapacity(nodeSet.size());
+    for (auto& node : nodeSet) {
+        if (is<Element>(node) && isEditableTextInputElement(downcast<Element>(*node))) {
+            ASSERT(searchRectInRootViewCoordinates.intersects(downcast<Element>(*node).clientRect()));
+            result.uncheckedAppend(downcast<Element>(*node));
         }
-    });
+    }
     return result;
 }
 

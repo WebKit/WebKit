@@ -76,7 +76,6 @@ static NSString *applyIframe(NSString *HTMLString)
 TEST(WebKit, RequestTextInputContext)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetThreadedScrollingEnabled((WKPreferencesRef)[configuration preferences], false);
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     NSArray<_WKTextInputContext *> *contexts;
@@ -133,23 +132,19 @@ TEST(WebKit, RequestTextInputContext)
 
     // Inputs scrolled outside the requested rect; should not be included.
 
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br><div style='width: 100px; height: 5000px;'></div>")];
-#if PLATFORM(MAC)
-    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 5000);"];
-#else
-    [webView scrollView].contentOffset = CGPointMake(0, 5000);
-#endif
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br><div style='width: 100px; height: 10000px;'></div>")];
+    [webView stringByEvaluatingJavaScript:@"window.scrollTo(0, 5000)"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(5000, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(0UL, contexts.count);
 
     // Inputs scrolled into the requested rect.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px; position: absolute; top: 5000px;'><br><div style='width: 100px; height: 10000px;'></div>")];
-#if PLATFORM(MAC)
-    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 5000);"];
-#else
-    [webView scrollView].contentOffset = CGPointMake(0, 5000);
-#endif
+    [webView stringByEvaluatingJavaScript:@"window.scrollTo(0, 5000)"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(5000, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
@@ -159,16 +154,17 @@ TEST(WebKit, RequestTextInputContext)
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(3UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 100, 50, 50), contexts[0].boundingRect);
     EXPECT_EQ(CGRectMake(0, 50, 50, 50), contexts[1].boundingRect);
-    EXPECT_EQ(CGRectMake(0, 100, 50, 50), contexts[2].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[2].boundingRect);
 
-    // Nested <input>-inside-contenteditable. Only the contenteditable is considered.
+    // Nested <input>-inside-contenteditable.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<div contenteditable style='width: 100px; height: 100px;'><input type='text' style='width: 50px; height: 50px;'></div>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
-    EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
+    EXPECT_EQ(2UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[1].boundingRect);
 }
 
 TEST(WebKit, DISABLED_FocusTextInputContext)

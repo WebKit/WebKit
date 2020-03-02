@@ -1,3 +1,20 @@
+2020-03-02  Daniel Bates  <dabates@apple.com>
+
+        Page::editableElementsInRect() should find nested editable elements and return found elements in paint order
+        https://bugs.webkit.org/show_bug.cgi?id=208352
+        <rdar://problem/59867815>
+
+        Reviewed by Wenson Hsieh.
+
+        Update test results to reflect the new behavior. To do this I also need to fix up the test code
+        to actually scroll the web content. This also means we now execute the same code on both Mac and
+        iOS to do the scrolling: window.scrollTo(0, 5000). Also fixed up sub-test "Inputs scrolled outside
+        the requested rect; should not be included." to use a 10000px height <div> so that you can scroll
+        to a y position of 5000. Otherwise, it's impossible to do because the page height is < 5000px.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TEST):
+
 2020-03-02  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, rolling out r257687.
