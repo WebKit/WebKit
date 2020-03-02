@@ -1,3 +1,15 @@
+2020-03-01  Charles Turner  <cturner@igalia.com>
+
+        undefined reference to `JSC::ExecutableBase::hasJITCodeForCall() const'
+        https://bugs.webkit.org/show_bug.cgi?id=207890
+
+        Reviewed by Yusuke Suzuki.
+
+        Encountered on arm-buildroot-linux-gnueabihf with GCC 9.2.0.
+
+        * runtime/NativeExecutable.cpp: Inclusion of
+        ExecutableBaseInlines.h resolves the issue for me.
+
 2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove std::lock_guard
