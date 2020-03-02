@@ -1,3 +1,12 @@
+2020-03-02  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] is css3/shapes/shape-outside/shape-image/shape-image-025.html flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208476
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for LayoutTests/accessibility/mac/search-text/search-text.html in IsolatedTree mode.
