@@ -42,10 +42,10 @@ class FloatPolygonEdge;
 
 class FloatPolygon {
 public:
-    FloatPolygon(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule);
+    FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule);
 
-    const FloatPoint& vertexAt(unsigned index) const { return (*m_vertices)[index]; }
-    unsigned numberOfVertices() const { return m_vertices->size(); }
+    const FloatPoint& vertexAt(unsigned index) const { return m_vertices[index]; }
+    unsigned numberOfVertices() const { return m_vertices.size(); }
 
     WindRule fillRule() const { return m_fillRule; }
 
@@ -58,12 +58,12 @@ public:
     bool isEmpty() const { return m_empty; }
 
 private:
-    typedef PODIntervalTree<float, FloatPolygonEdge*> EdgeIntervalTree;
+    using EdgeIntervalTree = PODIntervalTree<float, FloatPolygonEdge*>;
 
     bool containsNonZero(const FloatPoint&) const;
     bool containsEvenOdd(const FloatPoint&) const;
 
-    std::unique_ptr<Vector<FloatPoint>> m_vertices;
+    Vector<FloatPoint> m_vertices;
     WindRule m_fillRule;
     FloatRect m_boundingBox;
     bool m_empty;

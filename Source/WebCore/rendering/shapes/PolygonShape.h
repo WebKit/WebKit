@@ -59,7 +59,7 @@ private:
 class PolygonShape : public Shape {
     WTF_MAKE_NONCOPYABLE(PolygonShape);
 public:
-    PolygonShape(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule)
+    PolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
         : m_polygon(WTFMove(vertices), fillRule)
     {
     }

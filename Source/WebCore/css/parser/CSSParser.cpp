@@ -263,7 +263,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), builderState, m_context);
 }
 
-std::unique_ptr<Vector<double>> CSSParser::parseKeyframeKeyList(const String& selector)
+Vector<double> CSSParser::parseKeyframeKeyList(const String& selector)
 {
     return CSSParserImpl::parseKeyframeKeyList(selector);
 }

@@ -373,7 +373,7 @@ StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool condition
 {
 }
 
-StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported,  std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
     : StyleRuleGroup(StyleRuleType::Supports, WTFMove(deferredRules))
     , m_conditionText(conditionText)
     , m_conditionIsSupported(conditionIsSupported)

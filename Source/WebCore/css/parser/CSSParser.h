@@ -63,7 +63,7 @@ public:
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
-    static std::unique_ptr<Vector<double>> parseKeyframeKeyList(const String&);
+    static Vector<double> parseKeyframeKeyList(const String&);
     
     bool parseSupportsCondition(const String&);
 

@@ -290,7 +290,7 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     return CSSSelectorList { Vector<std::unique_ptr<CSSParserSelector>>::from(WTFMove(selector)) };
 }
 
-std::unique_ptr<Vector<double>> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
+Vector<double> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
 {
     return consumeKeyframeKeyList(CSSTokenizer(keyList).tokenRange());
 }
@@ -654,8 +654,8 @@ RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    std::unique_ptr<Vector<double>> keyList = consumeKeyframeKeyList(prelude);
-    if (!keyList)
+    auto keyList = consumeKeyframeKeyList(prelude);
+    if (keyList.isEmpty())
         return nullptr;
 
     if (m_observerWrapper) {
@@ -819,24 +819,24 @@ void CSSParserImpl::consumeDeclarationValue(CSSParserTokenRange range, CSSProper
     CSSPropertyParser::parseValue(propertyID, important, range, m_context, m_parsedProperties, ruleType);
 }
 
-std::unique_ptr<Vector<double>> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
+Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
 {
-    std::unique_ptr<Vector<double>> result = std::unique_ptr<Vector<double>>(new Vector<double>);
+    Vector<double> result;
     while (true) {
         range.consumeWhitespace();
         const CSSParserToken& token = range.consumeIncludingWhitespace();
         if (token.type() == PercentageToken && token.numericValue() >= 0 && token.numericValue() <= 100)
-            result->append(token.numericValue() / 100);
+            result.append(token.numericValue() / 100);
         else if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "from"))
-            result->append(0);
+            result.append(0);
         else if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "to"))
-            result->append(1);
+            result.append(1);
         else
-            return nullptr; // Parser error, invalid value in keyframe selector
+            return { }; // Parser error, invalid value in keyframe selector
         if (range.atEnd())
             return result;
         if (range.consume().type() != CommaToken)
-            return nullptr; // Parser error
+            return { }; // Parser error
     }
 }
 
