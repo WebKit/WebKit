@@ -189,8 +189,17 @@ typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
     UIDatePickerModeYearAndMonth = 4269,
 };
 
+#if HAVE(UIDATEPICKER_STYLE)
+typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
+    UIDatePickerStyleAutomatic = 0
+}
+#endif
+
 @interface UIDatePicker ()
 @property (nonatomic, readonly, getter=_contentWidth) CGFloat contentWidth;
+#if HAVE(UIDATEPICKER_STYLE)
+@property (nonatomic, readwrite, assign) UIDatePickerStyle preferredDatePickerStyle;
+#endif
 @end
 
 @interface UIDevice ()

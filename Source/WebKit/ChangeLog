@@ -1,3 +1,17 @@
+2020-03-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Add date/time style to macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=208456
+
+        Reviewed by Wenson Hsieh.
+
+        Add style flag for date/time pickers on macCatalyst.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePicker datePickerStyle]):
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+
 2020-03-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement the remote ImageBuffer

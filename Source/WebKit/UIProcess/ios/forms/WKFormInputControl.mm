@@ -68,6 +68,10 @@ using namespace WebKit;
 
 @end
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKFormInputControlAdditions.mm>
+#endif
+
 @implementation WKDateTimePicker
 
 static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
@@ -79,6 +83,13 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     return _datePicker.get();
 }
+
+#if !USE(APPLE_INTERNAL_SDK) && HAVE(UIDATEPICKER_STYLE)
+- (UIDatePickerStyle)datePickerStyle
+{
+    return UIDatePickerStyleAutomatic;
+}
+#endif
 
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode
 {
@@ -109,6 +120,9 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     auto size = currentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
 
     _datePicker = adoptNS([[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)]);
+#if HAVE(UIDATEPICKER_STYLE)
+    [_datePicker setPreferredDatePickerStyle:[self datePickerStyle]];
+#endif
     _datePicker.get().datePickerMode = mode;
     _datePicker.get().hidden = NO;
     
