@@ -698,12 +698,6 @@ def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
 end
 
 def runBigIntEnabled(*optionalTestSpecificOptions)
-    # FIXME: <rdar://problem/40331121>
-    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin")
-        skip
-        return
-    end
-
     run("big-int-enabled", "--useBigInt=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
@@ -930,7 +924,7 @@ def defaultNoSamplingProfilerRun
 end
 
 def runProfiler
-    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin") or ($hostOS == "windows") or ($hostOS == "playstation")
+    if $remote or $memoryLimited or ($hostOS == "windows") or ($hostOS == "playstation")
         skip
         return
     end

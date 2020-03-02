@@ -1,4 +1,4 @@
-//@ if ($architecture != "x86-64") or $memoryLimited then skip else runDefault end
+//@ if $memoryLimited then skip else runDefault end
 
 var fe="f";                                                                         
 try

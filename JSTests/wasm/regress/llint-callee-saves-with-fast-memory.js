@@ -1,6 +1,4 @@
-//@ skip if $architecture != "x86-64"
 //@ requireOptions("--useWebAssemblyFastMemory=true")
-// FIXME: Stop skipping when we enable fast memory for iOS. https://bugs.webkit.org/show_bug.cgi?id=170774
 
 import { instantiate } from '../wabt-wrapper.js';
 

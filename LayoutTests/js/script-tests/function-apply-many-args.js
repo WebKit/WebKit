@@ -1,4 +1,4 @@
-//@ skip if $architecture !~ /x86/i and $hostOS == "darwin"
+//@ skip if $memoryLimited and $hostOS == "darwin"
 
 description("Tests that we throw an error when passing a number of arguments beyond a certain threshold.");
 

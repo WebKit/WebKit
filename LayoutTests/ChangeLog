@@ -1,3 +1,14 @@
+2020-03-02  Saam Barati  <sbarati@apple.com>
+
+        Don't skip tests unnecessarily on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=208470
+        <rdar://problem/59968869>
+
+        Reviewed by Tadeu Zagallo.
+
+        * js/script-tests/array-from.js:
+        * js/script-tests/function-apply-many-args.js:
+
 2020-03-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] is css3/shapes/shape-outside/shape-image/shape-image-025.html flaky failing.
