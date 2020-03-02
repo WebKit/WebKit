@@ -1,3 +1,14 @@
+2020-03-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Plumb through more MediaPlayer methods
+        https://bugs.webkit.org/show_bug.cgi?id=208423
+        <rdar://problem/59924386>
+
+        Unreviewed, remove an invalid ASSERT that causes some tests to crash.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+
 2020-03-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to distributed notifications in the WebContent process
