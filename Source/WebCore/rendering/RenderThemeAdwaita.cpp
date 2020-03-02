@@ -41,7 +41,6 @@
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -175,11 +174,7 @@ String RenderThemeAdwaita::extraMediaControlsStyleSheet()
 
 String RenderThemeAdwaita::mediaControlsScript()
 {
-    StringBuilder scriptBuilder;
-    scriptBuilder.appendCharacters(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
-    scriptBuilder.appendCharacters(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
-    scriptBuilder.appendCharacters(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript));
-    return scriptBuilder.toString();
+    return String(mediaControlsAdwaitaJavaScript, sizeof(mediaControlsAdwaitaJavaScript));
 }
 #endif
 
