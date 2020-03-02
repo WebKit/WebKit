@@ -45,13 +45,13 @@ class StylePropertyShorthand;
 class StyleSheetContents;
 
 enum StylePropertiesType { ImmutablePropertiesType, MutablePropertiesType, DeferredPropertiesType };
-    
+
 class StylePropertiesBase : public RefCounted<StylePropertiesBase> {
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
     void deref() const;
-    
+
     StylePropertiesType type() const { return static_cast<StylePropertiesType>(m_type); }
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
@@ -62,13 +62,13 @@ protected:
         , m_type(type)
         , m_arraySize(0)
     { }
-    
+
     StylePropertiesBase(CSSParserMode cssParserMode, unsigned immutableArraySize)
         : m_cssParserMode(cssParserMode)
         , m_type(ImmutablePropertiesType)
         , m_arraySize(immutableArraySize)
     { }
-    
+
     unsigned m_cssParserMode : 3;
     mutable unsigned m_type : 2;
     unsigned m_arraySize : 27;
@@ -173,9 +173,7 @@ private:
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
-    
-    RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) const;
-    
+
     friend class PropertySetCSSStyleDeclaration;
 };
 

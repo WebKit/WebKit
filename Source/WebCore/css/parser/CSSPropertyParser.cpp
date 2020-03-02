@@ -328,13 +328,11 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
     }
 
     if (CSSVariableParser::containsValidVariableReferences(originalRange, m_context)) {
-        RefPtr<CSSVariableReferenceValue> variable = CSSVariableReferenceValue::create(originalRange);
-
-        if (isShorthand) {
-            RefPtr<CSSPendingSubstitutionValue> pendingValue = CSSPendingSubstitutionValue::create(propertyID, variable.releaseNonNull());
-            addExpandedPropertyForValue(propertyID, pendingValue.releaseNonNull(), important);
-        } else
-            addProperty(propertyID, CSSPropertyInvalid, variable.releaseNonNull(), important);
+        auto variable = CSSVariableReferenceValue::create(originalRange);
+        if (isShorthand)
+            addExpandedPropertyForValue(propertyID, CSSPendingSubstitutionValue::create(propertyID, WTFMove(variable)), important);
+        else
+            addProperty(propertyID, CSSPropertyInvalid, WTFMove(variable), important);
         return true;
     }
 

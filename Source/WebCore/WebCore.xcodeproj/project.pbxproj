@@ -10861,7 +10861,6 @@
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
 		941827881D8B242200492764 /* StyleColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColor.cpp; sourceTree = "<group>"; };
 		941827891D8B242200492764 /* StyleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleColor.h; sourceTree = "<group>"; };
-		9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPendingSubstitutionValue.cpp; sourceTree = "<group>"; };
 		9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPendingSubstitutionValue.h; sourceTree = "<group>"; };
 		9444CBCF1D860C740073A074 /* SizesCalcParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesCalcParser.h; path = parser/SizesCalcParser.h; sourceTree = "<group>"; };
 		9444CBD01D860C740073A074 /* SizesCalcParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SizesCalcParser.cpp; path = parser/SizesCalcParser.cpp; sourceTree = "<group>"; };
@@ -27478,7 +27477,6 @@
 				4B6E87682176D69200420E5E /* CSSPaintImageValue.h */,
 				4BAFD0CA2190EBD600C0AB64 /* CSSPaintSize.h */,
 				4BAFD0CD2190EBE900C0AB64 /* CSSPaintSize.idl */,
-				9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */,
 				9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
 				A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */,
