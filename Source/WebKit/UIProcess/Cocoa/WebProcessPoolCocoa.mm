@@ -56,6 +56,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/UTIUtilities.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <sys/param.h>
@@ -406,6 +407,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
     }
     parameters.systemHasBattery = systemHasBattery();
+    parameters.mimeTypesMap = commonMimeTypesMap();
+    parameters.mapUTIFromMIMEType = createUTIFromMIMETypeMap();
 #endif
     
 #if PLATFORM(IOS)
@@ -414,7 +417,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI", WTF::nullopt, handle);
         parameters.contentFilterExtensionHandle = WTFMove(handle);
     }
-    parameters.mimeTypesMap = commonMimeTypesMap();
 #endif
     
 #if PLATFORM(IOS_FAMILY)

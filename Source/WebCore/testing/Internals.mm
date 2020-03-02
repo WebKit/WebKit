@@ -34,6 +34,7 @@
 #import "HitTestResult.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
+#import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
@@ -98,6 +99,11 @@ String Internals::encodedPreferenceValue(const String& domain, const String& key
     ASSERT(!e);
     auto encodedString = [data base64EncodedStringWithOptions:0];
     return encodedString;
+}
+
+String Internals::getUTIFromMIMEType(const String& mimeType)
+{
+    return UTIFromMIMEType(mimeType);
 }
 
 }
