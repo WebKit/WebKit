@@ -2858,7 +2858,7 @@ static EncodedJSValue JSC_HOST_CALL functionHasOwnLengthProperty(JSGlobalObject*
 
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
     JSFunction* function = jsDynamicCast<JSFunction*>(vm, target);
-    return JSValue::encode(jsBoolean(function->areNameAndLengthOriginal(vm)));
+    return JSValue::encode(jsBoolean(function->canAssumeNameAndLengthAreOriginal(vm)));
 }
 
 void JSDollarVM::finishCreation(VM& vm)

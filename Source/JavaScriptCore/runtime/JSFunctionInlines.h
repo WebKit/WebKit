@@ -111,14 +111,16 @@ inline bool JSFunction::hasReifiedName() const
     return false;
 }
 
-inline bool JSFunction::areNameAndLengthOriginal(VM&)
+inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
+    if (isHostFunction())
+        return false;
     FunctionRareData* rareData = this->rareData();
     if (!rareData)
         return true;
-    if (rareData->hasModifiedName())
+    if (rareData->hasModifiedNameForNonHostFunction())
         return false;
-    if (rareData->hasModifiedLength())
+    if (rareData->hasModifiedLengthForNonHostFunction())
         return false;
     return true;
 }
