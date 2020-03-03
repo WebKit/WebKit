@@ -714,7 +714,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         if (request.url().protocolIsInHTTPFamily()) {
             if (isCrossOrigin) {
                 m_startTime = MonotonicTime::now();
-                m_networkLoadMetrics.reset();
+                m_networkLoadMetrics = { };
             }
 
             applyAuthenticationToRequest(request);
@@ -1156,7 +1156,7 @@ void NetworkDataTaskSoup::restartedCallback(SoupMessage* soupMessage, NetworkDat
 void NetworkDataTaskSoup::didRestart()
 {
     m_startTime = MonotonicTime::now();
-    m_networkLoadMetrics.reset();
+    m_networkLoadMetrics = { };
 }
 
 } // namespace WebKit

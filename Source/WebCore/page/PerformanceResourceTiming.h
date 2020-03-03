@@ -75,7 +75,7 @@ private:
     AtomString m_initiatorType;
     MonotonicTime m_timeOrigin;
     LoadTiming m_loadTiming;
-    NetworkLoadMetrics m_networkLoadMetrics;
+    NetworkLoadMetricsWithoutNonTimingData m_networkLoadMetrics;
     bool m_shouldReportDetails;
     Vector<Ref<PerformanceServerTiming>> m_serverTiming;
 };
