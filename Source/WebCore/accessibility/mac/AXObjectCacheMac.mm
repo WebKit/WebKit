@@ -34,6 +34,7 @@
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <ApplicationServices/ApplicationServicesPriv.h>
@@ -403,7 +404,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
         }
     }
     if (!selection.isNone()) {
-        if (id textMarkerRange = [object->wrapper() textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()])
+        if (id textMarkerRange = textMarkerRangeFromVisiblePositions(this, selection.visibleStart(), selection.visibleEnd()))
             [userInfo setObject:textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
     }
 
@@ -539,6 +540,48 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
+}
+
+// TextMarker utility functions.
+
+static id AXTextMarkerRange(id startMarker, id endMarker)
+{
+    ASSERT(startMarker);
+    ASSERT(endMarker);
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
+    ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
+    return CFBridgingRelease(AXTextMarkerRangeCreate(kCFAllocatorDefault, (AXTextMarkerRef)startMarker, (AXTextMarkerRef)endMarker));
+}
+
+id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
+{
+    if (!textMarker1 || !textMarker2)
+        return nil;
+
+    return AXTextMarkerRange(textMarker1, textMarker2);
+}
+
+id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
+{
+    ASSERT(cache);
+    if (!cache)
+        return nil;
+
+    auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
+    if (!textMarkerData)
+        return nil;
+
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
+}
+
+id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
+{
+    if (!cache)
+        return nil;
+
+    id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
+    id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
+    return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);
 }
 
 }
