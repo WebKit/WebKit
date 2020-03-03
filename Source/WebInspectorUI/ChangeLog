@@ -1,5 +1,44 @@
 2020-03-02  Jon Davis  <jond@apple.com>
 
+        Updated breakpoint and search type icons
+        https://bugs.webkit.org/show_bug.cgi?id=208453
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Images/ApplicationCacheManifest.svg:
+        * UserInterface/Images/ClippingIcons.svg:
+        * UserInterface/Images/DocumentIcons.svg:
+        * UserInterface/Images/FolderGeneric.svg:
+        * UserInterface/Images/InstrumentIcons.svg:
+        * UserInterface/Images/NavigationItemNetworkOverride.svg:
+        * UserInterface/Images/Origin.svg:
+        * UserInterface/Images/TableIcons.svg:
+        * UserInterface/Images/TypeIcons.svg:
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-debugger-statement-icon .icon):
+        (.breakpoint-generic-line-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-debugger-statement-icon .icon):
+        (@media (prefers-color-scheme: dark) .breakpoint-generic-line-icon .icon):
+        * UserInterface/Views/EventBreakpointTreeElement.css:
+        (.breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon):
+        (.breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon):
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon):
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon):
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon):
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon):
+        * UserInterface/Views/FolderIcon.css:
+        (.tree-outline .folder-icon.selected:focus .icon):
+        (.tree-outline .origin-icon.selected:focus .icon):
+        (.tree-outline:focus .folder-icon.selected .icon): Deleted.
+        (.tree-outline:focus .origin-icon.selected .icon): Deleted.
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.recording-action > .icon):
+        (@media (prefers-color-scheme: dark) .item.recording-action > .icon):
+
+2020-03-02  Jon Davis  <jond@apple.com>
+
         Update the resource override button icon
         https://bugs.webkit.org/show_bug.cgi?id=208459
 

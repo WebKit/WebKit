@@ -24,7 +24,7 @@
  */
 
 .item.recording-action > .icon {
-    content: url("../Images/Source.svg");
+    content: url("../Images/TypeIcons.svg#Source-light");
 }
 
 .item.recording-action:not(.initial-state)::before {
@@ -233,4 +233,8 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.re
         filter: invert();
         opacity: 0.8;
     }
+
+    .item.recording-action > .icon {
+        content: url("../Images/TypeIcons.svg#Source-dark");
+    }    
 }

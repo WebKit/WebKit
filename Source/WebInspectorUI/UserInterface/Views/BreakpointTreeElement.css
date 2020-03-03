@@ -64,7 +64,7 @@
 }
 
 .breakpoint-debugger-statement-icon .icon {
-    content: url(../Images/DebuggerStatement.svg);
+    content: url(../Images/TypeIcons.svg#DebuggerStatement-light);
 }
 
 .breakpoint-exception-icon .icon {
@@ -86,7 +86,7 @@
 /* When animating a layer on top of a tree element's icon, move the main
 icon to the icon element's background so animations are layered on top. */
 .breakpoint-generic-line-icon .icon {
-    background-image: url(../Images/ResultLine.svg);
+    background-image: url(../Images/TypeIcons.svg#ResultLine-light);
     content: '';
 }
 
@@ -111,6 +111,10 @@ icon to the icon element's background so animations are layered on top. */
 }
 
 @media (prefers-color-scheme: dark) {
+    .breakpoint-debugger-statement-icon .icon {
+        content: url(../Images/TypeIcons.svg#DebuggerStatement-dark);
+    }
+    
     .breakpoint-exception-icon .icon {
         content: url(../Images/TypeIcons.svg#Exception-dark);
     }
@@ -126,4 +130,9 @@ icon to the icon element's background so animations are layered on top. */
     .breakpoint-paused-icon .icon {
         content: url(../Images/TypeIcons.svg#PausedBreakpoint-dark);
     }
+
+    .breakpoint-generic-line-icon .icon {
+        background-image: url(../Images/TypeIcons.svg#ResultLine-dark);
+    }
+    
 }

@@ -27,7 +27,7 @@
     content: url(../Images/FolderGeneric.svg#light)
 }
 
-.tree-outline:focus .folder-icon.selected .icon {
+.tree-outline .folder-icon.selected:focus .icon {
     content: url(../Images/FolderGeneric.svg#dark)
 }
 
@@ -35,7 +35,7 @@
     content: url(../Images/Origin.svg#light);
 }
 
-.tree-outline:focus .origin-icon.selected .icon {
+.tree-outline .origin-icon.selected:focus .icon {
     content: url(../Images/Origin.svg#dark);
 }
 
