@@ -37,7 +37,7 @@ from twisted.trial import unittest
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
                    CompileJSC, CompileJSCToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
-                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
+                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests,
                    RunWebKitPerlTests, RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
@@ -3012,6 +3012,64 @@ OSError: [Errno 2] No such file or directory''')
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
+        return self.runStep()
+
+
+class TestFindModifiedChangeLogs(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_modified_changelogs(self):
+        self.setupStep(FindModifiedChangeLogs())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=180,
+                        logEnviron=False,
+                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
+            ExpectShell.log('stdio', stdout='''M	Source/WebCore/ChangeLog
+M	Source/WebCore/layout/blockformatting/BlockFormattingContext.h
+M	Source/WebCore/layout/blockformatting/BlockMarginCollapse.cpp
+M	Tools/ChangeLog
+M	Tools/TestWebKitAPI/CMakeLists.txt''') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_changelogs'), ['Source/WebCore/ChangeLog', 'Tools/ChangeLog'])
+        return rc
+
+    def test_success_added_changelog(self):
+        self.setupStep(FindModifiedChangeLogs())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=180,
+                        logEnviron=False,
+                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
+            ExpectShell.log('stdio', stdout='''A	Tools/Scripts/ChangeLog
+M	Tools/Scripts/run-api-tests''') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('modified_changelogs'), ['Tools/Scripts/ChangeLog'])
+        return rc
+
+    def test_failure(self):
+        self.setupStep(FindModifiedChangeLogs())
+        self.setProperty('bug_id', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=180,
+                        logEnviron=False,
+                        command=['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to find list of modified ChangeLogs')
         return self.runStep()
 
 

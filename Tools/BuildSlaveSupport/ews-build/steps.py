@@ -33,6 +33,7 @@ from layout_test_failures import LayoutTestFailures
 import json
 import re
 import requests
+import os
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
@@ -2414,3 +2415,47 @@ class SetBuildSummary(buildstep.BuildStep):
         self.finished(SUCCESS)
         self.build.buildFinished([build_summary], self.build.results)
         return defer.succeed(None)
+
+
+class FindModifiedChangeLogs(shell.ShellCommand):
+    name = 'find-modified-changelogs'
+    descriptionDone = ['Found modified ChangeLogs']
+    command = ['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=3 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to find list of modified ChangeLogs'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        modified_changelogs = self.extract_changelogs(log_text, self._status_regexp('MA'))
+        self.setProperty('modified_changelogs', modified_changelogs)
+        return rc
+
+    def is_path_to_changelog(self, path):
+        return os.path.basename(path) == 'ChangeLog'
+
+    def _status_regexp(self, expected_types):
+        return '^(?P<status>[{}])\t(?P<filename>.+)$'.format(expected_types)
+
+    def extract_changelogs(self, output, status_regexp):
+        filenames = []
+        for line in output.splitlines():
+            match = re.search(status_regexp, line)
+            if not match:
+                continue
+            filename = match.group('filename')
+            if self.is_path_to_changelog(filename):
+                filenames.append(filename)
+        return filenames

@@ -1,3 +1,21 @@
+2020-03-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build step to find list of modified changelogs
+        https://bugs.webkit.org/show_bug.cgi?id=208514
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        * BuildSlaveSupport/ews-build/steps.py:
+        (FindModifiedChangeLogs): Build step to find modified ChangeLogs.
+        (FindModifiedChangeLogs.start): Initialize log observer.
+        (FindModifiedChangeLogs.getResultSummary): Set custom failure message.
+        (FindModifiedChangeLogs.evaluateCommand):
+        (FindModifiedChangeLogs.is_path_to_changelog): Check if the file is a ChangeLog.
+        (FindModifiedChangeLogs._status_regexp): Regex to match files from git output.
+        (FindModifiedChangeLogs.extract_changelogs): Method to get list of ChangeLogs from git output.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2020-03-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS EWS] TestWebKitAPI.WKWebsiteDataStore.RemoveAndFetchData is failing
