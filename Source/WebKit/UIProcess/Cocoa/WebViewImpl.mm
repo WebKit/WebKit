@@ -201,7 +201,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
     WebKit::WebViewImpl *_impl;
 
     BOOL _didRegisterForLookupPopoverCloseNotifications;
-    __weak NSWindow *_observingWindow;
 }
 
 - (instancetype)initWithView:(NSView *)view impl:(WebKit::WebViewImpl&)impl;
@@ -237,8 +236,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
     NSNotificationCenter *workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
-
-    [self setWindowToObserve:nil];
 
     [super dealloc];
 }
@@ -300,14 +297,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
-}
-
-- (void)setWindowToObserve:(NSWindow *)window
-{
-    if (_observingWindow)
-        [self stopObserving:_observingWindow];
-    _observingWindow = window;
-    [self startObserving:window];
 }
 
 - (void)startObservingFontPanel
@@ -2220,7 +2209,9 @@ void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 
     clearAllEditCommands();
 
-    [m_windowVisibilityObserver setWindowToObserve:window];
+    NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation : [m_view window];
+    [m_windowVisibilityObserver stopObserving:stopObservingWindow];
+    [m_windowVisibilityObserver startObserving:window];
 }
 
 void WebViewImpl::viewDidMoveToWindow()
