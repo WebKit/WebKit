@@ -3099,7 +3099,6 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
-    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
     return context;
 }
 

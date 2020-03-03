@@ -1,3 +1,13 @@
+2020-03-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION(r257726): [GTK] LayoutTests crashing after r257726
+        https://bugs.webkit.org/show_bug.cgi?id=208506
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformAdjustContext): Remove unnecessary code.
+
 2020-03-02  Ben Nham  <nham@apple.com>
 
         Add performance probes for HTML parsing
