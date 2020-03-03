@@ -263,8 +263,7 @@ void InspectorAnimationAgent::enable(ErrorString& errorString)
     };
 
     {
-        LockHolder lock(WebAnimation::instancesMutex());
-        for (auto* animation : WebAnimation::instances(lock)) {
+        for (auto* animation : WebAnimation::instances()) {
             if (existsInCurrentPage(animation->scriptExecutionContext()))
                 bindAnimation(*animation, false);
         }

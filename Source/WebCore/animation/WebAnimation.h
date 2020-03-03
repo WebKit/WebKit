@@ -57,8 +57,7 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 
-    static HashSet<WebAnimation*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+    static HashSet<WebAnimation*>& instances();
 
     virtual bool isDeclarativeAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }

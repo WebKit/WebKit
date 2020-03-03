@@ -45,7 +45,6 @@
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
@@ -55,20 +54,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebAnimation);
 
-HashSet<WebAnimation*>& WebAnimation::instances(const LockHolder&)
+HashSet<WebAnimation*>& WebAnimation::instances()
 {
     static NeverDestroyed<HashSet<WebAnimation*>> instances;
     return instances;
-}
-
-Lock& WebAnimation::instancesMutex()
-{
-    static LazyNeverDestroyed<Lock> mutex;
-    static std::once_flag initializeMutex;
-    std::call_once(initializeMutex, [] {
-        mutex.construct();
-    });
-    return mutex.get();
 }
 
 Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
@@ -102,8 +91,7 @@ WebAnimation::WebAnimation(Document& document)
     m_readyPromise->resolve(*this);
     suspendIfNeeded();
 
-    LockHolder lock(instancesMutex());
-    instances(lock).add(this);
+    instances().add(this);
 }
 
 WebAnimation::~WebAnimation()
@@ -113,9 +101,8 @@ WebAnimation::~WebAnimation()
     if (m_timeline)
         m_timeline->forgetAnimation(this);
 
-    LockHolder lock(instancesMutex());
-    ASSERT(instances(lock).contains(this));
-    instances(lock).remove(this);
+    ASSERT(instances().contains(this));
+    instances().remove(this);
 }
 
 void WebAnimation::contextDestroyed()
