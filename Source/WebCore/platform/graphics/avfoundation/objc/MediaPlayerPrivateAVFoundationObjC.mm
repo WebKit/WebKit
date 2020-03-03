@@ -746,26 +746,6 @@ static NSURL *canonicalURL(const URL& url)
     return [canonicalRequest URL];
 }
 
-#if PLATFORM(IOS_FAMILY)
-static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
-{
-    RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
-    [properties setDictionary:@{
-        NSHTTPCookieName: cookie.name,
-        NSHTTPCookieValue: cookie.value,
-        NSHTTPCookieDomain: cookie.domain,
-        NSHTTPCookiePath: cookie.path,
-        NSHTTPCookieExpires: cookie.expires ? [NSDate dateWithTimeIntervalSince1970:(*cookie.expires / 1000)] : nil,
-    }];
-    if (cookie.secure)
-        [properties setObject:@YES forKey:NSHTTPCookieSecure];
-    if (cookie.session)
-        [properties setObject:@YES forKey:NSHTTPCookieDiscard];
-
-    return [NSHTTPCookie cookieWithProperties:properties.get()];
-}
-#endif
-
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 {
     if (m_avAsset)
@@ -850,7 +830,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     if (player()->getRawCookies(url, cookies)) {
         RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
         for (auto& cookie : cookies)
-            [nsCookies addObject:toNSHTTPCookie(cookie)];
+            [nsCookies addObject:(NSHTTPCookie *)cookie];
 
         if (PAL::canLoad_AVFoundation_AVURLAssetHTTPCookiesKey())
             [options setObject:nsCookies.get() forKey:AVURLAssetHTTPCookiesKey];
