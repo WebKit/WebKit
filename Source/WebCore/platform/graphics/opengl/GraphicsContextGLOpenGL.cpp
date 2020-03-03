@@ -82,6 +82,7 @@ GraphicsContextGL::DataFormat getDataFormat(GCGLenum destinationFormat, GCGLenum
         dstFormat = GraphicsContextGL::DataFormat::RGB565;
         break;
     case GraphicsContextGL::HALF_FLOAT_OES: // OES_texture_half_float
+    case GraphicsContextGL::HALF_FLOAT:
         switch (destinationFormat) {
         case GraphicsContextGL::RGB:
             dstFormat = GraphicsContextGL::DataFormat::RGB16F;

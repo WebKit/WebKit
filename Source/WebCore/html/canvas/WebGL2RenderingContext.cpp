@@ -689,11 +689,14 @@ void WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, G
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, TexImageSource&& source)
 {
-    // Covered by textures/misc/origin-clean-conformance-offscreencanvas.html?
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage2D(TexImageSource)");
-    return { };
+    if (isContextLostOrPending())
+        return { };
+
+    // FIXME: Generate INVALID_OPERATION if a WebGLBuffer is bound to PIXEL_UNPACK_BUFFER.
+
+    return WebGLRenderingContextBase::texImageSource2D(target, level, internalformat, width, height, border, format, type, WTFMove(source));
 }
 
 RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceTypedArrayBufferView(const char* const functionName, RefPtr<ArrayBufferView>& srcData, GCGLuint srcOffset)

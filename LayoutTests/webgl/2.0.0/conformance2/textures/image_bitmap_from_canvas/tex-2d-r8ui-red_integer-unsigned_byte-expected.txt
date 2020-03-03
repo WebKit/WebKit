@@ -42,7 +42,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 39: FAIL ] shouldBe 255,0,0 at (20, 8) expected: 255,0,0 was 0,0,0
 [ 40: PASS ] shouldBe 0,0,0
 [ 41: PASS ] shouldBe 0,0,0
-[ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 43: PASS ] shouldBe 0,0,0
 [ 44: PASS ] shouldBe 0,0,0
 [ 45: PASS ] shouldBe 0,0,0
@@ -52,7 +52,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 49: FAIL ] shouldBe 255,0,0 at (20, 8) expected: 255,0,0 was 0,0,0
 [ 50: PASS ] shouldBe 0,0,0
 [ 51: PASS ] shouldBe 0,0,0
-[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 53: FAIL ] shouldBe 128,0,0 at (8, 24) expected: 128,0,0 was 0,0,0
 [ 54: FAIL ] shouldBe 128,0,0 at (20, 24) expected: 128,0,0 was 0,0,0
 [ 55: FAIL ] shouldBe 128,0,0 at (8, 8) expected: 128,0,0 was 0,0,0
@@ -62,7 +62,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 59: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 60: PASS ] shouldBe 0,0,0
 [ 61: PASS ] shouldBe 0,0,0
-[ 62: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 62: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 63: FAIL ] shouldBe 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 64: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 65: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
@@ -72,7 +72,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 69: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 70: PASS ] shouldBe 0,0,0
 [ 71: PASS ] shouldBe 0,0,0
-[ 72: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 72: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 73: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 74: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 75: PASS ] shouldBe 0,0,0
@@ -91,7 +91,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 88: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 89: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 90: PASS ] shouldBe 0,0,0
-[ 91: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
+[ 91: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
 [ 92: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 93: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 94: PASS ] shouldBe 0,0,0
@@ -266,7 +266,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 263: FAIL ] shouldBe 255,0,0 at (20, 8) expected: 255,0,0 was 0,0,0
 [ 264: PASS ] shouldBe 0,0,0
 [ 265: PASS ] shouldBe 0,0,0
-[ 266: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 266: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 267: PASS ] shouldBe 0,0,0
 [ 268: PASS ] shouldBe 0,0,0
 [ 269: PASS ] shouldBe 0,0,0
@@ -276,7 +276,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 273: FAIL ] shouldBe 255,0,0 at (20, 8) expected: 255,0,0 was 0,0,0
 [ 274: PASS ] shouldBe 0,0,0
 [ 275: PASS ] shouldBe 0,0,0
-[ 276: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 276: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 277: FAIL ] shouldBe 128,0,0 at (8, 24) expected: 128,0,0 was 0,0,0
 [ 278: FAIL ] shouldBe 128,0,0 at (20, 24) expected: 128,0,0 was 0,0,0
 [ 279: FAIL ] shouldBe 128,0,0 at (8, 8) expected: 128,0,0 was 0,0,0
@@ -286,7 +286,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 283: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 284: PASS ] shouldBe 0,0,0
 [ 285: PASS ] shouldBe 0,0,0
-[ 286: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 286: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 287: FAIL ] shouldBe 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 288: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 289: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
@@ -296,7 +296,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 293: FAIL ] shouldBe 255,0,0 at (20, 24) expected: 255,0,0 was 0,0,0
 [ 294: PASS ] shouldBe 0,0,0
 [ 295: PASS ] shouldBe 0,0,0
-[ 296: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 296: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
 [ 297: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 298: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 299: PASS ] shouldBe 0,0,0
@@ -315,7 +315,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_fro
 [ 312: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 313: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 314: PASS ] shouldBe 0,0,0
-[ 315: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : should be no errors
+[ 315: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
 [ 316: FAIL ] shouldBe 255,0,0 at (8, 8) expected: 255,0,0 was 0,0,0
 [ 317: FAIL ] shouldBe 128,0,0 at (24, 8) expected: 128,0,0 was 0,0,0
 [ 318: PASS ] shouldBe 0,0,0
