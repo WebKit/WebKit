@@ -965,3 +965,5 @@ webkit.org/b/208518 [ Debug ] legacy-animation-engine/animations/animation-direc
 webkit.org/b/208524 [ Release ] webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Timeout ]
 
 webkit.org/b/208572 [ Release ] legacy-animation-engine/animations/play-state-start-paused.html [ Pass Failure ]
+
+webkit.org/b/208532 svg/custom/textPath-change-id-pattern.svg [ Pass Failure ]

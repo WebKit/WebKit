@@ -1,5 +1,14 @@
 2020-03-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ macOS ] svg/custom/textPath-change-id-pattern.svg is flakey failing
+        https://bugs.webkit.org/show_bug.cgi?id=208532
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-03-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS ] legacy-animation-engine/animations/play-state-start-paused.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=208527
 
