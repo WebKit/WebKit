@@ -1,3 +1,42 @@
+2020-03-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: the background of the navigation items in the tab bar doesn't match when unfocusing the window
+        https://bugs.webkit.org/show_bug.cgi?id=208538
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.css:
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)), body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)), body[dir=ltr]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected, body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden))): Added.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)), body[dir=rtl]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)), body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)), body[dir=rtl]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected): Added.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:not(:first-child), body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:first-child, body[dir=ltr]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected, body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:last-child): Deleted.
+        (body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:last-child, body[dir=rtl]:not(.docked) .tab-bar > .tabs > .item:not(:first-child), body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:first-child, body[dir=rtl]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected): Deleted.
+        Use `nth-child` and `nth-last-child` instead of `:first-child` and `:last-child` now that
+        there are `.flexible-space` elements alongside tab bar items.
+
+        (@media (prefers-color-scheme: dark) .tab-bar):
+        (@media (prefers-color-scheme: dark) body:not(.docked) .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body.docked .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:matches(.window-inactive, .window-docked-inactive) .tab-bar): Deleted.
+        Ensure completely separate styles for `background-color` and `background-image` when `.docked`
+        vs when `:not(.docked)` so that they don't "bleed" into eachother.
+
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar):
+        (body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar):
+        (.tab-bar > .navigation-bar > .item.group > .item):
+        (.tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden))):
+        (.tab-bar > .navigation-bar > .item.group > .item:nth-last-child(1 of :not(.hidden))):
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item):
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (.tab-bar > .tabs.static-layout > :matches(.flexible-space, .item)):
+        (.tab-bar > .tabs.animating.inserting-tab > .item.being-inserted):
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover):
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item):
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected):
+        Drive-by: remove as many `!important` as possible to make future modification simpler.
+
 2020-03-03  Jon Davis  <jond@apple.com>
 
         Removed old raster icons for object types and resources

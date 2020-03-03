@@ -47,12 +47,12 @@ body:not(.docked) .tab-bar {
 }
 
 body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar {
-    background-image: none !important;
-    background-color: var(--tab-item-extra-light-border-color) !important;
+    background-image: none;
+    background-color: var(--tab-item-extra-light-border-color);
 }
 
 body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar {
-    background-color: var(--background-color-unfocused) !important;
+    background-color: var(--background-color-unfocused);
 }
 
 .tab-bar > .border {
@@ -86,17 +86,17 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .border {
 }
 
 .tab-bar > .navigation-bar > .item.group > .item {
-    width: auto !important;
-    margin: 0 4px !important;
-    padding: 0 !important;
+    width: auto;
+    margin: 0 4px;
+    padding: 0;
 }
 
 .tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden)) {
-    -webkit-margin-start: 8px !important;
+    -webkit-margin-start: 8px;
 }
 
 .tab-bar > .navigation-bar > .item.group > .item:nth-last-child(1 of :not(.hidden)) {
-    -webkit-margin-end: 8px !important;
+    -webkit-margin-end: 8px;
 }
 
 .tab-bar > .navigation-bar .item.divider {
@@ -170,16 +170,16 @@ body.docked .tab-bar > .tabs > .item {
     flex: initial;
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:not(:first-child),
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:first-child,
+body[dir=ltr]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),
+body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)),
 body[dir=ltr]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:last-child {
+body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)) {
     border-left: var(--tab-item-medium-border-style);
 }
 
-body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:last-child,
-body[dir=rtl]:not(.docked) .tab-bar > .tabs > .item:not(:first-child),
-body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:first-child,
+body[dir=ltr]:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)),
+body[dir=rtl]:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)),
+body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)),
 body[dir=rtl]:not(.docked) .tab-bar > .tabs.dragging-tab > .item.selected {
     border-right: var(--tab-item-medium-border-style);
 }
@@ -232,15 +232,15 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
     border-right-color: var(--tab-item-light-border-color) !important;
     border-left-color: var(--tab-item-light-border-color) !important;
 
-    background-image: none !important;
-    background-color: var(--tab-item-extra-light-border-color) !important;
+    background-image: none;
+    background-color: var(--tab-item-extra-light-border-color);
 
     transition: none;
 }
 
 body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
-    background-image: none !important;
-    background-color: hsl(0, 0%, 96%) !important;
+    background-image: none;
+    background-color: hsl(0, 0%, 96%);
 }
 
 body.docked .tab-bar > .tabs > .item:not(.disabled):matches(.selected, :hover) {
@@ -334,7 +334,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item
 }
 
 .tab-bar > .tabs.static-layout > :matches(.flexible-space, .item) {
-    position: absolute !important;
+    position: absolute;
     top: 0;
 }
 
@@ -352,8 +352,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item
 
 .tab-bar > .tabs.animating.inserting-tab > .item.being-inserted {
     z-index: 2;
-    min-width: 0 !important;
-    padding: 0 !important;
+    padding: 0;
 }
 
 body:not(.docked) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
@@ -365,7 +364,7 @@ body:not(.docked) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).
 body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
 body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
 body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected {
-    border-right-color: var(--tab-item-light-border-color) !important;
+    border-right-color: var(--tab-item-light-border-color);
 }
 
 .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected {
@@ -375,8 +374,6 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
 
 @media (prefers-color-scheme: dark) {
     .tab-bar {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%)) !important;
-
         --tab-item-border-color: hsl(0, 0%, 36%);
 
         /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
@@ -384,6 +381,14 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
         --tab-item-medium-border-color: var(--tab-item-border-color);
         --tab-item-light-border-color: var(--tab-item-border-color);
         --tab-item-extra-light-border-color: var(--tab-item-border-color);
+    }
+
+    body:not(.docked) .tab-bar {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+    }
+
+    body.docked .tab-bar {
+        background-color: hsl(0, 0%, 10%);
     }
 
     body.docked.bottom .tab-bar > .border.top {
@@ -395,11 +400,11 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
     }
 
     body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%)) !important;
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
     }
 
     body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
-        background-image: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%)) !important;
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
     }
 
     body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
@@ -422,19 +427,19 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
         opacity: 0.6;
     }
 
-    body:matches(.window-inactive, .window-docked-inactive) .tab-bar {
+    body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar {
         --tab-item-border-color: hsl(0, 0%, 34%);
 
-        background-image: none !important;
-        background-color: hsl(0, 0%, 13%) !important;
+        background-image: none;
+        background-color: hsl(0, 0%, 13%);
     }
 
     body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item {
-        background-image: none !important;
-        background-color: hsl(0, 0%, 13%) !important;
+        background-image: none;
+        background-color: hsl(0, 0%, 13%);
     }
 
     body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
-        background-color: hsl(0, 0%, 19%) !important;
+        background-color: hsl(0, 0%, 19%);
     }
 }
