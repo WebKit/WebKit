@@ -959,3 +959,5 @@ webkit.org/b/208345 fast/canvas/webgl/canvas-webgl-page-cache.html [ Pass Crash 
 webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html [ Pass Failure ]
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/208518 [ Debug ] legacy-animation-engine/animations/animation-direction-reverse.html [ Pass Failure ]
