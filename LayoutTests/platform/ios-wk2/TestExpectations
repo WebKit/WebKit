@@ -1427,3 +1427,5 @@ webkit.org/b/208355 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/t
 webkit.org/b/208401 compositing/absolute-inside-out-of-view-fixed.html [ Pass Crash Timeout ]
 
 webkit.org/b/208467 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
+
+webkit.org/b/208491 http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Skip ]
