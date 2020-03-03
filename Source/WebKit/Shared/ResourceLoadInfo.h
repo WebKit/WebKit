@@ -28,6 +28,8 @@
 #include "ArgumentCoders.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/URL.h>
+#include <wtf/WallTime.h>
 
 namespace WebKit {
 
@@ -36,12 +38,18 @@ struct ResourceLoadInfo {
     NetworkResourceLoadIdentifier resourceLoadID;
     Optional<WebCore::FrameIdentifier> frameID;
     Optional<WebCore::FrameIdentifier> parentFrameID;
+    URL originalURL;
+    String originalHTTPMethod;
+    WallTime eventTimestamp;
     
     void encode(IPC::Encoder& encoder) const
     {
         encoder << resourceLoadID;
         encoder << frameID;
         encoder << parentFrameID;
+        encoder << originalURL;
+        encoder << originalHTTPMethod;
+        encoder << eventTimestamp;
     }
 
     static Optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
@@ -61,10 +69,28 @@ struct ResourceLoadInfo {
         if (!parentFrameID)
             return WTF::nullopt;
 
+        Optional<URL> originalURL;
+        decoder >> originalURL;
+        if (!originalURL)
+            return WTF::nullopt;
+
+        Optional<String> originalHTTPMethod;
+        decoder >> originalHTTPMethod;
+        if (!originalHTTPMethod)
+            return WTF::nullopt;
+
+        Optional<WallTime> eventTimestamp;
+        decoder >> eventTimestamp;
+        if (!eventTimestamp)
+            return WTF::nullopt;
+        
         return {{
             WTFMove(*resourceLoadID),
             WTFMove(*frameID),
             WTFMove(*parentFrameID),
+            WTFMove(*originalURL),
+            WTFMove(*originalHTTPMethod),
+            WTFMove(*eventTimestamp)
         }};
     }
 };

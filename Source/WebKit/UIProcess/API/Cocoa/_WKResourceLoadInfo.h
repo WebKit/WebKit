@@ -36,8 +36,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (nonatomic, readonly) uint64_t resourceLoadID;
-@property (nonatomic, readonly) _WKFrameHandle* frame;
-@property (nonatomic, readonly, nullable) _WKFrameHandle* parentFrame;
+@property (nonatomic, readonly) _WKFrameHandle *frame;
+@property (nonatomic, readonly, nullable) _WKFrameHandle *parentFrame;
+@property (nonatomic, readonly) NSURL *originalURL;
+@property (nonatomic, readonly) NSString *originalHTTPMethod;
+@property (nonatomic, readonly) NSDate *eventTimestamp;
 
 @end
 

@@ -43,6 +43,9 @@ public:
     WebKit::NetworkResourceLoadIdentifier resourceLoadID() const { return m_info.resourceLoadID; }
     Optional<WebCore::FrameIdentifier> frameID() const { return m_info.frameID; }
     Optional<WebCore::FrameIdentifier> parentFrameID() const { return m_info.parentFrameID; }
+    const WTF::URL& originalURL() const { return m_info.originalURL; }
+    const WTF::String& originalHTTPMethod() const { return m_info.originalHTTPMethod; }
+    WallTime eventTimestamp() const { return m_info.eventTimestamp; }
 
 private:
     const WebKit::ResourceLoadInfo m_info;

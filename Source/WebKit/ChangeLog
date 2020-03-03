@@ -1,3 +1,24 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Expose originalURL and originalHTTPMethod on _WKResourceLoadInfo
+        https://bugs.webkit.org/show_bug.cgi?id=208522
+
+        Reviewed by Brian Weinstein.
+
+        Covered by API tests.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        * Shared/ResourceLoadInfo.h:
+        (WebKit::ResourceLoadInfo::encode const):
+        (WebKit::ResourceLoadInfo::decode):
+        * UIProcess/API/APIResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (-[_WKResourceLoadInfo originalURL]):
+        (-[_WKResourceLoadInfo initWithCoder:]):
+        (-[_WKResourceLoadInfo encodeWithCoder:]):
+
 2020-03-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: setting the frontend appearance doesn't update the window when undocked

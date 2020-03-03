@@ -1,3 +1,13 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Expose originalURL and originalHTTPMethod on _WKResourceLoadInfo
+        https://bugs.webkit.org/show_bug.cgi?id=208522
+
+        Reviewed by Brian Weinstein.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+
 2020-03-03  Aakash Jain  <aakash_jain@apple.com>
 
         commit-queue should update working directory and reapply patch just before commiting

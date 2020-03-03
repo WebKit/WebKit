@@ -59,6 +59,21 @@
     return nil;
 }
 
+- (NSURL *)originalURL
+{
+    return _info->originalURL();
+}
+
+- (NSString *)originalHTTPMethod
+{
+    return _info->originalHTTPMethod();
+}
+
+- (NSDate *)eventTimestamp
+{
+    return [NSDate dateWithTimeIntervalSince1970:_info->eventTimestamp().secondsSinceEpoch().seconds()];
+}
+
 - (API::Object&)_apiObject
 {
     return *_info;
@@ -92,10 +107,31 @@
         return nil;
     }
 
+    NSURL *originalURL = [coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"];
+    if (!originalURL) {
+        [self release];
+        return nil;
+    }
+
+    NSString *originalHTTPMethod = [coder decodeObjectOfClass:[NSString class] forKey:@"originalHTTPMethod"];
+    if (!originalHTTPMethod) {
+        [self release];
+        return nil;
+    }
+
+    NSDate *eventTimestamp = [coder decodeObjectOfClass:[NSDate class] forKey:@"eventTimestamp"];
+    if (!eventTimestamp) {
+        [self release];
+        return nil;
+    }
+
     WebKit::ResourceLoadInfo info {
         makeObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
         makeObjectIdentifier<WebCore::FrameIdentifierType>(frame.unsignedLongLongValue),
-        makeObjectIdentifier<WebCore::FrameIdentifierType>(parentFrame.unsignedLongLongValue)
+        makeObjectIdentifier<WebCore::FrameIdentifierType>(parentFrame.unsignedLongLongValue),
+        originalURL,
+        originalHTTPMethod,
+        WallTime::fromRawSeconds(eventTimestamp.timeIntervalSince1970)
     };
 
     API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTFMove(info));
@@ -108,6 +144,9 @@
     [coder encodeObject:@(self.resourceLoadID) forKey:@"resourceLoadID"];
     [coder encodeObject:@(self.frame.frameID) forKey:@"frame"];
     [coder encodeObject:@(self.parentFrame.frameID) forKey:@"parentFrame"];
+    [coder encodeObject:self.originalURL forKey:@"originalURL"];
+    [coder encodeObject:self.originalHTTPMethod forKey:@"originalHTTPMethod"];
+    [coder encodeObject:self.eventTimestamp forKey:@"eventTimestamp"];
 }
 
 @end

@@ -181,9 +181,15 @@ TEST(ResourceLoadDelegate, Redirect)
 
     __block bool done = false;
     auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
-    [resourceLoadDelegate setDidPerformHTTPRedirection:^(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *response, NSURLRequest *request) {
+    [resourceLoadDelegate setDidPerformHTTPRedirection:^(WKWebView *, _WKResourceLoadInfo *loadInfo, NSURLResponse *response, NSURLRequest *request) {
         EXPECT_WK_STREQ(response.URL.path, "/");
         EXPECT_WK_STREQ(request.URL.path, "/redirectTarget");
+        EXPECT_WK_STREQ(loadInfo.originalURL.path, "/");
+        EXPECT_WK_STREQ(loadInfo.originalHTTPMethod, "GET");
+    }];
+    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *loadInfo, NSError *) {
+        EXPECT_WK_STREQ(loadInfo.originalURL.path, "/");
+        EXPECT_WK_STREQ(loadInfo.originalHTTPMethod, "GET");
         done = true;
     }];
 
@@ -309,13 +315,16 @@ TEST(ResourceLoadDelegate, LoadInfo)
     _WKResourceLoadInfo *original = loadInfos[0].get();
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
-    EXPECT_EQ(archiveData.length, 299ull);
+    EXPECT_EQ(archiveData.length, 559ull);
     EXPECT_FALSE(error);
     _WKResourceLoadInfo *deserialized = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKResourceLoadInfo class] fromData:archiveData error:&error];
     EXPECT_FALSE(error);
     EXPECT_TRUE(deserialized.resourceLoadID == original.resourceLoadID);
     EXPECT_TRUE(deserialized.frame.frameID == original.frame.frameID);
     EXPECT_TRUE(deserialized.parentFrame.frameID == original.parentFrame.frameID);
+    EXPECT_WK_STREQ(deserialized.originalURL.absoluteString, original.originalURL.absoluteString);
+    EXPECT_WK_STREQ(deserialized.originalHTTPMethod, original.originalHTTPMethod);
+    EXPECT_EQ(deserialized.eventTimestamp.timeIntervalSince1970, original.eventTimestamp.timeIntervalSince1970);
 }
 
 #endif // HAVE(NETWORK_FRAMEWORK)

@@ -339,6 +339,9 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         m_resourceLoadID,
         m_parameters.webFrameID,
         m_parameters.parentFrameID,
+        originalRequest().url(),
+        originalRequest().httpMethod(),
+        WallTime::now()
     };
 }
 
