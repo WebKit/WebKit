@@ -894,6 +894,8 @@ Controller.prototype = {
 
     hideCaptionMenu: function()
     {
+        if (!this.captionMenu)
+            return;
         this.captionMenu.style.height = 0;
     },
 
