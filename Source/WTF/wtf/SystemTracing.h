@@ -86,6 +86,8 @@ enum TracePointCode {
     CompositingUpdateEnd,
     DispatchTouchEventsStart,
     DispatchTouchEventsEnd,
+    ParseHTMLStart,
+    ParseHTMLEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,
