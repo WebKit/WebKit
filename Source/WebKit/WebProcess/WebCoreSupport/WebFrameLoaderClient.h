@@ -289,6 +289,8 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
 #endif
+
+    bool hasNavigatedAwayFromAppBoundDomain() final;
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.

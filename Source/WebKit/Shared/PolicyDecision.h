@@ -32,10 +32,12 @@
 namespace WebKit {
 
 enum class NavigatingToAppBoundDomain { Yes, No };
+enum class NavigatedAwayFromAppBoundDomain { Yes, No};
 
 struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };
     DownloadID downloadID { 0 };
@@ -46,6 +48,7 @@ struct PolicyDecision {
     {
         encoder << identifier;
         encoder << isNavigatingToAppBoundDomain;
+        encoder << hasNavigatedAwayFromAppBoundDomain;
         encoder << policyAction;
         encoder << navigationID;
         encoder << downloadID;
@@ -63,6 +66,11 @@ struct PolicyDecision {
         Optional<NavigatingToAppBoundDomain> decodedIsNavigatingToAppBoundDomain;
         decoder >> decodedIsNavigatingToAppBoundDomain;
         if (!decodedIsNavigatingToAppBoundDomain)
+            return WTF::nullopt;
+        
+        Optional<NavigatedAwayFromAppBoundDomain> decodedHasNavigatedAwayFromAppBoundDomain;
+        decoder >> decodedHasNavigatedAwayFromAppBoundDomain;
+        if (!decodedHasNavigatedAwayFromAppBoundDomain)
             return WTF::nullopt;
 
         Optional<WebCore::PolicyAction> decodedPolicyAction;
@@ -85,7 +93,7 @@ struct PolicyDecision {
         if (!decodedWebsitePoliciesData)
             return WTF::nullopt;
 
-        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedIsNavigatingToAppBoundDomain), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData) }};
+        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedIsNavigatingToAppBoundDomain), WTFMove(*decodedHasNavigatedAwayFromAppBoundDomain), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData) }};
     }
 };
 
@@ -98,6 +106,14 @@ template<> struct EnumTraits<WebKit::NavigatingToAppBoundDomain> {
         WebKit::NavigatingToAppBoundDomain,
         WebKit::NavigatingToAppBoundDomain::Yes,
         WebKit::NavigatingToAppBoundDomain::No
+    >;
+};
+
+template<> struct EnumTraits<WebKit::NavigatedAwayFromAppBoundDomain> {
+    using values = EnumValues<
+        WebKit::NavigatedAwayFromAppBoundDomain,
+        WebKit::NavigatedAwayFromAppBoundDomain::Yes,
+        WebKit::NavigatedAwayFromAppBoundDomain::No
     >;
 };
 

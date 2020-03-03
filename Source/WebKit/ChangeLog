@@ -1,3 +1,73 @@
+2020-03-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Check for navigation to app-bound domain during script evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=208319
+        <rdar://problem/57569321>
+
+        Reviewed by Brent Fulgham.
+
+        Much of this patch is passing around a new parameter,
+        m_hasNavigatedAwayFromAppBoundDomain, to the Web Content Process to
+        indicate conditions for script evaluation. 
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * Shared/PolicyDecision.h:
+        (WebKit::PolicyDecision::encode const):
+        (WebKit::PolicyDecision::decode):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _inAppBrowserPrivacyEnabled]):
+        (-[WKPreferences _setInAppBrowserPrivacyEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setIsNavigatingToAppBoundDomain:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainTesting):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSyncShared):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasNavigatedAwayFromAppBoundDomain const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::hasNavigatedAwayFromAppBoundDomain):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomainTesting):
+        A new call to manually set isNavigatingToAppBoundDomain to mimic
+        test cases in which a webView switches between app-bound and
+        non-app-bound domains.
+
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain): Deleted.
+        Moved to header file because its setting a private variable.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPage::hasNavigatedAwayFromAppBoundDomain const):
+        (WebKit::WebPage::setHasNavigatedAwayFromAppBoundDomain):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-03  youenn fablet  <youenn@apple.com>
 
         Rename USE(GPU_PROCESS) to ENABLE(GPU_PROCESS_FOR_WEBRTC)

@@ -622,6 +622,9 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 
 void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().isInAppBrowserPrivacyEnabled() && isMainFrame() && loader().client().hasNavigatedAwayFromAppBoundDomain())
+        return;
+
     auto* document = this->document();
     if (!document)
         return;

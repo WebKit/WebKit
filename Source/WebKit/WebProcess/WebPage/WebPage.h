@@ -1292,8 +1292,11 @@ public:
 
     void getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&&);
 
-    void setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain);
+    void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
+    void setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; }
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
+    NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
+    void setHasNavigatedAwayFromAppBoundDomain(NavigatedAwayFromAppBoundDomain navigatedAwayFromAppBoundDomain) { m_hasNavigatedAwayFromAppBoundDomain = navigatedAwayFromAppBoundDomain; }
 
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
     
@@ -1390,7 +1393,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, NavigatingToAppBoundDomain, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, NavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
@@ -2082,6 +2085,7 @@ private:
 #endif
     
     NavigatingToAppBoundDomain m_isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
 };
 
 #if !PLATFORM(IOS_FAMILY)

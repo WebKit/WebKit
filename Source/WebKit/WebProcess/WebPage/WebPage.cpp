@@ -1576,6 +1576,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
     setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain);
+    setHasNavigatedAwayFromAppBoundDomain(loadParameters.hasNavigatedAwayFromAppBoundDomain);
 
     SendStopResponsivenessTimer stopper;
 
@@ -1611,9 +1612,10 @@ NO_RETURN void WebPage::loadRequestWaitingForProcessLaunch(LoadParameters&&, URL
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+void WebPage::loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies, Ref<SharedBuffer>&& sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, const UserData& userData, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain);
+    setHasNavigatedAwayFromAppBoundDomain(hasNavigatedAwayFromAppBoundDomain);
 
     SendStopResponsivenessTimer stopper;
 
@@ -1641,7 +1643,7 @@ void WebPage::loadData(LoadParameters&& loadParameters)
 
     auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(loadParameters.data.data()), loadParameters.data.size());
     URL baseURL = loadParameters.baseURLString.isEmpty() ? WTF::blankURL() : URL(URL(), loadParameters.baseURLString);
-    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.shouldOpenExternalURLsPolicy);
+    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.hasNavigatedAwayFromAppBoundDomain, loadParameters.shouldOpenExternalURLsPolicy);
 }
 
 void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
@@ -1653,7 +1655,7 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     URL provisionalLoadErrorURL = loadParameters.provisionalLoadErrorURLString.isEmpty() ? URL() : URL(URL(), loadParameters.provisionalLoadErrorURLString);
     auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(loadParameters.data.data()), loadParameters.data.size());
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);    
-    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain);
+    loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), WTFMove(sharedBuffer), loadParameters.MIMEType, loadParameters.encodingName, baseURL, unreachableURL, loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, loadParameters.hasNavigatedAwayFromAppBoundDomain);
     m_mainFrame->coreFrame()->loader().setProvisionalLoadErrorBeingHandledURL({ });
 }
 
@@ -3281,6 +3283,8 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
 {
     setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain);
+    setHasNavigatedAwayFromAppBoundDomain(policyDecision.hasNavigatedAwayFromAppBoundDomain);
+
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
@@ -3439,6 +3443,11 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
         send(Messages::WebPageProxy::ScriptValueCallback(dataReference, details, callbackID));
     };
+    
+    if (RuntimeEnabledFeatures::sharedFeatures().isInAppBrowserPrivacyEnabled() && frame->isMainFrame() && hasNavigatedAwayFromAppBoundDomain() == NavigatedAwayFromAppBoundDomain::Yes) {
+        send(Messages::WebPageProxy::ScriptValueCallback({ }, ExceptionDetails { "Unable to execute JavaScript"_s }, callbackID));
+        return;
+    }
 
     JSLockHolder lock(commonVM());
     frame->coreFrame()->script().executeAsynchronousUserAgentScriptInWorld(world->coreWorld(), WTFMove(parameters), WTFMove(resolveFunction));
@@ -7035,11 +7044,6 @@ void WebPage::setOverriddenMediaType(const String& mediaType)
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void WebPage::setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
-{
-    m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-}
-
 bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
 {
 #if ENABLE(GPU_PROCESS)
@@ -7053,6 +7057,12 @@ bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     UNUSED_PARAM(purpose);
 #endif
     return false;
+}
+
+void WebPage::setIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain, CompletionHandler<void()>&& completionHandler)
+{
+    m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
+    completionHandler();
 }
 
 } // namespace WebKit

@@ -57,6 +57,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(lockBackForwardList);
     encoder << clientRedirectSourceForHistory;
     encoder << isNavigatingToAppBoundDomain;
+    encoder << hasNavigatedAwayFromAppBoundDomain;
 
     platformEncode(encoder);
 }
@@ -135,6 +136,9 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     data.clientRedirectSourceForHistory = WTFMove(*clientRedirectSourceForHistory);
     
     if (!decoder.decode(data.isNavigatingToAppBoundDomain))
+        return false;
+    
+    if (!decoder.decode(data.hasNavigatedAwayFromAppBoundDomain))
         return false;
     
     if (!platformDecode(decoder, data))

@@ -379,6 +379,9 @@ public:
 #endif
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
+
+    virtual bool hasNavigatedAwayFromAppBoundDomain() { return false; }
+
 };
 
 } // namespace WebCore

@@ -605,4 +605,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetProcessDisplayName() -> (String displayName) Async
 
     SetHasResourceLoadClient(bool has)
+    SetIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain) -> () Async
+
 }
