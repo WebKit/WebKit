@@ -394,7 +394,7 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
         background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
-    .tab-bar > .tabs > .item:not(.disabled).selected {
+    body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
         background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%)) !important;
     }
 
@@ -404,6 +404,14 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
 
     body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
         background-color: hsl(0, 0%, 15%);
+    }
+
+    body.docked .tab-bar > .tabs > .item:not(.disabled).selected {
+        background-color: var(--background-color);
+    }
+
+    body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
+        background-color: hsl(0, 0%, 20%);
     }
 
     .tab-bar > .tabs > .item > .icon {

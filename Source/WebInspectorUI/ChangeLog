@@ -1,5 +1,21 @@
 2020-03-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: visual artifacts in the corner of selected tabs when docked in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=208498
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.css:
+        (@media (prefers-color-scheme: dark) body:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body.docked .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        The `background-color` set by `body.docked .tab-bar > .tabs > .item:not(.disabled).selected`
+        in light mode was also being applied in dark mode. When docked, don't use `background-image`
+        and instead exclusively use `background-color` so nothing is still applied.
+
+2020-03-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Items in the toolbar take up to much vertical space
         https://bugs.webkit.org/show_bug.cgi?id=204627
         <rdar://problem/59091905>
