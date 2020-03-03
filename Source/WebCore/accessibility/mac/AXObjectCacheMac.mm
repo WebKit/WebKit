@@ -490,7 +490,9 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* object
         [changes addObject:change];
     if (NSDictionary *change = textReplacementChangeDictionary(*object, insertionType, insertedText, position))
         [changes addObject:change];
-    postUserInfoForChanges(*rootWebArea(), *object, changes);
+
+    if (auto* root = rootWebArea())
+        postUserInfoForChanges(*root, *object, changes);
     [changes release];
 }
 
@@ -507,7 +509,9 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
         [changes addObject:change];
     if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeInsert, insertedText, textControl))
         [changes addObject:change];
-    postUserInfoForChanges(*rootWebArea(), *object, changes);
+
+    if (auto* root = rootWebArea())
+        postUserInfoForChanges(*root, *object, changes);
     [changes release];
 }
 
