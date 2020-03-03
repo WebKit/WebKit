@@ -67,7 +67,6 @@
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
-#import <WebCore/UTIUtilities.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
@@ -275,8 +274,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (parameters.mimeTypesMap)
         overriddenMimeTypesMap() = WTFMove(parameters.mimeTypesMap);
-
-    setUTIFromMIMETypeMap(WTFMove(parameters.mapUTIFromMIMEType));
 #endif
 
 #if PLATFORM(IOS_FAMILY)

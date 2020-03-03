@@ -1,3 +1,17 @@
+2020-03-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r257754.
+        https://bugs.webkit.org/show_bug.cgi?id=208513
+
+        Introduced API test failure (Requested by perarne on #webkit).
+
+        Reverted changeset:
+
+        "[Cocoa] Mapping from MIME type to UTI type should be done in
+        the UI process"
+        https://bugs.webkit.org/show_bug.cgi?id=208415
+        https://trac.webkit.org/changeset/257754
+
 2020-03-03  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(r257726): [GTK] LayoutTests crashing after r257726
