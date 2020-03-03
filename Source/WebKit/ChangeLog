@@ -1,3 +1,15 @@
+2020-03-02  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=208447
+        Make FrameLoadRequest ctor take move parameter
+
+        Reviewed by Simon Fraser.
+
+        Adapt to API change.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+
 2020-03-02  Ben Nham  <nham@apple.com>
 
         [WTF] Add signpost API

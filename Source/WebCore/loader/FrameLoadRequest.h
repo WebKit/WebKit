@@ -39,7 +39,7 @@ class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, const ReferrerPolicy&, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, InitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const String& frameName, LockHistory, LockBackForwardList, const ReferrerPolicy&, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, InitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
