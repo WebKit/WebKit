@@ -31,6 +31,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/objcSPI.h
 
     spi/darwin/DataVaultSPI.h
+    spi/darwin/OSVariantSPI.h
     spi/darwin/ProcessMemoryFootprint.h
     spi/darwin/SandboxSPI.h
     spi/darwin/XPCSPI.h
@@ -64,6 +65,7 @@ list(APPEND WTF_SOURCES
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/NSURLExtras.mm
     cocoa/ResourceUsageCocoa.cpp
+    cocoa/SystemTracingCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 

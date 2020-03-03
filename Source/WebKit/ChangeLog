@@ -1,3 +1,31 @@
+2020-03-02  Ben Nham  <nham@apple.com>
+
+        [WTF] Add signpost API
+        https://bugs.webkit.org/show_bug.cgi?id=208395
+
+        Reviewed by Alex Christensen.
+
+        We want to start using os_signpost instead of kdebug_trace when emitting performance events,
+        because it is usually cheaper (doesn't require a system call unless the log buffer is full)
+        and allows for richer tracepoints (allows for logging strings as well as integers).
+
+        To facilitate this, this moves the os_signpost wrappers in NetworkDataTaskCocoa to
+        WTF. Since signposts can contain sensitive strings (like URLs), currently we only enable
+        them on Apple-internal devices when an environment variable is set.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::didSendData):
+        (WebKit::NetworkDataTaskCocoa::didReceiveChallenge):
+        (WebKit::NetworkDataTaskCocoa::didCompleteWithError):
+        (WebKit::NetworkDataTaskCocoa::didReceiveData):
+        (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCocoa::cancel):
+        (WebKit::NetworkDataTaskCocoa::resume):
+        (signpostLogHandle): Deleted.
+        (signpostsEnabled): Deleted.
+
 2020-03-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Items in the toolbar take up to much vertical space

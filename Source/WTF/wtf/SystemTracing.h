@@ -158,3 +158,38 @@ using WTF::TraceScope;
 using WTF::tracePoint;
 
 #endif // __cplusplus
+
+#if HAVE(OS_SIGNPOST)
+
+#import <os/signpost.h>
+
+WTF_EXTERN_C_BEGIN
+WTF_EXPORT_PRIVATE bool WTFSignpostsEnabled();
+WTF_EXPORT_PRIVATE os_log_t WTFSignpostLogHandle();
+WTF_EXTERN_C_END
+
+#define WTFEmitSignpost(pointer, name, ...) \
+    WTFEmitSignpostWithFunction(os_signpost_event_emit, (pointer), name, ##__VA_ARGS__)
+
+#define WTFBeginSignpost(pointer, name, ...) \
+    WTFEmitSignpostWithFunction(os_signpost_interval_begin, (pointer), name, ##__VA_ARGS__)
+
+#define WTFEndSignpost(pointer, name, ...) \
+    WTFEmitSignpostWithFunction(os_signpost_interval_end, (pointer), name, ##__VA_ARGS__)
+
+#define WTFEmitSignpostWithFunction(emitFunc, pointer, name, ...) \
+do { \
+    if (UNLIKELY(WTFSignpostsEnabled())) { \
+        os_log_t handle = WTFSignpostLogHandle(); \
+        os_signpost_id_t signpostID = os_signpost_id_make_with_pointer(handle, (pointer)); \
+        emitFunc(handle, signpostID, name, ##__VA_ARGS__); \
+    } \
+} while (0)
+
+#else
+
+#define WTFEmitSignpost(pointer, name, ...) do { } while (0)
+#define WTFBeginSignpost(pointer, name, ...) do { } while (0)
+#define WTFEndSignpost(pointer, name, ...) do { } while (0)
+
+#endif

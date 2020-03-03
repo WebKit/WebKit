@@ -1,3 +1,22 @@
+2020-03-02  Ben Nham  <nham@apple.com>
+
+        [WTF] Add signpost API
+        https://bugs.webkit.org/show_bug.cgi?id=208395
+
+        Reviewed by Alex Christensen.
+
+        We want to start using os_signpost instead of kdebug_trace when emitting performance events,
+        because it is usually cheaper (doesn't require a system call unless the log buffer is full)
+        and allows for richer tracepoints (allows for logging strings as well as integers).
+
+        To facilitate this, this moves the os_signpost wrappers in NetworkDataTaskCocoa to
+        WTF. Since signposts can contain sensitive strings (like URLs), currently we only enable
+        them on Apple-internal devices when an environment variable is set.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * spi/darwin/OSVariantSPI.h: Renamed to wtf/spi/darwin/OSVariantSPI.h.
+
 2020-02-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::PAL target
