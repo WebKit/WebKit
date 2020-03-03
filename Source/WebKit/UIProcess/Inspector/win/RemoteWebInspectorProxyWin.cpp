@@ -33,6 +33,7 @@
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebView.h"
+#include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/IntRect.h>
 
 namespace WebKit {
@@ -134,7 +135,7 @@ void RemoteWebInspectorProxy::platformBringToFront() { }
 void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&) { }
-void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance) { }
+void RemoteWebInspectorProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&) { }
 void RemoteWebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
 

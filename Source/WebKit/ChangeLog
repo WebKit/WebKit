@@ -1,3 +1,12 @@
+2020-03-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed. Fix WinCairo build following r257801.
+
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance):
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance):
+
 2020-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Expose originalURL and originalHTTPMethod on _WKResourceLoadInfo
