@@ -63,6 +63,15 @@ protected:
         m_backend = BackendType::create(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
     }
     
+    bool isBackendCreated() const override { return m_backend.get(); }
+
+    BackendType* ensureBackendCreated() const override
+    {
+        if (!m_backend)
+            const_cast<RemoteImageBuffer&>(*this).RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend();
+        return m_backend.get();
+    }
+
     void flushContext() override
     {
         flushDrawingContext();
@@ -74,6 +83,7 @@ protected:
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount()) {
             RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
+            RemoteImageBufferMessageHandler::waitForCommitImageBufferFlushContext();
             displayList.clear();
         }
     }

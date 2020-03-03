@@ -72,6 +72,18 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
+bool RemoteRenderingBackend::waitForCreateImageBufferBackend()
+{
+    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+}
+
+bool RemoteRenderingBackend::waitForCommitImageBufferFlushContext()
+{
+    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CommitImageBufferFlushContext>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+}
+
 std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace)
 {
     if (renderingMode == RenderingMode::RemoteAccelerated) {

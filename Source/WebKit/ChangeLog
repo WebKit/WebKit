@@ -1,3 +1,30 @@
+2020-03-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement canvas remote rendering
+        https://bugs.webkit.org/show_bug.cgi?id=204955
+
+        Reviewed by Jon Lee.
+
+        * WebProcess/GPU/graphics/RemoteImageBuffer.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp:
+        (WebKit::RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend):
+        (WebKit::RemoteImageBufferMessageHandler::waitForCommitImageBufferFlushContext):
+        Synchronize the RemoteImageBuffer backend such that the context and the
+        DrawingContext are flushed to the backend in the GPUProcess only when
+        its pixels are needed in the WebProcess.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+        (WebKit::RemoteImageBufferMessageHandler::isPendingFlush const):
+        Tells whether the pixels of the backend is ready to use or a flushing is
+        being committed.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::waitForCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackend::waitForCommitImageBufferFlushContext):
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h:
+        They block execution till certain RemoteRenderingBackendProxy messages
+        are received.
+
 2020-03-02  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, rolling out r257725.

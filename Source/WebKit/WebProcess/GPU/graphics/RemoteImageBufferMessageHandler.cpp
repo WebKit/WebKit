@@ -49,6 +49,18 @@ RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler()
     m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::ReleaseImageBuffer(m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
 }
 
+void RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend()
+{
+    if (m_remoteRenderingBackend && !isBackendCreated())
+        m_remoteRenderingBackend->waitForCreateImageBufferBackend();
+}
+
+void RemoteImageBufferMessageHandler::waitForCommitImageBufferFlushContext()
+{
+    if (m_remoteRenderingBackend && isPendingFlush())
+        m_remoteRenderingBackend->waitForCommitImageBufferFlushContext();
+}
+
 void RemoteImageBufferMessageHandler::flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList)
 {
     if (!m_remoteRenderingBackend)

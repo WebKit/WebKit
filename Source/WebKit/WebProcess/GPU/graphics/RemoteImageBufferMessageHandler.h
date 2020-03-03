@@ -52,6 +52,12 @@ public:
 protected:
     RemoteImageBufferMessageHandler(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, RemoteRenderingBackend&);
 
+    virtual bool isBackendCreated() const = 0;
+    bool isPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
+
+    void waitForCreateImageBufferBackend();
+    void waitForCommitImageBufferFlushContext();
+
     // Messages to be sent. See RemoteRenderingBackendProxy.messages.in.
     void flushDrawingContext(const WebCore::DisplayList::DisplayList&);
 

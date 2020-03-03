@@ -59,7 +59,7 @@ protected:
 
     ConcreteImageBuffer() = default;
 
-    virtual BackendType* ensureBackend() const { return m_backend.get(); }
+    virtual BackendType* ensureBackendCreated() const { return m_backend.get(); }
 
     GraphicsContext& context() const override
     {
@@ -69,110 +69,186 @@ protected:
 
     void flushContext() override
     {
-        flushDrawingContext();
-        m_backend->flushContext();
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->flushContext();
+        }
     }
 
-    AffineTransform baseTransform() const override { return m_backend->baseTransform(); }
-    IntSize logicalSize() const override { return m_backend->logicalSize(); }
-    IntSize backendSize() const override { return m_backend->backendSize(); }
-    float resolutionScale() const override { return m_backend->resolutionScale(); }
+    AffineTransform baseTransform() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->baseTransform();
+        return { };
+    }
 
-    size_t memoryCost() const override { return m_backend->memoryCost(); }
-    size_t externalMemoryCost() const override { return m_backend->externalMemoryCost(); }
+    IntSize logicalSize() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->logicalSize();
+        return { };
+    }
+
+    IntSize backendSize() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->backendSize();
+        return { };
+    }
+
+    float resolutionScale() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->resolutionScale();
+        return 1;
+    }
+
+    size_t memoryCost() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->memoryCost();
+        return 0;
+    }
+
+    size_t externalMemoryCost() const override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->externalMemoryCost();
+        return 0;
+    }
 
     NativeImagePtr copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
-        return m_backend->copyNativeImage(copyBehavior);
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
+            return backend->copyNativeImage(copyBehavior);
+        }
+        return nullptr;
     }
 
     RefPtr<Image> copyImage(BackingStoreCopy copyBehavior = CopyBackingStore, PreserveResolution preserveResolution = PreserveResolution::No) const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
-        return m_backend->copyImage(copyBehavior, preserveResolution);
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
+            return backend->copyImage(copyBehavior, preserveResolution);
+        }
+        return nullptr;
     }
 
     void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
-        flushDrawingContext();
-        m_backend->draw(destContext, destRect, srcRect, options);
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->draw(destContext, destRect, srcRect, options);
+        }
     }
 
     void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options) override
     {
-        flushDrawingContext();
-        m_backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
+        }
     }
 
     NativeImagePtr sinkIntoNativeImage() override
     {
-        flushDrawingContext();
-        return m_backend->sinkIntoNativeImage();
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            return backend->sinkIntoNativeImage();
+        }
+        return nullptr;
     }
 
     RefPtr<Image> sinkIntoImage(PreserveResolution preserveResolution = PreserveResolution::No) override
     {
-        flushDrawingContext();
-        return m_backend->sinkIntoImage(preserveResolution);
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            return backend->sinkIntoImage(preserveResolution);
+        }
+        return nullptr;
     }
 
     void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
-        flushDrawingContext();
-        m_backend->drawConsuming(destContext, destRect, srcRect, options);
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->drawConsuming(destContext, destRect, srcRect, options);
+        }
     }
 
     void convertToLuminanceMask() override
     {
-        flushDrawingContext();
-        m_backend->convertToLuminanceMask();
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->convertToLuminanceMask();
+        }
     }
 
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace destColorSpace) override
     {
-        flushDrawingContext();
-        m_backend->transformColorSpace(srcColorSpace, destColorSpace);
+        if (auto* backend = ensureBackendCreated()) {
+            flushDrawingContext();
+            backend->transformColorSpace(srcColorSpace, destColorSpace);
+        }
     }
 
     String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushContext();
-        return m_backend->toDataURL(mimeType, quality, preserveResolution);
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->toDataURL(mimeType, quality, preserveResolution);
+        }
+        return String();
     }
 
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushContext();
-        return m_backend->toData(mimeType, quality);
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->toData(mimeType, quality);
+        }
+        return { };
     }
 
     Vector<uint8_t> toBGRAData() const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushContext();
-        return m_backend->toBGRAData();
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->toBGRAData();
+        }
+        return { };
     }
 
     RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const override
     {
-        const_cast<ConcreteImageBuffer&>(*this).flushContext();
-        return m_backend->getImageData(outputFormat, srcRect);
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->getImageData(outputFormat, srcRect);
+        }
+        return nullptr;
     }
 
     void putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint = { }) override
     {
-        flushContext();
-        m_backend->putImageData(inputFormat, imageData, srcRect, destPoint);
+        if (auto* backend = ensureBackendCreated()) {
+            flushContext();
+            backend->putImageData(inputFormat, imageData, srcRect, destPoint);
+        }
     }
 
     PlatformLayer* platformLayer() const override
     {
-        return m_backend->platformLayer();
+        if (auto* backend = ensureBackendCreated())
+            return backend->platformLayer();
+        return nullptr;
     }
 
     bool copyToPlatformTexture(GraphicsContextGLOpenGL& context, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const override
     {
-        return m_backend->copyToPlatformTexture(context, target, destinationTexture, internalformat, premultiplyAlpha, flipY);
+        if (auto* backend = ensureBackendCreated())
+            return backend->copyToPlatformTexture(context, target, destinationTexture, internalformat, premultiplyAlpha, flipY);
+        return false;
     }
 
     std::unique_ptr<BackendType> m_backend;

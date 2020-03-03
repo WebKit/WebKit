@@ -64,6 +64,9 @@ public:
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace);
     void releaseImageBuffer(ImageBufferIdentifier);
 
+    bool waitForCreateImageBufferBackend();
+    bool waitForCommitImageBufferFlushContext();
+
 private:
     RemoteRenderingBackend();
 
