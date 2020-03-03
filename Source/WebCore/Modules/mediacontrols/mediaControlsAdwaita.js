@@ -436,7 +436,8 @@ Controller.prototype = {
             this.controls.currentTime.innerText += " / " + this.formatTime(duration);
             this.controls.currentTime.classList.toggle(this.ClassNames.noDuration, !duration);
             this.controls.timeline.disabled = !duration;
-        }
+        } else
+            this.controls.currentTime.classList.remove(this.ClassNames.noDuration);
     },
 
     setPlaying: function(isPlaying)
