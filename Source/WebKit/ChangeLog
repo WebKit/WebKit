@@ -1,3 +1,9 @@
+2020-03-02  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed sandbox compile fix.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-03-02  Daniel Bates  <dabates@apple.com>
 
         Annotate editable elements with hit test order

@@ -538,7 +538,7 @@
     (global-name "com.apple.logd.events")
 )
 
-(deny mach-lookup (with report) (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
 (allow ipc-posix-shm-read*
