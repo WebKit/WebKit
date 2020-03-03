@@ -405,22 +405,44 @@ Controller.prototype = {
         this.setIsLive(duration === Number.POSITIVE_INFINITY);
         this.controls.timeline.min = 0;
         this.controls.timeline.max = this.isLive ? 0 : duration;
+        if (this.isLive || isNaN(duration))
+            this.timeDigitsCount = 4;
+        else if (duration < 10 * 60) /* Ten minutes */
+            this.timeDigitsCount = 3;
+        else if (duration < 60 * 60) /* One hour */
+            this.timeDigitsCount = 4;
+        else if (duration < 10 * 60 * 60) /* Ten hours */
+            this.timeDigitsCount = 5;
+        else
+            this.timeDigitsCount = 6;
     },
 
     formatTime: function(time)
     {
         if (isNaN(time))
-            time = 0;
-        var absTime = Math.abs(time);
-        var intSeconds = Math.floor(absTime % 60).toFixed(0);
-        var intMinutes = Math.floor((absTime / 60) % 60).toFixed(0);
-        var intHours = Math.floor(absTime / (60 * 60)).toFixed(0);
-        var sign = time < 0 ? '-' : String();
+            return '00:00';
 
-        if (intHours > 0)
-            return sign + intHours + ':' + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2);
+        const absTime = Math.abs(time);
+        const seconds = Math.floor(absTime % 60).toFixed(0);
+        const minutes = Math.floor((absTime / 60) % 60).toFixed(0);
+        const hours = Math.floor(absTime / (60 * 60)).toFixed(0);
 
-        return sign + String('00' + intMinutes).slice(-2) + ":" + String('00' + intSeconds).slice(-2)
+        function prependZeroIfNeeded(value) {
+            if (value < 10)
+                return `0${value}`;
+            return `${value}`;
+        }
+
+        switch (this.timeDigitsCount) {
+        case 3:
+            return minutes + ':' + prependZeroIfNeeded(seconds);
+        case 4:
+            return prependZeroIfNeeded(minutes) + ':' + prependZeroIfNeeded(seconds);
+        case 5:
+            return hours + ':' + prependZeroIfNeeded(minutes) + ':' + prependZeroIfNeeded(seconds);
+        case 6:
+            return prependZeroIfNeeded(hours) + ':' + prependZeroIfNeeded(minutes) + ':' + prependZeroIfNeeded(seconds);
+        }
     },
 
     updateTime: function(forceUpdate)
