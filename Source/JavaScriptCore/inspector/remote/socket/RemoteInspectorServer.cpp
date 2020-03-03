@@ -47,9 +47,21 @@ RemoteInspectorServer::~RemoteInspectorServer()
 
 bool RemoteInspectorServer::start(const char* address, uint16_t port)
 {
+    if (isRunning())
+        return false;
+
     auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
     m_server = endpoint.listenInet(address, port, *this, RemoteInspector::singleton());
     return isRunning();
+}
+
+Optional<uint16_t> RemoteInspectorServer::getPort() const
+{
+    if (!isRunning())
+        return WTF::nullopt;
+
+    const auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
+    return endpoint.getPort(m_server.value());
 }
 
 bool RemoteInspectorServer::didAccept(ConnectionID acceptedID, ConnectionID, Socket::Domain)

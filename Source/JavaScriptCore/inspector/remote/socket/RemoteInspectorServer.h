@@ -39,6 +39,7 @@ public:
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
 
     JS_EXPORT_PRIVATE bool start(const char* address, uint16_t port);
+    JS_EXPORT_PRIVATE Optional<uint16_t> getPort() const;
     bool isRunning() const { return !!m_server; }
 
 private:
