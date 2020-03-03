@@ -216,7 +216,6 @@ public:
 private:
 #if USE(CG)
     void swap(Path&);
-    void initializeOrCopyPlatformPathIfNeeded();
 #endif
 
 #if USE(DIRECT2D)

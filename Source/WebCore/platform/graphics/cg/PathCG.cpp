@@ -100,7 +100,13 @@ Path::~Path()
 
 PlatformPathPtr Path::ensurePlatformPath()
 {
-    initializeOrCopyPlatformPathIfNeeded();
+    if (!m_path)
+        m_path = CGPathCreateMutable();
+    else if (m_copyPathBeforeMutation) {
+        if (CFGetRetainCount(m_path) > 1)
+            CFRelease(std::exchange(m_path, CGPathCreateMutableCopy(m_path)));
+        m_copyPathBeforeMutation = false;
+    }
     return m_path;
 }
 
@@ -124,23 +130,6 @@ void Path::swap(Path& otherPath)
 {
     std::swap(m_path, otherPath.m_path);
     std::swap(m_copyPathBeforeMutation, otherPath.m_copyPathBeforeMutation);
-}
-
-void Path::initializeOrCopyPlatformPathIfNeeded()
-{
-    if (!m_path) {
-        m_path = CGPathCreateMutable();
-        return;
-    }
-
-    if (m_copyPathBeforeMutation) {
-        if (CFGetRetainCount(m_path) > 1) {
-            auto pathToCopy = m_path;
-            m_path = CGPathCreateMutableCopy(pathToCopy);
-            CFRelease(pathToCopy);
-        }
-        m_copyPathBeforeMutation = false;
-    }
 }
 
 Path& Path::operator=(const Path& other)
