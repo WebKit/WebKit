@@ -1,3 +1,53 @@
+2020-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutTests] Transition animations/cross-fade-* tests to non-pixel-tests
+        https://bugs.webkit.org/show_bug.cgi?id=208495
+        <rdar://problem/59979337>
+
+        Reviewed by Simon Fraser.
+
+        These tests are designed to be a dumpAsText() tests (their render tree outputs are flaky).
+
+        * animations/cross-fade-border-image-source-expected.txt: Added.
+        * animations/cross-fade-border-image-source.html:
+        * animations/cross-fade-list-style-image-expected.txt: Added.
+        * animations/cross-fade-list-style-image.html:
+        * animations/cross-fade-webkit-mask-box-image-expected.txt: Added.
+        * animations/cross-fade-webkit-mask-box-image.html:
+        * animations/cross-fade-webkit-mask-image-expected.txt: Added.
+        * animations/cross-fade-webkit-mask-image.html:
+        * platform/gtk/animations/cross-fade-border-image-source-expected.png: Removed.
+        * platform/gtk/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/gtk/animations/cross-fade-list-style-image-expected.png: Removed.
+        * platform/gtk/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/gtk/animations/cross-fade-webkit-mask-box-image-expected.png: Removed.
+        * platform/gtk/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/gtk/animations/cross-fade-webkit-mask-image-expected.png: Removed.
+        * platform/gtk/animations/cross-fade-webkit-mask-image-expected.txt: Removed.
+        * platform/ios/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/ios/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/ios/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/ios/animations/cross-fade-webkit-mask-image-expected.txt: Removed.
+        * platform/mac/animations/cross-fade-border-image-source-expected.png: Removed.
+        * platform/mac/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/mac/animations/cross-fade-list-style-image-expected.png: Removed.
+        * platform/mac/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/mac/animations/cross-fade-webkit-mask-box-image-expected.png: Removed.
+        * platform/mac/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/mac/animations/cross-fade-webkit-mask-image-expected.png: Removed.
+        * platform/mac/animations/cross-fade-webkit-mask-image-expected.txt: Removed.
+        * platform/win/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/win/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/win/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/wincairo/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/wincairo/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/wincairo/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/wincairo/animations/cross-fade-webkit-mask-image-expected.txt: Removed.
+        * platform/wpe/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/wpe/animations/cross-fade-list-style-image-expected.txt: Removed.
+        * platform/wpe/animations/cross-fade-webkit-mask-box-image-expected.txt: Removed.
+        * platform/wpe/animations/cross-fade-webkit-mask-image-expected.txt: Removed.
+
 2020-03-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] http/tests/workers/service/postmessage-after-sw-process-crash.https.html is flaky failing, timing out and crashing.
