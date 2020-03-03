@@ -199,7 +199,7 @@ video::-webkit-media-controls-current-time-display {
     margin: 0 15px 0 0;
 
     line-height: 30px;
-    font-family: -webkit-small-control;
+    font-family: -webkit-system-font;
     font-size: 13px;
     font-weight: normal;
     font-style: normal;
@@ -360,7 +360,7 @@ video::-webkit-media-controls-closed-captions-container {
     max-width: -webkit-calc(100% - 48px); /* right + 10px */
     max-height: -webkit-calc(100% - 35px); /* bottom + 10px */
     cursor: default;
-    font-family: -webkit-small-control;
+    font-family: -webkit-system-font;
     font-size: 10pt;
     font-weight: normal;
     font-style: normal;
