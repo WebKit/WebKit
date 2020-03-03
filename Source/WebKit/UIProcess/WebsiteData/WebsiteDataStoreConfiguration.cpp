@@ -37,6 +37,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory());
         setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
         setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
+        setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory());
         setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory());
         setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory());
         setServiceWorkerRegistrationDirectory(WebsiteDataStore::defaultServiceWorkerRegistrationDirectory());
@@ -71,6 +72,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 #endif
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
+    copy->m_alternativeServicesDirectory = this->m_alternativeServicesDirectory;
     copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;
     copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
     copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;

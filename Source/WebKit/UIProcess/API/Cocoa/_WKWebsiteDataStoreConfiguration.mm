@@ -290,6 +290,19 @@ static void checkURLArgument(NSURL *url)
     _configuration->setMediaKeysStorageDirectory(url.path);
 }
 
+- (NSURL *)alternativeServicesStorageDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->alternativeServicesDirectory() isDirectory:YES];
+}
+
+- (void)setAlternativeServicesStorageDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set alternativeServicesDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    checkURLArgument(url);
+    _configuration->setAlternativeServicesDirectory(url.path);
+}
+
 - (BOOL)deviceManagementRestrictionsEnabled
 {
     return _configuration->deviceManagementRestrictionsEnabled();

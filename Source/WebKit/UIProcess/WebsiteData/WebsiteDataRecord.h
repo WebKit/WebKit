@@ -54,6 +54,7 @@ struct WebsiteDataRecord {
     void addPluginDataHostName(const String& hostName);
 #endif
     void addHSTSCacheHostname(const String& hostName);
+    void addAlternativeServicesHostname(const String& hostName);
 
     String displayName;
     OptionSet<WebsiteDataType> types;
@@ -70,6 +71,7 @@ struct WebsiteDataRecord {
     HashSet<String> pluginDataHostNames;
 #endif
     HashSet<String> HSTSCacheHostNames;
+    HashSet<String> alternativeServicesHostNames;
 
     bool matches(const WebCore::RegistrableDomain&) const;
     String topPrivatelyControlledDomain();

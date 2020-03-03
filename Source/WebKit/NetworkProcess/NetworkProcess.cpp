@@ -1481,6 +1481,15 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             });
         });
     }
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices)) {
+        if (auto* session = networkSession(sessionID)) {
+            for (auto& origin : session->hostNamesWithAlternativeServices())
+                callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::AlternativeServices, 0 });
+        }
+    }
+#endif
 }
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
@@ -1550,6 +1559,13 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         if (auto* networkSession = this->networkSession(sessionID))
             networkSession->clearAdClickAttribution();
     }
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices)) {
+        if (auto* networkSession = this->networkSession(sessionID))
+            networkSession->clearAlternativeServices(modifiedSince);
+    }
+#endif
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
@@ -1587,6 +1603,18 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         if (auto* networkStorageSession = storageSession(sessionID))
             deleteHSTSCacheForHostNames(*networkStorageSession, HSTSCacheHostNames);
+    }
+#endif
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices)) {
+        if (auto* networkSession = this->networkSession(sessionID)) {
+            Vector<String> hosts;
+            hosts.reserveInitialCapacity(originDatas.size());
+            for (auto& origin : originDatas)
+                hosts.uncheckedAppend(origin.host);
+            networkSession->deleteAlternativeServicesForHostNames(hosts);
+        }
     }
 #endif
 
@@ -1762,6 +1790,18 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
                 callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
 
             deleteHSTSCacheForHostNames(*networkStorageSession, hostnamesWithHSTSToDelete);
+        }
+    }
+#endif
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices)) {
+        if (auto* networkSession = this->networkSession(sessionID)) {
+            Vector<String> registrableDomainsToDelete;
+            registrableDomainsToDelete.reserveInitialCapacity(domains.size());
+            for (auto& domain : domains)
+                registrableDomainsToDelete.uncheckedAppend(domain.first.string());
+            networkSession->deleteAlternativeServicesForHostNames(registrableDomainsToDelete);
         }
     }
 #endif

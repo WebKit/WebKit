@@ -52,6 +52,10 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << httpProxy;
     encoder << httpsProxy;
 #endif
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    encoder << alternativeServiceDirectory;
+    encoder << alternativeServiceDirectoryExtensionHandle;
+#endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
     encoder << cookiePersistentStorageType;
@@ -138,6 +142,18 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<URL> httpsProxy;
     decoder >> httpsProxy;
     if (!httpsProxy)
+        return WTF::nullopt;
+#endif
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    Optional<String> alternativeServiceDirectory;
+    decoder >> alternativeServiceDirectory;
+    if (!alternativeServiceDirectory)
+        return WTF::nullopt;
+
+    Optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
+    decoder >> alternativeServiceDirectoryExtensionHandle;
+    if (!alternativeServiceDirectoryExtensionHandle)
         return WTF::nullopt;
 #endif
 
@@ -294,6 +310,10 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*loadThrottleLatency)
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)
+#endif
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+        , WTFMove(*alternativeServiceDirectory)
+        , WTFMove(*alternativeServiceDirectoryExtensionHandle)
 #endif
 #if USE(SOUP)
         , WTFMove(*cookiePersistentStoragePath)

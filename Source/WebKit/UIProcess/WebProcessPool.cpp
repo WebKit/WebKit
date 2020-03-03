@@ -651,6 +651,10 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         SandboxExtension::createHandle(networkCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectoryExtensionHandle);
     }
 
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory = WebsiteDataStore::defaultAlternativeServicesDirectory();
+    SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle);
+#endif
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = enableResourceLoadStatistics;
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsLogTestingEvent = enableResourceLoadStatisticsLogTestingEvent;
     parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;

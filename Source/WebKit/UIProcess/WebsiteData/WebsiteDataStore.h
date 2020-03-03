@@ -206,6 +206,7 @@ public:
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration->applicationCacheDirectory(); }
     const String& resolvedLocalStorageDirectory() const { return m_resolvedConfiguration->localStorageDirectory(); }
     const String& resolvedNetworkCacheDirectory() const { return m_resolvedConfiguration->networkCacheDirectory(); }
+    const String& resolvedAlternativeServicesStorageDirectory() const { return m_resolvedConfiguration->alternativeServicesDirectory(); }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration->mediaCacheDirectory(); }
     const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration->mediaKeysStorageDirectory(); }
     const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration->webSQLDatabaseDirectory(); }
@@ -264,6 +265,7 @@ public:
     static WTF::String defaultLocalStorageDirectory();
     static WTF::String defaultResourceLoadStatisticsDirectory();
     static WTF::String defaultNetworkCacheDirectory();
+    static WTF::String defaultAlternativeServicesDirectory();
     static WTF::String defaultApplicationCacheDirectory();
     static WTF::String defaultWebSQLDatabaseDirectory();
 #if USE(GLIB)

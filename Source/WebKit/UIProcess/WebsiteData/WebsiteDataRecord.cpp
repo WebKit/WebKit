@@ -104,6 +104,16 @@ void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
     HSTSCacheHostNames.add(hostName);
 }
 
+void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
+{
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    types.add(WebsiteDataType::AlternativeServices);
+    alternativeServicesHostNames.add(hostName);
+#else
+    UNUSED_PARAM(hostName);
+#endif
+}
+
 static inline bool hostIsInDomain(StringView host, StringView domain)
 {
     if (!host.endsWithIgnoringASCIICase(domain))

@@ -217,6 +217,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setWebSQLDatabaseDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->webSQLDatabaseDirectory()));
     if (!m_configuration->indexedDBDatabaseDirectory().isEmpty())
         m_resolvedConfiguration->setIndexedDBDatabaseDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->indexedDBDatabaseDirectory()));
+    if (!m_configuration->alternativeServicesDirectory().isEmpty())
+        m_resolvedConfiguration->setAlternativeServicesDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->alternativeServicesDirectory()));
     if (!m_configuration->deviceIdHashSaltsStorageDirectory().isEmpty())
         m_resolvedConfiguration->setDeviceIdHashSaltsStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->deviceIdHashSaltsStorageDirectory()));
     if (!m_configuration->networkCacheDirectory().isEmpty())
@@ -2243,6 +2245,12 @@ void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
 WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
 {
     // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
+    return WTF::String();
+}
+
+WTF::String WebsiteDataStore::defaultAlternativeServicesDirectory()
+{
+    // FIXME: Implement.
     return WTF::String();
 }
 

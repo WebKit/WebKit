@@ -37,6 +37,7 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -582,6 +583,74 @@ TEST(WebKit, ApplicationCacheDirectories)
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
 }
+
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+
+static void checkUntilEntryFound(WKWebsiteDataStore *dataStore, void(^completionHandler)(NSArray<WKWebsiteDataRecord *> *))
+{
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeAlternativeServices] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        if (records.count)
+            completionHandler(records);
+        else
+            checkUntilEntryFound(dataStore, completionHandler);
+    }];
+}
+
+// This test needs to remain disabled until rdar://problem/59644683 is resolved.
+TEST(WebKit, DISABLED_AlternativeService)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { {{ "alt-svc", "h3-24=\":443\"; ma=3600; persist=1" }}, "<html>test content</html>" } }
+    }, HTTPServer::Protocol::Https);
+
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"AlternativeServiceTest"] isDirectory:YES];
+    NSString *path = [tempDir URLByAppendingPathComponent:@"AlternativeService.sqlite"].path;
+    NSError *error = nil;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:path error:&error];
+
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    dataStoreConfiguration.alternativeServicesStorageDirectory = tempDir;
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
+
+    __block bool done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeAlternativeServices] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 0u);
+        done = true;
+    }];
+    Util::run(&done);
+
+    WKWebViewConfiguration *webViewConfiguration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    webViewConfiguration.websiteDataStore = dataStore;
+    WKWebView *webView = [[[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration] autorelease];
+    TestNavigationDelegate *delegate = [[[TestNavigationDelegate alloc] init] autorelease];
+    webView.navigationDelegate = delegate;
+    delegate.didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+    
+    [webView loadRequest:server.request()];
+
+    done = false;
+    checkUntilEntryFound(dataStore, ^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 1u);
+        [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeAlternativeServices] forDataRecords:records completionHandler:^{
+            [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeAlternativeServices] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+                EXPECT_EQ(records.count, 0u);
+                done = true;
+            }];
+        }];
+    });
+    Util::run(&done);
+    
+    EXPECT_TRUE([fileManager fileExistsAtPath:path]);
+    // We can't unlink the sqlite file because it is guarded by the network process right now.
+    // We delete it before running this test the next time.
+}
+
+#endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 
 #endif // HAVE(NETWORK_FRAMEWORK)
 

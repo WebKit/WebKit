@@ -127,6 +127,10 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::AdClickAttributions:
         return WebsiteDataProcessType::Network;
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    case WebsiteDataType::AlternativeServices:
+        return WebsiteDataProcessType::Network;
+#endif
     }
 
     RELEASE_ASSERT_NOT_REACHED();

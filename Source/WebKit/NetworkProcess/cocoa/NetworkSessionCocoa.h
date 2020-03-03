@@ -107,6 +107,10 @@ private:
     SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain);
     SessionWrapper& appBoundSession(WebCore::StoredCredentialsPolicy);
 
+    Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const override;
+    void deleteAlternativeServicesForHostNames(const Vector<String>&) override;
+    void clearAlternativeServices(WallTime) override;
+
 #if HAVE(NSURLSESSION_WEBSOCKET)
     std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
     void addWebSocketTask(WebSocketTask&) final;

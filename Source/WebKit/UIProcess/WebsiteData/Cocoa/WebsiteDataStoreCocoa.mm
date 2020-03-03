@@ -144,11 +144,18 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!networkCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
 
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
+    SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
+    if (!alternativeServiceStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
+#endif
+
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
     bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
     
     WebsiteDataStoreParameters parameters;
-    parameters.networkSessionParameters = {
+    parameters.networkSessionParameters = NetworkSessionCreationParameters {
         m_sessionID,
         configuration().boundInterfaceIdentifier(),
         configuration().allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No,
@@ -159,6 +166,10 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
         WTFMove(httpsProxy),
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+        WTFMove(alternativeServiceStorageDirectory),
+        WTFMove(alternativeServiceStorageDirectoryExtensionHandle),
+#endif
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
         resourceLoadStatisticsEnabled(),
@@ -276,6 +287,11 @@ WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
 WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("NetworkCache");
+}
+
+WTF::String WebsiteDataStore::defaultAlternativeServicesDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("AlternativeServices");
 }
 
 WTF::String WebsiteDataStore::defaultMediaCacheDirectory()

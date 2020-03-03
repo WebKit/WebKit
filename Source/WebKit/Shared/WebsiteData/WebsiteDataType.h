@@ -51,6 +51,9 @@ enum class WebsiteDataType {
     DOMCache = 1 << 15,
     DeviceIdHashSalt = 1 << 16,
     AdClickAttributions = 1 << 17,
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    AlternativeServices = 1 << 18,
+#endif
 };
 
 };

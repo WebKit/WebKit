@@ -76,6 +76,10 @@ static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataT
         return WebsiteDataType::Credentials;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAdClickAttributions])
         return WebsiteDataType::AdClickAttributions;
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
+        return WebsiteDataType::AlternativeServices;
+#endif
     return WTF::nullopt;
 }
 
@@ -133,6 +137,10 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeCredentials];
     if (websiteDataTypes.contains(WebsiteDataType::AdClickAttributions))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeAdClickAttributions];
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeAlternativeServices];
+#endif
 
     return wkWebsiteDataTypes;
 }

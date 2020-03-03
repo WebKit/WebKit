@@ -46,6 +46,7 @@ class NetworkStorageSession;
 class ResourceRequest;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ShouldSample : bool;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -75,6 +76,9 @@ public:
     virtual void clearCredentials() { };
     virtual bool shouldLogCookieInformation() const { return false; }
     virtual Seconds loadThrottleLatency() const { return { }; }
+    virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
+    virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }
+    virtual void clearAlternativeServices(WallTime) { }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkProcess& networkProcess() { return m_networkProcess; }
