@@ -859,10 +859,12 @@ AbstractDOMWindow* Frame::virtualWindow() const
 
 String Frame::layerTreeAsText(LayerTreeFlags flags) const
 {
-    document()->updateLayout();
+    if (!m_view)
+        return { };
 
+    m_view->updateLayoutAndStyleIfNeededRecursive();
     if (!contentRenderer())
-        return String();
+        return { };
 
     return contentRenderer()->compositor().layerTreeAsText(flags);
 }
