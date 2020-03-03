@@ -32,9 +32,11 @@
 
 #include "CSSParserContext.h"
 #include "CSSParserSelector.h"
+#include "CSSParserTokenRange.h"
 #include "CSSSelectorList.h"
 #include "StyleSheetContents.h"
 #include <memory>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 

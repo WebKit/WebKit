@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSSParserTokenRange;
+class CSSSelectorList;
 class StyleSheetContents;
 
 struct CSSParserContext;
