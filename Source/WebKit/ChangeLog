@@ -1,3 +1,47 @@
+2020-03-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Add flag to indicate that ITP state was explicitly set
+        https://bugs.webkit.org/show_bug.cgi?id=208461
+        <rdar://problem/59960829>
+
+        Reviewed by John Wilander.
+
+        Now that ITP is supported in Ephemeral sessions, we would like to move to a process-wide
+        concept of ITP being on or off, rather than controlling this at a website data level.
+        This patch takes the first step by adding a flag to the WebKit::NetworkSessionCreationParameters
+        structure that tracks whether the state of ITP (On or Off) was explicitly set by
+        SPI (primarily during testing).
+
+        This patch also ensures that we can communicate with TCC for the purpose of checking if
+        ITP is on or off.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Scripts/process-entitlements.sh:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsEnabled):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsEnabled:]):
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setIsRunningResourceLoadStatisticsTest):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::itpStateWasExplicitlySet const):
+        (WebKit::WebsiteDataStore::useExplicitITPState):
+
 2020-03-02  Alan Coon  <alancoon@apple.com>
 
         Add new Mac target numbers

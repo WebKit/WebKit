@@ -440,3 +440,6 @@
 (allow mach-lookup
     (global-name "com.apple.ProgressReporting"))
 
+;; Needed for TCC.
+(allow mach-lookup
+    (global-name "com.apple.tccd"))

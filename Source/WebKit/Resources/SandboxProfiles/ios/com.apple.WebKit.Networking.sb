@@ -674,3 +674,7 @@
     (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
 (allow iokit-get-properties
     (iokit-property "IORegistryEntryPropertyKeys"))
+
+;; Needed for TCC.
+(allow mach-lookup
+    (global-name "com.apple.tccd"))

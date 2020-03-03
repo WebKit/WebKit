@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,6 +136,14 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebProcessPoolAdditions.h>
+#else
+#define WEB_PROCESS_POOL_ADDITIONS
+#define WEB_PROCESS_POOL_ADDITIONS_2
+#define WEB_PROCESS_POOL_ADDITIONS_3
+#endif
+
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
 #define WEBPROCESSPOOL_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
 #define WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -241,6 +249,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_alwaysRunsAtBackgroundPriority(m_configuration->alwaysRunsAtBackgroundPriority())
     , m_shouldTakeUIBackgroundAssertion(m_configuration->shouldTakeUIBackgroundAssertion())
+    WEB_PROCESS_POOL_ADDITIONS
     , m_userObservablePageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
@@ -585,6 +594,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain manualPrevalentResource { };
+    WEB_PROCESS_POOL_ADDITIONS_2
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -832,6 +842,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
+    WEB_PROCESS_POOL_ADDITIONS_3
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
     auto& process = processProxy.get();
     initializeNewWebProcess(process, websiteDataStore, isPrewarmed);
