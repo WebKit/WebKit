@@ -6879,6 +6879,7 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
 
 void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&& completionHandler)
 {
+    unsigned count = 1; // Zero is reserved for _WKTextInputContext objects that do not have a hit test order.
     auto contexts = m_page->editableElementsInRect(searchRect).map([&] (const auto& element) {
         auto& document = element->document();
 
@@ -6887,6 +6888,7 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
         context.documentIdentifier = document.identifier();
         context.elementIdentifier = document.identifierForElement(element);
         context.boundingRect = element->clientRect();
+        context.hitTestOrder = count++;
         return context;
     });
     completionHandler(contexts);
@@ -6934,7 +6936,7 @@ Optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& e
     if (!frame)
         return WTF::nullopt;
 
-    return WebCore::ElementContext { element.clientRect(), m_identifier, document.identifier(), document.identifierForElement(element) };
+    return WebCore::ElementContext { element.clientRect(), WTF::nullopt, m_identifier, document.identifier(), document.identifierForElement(element) };
 }
 
 void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)

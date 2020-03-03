@@ -1,3 +1,33 @@
+2020-03-02  Daniel Bates  <dabates@apple.com>
+
+        Annotate editable elements with hit test order
+        https://bugs.webkit.org/show_bug.cgi?id=208463
+        <rdar://problem/59962843>
+
+        Reviewed by Wenson Hsieh.
+
+        Until <rdar://problem/59737118> is fixed, annotate editable elements with their hit test
+        order towards fixing <rdar://problem/59602885>. Only element contexts created as a result
+        of calling WebPage::textInputContextsInRect() have a meaningful hit test order.
+
+        Note that the hit test order of an element can only be meaningfully compared to the hit test
+        order of other elements returned in the same invocation of WebPage::textInputContextsInRect().
+        That is, the hit test order is not render tree-unique. So, the same element returned by two
+        different invocations of WebPage::textInputContextsInRect() cannot be compared to any other
+        element outside of the list it was returned in even if its order is the same in both lists.
+
+        * UIProcess/API/Cocoa/_WKTextInputContext.mm:
+        (-[_WKTextInputContext _hitTestOrder]): Added. If the context does not have a hit test order
+        (e.g. returned form WebPage::contextForElement()) then I chose to return 0 – treat it as the
+        frontmost element.
+        * UIProcess/API/Cocoa/_WKTextInputContextInternal.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect): Assign each element's hit test order. Following
+        r257722 the elements are already ordered by hit test order (frontmost to backmost). So, we can
+        simply assign monotonically increasing numbers.
+        (WebKit::WebPage::contextForElement const): Pass WTF::nullopt for the hit test order as I do
+        not have a need to support hit test order for individual elements.
+
 2020-03-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement canvas remote rendering

@@ -54,6 +54,12 @@
     return _textInputContext.boundingRect;
 }
 
+- (NSUInteger)_hitTestOrder
+{
+    // All elements that do not have a hit test order are considered frontmost.
+    return _textInputContext.hitTestOrder.valueOr(0);
+}
+
 - (const WebCore::ElementContext&)_textInputContext
 {
     return _textInputContext;
