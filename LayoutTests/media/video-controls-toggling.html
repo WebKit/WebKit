@@ -66,17 +66,16 @@
             consoleWrite("** Remove controls attribute**");
             run("video.removeAttribute('controls')");
 
-            consoleWrite("");
-            consoleWrite("** Move mouse back over the panel **");
-            run("eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1])");
+            setTimeout(function() {
+                consoleWrite("");
+                consoleWrite("** Video controls tree has been removed **");
+                panel = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
+                testExpected("panel", null);
 
-            consoleWrite("");
-            consoleWrite("** Video controls should not be shown **");
-            testExpected("getComputedStyle(panel).display", 'none', "==");
+                consoleWrite("");
 
-            consoleWrite("");
-
-            endTest();
+                endTest();
+            }, 0);
         }
 
     </script>

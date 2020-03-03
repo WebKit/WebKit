@@ -1,3 +1,22 @@
+2020-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Test media/video-controls-toggling.html is failing for GTK since r257299
+        https://bugs.webkit.org/show_bug.cgi?id=208507
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This has started to fail for GTK since we switched to use adwaita media controls, but I think this was passing
+        by coincidence. The test itself is wrong and that's probably the reason why it fails in the other platforms
+        too. The test expects that the changes that happen after removing the controls attribute from video element are
+        sync, but they aren't because a mutation observer is used by media controls script. Then, it assumes that panel
+        display property is set to none after controls attribute is removed, but we are actually removing the media
+        controls tree from the DOM in that case so the panel is null at that point. This worked in GTK before because
+        all those checks that were supposed to happen after removing the controls were done before the
+        handleControlsChange() was called.
+
+        * media/video-controls-toggling.html: Check that panel is null after controls attribute is removed from video
+        element in the next run loop iteration.
+
 2020-03-02  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutTests] Transition animations/cross-fade-* tests to non-pixel-tests
