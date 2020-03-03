@@ -25,12 +25,15 @@
 
 WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor(identifier)
+    constructor()
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.StorageTabContentView.tabInfo());
-        let detailsSidebarPanelConstructors = [WI.ApplicationCacheDetailsSidebarPanel, WI.IndexedDatabaseDetailsSidebarPanel];
-
-        super(identifier || "storage", "storage", tabBarItem, WI.StorageSidebarPanel, detailsSidebarPanelConstructors);
+        super(StorageTabContentView.tabInfo(), {
+            navigationSidebarPanelConstructor: WI.StorageSidebarPanel,
+            detailsSidebarPanelConstructors: [
+                WI.ApplicationCacheDetailsSidebarPanel,
+                WI.IndexedDatabaseDetailsSidebarPanel,
+            ],
+        });
 
         WI.applicationCacheManager.enable();
         WI.databaseManager.enable();
@@ -41,6 +44,7 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
     static tabInfo()
     {
         return {
+            identifier: StorageTabContentView.Type,
             image: "Images/Storage.svg",
             title: WI.UIString("Storage"),
         };

@@ -1,3 +1,18 @@
+2020-03-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Items in the toolbar take up to much vertical space
+        https://bugs.webkit.org/show_bug.cgi?id=204627
+        <rdar://problem/59091905>
+
+        Reviewed by Timothy Hatcher.
+
+        Now that there is no toolbar area, there is nothing obstructing the ability for the window
+        to be moved around when dragging via the title bar area. As such, we can remove the unused
+        `InspectorFrontendHost` APIs.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::startWindowDrag): Deleted.
+
 2020-03-02  Rob Buis  <rbuis@igalia.com>
 
         Add referrerpolicy attribute support for anchors

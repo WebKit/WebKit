@@ -25,36 +25,43 @@
 
 WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor(identifier)
+    constructor()
     {
-        let tabBarItem;
-        if (WI.settings.experimentalEnableNewTabBar.value)
-            tabBarItem = WI.PinnedTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
-        else
-            tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
-
-        let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
-            WI.DOMNodeDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.RulesStyleDetailsSidebarPanel];
-
+        let detailsSidebarPanelConstructors = [
+            WI.ResourceDetailsSidebarPanel,
+            WI.ProbeDetailsSidebarPanel,
+            WI.DOMNodeDetailsSidebarPanel,
+            WI.ComputedStyleDetailsSidebarPanel,
+            WI.RulesStyleDetailsSidebarPanel,
+        ];
         if (InspectorBackend.hasDomain("LayerTree"))
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
-        super(identifier || "search", "search", tabBarItem, WI.SearchSidebarPanel, detailsSidebarPanelConstructors);
-
-        // Ensures that the Search tab is displayable from a pinned tab bar item.
-        tabBarItem.representedObject = this;
+        super(SearchTabContentView.tabInfo(), {
+            navigationSidebarPanelConstructor: WI.SearchSidebarPanel,
+            detailsSidebarPanelConstructors,
+        });
 
         this._forcePerformSearch = false;
     }
 
     static tabInfo()
     {
-        let image = WI.settings.experimentalEnableNewTabBar.value ? "Images/Search.svg" : "Images/SearchResults.svg";
         return {
-            image,
+            identifier: SearchTabContentView.Type,
+            image: "Images/Search.svg",
             title: WI.UIString("Search"),
-            isEphemeral: true,
         };
+    }
+
+    static shouldPinTab()
+    {
+        return true;
+    }
+
+    static shouldSaveTab()
+    {
+        return false;
     }
 
     // Public

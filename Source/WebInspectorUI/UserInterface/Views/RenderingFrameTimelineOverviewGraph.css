@@ -58,6 +58,6 @@
     pointer-events: none;
 }
 
-body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker {
+body:matches(.window-inactive, .window-docked-inactive) .timeline-overview-graph.rendering-frame > .frame-marker {
     background-image: linear-gradient(to right, hsl(0, 0%, 60%), hsl(0, 0%, 60%));
 }

@@ -110,18 +110,6 @@ void RemoteWebInspectorUI::changeSheetRect(const FloatRect& rect)
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::SetSheetRect(rect), m_page.identifier());
 }
 
-void RemoteWebInspectorUI::startWindowDrag()
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::StartWindowDrag(), m_page.identifier());
-}
-
-void RemoteWebInspectorUI::moveWindowBy(float x, float y)
-{
-    FloatRect frameRect = m_page.corePage()->chrome().windowRect();
-    frameRect.move(x, y);
-    m_page.corePage()->chrome().setWindowRect(frameRect);
-}
-
 WebCore::UserInterfaceLayoutDirection RemoteWebInspectorUI::userInterfaceLayoutDirection() const
 {
     return m_page.corePage()->userInterfaceLayoutDirection();

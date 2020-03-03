@@ -31,8 +31,6 @@ messages -> RemoteWebInspectorProxy {
 
     SetSheetRect(WebCore::FloatRect rect)
 
-    StartWindowDrag()
-
     OpenInNewTab(String url)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
 

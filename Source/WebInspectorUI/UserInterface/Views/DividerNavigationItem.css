@@ -25,11 +25,8 @@
 
 .navigation-bar .item.divider {
     width: 1px;
-    height: 100%;
-    background-image: linear-gradient(hsl(0, 0%, 74%), hsl(0, 0%, 74%));
-    background-size: 100% 16px;
-    background-repeat: no-repeat;
-    background-position: center;
+    height: 16px;
+    background-color: hsl(0, 0%, 74%);
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {
@@ -40,7 +37,6 @@
 
 @media (prefers-color-scheme: dark) {
     .navigation-bar .item.divider {
-        --divider-background: hsl(0, 0%, 40%);
-        background-image: linear-gradient(var(--divider-background), var(--divider-background));
+        background-color: hsl(0, 0%, 40%);
     }
 }

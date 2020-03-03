@@ -27,16 +27,25 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
 {
     constructor()
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SourcesTabContentView.tabInfo());
-        const detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ScopeChainDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
-        super("sources", ["sources"], tabBarItem, WI.SourcesNavigationSidebarPanel, detailsSidebarPanelConstructors);
+        super(SourcesTabContentView.tabInfo(), {
+            navigationSidebarPanelConstructor: WI.SourcesNavigationSidebarPanel,
+            detailsSidebarPanelConstructors: [
+                WI.ResourceDetailsSidebarPanel,
+                WI.ScopeChainDetailsSidebarPanel,
+                WI.ProbeDetailsSidebarPanel,
+            ],
+        });
 
         this._showScopeChainDetailsSidebarPanel = false;
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, this._handleDebuggerPaused, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, this._handleDebuggerResumed, this);
     }
 
     static tabInfo()
     {
         return {
+            identifier: SourcesTabContentView.Type,
             image: "Images/Sources.svg",
             title: WI.UIString("Sources"),
         };
@@ -97,6 +106,18 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
         let treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(breakpoint);
         if (treeElement)
             treeElement.revealAndSelect();
+    }
+
+    // Private
+
+    _handleDebuggerPaused(event)
+    {
+        this.tabBarItem.image = "Images/SourcesPaused.svg";
+    }
+
+    _handleDebuggerResumed(event)
+    {
+        this.tabBarItem.image = "Images/Sources.svg";
     }
 };
 

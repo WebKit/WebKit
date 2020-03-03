@@ -55,9 +55,6 @@ public:
     WEBCORE_EXPORT virtual void windowObjectCleared() = 0;
     virtual void frontendLoaded() = 0;
 
-    virtual void startWindowDrag() = 0;
-    virtual void moveWindowBy(float x, float y) = 0;
-
     // Information about the debuggable.
     virtual bool isRemote() const = 0;
     virtual String localizedStringsURL() const = 0;

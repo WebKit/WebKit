@@ -53,7 +53,7 @@
     background: linear-gradient(to right, var(--selected-text-background-color), var(--selected-text-background-color)) no-repeat 1px -1px;
 }
 
-body.window-inactive .timeline-record-frame.selected {
+body:matches(.window-inactive, .window-docked-inactive) .timeline-record-frame.selected {
     background: linear-gradient(to right, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
 }
 

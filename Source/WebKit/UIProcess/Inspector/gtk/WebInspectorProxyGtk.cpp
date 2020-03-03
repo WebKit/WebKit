@@ -461,11 +461,6 @@ void WebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&)
     notImplemented();
 }
 
-void WebInspectorProxy::platformStartWindowDrag()
-{
-    notImplemented();
-}
-
 static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);

@@ -25,7 +25,7 @@
 
 WI.NavigationBar = class NavigationBar extends WI.View
 {
-    constructor(element, navigationItems, role, label)
+    constructor(element, {role, sizesToFit, navigationItems} = {})
     {
         super(element);
 
@@ -33,19 +33,18 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         if (role)
             this.element.setAttribute("role", role);
-        if (label)
-            this.element.setAttribute("aria-label", label);
 
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
         this.element.addEventListener("mousedown", this._mouseDown.bind(this), true);
 
         this._role = role;
-        this._mouseMovedEventListener = this._mouseMoved.bind(this);
-        this._mouseUpEventListener = this._mouseUp.bind(this);
-
+        this._sizesToFit = sizesToFit || false;
         this._minimumWidth = NaN;
         this._navigationItems = [];
         this._selectedNavigationItem = null;
+
+        this._mouseMovedEventListener = this._mouseMoved.bind(this);
+        this._mouseUpEventListener = this._mouseUp.bind(this);
 
         if (navigationItems) {
             for (var i = 0; i < navigationItems.length; ++i)
@@ -55,9 +54,11 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     // Public
 
+    get sizesToFit() { return this._sizesToFit; }
+
     addNavigationItem(navigationItem, parentElement)
     {
-        return this.insertNavigationItem(navigationItem, this._navigationItems.length, parentElement);
+        return this.insertNavigationItem(navigationItem, Infinity, parentElement);
     }
 
     insertNavigationItem(navigationItem, index, parentElement)
@@ -71,7 +72,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         navigationItem.didAttach(this);
 
-        console.assert(index >= 0 && index <= this._navigationItems.length);
+        console.assert(!isFinite(index) || (index >= 0 && index <= this._navigationItems.length));
         index = Math.max(0, Math.min(index, this._navigationItems.length));
 
         this._navigationItems.splice(index, 0, navigationItem);
@@ -164,12 +165,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (isNaN(this._minimumWidth))
             this._minimumWidth = this._calculateMinimumWidth();
         return this._minimumWidth;
-    }
-
-    get sizesToFit()
-    {
-        // Can be overridden by subclasses.
-        return false;
     }
 
     findNavigationItem(identifier)

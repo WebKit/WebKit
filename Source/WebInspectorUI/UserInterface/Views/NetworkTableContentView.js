@@ -56,6 +56,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // FIXME: Network Timeline.
         // FIXME: Throttling.
 
+        this._statistics = {};
+
+        this.element.classList.add("network-table");
+
         this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"), {exclusive: true});
         let typeFilterScopeBarItems = [this._typeFilterScopeBarItemAll];
 
@@ -164,6 +168,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
+        WI.Resource.addEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
@@ -304,8 +309,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     reset()
     {
-        this._runForMainCollection((collection) => {
+        this._runForMainCollection((collection, wasMain) => {
             this._resetCollection(collection);
+
+            if (wasMain)
+                this._updateStatistics();
         });
 
         for (let detailView of this._detailViewMap.values())
@@ -441,6 +449,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     tablePopulateCell(table, cell, column, rowIndex)
     {
         let entry = this._activeCollection.filteredEntries[rowIndex];
+
+        cell.classList.toggle("current-session", entry.currentSession);
 
         if (entry.resource)
             cell.classList.toggle("error", entry.resource.hadLoadingError());
@@ -601,6 +611,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateFilteredEntries();
         this._updateWaterfallTimelineRuler();
         this._reloadTable();
+        this._updateStatistics();
         this._hideDetailView();
 
         this.needsLayout();
@@ -1238,6 +1249,31 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this.addSubview(this._table);
+
+        let statisticsContainer = this.element.appendChild(document.createElement("div"));
+        statisticsContainer.className = "statistics";
+
+        let createStatisticElement = (name, image) => {
+            let statistic = this._statistics[name];
+            if (!statistic)
+                statistic = this._statistics[name] = {};
+
+            statistic.container = statisticsContainer.appendChild(document.createElement("div"));
+            statistic.container.classList.add("statistic", name);
+
+            statistic.container.appendChild(WI.ImageUtilities.useSVGSymbol(image, "icon"));
+
+            statistic.element = statistic.container.appendChild(document.createElement("div"));
+            statistic.element.className = "text";
+        };
+        createStatisticElement("domain-count", "Images/Origin.svg");
+        createStatisticElement("resource-count", "Images/Resources.svg");
+        createStatisticElement("resource-size", "Images/Weight.svg");
+        createStatisticElement("transfer-size", "Images/Network.svg");
+        createStatisticElement("redirect-count", "Images/StepOver.svg");
+        createStatisticElement("load-time", "Images/Time.svg");
+
+        this._updateStatistics();
     }
 
     layout()
@@ -1272,6 +1308,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         for (let resource of resources)
             this._insertResourceAndReloadTable(resource);
+
+        this._updateStatistics();
     }
 
     handleClearShortcut(event)
@@ -1359,6 +1397,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 this._insertResourceAndReloadTable(resource);
             console.assert(collection.pendingInsertions.length === originalLength);
             collection.pendingInsertions = [];
+            this._updateStatistics();
             return;
         }
 
@@ -1378,6 +1417,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateSort();
         this._updateFilteredEntries();
         this._reloadTable();
+        this._updateStatistics();
     }
 
     _populateWithInitialResourcesIfNeeded(collection)
@@ -1465,6 +1505,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         updateExistingEntry(collection.filteredEntries[rowIndex], entry);
+
+        this._updateStatistics();
     }
 
     _hidePopover()
@@ -1595,23 +1637,33 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _mainResourceDidChange(event)
     {
-        this._runForMainCollection((collection, wasMain) => {
-            let frame = event.target;
-            if (frame.isMainFrame() && WI.settings.clearNetworkOnNavigate.value) {
-                this._resetCollection(collection);
+        let frame = event.target;
 
-                if (wasMain && !this._needsInitialPopulate)
-                    this._hideDetailView();
+        if (frame.isMainFrame() && !this._transitioningPageTarget)
+            this._startUpdatingLoadTimeStatistic();
+
+        this._runForMainCollection((collection, wasMain) => {
+            if (frame.isMainFrame()) {
+                if (WI.settings.clearNetworkOnNavigate.value) {
+                    this._resetCollection(collection);
+
+                    if (wasMain && !this._needsInitialPopulate)
+                        this._hideDetailView();
+                } else {
+                    for (let entry of collection.entries)
+                        entry.currentSession = false;
+                }
             }
 
             if (this._transitioningPageTarget) {
                 this._transitioningPageTarget = false;
                 this._needsInitialPopulate = true;
                 this._populateWithInitialResourcesIfNeeded(collection);
-                return;
-            }
+            } else
+                this._insertResourceAndReloadTable(frame.mainResource);
 
-            this._insertResourceAndReloadTable(frame.mainResource);
+            if (wasMain)
+                this._updateStatistics();
         });
     }
 
@@ -1654,6 +1706,41 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
     }
 
+    _handleResourceSizeDidChange(event)
+    {
+        if (!this._table)
+            return;
+
+        this._runForMainCollection((collection, wasMain) => {
+            let resource = event.target;
+
+            // In the unlikely event that this is the sort column, we may need to resort.
+            if (this._table.sortColumnIdentifier === "resourceSize") {
+                collection.pendingUpdates.push(resource);
+                this.needsLayout();
+                return;
+            }
+
+            let index = collection.entries.findIndex((x) => x.resource === resource);
+            if (index === -1)
+                return;
+
+            let entry = collection.entries[index];
+            entry.resourceSize = resource.size;
+
+            if (!wasMain)
+                return;
+
+            let rowIndex = this._rowIndexForRepresentedObject(resource);
+            if (rowIndex === -1)
+                return;
+
+            this._table.reloadCell(rowIndex, "resourceSize");
+
+            this._updateStatistics();
+        });
+    }
+
     _resourceTransferSizeDidChange(event)
     {
         if (!this._table)
@@ -1684,13 +1771,18 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 return;
 
             this._table.reloadCell(rowIndex, "transferSize");
+
+            this._updateStatistics();
         });
     }
 
     _handleResourceAdded(event)
     {
-        this._runForMainCollection((collection) => {
+        this._runForMainCollection((collection, wasMain) => {
             this._insertResourceAndReloadTable(event.data.resource);
+
+            if (wasMain)
+                this._updateStatistics();
         });
     }
 
@@ -1699,11 +1791,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (this._needsInitialPopulate)
             return;
 
-        this._runForMainCollection((collection) => {
+        this._runForMainCollection((collection, wasMain) => {
             let frame = event.data.childFrame;
             let mainResource = frame.provisionalMainResource || frame.mainResource;
             console.assert(mainResource, "Frame should have a main resource.");
             this._insertResourceAndReloadTable(mainResource);
+
+            if (wasMain)
+                this._updateStatistics();
 
             console.assert(!frame.resourceCollection.size, "New frame should be empty.");
             console.assert(!frame.childFrameCollection.size, "New frame should be empty.");
@@ -1808,6 +1903,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             remoteAddress: resource.remoteAddress,
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
+            currentSession: true,
         };
     }
 
@@ -1972,6 +2068,131 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this._updateEmptyFilterResultsMessage();
+    }
+
+    _updateStatistics()
+    {
+        if (!this.didInitialLayout)
+            return;
+
+        let entries = this._activeCollection.entries.filter((entry) => entry.currentSession);
+
+        let domains = new Set;
+        let resourceSize = 0;
+        let transferSize = 0;
+        let redirectCount = 0;
+        for (let entry of entries) {
+            domains.add(entry.domain);
+            if (!isNaN(entry.resourceSize))
+                resourceSize += entry.resourceSize;
+            if (!isNaN(entry.transferSize))
+                transferSize += entry.transferSize;
+            if (entry.resource)
+                redirectCount += entry.resource.redirects.length;
+        }
+
+        this._updateStatistic("domain-count", domains.size === 1 ? WI.UIString("%d domain") : WI.UIString("%d domains"), domains.size);
+
+        let resourceCount = entries.length;
+        this._updateStatistic("resource-count", resourceCount === 1 ? WI.UIString("%d resource") : WI.UIString("%d resources"), resourceCount);
+
+        const higherResolution = false;
+        this._updateStatistic("resource-size", WI.UIString("%s total"), Number.bytesToString(resourceSize, higherResolution));
+        this._updateStatistic("transfer-size", WI.UIString("%s transferred"), Number.bytesToString(transferSize, higherResolution));
+
+        this._updateStatistic("redirect-count", redirectCount === 1 ? WI.UIString("%d redirect") : WI.UIString("%d redirects"), redirectCount);
+
+        let loadTimeStatistic = this._statistics["load-time"];
+        if (loadTimeStatistic.format && this._isShowingMainCollection()) {
+            this._updateStatistic("load-time");
+            loadTimeStatistic.container.hidden = false;
+        } else
+            loadTimeStatistic.container.hidden = true;
+    }
+
+    _updateStatistic(name, format, value)
+    {
+        let statistic = this._statistics[name];
+
+        if (format)
+            statistic.format = format;
+        else
+            format = statistic.format;
+
+        if (value || value === 0)
+            statistic.value = value;
+        else
+            value = statistic.value;
+
+        if (statistic.container)
+            statistic.container.title = format.format(value);
+
+        if (statistic.element)
+            statistic.element.textContent = value;
+    }
+
+    _startUpdatingLoadTimeStatistic()
+    {
+        this._stopUpdatingLoadTimeStatistic();
+
+        let loadTimeStatistic = this._statistics["load-time"];
+        if (!loadTimeStatistic)
+            loadTimeStatistic = this._statistics["load-time"] = {};
+
+        loadTimeStatistic.start = Date.now();
+        loadTimeStatistic.delay = 50;
+        loadTimeStatistic.timer = setInterval(this._updateLoadTimeStatistic.bind(this), loadTimeStatistic.delay);
+    }
+
+    _stopUpdatingLoadTimeStatistic()
+    {
+        let loadTimeStatistic = this._statistics["load-time"];
+        if (!loadTimeStatistic)
+            return;
+
+        if (loadTimeStatistic.timer) {
+            clearInterval(loadTimeStatistic.timer);
+            loadTimeStatistic.timer = undefined;
+        }
+    }
+
+    _updateLoadTimeStatistic()
+    {
+        let loadTimeStatistic = this._statistics["load-time"];
+        console.assert(loadTimeStatistic);
+
+        let duration = Date.now() - loadTimeStatistic.start;
+
+        let delay = loadTimeStatistic.delay;
+        if (duration >= 1000) // 1 second
+            delay = 100;
+        else if (duration >= 60000) // 60 seconds
+            delay = 1000;
+        else if (duration >= 3600000) // 1 minute
+            delay = 10000;
+
+        if (delay !== loadTimeStatistic.delay) {
+            loadTimeStatistic.delay = delay;
+
+            clearInterval(loadTimeStatistic.timer);
+            loadTimeStatistic.timer = setInterval(this._updateLoadTimeStatistic.bind(this), loadTimeStatistic.delay);
+        }
+
+        let mainFrame = WI.networkManager.mainFrame;
+        let mainFrameStartTime = mainFrame.mainResource.firstTimestamp;
+        let mainFrameLoadEventTime = mainFrame.loadEventTimestamp;
+
+        if (loadTimeStatistic.container)
+            loadTimeStatistic.container.hidden = !this._isShowingMainCollection();
+
+        if (isNaN(mainFrameStartTime) || isNaN(mainFrameLoadEventTime)) {
+            this._updateStatistic("load-time", WI.UIString("Loading for %s"), Number.secondsToString(duration / 1000));
+            return;
+        }
+
+        this._updateStatistic("load-time", WI.UIString("Loaded in %s"), Number.secondsToString(mainFrameLoadEventTime - mainFrameStartTime));
+
+        this._stopUpdatingLoadTimeStatistic();
     }
 
     _reloadTable()

@@ -133,7 +133,6 @@ void WebInspectorFrontendClient::detachWindow() { }
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }
 void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned) { }
 void WebInspectorFrontendClient::setSheetRect(const FloatRect&) { }
-void WebInspectorFrontendClient::startWindowDrag() { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::showCertificate(const CertificateInfo&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }

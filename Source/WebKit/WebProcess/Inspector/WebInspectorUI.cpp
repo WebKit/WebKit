@@ -137,18 +137,6 @@ void WebInspectorUI::frontendLoaded()
     bringToFront();
 }
 
-void WebInspectorUI::startWindowDrag()
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::StartWindowDrag(), m_inspectedPageIdentifier);
-}
-
-void WebInspectorUI::moveWindowBy(float x, float y)
-{
-    FloatRect frameRect = m_page.corePage()->chrome().windowRect();
-    frameRect.move(x, y);
-    m_page.corePage()->chrome().setWindowRect(frameRect);
-}
-
 void WebInspectorUI::bringToFront()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::BringToFront(), m_inspectedPageIdentifier);

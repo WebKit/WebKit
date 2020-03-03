@@ -104,7 +104,7 @@ WI.GraphicsOverviewContentView = class GraphicsOverviewContentView extends WI.Co
 
                 let navigationItems = overviewView.navigationItems;
                 if (navigationItems.length) {
-                    let navigationBar = new WI.NavigationBar(document.createElement("nav"), navigationItems);
+                    let navigationBar = new WI.NavigationBar(document.createElement("nav"), {navigationItems});
                     headerElement.appendChild(navigationBar.element);
                     this.addSubview(navigationBar);
                 }

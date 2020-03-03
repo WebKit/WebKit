@@ -117,7 +117,7 @@ body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .tim
 }
 
 .timeline-overview > .tree-outline.timelines .item.selected + .item,
-body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected + .item {
+body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item {
     border-top-color: hsl(0, 0%, 83%);
 }
 
@@ -246,7 +246,7 @@ body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
     }
 
     .timeline-overview > .tree-outline.timelines .item.selected + .item,
-    body.window-inactive .timeline-overview > .tree-outline.timelines .item.selected + .item {
+    body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item {
         border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
     }
 }
