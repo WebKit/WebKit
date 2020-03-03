@@ -588,11 +588,15 @@ void NetworkStorageSession::registerCookieChangeListenersIfNecessary()
         Vector<Cookie> cookies = nsCookiesToCookieVector(nsCookies);
         auto host = URL(urlForAddedCookies).host().toString();
         RELEASE_ASSERT(!host.isNull());
-        auto it = m_cookieChangeObservers.find(host);
-        if (it == m_cookieChangeObservers.end())
-            return;
-        for (auto* observer : it->value)
-            observer->cookiesAdded(host, cookies);
+        // FIXME: This is inefficient. Unfortunately, CFNetwork sends us notifications for hosts that do not match exactly the ones we
+        // are listening for (e.g. 'secure.hulu.com instead of 'www.hulu.com' for). See <rdar://problem/59973630>.
+        auto registrableDomain = RegistrableDomain::uncheckedCreateFromHost(host);
+        for (auto& pair : m_cookieChangeObservers) {
+            if (RegistrableDomain::uncheckedCreateFromHost(pair.key) == registrableDomain) {
+                for (auto* observer : pair.value)
+                    observer->cookiesAdded(pair.key, cookies);
+            }
+        }
     } onQueue:dispatch_get_main_queue()];
     [nsCookieStorage() _setCookiesDeletedHandler:^(NSArray<NSHTTPCookie *> *, bool /*deletedAllCookies*/) {
         for (auto& observers : m_cookieChangeObservers.values()) {
