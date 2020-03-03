@@ -332,6 +332,11 @@ bool WebInspectorProxy::platformIsFront()
     return false;
 }
 
+void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
     m_inspectedURLString = url;

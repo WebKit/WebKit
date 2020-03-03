@@ -33,6 +33,8 @@ messages -> WebInspectorProxy {
     Reopen()
     ResetState()
 
+    SetForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
+
     InspectedURLChanged(String urlString)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
     ElementSelectionChanged(bool active)

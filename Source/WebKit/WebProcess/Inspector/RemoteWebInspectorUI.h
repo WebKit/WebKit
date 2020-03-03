@@ -72,6 +72,8 @@ public:
     String targetProductVersion() const override;
     bool targetIsSimulator() const override;
 
+    void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance) override;
+
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 
     void bringToFront() override;

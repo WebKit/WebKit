@@ -110,6 +110,11 @@ void RemoteWebInspectorUI::changeSheetRect(const FloatRect& rect)
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::SetSheetRect(rect), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::setForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::SetForcedAppearance(appearance), m_page.identifier());
+}
+
 WebCore::UserInterfaceLayoutDirection RemoteWebInspectorUI::userInterfaceLayoutDirection() const
 {
     return m_page.corePage()->userInterfaceLayoutDirection();

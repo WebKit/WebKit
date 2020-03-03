@@ -580,6 +580,11 @@ void WebInspectorProxy::attachAvailabilityChanged(bool available)
     platformAttachAvailabilityChanged(m_canAttach);
 }
 
+void WebInspectorProxy::setForcedAppearance(InspectorFrontendClient::Appearance appearance)
+{
+    platformSetForcedAppearance(appearance);
+}
+
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);
@@ -722,6 +727,11 @@ bool WebInspectorProxy::platformIsFront()
 {
     notImplemented();
     return false;
+}
+
+void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+{
+    notImplemented();
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String&)

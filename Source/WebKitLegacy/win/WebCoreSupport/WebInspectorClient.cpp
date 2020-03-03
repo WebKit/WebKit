@@ -286,6 +286,11 @@ void WebInspectorFrontendClient::resetState()
     m_inspectorClient->deleteInspectorAttachDisabled();
 }
 
+void WebInspectorFrontendClient::setForcedAppearance(InspectorFrontendClient::Appearance)
+{
+    notImplemented();
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if (m_attached)

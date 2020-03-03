@@ -225,6 +225,26 @@ void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
     m_sheetRect = rect;
 }
 
+void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
+{
+    NSWindow *window = m_window.get();
+    ASSERT(window);
+
+    switch (appearance) {
+    case InspectorFrontendClient::Appearance::System:
+        window.appearance = nil;
+        break;
+
+    case InspectorFrontendClient::Appearance::Light:
+        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        break;
+
+    case InspectorFrontendClient::Appearance::Dark:
+        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+        break;
+    }
+}
+
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String& url)
 {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];

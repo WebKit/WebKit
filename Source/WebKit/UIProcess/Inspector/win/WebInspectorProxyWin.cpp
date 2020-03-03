@@ -410,6 +410,11 @@ void WebInspectorProxy::platformBringInspectedPageToFront()
     notImplemented();
 }
 
+void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& /* url */)
 {
     notImplemented();

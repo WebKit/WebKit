@@ -157,6 +157,10 @@ void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect&)
 {
 }
 
+void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+{
+}
+
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&)
 {
 }

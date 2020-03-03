@@ -116,6 +116,8 @@ public:
     void reopen() override;
     void resetState() override;
 
+    void setForcedAppearance(InspectorFrontendClient::Appearance) override;
+
     void setAttachedWindowHeight(unsigned) override;
     void setAttachedWindowWidth(unsigned) override;
 

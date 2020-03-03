@@ -349,6 +349,7 @@ private:
     void closeWindow() final;
     void reopen() final { }
     void bringToFront() final { }
+    void setForcedAppearance(InspectorFrontendClient::Appearance) final { }
     String localizedStringsURL() const final { return String(); }
     DebuggableType debuggableType() const final { return DebuggableType::Page; }
     String targetPlatformName() const { return "Unknown"_s; }

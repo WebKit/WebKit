@@ -1,3 +1,45 @@
+2020-03-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: setting the frontend appearance doesn't update the window when undocked
+        https://bugs.webkit.org/show_bug.cgi?id=208503
+
+        Reviewed by Timothy Hatcher.
+
+        Notify the UIProcess when setting the forced appearance so platforms that support dark mode
+        are able to run native code to adjust the appearance of the undocked window.
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setForcedAppearance): Added.
+        * UIProcess/Inspector/WebInspectorProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setForcedAppearance): Added.
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance): Added.
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance): Added.
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow): Added.
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance): Added.
+        (WebKit::WebInspectorProxy::applyForcedAppearance): Added.
+        * UIProcess/Inspector/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance): Added.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::setForcedAppearance): Added.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.messages.in:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::setForcedAppearance): Added.
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance): Added.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance): Added.
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance): Added.
+        * UIProcess/Inspector/win/RemoteWebInspectorProxyWin.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSetForcedAppearance): Added.
+
 2020-03-03  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add entitlement for message filtering

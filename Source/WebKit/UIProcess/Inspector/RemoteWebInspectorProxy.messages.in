@@ -29,6 +29,8 @@ messages -> RemoteWebInspectorProxy {
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
     Append(String filename, String content)
 
+    SetForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
+
     SetSheetRect(WebCore::FloatRect rect)
 
     OpenInNewTab(String url)

@@ -129,6 +129,8 @@ public:
     void reopen() override;
     void resetState() override;
 
+    void setForcedAppearance(InspectorFrontendClient::Appearance) override;
+
     void attachWindow(DockSide) override;
     void detachWindow() override;
 

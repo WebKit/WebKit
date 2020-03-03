@@ -298,6 +298,7 @@ void WebInspectorProxy::platformCreateFrontendWindow()
     [contentView addSubview:inspectorView];
 
     updateInspectorWindowTitle();
+    applyForcedAppearance();
 }
 
 void WebInspectorProxy::closeFrontendPage()
@@ -411,6 +412,13 @@ bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
 void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 {
     // Do nothing.
+}
+
+void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance appearance)
+{
+    m_frontendAppearance = appearance;
+
+    applyForcedAppearance();
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
@@ -794,6 +802,27 @@ DebuggableInfoData WebInspectorProxy::infoForLocalDebuggable()
     result.targetIsSimulator = false;
 
     return result;
+}
+
+void WebInspectorProxy::applyForcedAppearance()
+{
+    NSWindow *window = m_inspectorWindow.get();
+    if (!window)
+        return;
+
+    switch (m_frontendAppearance) {
+    case InspectorFrontendClient::Appearance::System:
+        window.appearance = nil;
+        break;
+
+    case InspectorFrontendClient::Appearance::Light:
+        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        break;
+
+    case InspectorFrontendClient::Appearance::Dark:
+        window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
+        break;
+    }
 }
 
 } // namespace WebKit

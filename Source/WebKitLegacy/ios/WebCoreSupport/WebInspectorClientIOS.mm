@@ -128,6 +128,7 @@ void WebInspectorFrontendClient::bringToFront() { }
 void WebInspectorFrontendClient::closeWindow() { }
 void WebInspectorFrontendClient::reopen() { }
 void WebInspectorFrontendClient::resetState() { }
+void WebInspectorFrontendClient::setForcedAppearance(InspectorFrontendClient::Appearance) { }
 void WebInspectorFrontendClient::attachWindow(DockSide) { }
 void WebInspectorFrontendClient::detachWindow() { }
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }

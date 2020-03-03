@@ -173,6 +173,11 @@ void WebInspectorUI::resetState()
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ResetState(), m_inspectedPageIdentifier);
 }
 
+void WebInspectorUI::setForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetForcedAppearance(appearance), m_inspectedPageIdentifier);
+}
+
 WebCore::UserInterfaceLayoutDirection WebInspectorUI::userInterfaceLayoutDirection() const
 {
     return m_page.corePage()->userInterfaceLayoutDirection();

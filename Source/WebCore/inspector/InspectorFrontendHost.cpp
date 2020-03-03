@@ -234,14 +234,25 @@ float InspectorFrontendHost::zoomFactor()
 
 void InspectorFrontendHost::setForcedAppearance(String appearance)
 {
-    if (!m_frontendPage)
+    if (appearance == "light"_s) {
+        if (m_client)
+            m_client->setForcedAppearance(InspectorFrontendClient::Appearance::Light);
+        else if (m_frontendPage)
+            m_frontendPage->setUseDarkAppearanceOverride(false);
         return;
+    }
 
-    if (appearance == "light"_s)
-        m_frontendPage->setUseDarkAppearanceOverride(false);
-    else if (appearance == "dark"_s)
-        m_frontendPage->setUseDarkAppearanceOverride(true);
-    else
+    if (appearance == "dark"_s) {
+        if (m_client)
+            m_client->setForcedAppearance(InspectorFrontendClient::Appearance::Dark);
+        else if (m_frontendPage)
+            m_frontendPage->setUseDarkAppearanceOverride(true);
+        return;
+    }
+
+    if (m_client)
+        m_client->setForcedAppearance(InspectorFrontendClient::Appearance::System);
+    else if (m_frontendPage)
         m_frontendPage->setUseDarkAppearanceOverride(WTF::nullopt);
 }
 
