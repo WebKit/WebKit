@@ -1069,6 +1069,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/YarrUnicodeProperties.h
 )
 
+if (USE_INSPECTOR_SOCKET_SERVER)
+    list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
+        API/JSRemoteInspectorServer.h
+    )
+endif ()
+
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${JavaScriptCore_DERIVED_SOURCES_DIR}/Lexer.lut.h)
 

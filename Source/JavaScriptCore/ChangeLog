@@ -1,3 +1,15 @@
+2020-03-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Introduce JSRemoteInspectorServerStart API for socket-based RWI.
+        https://bugs.webkit.org/show_bug.cgi?id=208349
+
+        Reviewed by Joseph Pecoraro.
+
+        * API/JSRemoteInspectorServer.cpp: Added.
+        (JSRemoteInspectorServerStart):
+        * API/JSRemoteInspectorServer.h: Added.
+        * CMakeLists.txt:
+
 2020-03-03  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo][PlayStation] Add interface to get listening port of RemoteInspectorServer
