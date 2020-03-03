@@ -1,3 +1,36 @@
+2020-03-03  Matt Lewis  <jlewis3@apple.com>
+
+        Add Unittest to commits_for_upload() and fix multiple unittests for several test suites.
+        https://bugs.webkit.org/show_bug.cgi?id=208485
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/stub_repository.py:
+        (StubRepository.__init__): Fixing the constructor to call upon the parent class as we were not doing this before. It also means
+        that we don't have to recreate the variables that are already created.
+        * Scripts/webkitpy/common/checkout/scm/stub_repository_unittest.py: High level changed the imports to better reflect what we are using
+        from each module, rather than making extra imports that we don't need.
+        (StubRepositoryTest.mock_host_for_stub_repository): Since we are calling both an executive and a filesystem mock for most of the
+        tests. it makes more sense to create a mock host with the files needed, than it does to instantiate each of these as separate objects
+        and not part of the host.
+        (StubRepositoryTest.test_in_working_directory): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_native_revision): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_native_branch): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_svn_revision): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_find_checkout_root): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_find_checkout_root_failure): Changed the filesystem call to the host call.
+        (StubRepositoryTest.test_find_parent_path_matching_callback_condition_with_file_system): Changed the filesystem call to the host call.
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py: 
+        (SummarizedResultsTest.test_svn_revision_exists): Changed the name to original test to better reflect that it was just looking to see
+        if we were geting any value at all
+        (SummarizedResultsTest.test_svn_revision): Added a test to make sure that the revision we are getting is what we expect to get and make
+        sure we aren't gabking the wrong key:value pair
+        * Scripts/webkitpy/port/base_unittest.py: Changed from MockSystemHost to MockHost as we want the extras that
+        come with the MockHosts and MockHost inherits from MockSystemHost.
+        (PortTest.make_port): Changed the port to call MockHost that will creat the required stub_repository files.
+        (test_commits_for_upload): Added amissing test for commits_for_upload as this has been an issue when trying to make changes
+        to the various upload steps.
+
 2020-03-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build step to find list of modified changelogs

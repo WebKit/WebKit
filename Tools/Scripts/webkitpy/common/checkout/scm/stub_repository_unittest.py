@@ -22,7 +22,9 @@
 
 import unittest
 
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.checkout.scm.stub_repository import StubRepository
 
 mock_stub_repository_json = {'branch': 'trunk', 'id': '2738499'}
@@ -38,41 +40,43 @@ class StubRepositoryTest(unittest.TestCase):
 
     @staticmethod
     def mock_host_for_stub_repository():
-        host = filesystem_mock.MockFileSystem(files=FAKE_FILES)
+        host = MockHost(create_stub_repository_files=True)
+        host.filesystem = MockFileSystem(files=FAKE_FILES)
+        host.executive = MockExecutive()
         return host
 
     def test_in_working_directory(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        self.assertTrue(StubRepository.in_working_directory(path=host.join(host.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3'), filesystem=host))
+        self.assertTrue(StubRepository.in_working_directory(path=host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3'), filesystem=host.filesystem))
 
     def test_native_revision(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        repository = StubRepository(cwd=host.getcwd(), filesystem=host)
-        self.assertEqual(repository.native_revision(path=host.join(host.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['id'])
+        repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
+        self.assertEqual(repository.native_revision(path=host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['id'])
 
     def test_native_branch(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        repository = StubRepository(cwd=host.getcwd(), filesystem=host)
-        self.assertEqual(repository.native_branch(path=host.join(host.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['branch'])
+        repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
+        self.assertEqual(repository.native_branch(path=host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['branch'])
 
     def test_svn_revision(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        repository = StubRepository(cwd=host.getcwd(), filesystem=host)
-        self.assertEqual(repository.svn_revision(path=host.join(host.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['id'])
+        repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
+        self.assertEqual(repository.svn_revision(path=host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2', 'TestDirectory3')), mock_stub_repository_json['id'])
 
     def test_find_checkout_root(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        repository = StubRepository(cwd=host.getcwd(), filesystem=host)
-        self.assertEquals(repository.find_checkout_root(path=host.join('TestDirectory', 'TestDirectory2', 'TestDirectory3')), host.join(host.getcwd(), 'TestDirectory', 'TestDirectory2'))
+        repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
+        self.assertEquals(repository.find_checkout_root(path=host.filesystem.join('TestDirectory', 'TestDirectory2', 'TestDirectory3')), host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2'))
 
     def test_find_checkout_root_failure(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        repository = StubRepository(cwd=host.getcwd(), filesystem=host)
-        self.assertIsNone(repository.find_checkout_root(path=host.getcwd()))
+        repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
+        self.assertIsNone(repository.find_checkout_root(path=host.filesystem.getcwd()))
 
     def test_find_parent_path_matching_callback_condition_with_file_system(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
-        self.assertIsNone(StubRepository._find_parent_path_matching_callback_condition(path=host.join('TestDirectory'), callback=lambda path: True, filesystem=host))
+        self.assertIsNone(StubRepository._find_parent_path_matching_callback_condition(path=host.filesystem.join('TestDirectory'), callback=lambda path: True, filesystem=host.filesystem))
 
     def test_find_parent_path_matching_callback_condition_without_file_system(self):
         self.assertIsNone(StubRepository._find_parent_path_matching_callback_condition(path='/Volumes/', callback=lambda path: True, filesystem=None))

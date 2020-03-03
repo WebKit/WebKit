@@ -37,10 +37,8 @@ _log = logging.getLogger(__name__)
 class StubRepository(SCM):
     _stub_repository_json = 'checkout_information.json'
 
-    def __init__(self, cwd, filesystem, **kwargs):
-        # We create our own checkout root and filesystem here because we are working around the fact that we don't have and actual SCM scheme.
-        self._filesystem = filesystem
-        self.checkout_root = self.find_checkout_root(cwd)
+    def __init__(self, cwd, patch_directories=None, **kwargs):
+        SCM.__init__(self, cwd, **kwargs)
 
     @classmethod
     def _find_parent_path_matching_callback_condition(cls, path, callback, filesystem=None):

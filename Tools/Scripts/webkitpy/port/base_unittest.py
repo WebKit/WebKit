@@ -36,6 +36,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.port import Port
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
@@ -46,7 +47,7 @@ def cmp(a, b):
 
 class PortTest(unittest.TestCase):
     def make_port(self, executive=None, with_tests=False, port_name=None, **kwargs):
-        host = MockSystemHost()
+        host = MockHost(create_stub_repository_files=True)
         if executive:
             host.executive = executive
         if with_tests:
@@ -434,6 +435,10 @@ class PortTest(unittest.TestCase):
             [('!=', '/mock-checkout/LayoutTests/platform/foo/fast/ref-expected-mismatch.html')],
             port.reference_files('fast/ref.html'),
         )
+
+    def test_commits_for_upload(self):
+        port = self.make_port(port_name='foo')
+        self.assertEqual([{'repository_id': 'webkit', 'id': '2738499', 'branch': 'trunk'}], port.commits_for_upload())
 
 
 class NaturalCompareTest(unittest.TestCase):
