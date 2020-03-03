@@ -1,5 +1,11 @@
 2020-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Rebaseline media/video-controls-no-scripting.html after r257705
+
+        * platform/gtk/media/video-controls-no-scripting-expected.txt:
+
+2020-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed gardeing. Update expectations of media/video-controls-toggling.html after r257771
 
         I forgot to update the expected file after the changes in media/video-controls-toggling.html.
