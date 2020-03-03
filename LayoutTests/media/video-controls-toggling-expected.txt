@@ -19,11 +19,8 @@ EXPECTED (getComputedStyle(panel).display == 'none') OK
 ** Remove controls attribute**
 RUN(video.removeAttribute('controls'))
 
-** Move mouse back over the panel **
-RUN(eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]))
-
-** Video controls should not be shown **
-EXPECTED (getComputedStyle(panel).display == 'none') OK
+** Video controls tree has been removed **
+EXPECTED (panel == 'null') OK
 
 END OF TEST
 

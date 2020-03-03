@@ -1,5 +1,14 @@
 2020-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed gardeing. Update expectations of media/video-controls-toggling.html after r257771
+
+        I forgot to update the expected file after the changes in media/video-controls-toggling.html.
+
+        * media/video-controls-toggling-expected.txt:
+        * platform/gtk/media/video-controls-toggling-expected.txt: Removed.
+
+2020-03-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Test media/video-controls-toggling.html is failing for GTK since r257299
         https://bugs.webkit.org/show_bug.cgi?id=208507
 
