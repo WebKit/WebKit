@@ -221,4 +221,8 @@ class CommitQueueFactory(Factory):
         self.addStep(KillOldProcesses())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
         self.addStep(RunWebKit1Tests())
+        self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(CheckOutSource())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ApplyPatch())
         self.addStep(FindModifiedChangeLogs())
