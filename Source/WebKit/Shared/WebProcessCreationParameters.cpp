@@ -171,6 +171,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << neSessionManagerExtensionHandle;
     encoder << systemHasBattery;
     encoder << mimeTypesMap;
+    encoder << mapUTIFromMIMEType;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -460,6 +461,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!mimeTypesMap)
         return false;
     parameters.mimeTypesMap = WTFMove(*mimeTypesMap);
+
+    Optional<HashMap<String, String>> mapUTIFromMIMEType;
+    decoder >> mapUTIFromMIMEType;
+    if (!mapUTIFromMIMEType)
+        return false;
+    parameters.mapUTIFromMIMEType = WTFMove(*mapUTIFromMIMEType);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
