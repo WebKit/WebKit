@@ -1,3 +1,13 @@
+2020-03-02  Alan Coon  <alancoon@apple.com>
+
+        Add new Mac target numbers
+        https://bugs.webkit.org/show_bug.cgi?id=208398
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2020-02-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove std::lock_guard
