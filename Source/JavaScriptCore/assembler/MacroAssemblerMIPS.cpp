@@ -394,6 +394,7 @@ asm (
     "sdc1      $f30, " STRINGIZE_VALUE_OF(PROBE_CPU_F30_OFFSET) "($sp)" "\n"
 
     "move      $a0, $sp" "\n" // Set the Probe::State* arg.
+    "addiu     $sp, $sp, -16" "\n" // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
     "move      $t9, $a2" "\n" // Probe::executeProbe()
     "jalr      $t9" "\n" // Call the probe handler.
     "nop" "\n"
