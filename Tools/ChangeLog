@@ -1,3 +1,12 @@
+2020-03-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build step to create local git commit for commit-queue (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=208539
+
+        Unreviewed follow-up fix.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+
 2020-03-04  Daniel Bates  <dabates@apple.com>
 
         Should use -bounds instead of -frame in RequestTextInputContext.mm tests

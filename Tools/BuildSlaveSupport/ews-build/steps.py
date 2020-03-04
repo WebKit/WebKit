@@ -2464,7 +2464,6 @@ class FindModifiedChangeLogs(shell.ShellCommand):
 class CreateLocalGITCommit(shell.ShellCommand):
     name = 'create-local-git-commit'
     descriptionDone = ['Created local git commit']
-    command = ['git', 'commit', '--all', '-F']
     haltOnFailure = True
 
     def __init__(self, **kwargs):
