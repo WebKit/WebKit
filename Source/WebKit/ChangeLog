@@ -1,3 +1,13 @@
+2020-03-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Partially revert r256756, since it introduced bugs related to Accessibility.
+        <rdar://problem/60005574>
+
+        Unreviewed partial revert of r256756.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement -[_WKWebAuthenticationPanelDelegate panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:] SPI
