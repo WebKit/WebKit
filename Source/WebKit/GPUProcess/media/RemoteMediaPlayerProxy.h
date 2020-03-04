@@ -46,6 +46,11 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMInstanceIdentifier.h"
+#include "RemoteCDMInstanceProxy.h"
+#endif
+
 namespace WTF {
 class MachSendRight;
 }
@@ -139,6 +144,16 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(RemoteCDMInstanceIdentifier&&);
+    void cdmInstanceDetached(RemoteCDMInstanceIdentifier&&);
+    void attemptToDecryptWithInstance(RemoteCDMInstanceIdentifier&&);
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    void setShouldContinueAfterKeyNeeded(bool);
 #endif
 
     void beginSimulatedHDCPError();

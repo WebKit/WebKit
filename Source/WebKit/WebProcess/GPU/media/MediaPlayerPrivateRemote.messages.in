@@ -75,6 +75,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
 #if ENABLE(ENCRYPTED_MEDIA)
     WaitingForKeyChanged()
+    InitializationDataEncountered(String initDataType, IPC::DataReference initData)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

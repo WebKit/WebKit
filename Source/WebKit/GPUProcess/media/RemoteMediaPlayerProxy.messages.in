@@ -82,9 +82,16 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     # SetCDMSession
     KeyAdded()
-    # CdmInstanceAttached
-    # CdmInstanceDetached
-    # AttemptToDecryptWithInstance
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    SetShouldContinueAfterKeyNeeded(bool should)
 #endif
 
     BeginSimulatedHDCPError()

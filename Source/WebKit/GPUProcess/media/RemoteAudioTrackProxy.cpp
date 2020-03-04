@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 RemoteAudioTrackProxy::RemoteAudioTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, AudioTrackPrivate& trackPrivate)
     : m_player(player)
     , m_identifier(id)

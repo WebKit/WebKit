@@ -32,15 +32,20 @@
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/TrackBase.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 struct TrackPrivateRemoteConfiguration;
+class RemoteMediaPlayerProxy;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::AudioTrackPrivateClient {
 public:
-    static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, AudioTrackPrivate& trackPrivate)
+    static Ref<RemoteAudioTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::AudioTrackPrivate& trackPrivate)
     {
         return adoptRef(*new RemoteAudioTrackProxy(player, id, WTFMove(connection), trackPrivate));
     }
@@ -50,7 +55,7 @@ public:
     void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
 
 private:
-    RemoteAudioTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, AudioTrackPrivate&);
+    RemoteAudioTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::AudioTrackPrivate&);
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
@@ -67,7 +72,7 @@ private:
     RemoteMediaPlayerProxy& m_player;
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<IPC::Connection> m_webProcessConnection;
-    Ref<AudioTrackPrivate> m_trackPrivate;
+    Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
 };
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
@@ -46,6 +47,10 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMFactoryProxy.h"
+#endif
 
 namespace WebKit {
 
@@ -523,9 +528,9 @@ void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array*)
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&)
+void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    notImplemented();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, IPC::DataReference(reinterpret_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()
@@ -692,6 +697,34 @@ void RemoteMediaPlayerProxy::sendCachedState()
 void RemoteMediaPlayerProxy::keyAdded()
 {
     m_player->keyAdded();
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void RemoteMediaPlayerProxy::cdmInstanceAttached(RemoteCDMInstanceIdentifier&& instanceId)
+{
+    if (auto* instanceProxy = m_manager.gpuConnectionToWebProcess().cdmFactoryProxy().getInstance(instanceId))
+        m_player->cdmInstanceAttached(instanceProxy->instance());
+}
+
+void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& instanceId)
+{
+    if (auto* instanceProxy = m_manager.gpuConnectionToWebProcess().cdmFactoryProxy().getInstance(instanceId))
+        m_player->cdmInstanceDetached(instanceProxy->instance());
+}
+
+void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdentifier&& instanceId)
+{
+    if (auto* instanceProxy = m_manager.gpuConnectionToWebProcess().cdmFactoryProxy().getInstance(instanceId))
+        m_player->attemptToDecryptWithInstance(instanceProxy->instance());
+}
+#endif
+
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+void RemoteMediaPlayerProxy::setShouldContinueAfterKeyNeeded(bool should)
+{
+    m_player->setShouldContinueAfterKeyNeeded(should);
 }
 #endif
 

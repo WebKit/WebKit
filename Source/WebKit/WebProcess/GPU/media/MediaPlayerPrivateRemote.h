@@ -139,6 +139,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void waitingForKeyChanged();
+    void initializationDataEncountered(const String&, IPC::DataReference&&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -313,6 +314,10 @@ private:
     void cdmInstanceDetached(WebCore::CDMInstance&) final;
     void attemptToDecryptWithInstance(WebCore::CDMInstance&) final;
     bool waitingForKey() const final;
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
 #if ENABLE(VIDEO_TRACK)

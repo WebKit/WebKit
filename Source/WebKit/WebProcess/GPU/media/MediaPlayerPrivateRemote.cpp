@@ -49,6 +49,10 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMInstance.h"
+#endif
+
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
 extern WTFLogChannel LogMedia;
@@ -912,19 +916,22 @@ void MediaPlayerPrivateRemote::keyAdded()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void MediaPlayerPrivateRemote::cdmInstanceAttached(CDMInstance&)
+void MediaPlayerPrivateRemote::cdmInstanceAttached(CDMInstance& instance)
 {
-    notImplemented();
+    if (is<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceAttached(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
 }
 
-void MediaPlayerPrivateRemote::cdmInstanceDetached(CDMInstance&)
+void MediaPlayerPrivateRemote::cdmInstanceDetached(CDMInstance& instance)
 {
-    notImplemented();
+    if (is<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::CdmInstanceDetached(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
 }
 
-void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance&)
+void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance& instance)
 {
-    notImplemented();
+    if (is<RemoteCDMInstance>(instance))
+        connection().send(Messages::RemoteMediaPlayerProxy::AttemptToDecryptWithInstance(downcast<RemoteCDMInstance>(instance).identifier()), m_id);
 }
 
 void MediaPlayerPrivateRemote::waitingForKeyChanged()
@@ -932,10 +939,23 @@ void MediaPlayerPrivateRemote::waitingForKeyChanged()
     m_player->waitingForKeyChanged();
 }
 
+void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, IPC::DataReference&& initData)
+{
+    auto initDataBuffer = ArrayBuffer::create(initData.data(), initData.size());
+    m_player->initializationDataEncountered(initDataType, WTFMove(initDataBuffer));
+}
+
 bool MediaPlayerPrivateRemote::waitingForKey() const
 {
     notImplemented();
     return false;
+}
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateRemote::setShouldContinueAfterKeyNeeded(bool should)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetShouldContinueAfterKeyNeeded(should), m_id);
 }
 #endif
 

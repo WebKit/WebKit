@@ -60,9 +60,17 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
-
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMFactoryProxy.h"
+#include "RemoteCDMFactoryProxyMessages.h"
+#include "RemoteCDMInstanceProxyMessages.h"
+#include "RemoteCDMInstanceSessionProxyMessages.h"
+#include "RemoteCDMProxyMessages.h"
+#endif
+
 
 namespace WebKit {
 using namespace WebCore;
@@ -199,6 +207,16 @@ LibWebRTCCodecsProxy& GPUConnectionToWebProcess::libWebRTCCodecsProxy()
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
+{
+    if (!m_cdmFactoryProxy)
+        m_cdmFactoryProxy = makeUnique<RemoteCDMFactoryProxy>(*this);
+
+    return *m_cdmFactoryProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
 {
     auto addResult = m_remoteRenderingBackendProxyMap.ensure(renderingBackendIdentifier, [&]() {
@@ -269,6 +287,28 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveCDMMessage(connection, decoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveCDMInstanceMessage(connection, decoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSessionProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveCDMInstanceSessionMessage(connection, decoder);
+        return true;
+    }
+#endif
+
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
 
@@ -294,6 +334,28 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
     }
 #endif
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveSyncCDMInstanceMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSessionProxy::messageReceiverName()) {
+        cdmFactoryProxy().didReceiveSyncCDMInstanceSessionMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
@@ -302,7 +364,7 @@ const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
     return m_gpuProcess->mediaCacheDirectory(m_sessionID);
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
 const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
 {
     return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);

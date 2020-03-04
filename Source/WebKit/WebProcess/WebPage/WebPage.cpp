@@ -322,6 +322,9 @@
 
 #if ENABLE(GPU_PROCESS)
 #include "RemoteMediaPlayerManager.h"
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMFactory.h"
+#endif
 #endif
 
 namespace WebKit {

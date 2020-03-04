@@ -48,6 +48,7 @@ class GPUProcess;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
 class RemoteAudioMediaStreamTrackRendererManager;
+class RemoteCDMFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
@@ -84,6 +85,10 @@ public:
 #endif
 
     WebCore::PlatformMediaSessionManager& sessionManager();
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    RemoteCDMFactoryProxy& cdmFactoryProxy();
+#endif
 
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
@@ -138,6 +143,10 @@ private:
     
     using RemoteRenderingBackendProxyMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendProxy>>;
     RemoteRenderingBackendProxyMap m_remoteRenderingBackendProxyMap;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
+#endif
 };
 
 } // namespace WebKit

@@ -39,6 +39,8 @@ class DataReference;
 
 namespace WebKit {
 
+class RemoteCDMFactory;
+
 class GPUProcessConnection : public RefCounted<GPUProcessConnection>, IPC::Connection::Client {
 public:
     static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
@@ -56,6 +58,10 @@ public:
 #endif
 #if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    RemoteCDMFactory& cdmFactory();
 #endif
 
 private:

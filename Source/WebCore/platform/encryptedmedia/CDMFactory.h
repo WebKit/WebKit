@@ -42,7 +42,7 @@ public:
     virtual std::unique_ptr<CDMPrivate> createCDM(const String&) = 0;
     virtual bool supportsKeySystem(const String&) = 0;
 
-    static Vector<CDMFactory*>& registeredFactories();
+    WEBCORE_EXPORT static Vector<CDMFactory*>& registeredFactories();
     WEBCORE_EXPORT static void registerFactory(CDMFactory&);
     WEBCORE_EXPORT static void unregisterFactory(CDMFactory&);
 

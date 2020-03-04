@@ -151,6 +151,11 @@ MESSAGE_RECEIVERS = \
     RemoteAudioMediaStreamTrackRendererManager \
     RemoteAudioMediaStreamTrackRenderer \
     RemoteLayerTreeDrawingAreaProxy \
+    RemoteCDMProxy \
+    RemoteCDMFactoryProxy \
+    RemoteCDMInstanceProxy \
+    RemoteCDMInstanceSession \
+    RemoteCDMInstanceSessionProxy \
     RemoteMediaPlayerManager \
     RemoteMediaPlayerManagerProxy \
     RemoteMediaPlayerProxy \

@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 RemoteVideoTrackProxy::RemoteVideoTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
     : m_player(player)
     , m_identifier(id)

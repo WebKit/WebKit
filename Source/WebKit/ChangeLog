@@ -1,3 +1,172 @@
+2020-03-04  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement Modern EME API in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208090
+
+        Reviewed by Eric Carlson.
+
+        Add support for RemoteCDMFactory, RemateCDM, RemoteCDMInstance, RemoteCDMInstanceSession, and all
+        of their associated Proxy objects.
+
+        Allow the existing CDMFactory machinery to work normally  when the GPU process is disabled,
+        by making initialization of the CDM factories contingent upon the "use GPU" setting.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::cdmFactoryProxy):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp: Added.
+        (WebKit::RemoteCDMFactoryProxy::RemoteCDMFactoryProxy):
+        (WebKit::factoryForKeySystem):
+        (WebKit::RemoteCDMFactoryProxy::createCDM):
+        (WebKit::RemoteCDMFactoryProxy::supportsKeySystem):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveCDMMessage):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveCDMInstanceMessage):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveSyncCDMMessage):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage):
+        (WebKit::RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage):
+        (WebKit::RemoteCDMFactoryProxy::addProxy):
+        (WebKit::RemoteCDMFactoryProxy::removeProxy):
+        (WebKit::RemoteCDMFactoryProxy::addInstance):
+        (WebKit::RemoteCDMFactoryProxy::removeInstance):
+        (WebKit::RemoteCDMFactoryProxy::getInstance):
+        (WebKit::RemoteCDMFactoryProxy::addSession):
+        (WebKit::RemoteCDMFactoryProxy::removeSession):
+        * GPUProcess/media/RemoteCDMFactoryProxy.h: Added.
+        * GPUProcess/media/RemoteCDMFactoryProxy.messages.in: Added.
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp: Added.
+        (WebKit::RemoteCDMInstanceProxy::create):
+        (WebKit::RemoteCDMInstanceProxy::RemoteCDMInstanceProxy):
+        (WebKit::RemoteCDMInstanceProxy::initializeWithConfiguration):
+        (WebKit::RemoteCDMInstanceProxy::setServerCertificate):
+        (WebKit::RemoteCDMInstanceProxy::setStorageDirectory):
+        (WebKit::RemoteCDMInstanceProxy::createSession):
+        * GPUProcess/media/RemoteCDMInstanceProxy.h: Added.
+        (WebKit::RemoteCDMInstanceProxy::configuration const):
+        (WebKit::RemoteCDMInstanceProxy::instance):
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in: Added.
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp: Added.
+        (WebKit::RemoteCDMInstanceSessionProxy::create):
+        (WebKit::RemoteCDMInstanceSessionProxy::RemoteCDMInstanceSessionProxy):
+        (WebKit::RemoteCDMInstanceSessionProxy::~RemoteCDMInstanceSessionProxy):
+        (WebKit::RemoteCDMInstanceSessionProxy::requestLicense):
+        (WebKit::RemoteCDMInstanceSessionProxy::updateLicense):
+        (WebKit::RemoteCDMInstanceSessionProxy::loadSession):
+        (WebKit::RemoteCDMInstanceSessionProxy::closeSession):
+        (WebKit::RemoteCDMInstanceSessionProxy::removeSessionData):
+        (WebKit::RemoteCDMInstanceSessionProxy::storeRecordOfKeyUsage):
+        (WebKit::RemoteCDMInstanceSessionProxy::updateKeyStatuses):
+        (WebKit::RemoteCDMInstanceSessionProxy::sendMessage):
+        (WebKit::RemoteCDMInstanceSessionProxy::sessionIdChanged):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h: Added.
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in: Added.
+        * GPUProcess/media/RemoteCDMProxy.cpp: Added.
+        (WebKit::RemoteCDMProxy::create):
+        (WebKit::RemoteCDMProxy::RemoteCDMProxy):
+        (WebKit::RemoteCDMProxy::supportsInitData):
+        (WebKit::RemoteCDMProxy::sanitizeResponse):
+        (WebKit::RemoteCDMProxy::sanitizeSessionId):
+        (WebKit::RemoteCDMProxy::getSupportedConfiguration):
+        (WebKit::RemoteCDMProxy::createInstance):
+        (WebKit::RemoteCDMProxy::loadAndInitialize):
+        * GPUProcess/media/RemoteCDMProxy.h: Added.
+        (WebKit::RemoteCDMProxy::configuration const):
+        (WebKit::RemoteCDMProxy::factory const):
+        * GPUProcess/media/RemoteCDMProxy.messages.in: Added.
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered):
+        (WebKit::RemoteMediaPlayerProxy::cdmInstanceAttached):
+        (WebKit::RemoteMediaPlayerProxy::cdmInstanceDetached):
+        (WebKit::RemoteMediaPlayerProxy::attemptToDecryptWithInstance):
+        (WebKit::RemoteMediaPlayerProxy::setShouldContinueAfterKeyNeeded):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode):
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode):
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::encode):
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::cdmInstanceAttached):
+        (WebKit::MediaPlayerPrivateRemote::cdmInstanceDetached):
+        (WebKit::MediaPlayerPrivateRemote::attemptToDecryptWithInstance):
+        (WebKit::MediaPlayerPrivateRemote::initializationDataEncountered):
+        (WebKit::MediaPlayerPrivateRemote::setShouldContinueAfterKeyNeeded):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/RemoteCDM.cpp: Added.
+        (WebKit::RemoteCDM::create):
+        (WebKit::RemoteCDM::RemoteCDM):
+        (WebKit::RemoteCDM::getSupportedConfiguration):
+        (WebKit::RemoteCDM::supportsConfiguration const):
+        (WebKit::RemoteCDM::supportsConfigurationWithRestrictions const):
+        (WebKit::RemoteCDM::supportsSessionTypeWithConfiguration const):
+        (WebKit::RemoteCDM::supportsInitData const):
+        (WebKit::RemoteCDM::distinctiveIdentifiersRequirement const):
+        (WebKit::RemoteCDM::persistentStateRequirement const):
+        (WebKit::RemoteCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable const):
+        (WebKit::RemoteCDM::createInstance):
+        (WebKit::RemoteCDM::loadAndInitialize):
+        (WebKit::RemoteCDM::sanitizeResponse const):
+        (WebKit::RemoteCDM::sanitizeSessionId const):
+        * WebProcess/GPU/media/RemoteCDM.h: Added.
+        * WebProcess/GPU/media/RemoteCDMConfiguration.h: Added.
+        (WebKit::RemoteCDMConfiguration::encode const):
+        (WebKit::RemoteCDMConfiguration::decode):
+        * WebProcess/GPU/media/RemoteCDMFactory.cpp: Added.
+        (WebKit::RemoteCDMFactory::RemoteCDMFactory):
+        (WebKit::RemoteCDMFactory::updatePreferences):
+        (WebKit::RemoteCDMFactory::supplementName):
+        (WebKit::RemoteCDMFactory::gpuProcessConnection):
+        (WebKit::RemoteCDMFactory::supportsKeySystem):
+        (WebKit::RemoteCDMFactory::createCDM):
+        (WebKit::RemoteCDMFactory::addSession):
+        (WebKit::RemoteCDMFactory::removeSession):
+        (WebKit::RemoteCDMFactory::didReceiveSessionMessage):
+        * WebProcess/GPU/media/RemoteCDMFactory.h: Added.
+        * WebProcess/GPU/media/RemoteCDMIdentifier.h: Added.
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp: Added.
+        (WebKit::RemoteCDMInstance::create):
+        (WebKit::RemoteCDMInstance::RemoteCDMInstance):
+        (WebKit::RemoteCDMInstance::initializeWithConfiguration):
+        (WebKit::RemoteCDMInstance::setServerCertificate):
+        (WebKit::RemoteCDMInstance::setStorageDirectory):
+        (WebKit::RemoteCDMInstance::createSession):
+        * WebProcess/GPU/media/RemoteCDMInstance.h: Added.
+        * WebProcess/GPU/media/RemoteCDMInstanceConfiguration.h: Added.
+        (WebKit::RemoteCDMInstanceConfiguration::encode const):
+        (WebKit::RemoteCDMInstanceConfiguration::decode):
+        * WebProcess/GPU/media/RemoteCDMInstanceIdentifier.h: Added.
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp: Added.
+        (WebKit::RemoteCDMInstanceSession::create):
+        (WebKit::RemoteCDMInstanceSession::RemoteCDMInstanceSession):
+        (WebKit::RemoteCDMInstanceSession::requestLicense):
+        (WebKit::RemoteCDMInstanceSession::updateLicense):
+        (WebKit::RemoteCDMInstanceSession::loadSession):
+        (WebKit::RemoteCDMInstanceSession::closeSession):
+        (WebKit::RemoteCDMInstanceSession::removeSessionData):
+        (WebKit::RemoteCDMInstanceSession::storeRecordOfKeyUsage):
+        (WebKit::RemoteCDMInstanceSession::updateKeyStatuses):
+        (WebKit::RemoteCDMInstanceSession::sendMessage):
+        (WebKit::RemoteCDMInstanceSession::sessionIdChanged):
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h: Added.
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in: Added.
+        * WebProcess/GPU/media/RemoteCDMInstanceSessionIdentifier.h: Added.
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+
 2020-03-04  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion failed: !m_function in CompletionHandler::~CompletionHandler()

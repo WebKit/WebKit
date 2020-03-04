@@ -28,6 +28,8 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteAudioDestinationProxy.h"
+#include "RemoteCDMFactory.h"
+#include "WebProcess.h"
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
 #include <WebCore/CDMFactory.h>
@@ -51,7 +53,13 @@ std::unique_ptr<WebCore::AudioDestination> WebMediaStrategy::createAudioDestinat
 #if ENABLE(ENCRYPTED_MEDIA)
 void WebMediaStrategy::registerCDMFactories(Vector<WebCore::CDMFactory*>& factories)
 {
-    return WebCore::CDMFactory::platformRegisterFactories(factories);
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        WebProcess::singleton().ensureGPUProcessConnection().cdmFactory().registerFactory(factories);
+        return;
+    }
+#endif
+    WebCore::CDMFactory::platformRegisterFactories(factories);
 }
 #endif
 

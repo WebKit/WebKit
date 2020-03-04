@@ -32,15 +32,20 @@
 #include <WebCore/TrackBase.h>
 #include <WebCore/VideoTrackPrivate.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
+class RemoteMediaPlayerProxy;
 struct TrackPrivateRemoteConfiguration;
 
 class RemoteVideoTrackProxy final
     : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::VideoTrackPrivateClient {
 public:
-    static Ref<RemoteVideoTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, VideoTrackPrivate& trackPrivate)
+    static Ref<RemoteVideoTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::VideoTrackPrivate& trackPrivate)
     {
         return adoptRef(*new RemoteVideoTrackProxy(player, id, WTFMove(connection), trackPrivate));
     }
@@ -50,7 +55,7 @@ public:
     void setSelected(bool selected) { m_trackPrivate->setSelected(selected); }
 
 private:
-    RemoteVideoTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, VideoTrackPrivate&);
+    RemoteVideoTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::VideoTrackPrivate&);
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
@@ -67,7 +72,7 @@ private:
     RemoteMediaPlayerProxy& m_player;
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<IPC::Connection> m_webProcessConnection;
-    Ref<VideoTrackPrivate> m_trackPrivate;
+    Ref<WebCore::VideoTrackPrivate> m_trackPrivate;
 };
 
 } // namespace WebKit

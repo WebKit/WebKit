@@ -33,6 +33,8 @@
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCCodecsMessages.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
+#include "RemoteCDMFactory.h"
+#include "RemoteCDMProxy.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "SampleBufferDisplayLayerMessages.h"
@@ -43,6 +45,10 @@
 #include "WebPageMessages.h"
 #include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMInstanceSessionMessages.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,6 +81,13 @@ SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerM
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+RemoteCDMFactory& GPUProcessConnection::cdmFactory()
+{
+    return *WebProcess::singleton().supplement<RemoteCDMFactory>();
+}
+#endif
+
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
@@ -98,6 +111,12 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {
         WebProcess::singleton().libWebRTCCodecs().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
+        WebProcess::singleton().supplement<RemoteCDMFactory>()->didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif

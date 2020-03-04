@@ -174,6 +174,10 @@
 #include "LibWebRTCCodecs.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "RemoteCDMFactory.h"
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
@@ -238,6 +242,10 @@ WebProcess::WebProcess()
 
 #if ENABLE(GPU_PROCESS)
     addSupplement<RemoteMediaPlayerManager>();
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+    addSupplement<RemoteCDMFactory>();
 #endif
 
     Gigacage::forbidDisablingPrimitiveGigacage();

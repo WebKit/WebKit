@@ -3217,4 +3217,59 @@ Optional<RefPtr<SharedBuffer>> ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::dec
     return buffer;
 }
 
+#if ENABLE(ENCRYPTED_MEDIA)
+void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)
+{
+    encoder << message.first;
+
+    RefPtr<SharedBuffer> messageData = message.second.copyRef();
+    encoder << messageData;
+}
+
+Optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode(Decoder& decoder)
+{
+    WebCore::CDMInstanceSession::MessageType type;
+    if (!decoder.decode(type))
+        return WTF::nullopt;
+
+    RefPtr<SharedBuffer> buffer;
+    if (!decoder.decode(buffer) || !buffer)
+        return WTF::nullopt;
+
+    return makeOptional<WebCore::CDMInstanceSession::Message>({ type, buffer.releaseNonNull() });
+}
+
+void ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::KeyStatusVector& keyStatuses)
+{
+    encoder << static_cast<uint64_t>(keyStatuses.size());
+    for (auto& keyStatus : keyStatuses) {
+        RefPtr<SharedBuffer> key = keyStatus.first.copyRef();
+        encoder << key << keyStatus.second;
+    }
+}
+
+Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::decode(Decoder& decoder)
+{
+    uint64_t dataSize;
+    if (!decoder.decode(dataSize))
+        return WTF::nullopt;
+
+    WebCore::CDMInstanceSession::KeyStatusVector keyStatuses;
+    keyStatuses.reserveInitialCapacity(dataSize);
+
+    for (uint64_t i = 0; i < dataSize; ++i) {
+        RefPtr<SharedBuffer> key;
+        if (!decoder.decode(key) || !key)
+            return WTF::nullopt;
+
+        WebCore::CDMInstanceSessionClient::KeyStatus status;
+        if (!decoder.decode(status))
+            return WTF::nullopt;
+
+        keyStatuses.uncheckedAppend({ key.releaseNonNull(), status });
+    }
+    return keyStatuses;
+}
+#endif // ENABLE(ENCRYPTED_MEDIA)
+
 } // namespace IPC
