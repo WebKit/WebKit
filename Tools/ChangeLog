@@ -1,5 +1,25 @@
 2020-03-04  Daniel Bates  <dabates@apple.com>
 
+        Should use -bounds instead of -frame in RequestTextInputContext.mm tests
+        https://bugs.webkit.org/show_bug.cgi?id=208565
+
+        Reviewed by Wenson Hsieh.
+
+        Pass the bounds of the web view to -synchronouslyRequestTextInputContextsInRect: instead
+        of its frame as a means to find all the editable elements in the visible content area
+        of the web view.
+
+        Coincidentally this makes no difference to the test results right now because the web view
+        happens to be located at the origin (0, 0) in the window. However if in the future the
+        web view would be located at some other point then the tests may fail because the rectangle
+        passed to -synchronouslyRequestTextInputContextsInRect: would no longer represent the
+        rectangle for the visible content area.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TEST):
+
+2020-03-04  Daniel Bates  <dabates@apple.com>
+
         Organize tests in RequestTextInputContext.mm tests under test name RequestTextInputContext
         https://bugs.webkit.org/show_bug.cgi?id=208564
 

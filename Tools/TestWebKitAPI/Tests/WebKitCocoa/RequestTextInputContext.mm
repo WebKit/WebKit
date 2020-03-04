@@ -83,45 +83,45 @@ TEST(RequestTextInputContext, Simple)
     // Basic inputs.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<textarea style='width: 100px; height: 100px;'></textarea>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<div contenteditable style='width: 100px; height: 100px;'></div>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 
     // Basic inputs inside subframe.
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 50, 50), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 
     // Read only inputs; should not be included.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;' readonly>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(0UL, contexts.count);
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<textarea style='width: 100px; height: 100px;' readonly>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(0UL, contexts.count);
 
     // Inputs outside the requested rect; should not be included.
@@ -136,7 +136,7 @@ TEST(RequestTextInputContext, Simple)
     [webView stringByEvaluatingJavaScript:@"window.scrollTo(0, 5000)"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(5000, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(0UL, contexts.count);
 
     // Inputs scrolled into the requested rect.
@@ -145,14 +145,14 @@ TEST(RequestTextInputContext, Simple)
     [webView stringByEvaluatingJavaScript:@"window.scrollTo(0, 5000)"];
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ(5000, [[webView objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
 
     // Multiple inputs.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(3UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 100, 50, 50), contexts[0].boundingRect);
     EXPECT_EQ(CGRectMake(0, 50, 50, 50), contexts[1].boundingRect);
@@ -161,7 +161,7 @@ TEST(RequestTextInputContext, Simple)
     // Nested <input>-inside-contenteditable.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<div contenteditable style='width: 100px; height: 100px;'><input type='text' style='width: 50px; height: 50px;'></div>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(2UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[1].boundingRect);
@@ -176,20 +176,20 @@ TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)
     NSArray<_WKTextInputContext *> *contexts;
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input id='test' type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     RetainPtr<_WKTextInputContext> originalInput = contexts[0];
     EXPECT_TRUE([webView synchronouslyFocusTextInputContext:originalInput.get()]);
     EXPECT_WK_STREQ("test", [webView objectByEvaluatingJavaScript:@"document.activeElement.id"]);
 
     // The _WKTextInputContext should still work even after another request.
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_TRUE([contexts[0] isEqual:originalInput.get()]);
     EXPECT_TRUE([webView synchronouslyFocusTextInputContext:originalInput.get()]);
 
     // Replace the <input> with a <textarea> with script; the <input> should no longer be focusable.
     [webView objectByEvaluatingJavaScript:@"document.body.innerHTML = '<textarea id=\"area\">';"];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     RetainPtr<_WKTextInputContext> textArea = contexts[0];
     EXPECT_FALSE([textArea isEqual:originalInput.get()]);
