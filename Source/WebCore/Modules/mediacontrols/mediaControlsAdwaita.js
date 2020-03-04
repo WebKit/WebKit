@@ -49,6 +49,7 @@ Controller.prototype = {
     },
     HideControlsDelay: 4 * 1000,
     ClassNames: {
+        exit: 'exit',
         hidden: 'hidden',
         hiding: 'hiding',
         muteBox: 'mute-box',
@@ -590,9 +591,11 @@ Controller.prototype = {
         this.updateControls();
 
         if (this.isFullScreen()) {
+            this.controls.fullscreenButton.classList.add(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', 'Exit Full Screen');
             this.host.enteredFullscreen();
         } else {
+            this.controls.fullscreenButton.classList.remove(this.ClassNames.exit);
             this.controls.fullscreenButton.setAttribute('aria-label', 'Display Full Screen');
             this.host.exitedFullscreen();
         }
