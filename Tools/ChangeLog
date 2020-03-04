@@ -1,3 +1,13 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKResourceLoadInfo.loadedFromCache
+        https://bugs.webkit.org/show_bug.cgi?id=208554
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+
 2020-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Batch observations and completions of text manipulations

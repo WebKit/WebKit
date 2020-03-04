@@ -74,6 +74,11 @@
     return [NSDate dateWithTimeIntervalSince1970:_info->eventTimestamp().secondsSinceEpoch().seconds()];
 }
 
+- (BOOL)loadedFromCache
+{
+    return _info->loadedFromCache();
+}
+
 - (API::Object&)_apiObject
 {
     return *_info;
@@ -125,13 +130,20 @@
         return nil;
     }
 
+    NSNumber *loadedFromCache = [coder decodeObjectOfClass:[NSNumber class] forKey:@"loadedFromCache"];
+    if (!loadedFromCache) {
+        [self release];
+        return nil;
+    }
+
     WebKit::ResourceLoadInfo info {
         makeObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
         makeObjectIdentifier<WebCore::FrameIdentifierType>(frame.unsignedLongLongValue),
         makeObjectIdentifier<WebCore::FrameIdentifierType>(parentFrame.unsignedLongLongValue),
         originalURL,
         originalHTTPMethod,
-        WallTime::fromRawSeconds(eventTimestamp.timeIntervalSince1970)
+        WallTime::fromRawSeconds(eventTimestamp.timeIntervalSince1970),
+        static_cast<bool>(loadedFromCache.boolValue)
     };
 
     API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTFMove(info));
@@ -147,6 +159,7 @@
     [coder encodeObject:self.originalURL forKey:@"originalURL"];
     [coder encodeObject:self.originalHTTPMethod forKey:@"originalHTTPMethod"];
     [coder encodeObject:self.eventTimestamp forKey:@"eventTimestamp"];
+    [coder encodeObject:@(self.loadedFromCache) forKey:@"loadedFromCache"];
 }
 
 @end

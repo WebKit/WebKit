@@ -1,3 +1,25 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKResourceLoadInfo.loadedFromCache
+        https://bugs.webkit.org/show_bug.cgi?id=208554
+
+        Reviewed by Wenson Hsieh.
+
+        This exposes a boolean value indicating whether the resource was loaded from a cache based on the response source.
+        This is needed for rdar://problem/57132290
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        * Shared/ResourceLoadInfo.h:
+        (WebKit::ResourceLoadInfo::encode const):
+        (WebKit::ResourceLoadInfo::decode):
+        * UIProcess/API/APIResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (-[_WKResourceLoadInfo loadedFromCache]):
+        (-[_WKResourceLoadInfo initWithCoder:]):
+        (-[_WKResourceLoadInfo encodeWithCoder:]):
+
 2020-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Batch observations and completions of text manipulations

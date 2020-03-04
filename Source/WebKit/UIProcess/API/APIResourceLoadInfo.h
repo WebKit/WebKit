@@ -46,10 +46,10 @@ public:
     const WTF::URL& originalURL() const { return m_info.originalURL; }
     const WTF::String& originalHTTPMethod() const { return m_info.originalHTTPMethod; }
     WallTime eventTimestamp() const { return m_info.eventTimestamp; }
+    bool loadedFromCache() const { return m_info.loadedFromCache; }
 
 private:
     const WebKit::ResourceLoadInfo m_info;
-
 };
 
 } // namespace API

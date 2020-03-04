@@ -325,7 +325,7 @@ TEST(ResourceLoadDelegate, LoadInfo)
     _WKResourceLoadInfo *original = loadInfos[0].get();
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
-    EXPECT_EQ(archiveData.length, 559ull);
+    EXPECT_EQ(archiveData.length, 589ull);
     EXPECT_FALSE(error);
     _WKResourceLoadInfo *deserialized = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKResourceLoadInfo class] fromData:archiveData error:&error];
     EXPECT_FALSE(error);
@@ -336,6 +336,8 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_WK_STREQ(deserialized.originalHTTPMethod, original.originalHTTPMethod);
     EXPECT_EQ(deserialized.eventTimestamp.timeIntervalSince1970, original.eventTimestamp.timeIntervalSince1970);
 }
+
+// FIXME: Add a test for loadedFromCache.
 
 #endif // HAVE(NETWORK_FRAMEWORK)
 

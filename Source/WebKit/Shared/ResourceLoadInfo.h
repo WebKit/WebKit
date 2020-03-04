@@ -41,6 +41,7 @@ struct ResourceLoadInfo {
     URL originalURL;
     String originalHTTPMethod;
     WallTime eventTimestamp;
+    bool loadedFromCache { false };
     
     void encode(IPC::Encoder& encoder) const
     {
@@ -50,6 +51,7 @@ struct ResourceLoadInfo {
         encoder << originalURL;
         encoder << originalHTTPMethod;
         encoder << eventTimestamp;
+        encoder << loadedFromCache;
     }
 
     static Optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
@@ -83,14 +85,20 @@ struct ResourceLoadInfo {
         decoder >> eventTimestamp;
         if (!eventTimestamp)
             return WTF::nullopt;
-        
+
+        Optional<bool> loadedFromCache;
+        decoder >> loadedFromCache;
+        if (!loadedFromCache)
+            return WTF::nullopt;
+
         return {{
             WTFMove(*resourceLoadID),
             WTFMove(*frameID),
             WTFMove(*parentFrameID),
             WTFMove(*originalURL),
             WTFMove(*originalHTTPMethod),
-            WTFMove(*eventTimestamp)
+            WTFMove(*eventTimestamp),
+            WTFMove(*loadedFromCache),
         }};
     }
 };

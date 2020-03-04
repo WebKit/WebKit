@@ -41,6 +41,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) NSURL *originalURL;
 @property (nonatomic, readonly) NSString *originalHTTPMethod;
 @property (nonatomic, readonly) NSDate *eventTimestamp;
+@property (nonatomic, readonly) BOOL loadedFromCache;
 
 @end
 

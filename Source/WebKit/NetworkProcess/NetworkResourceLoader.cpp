@@ -342,13 +342,32 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
 ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
 {
-    return {
+    auto loadedFromCache = [] (const ResourceResponse& response) {
+        switch (response.source()) {
+        case ResourceResponse::Source::DiskCache:
+        case ResourceResponse::Source::DiskCacheAfterValidation:
+        case ResourceResponse::Source::MemoryCache:
+        case ResourceResponse::Source::MemoryCacheAfterValidation:
+        case ResourceResponse::Source::ApplicationCache:
+        case ResourceResponse::Source::DOMCache:
+            return true;
+        case ResourceResponse::Source::Unknown:
+        case ResourceResponse::Source::Network:
+        case ResourceResponse::Source::ServiceWorker:
+        case ResourceResponse::Source::InspectorOverride:
+            break;
+        }
+        return false;
+    };
+    
+    return ResourceLoadInfo {
         m_resourceLoadID,
         m_parameters.webFrameID,
         m_parameters.parentFrameID,
         originalRequest().url(),
         originalRequest().httpMethod(),
-        WallTime::now()
+        WallTime::now(),
+        loadedFromCache(m_response)
     };
 }
 
