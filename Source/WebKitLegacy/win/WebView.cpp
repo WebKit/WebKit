@@ -7271,7 +7271,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             ::GetClientRect(m_viewWindow, &clientRect);
             m_backingLayer->setSize(IntRect(clientRect).size());
             m_backingLayer->setNeedsDisplay();
-            m_layerTreeHost->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
+            m_layerTreeHost->setRootChildLayer(PlatformCALayer::platformCALayerForLayer(m_backingLayer->platformLayer()).get());
 
 #if !HAVE(CACFLAYER_SETCONTENTSSCALE)
             TransformationMatrix m;
