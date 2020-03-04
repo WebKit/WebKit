@@ -47,11 +47,12 @@ public:
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferReason {
-        HandlingWheelEvent          = 1 << 0,
-        RubberbandInProgress        = 1 << 1,
-        ScrollSnapInProgress        = 1 << 2,
-        ScrollingThreadSyncNeeded   = 1 << 3,
-        ContentScrollInProgress     = 1 << 4,
+        HandlingWheelEvent              = 1 << 0,
+        HandlingWheelEventOnMainThread  = 1 << 1,
+        RubberbandInProgress            = 1 << 2,
+        ScrollSnapInProgress            = 1 << 3,
+        ScrollingThreadSyncNeeded       = 1 << 4,
+        ContentScrollInProgress         = 1 << 5,
     };
     typedef const void* ScrollableAreaIdentifier;
 
@@ -67,6 +68,30 @@ private:
     RunLoop::Timer<WheelEventTestMonitor> m_testForCompletionTimer;
 
     ScrollableAreaReasonMap m_deferCompletionReasons;
+    bool m_everHadDeferral { false };
+};
+
+class WheelEventTestMonitorCompletionDeferrer {
+public:
+    WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
+        : m_monitor(monitor)
+        , m_identifier(identifier)
+        , m_reason(reason)
+    {
+        if (m_monitor)
+            m_monitor->deferForReason(m_identifier, m_reason);
+    }
+    
+    ~WheelEventTestMonitorCompletionDeferrer()
+    {
+        if (m_monitor)
+            m_monitor->removeDeferralForReason(m_identifier, m_reason);
+    }
+
+private:
+    RefPtr<WheelEventTestMonitor> m_monitor;
+    WheelEventTestMonitor::ScrollableAreaIdentifier m_identifier;
+    WheelEventTestMonitor::DeferReason m_reason;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestMonitor::DeferReason);

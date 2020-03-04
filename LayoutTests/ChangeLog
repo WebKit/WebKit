@@ -1,3 +1,17 @@
+2020-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        (r256513) [ Mac ] fast/scrolling/programmatic-scroll-to-zero-zero.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207948
+
+        Reviewed by Zalan Bujtas.
+
+        Remove line for fast/scrolling/programmatic-scroll-to-zero-zero.html.
+        Skip two Windows tests that, for unknown reasons, no longer get any scrolling
+        triggers.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] webrtc/video-replace-track.html has been flaky failing on iOS

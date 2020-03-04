@@ -852,6 +852,8 @@ static NSUInteger swizzledEventPressedMouseButtons()
 - (void)mouseScrollByX:(int)x andY:(int)y withWheel:(NSString*)phaseName andMomentumPhases:(NSString*)momentumName
 {
 #if PLATFORM(MAC)
+    [[[mainFrame frameView] documentView] layout];
+
     uint32_t phase = 0;
     if ([phaseName isEqualToString: @"none"])
         phase = 0;

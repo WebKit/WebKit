@@ -1,3 +1,18 @@
+2020-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        (r256513) [ Mac ] fast/scrolling/programmatic-scroll-to-zero-zero.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207948
+
+        Reviewed by Zalan Bujtas.
+
+        EventSendingController needs to trigger layout so that the WebHTMLView is not 0x0,
+        so that it receives the wheel events.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        * DumpRenderTree/win/EventSender.cpp:
+        (mouseScrollBy):
+
 2020-03-04  Andres Gonzalez  <andresg_22@apple.com>
 
         REGRESSION (r257739): two fast/events/autoscroll test have started to fail

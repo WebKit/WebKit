@@ -51,6 +51,7 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
     m_deferCompletionReasons.clear();
     m_completionCallback = nullptr;
     m_testForCompletionTimer.stop();
+    m_everHadDeferral = false;
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::clearAllTestDeferrals: cleared all test state.");
 }
 
@@ -69,7 +70,9 @@ void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, 
     m_deferCompletionReasons.ensure(identifier, [] {
         return OptionSet<DeferReason>();
     }).iterator->value.add(reason);
-    
+
+    m_everHadDeferral = true;
+
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::deferForReason: id=" << identifier << ", reason=" << reason);
 }
 
@@ -95,6 +98,11 @@ void WheelEventTestMonitor::triggerTestTimerFired()
         return;
     }
 
+    if (!m_everHadDeferral) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::triggerTestTimerFired - have not yet seen any deferral reasons");
+        return;
+    }
+
     auto functionCallback = WTFMove(m_completionCallback);
     m_testForCompletionTimer.stop();
 
@@ -107,6 +115,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
 {
     switch (reason) {
     case WheelEventTestMonitor::HandlingWheelEvent: ts << "handling wheel event"; break;
+    case WheelEventTestMonitor::HandlingWheelEventOnMainThread: ts << "handling wheel event on main thread"; break;
     case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
