@@ -1,3 +1,16 @@
+2020-03-03  James Savage  <james.savage@apple.com>
+
+        Refine Swift API for WKWebView JavaScript methods
+        https://bugs.webkit.org/show_bug.cgi?id=208483
+
+        Reviewed by Sam Weinig.
+        
+        Refine these interfaces for Swift and to align with our desired API.
+
+        * UIProcess/API/Cocoa/WKContentWorld.h: This doesn't need to be refined
+        for Swift, we can just rename it here.
+        * UIProcess/API/Cocoa/WKWebView.h: This does need refinement.
+
 2020-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Add response to _WKResourceLoadDelegate didCompleteWithError callback

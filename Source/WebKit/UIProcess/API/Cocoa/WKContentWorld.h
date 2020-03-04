@@ -64,7 +64,7 @@ As long as a particular named WKContentWorld instance has not been deallocated, 
 Each named content world is distinct from all other named content worlds, the defaultClientWorld, and the pageWorld.
 The name can be used to keep distinct worlds identifiable anywhere a world might be surfaced in a user interface. For example, the different worlds used in your application will be surfaced by name in the WebKit Web Inspector.
 */
-+ (WKContentWorld *)worldWithName:(NSString *)name NS_REFINED_FOR_SWIFT;
++ (WKContentWorld *)worldWithName:(NSString *)name NS_SWIFT_NAME(world(name:));
 
 /*! @abstract The name of the WKContentWorld
 @discussion The pageWorld and defaultClientWorld instances will have a nil name.
