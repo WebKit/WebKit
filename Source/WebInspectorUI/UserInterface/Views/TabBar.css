@@ -125,6 +125,10 @@ body.docked .tab-bar > .tabs > .flexible-space {
     flex-grow: 1;
 }
 
+body.docked.bottom .tab-bar > .tabs > .flexible-space {
+    cursor: row-resize;
+}
+
 .tab-bar > .tabs > .item {
     display: flex;
 

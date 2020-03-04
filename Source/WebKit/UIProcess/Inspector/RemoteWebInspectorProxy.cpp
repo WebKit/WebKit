@@ -143,6 +143,11 @@ void RemoteWebInspectorProxy::setForcedAppearance(InspectorFrontendClient::Appea
     platformSetForcedAppearance(appearance);
 }
 
+void RemoteWebInspectorProxy::startWindowDrag()
+{
+    platformStartWindowDrag();
+}
+
 void RemoteWebInspectorProxy::openInNewTab(const String& url)
 {
     platformOpenInNewTab(url);
@@ -199,6 +204,7 @@ void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, b
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect&) { }
 void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance) { }
+void RemoteWebInspectorProxy::platformStartWindowDrag() { }
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&) { }
 void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo&) { }
 void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow() { }

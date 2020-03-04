@@ -161,6 +161,10 @@ void RemoteWebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClien
 {
 }
 
+void RemoteWebInspectorProxy::platformStartWindowDrag()
+{
+}
+
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&)
 {
 }

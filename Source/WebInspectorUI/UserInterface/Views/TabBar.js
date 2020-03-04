@@ -30,6 +30,7 @@ WI.TabBar = class TabBar extends WI.View
         super(element);
 
         this.element.classList.add("tab-bar");
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
         this.element.createChild("div", "border top");
 
@@ -40,10 +41,10 @@ WI.TabBar = class TabBar extends WI.View
         this._tabContainer = this.element.appendChild(document.createElement("div"));
         this._tabContainer.className = "tabs";
         this._tabContainer.setAttribute("role", "tablist");
-        this._tabContainer.addEventListener("mousedown", this._handleMouseDown.bind(this));
-        this._tabContainer.addEventListener("click", this._handleClick.bind(this));
-        this._tabContainer.addEventListener("mouseleave", this._handleMouseLeave.bind(this));
-        this._tabContainer.addEventListener("contextmenu", this._handleContextMenu.bind(this));
+        this._tabContainer.addEventListener("mousedown", this._handleTabContainerMouseDown.bind(this));
+        this._tabContainer.addEventListener("click", this._handleTabContainerClick.bind(this));
+        this._tabContainer.addEventListener("mouseleave", this._handleTabContainerMouseLeave.bind(this));
+        this._tabContainer.addEventListener("contextmenu", this._handleTabContainerContextMenu.bind(this));
 
         this._flexibleSpaceBeforeElement = this._tabContainer.appendChild(document.createElement("div"));
         this._flexibleSpaceBeforeElement.className = "flexible-space";
@@ -71,7 +72,7 @@ WI.TabBar = class TabBar extends WI.View
 
     static get horizontalPadding()
     {
-        return WI.docked ? 8 : 0; // Keep in sync with `body.docked .tab-bar .tabs`
+        return (WI.dockConfiguration !== WI.DockConfiguration.Undocked) ? 8 : 0; // Keep in sync with `body.docked .tab-bar .tabs`
     }
 
     // Public
@@ -640,6 +641,25 @@ WI.TabBar = class TabBar extends WI.View
 
     _handleMouseDown(event)
     {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
+        if (event.target !== this.element && event.target !== this._flexibleSpaceBeforeElement && event.target !== this._flexibleSpaceAfterElement)
+            return;
+
+        switch (WI.dockConfiguration) {
+        case WI.DockConfiguration.Bottom:
+            WI.resizeDockedFrameMouseDown(event);
+            break;
+
+        case WI.DockConfiguration.Undocked:
+            WI.moveUndockedWindowMouseDown(event);
+            break;
+        }
+    }
+
+    _handleTabContainerMouseDown(event)
+    {
         // Only consider left mouse clicks for tab movement.
         if (event.button !== 0 || event.ctrlKey)
             return;
@@ -710,7 +730,7 @@ WI.TabBar = class TabBar extends WI.View
         event.stopPropagation();
     }
 
-    _handleClick(event)
+    _handleTabContainerClick(event)
     {
         var itemElement = event.target.closest("." + WI.TabBarItem.StyleClassName);
         if (!itemElement)
@@ -880,7 +900,7 @@ WI.TabBar = class TabBar extends WI.View
         this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemsReordered);
     }
 
-    _handleMouseLeave(event)
+    _handleTabContainerMouseLeave(event)
     {
         if (this._mouseIsDown || !this._tabAnimatedClosedSinceMouseEnter || !this._tabContainer.classList.contains("static-layout") || this._tabContainer.classList.contains("animating"))
             return;
@@ -895,7 +915,7 @@ WI.TabBar = class TabBar extends WI.View
         this._finishExpandingTabsAfterClose();
     }
 
-    _handleContextMenu(event)
+    _handleTabContainerContextMenu(event)
     {
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 

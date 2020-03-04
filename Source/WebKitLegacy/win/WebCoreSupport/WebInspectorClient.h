@@ -118,6 +118,7 @@ public:
 
     void setForcedAppearance(InspectorFrontendClient::Appearance) override;
 
+    bool supportsDockSide(DockSide) override;
     void setAttachedWindowHeight(unsigned) override;
     void setAttachedWindowWidth(unsigned) override;
 

@@ -92,6 +92,9 @@ public:
     void windowObjectCleared() override;
     void frontendLoaded() override;
 
+    void startWindowDrag() override;
+    void moveWindowBy(float x, float y) override;
+
     bool isRemote() const final { return false; }
     String localizedStringsURL() const override;
     String backendCommandsURL() const final { return String(); }
@@ -111,6 +114,7 @@ public:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 
+    bool supportsDockSide(DockSide) override;
     void requestSetDockSide(DockSide) override;
     void changeAttachedWindowHeight(unsigned) override;
     void changeAttachedWindowWidth(unsigned) override;

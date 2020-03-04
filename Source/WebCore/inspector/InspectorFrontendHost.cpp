@@ -171,18 +171,41 @@ void InspectorFrontendHost::loaded()
         m_client->frontendLoaded();
 }
 
-void InspectorFrontendHost::requestSetDockSide(const String& side)
+static Optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
+{
+    if (dockSideString == "undocked")
+        return InspectorFrontendClient::DockSide::Undocked;
+    if (dockSideString == "right")
+        return InspectorFrontendClient::DockSide::Right;
+    if (dockSideString == "left")
+        return InspectorFrontendClient::DockSide::Left;
+    if (dockSideString == "bottom")
+        return InspectorFrontendClient::DockSide::Bottom;
+    return WTF::nullopt;
+}
+
+bool InspectorFrontendHost::supportsDockSide(const String& dockSideString)
+{
+    if (!m_client)
+        return false;
+
+    auto dockSide = dockSideFromString(dockSideString);
+    if (!dockSide)
+        return false;
+
+    return m_client->supportsDockSide(dockSide.value());
+}
+
+void InspectorFrontendHost::requestSetDockSide(const String& dockSideString)
 {
     if (!m_client)
         return;
-    if (side == "undocked")
-        m_client->requestSetDockSide(InspectorFrontendClient::DockSide::Undocked);
-    else if (side == "right")
-        m_client->requestSetDockSide(InspectorFrontendClient::DockSide::Right);
-    else if (side == "left")
-        m_client->requestSetDockSide(InspectorFrontendClient::DockSide::Left);
-    else if (side == "bottom")
-        m_client->requestSetDockSide(InspectorFrontendClient::DockSide::Bottom);
+
+    auto dockSide = dockSideFromString(dockSideString);
+    if (!dockSide)
+        return;
+
+    m_client->requestSetDockSide(dockSide.value());
 }
 
 void InspectorFrontendHost::closeWindow()
@@ -280,6 +303,18 @@ void InspectorFrontendHost::setSheetRect(float x, float y, unsigned width, unsig
 {
     if (m_client)
         m_client->changeSheetRect(FloatRect(x, y, width, height));
+}
+
+void InspectorFrontendHost::startWindowDrag()
+{
+    if (m_client)
+        m_client->startWindowDrag();
+}
+
+void InspectorFrontendHost::moveWindowBy(float x, float y) const
+{
+    if (m_client)
+        m_client->moveWindowBy(x, y);
 }
 
 bool InspectorFrontendHost::isRemote() const

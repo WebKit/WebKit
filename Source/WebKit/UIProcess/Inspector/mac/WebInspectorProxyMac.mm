@@ -742,6 +742,11 @@ void WebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
     m_sheetRect = rect;
 }
 
+void WebInspectorProxy::platformStartWindowDrag()
+{
+    [m_inspectorViewController webView]->_page->startWindowDrag();
+}
+
 String WebInspectorProxy::inspectorPageURL()
 {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];

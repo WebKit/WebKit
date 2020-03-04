@@ -116,6 +116,8 @@ public:
 
     void frontendLoaded() override;
 
+    void startWindowDrag() override;
+
     String localizedStringsURL() const override;
     Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::Page; };
     String targetPlatformName() const final { return "macOS"_s; };
@@ -131,6 +133,7 @@ public:
 
     void setForcedAppearance(InspectorFrontendClient::Appearance) override;
 
+    bool supportsDockSide(DockSide) override;
     void attachWindow(DockSide) override;
     void detachWindow() override;
 

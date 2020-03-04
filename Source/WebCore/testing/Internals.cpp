@@ -344,6 +344,7 @@ public:
     virtual ~InspectorStubFrontend();
 
 private:
+    bool supportsDockSide(DockSide) final { return false; }
     void attachWindow(DockSide) final { }
     void detachWindow() final { }
     void closeWindow() final;

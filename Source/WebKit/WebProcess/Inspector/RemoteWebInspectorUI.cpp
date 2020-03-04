@@ -115,9 +115,37 @@ void RemoteWebInspectorUI::setForcedAppearance(WebCore::InspectorFrontendClient:
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::SetForcedAppearance(appearance), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::startWindowDrag()
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::StartWindowDrag(), m_page.identifier());
+}
+
+void RemoteWebInspectorUI::moveWindowBy(float x, float y)
+{
+    FloatRect frameRect = m_page.corePage()->chrome().windowRect();
+    frameRect.move(x, y);
+    m_page.corePage()->chrome().setWindowRect(frameRect);
+}
+
 WebCore::UserInterfaceLayoutDirection RemoteWebInspectorUI::userInterfaceLayoutDirection() const
 {
     return m_page.corePage()->userInterfaceLayoutDirection();
+}
+
+bool RemoteWebInspectorUI::supportsDockSide(DockSide dockSide)
+{
+    switch (dockSide) {
+    case DockSide::Undocked:
+        return true;
+
+    case DockSide::Right:
+    case DockSide::Left:
+    case DockSide::Bottom:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void RemoteWebInspectorUI::bringToFront()

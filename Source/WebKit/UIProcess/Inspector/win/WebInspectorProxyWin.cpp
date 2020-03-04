@@ -456,4 +456,9 @@ void WebInspectorProxy::platformInvalidate()
     notImplemented();
 }
 
+void WebInspectorProxy::platformStartWindowDrag()
+{
+    notImplemented();
+}
+
 }

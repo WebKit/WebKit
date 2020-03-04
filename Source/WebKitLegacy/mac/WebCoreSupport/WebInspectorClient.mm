@@ -216,6 +216,11 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
+void WebInspectorFrontendClient::startWindowDrag()
+{
+    [[m_frontendWindowController window] performWindowDragWithEvent:[NSApp currentEvent]];
+}
+
 String WebInspectorFrontendClient::localizedStringsURL() const
 {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
@@ -282,6 +287,22 @@ void WebInspectorFrontendClient::setForcedAppearance(InspectorFrontendClient::Ap
         window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
         break;
     }
+}
+
+bool WebInspectorFrontendClient::supportsDockSide(DockSide dockSide)
+{
+    switch (dockSide) {
+    case DockSide::Undocked:
+    case DockSide::Bottom:
+        return true;
+
+    case DockSide::Right:
+    case DockSide::Left:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WebInspectorFrontendClient::attachWindow(DockSide)

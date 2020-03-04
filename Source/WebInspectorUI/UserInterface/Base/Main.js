@@ -370,17 +370,28 @@ WI.contentLoaded = function()
     WI._closeTabBarButton = new WI.ButtonNavigationItem("dock-close", WI.UIString("Close"), "Images/CloseLarge.svg");
     WI._closeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.close);
 
-    WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 16, 16);
-    WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight);
+    let dockingConfigurationNavigationItems = [];
 
-    WI._dockBottomTabBarButton = new WI.ButtonNavigationItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", 16, 16);
-    WI._dockBottomTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom);
+    if (InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Right) && InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Left)) {
+        WI._dockToSideTabBarButton = new WI.ButtonNavigationItem("dock-right", WI.UIString("Dock to side of window"), WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg", 16, 16);
+        WI._dockToSideTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+        WI._dockToSideTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI._dockLeft : WI._dockRight);
+        dockingConfigurationNavigationItems.push(WI._dockToSideTabBarButton);
+    }
 
-    WI._undockTabBarButton = new WI.ButtonNavigationItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", 16, 16);
-    WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
+    if (InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Bottom)) {
+        WI._dockBottomTabBarButton = new WI.ButtonNavigationItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg", 16, 16);
+        WI._dockBottomTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+        WI._dockBottomTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._dockBottom);
+        dockingConfigurationNavigationItems.push(WI._dockBottomTabBarButton);
+    }
+
+    if (InspectorFrontendHost.supportsDockSide(WI.DockConfiguration.Undocked)) {
+        WI._undockTabBarButton = new WI.ButtonNavigationItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg", 16, 16);
+        WI._undockTabBarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
+        WI._undockTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._undock);
+        dockingConfigurationNavigationItems.push(WI._undockTabBarButton);
+    }
 
     let inspectedPageControlNavigationItems = [];
 
@@ -417,9 +428,7 @@ WI.contentLoaded = function()
 
     WI.tabBar.addNavigationItemBefore(new WI.GroupNavigationItem([
         WI._closeTabBarButton,
-        WI._dockToSideTabBarButton,
-        WI._dockBottomTabBarButton,
-        WI._undockTabBarButton,
+        ...dockingConfigurationNavigationItems,
         ...inspectedPageControlNavigationItems,
     ]));
 
@@ -460,7 +469,10 @@ WI.contentLoaded = function()
 
     WI._dockedResizerElement = document.getElementById("docked-resizer");
     WI._dockedResizerElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
-    WI._dockedResizerElement.addEventListener("mousedown", WI._dockedResizerMouseDown);
+    WI._dockedResizerElement.addEventListener("mousedown", WI._handleDockedResizerMouseDown);
+
+    let undockedTitleAreaElement = document.getElementById("undocked-title-area");
+    undockedTitleAreaElement.addEventListener("mousedown", WI._handleUndockedTitleAreaMouseDown);
 
     WI._dockingAvailable = false;
 
@@ -833,10 +845,10 @@ WI.updateDockingAvailability = function(available)
 
 WI.updateDockedState = function(side)
 {
-    if (WI._dockConfiguration === side)
+    if (WI.dockConfiguration === side)
         return;
 
-    WI._previousDockConfiguration = WI._dockConfiguration;
+    WI._previousDockConfiguration = WI.dockConfiguration;
 
     if (!WI._previousDockConfiguration) {
         if (side === WI.DockConfiguration.Right || side === WI.DockConfiguration.Left)
@@ -845,26 +857,150 @@ WI.updateDockedState = function(side)
             WI._previousDockConfiguration = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? WI.DockConfiguration.Left : WI.DockConfiguration.Right;
     }
 
-    WI._dockConfiguration = side;
+    WI.dockConfiguration = side;
 
-    WI.docked = side !== WI.DockConfiguration.Undocked;
-
-    if (side === WI.DockConfiguration.Bottom) {
+    switch (WI.dockConfiguration) {
+    case WI.DockConfiguration.Bottom:
         document.body.classList.add("docked", WI.DockConfiguration.Bottom);
         document.body.classList.remove("window-inactive", WI.DockConfiguration.Right, WI.DockConfiguration.Left);
-    } else if (side === WI.DockConfiguration.Right) {
+        break;
+
+    case WI.DockConfiguration.Right:
         document.body.classList.add("docked", WI.DockConfiguration.Right);
         document.body.classList.remove("window-inactive", WI.DockConfiguration.Bottom, WI.DockConfiguration.Left);
-    } else if (side === WI.DockConfiguration.Left) {
+        break;
+
+    case WI.DockConfiguration.Left:
         document.body.classList.add("docked", WI.DockConfiguration.Left);
         document.body.classList.remove("window-inactive", WI.DockConfiguration.Bottom, WI.DockConfiguration.Right);
-    } else
+        break;
+
+    default:
         document.body.classList.remove("docked", WI.DockConfiguration.Right, WI.DockConfiguration.Left, WI.DockConfiguration.Bottom);
+        break;
+    }
 
     WI._updateDockNavigationItems();
 
     if (!WI.dockedConfigurationSupportsSplitContentBrowser() && !WI.doesCurrentTabSupportSplitContentBrowser())
         WI.hideSplitConsole();
+};
+
+WI.resizeDockedFrameMouseDown = function(event)
+{
+    console.assert(WI.dockConfiguration !== WI.DockConfiguration.Undocked);
+
+    if (event.button !== 0 || event.ctrlKey)
+        return;
+
+    event[WI.Popover.EventPreventDismissSymbol] = true;
+
+    let isDockedBottom = WI.dockConfiguration === WI.DockConfiguration.Bottom;
+
+    let windowProperty = isDockedBottom ? "innerHeight" : "innerWidth";
+    let eventScreenProperty = isDockedBottom ? "screenY" : "screenX";
+    let eventClientProperty = isDockedBottom ? "clientY" : "clientX";
+
+    let resizerElement = event.target;
+    let firstClientPosition = event[eventClientProperty];
+    let lastScreenPosition = event[eventScreenProperty];
+
+    function dividerDrag(event)
+    {
+        if (event.button !== 0)
+            return;
+
+        let position = event[eventScreenProperty];
+        let delta = position - lastScreenPosition;
+        let clientPosition = event[eventClientProperty];
+
+        lastScreenPosition = position;
+
+        if (WI.dockConfiguration === WI.DockConfiguration.Left) {
+            // If the mouse is travelling rightward but is positioned left of the resizer, ignore the event.
+            if (delta > 0 && clientPosition < firstClientPosition)
+                return;
+
+            // If the mouse is travelling leftward but is positioned to the right of the resizer, ignore the event.
+            if (delta < 0 && clientPosition > window[windowProperty])
+                return;
+
+            // We later subtract the delta from the current position, but since the inspected view and inspector view
+            // are flipped when docked to left, we want dragging to have the opposite effect from docked to right.
+            delta *= -1;
+        } else {
+            // If the mouse is travelling downward/rightward but is positioned above/left of the resizer, ignore the event.
+            if (delta > 0 && clientPosition < firstClientPosition)
+                return;
+
+            // If the mouse is travelling upward/leftward but is positioned below/right of the resizer, ignore the event.
+            if (delta < 0 && clientPosition > firstClientPosition)
+                return;
+        }
+
+        let dimension = Math.max(0, window[windowProperty] - delta);
+        // If zoomed in/out, there be greater/fewer document pixels shown, but the inspector's
+        // width or height should be the same in device pixels regardless of the document zoom.
+        dimension *= WI.getZoomFactor();
+
+        if (isDockedBottom)
+            InspectorFrontendHost.setAttachedWindowHeight(dimension);
+        else
+            InspectorFrontendHost.setAttachedWindowWidth(dimension);
+    }
+
+    function elementDragEnd(event)
+    {
+        if (event.button !== 0)
+            return;
+
+        WI.elementDragEnd(event);
+    }
+
+    let cursor = isDockedBottom ? "row-resize" : "col-resize";
+    WI.elementDragStart(resizerElement, dividerDrag, elementDragEnd, event, cursor);
+};
+
+WI.moveUndockedWindowMouseDown = function(event)
+{
+    console.assert(WI.dockConfiguration === WI.DockConfiguration.Undocked);
+
+    if (event.button !== 0 || event.ctrlKey)
+        return;
+
+    event[WI.Popover.EventPreventDismissSymbol] = true;
+
+    if (WI.Platform.name === "mac") {
+        InspectorFrontendHost.startWindowDrag();
+        event.preventDefault();
+        return;
+    }
+
+    let lastScreenX = event.screenX;
+    let lastScreenY = event.screenY;
+
+    function dividerDrag(event) {
+        if (event.button !== 0)
+            return;
+
+        let x = event.screenX - lastScreenX;
+        let y = event.screenY - lastScreenY;
+
+        InspectorFrontendHost.moveWindowBy(x, y);
+
+        lastScreenX = event.screenX;
+        lastScreenY = event.screenY;
+    }
+
+    function elementDragEnd(event) {
+        if (event.button !== 0)
+            return;
+
+        WI.elementDragEnd(event);
+    }
+
+    const cursor = "default";
+    WI.elementDragStart(event.target, dividerDrag, elementDragEnd, event, cursor);
 };
 
 WI.updateVisibilityState = function(visible)
@@ -967,7 +1103,7 @@ WI.isShowingSplitConsole = function()
 
 WI.dockedConfigurationSupportsSplitContentBrowser = function()
 {
-    return WI._dockConfiguration !== WI.DockConfiguration.Bottom;
+    return WI.dockConfiguration !== WI.DockConfiguration.Bottom;
 };
 
 WI.doesCurrentTabSupportSplitContentBrowser = function()
@@ -1588,7 +1724,7 @@ WI._windowFocused = function(event)
         return;
 
     // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.remove(WI.docked ? "window-docked-inactive" : "window-inactive");
+    document.body.classList.remove(WI.dockConfiguration === WI.DockConfiguration.Undocked ? "window-inactive" : "window-docked-inactive");
 };
 
 WI._windowBlurred = function(event)
@@ -1597,7 +1733,7 @@ WI._windowBlurred = function(event)
         return;
 
     // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.add(WI.docked ? "window-docked-inactive" : "window-inactive");
+    document.body.classList.add(WI.dockConfiguration === WI.DockConfiguration.Undocked ? "window-inactive" : "window-docked-inactive");
 };
 
 WI._windowResized = function(event)
@@ -1728,16 +1864,24 @@ WI._togglePreviousDockConfiguration = function(event)
 
 WI._updateDockNavigationItems = function()
 {
-    if (WI._dockingAvailable || WI.docked) {
-        WI._closeTabBarButton.hidden = !WI.docked;
-        WI._undockTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Undocked;
-        WI._dockBottomTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Bottom;
-        WI._dockToSideTabBarButton.hidden = WI._dockConfiguration === WI.DockConfiguration.Right || WI._dockConfiguration === WI.DockConfiguration.Left;
+    let docked = WI.dockConfiguration !== WI.DockConfiguration.Undocked;
+
+    if (WI._dockingAvailable || docked) {
+        WI._closeTabBarButton.hidden = !docked;
+        if (WI._dockToSideTabBarButton)
+            WI._dockToSideTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Right || WI.dockConfiguration === WI.DockConfiguration.Left;
+        if (WI._dockBottomTabBarButton)
+            WI._dockBottomTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Bottom;
+        if (WI._undockTabBarButton)
+            WI._undockTabBarButton.hidden = WI.dockConfiguration === WI.DockConfiguration.Undocked;
     } else {
         WI._closeTabBarButton.hidden = true;
-        WI._undockTabBarButton.hidden = true;
-        WI._dockBottomTabBarButton.hidden = true;
-        WI._dockToSideTabBarButton.hidden = true;
+        if (WI._dockToSideTabBarButton)
+            WI._dockToSideTabBarButton.hidden = true;
+        if (WI._dockBottomTabBarButton)
+            WI._dockBottomTabBarButton.hidden = true;
+        if (WI._undockTabBarButton)
+            WI._undockTabBarButton.hidden = true;
     }
 
     WI._updateTabBarDividers();
@@ -1795,81 +1939,14 @@ WI._tabBrowserSelectedTabContentViewDidChange = function(event)
     WI.hideSplitConsole();
 };
 
-WI._dockedResizerMouseDown = function(event)
+WI._handleDockedResizerMouseDown = function(event)
 {
-    if (event.button !== 0 || event.ctrlKey)
-        return;
+    WI.resizeDockedFrameMouseDown(event);
+};
 
-    if (!WI.docked)
-        return;
-
-    // Only start dragging if the target is one of the elements that we expect.
-    if (event.target !== WI._dockedResizerElement)
-        return;
-
-    event[WI.Popover.EventPreventDismissSymbol] = true;
-
-    let windowProperty = WI._dockConfiguration === WI.DockConfiguration.Bottom ? "innerHeight" : "innerWidth";
-    let eventScreenProperty = WI._dockConfiguration === WI.DockConfiguration.Bottom ? "screenY" : "screenX";
-    let eventClientProperty = WI._dockConfiguration === WI.DockConfiguration.Bottom ? "clientY" : "clientX";
-
-    var resizerElement = event.target;
-    var firstClientPosition = event[eventClientProperty];
-    var lastScreenPosition = event[eventScreenProperty];
-
-    function dockedResizerDrag(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        var position = event[eventScreenProperty];
-        var delta = position - lastScreenPosition;
-        var clientPosition = event[eventClientProperty];
-
-        lastScreenPosition = position;
-
-        if (WI._dockConfiguration === WI.DockConfiguration.Left) {
-            // If the mouse is travelling rightward but is positioned left of the resizer, ignore the event.
-            if (delta > 0 && clientPosition < firstClientPosition)
-                return;
-
-            // If the mouse is travelling leftward but is positioned to the right of the resizer, ignore the event.
-            if (delta < 0 && clientPosition > window[windowProperty])
-                return;
-
-            // We later subtract the delta from the current position, but since the inspected view and inspector view
-            // are flipped when docked to left, we want dragging to have the opposite effect from docked to right.
-            delta *= -1;
-        } else {
-            // If the mouse is travelling downward/rightward but is positioned above/left of the resizer, ignore the event.
-            if (delta > 0 && clientPosition < firstClientPosition)
-                return;
-
-            // If the mouse is travelling upward/leftward but is positioned below/right of the resizer, ignore the event.
-            if (delta < 0 && clientPosition > firstClientPosition)
-                return;
-        }
-
-        let dimension = Math.max(0, window[windowProperty] - delta);
-        // If zoomed in/out, there be greater/fewer document pixels shown, but the inspector's
-        // width or height should be the same in device pixels regardless of the document zoom.
-        dimension *= WI.getZoomFactor();
-
-        if (WI._dockConfiguration === WI.DockConfiguration.Bottom)
-            InspectorFrontendHost.setAttachedWindowHeight(dimension);
-        else
-            InspectorFrontendHost.setAttachedWindowWidth(dimension);
-    }
-
-    function dockedResizerDragEnd(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        WI.elementDragEnd(event);
-    }
-
-    WI.elementDragStart(resizerElement, dockedResizerDrag, dockedResizerDragEnd, event, WI._dockConfiguration === WI.DockConfiguration.Bottom ? "row-resize" : "col-resize");
+WI._handleUndockedTitleAreaMouseDown = function(event)
+{
+    WI.moveUndockedWindowMouseDown(event);
 };
 
 WI._domStorageWasInspected = function(event)
@@ -2256,9 +2333,9 @@ WI._updateInspectModeTabBarButton = function()
 WI._updateTabBarDividers = function()
 {
     let closeHidden = WI._closeTabBarButton.hidden;
-    let dockToSideHidden = WI._dockToSideTabBarButton.hidden;
-    let dockBottomHidden = WI._dockBottomTabBarButton.hidden;
-    let undockHidden = WI._undockTabBarButton.hidden;
+    let dockToSideHidden = WI._dockToSideTabBarButton?.hidden;
+    let dockBottomHidden = WI._dockBottomTabBarButton?.hidden;
+    let undockHidden = WI._undockTabBarButton?.hidden;
 
     let inspectModeHidden = WI._inspectModeTabBarButton.hidden;
     let deviceSettingsHidden = WI._deviceSettingsTabBarButton && WI._deviceSettingsTabBarButton.hidden;
@@ -2663,10 +2740,10 @@ WI.setLayoutDirection = function(value)
 
     WI.settings.debugLayoutDirection.value = value;
 
-    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL && WI._dockConfiguration === WI.DockConfiguration.Right)
+    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL && WI.dockConfiguration === WI.DockConfiguration.Right)
         WI._dockLeft();
 
-    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR && WI._dockConfiguration === WI.DockConfiguration.Left)
+    if (WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR && WI.dockConfiguration === WI.DockConfiguration.Left)
         WI._dockRight();
 
     InspectorFrontendHost.reopen();

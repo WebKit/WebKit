@@ -120,6 +120,7 @@ private:
     void append(const String& filename, const String& content);
     void setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void startWindowDrag();
     void openInNewTab(const String& url);
     void showCertificate(const WebCore::CertificateInfo&);
     void sendMessageToBackend(const String& message);
@@ -136,6 +137,7 @@ private:
     void platformAppend(const String& filename, const String& content);
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void platformStartWindowDrag();
     void platformOpenInNewTab(const String& url);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
