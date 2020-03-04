@@ -732,12 +732,12 @@ public:
     void setReadyState(ReadyState);
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }
-    Seconds minimumLayoutDelay();
 
-    bool shouldScheduleLayout();
-    bool isLayoutTimerActive();
-    Seconds timeSinceDocumentCreation() const;
-    
+    bool shouldScheduleLayout() const;
+    bool isLayoutTimerActive() const;
+#if !LOG_DISABLED
+    Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
+#endif
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
 
@@ -1743,9 +1743,9 @@ private:
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
+#if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
-    bool m_overMinimumLayoutThreshold { false };
-    
+#endif
     std::unique_ptr<ScriptRunner> m_scriptRunner;
     std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
 

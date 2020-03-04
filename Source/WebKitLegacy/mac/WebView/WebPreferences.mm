@@ -576,7 +576,6 @@ public:
 #if PLATFORM(IOS_FAMILY)
         @YES, WebKitContentChangeObserverEnabledPreferenceKey,
         @NO, WebKitTelephoneParsingEnabledPreferenceKey,
-        [NSNumber numberWithInt:-1], WebKitLayoutIntervalPreferenceKey,
         [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
         @NO, WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey,
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
@@ -1673,16 +1672,6 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-- (void)_setLayoutInterval:(int)l
-{
-    [self _setIntegerValue:l forKey:WebKitLayoutIntervalPreferenceKey];
-}
-
-- (int)_layoutInterval
-{
-    return [self _integerValueForKey:WebKitLayoutIntervalPreferenceKey];
-}
-
 - (void)_setMaxParseDuration:(float)d
 {
     [self _setFloatValue:d forKey:WebKitMaxParseDurationPreferenceKey];

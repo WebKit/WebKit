@@ -61,15 +61,9 @@ static void invalidateAfterGenericFamilyChange(Page* page)
         page->setNeedsRecalcStyleInAllFrames();
 }
 
-// This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
-// FIXME: For faster machines this value can really be lowered to 200. 250 is adequate, but a little high
-// for dual G5s. :)
-static const Seconds layoutScheduleThreshold = 250_ms;
-
 SettingsBase::SettingsBase(Page* page)
     : m_page(nullptr)
     , m_fontGenericFamilies(makeUnique<FontGenericFamilies>())
-    , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
     , m_setImageLoadingSettingsTimer(*this, &SettingsBase::imageLoadingSettingsTimerFired)
 {
@@ -232,13 +226,6 @@ void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
         if (frame->document())
             frame->document()->adjustMinimumDOMTimerInterval(oldTimerInterval);
     }
-}
-
-void SettingsBase::setLayoutInterval(Seconds layoutInterval)
-{
-    // FIXME: It seems weird that this function may disregard the specified layout interval.
-    // We should either expose layoutScheduleThreshold or better communicate this invariant.
-    m_layoutInterval = std::max(layoutInterval, layoutScheduleThreshold);
 }
 
 void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)

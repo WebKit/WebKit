@@ -933,11 +933,6 @@ DefaultFixedFontSize:
   type: double
   defaultValue: 13
 
-LayoutInterval:
-  type: double
-  defaultValue: -1
-  webcoreBinding: custom
-
 MaxParseDuration:
   type: double
   defaultValue: -1
