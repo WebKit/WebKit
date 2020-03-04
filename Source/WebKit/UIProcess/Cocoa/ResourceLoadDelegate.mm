@@ -63,7 +63,7 @@ void ResourceLoadDelegate::setDelegate(id <_WKResourceLoadDelegate> delegate)
     m_delegateMethods.didPerformHTTPRedirection = [delegate respondsToSelector:@selector(webView:resourceLoad:didPerformHTTPRedirection:newRequest:)];
     m_delegateMethods.didReceiveChallenge = [delegate respondsToSelector:@selector(webView:resourceLoad:didReceiveChallenge:)];
     m_delegateMethods.didReceiveResponse = [delegate respondsToSelector:@selector(webView:resourceLoad:didReceiveResponse:)];
-    m_delegateMethods.didCompleteWithError = [delegate respondsToSelector:@selector(webView:resourceLoad:didCompleteWithError:)];
+    m_delegateMethods.didCompleteWithError = [delegate respondsToSelector:@selector(webView:resourceLoad:didCompleteWithError:response:)];
 }
 
 ResourceLoadDelegate::ResourceLoadClient::ResourceLoadClient(ResourceLoadDelegate& delegate)
@@ -121,7 +121,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didReceiveResponse(WebKit::Resour
     [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didReceiveResponse:response.nsURLResponse()];
 }
 
-void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceError&& error) const
+void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) const
 {
     if (!m_resourceLoadDelegate.m_delegateMethods.didCompleteWithError)
         return;
@@ -130,7 +130,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didCompleteWithError(WebKit::Reso
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didCompleteWithError:error.nsError()];
+    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didCompleteWithError:error.nsError() response:response.nsURLResponse()];
 }
 
 } // namespace WebKit

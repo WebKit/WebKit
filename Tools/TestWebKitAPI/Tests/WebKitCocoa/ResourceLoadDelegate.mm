@@ -43,7 +43,7 @@
 @property (nonatomic, copy) void (^didPerformHTTPRedirection)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *, NSURLRequest *);
 @property (nonatomic, copy) void (^didReceiveChallenge)(WKWebView *, _WKResourceLoadInfo *, NSURLAuthenticationChallenge *);
 @property (nonatomic, copy) void (^didReceiveResponse)(WKWebView *, _WKResourceLoadInfo *, NSURLResponse *);
-@property (nonatomic, copy) void (^didCompleteWithError)(WKWebView *, _WKResourceLoadInfo *, NSError *);
+@property (nonatomic, copy) void (^didCompleteWithError)(WKWebView *, _WKResourceLoadInfo *, NSError *, NSURLResponse *);
 
 @end
 
@@ -73,10 +73,10 @@
         _didReceiveResponse(webView, resourceLoad, response);
 }
 
-- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView resourceLoad:(_WKResourceLoadInfo *)resourceLoad didCompleteWithError:(NSError *)error response:(NSURLResponse *)response
 {
     if (_didCompleteWithError)
-        _didCompleteWithError(webView, resourceLoad, error);
+        _didCompleteWithError(webView, resourceLoad, error, response);
 }
 
 @end
@@ -187,7 +187,7 @@ TEST(ResourceLoadDelegate, Redirect)
         EXPECT_WK_STREQ(loadInfo.originalURL.path, "/");
         EXPECT_WK_STREQ(loadInfo.originalHTTPMethod, "GET");
     }];
-    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *loadInfo, NSError *) {
+    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *loadInfo, NSError *, NSURLResponse *) {
         EXPECT_WK_STREQ(loadInfo.originalURL.path, "/");
         EXPECT_WK_STREQ(loadInfo.originalHTTPMethod, "GET");
         done = true;
@@ -232,11 +232,12 @@ TEST(ResourceLoadDelegate, LoadInfo)
         loadInfos.append(loadInfo);
         otherParameters.append(response);
     }];
-    [delegate setDidCompleteWithError:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSError *error) {
+    [delegate setDidCompleteWithError:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSError *error, NSURLResponse *response) {
         callbacks.append(Callback::DidCompleteWithError);
         webViews.append(webView);
         loadInfos.append(loadInfo);
         otherParameters.append(error);
+        otherParameters.append(response);
         resourceCompletionCount++;
     }];
 
@@ -295,24 +296,32 @@ TEST(ResourceLoadDelegate, LoadInfo)
     checkFrames(7, sub, main);
     checkFrames(8, sub, main);
 
-    EXPECT_EQ(otherParameters.size(), 9ull);
+    EXPECT_EQ(otherParameters.size(), 12ull);
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");
     EXPECT_WK_STREQ([otherParameters[0] URL].path, "/");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[1] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[1] URL].path, "/");
     EXPECT_EQ(otherParameters[2], nil);
-    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[3] class]), "NSMutableURLRequest");
-    EXPECT_WK_STREQ([otherParameters[3] URL].path, "/iframeSrc");
-    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[4] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[3] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[3] URL].path, "/");
+
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[4] class]), "NSMutableURLRequest");
     EXPECT_WK_STREQ([otherParameters[4] URL].path, "/iframeSrc");
-    EXPECT_EQ(otherParameters[5], nil);
-    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[6] class]), "NSMutableURLRequest");
-    EXPECT_WK_STREQ([otherParameters[6] URL].path, "/fetchTarget");
-    EXPECT_WK_STREQ([[[NSString alloc] initWithData:[otherParameters[6] HTTPBody] encoding:NSUTF8StringEncoding] autorelease], "a=b&c=d");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[5] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[5] URL].path, "/iframeSrc");
+    EXPECT_EQ(otherParameters[6], nil);
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[7] class]), "NSHTTPURLResponse");
-    EXPECT_WK_STREQ([otherParameters[7] URL].path, "/fetchTarget");
-    EXPECT_EQ(otherParameters[8], nil);
-    
+    EXPECT_WK_STREQ([otherParameters[7] URL].path, "/iframeSrc");
+
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[8] class]), "NSMutableURLRequest");
+    EXPECT_WK_STREQ([otherParameters[8] URL].path, "/fetchTarget");
+    EXPECT_WK_STREQ([[[NSString alloc] initWithData:[otherParameters[8] HTTPBody] encoding:NSUTF8StringEncoding] autorelease], "a=b&c=d");
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[9] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[9] URL].path, "/fetchTarget");
+    EXPECT_EQ(otherParameters[10], nil);
+    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[11] class]), "NSHTTPURLResponse");
+    EXPECT_WK_STREQ([otherParameters[11] URL].path, "/fetchTarget");
+
     _WKResourceLoadInfo *original = loadInfos[0].get();
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
@@ -353,7 +362,7 @@ TEST(ResourceLoadDelegate, Challenge)
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
         receivedChallengeNotificiation = true;
     }];
-    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *, NSError *error) {
+    [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *, NSError *error, NSURLResponse *) {
         EXPECT_EQ(error.code, kCFURLErrorCannotConnectToHost);
         EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
         receivedErrorNotification = true;

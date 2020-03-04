@@ -516,13 +516,13 @@ void NetworkProcessProxy::resourceLoadDidReceiveResponse(WebPageProxyIdentifier 
     page->resourceLoadDidReceiveResponse(WTFMove(loadInfo), WTFMove(response));
 }
 
-void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceError&& error)
+void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error)
 {
     auto* page = WebProcessProxy::webPage(pageID);
     if (!page)
         return;
 
-    page->resourceLoadDidCompleteWithError(WTFMove(loadInfo), WTFMove(error));
+    page->resourceLoadDidCompleteWithError(WTFMove(loadInfo), WTFMove(response), WTFMove(error));
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

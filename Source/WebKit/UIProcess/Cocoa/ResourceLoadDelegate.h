@@ -63,7 +63,7 @@ private:
         void didPerformHTTPRedirection(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const final;
         void didReceiveChallenge(ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const final;
         void didReceiveResponse(ResourceLoadInfo&&, WebCore::ResourceResponse&&) const final;
-        void didCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceError&&) const final;
+        void didCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&) const final;
 
         ResourceLoadDelegate& m_resourceLoadDelegate;
     };

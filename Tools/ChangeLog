@@ -1,3 +1,15 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add response to _WKResourceLoadDelegate didCompleteWithError callback
+        https://bugs.webkit.org/show_bug.cgi?id=208553
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (-[TestResourceLoadDelegate webView:resourceLoad:didCompleteWithError:response:]):
+        (TEST):
+        (-[TestResourceLoadDelegate webView:resourceLoad:didCompleteWithError:]): Deleted.
+
 2020-03-03  Brady Eidson  <beidson@apple.com>
 
         API Test [Mojave+ WK2 Debug ] TestWebKitAPI.WKAttachmentTestsMac.InsertDroppedFilePromisesAsAttachments is a flaky crash.
