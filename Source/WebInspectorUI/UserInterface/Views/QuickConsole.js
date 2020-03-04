@@ -199,9 +199,13 @@ WI.QuickConsole = class QuickConsole extends WI.View
             return;
         }
 
-        if (WI.networkManager.frames.length === 1 && WI.networkManager.mainFrame.executionContextList.contexts.length === 1 && !WI.targetManager.workerTargets.length) {
-            toggleHidden(true);
-            return;
+        if (WI.networkManager.frames.length === 1 && !WI.targetManager.workerTargets.length) {
+            let mainFrameContexts = WI.networkManager.mainFrame.executionContextList.contexts;
+            let contextsToShow = mainFrameContexts.filter((context) => context.type !== WI.ExecutionContext.Type.Internal || WI.settings.engineeringShowInternalExecutionContexts.value);
+            if (contextsToShow.length <= 1) {
+                toggleHidden(true);
+                return;
+            }
         }
 
         const maxLength = 40;
@@ -335,6 +339,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _handleEngineeringShowInternalExecutionContextsSettingChanged(event)
     {
+        this._updateActiveExecutionContextDisplay();
+
         if (WI.runtimeManager.activeExecutionContext.type !== WI.ExecutionContext.Type.Internal)
             return;
 
