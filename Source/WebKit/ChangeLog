@@ -1,3 +1,37 @@
+2020-03-04  Daniel Bates  <dabates@apple.com>
+
+        Move WKTextSelectionRect into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=208561
+
+        Reviewed by Alex Christensen.
+
+        WKTextSelectionRect is currently defined in WKContentViewInteraction.mm. Separate it
+        out into its own file to improve project organization and de-clutter WKContentViewInteraction.mm.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKTextSelectionRect initWithWebRect:]): Deleted.
+        (-[WKTextSelectionRect dealloc]): Deleted.
+        (+[WKTextSelectionRect textSelectionRectsWithWebRects:]): Deleted.
+        (-[WKTextSelectionRect rect]): Deleted.
+        (-[WKTextSelectionRect writingDirection]): Deleted.
+        (-[WKTextSelectionRect range]): Deleted.
+        (-[WKTextSelectionRect containsStart]): Deleted.
+        (-[WKTextSelectionRect containsEnd]): Deleted.
+        (-[WKTextSelectionRect isVertical]): Deleted.
+        * UIProcess/ios/WKTextSelectionRect.h: Added.
+        * UIProcess/ios/WKTextSelectionRect.mm: Added.
+        (-[WKTextSelectionRect initWithWebRect:]):
+        (-[WKTextSelectionRect dealloc]):
+        (+[WKTextSelectionRect textSelectionRectsWithWebRects:]):
+        (-[WKTextSelectionRect rect]):
+        (-[WKTextSelectionRect writingDirection]):
+        (-[WKTextSelectionRect range]):
+        (-[WKTextSelectionRect containsStart]):
+        (-[WKTextSelectionRect containsEnd]):
+        (-[WKTextSelectionRect isVertical]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-03-04  Youenn Fablet  <youenn@apple.com>
 
         WebChromeClient::createImageBuffer should not create a connection to GPU Process if page does not want remote rendering

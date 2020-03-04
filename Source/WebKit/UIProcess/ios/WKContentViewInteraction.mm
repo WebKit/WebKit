@@ -65,6 +65,7 @@
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTextInputListViewController.h"
+#import "WKTextSelectionRect.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
@@ -290,13 +291,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @end
 
-@interface WKTextSelectionRect : UITextSelectionRect
-
-@property (nonatomic, retain) WebSelectionRect *webRect;
-
-+ (NSArray *)textSelectionRectsWithWebRects:(NSArray *)webRects;
-
-@end
 
 @interface WKAutocorrectionRects : UIWKAutocorrectionRects
 + (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
@@ -9304,7 +9298,8 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 #endif // HAVE(LINK_PREVIEW)
 
-// UITextRange, UITextPosition and UITextSelectionRect implementations for WK2
+// UITextRange and UITextPosition implementations for WK2
+// FIXME: Move these out into separate files.
 
 @implementation WKTextRange (UITextInputAdditions)
 
@@ -9416,71 +9411,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<WKTextPosition: %p, {%@}>", self, NSStringFromCGRect(self.positionRect)];
-}
-
-@end
-
-@implementation WKTextSelectionRect
-
-- (id)initWithWebRect:(WebSelectionRect *)wRect
-{
-    self = [super init];
-    if (self)
-        self.webRect = wRect;
-
-    return self;
-}
-
-- (void)dealloc
-{
-    self.webRect = nil;
-    [super dealloc];
-}
-
-// FIXME: we are using this implementation for now
-// that uses WebSelectionRect, but we want to provide our own
-// based on WebCore::SelectionRect.
-
-+ (NSArray *)textSelectionRectsWithWebRects:(NSArray *)webRects
-{
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:webRects.count];
-    for (WebSelectionRect *webRect in webRects) {
-        RetainPtr<WKTextSelectionRect> rect = adoptNS([[WKTextSelectionRect alloc] initWithWebRect:webRect]);
-        [array addObject:rect.get()];
-    }
-    return array;
-}
-
-- (CGRect)rect
-{
-    return _webRect.rect;
-}
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (UITextWritingDirection)writingDirection
-{
-    return (UITextWritingDirection)_webRect.writingDirection;
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-- (UITextRange *)range
-{
-    return nil;
-}
-
-- (BOOL)containsStart
-{
-    return _webRect.containsStart;
-}
-
-- (BOOL)containsEnd
-{
-    return _webRect.containsEnd;
-}
-
-- (BOOL)isVertical
-{
-    return !_webRect.isHorizontal;
 }
 
 @end
