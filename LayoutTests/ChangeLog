@@ -1,3 +1,43 @@
+2020-03-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r257716. rdar://problem/60019586
+
+    maps.google.com is not loading properly, screen flickers when zooming
+    https://bugs.webkit.org/show_bug.cgi?id=208331
+    <rdar://problem/59790757>
+    
+    Reviewed by Antoine Quint.
+    
+    Source/WebCore:
+    
+    When using ANGLE, we don't need the GL_ANGLE_depth_texture extension.
+    We were mistakenly checking for it and deciding to not allow
+    combined depth+stencil framebuffer attachments.
+    
+    Test: webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+    (now passes on iOS)
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::setupFlags):
+    
+    LayoutTests:
+    
+    * platform/ios/TestExpectations: remove failing expectation for:
+    webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257716 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-02  Dean Jackson  <dino@apple.com>
+
+            maps.google.com is not loading properly, screen flickers when zooming
+            https://bugs.webkit.org/show_bug.cgi?id=208331
+            <rdar://problem/59790757>
+
+            Reviewed by Antoine Quint.
+
+            * platform/ios/TestExpectations: remove failing expectation for:
+            webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html
+
 2020-02-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS ] imported/w3c/web-platform-tests/dom/nodes/Document-characterSet-normalization.html is flaky failing

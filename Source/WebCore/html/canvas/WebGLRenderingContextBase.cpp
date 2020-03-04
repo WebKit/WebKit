@@ -795,13 +795,20 @@ void WebGLRenderingContextBase::setupFlags()
             m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
     }
 
+    // FIXME: With ANGLE as a backend this probably isn't needed any more. Unfortunately
+    // turning it off causes problems.
     m_isGLES2Compliant = m_context->isGLES2Compliant();
     if (m_isGLES2Compliant) {
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_OES_texture_npot");
         m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_OES_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
     } else {
+#if USE(ANGLE)
+        m_isGLES2NPOTStrict = true;
+        m_isDepthStencilSupported = true;
+#else
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_ARB_texture_non_power_of_two");
         m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
+#endif
     }
     m_isRobustnessEXTSupported = m_context->getExtensions().isEnabled("GL_EXT_robustness");
 }
