@@ -1,3 +1,10 @@
+2020-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening after r257764.
+
+        * TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-04  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION (r257840?) [ Mac wk2 Release ] fast/hidpi/image-srcset-relative-svg-canvas.html is flaky failing.
