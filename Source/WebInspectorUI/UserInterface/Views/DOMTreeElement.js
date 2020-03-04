@@ -722,9 +722,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (tag.getElementsByClassName("html-attribute").length > 0)
             tag.insertBefore(node, tag.lastChild);
         else {
-            var nodeName = tag.textContent.match(/^<(.*?)>$/)[1];
-            tag.textContent = "";
-            tag.append("<" + nodeName, node, ">");
+            let tagNameElement = tag.querySelector(".html-tag-name");
+            tagNameElement.parentNode.insertBefore(node, tagNameElement.nextSibling);
         }
 
         this.updateSelectionArea();
