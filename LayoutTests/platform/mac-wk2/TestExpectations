@@ -1092,4 +1092,5 @@ webkit.org/b/208584 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.ht
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
-webkit.org/b/208598 [ Debug ] fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ Pass Crash ]
+# LFC only failure.
+webkit.org/b/208600 [ Debug ] fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ Skip ]
