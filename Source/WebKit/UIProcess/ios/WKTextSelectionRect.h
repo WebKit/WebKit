@@ -29,13 +29,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class WebSelectionRect;
+namespace WebCore {
+class SelectionRect;
+}
 
 @interface WKTextSelectionRect : UITextSelectionRect
 
-@property (nonatomic, retain) WebSelectionRect *webRect;
-
-+ (NSArray *)textSelectionRectsWithWebRects:(NSArray *)webRects;
+- (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect;
 
 @end
 

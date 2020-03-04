@@ -1,5 +1,34 @@
 2020-03-04  Daniel Bates  <dabates@apple.com>
 
+        Implement WKTextSelectionRect in terms of WebCore::SelectionRect and WKTextRange in terms of WKTextSelectionRect
+        https://bugs.webkit.org/show_bug.cgi?id=208563
+
+        Reviewed by Alex Christensen.
+
+        It is a layering violation that WebKit2 includes a header from WebKit. Implement
+        WKTextSelectionRect in terms of WebCore::SelectionRect as a step towards fixing this.
+        Also avoid the WebCore::SelectionRect -> WebSelectionRect -> WKTextSelectionRect
+        dance that WKTextRange does so that -[WKTextRange selectionRectsForRange] returns
+        an array of WKTextSelectionRects by writing WKTextRange in terms of NSArray<WKTextSelectionRect *>*.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _uiTextSelectionRects]):
+        (-[WKContentView selectedTextRange]):
+        (-[WKContentView selectionRectsForRange:]):
+        * UIProcess/ios/WKTextSelectionRect.h:
+        * UIProcess/ios/WKTextSelectionRect.mm:
+        (-[WKTextSelectionRect initWithSelectionRect:]):
+        (-[WKTextSelectionRect rect]):
+        (-[WKTextSelectionRect writingDirection]):
+        (-[WKTextSelectionRect containsStart]):
+        (-[WKTextSelectionRect containsEnd]):
+        (-[WKTextSelectionRect isVertical]):
+        (-[WKTextSelectionRect initWithWebRect:]): Deleted.
+        (-[WKTextSelectionRect dealloc]): Deleted.
+        (+[WKTextSelectionRect textSelectionRectsWithWebRects:]): Deleted.
+
+2020-03-04  Daniel Bates  <dabates@apple.com>
+
         Move WKTextSelectionRect into its own file
         https://bugs.webkit.org/show_bug.cgi?id=208561
 

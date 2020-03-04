@@ -28,47 +28,29 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-// FIXME: Layering violation; WebKit2 should not include WebKit headers.
-#import <WebKit/WebSelectionRect.h>
+#import <WebCore/SelectionRect.h>
 
-@implementation WKTextSelectionRect
+@implementation WKTextSelectionRect {
+    WebCore::SelectionRect _selectionRect;
+}
 
-- (id)initWithWebRect:(WebSelectionRect *)wRect
+- (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect
 {
-    self = [super init];
-    if (self)
-        self.webRect = wRect;
-
+    if (!(self = [super init]))
+        return nil;
+    _selectionRect = selectionRect;
     return self;
-}
-
-- (void)dealloc
-{
-    self.webRect = nil;
-    [super dealloc];
-}
-
-// FIXME: We are using this implementation for now that uses WebSelectionRect, but
-// we want to provide our own based on WebCore::SelectionRect.
-+ (NSArray *)textSelectionRectsWithWebRects:(NSArray *)webRects
-{
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:webRects.count];
-    for (WebSelectionRect *webRect in webRects) {
-        RetainPtr<WKTextSelectionRect> rect = adoptNS([[WKTextSelectionRect alloc] initWithWebRect:webRect]);
-        [array addObject:rect.get()];
-    }
-    return array;
 }
 
 - (CGRect)rect
 {
-    return _webRect.rect;
+    return _selectionRect.rect();
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (UITextWritingDirection)writingDirection
 {
-    return (UITextWritingDirection)_webRect.writingDirection;
+    return _selectionRect.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -79,17 +61,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)containsStart
 {
-    return _webRect.containsStart;
+    return _selectionRect.containsStart();
 }
 
 - (BOOL)containsEnd
 {
-    return _webRect.containsEnd;
+    return _selectionRect.containsEnd();
 }
 
 - (BOOL)isVertical
 {
-    return !_webRect.isHorizontal;
+    return !_selectionRect.isHorizontal();
 }
 
 @end

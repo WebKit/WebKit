@@ -266,7 +266,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
     BOOL _isNone;
     BOOL _isRange;
     BOOL _isEditable;
-    NSArray *_selectionRects;
+    NSArray<WKTextSelectionRect *>*_selectionRects;
     NSUInteger _selectedTextLength;
 }
 @property (nonatomic) CGRect startRect;
@@ -275,7 +275,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 @property (nonatomic) BOOL isRange;
 @property (nonatomic) BOOL isEditable;
 @property (nonatomic) NSUInteger selectedTextLength;
-@property (copy, nonatomic) NSArray *selectionRects;
+@property (copy, nonatomic) NSArray<WKTextSelectionRect *> *selectionRects;
 
 + (WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength;
 
@@ -2294,7 +2294,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (_textInteractionAssistant) {
         for (WKTextSelectionRect *selectionRect in [_textInteractionAssistant valueForKeyPath:@"selectionView.selection.selectionRects"])
-            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.webRect.rect]];
+            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.rect]];
     }
 
     return textSelectionRects;
@@ -4460,6 +4460,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
 }
 
+static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore::SelectionRect>& coreRects)
+{
+    auto rects = adoptNS([[NSMutableArray alloc] initWithCapacity:coreRects.size()]);
+    for (auto& coreRect : coreRects) {
+        auto wkTextSelectionRect = adoptNS([[WKTextSelectionRect alloc] initWithSelectionRect:coreRect]);
+        [rects addObject:wkTextSelectionRect.get()];
+    }
+    return rects.autorelease();
+}
+
 - (UITextRange *)selectedTextRange
 {
     if (_page->editorState().selectionIsNone || _page->editorState().isMissingPostLayoutData)
@@ -4497,7 +4507,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
                                 isEditable:_page->editorState().isContentEditable
                                  startRect:startRect
                                    endRect:endRect
-                            selectionRects:[self webSelectionRects]
+                            selectionRects:wkTextSelectionRects(_page->editorState().postLayoutData().selectionRects)
                         selectedTextLength:postLayoutEditorStateData.selectedTextLength];
 }
 
@@ -4508,7 +4518,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (NSArray *)selectionRectsForRange:(UITextRange *)range
 {
-    return [WKTextSelectionRect textSelectionRectsWithWebRects:((WKTextRange *)range).selectionRects];
+    return [(WKTextRange *)range selectionRects];
 }
 
 - (void)setSelectedTextRange:(UITextRange *)range
