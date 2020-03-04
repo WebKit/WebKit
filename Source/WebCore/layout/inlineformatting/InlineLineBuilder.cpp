@@ -833,7 +833,8 @@ void LineBuilder::Run::removeTrailingWhitespace()
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsable so the length of the trailing trimmable whitespace is always 1 (or non-existent).
     ASSERT(m_textContent->length());
-    m_textContent->expand(-1);
+    constexpr size_t trailingTrimmableContentLength = 1;
+    m_textContent->shrink(trailingTrimmableContentLength);
     visuallyCollapseTrailingWhitespace();
 }
 

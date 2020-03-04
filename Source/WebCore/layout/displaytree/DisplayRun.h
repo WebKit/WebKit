@@ -54,6 +54,7 @@ struct Run {
         void setNeedsHyphen() { m_needsHyphen = true; }
 
         void expand(unsigned delta) { m_length += delta; }
+        void shrink(unsigned delta) { m_length -= delta; }
 
     private:
         unsigned m_start { 0 };
