@@ -196,7 +196,7 @@ void WebsiteDataStore::unregisterProcess(WebProcessProxy& process)
 
 WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()
 {
-    auto pools = processPools(1, false);
+    auto pools = processPools(1);
     return pools.isEmpty() ? nullptr : pools.begin()->get();
 }
 
@@ -423,7 +423,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto& processPool : processPools()) {
+        for (auto& processPool : ensureProcessPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -706,7 +706,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 #endif
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto& processPool : processPools()) {
+        for (auto& processPool : ensureProcessPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -733,7 +733,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
-        for (auto& processPool : processPools()) {
+        for (auto& processPool : ensureProcessPools()) {
             // Clear back/forward cache first as processes removed from the back/forward cache will likely
             // be added to the WebProcess cache.
             processPool->backForwardCache().removeEntriesForSession(sessionID());
@@ -873,7 +873,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (!didNotifyNetworkProcessToDeleteWebsiteData) {
-            for (auto& processPool : processPools()) {
+            for (auto& processPool : ensureProcessPools()) {
                 if (auto* process = processPool->networkProcess()) {
                     callbackAggregator->addPendingCallback();
                     process->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
@@ -970,7 +970,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto& processPool : processPools()) {
+        for (auto& processPool : ensureProcessPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -1159,7 +1159,7 @@ void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, Complet
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setMaxStatisticsEntries(m_sessionID, maximumEntryCount, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1169,7 +1169,7 @@ void WebsiteDataStore::setPruneEntriesDownTo(size_t pruneTargetCount, Completion
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         processPool->ensureNetworkProcess().setPruneEntriesDownTo(m_sessionID, pruneTargetCount, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
@@ -1180,7 +1180,7 @@ void WebsiteDataStore::setGrandfatheringTime(Seconds seconds, CompletionHandler<
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setGrandfatheringTime(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1190,7 +1190,7 @@ void WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds, 
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setMinimumTimeBetweenDataRecordsRemoval(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
     
@@ -1198,10 +1198,9 @@ void WebsiteDataStore::dumpResourceLoadStatistics(CompletionHandler<void(const S
 {
     ASSERT(RunLoop::isMain());
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->dumpResourceLoadStatistics(m_sessionID, WTFMove(completionHandler));
-            RELEASE_ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1216,10 +1215,9 @@ void WebsiteDataStore::isPrevalentResource(const URL& url, CompletionHandler<voi
         return;
     }
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isPrevalentResource(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            RELEASE_ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1234,10 +1232,9 @@ void WebsiteDataStore::isGrandfathered(const URL& url, CompletionHandler<void(bo
         return;
     }
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isGrandfathered(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            RELEASE_ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1254,7 +1251,7 @@ void WebsiteDataStore::setPrevalentResource(const URL& url, CompletionHandler<vo
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         processPool->ensureNetworkProcess().setPrevalentResource(m_sessionID, WebCore::RegistrableDomain { url }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
@@ -1270,7 +1267,7 @@ void WebsiteDataStore::setPrevalentResourceForDebugMode(const URL& url, Completi
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setPrevalentResourceForDebugMode(m_sessionID, WebCore::RegistrableDomain { url }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1285,10 +1282,9 @@ void WebsiteDataStore::isVeryPrevalentResource(const URL& url, CompletionHandler
         return;
     }
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isVeryPrevalentResource(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1305,7 +1301,7 @@ void WebsiteDataStore::setVeryPrevalentResource(const URL& url, CompletionHandle
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setVeryPrevalentResource(m_sessionID, WebCore::RegistrableDomain { url }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1317,7 +1313,7 @@ void WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool v
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setShouldClassifyResourcesBeforeDataRecordsRemoval(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1332,7 +1328,7 @@ void WebsiteDataStore::setSubframeUnderTopFrameDomain(const URL& subFrameURL, co
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setSubframeUnderTopFrameDomain(m_sessionID, WebCore::RegistrableDomain { subFrameURL }, WebCore::RegistrableDomain { topFrameURL }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1342,10 +1338,9 @@ void WebsiteDataStore::isRegisteredAsSubFrameUnder(const URL& subFrameURL, const
 {
     ASSERT(RunLoop::isMain());
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsSubFrameUnder(m_sessionID, WebCore::RegistrableDomain { subFrameURL }, WebCore::RegistrableDomain { topFrameURL }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1362,7 +1357,7 @@ void WebsiteDataStore::setSubresourceUnderTopFrameDomain(const URL& subresourceU
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setSubresourceUnderTopFrameDomain(m_sessionID, WebCore::RegistrableDomain { subresourceURL }, WebCore::RegistrableDomain { topFrameURL }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1372,10 +1367,9 @@ void WebsiteDataStore::isRegisteredAsSubresourceUnder(const URL& subresourceURL,
 {
     ASSERT(RunLoop::isMain());
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsSubresourceUnder(m_sessionID, WebCore::RegistrableDomain { subresourceURL }, WebCore::RegistrableDomain { topFrameURL }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         } else {
             ASSERT_NOT_REACHED();
@@ -1396,7 +1390,7 @@ void WebsiteDataStore::setSubresourceUniqueRedirectTo(const URL& subresourceURL,
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setSubresourceUniqueRedirectTo(m_sessionID, WebCore::RegistrableDomain { subresourceURL }, WebCore::RegistrableDomain { urlRedirectedTo }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1413,7 +1407,7 @@ void WebsiteDataStore::setSubresourceUniqueRedirectFrom(const URL& subresourceUR
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setSubresourceUniqueRedirectFrom(m_sessionID, WebCore::RegistrableDomain { subresourceURL }, WebCore::RegistrableDomain { urlRedirectedFrom }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1430,7 +1424,7 @@ void WebsiteDataStore::setTopFrameUniqueRedirectTo(const URL& topFrameURL, const
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setTopFrameUniqueRedirectTo(m_sessionID, WebCore::RegistrableDomain { topFrameURL }, WebCore::RegistrableDomain { urlRedirectedTo }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1447,7 +1441,7 @@ void WebsiteDataStore::setTopFrameUniqueRedirectFrom(const URL& topFrameURL, con
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setTopFrameUniqueRedirectFrom(m_sessionID, WebCore::RegistrableDomain { topFrameURL }, WebCore::RegistrableDomain { urlRedirectedFrom }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1457,10 +1451,9 @@ void WebsiteDataStore::isRegisteredAsRedirectingTo(const URL& urlRedirectedFrom,
 {
     ASSERT(RunLoop::isMain());
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRegisteredAsRedirectingTo(m_sessionID, WebCore::RegistrableDomain { urlRedirectedFrom }, WebCore::RegistrableDomain { urlRedirectedTo }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1477,7 +1470,7 @@ void WebsiteDataStore::clearPrevalentResource(const URL& url, CompletionHandler<
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->clearPrevalentResource(m_sessionID, WebCore::RegistrableDomain { url }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1489,7 +1482,7 @@ void WebsiteDataStore::resetParametersToDefaultValues(CompletionHandler<void()>&
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->resetParametersToDefaultValues(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1499,7 +1492,7 @@ void WebsiteDataStore::submitTelemetry()
 {
     ASSERT(RunLoop::isMain());
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->submitTelemetry(m_sessionID, [] { });
     }
@@ -1511,7 +1504,7 @@ void WebsiteDataStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->scheduleClearInMemoryAndPersistent(m_sessionID, modifiedSince, shouldGrandfather, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1521,7 +1514,7 @@ void WebsiteDataStore::getResourceLoadStatisticsDataSummary(CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->getResourceLoadStatisticsDataSummary(m_sessionID, WTFMove(completionHandler));
     }
@@ -1533,7 +1526,7 @@ void WebsiteDataStore::scheduleClearInMemoryAndPersistent(ShouldGrandfatherStati
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->scheduleClearInMemoryAndPersistent(m_sessionID, { }, shouldGrandfather, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1543,7 +1536,7 @@ void WebsiteDataStore::scheduleCookieBlockingUpdate(CompletionHandler<void()>&& 
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->scheduleCookieBlockingUpdate(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1555,7 +1548,7 @@ void WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing(CompletionHand
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->scheduleStatisticsAndDataRecordsProcessing(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1570,7 +1563,7 @@ void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHa
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setLastSeen(m_sessionID, WebCore::RegistrableDomain { url }, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1585,7 +1578,7 @@ void WebsiteDataStore::mergeStatisticForTesting(const URL& url , const URL& topF
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->mergeStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, WebCore::RegistrableDomain { topFrameUrl1 }, WebCore::RegistrableDomain { topFrameUrl2 }, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1595,7 +1588,7 @@ void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, Comp
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setNotifyPagesWhenDataRecordsWereScanned(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1604,7 +1597,7 @@ void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, Comple
     useExplicitITPState();
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setIsRunningResourceLoadStatisticsTest(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1612,7 +1605,7 @@ void WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured(bool value, Comple
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setNotifyPagesWhenTelemetryWasCaptured(m_sessionID, value, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1633,7 +1626,7 @@ void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionH
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setTimeToLiveUserInteraction(m_sessionID, seconds, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -1648,7 +1641,7 @@ void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->logUserInteraction(m_sessionID, WebCore::RegistrableDomain { url }, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1663,10 +1656,9 @@ void WebsiteDataStore::hasHadUserInteraction(const URL& url, CompletionHandler<v
         return;
     }
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->hasHadUserInteraction(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1681,10 +1673,9 @@ void WebsiteDataStore::isRelationshipOnlyInDatabaseOnce(const URL& subUrl, const
         return;
     }
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess()) {
             process->isRelationshipOnlyInDatabaseOnce(m_sessionID, WebCore::RegistrableDomain { subUrl }, WebCore::RegistrableDomain { topUrl }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1701,7 +1692,7 @@ void WebsiteDataStore::clearUserInteraction(const URL& url, CompletionHandler<vo
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->clearUserInteraction(m_sessionID, WebCore::RegistrableDomain { url }, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1718,7 +1709,7 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setGrandfathered(m_sessionID, WebCore::RegistrableDomain { url }, isGrandfathered, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1730,7 +1721,7 @@ void WebsiteDataStore::setUseITPDatabase(bool value, CompletionHandler<void()>&&
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setUseITPDatabase(m_sessionID, value, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1742,7 +1733,7 @@ void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& f
     
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->setCrossSiteLoadWithLinkDecorationForTesting(m_sessionID, WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1752,7 +1743,7 @@ void WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting(Completio
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess())
             networkProcess->resetCrossSiteLoadsWithLinkDecorationForTesting(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1762,7 +1753,7 @@ void WebsiteDataStore::deleteCookiesForTesting(const URL& url, bool includeHttpO
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess())
             networkProcess->deleteCookiesForTesting(m_sessionID, WebCore::RegistrableDomain { url }, includeHttpOnlyCookies, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1770,10 +1761,9 @@ void WebsiteDataStore::deleteCookiesForTesting(const URL& url, bool includeHttpO
 
 void WebsiteDataStore::hasLocalStorageForTesting(const URL& url, CompletionHandler<void(bool)>&& completionHandler) const
 {
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->hasLocalStorage(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1782,10 +1772,9 @@ void WebsiteDataStore::hasLocalStorageForTesting(const URL& url, CompletionHandl
 
 void WebsiteDataStore::hasIsolatedSessionForTesting(const URL& url, CompletionHandler<void(bool)>&& completionHandler) const
 {
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->hasIsolatedSession(m_sessionID, WebCore::RegistrableDomain { url }, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1796,10 +1785,9 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTestin
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->setShouldDowngradeReferrerForTesting(enabled, [callbackAggregator = callbackAggregator.copyRef()] { });
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1828,10 +1816,9 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForT
             webProcess.setShouldBlockThirdPartyCookiesForTesting(blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->setShouldBlockThirdPartyCookiesForTesting(m_sessionID, blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1843,10 +1830,9 @@ void WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalMode
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     auto mode = enabled ? WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies : WebCore::FirstPartyWebsiteDataRemovalMode::None;
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->setFirstPartyWebsiteDataRemovalModeForTesting(m_sessionID, mode, [callbackAggregator = callbackAggregator.copyRef()] { });
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -1859,7 +1845,7 @@ void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, C
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setCacheMaxAgeCapForPrevalentResources(m_sessionID, seconds, [callbackAggregator = callbackAggregator.copyRef()] { });
 #else
     UNUSED_PARAM(seconds);
@@ -1872,7 +1858,7 @@ void WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources(CompletionHandle
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess())
             networkProcess->resetCacheMaxAgeCapForPrevalentResources(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -1888,12 +1874,15 @@ bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) cons
     return false;
 }
 
-HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, bool ensureAPoolExists) const
+HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t limit) const
 {
     HashSet<RefPtr<WebProcessPool>> processPools;
     for (auto& process : processes()) {
-        if (auto* processPool = process.processPoolIfExists())
+        if (auto* processPool = process.processPoolIfExists()) {
             processPools.add(processPool);
+            if (processPools.size() == limit)
+                break;
+        }
     }
 
     if (processPools.isEmpty()) {
@@ -1903,17 +1892,19 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, boo
                 continue;
 
             processPools.add(processPool);
-
-            if (processPools.size() == count)
+            if (processPools.size() == limit)
                 break;
         }
     }
 
-    if (processPools.isEmpty() && count && ensureAPoolExists) {
-        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::create());
-        processPools.add(processPool.ptr());
-    }
+    return processPools;
+}
 
+HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
+{
+    auto processPools = this->processPools();
+    if (processPools.isEmpty())
+        processPools.add(WebProcessPool::create(API::ProcessPoolConfiguration::create()));
     return processPools;
 }
 
@@ -1922,7 +1913,7 @@ Vector<PluginModuleInfo> WebsiteDataStore::plugins() const
 {
     Vector<PluginModuleInfo> plugins;
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         for (auto& plugin : processPool->pluginInfoStore().plugins())
             plugins.append(plugin);
     }
@@ -2017,14 +2008,14 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         
         resolveDirectoriesIfNecessary();
         
-        for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
+        for (auto& processPool : processPools()) {
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true));
             processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true));
         }
         return;
     }
 
-    for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false)) {
+    for (auto& processPool : processPools()) {
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false));
         processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false));
     }
@@ -2039,7 +2030,7 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
 void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)
 {
     if (callback) {
-        for (auto& processPool : processPools(std::numeric_limits<size_t>::max(), false))
+        for (auto& processPool : processPools())
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsLogTestingEvent(true));
     }
     
@@ -2059,7 +2050,7 @@ void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled, Completi
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto& processPool : processPools())
+    for (auto& processPool : ensureProcessPools())
         processPool->ensureNetworkProcess().setResourceLoadStatisticsDebugMode(m_sessionID, enabled, [callbackAggregator = callbackAggregator.copyRef()] { });
 #else
     UNUSED_PARAM(enabled);
@@ -2075,10 +2066,9 @@ void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(
         return;
     }
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->isResourceLoadStatisticsEphemeral(m_sessionID, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -2100,7 +2090,7 @@ void WebsiteDataStore::logTestingEvent(const String& event)
 void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&& callback)
 {
     if (resourceLoadStatisticsEnabled()) {
-        for (auto& processPool : processPools())
+        for (auto& processPool : ensureProcessPools())
             processPool->clearResourceLoadStatistics();
     }
     callback();
@@ -2221,7 +2211,7 @@ void WebsiteDataStore::getLocalStorageDetails(Function<void(Vector<LocalStorageD
         return;
     }
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         processPool->ensureNetworkProcess(this);
         processPool->networkProcess()->getLocalStorageDetails(m_sessionID, [completionHandler = WTFMove(completionHandler)](auto&& details) {
             completionHandler(WTFMove(details));
@@ -2235,7 +2225,7 @@ void WebsiteDataStore::getLocalStorageDetails(Function<void(Vector<LocalStorageD
 void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* process = processPool->networkProcess())
             process->resetQuota(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
@@ -2271,10 +2261,9 @@ WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 
 void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& completionHandler) const
 {
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->hasAppBoundSession(m_sessionID, WTFMove(completionHandler));
-            ASSERT(processPools().size() == 1);
             break;
         }
     }
@@ -2285,7 +2274,7 @@ void WebsiteDataStore::setInAppBrowserPrivacyEnabled(bool enabled, CompletionHan
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& processPool : processPools()) {
+    for (auto& processPool : ensureProcessPools()) {
         if (auto* networkProcess = processPool->networkProcess()) {
             networkProcess->setInAppBrowserPrivacyEnabled(m_sessionID, enabled, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
             break;
