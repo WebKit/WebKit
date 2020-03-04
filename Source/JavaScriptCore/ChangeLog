@@ -1,3 +1,33 @@
+2020-03-03  Saam Barati  <sbarati@apple.com>
+
+        Refactor FixedVMPoolExecutableAllocator to not have member functions which are really just helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=208537
+
+        Reviewed by Mark Lam.
+
+        There were a few member functions in FixedVMPoolExecutableAllocator that were
+        essentially helper functions. I've factored them out, and made FixedVMPoolExecutableAllocator
+        call them directly. This refactoring is needed when I implement the 1GB
+        executable pool on arm64 since the implementation of that will create split
+        implementations of something like FixedVMPoolExecutableAllocator.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitWriteThunkGenerator):
+        (JSC::genericWriteToJITRegion):
+        (JSC::initializeSeparatedWXHeaps):
+        (JSC::initializeJITPageReservation):
+        (JSC::ExecutableAllocator::isValid const):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock const):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::startOfFixedExecutableMemoryPoolImpl):
+        (JSC::endOfFixedExecutableMemoryPoolImpl):
+        (JSC::isJITPC):
+
 2020-03-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Introduce JSRemoteInspectorServerStart API for socket-based RWI.

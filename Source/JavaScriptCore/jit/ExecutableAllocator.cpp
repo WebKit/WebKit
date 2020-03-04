@@ -154,66 +154,226 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 #endif
 }
 
+#if OS(DARWIN) && HAVE(REMAP_JIT)
+
+#if CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
+{
+    using namespace ARM64Registers;
+    using TrustedImm32 = MacroAssembler::TrustedImm32;
+
+    MacroAssembler jit;
+
+    jit.tagReturnAddress();
+    jit.move(MacroAssembler::TrustedImmPtr(writableAddr), x7);
+    jit.addPtr(x7, x0);
+
+    jit.move(x0, x3);
+    MacroAssembler::Jump smallCopy = jit.branch64(MacroAssembler::Below, x2, MacroAssembler::TrustedImm64(64));
+
+    jit.add64(TrustedImm32(32), x3);
+    jit.and64(TrustedImm32(-32), x3);
+    jit.loadPair64(x1, x12, x13);
+    jit.loadPair64(x1, TrustedImm32(16), x14, x15);
+    jit.sub64(x3, x0, x5);
+    jit.addPtr(x5, x1);
+
+    jit.loadPair64(x1, x8, x9);
+    jit.loadPair64(x1, TrustedImm32(16), x10, x11);
+    jit.add64(TrustedImm32(32), x1);
+    jit.sub64(x5, x2);
+    jit.storePair64(x12, x13, x0);
+    jit.storePair64(x14, x15, x0, TrustedImm32(16));
+    MacroAssembler::Jump cleanup = jit.branchSub64(MacroAssembler::BelowOrEqual, TrustedImm32(64), x2);
+
+    MacroAssembler::Label copyLoop = jit.label();
+    jit.storePair64WithNonTemporalAccess(x8, x9, x3);
+    jit.storePair64WithNonTemporalAccess(x10, x11, x3, TrustedImm32(16));
+    jit.add64(TrustedImm32(32), x3);
+    jit.loadPair64WithNonTemporalAccess(x1, x8, x9);
+    jit.loadPair64WithNonTemporalAccess(x1, TrustedImm32(16), x10, x11);
+    jit.add64(TrustedImm32(32), x1);
+    jit.branchSub64(MacroAssembler::Above, TrustedImm32(32), x2).linkTo(copyLoop, &jit);
+
+    cleanup.link(&jit);
+    jit.add64(x2, x1);
+    jit.loadPair64(x1, x12, x13);
+    jit.loadPair64(x1, TrustedImm32(16), x14, x15);
+    jit.storePair64(x8, x9, x3);
+    jit.storePair64(x10, x11, x3, TrustedImm32(16));
+    jit.addPtr(x2, x3);
+    jit.storePair64(x12, x13, x3, TrustedImm32(32));
+    jit.storePair64(x14, x15, x3, TrustedImm32(48));
+    jit.ret();
+
+    MacroAssembler::Label local0 = jit.label();
+    jit.load64(x1, PostIndex(8), x6);
+    jit.store64(x6, x3, PostIndex(8));
+    smallCopy.link(&jit);
+    jit.branchSub64(MacroAssembler::AboveOrEqual, TrustedImm32(8), x2).linkTo(local0, &jit);
+    MacroAssembler::Jump local2 = jit.branchAdd64(MacroAssembler::Equal, TrustedImm32(8), x2);
+    MacroAssembler::Label local1 = jit.label();
+    jit.load8(x1, PostIndex(1), x6);
+    jit.store8(x6, x3, PostIndex(1));
+    jit.branchSub64(MacroAssembler::NotEqual, TrustedImm32(1), x2).linkTo(local1, &jit);
+    local2.link(&jit);
+    jit.ret();
+
+    auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
+    LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize);
+    // We don't use FINALIZE_CODE() for two reasons.
+    // The first is that we don't want the writeable address, as disassembled instructions,
+    // to appear in the console or anywhere in memory, via the PrintStream buffer.
+    // The second is we can't guarantee that the code is readable when using the
+    // asyncDisassembly option as our caller will set our pages execute only.
+    return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>();
+}
+#else // not CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
+{
+    memcpy((void*)(g_jscConfig.startOfFixedWritableMemoryPool + offset), data, dataSize);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerator(void* address, void*, size_t)
+{
+    g_jscConfig.startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
+    void* function = reinterpret_cast<void*>(&genericWriteToJITRegion);
+#if CPU(ARM_THUMB2)
+    // Handle thumb offset
+    uintptr_t functionAsInt = reinterpret_cast<uintptr_t>(function);
+    functionAsInt -= 1;
+    function = reinterpret_cast<void*>(functionAsInt);
+#endif
+    auto codePtr = MacroAssemblerCodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
+    return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
+}
+#endif // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+
+static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
+{
+    mach_vm_address_t writableAddr = 0;
+
+    // Create a second mapping of the JIT region at a random address.
+    vm_prot_t cur, max;
+    int remapFlags = VM_FLAGS_ANYWHERE;
+#if defined(VM_FLAGS_RANDOM_ADDR)
+    remapFlags |= VM_FLAGS_RANDOM_ADDR;
+#endif
+    kern_return_t ret = mach_vm_remap(mach_task_self(), &writableAddr, jitSize, 0,
+        remapFlags,
+        mach_task_self(), (mach_vm_address_t)jitBase, FALSE,
+        &cur, &max, VM_INHERIT_DEFAULT);
+
+    bool remapSucceeded = (ret == KERN_SUCCESS);
+    if (!remapSucceeded)
+        return;
+
+    // Assemble a thunk that will serve as the means for writing into the JIT region.
+    MacroAssemblerCodeRef<JITThunkPtrTag> writeThunk = jitWriteThunkGenerator(reinterpret_cast<void*>(writableAddr), stubBase, stubSize);
+
+    int result = 0;
+
+#if USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+    // Prevent reading the write thunk code.
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(stubBase), stubSize, true, VM_PROT_EXECUTE);
+    RELEASE_ASSERT(!result);
+#endif
+
+    // Prevent writing into the executable JIT mapping.
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(jitBase), jitSize, true, VM_PROT_READ | VM_PROT_EXECUTE);
+    RELEASE_ASSERT(!result);
+
+    // Prevent execution in the writable JIT mapping.
+    result = vm_protect(mach_task_self(), static_cast<vm_address_t>(writableAddr), jitSize, true, VM_PROT_READ | VM_PROT_WRITE);
+    RELEASE_ASSERT(!result);
+
+    // Zero out writableAddr to avoid leaking the address of the writable mapping.
+    memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
+
+#if ENABLE(SEPARATED_WX_HEAP)
+    g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
+#endif
+}
+
+#else // OS(DARWIN) && HAVE(REMAP_JIT)
+static ALWAYS_INLINE void initializeSeparatedWXHeaps(void*, size_t, void*, size_t)
+{
+}
+#endif
+
+struct JITReservation {
+    PageReservation pageReservation;
+    void* base { nullptr };
+    size_t size { 0 };
+};
+
+static ALWAYS_INLINE JITReservation initializeJITPageReservation()
+{
+    JITReservation reservation;
+    if (!isJITEnabled())
+        return reservation;
+
+    if (Options::jitMemoryReservationSize())
+        reservation.size = Options::jitMemoryReservationSize();
+    else
+        reservation.size = fixedExecutableMemoryPoolSize;
+    reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
+
+    auto tryCreatePageReservation = [] (size_t reservationSize) {
+#if OS(LINUX)
+        // If we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
+        // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
+        // To avoid this problem, we use committed reservation if we need perf JITDump logging.
+        if (Options::logJITCodeForPerf())
+            return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+#endif
+        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+    };
+
+    reservation.pageReservation = tryCreatePageReservation(reservation.size);
+    if (reservation.pageReservation) {
+        ASSERT(reservation.pageReservation.size() == reservation.size);
+        reservation.base = reservation.pageReservation.base();
+
+#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
+        RELEASE_ASSERT(os_thread_self_restrict_rwx_is_supported());
+        os_thread_self_restrict_rwx_to_rx();
+
+#else // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
+#if ENABLE(FAST_JIT_PERMISSIONS)
+        if (os_thread_self_restrict_rwx_is_supported()) {
+            g_jscConfig.useFastPermisionsJITCopy = true;
+            os_thread_self_restrict_rwx_to_rx();
+        } else
+#endif
+        if (Options::useSeparatedWXHeap()) {
+            // First page of our JIT allocation is reserved.
+            ASSERT(reservation.size >= pageSize() * 2);
+            reservation.base = (void*)((uintptr_t)(reservation.base) + pageSize());
+            reservation.size -= pageSize();
+            initializeSeparatedWXHeaps(reservation.pageReservation.base(), pageSize(), reservation.base, reservation.size);
+        }
+#endif // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
+        void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
+
+        g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservation.base);
+        g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
+    }
+
+    return reservation;
+}
+
 class FixedVMPoolExecutableAllocator final : public MetaAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
     {
-        if (!isJITEnabled())
-            return;
-
-        size_t reservationSize;
-        if (Options::jitMemoryReservationSize())
-            reservationSize = Options::jitMemoryReservationSize();
-        else
-            reservationSize = fixedExecutableMemoryPoolSize;
-        reservationSize = std::max(roundUpToMultipleOf(pageSize(), reservationSize), pageSize() * 2);
-
-        auto tryCreatePageReservation = [] (size_t reservationSize) {
-#if OS(LINUX)
-            // If we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
-            // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
-            // To avoid this problem, we use committed reservation if we need perf JITDump logging.
-            if (Options::logJITCodeForPerf())
-                return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-#endif
-            return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-        };
-
-        m_reservation = tryCreatePageReservation(reservationSize);
+        JITReservation reservation = initializeJITPageReservation();
+        m_reservation = WTFMove(reservation.pageReservation);
         if (m_reservation) {
-            ASSERT(m_reservation.size() == reservationSize);
-            void* reservationBase = m_reservation.base();
-
-#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
-            RELEASE_ASSERT(os_thread_self_restrict_rwx_is_supported());
-            os_thread_self_restrict_rwx_to_rx();
-
-#else // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
-#if ENABLE(FAST_JIT_PERMISSIONS)
-            if (os_thread_self_restrict_rwx_is_supported()) {
-                g_jscConfig.useFastPermisionsJITCopy = true;
-                os_thread_self_restrict_rwx_to_rx();
-            } else
-#endif
-            if (Options::useSeparatedWXHeap()) {
-                // First page of our JIT allocation is reserved.
-                ASSERT(reservationSize >= pageSize() * 2);
-                reservationBase = (void*)((uintptr_t)reservationBase + pageSize());
-                reservationSize -= pageSize();
-                initializeSeparatedWXHeaps(m_reservation.base(), pageSize(), reservationBase, reservationSize);
-            }
-#endif // not ENABLE(FAST_JIT_PERMISSIONS) or ENABLE(SEPARATED_WX_HEAP)
-
-            addFreshFreeSpace(reservationBase, reservationSize);
-
-            ASSERT(bytesReserved() == reservationSize); // Since our executable memory is fixed-sized, bytesReserved is never changed after initialization.
-
-            void* reservationEnd = reinterpret_cast<uint8_t*>(reservationBase) + reservationSize;
-
-            g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationBase);
-            g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
+            addFreshFreeSpace(reservation.base, reservation.size);
+            ASSERT(bytesReserved() == reservation.size); // Since our executable memory is fixed-sized, bytesReserved is never changed after initialization.
         }
     }
 
@@ -232,178 +392,13 @@ protected:
 
     void notifyNeedPage(void* page, size_t count) override
     {
-#if USE(MADV_FREE_FOR_JIT_MEMORY)
-        UNUSED_PARAM(page);
-        UNUSED_PARAM(count);
-#else
         m_reservation.commit(page, pageSize() * count);
-#endif
     }
 
     void notifyPageIsFree(void* page, size_t count) override
     {
-#if USE(MADV_FREE_FOR_JIT_MEMORY)
-        for (;;) {
-            int result = madvise(page, pageSize() * count, MADV_FREE);
-            if (!result)
-                return;
-            ASSERT(result == -1);
-            if (errno != EAGAIN) {
-                RELEASE_ASSERT_NOT_REACHED(); // In debug mode, this should be a hard failure.
-                break; // In release mode, we should just ignore the error - not returning memory to the OS is better than crashing, especially since we _will_ be able to reuse the memory internally anyway.
-            }
-        }
-#else
         m_reservation.decommit(page, pageSize() * count);
-#endif
     }
-
-private:
-#if OS(DARWIN) && HAVE(REMAP_JIT)
-    void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
-    {
-        mach_vm_address_t writableAddr = 0;
-
-        // Create a second mapping of the JIT region at a random address.
-        vm_prot_t cur, max;
-        int remapFlags = VM_FLAGS_ANYWHERE;
-#if defined(VM_FLAGS_RANDOM_ADDR)
-        remapFlags |= VM_FLAGS_RANDOM_ADDR;
-#endif
-        kern_return_t ret = mach_vm_remap(mach_task_self(), &writableAddr, jitSize, 0,
-            remapFlags,
-            mach_task_self(), (mach_vm_address_t)jitBase, FALSE,
-            &cur, &max, VM_INHERIT_DEFAULT);
-
-        bool remapSucceeded = (ret == KERN_SUCCESS);
-        if (!remapSucceeded)
-            return;
-
-        // Assemble a thunk that will serve as the means for writing into the JIT region.
-        MacroAssemblerCodeRef<JITThunkPtrTag> writeThunk = jitWriteThunkGenerator(reinterpret_cast<void*>(writableAddr), stubBase, stubSize);
-
-        int result = 0;
-
-#if USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
-        // Prevent reading the write thunk code.
-        result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(stubBase), stubSize, true, VM_PROT_EXECUTE);
-        RELEASE_ASSERT(!result);
-#endif
-
-        // Prevent writing into the executable JIT mapping.
-        result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(jitBase), jitSize, true, VM_PROT_READ | VM_PROT_EXECUTE);
-        RELEASE_ASSERT(!result);
-
-        // Prevent execution in the writable JIT mapping.
-        result = vm_protect(mach_task_self(), static_cast<vm_address_t>(writableAddr), jitSize, true, VM_PROT_READ | VM_PROT_WRITE);
-        RELEASE_ASSERT(!result);
-
-        // Zero out writableAddr to avoid leaking the address of the writable mapping.
-        memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
-
-#if ENABLE(SEPARATED_WX_HEAP)
-        g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().executableAddress());
-#endif
-    }
-
-#if CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
-    MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
-    {
-        using namespace ARM64Registers;
-        using TrustedImm32 = MacroAssembler::TrustedImm32;
-
-        MacroAssembler jit;
-
-        jit.tagReturnAddress();
-        jit.move(MacroAssembler::TrustedImmPtr(writableAddr), x7);
-        jit.addPtr(x7, x0);
-
-        jit.move(x0, x3);
-        MacroAssembler::Jump smallCopy = jit.branch64(MacroAssembler::Below, x2, MacroAssembler::TrustedImm64(64));
-
-        jit.add64(TrustedImm32(32), x3);
-        jit.and64(TrustedImm32(-32), x3);
-        jit.loadPair64(x1, x12, x13);
-        jit.loadPair64(x1, TrustedImm32(16), x14, x15);
-        jit.sub64(x3, x0, x5);
-        jit.addPtr(x5, x1);
-
-        jit.loadPair64(x1, x8, x9);
-        jit.loadPair64(x1, TrustedImm32(16), x10, x11);
-        jit.add64(TrustedImm32(32), x1);
-        jit.sub64(x5, x2);
-        jit.storePair64(x12, x13, x0);
-        jit.storePair64(x14, x15, x0, TrustedImm32(16));
-        MacroAssembler::Jump cleanup = jit.branchSub64(MacroAssembler::BelowOrEqual, TrustedImm32(64), x2);
-
-        MacroAssembler::Label copyLoop = jit.label();
-        jit.storePair64WithNonTemporalAccess(x8, x9, x3);
-        jit.storePair64WithNonTemporalAccess(x10, x11, x3, TrustedImm32(16));
-        jit.add64(TrustedImm32(32), x3);
-        jit.loadPair64WithNonTemporalAccess(x1, x8, x9);
-        jit.loadPair64WithNonTemporalAccess(x1, TrustedImm32(16), x10, x11);
-        jit.add64(TrustedImm32(32), x1);
-        jit.branchSub64(MacroAssembler::Above, TrustedImm32(32), x2).linkTo(copyLoop, &jit);
-
-        cleanup.link(&jit);
-        jit.add64(x2, x1);
-        jit.loadPair64(x1, x12, x13);
-        jit.loadPair64(x1, TrustedImm32(16), x14, x15);
-        jit.storePair64(x8, x9, x3);
-        jit.storePair64(x10, x11, x3, TrustedImm32(16));
-        jit.addPtr(x2, x3);
-        jit.storePair64(x12, x13, x3, TrustedImm32(32));
-        jit.storePair64(x14, x15, x3, TrustedImm32(48));
-        jit.ret();
-
-        MacroAssembler::Label local0 = jit.label();
-        jit.load64(x1, PostIndex(8), x6);
-        jit.store64(x6, x3, PostIndex(8));
-        smallCopy.link(&jit);
-        jit.branchSub64(MacroAssembler::AboveOrEqual, TrustedImm32(8), x2).linkTo(local0, &jit);
-        MacroAssembler::Jump local2 = jit.branchAdd64(MacroAssembler::Equal, TrustedImm32(8), x2);
-        MacroAssembler::Label local1 = jit.label();
-        jit.load8(x1, PostIndex(1), x6);
-        jit.store8(x6, x3, PostIndex(1));
-        jit.branchSub64(MacroAssembler::NotEqual, TrustedImm32(1), x2).linkTo(local1, &jit);
-        local2.link(&jit);
-        jit.ret();
-
-        auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
-        LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize);
-        // We don't use FINALIZE_CODE() for two reasons.
-        // The first is that we don't want the writeable address, as disassembled instructions,
-        // to appear in the console or anywhere in memory, via the PrintStream buffer.
-        // The second is we can't guarantee that the code is readable when using the
-        // asyncDisassembly option as our caller will set our pages execute only.
-        return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>();
-    }
-#else // not CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
-    static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
-    {
-        memcpy((void*)(g_jscConfig.startOfFixedWritableMemoryPool + offset), data, dataSize);
-    }
-
-    MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* address, void*, size_t)
-    {
-        g_jscConfig.startOfFixedWritableMemoryPool = reinterpret_cast<uintptr_t>(address);
-        void* function = reinterpret_cast<void*>(&genericWriteToJITRegion);
-#if CPU(ARM_THUMB2)
-        // Handle thumb offset
-        uintptr_t functionAsInt = reinterpret_cast<uintptr_t>(function);
-        functionAsInt -= 1;
-        function = reinterpret_cast<void*>(functionAsInt);
-#endif
-        auto codePtr = MacroAssemblerCodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
-    }
-#endif // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
-
-#else // OS(DARWIN) && HAVE(REMAP_JIT)
-    void initializeSeparatedWXHeaps(void*, size_t, void*, size_t)
-    {
-    }
-#endif
 
 private:
     PageReservation m_reservation;
@@ -427,7 +422,7 @@ void ExecutableAllocator::initializeUnderlyingAllocator()
 
 bool ExecutableAllocator::isValid() const
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::isValid();
     return !!allocator->bytesReserved();
@@ -435,7 +430,7 @@ bool ExecutableAllocator::isValid() const
 
 bool ExecutableAllocator::underMemoryPressure()
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::underMemoryPressure();
     return allocator->bytesAllocated() > allocator->bytesReserved() / 2;
@@ -443,7 +438,7 @@ bool ExecutableAllocator::underMemoryPressure()
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::memoryPressureMultiplier(addedMemoryUsage);
     ASSERT(allocator->bytesAllocated() <= allocator->bytesReserved());
@@ -463,7 +458,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 
 RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::allocate(sizeInBytes, ownerUID, effort);
     if (Options::logExecutableAllocation()) {
@@ -512,7 +507,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
 
 bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, void* address)
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::isValidExecutableMemory(locker, address);
     return allocator->isInAllocatedMemory(locker, address);
@@ -520,7 +515,7 @@ bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, 
 
 Lock& ExecutableAllocator::getLock() const
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::getLock();
     return allocator->getLock();
@@ -528,7 +523,7 @@ Lock& ExecutableAllocator::getLock() const
 
 size_t ExecutableAllocator::committedByteCount()
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::committedByteCount();
     return allocator->bytesCommitted();
@@ -537,7 +532,7 @@ size_t ExecutableAllocator::committedByteCount()
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void ExecutableAllocator::dumpProfile()
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return;
     allocator->dumpProfile();
@@ -546,7 +541,7 @@ void ExecutableAllocator::dumpProfile()
 
 void* startOfFixedExecutableMemoryPoolImpl()
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return nullptr;
     return allocator->memoryStart();
@@ -554,7 +549,7 @@ void* startOfFixedExecutableMemoryPoolImpl()
 
 void* endOfFixedExecutableMemoryPoolImpl()
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return nullptr;
     return allocator->memoryEnd();
@@ -562,7 +557,7 @@ void* endOfFixedExecutableMemoryPoolImpl()
 
 bool isJITPC(void* pc)
 {
-    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     return allocator && allocator->isJITPC(pc);
 }
 
