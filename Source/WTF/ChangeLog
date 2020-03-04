@@ -1,3 +1,47 @@
+2020-03-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r257875. rdar://problem/60055569
+
+    [Cocoa] Add enable flag to disable direct mode for preferences
+    https://bugs.webkit.org/show_bug.cgi?id=208588
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    Add an enable flag for this feature so it can be toggled, and turn it off.
+    
+    No new tests, since this patch is reverting to previous behavior covered by existing tests.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+    (WebKit::XPCServiceMain):
+    * Shared/WebProcessCreationParameters.cpp:
+    (WebKit::WebProcessCreationParameters::encode const):
+    (WebKit::WebProcessCreationParameters::decode):
+    * Shared/WebProcessCreationParameters.h:
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeWebProcess):
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnable.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-04  Per Arne Vollan  <pvollan@apple.com>
+
+            [Cocoa] Add enable flag to disable direct mode for preferences
+            https://bugs.webkit.org/show_bug.cgi?id=208588
+
+            Reviewed by Brent Fulgham.
+
+            * wtf/PlatformEnable.h:
+
 2020-02-26  Alan Coon  <alancoon@apple.com>
 
         Revert r256784. rdar://problem/59818035
