@@ -1,3 +1,28 @@
+2020-03-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Add enable flag to disable direct mode for preferences
+        https://bugs.webkit.org/show_bug.cgi?id=208588
+
+        Reviewed by Brent Fulgham.
+
+        Add an enable flag for this feature so it can be toggled, and turn it off.
+
+        No new tests, since this patch is reverting to previous behavior covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for WinCairo

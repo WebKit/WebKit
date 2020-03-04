@@ -288,6 +288,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // FIXME(207716): The following should be removed when the GPU process is complete.
     for (size_t i = 0, size = parameters.mediaExtensionHandles.size(); i < size; ++i)
         SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
+
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    if (parameters.preferencesExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandle);
+#endif
 #endif
 }
 

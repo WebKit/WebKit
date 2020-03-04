@@ -198,8 +198,10 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
     m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
     // Start observing preference changes.
     [WKPreferenceObserver sharedInstance];
+#endif
 }
 
 #if PLATFORM(IOS)
@@ -440,6 +442,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         for (size_t i = 0, size = services.size(); i < size; ++i)
             SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, parameters.mediaExtensionHandles[i]);
     }
+#if !ENABLE(CFPREFS_DIRECT_MODE)
+    SandboxExtension::Handle preferencesExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", WTF::nullopt, preferencesExtensionHandle);
+    parameters.preferencesExtensionHandle = WTFMove(preferencesExtensionHandle);
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
