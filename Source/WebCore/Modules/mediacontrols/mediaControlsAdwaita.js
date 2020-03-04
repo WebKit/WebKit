@@ -268,7 +268,6 @@ Controller.prototype = {
         var volumeBox = this.controls.volumeBox = document.createElement('div');
         volumeBox.setAttribute('pseudo', '-webkit-media-controls-volume-slider-container');
         volumeBox.classList.add(this.ClassNames.hiding);
-        volumeBox.classList.add(this.ClassNames.volumeBox);
         this.listenFor(volumeBox, 'mouseover', this.handleMuteButtonMouseOver);
 
         var volume = this.controls.volume = document.createElement('input');
