@@ -279,7 +279,8 @@ private:
 
     // WebCore::CookieChangeObserver.
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) final;
-    void cookiesDeleted() final;
+    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) final;
+    void allCookiesDeleted() final;
 #endif
 
     struct ResourceNetworkActivityTracker {

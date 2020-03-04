@@ -45,7 +45,8 @@ public:
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString);
 
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
-    void cookiesDeleted();
+    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
+    void allCookiesDeleted();
 
     void clear();
     void clearForHost(const String&);

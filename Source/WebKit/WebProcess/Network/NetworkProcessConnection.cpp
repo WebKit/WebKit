@@ -241,9 +241,14 @@ void NetworkProcessConnection::cookiesAdded(const String& host, const Vector<Web
     WebProcess::singleton().cookieJar().cookiesAdded(host, cookies);
 }
 
-void NetworkProcessConnection::cookiesDeleted()
+void NetworkProcessConnection::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
-    WebProcess::singleton().cookieJar().cookiesDeleted();
+    WebProcess::singleton().cookieJar().cookiesDeleted(host, cookies);
+}
+
+void NetworkProcessConnection::allCookiesDeleted()
+{
+    WebProcess::singleton().cookieJar().allCookiesDeleted();
 }
 #endif
 

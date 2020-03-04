@@ -681,9 +681,14 @@ void NetworkConnectionToWebProcess::cookiesAdded(const String& host, const Vecto
     connection().send(Messages::NetworkProcessConnection::CookiesAdded(host, cookies), 0);
 }
 
-void NetworkConnectionToWebProcess::cookiesDeleted()
+void NetworkConnectionToWebProcess::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
-    connection().send(Messages::NetworkProcessConnection::CookiesDeleted(), 0);
+    connection().send(Messages::NetworkProcessConnection::CookiesDeleted(host, cookies), 0);
+}
+
+void NetworkConnectionToWebProcess::allCookiesDeleted()
+{
+    connection().send(Messages::NetworkProcessConnection::AllCookiesDeleted(), 0);
 }
 
 #endif

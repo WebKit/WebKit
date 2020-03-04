@@ -86,7 +86,8 @@ public:
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
-    void cookiesDeleted();
+    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
+    void allCookiesDeleted();
 #endif
 
 private:

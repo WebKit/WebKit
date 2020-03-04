@@ -86,7 +86,8 @@ class CookieChangeObserver {
 public:
     virtual ~CookieChangeObserver() { }
     virtual void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) = 0;
-    virtual void cookiesDeleted() = 0;
+    virtual void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) = 0;
+    virtual void allCookiesDeleted() = 0;
 };
 #endif
 

@@ -161,9 +161,14 @@ void WebCookieJar::cookiesAdded(const String& host, const Vector<WebCore::Cookie
     m_cache.cookiesAdded(host, cookies);
 }
 
-void WebCookieJar::cookiesDeleted()
+void WebCookieJar::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
-    m_cache.cookiesDeleted();
+    m_cache.cookiesDeleted(host, cookies);
+}
+
+void WebCookieJar::allCookiesDeleted()
+{
+    m_cache.allCookiesDeleted();
 }
 
 void WebCookieJar::clearCache()
