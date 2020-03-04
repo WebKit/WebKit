@@ -642,9 +642,9 @@ Path Font::platformPathForGlyph(Glyph glyph) const
         CGPathAddPath(newPath.get(), nullptr, result.get());
         auto translation = CGAffineTransformMakeTranslation(syntheticBoldOffset, 0);
         CGPathAddPath(newPath.get(), &translation, result.get());
-        return newPath;
+        return { WTFMove(newPath) };
     }
-    return adoptCF(CGPathCreateMutableCopy(result.get()));
+    return { adoptCF(CGPathCreateMutableCopy(result.get())) };
 }
 
 bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const

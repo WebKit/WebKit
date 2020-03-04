@@ -76,6 +76,14 @@ typedef void PlatformPath;
 
 typedef PlatformPath* PlatformPathPtr;
 
+#if USE(CG)
+using PlatformPathStorageType = RetainPtr<CGMutablePathRef>;
+#elif USE(DIRECT2D)
+using PlatformPathStorageType = COMPtr<ID2D1GeometryGroup>;
+#else
+using PlatformPathStorageType = PlatformPathPtr;
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -114,7 +122,7 @@ class Path {
 public:
     WEBCORE_EXPORT Path();
 #if USE(CG)
-    Path(RetainPtr<CGMutablePathRef>);
+    Path(RetainPtr<CGMutablePathRef>&&);
 #endif
     WEBCORE_EXPORT ~Path();
 
@@ -175,6 +183,8 @@ public:
 #if USE(DIRECT2D)
     FloatRect fastBoundingRectForStroke(const PlatformContextDirect2D&) const;
     PlatformPathPtr platformPath() const { return m_path.get(); }
+#elif USE(CG)
+    PlatformPathPtr platformPath() const { return m_path.get(); }
 #else
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
@@ -218,13 +228,12 @@ private:
     void swap(Path&);
 #endif
 
+    mutable PlatformPathStorageType m_path;
+
 #if USE(DIRECT2D)
     Vector<ID2D1Geometry*> m_geometries;
-    COMPtr<ID2D1GeometryGroup> m_path;
     mutable COMPtr<ID2D1GeometrySink> m_activePath;
     mutable bool m_figureIsOpened { false };
-#else
-    mutable PlatformPathPtr m_path { nullptr };
 #endif
 
 #if USE(CG)

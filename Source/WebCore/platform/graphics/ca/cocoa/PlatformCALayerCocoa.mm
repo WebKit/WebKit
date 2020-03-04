@@ -989,7 +989,7 @@ Path PlatformCALayerCocoa::shapePath() const
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return Path(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path]));
+    return { adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path])) };
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

@@ -82,32 +82,24 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
     return path;
 }
 
-Path::Path()
-    : m_path(nullptr)
+Path::Path(RetainPtr<CGMutablePathRef>&& path)
+    : m_path(WTFMove(path))
 {
 }
 
-Path::Path(RetainPtr<CGMutablePathRef> p)
-    : m_path(p.leakRef())
-{
-}
-
-Path::~Path()
-{
-    if (m_path)
-        CFRelease(m_path);
-}
+Path::Path() = default;
+Path::~Path() = default;
 
 PlatformPathPtr Path::ensurePlatformPath()
 {
     if (!m_path)
-        m_path = CGPathCreateMutable();
+        m_path = adoptCF(CGPathCreateMutable());
     else if (m_copyPathBeforeMutation) {
-        if (CFGetRetainCount(m_path) > 1)
-            CFRelease(std::exchange(m_path, CGPathCreateMutableCopy(m_path)));
+        if (CFGetRetainCount(m_path.get()) > 1)
+            m_path = adoptCF(CGPathCreateMutableCopy(m_path.get()));
         m_copyPathBeforeMutation = false;
     }
-    return m_path;
+    return m_path.get();
 }
 
 Path::Path(const Path& other)
@@ -116,7 +108,6 @@ Path::Path(const Path& other)
     if (m_path) {
         m_copyPathBeforeMutation = true;
         other.m_copyPathBeforeMutation = true;
-        CFRetain(m_path);
     }
 }
 
@@ -189,7 +180,7 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
         return false;
 
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
-    RetainPtr<CGMutablePathRef> path = adoptCF(copyCGPathClosingSubpaths(m_path));
+    auto path = adoptCF(copyCGPathClosingSubpaths(m_path.get()));
     bool ret = CGPathContainsPoint(path.get(), 0, point, rule == WindRule::EvenOdd ? true : false);
     return ret;
 }
@@ -226,13 +217,12 @@ void Path::transform(const AffineTransform& transform)
 
     CGAffineTransform transformCG = transform;
 #if PLATFORM(WIN)
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddPath(path, &transformCG, m_path);
+    auto path = adoptCF(CGPathCreateMutable());
+    CGPathAddPath(path.get(), &transformCG, m_path.get());
 #else
-    CGMutablePathRef path = CGPathCreateMutableCopyByTransformingPath(m_path, &transformCG);
+    auto path = adoptCF(CGPathCreateMutableCopyByTransformingPath(m_path.get(), &transformCG));
 #endif
-    CFRelease(m_path);
-    m_path = path;
+    m_path = WTFMove(path);
     m_copyPathBeforeMutation = false;
 }
 
@@ -243,7 +233,7 @@ FloatRect Path::boundingRect() const
 
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox does not.
 
-    CGRect bound = CGPathGetPathBoundingBox(m_path);
+    CGRect bound = CGPathGetPathBoundingBox(m_path.get());
     return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 
@@ -251,7 +241,7 @@ FloatRect Path::fastBoundingRect() const
 {
     if (isNull())
         return CGRectZero;
-    CGRect bound = CGPathGetBoundingBox(m_path);
+    CGRect bound = CGPathGetBoundingBox(m_path.get());
     return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 
@@ -404,9 +394,8 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
         CGPathAddPath(ensurePlatformPath(), &transformCG, path.platformPath());
         return;
     }
-    CGPathRef pathCopy = CGPathCreateCopy(path.platformPath());
-    CGPathAddPath(ensurePlatformPath(), &transformCG, pathCopy);
-    CFRelease(pathCopy);
+    auto pathCopy = adoptCF(CGPathCreateCopy(path.platformPath()));
+    CGPathAddPath(ensurePlatformPath(), &transformCG, pathCopy.get());
 }
 
 void Path::clear()
@@ -414,14 +403,13 @@ void Path::clear()
     if (isNull())
         return;
 
-    CFRelease(m_path);
-    m_path = CGPathCreateMutable();
+    m_path = adoptCF(CGPathCreateMutable());
     m_copyPathBeforeMutation = false;
 }
 
 bool Path::isEmpty() const
 {
-    return isNull() || CGPathIsEmpty(m_path);
+    return isNull() || CGPathIsEmpty(m_path.get());
 }
 
 bool Path::hasCurrentPoint() const
@@ -433,7 +421,7 @@ FloatPoint Path::currentPoint() const
 {
     if (isNull())
         return FloatPoint();
-    return CGPathGetCurrentPoint(m_path);
+    return CGPathGetCurrentPoint(m_path.get());
 }
 
 static void CGPathApplierToPathApplier(void* info, const CGPathElement* element)
@@ -467,7 +455,7 @@ void Path::apply(const PathApplierFunction& function) const
     if (isNull())
         return;
 
-    CGPathApply(m_path, (void*)&function, CGPathApplierToPathApplier);
+    CGPathApply(m_path.get(), (void*)&function, CGPathApplierToPathApplier);
 }
 
 }
