@@ -210,7 +210,7 @@ bool HTMLAreaElement::isMouseFocusable() const
 bool HTMLAreaElement::isFocusable() const
 {
     RefPtr<HTMLImageElement> image = imageElement();
-    if (!image || !image->renderer() || image->renderer()->style().visibility() != Visibility::Visible)
+    if (!image || !image->isVisibleWithoutResolvingFullStyle())
         return false;
 
     return supportsFocus() && tabIndexSetExplicitly().valueOr(0) >= 0;

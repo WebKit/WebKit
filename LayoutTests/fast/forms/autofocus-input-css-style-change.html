@@ -13,9 +13,11 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
-var test = document.getElementById("test");
-if (document.defaultView.getComputedStyle(test, null).getPropertyValue('background-color') == "rgb(0, 128, 0)")
-    result.innerHTML = "PASS";
+requestAnimationFrame(()=>{
+    if (getComputedStyle(test, null).getPropertyValue('background-color') == "rgb(0, 128, 0)")
+        result.innerHTML = "PASS";
+});
+
 </script>
 </body>
 </html>

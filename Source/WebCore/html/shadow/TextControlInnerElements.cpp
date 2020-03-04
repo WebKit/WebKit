@@ -225,6 +225,8 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
         input->focus();
         input->select();
 #if !PLATFORM(IOS_FAMILY)
+        document().updateStyleIfNeeded();
+
         if (auto* renderer = input->renderer()) {
             auto& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
             if (searchFieldRenderer.popupIsVisible())

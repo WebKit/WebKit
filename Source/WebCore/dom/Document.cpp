@@ -4275,11 +4275,12 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
     if (backForwardCacheState() != NotInBackForwardCache)
         return false;
 
-    bool focusChangeBlocked = false;
     RefPtr<Element> oldFocusedElement = WTFMove(m_focusedElement);
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusedElement) {
+        bool focusChangeBlocked = false;
+
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
@@ -4332,23 +4333,21 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         if (is<HTMLInputElement>(oldFocusedElement)) {
             // HTMLInputElement::didBlur just scrolls text fields back to the beginning.
             // FIXME: This could be done asynchronusly.
-            // Updating style may dispatch events due to PostResolutionCallback
-            if (eventsMode == FocusRemovalEventsMode::Dispatch)
-                updateStyleIfNeeded();
             downcast<HTMLInputElement>(*oldFocusedElement).didBlur();
         }
+
+        if (focusChangeBlocked)
+            return false;
     }
 
     if (newFocusedElement && newFocusedElement->isFocusable()) {
         if (&newFocusedElement->document() != this) {
             // Bluring oldFocusedElement may have moved newFocusedElement across documents.
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
         if (newFocusedElement->isRootEditableElement() && !acceptsEditingFocus(*newFocusedElement)) {
             // delegate blocks focus change
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
         // Set focus on the new node
         m_focusedElement = newFocusedElement;
@@ -4359,16 +4358,14 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
 
         m_focusedElement->dispatchFocusInEvent(eventNames().focusinEvent, oldFocusedElement.copyRef()); // DOM level 3 bubbling focus event.
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
 
         // FIXME: We should remove firing DOMFocusInEvent event when we are sure no content depends
@@ -4377,8 +4374,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
 
         m_focusedElement->setFocus(true);
@@ -4386,8 +4382,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
-            focusChangeBlocked = true;
-            goto SetFocusedNodeDone;
+            return false;
         }
 
         if (m_focusedElement->isRootEditableElement())
@@ -4412,21 +4407,16 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         }
     }
 
-    if (!focusChangeBlocked && m_focusedElement) {
+    if (m_focusedElement) {
         // Create the AXObject cache in a focus change because GTK relies on it.
         if (AXObjectCache* cache = axObjectCache())
             cache->deferFocusedUIElementChangeIfNeeded(oldFocusedElement.get(), newFocusedElement.get());
     }
 
-    if (!focusChangeBlocked && page())
+    if (page())
         page()->chrome().focusedElementChanged(m_focusedElement.get());
 
-SetFocusedNodeDone:
-    // Updating style may dispatch events due to PostResolutionCallback
-    // FIXME: Why is synchronous style update needed here at all?
-    if (eventsMode == FocusRemovalEventsMode::Dispatch)
-        updateStyleIfNeeded();
-    return !focusChangeBlocked;
+    return true;
 }
 
 static bool shouldResetFocusNavigationStartingNode(Node& node)

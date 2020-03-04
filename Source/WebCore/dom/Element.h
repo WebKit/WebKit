@@ -343,6 +343,9 @@ public:
 
     bool needsStyleInvalidation() const;
 
+    bool hasValidStyle() const;
+    bool isVisibleWithoutResolvingFullStyle() const;
+
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByActive() const { return hasStyleFlag(ElementStyleFlag::StyleAffectedByActive); }
     bool styleAffectedByEmpty() const { return hasStyleFlag(ElementStyleFlag::StyleAffectedByEmpty); }
@@ -692,7 +695,8 @@ private:
 
     void removeShadowRoot();
 
-    const RenderStyle& resolveComputedStyle();
+    enum class ResolveComputedStyleMode { Normal, RenderedOnly };
+    const RenderStyle* resolveComputedStyle(ResolveComputedStyleMode = ResolveComputedStyleMode::Normal);
     const RenderStyle& resolvePseudoElementStyle(PseudoId);
 
     unsigned rareDataChildIndex() const;

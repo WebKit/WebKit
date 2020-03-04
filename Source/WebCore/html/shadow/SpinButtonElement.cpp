@@ -157,9 +157,6 @@ void SpinButtonElement::willOpenPopup()
 
 void SpinButtonElement::forwardEvent(Event& event)
 {
-    if (!renderBox())
-        return;
-
     if (!is<WheelEvent>(event))
         return;
 

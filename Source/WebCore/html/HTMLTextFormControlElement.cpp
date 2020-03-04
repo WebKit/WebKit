@@ -242,7 +242,10 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
 
     setInnerTextValue(text);
 
-    // FIXME: What should happen to the value (as in value()) if there's no renderer?
+    // FIXME: This shouldn't need synchronous style update, or renderer at all.
+    if (!renderer())
+        document().updateStyleIfNeeded();
+
     if (!renderer())
         return { };
 

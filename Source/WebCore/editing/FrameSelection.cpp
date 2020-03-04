@@ -369,8 +369,13 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     setCaretRectNeedsUpdate();
 
-    if (!newSelection.isNone() && !(options & DoNotSetFocus))
+    if (!newSelection.isNone() && !(options & DoNotSetFocus)) {
+        auto* oldFocusedElement = m_frame->document()->focusedElement();
         setFocusedElementIfNeeded();
+        // FIXME: Should not be needed.
+        if (m_frame->document()->focusedElement() != oldFocusedElement)
+            m_frame->document()->updateStyleIfNeeded();
+    }
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.

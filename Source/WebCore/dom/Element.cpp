@@ -607,23 +607,13 @@ bool Element::isFocusable() const
         return false;
 
     if (!renderer()) {
-        // If the node is in a display:none tree it might say it needs style recalc but
-        // the whole document is actually up to date.
-        // FIXME: We should be able to assert !needsStyleRecalc() || !document().childNeedsStyleRecalc()
-        // but it hits too frequently on websites like Gmail and Microsoft Exchange.
-
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
         if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
-            return canvas->renderer() && canvas->renderer()->style().visibility() == Visibility::Visible;
+            return canvas->isVisibleWithoutResolvingFullStyle();
     }
 
-    // FIXME: Even if we are not visible, we might have a child that is visible.
-    // Hyatt wants to fix that some day with a "has visible content" flag or the like.
-    if (!renderer() || renderer()->style().visibility() != Visibility::Visible)
-        return false;
-
-    return true;
+    return isVisibleWithoutResolvingFullStyle();
 }
 
 bool Element::isUserActionElementInActiveChain() const
@@ -2985,7 +2975,10 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     }
 
     RefPtr<Element> newTarget = this;
-    if (document->haveStylesheetsLoaded())
+
+    // If we don't have renderer yet, isFocusable will compute it without style update.
+    // FIXME: Expand it to avoid style update in all cases.
+    if (renderer() && document->haveStylesheetsLoaded())
         document->updateStyleIfNeeded();
 
     if (&newTarget->document() != document.ptr())
@@ -3290,7 +3283,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle() const
     return nullptr;
 }
 
-const RenderStyle& Element::resolveComputedStyle()
+const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
 {
     ASSERT(isConnected());
     ASSERT(!existingComputedStyle());
@@ -3314,9 +3307,54 @@ const RenderStyle& Element::resolveComputedStyle()
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
         rareData.setComputedStyle(WTFMove(style));
+
+        if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
+            return nullptr;
     }
 
-    return *computedStyle;
+    return computedStyle;
+}
+
+bool Element::hasValidStyle() const
+{
+    if (!document().needsStyleRecalc())
+        return true;
+
+    if (document().hasPendingFullStyleRebuild())
+        return false;
+    
+    for (auto& element : lineageOfType<Element>(*this)) {
+        if (element.styleValidity() != Style::Validity::Valid)
+            return false;
+    }
+    return true;
+}
+
+bool Element::isVisibleWithoutResolvingFullStyle() const
+{
+    if (renderStyle() || hasValidStyle())
+        return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
+
+    // Compute style in yet unstyled subtree.
+    auto* style = existingComputedStyle();
+    if (!style)
+        style = const_cast<Element&>(*this).resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+
+    if (!style)
+        return false;
+
+    if (style->display() == DisplayType::None || style->display() == DisplayType::Contents)
+        return false;
+
+    if (style->visibility() != Visibility::Visible)
+        return false;
+
+    for (auto& element : ancestorsOfType<Element>(*this)) {
+        if (element.existingComputedStyle()->display() == DisplayType::None)
+            return false;
+    }
+
+    return true;
 }
 
 const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpecifier)
@@ -3349,7 +3387,7 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 
     auto* style = existingComputedStyle();
     if (!style)
-        style = &resolveComputedStyle();
+        style = resolveComputedStyle();
 
     if (pseudoElementSpecifier != PseudoId::None) {
         if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))

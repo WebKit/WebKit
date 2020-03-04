@@ -427,6 +427,8 @@ AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     if (!focusedDocument)
         return nullptr;
 
+    focusedDocument->updateStyleIfNeeded();
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (clientSupportsIsolatedTree())
         return isolatedTreeFocusedObject(*focusedDocument);

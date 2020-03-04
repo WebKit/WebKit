@@ -1,3 +1,25 @@
+2020-03-04  Antti Koivisto  <antti@apple.com>
+
+        Avoid full style resolution on Element::focus()
+        https://bugs.webkit.org/show_bug.cgi?id=208504
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/events/keypress-removed-node-expected.txt:
+        * fast/events/keypress-removed-node.html:
+
+        Modify the test so it is not sensitive to non-rendered whitespace changes
+        (caused by timing of render tree updates).
+
+        * fast/forms/autofocus-input-css-style-change.html:
+
+        Read the <input autofocus> :focus style in rAF as focusing happens asynchronously. This matches other browsers.
+
+        * fast/forms/focus-after-visibility-change-expected.txt: Added.
+        * fast/forms/focus-after-visibility-change.html: Added.
+
+        Add a simple test for visibility style change after renderer has already be created.
+
 2020-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Stop adding volume-box class to volume box element
