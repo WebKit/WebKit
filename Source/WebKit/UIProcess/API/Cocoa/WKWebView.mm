@@ -27,6 +27,7 @@
 #import "WKWebViewInternal.h"
 
 #import "APIFormClient.h"
+#import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
 #import "AttributedString.h"
@@ -97,6 +98,7 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKFrameTreeNodeInternal.h"
 #import "_WKFullscreenDelegate.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
@@ -1582,13 +1584,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return _page->pageLoadState().hasNegotiatedLegacyTLS();
 }
 
-- (void)_allFrames:(void (^)(NSArray<WKFrameInfo *> *))completionHandler
+- (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
-    _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRefPtr(_page.get())] (Vector<WebKit::FrameInfoData>&& frames) {
-        NSMutableArray<WKFrameInfo *> *apiFrames = [NSMutableArray arrayWithCapacity:frames.size()];
-        for (auto& frame : WTFMove(frames))
-            [apiFrames addObject:wrapper(API::FrameInfo::create(WTFMove(frame), page.get()))];
-        completionHandler(apiFrames);
+    _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
+        _WKFrameTreeNode *node = [[wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())) retain] autorelease];
+        completionHandler(node);
     });
 }
 

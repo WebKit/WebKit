@@ -76,6 +76,7 @@
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKFrameTreeNodeInternal.h"
 #import "_WKGeolocationPositionInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
@@ -241,6 +242,9 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKFrameInfo alloc];
         break;
 
+    case Type::FrameTreeNode:
+        wrapper = [_WKFrameTreeNode alloc];
+        break;
 #if PLATFORM(IOS_FAMILY)
     case Type::GeolocationPosition:
         wrapper = [_WKGeolocationPosition alloc];

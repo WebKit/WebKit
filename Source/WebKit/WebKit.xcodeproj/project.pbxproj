@@ -1148,6 +1148,8 @@
 		58E977DF21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 58E977DD21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h */; };
 		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
 		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
+		5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E8324101F7000486F9B /* FrameTreeNodeData.h */; };
+		5C121E89241029C900486F9B /* _WKFrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C121E882410290D00486F9B /* _WKFrameTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
 		5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */; };
@@ -3953,6 +3955,12 @@
 		5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketStream.h; sourceTree = "<group>"; };
 		5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkSocketStream.messages.in; sourceTree = "<group>"; };
 		5C0B17801E7C888000E9123C /* WebSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebSocketStream.messages.in; path = Network/WebSocketStream.messages.in; sourceTree = "<group>"; };
+		5C121E8324101F7000486F9B /* FrameTreeNodeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTreeNodeData.h; sourceTree = "<group>"; };
+		5C121E852410276F00486F9B /* APIFrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameTreeNode.h; sourceTree = "<group>"; };
+		5C121E862410290D00486F9B /* _WKFrameTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFrameTreeNode.mm; sourceTree = "<group>"; };
+		5C121E872410290D00486F9B /* _WKFrameTreeNodeInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFrameTreeNodeInternal.h; sourceTree = "<group>"; };
+		5C121E882410290D00486F9B /* _WKFrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFrameTreeNode.h; sourceTree = "<group>"; };
+		5C121E8B2410306600486F9B /* APIFrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameTreeNode.cpp; sourceTree = "<group>"; };
 		5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePoliciesData.h; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
@@ -5872,6 +5880,7 @@
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
 				1A14F8DF1D74C834006CBEC6 /* FrameInfoData.cpp */,
 				1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */,
+				5C121E8324101F7000486F9B /* FrameTreeNodeData.h */,
 				1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContext.cpp */,
@@ -7045,6 +7054,9 @@
 				2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */,
 				2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */,
 				37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */,
+				5C121E882410290D00486F9B /* _WKFrameTreeNode.h */,
+				5C121E862410290D00486F9B /* _WKFrameTreeNode.mm */,
+				5C121E872410290D00486F9B /* _WKFrameTreeNodeInternal.h */,
 				CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */,
 				63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */,
 				63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */,
@@ -8916,6 +8928,8 @@
 				37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */,
 				2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */,
 				2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */,
+				5C121E8B2410306600486F9B /* APIFrameTreeNode.cpp */,
+				5C121E852410276F00486F9B /* APIFrameTreeNode.h */,
 				CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */,
 				7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */,
 				2DABA7751A82B42100EF0F1A /* APIHistoryClient.h */,
@@ -10280,6 +10294,7 @@
 				37A64E5718F38F4600EB30F1 /* _WKFormInputSession.h in Headers */,
 				373D122318A473010066D9CC /* _WKFrameHandle.h in Headers */,
 				373D122718A473F60066D9CC /* _WKFrameHandleInternal.h in Headers */,
+				5C121E89241029C900486F9B /* _WKFrameTreeNode.h in Headers */,
 				CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */,
 				636353A51E9858DF0009F8AF /* _WKGeolocationCoreLocationProvider.h in Headers */,
 				63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */,
@@ -10529,6 +10544,7 @@
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
+				5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */,
 				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
 				CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,48 +24,49 @@
  */
 
 #import "config.h"
-#import "WKFrameInfoInternal.h"
 
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKFrameTreeNodeInternal.h"
 
-@implementation WKFrameInfo
+@implementation _WKFrameTreeNode
 
 - (void)dealloc
 {
-    _frameInfo->~FrameInfo();
-
+    _node->API::FrameTreeNode::~FrameTreeNode();
     [super dealloc];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; webView = %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, self.webView, self.mainFrame ? "YES" : "NO", self.request];
 }
 
 - (BOOL)isMainFrame
 {
-    return _frameInfo->isMainFrame();
+    return _node->isMainFrame();
 }
 
 - (NSURLRequest *)request
 {
-    return _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _node->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
 - (WKSecurityOrigin *)securityOrigin
 {
-    auto& data = _frameInfo->securityOrigin();
+    auto& data = _node->securityOrigin();
     auto apiOrigin = API::SecurityOrigin::create(data.protocol, data.host, data.port);
     return [[wrapper(apiOrigin.get()) retain] autorelease];
 }
 
 - (WKWebView *)webView
 {
-    if (WebKit::WebPageProxy* page = _frameInfo->page())
-        return [[fromWebPageProxy(*page) retain] autorelease];
-    return nil;
+    return [[fromWebPageProxy(_node->page()) retain] autorelease];
+}
+
+- (NSArray<_WKFrameTreeNode *> *)childFrames
+{
+    const auto& children = _node->childFrames();
+    NSMutableArray<_WKFrameTreeNode *> *array = [NSMutableArray arrayWithCapacity:children.size()];
+    for (const auto& child : children)
+        [array addObject:wrapper(API::FrameTreeNode::create(WebKit::FrameTreeNodeData(child), _node->page()))];
+    return array;
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -73,20 +74,14 @@
     return [self retain];
 }
 
-#pragma mark WKObject protocol implementation
+- (_WKFrameHandle *)_handle
+{
+    return [[wrapper(_node->handle()) retain] autorelease];
+}
 
 - (API::Object&)_apiObject
 {
-    return *_frameInfo;
-}
-
-@end
-
-@implementation WKFrameInfo (WKPrivate)
-
-- (_WKFrameHandle *)_handle
-{
-    return [[wrapper(_frameInfo->handle()) retain] autorelease];
+    return *_node;
 }
 
 @end

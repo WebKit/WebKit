@@ -186,28 +186,14 @@ WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
     return webFrameLoaderClient->webFrame();
 }
 
-Vector<WebCore::FrameIdentifier> WebFrame::childFrameIDs() const
-{
-    Vector<WebCore::FrameIdentifier> identifiers;
-    for (auto* childFrame = m_coreFrame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
-        if (auto* childWebFrame = WebFrame::fromCoreFrame(*childFrame))
-            identifiers.append(childWebFrame->frameID());
-    }
-    return identifiers;
-};
-
 FrameInfoData WebFrame::info() const
 {
-    auto* parent = parentFrame();
-
     FrameInfoData info {
         isMainFrame(),
         // FIXME: This should use the full request.
         ResourceRequest(URL(URL(), url())),
         SecurityOriginData::fromFrame(m_coreFrame),
-        m_frameID,
-        parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : WTF::nullopt,
-        childFrameIDs()
+        m_frameID
     };
 
     return info;

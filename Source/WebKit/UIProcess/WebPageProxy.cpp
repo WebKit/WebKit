@@ -4051,7 +4051,7 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const At
 }
 #endif
 
-void WebPageProxy::getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&& completionHandler)
+void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPage::GetAllFrames(), WTFMove(completionHandler));
 }

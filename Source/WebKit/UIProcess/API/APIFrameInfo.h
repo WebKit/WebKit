@@ -53,8 +53,6 @@ public:
     const WebCore::ResourceRequest& request() const { return m_data.request; }
     WebCore::SecurityOriginData& securityOrigin() { return m_data.securityOrigin; }
     Ref<FrameHandle> handle() const;
-    RefPtr<FrameHandle> parentFrameHandle() const;
-    Vector<Ref<FrameHandle>> childFrameHandles() const;
     WebKit::WebPageProxy* page() { return m_page.get(); }
 
 private:

@@ -321,6 +321,7 @@ struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditingRange;
 struct EditorState;
+struct FrameTreeNodeData;
 struct FocusedElementInformation;
 struct FontInfo;
 struct FrameInfoData;
@@ -504,7 +505,7 @@ public:
     void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
-    void getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&&);
+    void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);

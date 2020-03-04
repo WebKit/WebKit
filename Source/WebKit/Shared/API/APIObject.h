@@ -125,6 +125,7 @@ public:
         Frame,
         FrameInfo,
         FramePolicyListener,
+        FrameTreeNode,
         FullScreenManager,
         GeolocationManager,
         GeolocationPermissionRequest,

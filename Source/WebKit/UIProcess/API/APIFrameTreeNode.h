@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FrameInfoData.h"
+#pragma once
 
-#include "WebCoreArgumentCoders.h"
+#include "APIObject.h"
+#include "FrameTreeNodeData.h"
 
 namespace WebKit {
-
-void FrameInfoData::encode(IPC::Encoder& encoder) const
-{
-    encoder << isMainFrame;
-    encoder << request;
-    encoder << securityOrigin;
-    encoder << frameID;
+class WebPageProxy;
 }
 
-Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
-{
-    Optional<bool> isMainFrame;
-    decoder >> isMainFrame;
-    if (!isMainFrame)
-        return WTF::nullopt;
+namespace API {
 
-    Optional<WebCore::ResourceRequest> request;
-    decoder >> request;
-    if (!request)
-        return WTF::nullopt;
+class FrameHandle;
 
-    Optional<WebCore::SecurityOriginData> securityOrigin;
-    decoder >> securityOrigin;
-    if (!securityOrigin)
-        return WTF::nullopt;
+class FrameTreeNode final : public ObjectImpl<Object::Type::FrameTreeNode> {
+public:
+    static Ref<FrameTreeNode> create(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page) { return adoptRef(*new FrameTreeNode(WTFMove(data), page)); }
+    virtual ~FrameTreeNode();
 
-    Optional<Optional<WebCore::FrameIdentifier>> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
+    WebKit::WebPageProxy& page() { return m_page.get(); }
+    bool isMainFrame() const { return m_data.info.isMainFrame; }
+    const WebCore::ResourceRequest& request() const { return m_data.info.request; }
+    const WebCore::SecurityOriginData& securityOrigin() const { return m_data.info.securityOrigin; }
+    const Vector<WebKit::FrameTreeNodeData>& childFrames() const { return m_data.children; }
+    Ref<FrameHandle> handle() const;
 
-    return {{
-        WTFMove(*isMainFrame),
-        WTFMove(*request),
-        WTFMove(*securityOrigin),
-        WTFMove(*frameID)
-    }};
-}
+private:
+    FrameTreeNode(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page)
+        : m_data(WTFMove(data))
+        , m_page(page) { }
 
-}
+    WebKit::FrameTreeNodeData m_data;
+    Ref<WebKit::WebPageProxy> m_page;
+};
+
+} // namespace API

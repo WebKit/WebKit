@@ -28,6 +28,7 @@
 
 #if ENABLE(GEOLOCATION)
 
+#include "FrameInfoData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"

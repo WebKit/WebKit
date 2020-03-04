@@ -38,6 +38,7 @@
 #include "EventDispatcher.h"
 #include "FindController.h"
 #include "FormDataReference.h"
+#include "FrameTreeNodeData.h"
 #include "GeolocationPermissionRequestManager.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
@@ -1751,14 +1752,26 @@ WebPage& WebPage::fromCorePage(Page& page)
     return static_cast<WebChromeClient&>(page.chrome().client()).page();
 }
 
-void WebPage::getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&& completionHandler)
+static Optional<FrameTreeNodeData> frameTreeNodeData(Frame& frame)
 {
-    Vector<FrameInfoData> data;
-    for (auto* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* webFrame = WebFrame::fromCoreFrame(*frame))
-            data.append(webFrame->info());
+    Optional<FrameTreeNodeData> info;
+    if (auto* webFrame = WebFrame::fromCoreFrame(frame)) {
+        Vector<FrameTreeNodeData> children;
+        for (auto* childFrame = frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling()) {
+            if (auto childInfo = frameTreeNodeData(*childFrame))
+                children.append(WTFMove(*childInfo));
+        }
+        info = FrameTreeNodeData {
+            webFrame->info(),
+            WTFMove(children)
+        };
     }
-    completionHandler(WTFMove(data));
+    return info;
+}
+
+void WebPage::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
+{
+    completionHandler(*frameTreeNodeData(m_page->mainFrame()));
 }
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)

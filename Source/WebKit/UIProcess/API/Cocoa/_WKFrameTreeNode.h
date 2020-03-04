@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FrameInfoData.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKFrameInfo.h>
 
-#include "WebCoreArgumentCoders.h"
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKFrameTreeNode : WKFrameInfo
 
-namespace WebKit {
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
-void FrameInfoData::encode(IPC::Encoder& encoder) const
-{
-    encoder << isMainFrame;
-    encoder << request;
-    encoder << securityOrigin;
-    encoder << frameID;
-}
+@property (nonatomic, readonly) NSArray<_WKFrameTreeNode *> *childFrames;
 
-Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
-{
-    Optional<bool> isMainFrame;
-    decoder >> isMainFrame;
-    if (!isMainFrame)
-        return WTF::nullopt;
-
-    Optional<WebCore::ResourceRequest> request;
-    decoder >> request;
-    if (!request)
-        return WTF::nullopt;
-
-    Optional<WebCore::SecurityOriginData> securityOrigin;
-    decoder >> securityOrigin;
-    if (!securityOrigin)
-        return WTF::nullopt;
-
-    Optional<Optional<WebCore::FrameIdentifier>> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
-
-    return {{
-        WTFMove(*isMainFrame),
-        WTFMove(*request),
-        WTFMove(*securityOrigin),
-        WTFMove(*frameID)
-    }};
-}
-
-}
+@end

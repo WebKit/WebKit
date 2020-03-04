@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FrameInfoData.h"
-
-#include "WebCoreArgumentCoders.h"
+#import "APIFrameTreeNode.h"
+#import "WKObject.h"
+#import "_WKFrameTreeNode.h"
 
 namespace WebKit {
 
-void FrameInfoData::encode(IPC::Encoder& encoder) const
-{
-    encoder << isMainFrame;
-    encoder << request;
-    encoder << securityOrigin;
-    encoder << frameID;
-}
-
-Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
-{
-    Optional<bool> isMainFrame;
-    decoder >> isMainFrame;
-    if (!isMainFrame)
-        return WTF::nullopt;
-
-    Optional<WebCore::ResourceRequest> request;
-    decoder >> request;
-    if (!request)
-        return WTF::nullopt;
-
-    Optional<WebCore::SecurityOriginData> securityOrigin;
-    decoder >> securityOrigin;
-    if (!securityOrigin)
-        return WTF::nullopt;
-
-    Optional<Optional<WebCore::FrameIdentifier>> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
-
-    return {{
-        WTFMove(*isMainFrame),
-        WTFMove(*request),
-        WTFMove(*securityOrigin),
-        WTFMove(*frameID)
-    }};
-}
+template<> struct WrapperTraits<API::FrameTreeNode> {
+    using WrapperClass = _WKFrameTreeNode;
+};
 
 }
+
+@interface _WKFrameTreeNode () <WKObject> {
+@package
+    API::ObjectStorage<API::FrameTreeNode> _node;
+}
+@end

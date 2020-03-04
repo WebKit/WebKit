@@ -1,3 +1,71 @@
+2020-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView's frames accessor should return a traversable type
+        https://bugs.webkit.org/show_bug.cgi?id=208591
+
+        Reviewed by Brady Eidson.
+
+        Rather than return an array of information that can technically be used to reconstruct a tree,
+        let's just return the root of a tree. This introduces _WKFrameTreeNode which inherits from WKFrameInfo.
+        Covered by API tests.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::encode const):
+        (WebKit::FrameInfoData::decode):
+        * Shared/FrameInfoData.h:
+        * Shared/FrameTreeNodeData.h: Added.
+        (WebKit::FrameTreeNodeData::encode const):
+        (WebKit::FrameTreeNodeData::decode):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::parentFrameHandle const): Deleted.
+        (API::FrameInfo::childFrameHandles const): Deleted.
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/APIFrameTreeNode.cpp: Added.
+        (API::FrameTreeNode::handle const):
+        * UIProcess/API/APIFrameTreeNode.h: Added.
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo _parentFrameHandle]): Deleted.
+        (-[WKFrameInfo _childFrameHandles]): Deleted.
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frames:]):
+        (-[WKWebView _allFrames:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.h: Added.
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.mm: Added.
+        (-[_WKFrameTreeNode dealloc]):
+        (-[_WKFrameTreeNode isMainFrame]):
+        (-[_WKFrameTreeNode request]):
+        (-[_WKFrameTreeNode securityOrigin]):
+        (-[_WKFrameTreeNode webView]):
+        (-[_WKFrameTreeNode childFrames]):
+        (-[_WKFrameTreeNode copyWithZone:]):
+        (-[_WKFrameTreeNode _handle]):
+        (-[_WKFrameTreeNode _apiObject]):
+        * UIProcess/API/Cocoa/_WKFrameTreeNodeInternal.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getAllFrames):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::info const):
+        (WebKit::WebFrame::childFrameIDs const): Deleted.
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::frameID const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::frameTreeNodeData):
+        (WebKit::WebPage::getAllFrames):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-04  Antoine Quint  <graouts@apple.com>
 
         Add an SPI to allow UserStyleSheet injection to target a specific WKWebView

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FrameInfoData.h"
+#pragma once
 
-#include "WebCoreArgumentCoders.h"
+#import "ArgumentCoders.h"
+#import "FrameInfoData.h"
 
 namespace WebKit {
 
-void FrameInfoData::encode(IPC::Encoder& encoder) const
-{
-    encoder << isMainFrame;
-    encoder << request;
-    encoder << securityOrigin;
-    encoder << frameID;
-}
+struct FrameTreeNodeData {
 
-Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
-{
-    Optional<bool> isMainFrame;
-    decoder >> isMainFrame;
-    if (!isMainFrame)
-        return WTF::nullopt;
+    FrameInfoData info;
+    Vector<FrameTreeNodeData> children;
 
-    Optional<WebCore::ResourceRequest> request;
-    decoder >> request;
-    if (!request)
-        return WTF::nullopt;
+    void encode(IPC::Encoder& encoder) const
+    {
+        encoder << info;
+        encoder << children;
+    }
 
-    Optional<WebCore::SecurityOriginData> securityOrigin;
-    decoder >> securityOrigin;
-    if (!securityOrigin)
-        return WTF::nullopt;
-
-    Optional<Optional<WebCore::FrameIdentifier>> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return WTF::nullopt;
-
-    return {{
-        WTFMove(*isMainFrame),
-        WTFMove(*request),
-        WTFMove(*securityOrigin),
-        WTFMove(*frameID)
-    }};
-}
+    static Optional<FrameTreeNodeData> decode(IPC::Decoder& decoder)
+    {
+        Optional<FrameInfoData> info;
+        decoder >> info;
+        if (!info)
+            return WTF::nullopt;
+        
+        Optional<Vector<FrameTreeNodeData>> children;
+        decoder >> children;
+        if (!children)
+            return WTF::nullopt;
+        
+        return {{
+            WTFMove(*info),
+            WTFMove(*children)
+        }};
+    }
+};
 
 }

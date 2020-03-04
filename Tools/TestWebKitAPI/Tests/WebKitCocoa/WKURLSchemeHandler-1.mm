@@ -38,6 +38,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKFrameHandle.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -1019,44 +1020,66 @@ TEST(URLSchemeHandler, Frames)
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     auto handler = adoptNS([TestURLSchemeHandler new]);
-    __block size_t framesLoaded = 0;
+    __block size_t grandchildFramesLoaded = 0;
     [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         NSString *responseString = nil;
         if ([task.request.URL.absoluteString isEqualToString:@"frame://host1/"])
             responseString = @"<iframe src='frame://host2/'></iframe>";
         else if ([task.request.URL.absoluteString isEqualToString:@"frame://host2/"])
-            responseString = @"<iframe src='frame://host3/'></iframe><iframe src='frame://host4/'></iframe>";
+            responseString = @"<iframe src='frame://host3/' onload='fetch(\"loadedGrandchildFrame\")'></iframe><iframe src='frame://host4/' onload='fetch(\"loadedGrandchildFrame\")'></iframe>";
         else if ([task.request.URL.absoluteString isEqualToString:@"frame://host3/"])
             responseString = @"frame content";
         else if ([task.request.URL.absoluteString isEqualToString:@"frame://host4/"])
             responseString = @"frame content";
+        else if ([task.request.URL.path isEqualToString:@"/loadedGrandchildFrame"]) {
+            responseString = @"fetched content";
+            ++grandchildFramesLoaded;
+        }
 
         ASSERT(responseString);
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
         [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
         [task didFinish];
-        ++framesLoaded;
     }];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"frame"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
 
-    while (framesLoaded < 4)
+    while (grandchildFramesLoaded < 2)
         TestWebKitAPI::Util::spinRunLoop();
     
-    [webView _allFrames:^(NSArray<WKFrameInfo *> *frames) {
-        EXPECT_EQ(frames.count, framesLoaded);
-        EXPECT_NULL(frames[0]._parentFrameHandle);
-        EXPECT_EQ(frames[0]._childFrameHandles.count, 1u);
-        EXPECT_EQ(frames[1]._parentFrameHandle.frameID, frames[0]._handle.frameID);
-        EXPECT_EQ(frames[1]._childFrameHandles.count, 2u);
-        EXPECT_EQ(frames[1]._childFrameHandles[0].frameID, frames[2]._handle.frameID);
-        EXPECT_EQ(frames[1]._childFrameHandles[1].frameID, frames[3]._handle.frameID);
-        EXPECT_EQ(frames[2]._parentFrameHandle.frameID, frames[1]._handle.frameID);
-        EXPECT_NULL(frames[2]._childFrameHandles);
-        EXPECT_EQ(frames[3]._parentFrameHandle.frameID, frames[1]._handle.frameID);
-        EXPECT_NULL(frames[3]._childFrameHandles);
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "host1");
+        EXPECT_WK_STREQ(mainFrame.request.URL.host, "host1");
+        EXPECT_EQ(mainFrame.childFrames.count, 1u);
+        EXPECT_TRUE(mainFrame.isMainFrame);
+
+        _WKFrameTreeNode *child = mainFrame.childFrames[0];
+        EXPECT_WK_STREQ(child.request.URL.host, "host2");
+        EXPECT_WK_STREQ(child.securityOrigin.host, "host2");
+        EXPECT_EQ(child.childFrames.count, 2u);
+        EXPECT_FALSE(child.isMainFrame);
+
+        _WKFrameTreeNode *grandchild1 = child.childFrames[0];
+        EXPECT_WK_STREQ(grandchild1.request.URL.host, "host3");
+        EXPECT_WK_STREQ(grandchild1.securityOrigin.host, "host3");
+        EXPECT_EQ(grandchild1.childFrames.count, 0u);
+        EXPECT_FALSE(grandchild1.isMainFrame);
+
+        _WKFrameTreeNode *grandchild2 = child.childFrames[1];
+        EXPECT_WK_STREQ(grandchild2.request.URL.host, "host4");
+        EXPECT_WK_STREQ(grandchild2.securityOrigin.host, "host4");
+        EXPECT_EQ(grandchild2.childFrames.count, 0u);
+        EXPECT_FALSE(grandchild2.isMainFrame);
+
+        EXPECT_NE(mainFrame._handle.frameID, child._handle.frameID);
+        EXPECT_NE(mainFrame._handle.frameID, grandchild1._handle.frameID);
+        EXPECT_NE(mainFrame._handle.frameID, grandchild2._handle.frameID);
+        EXPECT_NE(child._handle.frameID, grandchild1._handle.frameID);
+        EXPECT_NE(child._handle.frameID, grandchild2._handle.frameID);
+        EXPECT_NE(grandchild1._handle.frameID, grandchild2._handle.frameID);
+
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

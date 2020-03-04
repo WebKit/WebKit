@@ -278,6 +278,7 @@ struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
+struct FrameTreeNodeData;
 struct FontInfo;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
@@ -1288,7 +1289,7 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return m_allowsContentJavaScriptFromMostRecentNavigation; }
     void setAllowsContentJavaScriptFromMostRecentNavigation(WebCore::AllowsContentJavaScript allows) { m_allowsContentJavaScriptFromMostRecentNavigation = allows; }
 
-    void getAllFrames(CompletionHandler<void(Vector<FrameInfoData>&&)>&&);
+    void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
     void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
     void setIsNavigatingToAppBoundDomain(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; }
