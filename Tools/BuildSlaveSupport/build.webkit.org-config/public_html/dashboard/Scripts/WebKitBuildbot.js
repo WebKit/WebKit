@@ -33,7 +33,6 @@ WebKitBuildbot = function()
         "Apple-Catalina-Release-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple-Catalina-Release-WK2-Perf": {platform: Dashboard.Platform.macOSCatalina, debug: false, performance: true, heading: "Performance"},
         "Apple-Catalina-Release-WK2-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple-Catalina-Leaks": {platform: Dashboard.Platform.macOSCatalina, debug: false, leaks: true},
         "Apple-Catalina JSC": {platform: Dashboard.Platform.macOSCatalina, heading: "JavaScript", combinedQueues: {
             "Apple-Catalina-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
             "Apple-Catalina-Debug-JSC-Tests": {heading: "Debug JSC (Tests)"},

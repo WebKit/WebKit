@@ -118,7 +118,7 @@
                     },
                     { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["catalina-release-tests-test262", "catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2", "catalina-leaks"],
+                      "triggers": ["catalina-release-tests-test262", "catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2"],
                       "slavenames": ["bot683", "bot674"]
                     },
                     { "name": "Apple-Catalina-Release-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-release-tests-wk1",
@@ -130,11 +130,6 @@
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot247", "bot248"]
-                    },
-                    { "name": "Apple-Catalina-Leaks", "type": "TestWebKit1Leaks", "builddir": "catalina-leaks",
-                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot121"]
                     },
                     { "name": "Apple-Catalina-Debug-JSC-Tests", "type": "TestJSC", "builddir": "catalina-debug-tests-jsc",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
@@ -418,9 +413,6 @@
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-Catalina-Debug-WK2-GPUProcess-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "catalina-leaks",
-                      "builderNames": ["Apple-Catalina-Leaks"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-jsc",
                       "builderNames": ["Apple-Catalina-Debug-JSC-Tests"]
