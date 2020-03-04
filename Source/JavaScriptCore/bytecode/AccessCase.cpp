@@ -1942,9 +1942,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         allocator.lock(scratchGPR);
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
         ASSERT(newStructure()->isPropertyDeletionTransition());
-        ASSERT(baseGPR != valueRegs.gpr());
         ASSERT(baseGPR != scratchGPR);
-        ASSERT(valueRegs.gpr() != scratchGPR);
+        ASSERT(!valueRegs.uses(baseGPR));
+        ASSERT(!valueRegs.uses(scratchGPR));
 
         ScratchRegisterAllocator::PreservedState preservedState =
             allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);

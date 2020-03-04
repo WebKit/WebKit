@@ -1,3 +1,16 @@
+2020-03-04  Paulo Matos  <pmatos@igalia.com>
+
+        JSC 32bits broken in debug mode by r257399
+        https://bugs.webkit.org/show_bug.cgi?id=208439
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use uses() method call instead of gpr() on assert to that it
+        works for both 64 and 32 bits.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2020-03-03  Saam Barati  <sbarati@apple.com>
 
         Refactor FixedVMPoolExecutableAllocator to not have member functions which are really just helper functions
