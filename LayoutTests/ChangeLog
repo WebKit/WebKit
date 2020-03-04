@@ -1,3 +1,13 @@
+2020-03-04  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS and Mac wk2 Debug ] fast/events/beforeunload-prompt.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=208590
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] scrollingcoordinator/ios/fixed-frame-overflow-swipe.html is flaky failing

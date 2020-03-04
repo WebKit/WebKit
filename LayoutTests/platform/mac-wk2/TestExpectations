@@ -1089,3 +1089,5 @@ webkit.org/b/208476 css3/shapes/shape-outside/shape-image/shape-image-025.html [
 webkit.org/b/208577 [ Release ] fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208584 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Pass Failure ]
+
+webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
