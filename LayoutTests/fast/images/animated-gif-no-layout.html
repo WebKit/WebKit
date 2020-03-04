@@ -7,9 +7,8 @@
 
     function animationComplete()
     {
-        document.body.offsetWidth; // Explicitly trigger a layout.
-
         if (window.internals && window.testRunner) {
+            internals.updateLayoutAndStyleForAllFrames();
             var count = internals.layoutCount - layoutCountBeforeTimer;
             if (count == 0) {
                 var indicator = document.getElementById("indicator");
@@ -23,10 +22,9 @@
 
     function test()
     {
-        document.body.offsetWidth; // Explicitly trigger a layout.
-
         if (window.internals && window.testRunner) {
             testRunner.waitUntilDone();
+            internals.updateLayoutAndStyleForAllFrames();
             layoutCountBeforeTimer = internals.layoutCount;
         }
 

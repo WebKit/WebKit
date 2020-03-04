@@ -530,6 +530,8 @@ enum CompositingPolicy {
 
     attribute CompositingPolicy? compositingPolicyOverride;
 
+    void updateLayoutAndStyleForAllFrames();
+
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified or null means this document.

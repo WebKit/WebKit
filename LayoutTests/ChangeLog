@@ -1,3 +1,13 @@
+2020-03-03  Zalan Bujtas  <zalan@apple.com>
+
+        [Internals] Introduce Internals::updateLayoutAndStyleRecursively
+        https://bugs.webkit.org/show_bug.cgi?id=208536
+        <rdar://problem/60012372>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/animated-gif-no-layout.html:
+
 2020-03-03  Justin Fan  <justin_fan@apple.com>
 
         [WebGL2] Implement texImage2D(TexImageSource) for RGBA/RGBA/UNSIGNED_BYTE ImageElements

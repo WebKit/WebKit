@@ -3377,6 +3377,14 @@ ExceptionOr<Optional<Internals::CompositingPolicy>> Internals::compositingPolicy
     return { Internals::CompositingPolicy::Normal };
 }
 
+void Internals::updateLayoutAndStyleForAllFrames()
+{
+    auto* document = contextDocument();
+    if (!document || !document->view())
+        return;
+    document->view()->updateLayoutAndStyleIfNeededRecursive();
+}
+
 ExceptionOr<void> Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* node)
 {
     Document* document;
