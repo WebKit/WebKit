@@ -183,6 +183,8 @@ TEST(AsyncFunction, Promise)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
+    [webView callAsyncJavaScript:@"shouldn't crash" arguments:@{ @"invalidparameter" : webView.get() } inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+
     NSString *functionBody = @"return new Promise(function(resolve, reject) { setTimeout(function(){ resolve(42) }, 0); })";
 
     bool done = false;

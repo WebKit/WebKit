@@ -904,7 +904,7 @@ static bool validateArgument(id argument)
         argumentsMap->set(key, *wireBytes);
     }
 
-    if (errorMessage) {
+    if (errorMessage && handler) {
         RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
         [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred) forKey:NSLocalizedDescriptionKey];
