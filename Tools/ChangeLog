@@ -1,3 +1,17 @@
+2020-03-03  Brady Eidson  <beidson@apple.com>
+
+        API Test [Mojave+ WK2 Debug ] TestWebKitAPI.WKAttachmentTestsMac.InsertDroppedFilePromisesAsAttachments is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=198795
+
+        Reviewed by Chris Dumez.
+
+        This test appears to no longer be flaky.
+        
+        Let's re-enable it.
+        
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2020-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Requests sent to _WKResourceLoadDelegate should include HTTPBody

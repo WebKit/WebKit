@@ -1608,7 +1608,7 @@ TEST(WKAttachmentTestsMac, InsertPastedFileURLsAsAttachments)
     }
 }
 
-TEST(WKAttachmentTestsMac, DISABLED_InsertDroppedFilePromisesAsAttachments)
+TEST(WKAttachmentTestsMac, InsertDroppedFilePromisesAsAttachments)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setAttachmentElementEnabled:YES];
