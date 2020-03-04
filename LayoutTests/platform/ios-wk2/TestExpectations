@@ -1441,3 +1441,5 @@ webkit.org/b/208576 webrtc/video-replace-track.html [ Pass Failure ]
 webkit.org/b/208576 [ Debug ] fast/forms/textarea-no-scroll-on-blur.html [ Failure ]
 
 webkit.org/b/208576 [ Debug ] fast/forms/textarea-scrolled-type.html [ Failure ]
+
+webkit.org/b/208581 http/wpt/service-workers/skipFetchEvent.https.html [ Pass Failure ]
