@@ -29,6 +29,9 @@
 #if HAVE(NETWORK_FRAMEWORK)
 
 #import "Utilities.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -112,32 +115,43 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
         size_t pathLength = pathEnd - request.data() - pathPrefixLength;
         String path(request.data() + pathPrefixLength, pathLength);
         ASSERT_WITH_MESSAGE(m_requestResponseMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
-        
-        auto response = m_requestResponseMap.get(path);
-        StringBuilder responseBuilder;
-        responseBuilder.append("HTTP/1.1 ");
-        responseBuilder.appendNumber(response.statusCode);
-        responseBuilder.append(' ');
-        responseBuilder.append(statusText(response.statusCode));
-        responseBuilder.append("\r\nContent-Length: ");
-        responseBuilder.appendNumber(response.body.length());
-        responseBuilder.append("\r\n");
-        for (auto& pair : response.headerFields) {
-            responseBuilder.append(pair.key);
-            responseBuilder.append(": ");
-            responseBuilder.append(pair.value);
+
+        CompletionHandler<void()> sendResponse = [this, connection = retainPtr(connection), context = retainPtr(context), path = WTFMove(path)] {
+            auto response = m_requestResponseMap.get(path);
+            StringBuilder responseBuilder;
+            responseBuilder.append("HTTP/1.1 ");
+            responseBuilder.appendNumber(response.statusCode);
+            responseBuilder.append(' ');
+            responseBuilder.append(statusText(response.statusCode));
+            responseBuilder.append("\r\nContent-Length: ");
+            responseBuilder.appendNumber(response.body.length());
             responseBuilder.append("\r\n");
-        }
-        responseBuilder.append("\r\n");
-        responseBuilder.append(response.body);
-        auto responseBodyAndHeader = responseBuilder.toString().releaseImpl();
-        auto responseData = adoptNS(dispatch_data_create(responseBodyAndHeader->characters8(), responseBodyAndHeader->length(), dispatch_get_main_queue(), ^{
-            (void)responseBodyAndHeader;
-        }));
-        nw_connection_send(connection, responseData.get(), context, true, ^(nw_error_t error) {
-            ASSERT(!error);
-            respondToRequests(connection);
-        });
+            for (auto& pair : response.headerFields) {
+                responseBuilder.append(pair.key);
+                responseBuilder.append(": ");
+                responseBuilder.append(pair.value);
+                responseBuilder.append("\r\n");
+            }
+            responseBuilder.append("\r\n");
+            responseBuilder.append(response.body);
+            auto responseBodyAndHeader = responseBuilder.toString().releaseImpl();
+            auto responseData = adoptNS(dispatch_data_create(responseBodyAndHeader->characters8(), responseBodyAndHeader->length(), dispatch_get_main_queue(), ^{
+                (void)responseBodyAndHeader;
+            }));
+            nw_connection_send(connection.get(), responseData.get(), context.get(), true, ^(nw_error_t error) {
+                ASSERT(!error);
+                respondToRequests(connection.get());
+            });
+        };
+
+        if (strstr(request.data(), "Content-Length")) {
+            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
+                if (error || !content)
+                    return;
+                sendResponse();
+            }).get());
+        } else
+            sendResponse();
     });
 }
 

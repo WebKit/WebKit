@@ -1,3 +1,19 @@
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
+        Requests sent to _WKResourceLoadDelegate should include HTTPBody
+        https://bugs.webkit.org/show_bug.cgi?id=208550
+
+        Reviewed by Tim Hatcher.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * UIProcess/Cocoa/ResourceLoadDelegate.mm:
+        (WebKit::ResourceLoadDelegate::ResourceLoadClient::didSendRequest const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::resourceLoadDidSendRequest):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2020-03-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Fix WinCairo build following r257801.

@@ -82,7 +82,7 @@ void ResourceLoadDelegate::ResourceLoadClient::didSendRequest(WebKit::ResourceLo
     if (!delegate)
         return;
 
-    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didSendRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
+    [delegate webView:m_resourceLoadDelegate.m_webView.get().get() resourceLoad:wrapper(API::ResourceLoadInfo::create(WTFMove(loadInfo)).get()) didSendRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)];
 }
 
 void ResourceLoadDelegate::ResourceLoadClient::didPerformHTTPRedirection(WebKit::ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request) const

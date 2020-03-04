@@ -203,7 +203,7 @@ TEST(ResourceLoadDelegate, LoadInfo)
 {
     TestWebKitAPI::HTTPServer server({
         { "/", { "<iframe src='iframeSrc'></iframe>" } },
-        { "/iframeSrc", { "<script>fetch('fetchTarget')</script>" } },
+        { "/iframeSrc", { "<script>fetch('fetchTarget', { body: 'a=b&c=d', method: 'post'})</script>" } },
         { "/fetchTarget", { "hi" } },
     });
 
@@ -308,6 +308,7 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_EQ(otherParameters[5], nil);
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[6] class]), "NSMutableURLRequest");
     EXPECT_WK_STREQ([otherParameters[6] URL].path, "/fetchTarget");
+    EXPECT_WK_STREQ([[[NSString alloc] initWithData:[otherParameters[6] HTTPBody] encoding:NSUTF8StringEncoding] autorelease], "a=b&c=d");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[7] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[7] URL].path, "/fetchTarget");
     EXPECT_EQ(otherParameters[8], nil);

@@ -323,8 +323,15 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url());
 
-    if (m_parameters.pageHasResourceLoadClient)
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request), 0);
+    if (m_parameters.pageHasResourceLoadClient) {
+        Optional<IPC::FormDataReference> httpBody;
+        if (auto* formData = request.httpBody()) {
+            static constexpr auto maxSerializedRequestSize = 1024 * 1024;
+            if (formData->lengthInBytes() <= maxSerializedRequestSize)
+                httpBody = IPC::FormDataReference { formData };
+        }
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request, httpBody), 0);
+    }
 
     parameters.request = WTFMove(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;

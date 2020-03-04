@@ -43,6 +43,10 @@
 #include "LegacyCustomProtocolManagerProxy.h"
 #endif
 
+namespace IPC {
+class FormDataReference;
+}
+
 namespace PAL {
 class SessionID;
 }
@@ -211,7 +215,7 @@ public:
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 
-    void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&);
+    void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&, Optional<IPC::FormDataReference>&&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::AuthenticationChallenge&&);
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);

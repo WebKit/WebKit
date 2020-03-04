@@ -1,5 +1,19 @@
 2020-03-03  Alex Christensen  <achristensen@webkit.org>
 
+        Requests sent to _WKResourceLoadDelegate should include HTTPBody
+        https://bugs.webkit.org/show_bug.cgi?id=208550
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        HTTPServer now looks for Content-Length in its request.
+        If it finds this header, that means that the HTTP body is going to be received in another read, then the response should be sent after receiving that.
+
+2020-03-03  Alex Christensen  <achristensen@webkit.org>
+
         Expose originalURL and originalHTTPMethod on _WKResourceLoadInfo
         https://bugs.webkit.org/show_bug.cgi?id=208522
 

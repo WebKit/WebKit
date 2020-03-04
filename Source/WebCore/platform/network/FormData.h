@@ -250,7 +250,7 @@ public:
         return FormURLEncoded;
     }
 
-    uint64_t lengthInBytes() const;
+    WEBCORE_EXPORT uint64_t lengthInBytes() const;
 
     WEBCORE_EXPORT URL asBlobURL() const;
 

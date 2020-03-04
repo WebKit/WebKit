@@ -474,11 +474,16 @@ void NetworkProcessProxy::logGlobalDiagnosticMessageWithValue(const String& mess
         page->logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
 }
 
-void NetworkProcessProxy::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request)
+void NetworkProcessProxy::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request, Optional<IPC::FormDataReference>&& httpBody)
 {
     auto* page = WebProcessProxy::webPage(pageID);
     if (!page)
         return;
+
+    if (httpBody) {
+        auto data = httpBody->takeData();
+        request.setHTTPBody(WTFMove(data));
+    }
 
     page->resourceLoadDidSendRequest(WTFMove(loadInfo), WTFMove(request));
 }
