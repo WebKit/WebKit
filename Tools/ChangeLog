@@ -1,3 +1,23 @@
+2020-03-04  Daniel Bates  <dabates@apple.com>
+
+        Organize tests in RequestTextInputContext.mm tests under test name RequestTextInputContext
+        https://bugs.webkit.org/show_bug.cgi?id=208564
+
+        Reviewed by Alex Christensen.
+
+        Group the tests in RequestTextInputContext.mm under the test case name RequestTextInputContext
+        to make it easy to run just these tests.
+
+        Currently, the tests are organized under the test case name WebKit. This means you need to
+        pass run-api-tests the name of each sub-test as there is no easy way to run them all without
+        also running all the TestWebKitAPI.WebKit sub-tests. Instead organize them under RequestTextInputContext
+        so that a person can run just these test using:
+        
+                run-api-tests --debug TestWebKitAPI.RequestTextInputContext
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TEST):
+
 2020-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build step to create local git commit for commit-queue

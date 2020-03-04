@@ -73,7 +73,7 @@ static NSString *applyIframe(NSString *HTMLString)
     return applyStyle([NSString stringWithFormat:@"<iframe src=\"data:text/html,%@\" style='position: absolute; top: 200px;'>", [applyStyle(HTMLString) stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]]]);
 }
 
-TEST(WebKit, RequestTextInputContext)
+TEST(RequestTextInputContext, Simple)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -167,7 +167,7 @@ TEST(WebKit, RequestTextInputContext)
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[1].boundingRect);
 }
 
-TEST(WebKit, DISABLED_FocusTextInputContext)
+TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetThreadedScrollingEnabled((WKPreferencesRef)[configuration preferences], false);
