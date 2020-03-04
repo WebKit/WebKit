@@ -1,3 +1,18 @@
+2020-03-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        REGRESSION (r257739): two fast/events/autoscroll test have started to fail
+        https://bugs.webkit.org/show_bug.cgi?id=208520
+        <rdar://problem/60000214>
+
+        Reviewed by Chris Fleizach.
+
+        Calling InjectedBundle::singleton().page()->page() in the constructor
+        of the AccessibilityController is having this side effect on iOS.
+        So #if to MAC where it's actually being used.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::AccessibilityController):
+
 2020-03-03  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI _WKResourceLoadInfo.loadedFromCache

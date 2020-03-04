@@ -46,7 +46,7 @@ Ref<AccessibilityController> AccessibilityController::create()
 
 AccessibilityController::AccessibilityController()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     m_useAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
 #endif
 }
