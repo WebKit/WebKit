@@ -7,7 +7,7 @@
 
         Wait for the dobule tap delay between the initial tap and the second tap on the editable region
         so that the second tap would result in a selection change instead of both taps to be recognized
-        as a single dobule tap.
+        as a single double tap.
 
         * editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html:
 
