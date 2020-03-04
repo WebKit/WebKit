@@ -1,3 +1,22 @@
+2020-03-04  Youenn Fablet  <youenn@apple.com>
+
+        WebChromeClient::createImageBuffer should not create a connection to GPU Process if page does not want remote rendering
+        https://bugs.webkit.org/show_bug.cgi?id=208567
+        rdar://problem/60020229
+
+        Reviewed by Wenson Hsieh.
+
+        Manually tested.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        Minor refactoring to directly take a ShouldAccelerate instead of a RenderingMode.
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        In case page does not want to do remote rendering, do not create a remote image buffer.
+        Instead, return null and let the caller create a local image buffer.
+
 2020-03-04  Zalan Bujtas  <zalan@apple.com>
 
         [First paint] Going from visually empty to non-empty should immediately trigger layer unfreezing
