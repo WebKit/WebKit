@@ -1514,9 +1514,37 @@ void WebsiteDataStore::getResourceLoadStatisticsDataSummary(CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
 
+    struct CallbackAggregator : RefCounted<CallbackAggregator> {
+        CallbackAggregator(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&& completionHandler)
+            : m_completionHandler(WTFMove(completionHandler))
+        {
+            ASSERT(RunLoop::isMain());
+        };
+
+        ~CallbackAggregator()
+        {
+            ASSERT(RunLoop::isMain());
+
+            m_completionHandler(WTFMove(m_results));
+        }
+
+        void addResult(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& results)
+        {
+            m_results.appendVector(WTFMove(results));
+        }
+
+        CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)> m_completionHandler;
+        Vector<WebResourceLoadStatisticsStore::ThirdPartyData> m_results;
+    };
+
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
+
     for (auto& processPool : ensureProcessPools()) {
-        if (auto* process = processPool->networkProcess())
-            process->getResourceLoadStatisticsDataSummary(m_sessionID, WTFMove(completionHandler));
+        if (auto* process = processPool->networkProcess()) {
+            process->getResourceLoadStatisticsDataSummary(m_sessionID, [callbackAggregator = callbackAggregator.copyRef()](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& data) {
+                callbackAggregator->addResult(WTFMove(data));
+            });
+        }
     }
 }
 
