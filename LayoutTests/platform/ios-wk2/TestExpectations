@@ -1437,3 +1437,7 @@ webkit.org/b/208543 fast/hidpi/filters-and-image-buffer-resolution.html [ Pass F
 webkit.org/b/208547 http/tests/navigation/process-swap-on-client-side-redirect-private.html [ Pass Timeout ]
 
 webkit.org/b/208576 webrtc/video-replace-track.html [ Pass Failure ]
+
+webkit.org/b/208576 [ Debug ] fast/forms/textarea-no-scroll-on-blur.html [ Failure ]
+
+webkit.org/b/208576 [ Debug ] fast/forms/textarea-scrolled-type.html [ Failure ]
