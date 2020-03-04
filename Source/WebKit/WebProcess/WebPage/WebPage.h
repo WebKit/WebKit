@@ -1239,9 +1239,7 @@ public:
     Optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
 
     void startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&&, CompletionHandler<void()>&&);
-    void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier,
-        const Vector<WebCore::TextManipulationController::ManipulationToken>&,
-        CompletionHandler<void(WebCore::TextManipulationController::ManipulationResult)>&&);
+    void completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>&, CompletionHandler<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
 
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();

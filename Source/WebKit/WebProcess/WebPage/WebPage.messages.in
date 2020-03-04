@@ -599,8 +599,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> () Async
-    CompleteTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID, Vector<WebCore::TextManipulationController::ManipulationToken> tokens) -> (enum:uint8_t WebCore::TextManipulationController::ManipulationResult result) Async
-    
+    CompleteTextManipulation(Vector<WebCore::TextManipulationController::ManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures) Async
+
     SetOverriddenMediaType(String mediaType)
     GetProcessDisplayName() -> (String displayName) Async
 

@@ -9886,22 +9886,21 @@ void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulation
     sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules), WTFMove(completionHandler));
 }
 
-void WebPageProxy::didFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier itemID,
-    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens)
+void WebPageProxy::didFindTextManipulationItems(const Vector<WebCore::TextManipulationController::ManipulationItem>& items)
 {
     if (!m_textManipulationItemCallback)
         return;
-    m_textManipulationItemCallback(itemID, tokens);
+    m_textManipulationItemCallback(items);
 }
 
-void WebPageProxy::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
-    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, WTF::Function<void (WebCore::TextManipulationController::ManipulationResult result)>&& completionHandler)
+void WebPageProxy::completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>& items,
+    WTF::Function<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
-        completionHandler(WebCore::TextManipulationController::ManipulationResult::InvalidItem);
+        completionHandler(true, { });
         return;
     }
-    sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(itemID, tokens), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(items), WTFMove(completionHandler));
 }
 
 void WebPageProxy::setOverriddenMediaType(const String& mediaType)

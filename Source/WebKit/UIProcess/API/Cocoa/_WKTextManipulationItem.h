@@ -45,4 +45,16 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @end
 
+WK_EXTERN NSString * const _WKTextManipulationItemErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ENUM(NSInteger, _WKTextManipulationItemErrorCode) {
+    _WKTextManipulationItemErrorNotAvailable,
+    _WKTextManipulationItemErrorContentChanged,
+    _WKTextManipulationItemErrorInvalidItem,
+    _WKTextManipulationItemErrorInvalidToken,
+    _WKTextManipulationItemErrorExclusionViolation,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+WK_EXTERN NSErrorUserInfoKey const _WKTextManipulationItemErrorItemKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 NS_ASSUME_NONNULL_END

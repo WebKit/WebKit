@@ -136,6 +136,7 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     VisiblePosition end = lastPositionInNode(m_document.get());
 
     observeParagraphs(start, end);
+    flushPendingItemsForCallback();
 }
 
 void TextManipulationController::observeParagraphs(VisiblePosition& start, VisiblePosition& end)
@@ -258,30 +259,58 @@ void TextManipulationController::scheduleObservartionUpdate()
 
             controller->observeParagraphs(start, end);
         }
+        controller->flushPendingItemsForCallback();
     });
 }
 
 void TextManipulationController::addItem(const Position& startOfParagraph, const Position& endOfParagraph, Vector<ManipulationToken>&& tokens)
 {
+    const unsigned itemCallbackBatchingSize = 128;
+
     ASSERT(m_document);
-    auto result = m_items.add(m_itemIdentifier.generate(), ManipulationItem { startOfParagraph, endOfParagraph, WTFMove(tokens) });
-    m_callback(*m_document, result.iterator->key, result.iterator->value.tokens);
+    auto newID = m_itemIdentifier.generate();
+    m_pendingItemsForCallback.append(ManipulationItem {
+        newID,
+        tokens.map([](auto& token) { return token; })
+    });
+    m_items.add(newID, ManipulationItemData { startOfParagraph, endOfParagraph, WTFMove(tokens) });
+
+    if (m_pendingItemsForCallback.size() >= itemCallbackBatchingSize)
+        flushPendingItemsForCallback();
 }
 
-auto TextManipulationController::completeManipulation(ItemIdentifier itemIdentifier, const Vector<ManipulationToken>& replacementTokens) -> ManipulationResult
+void TextManipulationController::flushPendingItemsForCallback()
 {
-    if (!itemIdentifier)
-        return ManipulationResult::InvalidItem;
+    m_callback(*m_document, m_pendingItemsForCallback);
+    m_pendingItemsForCallback.clear();
+}
 
-    auto itemIterator = m_items.find(itemIdentifier);
-    if (itemIterator == m_items.end())
-        return ManipulationResult::InvalidItem;
+auto TextManipulationController::completeManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>& completionItems) -> Vector<ManipulationFailure>
+{
+    Vector<ManipulationFailure> failures;
+    for (unsigned i = 0; i < completionItems.size(); ++i) {
+        auto& itemToComplete = completionItems[i];
+        auto identifier = itemToComplete.identifier;
+        if (!identifier) {
+            failures.append(ManipulationFailure { identifier, i, ManipulationFailureType::InvalidItem });
+            continue;
+        }
 
-    ManipulationItem item;
-    std::exchange(item, itemIterator->value);
-    m_items.remove(itemIterator);
+        auto itemDataIterator = m_items.find(identifier);
+        if (itemDataIterator == m_items.end()) {
+            failures.append(ManipulationFailure { identifier, i, ManipulationFailureType::InvalidItem });
+            continue;
+        }
 
-    return replace(item, replacementTokens);
+        ManipulationItemData itemData;
+        std::exchange(itemData, itemDataIterator->value);
+        m_items.remove(itemDataIterator);
+
+        auto failureOrNullopt = replace(itemData, itemToComplete.tokens);
+        if (failureOrNullopt)
+            failures.append(ManipulationFailure { identifier, i, *failureOrNullopt });
+    }
+    return failures;
 }
 
 struct TokenExchangeData {
@@ -301,10 +330,10 @@ struct NodeInsertion {
     Ref<Node> child;
 };
 
-auto TextManipulationController::replace(const ManipulationItem& item, const Vector<ManipulationToken>& replacementTokens) -> ManipulationResult
+auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens) -> Optional<ManipulationFailureType>
 {
     if (item.start.isOrphan() || item.end.isOrphan())
-        return ManipulationResult::ContentChanged;
+        return ManipulationFailureType::ContentChanged;
 
     TextIterator iterator { item.start, item.end };
     size_t currentTokenIndex = 0;
@@ -314,10 +343,10 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
     while (!iterator.atEnd()) {
         auto string = iterator.text().toString();
         if (currentTokenIndex >= item.tokens.size())
-            return ManipulationResult::ContentChanged;
+            return ManipulationFailureType::ContentChanged;
         auto& currentToken = item.tokens[currentTokenIndex];
         if (iterator.text() != currentToken.content)
-            return ManipulationResult::ContentChanged;
+            return ManipulationFailureType::ContentChanged;
 
         auto currentNode = makeRefPtr(iterator.node());
         tokenExchangeMap.set(currentToken.identifier, TokenExchangeData { currentNode.copyRef(), currentToken.content, currentToken.isExcluded });
@@ -358,17 +387,17 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
     for (auto& newToken : replacementTokens) {
         auto it = tokenExchangeMap.find(newToken.identifier);
         if (it == tokenExchangeMap.end())
-            return ManipulationResult::InvalidToken;
+            return ManipulationFailureType::InvalidToken;
 
         auto& exchangeData = it->value;
 
         RefPtr<Node> contentNode;
         if (exchangeData.isExcluded) {
             if (exchangeData.isConsumed)
-                return ManipulationResult::ExclusionViolation;
+                return ManipulationFailureType::ExclusionViolation;
             exchangeData.isConsumed = true;
             if (!newToken.content.isNull() && newToken.content != exchangeData.originalContent)
-                return ManipulationResult::ExclusionViolation;
+                return ManipulationFailureType::ExclusionViolation;
             contentNode = Text::create(commonAncestor->document(), exchangeData.originalContent);
         } else
             contentNode = Text::create(commonAncestor->document(), newToken.content);
@@ -423,7 +452,7 @@ auto TextManipulationController::replace(const ManipulationItem& item, const Vec
             m_manipulatedElements.add(downcast<Element>(insertion.child.get()));
     }
 
-    return ManipulationResult::Success;
+    return WTF::nullopt;
 }
 
 } // namespace WebCore

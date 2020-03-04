@@ -587,6 +587,6 @@ messages -> WebPageProxy {
     SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
 #endif
 
-    DidFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier itemID, Vector<WebCore::TextManipulationController::ManipulationToken> tokens)
+    DidFindTextManipulationItems(Vector<WebCore::TextManipulationController::ManipulationItem> items)
 
 }

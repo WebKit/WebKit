@@ -1654,8 +1654,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         }
     }
 
-    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::TextManipulationController::ItemIdentifier itemID,
-        const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens) {
+    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (const Vector<WebCore::TextManipulationController::ManipulationItem>& itemReferences) {
         if (!weakSelf)
             return;
 
@@ -1664,39 +1663,137 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         if (!delegate)
             return;
 
-        NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:tokens.size()];
-        for (auto& token : tokens) {
-            auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
-            [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
-            [wkToken setContent:token.content];
-            [wkToken setExcluded:token.isExcluded];
-            [wkTokens addObject:wkToken.get()];
+        if (![delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)]) {
+            for (auto& item : itemReferences) {
+                NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:item.tokens.size()];
+                for (auto& token : item.tokens) {
+                    auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
+                    [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
+                    [wkToken setContent:token.content];
+                    [wkToken setExcluded:token.isExcluded];
+                    [wkTokens addObject:wkToken.get()];
+                }
+                auto wkItem = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:wkTokens]);
+                [delegate _webView:retainedSelf.get() didFindTextManipulationItem:wkItem.get()];
+            }
+            return;
         }
 
-        auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(itemID.toUInt64()) tokens:wkTokens]);
-        [delegate _webView:retainedSelf.get() didFindTextManipulationItem:item.get()];
+        NSMutableArray *wkItems = [NSMutableArray arrayWithCapacity:itemReferences.size()];
+        for (auto& item : itemReferences) {
+            NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:item.tokens.size()];
+            for (auto& token : item.tokens) {
+                auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
+                [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
+                [wkToken setContent:token.content];
+                [wkToken setExcluded:token.isExcluded];
+                [wkTokens addObject:wkToken.get()];
+            }
+            auto wkItem = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:wkTokens]);
+            [wkItems addObject:wkItem.get()];
+        }
+        [delegate _webView:retainedSelf.get() didFindTextManipulationItems:wkItems];
+
     }, [capturedCompletionBlock = makeBlockPtr(completionHandler)] () {
         capturedCompletionBlock();
     });
 }
 
+static WebCore::TextManipulationController::ItemIdentifier coreTextManipulationItemIdentifierFromString(NSString* identifier)
+{
+    return makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(String(identifier).toUInt64());
+}
+
+static WebCore::TextManipulationController::TokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString* identifier)
+{
+    return makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(String(identifier).toUInt64());
+}
+
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
 {
-    using ManipulationResult = WebCore::TextManipulationController::ManipulationResult;
-
-    if (!_page)
+    if (!_page) {
+        completionHandler(false);
         return;
-
-    auto itemID = makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(String(item.identifier).toUInt64());
-
-    Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
-    for (_WKTextManipulationToken *wkToken in item.tokens) {
-        auto tokenID = makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(String(wkToken.identifier).toUInt64());
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { tokenID, wkToken.content });
     }
 
-    _page->completeTextManipulation(itemID, tokens, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (ManipulationResult result) {
-        capturedCompletionBlock(result == ManipulationResult::Success);
+    auto itemID = coreTextManipulationItemIdentifierFromString(item.identifier);
+
+    Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
+    for (_WKTextManipulationToken *wkToken in item.tokens)
+        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content });
+
+    Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
+    coreItems.reserveInitialCapacity(1);
+    coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { itemID, WTFMove(tokens) });
+    _page->completeTextManipulation(coreItems, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool allFailed, auto& failures) {
+        capturedCompletionBlock(!allFailed && failures.isEmpty());
+    });
+}
+
+static RetainPtr<NSMutableArray> makeFailureSetForAllTextManipulationItems(NSArray<_WKTextManipulationItem *> *items)
+{
+    RetainPtr<NSMutableArray> wkFailures = adoptNS([[[NSMutableArray alloc] initWithCapacity:items.count] autorelease]);
+    for (_WKTextManipulationItem *item in items)
+        [wkFailures addObject:[NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:_WKTextManipulationItemErrorNotAvailable userInfo:@{_WKTextManipulationItemErrorItemKey: item}]];
+    return wkFailures;
+};
+
+static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipulationItem *> *items, const Vector<WebCore::TextManipulationController::ManipulationFailure>& failures)
+{
+    using ManipulationFailureType = WebCore::TextManipulationController::ManipulationFailureType;
+
+    if (failures.isEmpty())
+        return RetainPtr<NSMutableArray> { nil };
+
+    RetainPtr<NSMutableArray> wkFailures = adoptNS([[NSMutableArray alloc] initWithCapacity:failures.size()]);
+    for (auto& coreFailure : failures) {
+        ASSERT(coreFailure.index < items.count);
+        if (coreFailure.index >= items.count)
+            continue;
+        auto* item = items[coreFailure.index];
+        ASSERT(coreTextManipulationItemIdentifierFromString(item.identifier) == coreFailure.identifier);
+        auto errorCode = ([&coreFailure]() {
+            switch (coreFailure.type) {
+            case ManipulationFailureType::ContentChanged:
+                return _WKTextManipulationItemErrorContentChanged;
+            case ManipulationFailureType::InvalidItem:
+                return _WKTextManipulationItemErrorInvalidItem;
+            case ManipulationFailureType::InvalidToken:
+                return _WKTextManipulationItemErrorInvalidToken;
+            case ManipulationFailureType::ExclusionViolation:
+                return _WKTextManipulationItemErrorExclusionViolation;
+            }
+        })();
+        [wkFailures addObject:[NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:static_cast<int>(errorCode) userInfo:@{_WKTextManipulationItemErrorItemKey: item}]];
+    }
+
+    return wkFailures;
+}
+
+- (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler
+{
+    if (!_page) {
+        completionHandler(makeFailureSetForAllTextManipulationItems(items).get());
+        return;
+    }
+
+    Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
+    coreItems.reserveInitialCapacity(items.count);
+    for (_WKTextManipulationItem *wkItem in items) {
+        Vector<WebCore::TextManipulationController::ManipulationToken> coreTokens;
+        coreTokens.reserveInitialCapacity(wkItem.tokens.count);
+        for (_WKTextManipulationToken *wkToken in wkItem.tokens)
+            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content });
+        coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
+    }
+
+    RetainPtr<NSArray<_WKTextManipulationItem *>> retainedItems = items;
+    _page->completeTextManipulation(coreItems, [capturedItems = retainedItems, capturedCompletionBlock = makeBlockPtr(completionHandler)](bool allFailed, auto& failures) {
+        if (allFailed) {
+            capturedCompletionBlock(makeFailureSetForAllTextManipulationItems(capturedItems.get()).get());
+            return;
+        }
+        capturedCompletionBlock(wkTextManipulationErrors(capturedItems.get(), failures).get());
     });
 }
 

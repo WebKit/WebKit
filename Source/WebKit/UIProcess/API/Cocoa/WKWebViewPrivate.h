@@ -190,8 +190,9 @@ for this property.
 @property (nonatomic, readonly) _WKFrameHandle *_mainFrame WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 @property (nonatomic, weak, setter=_setTextManipulationDelegate:) id <_WKTextManipulationDelegate> _textManipulationDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)snapshotConfiguration completion:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
 

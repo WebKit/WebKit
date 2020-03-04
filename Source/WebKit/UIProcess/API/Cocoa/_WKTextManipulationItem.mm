@@ -29,6 +29,9 @@
 #import "_WKTextManipulationToken.h"
 #import <wtf/RetainPtr.h>
 
+NSString * const _WKTextManipulationItemErrorDomain = @"WKTextManipulationItemErrorDomain";
+NSString * const _WKTextManipulationItemErrorItemKey = @"item";
+
 @implementation _WKTextManipulationItem {
     RetainPtr<NSString> _identifier;
     RetainPtr<NSArray<_WKTextManipulationToken *>> _tokens;

@@ -1682,11 +1682,10 @@ public:
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 #endif
 
-    using TextManipulationItemCallback = WTF::Function<void (WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&)>;
+    using TextManipulationItemCallback = WTF::Function<void(const Vector<WebCore::TextManipulationController::ManipulationItem>&)>;
     void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
-    void didFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&);
-    void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&,
-        WTF::Function<void (WebCore::TextManipulationController::ManipulationResult)>&&);
+    void didFindTextManipulationItems(const Vector<WebCore::TextManipulationController::ManipulationItem>&);
+    void completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>&, WTF::Function<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&&);
 
     const String& overriddenMediaType() const { return m_overriddenMediaType; }
     void setOverriddenMediaType(const String&);

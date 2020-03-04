@@ -6957,8 +6957,7 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
     if (!mainDocument)
         return;
 
-    mainDocument->textManipulationController().startObservingParagraphs([webPage = makeWeakPtr(*this)] (WebCore::Document& document,
-        WebCore::TextManipulationController::ItemIdentifier itemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens) {
+    mainDocument->textManipulationController().startObservingParagraphs([webPage = makeWeakPtr(*this)] (Document& document, const Vector<WebCore::TextManipulationController::ManipulationItem>& items) {
         auto* frame = document.frame();
         if (!webPage || !frame || webPage->mainFrame() != frame)
             return;
@@ -6967,31 +6966,36 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
         if (!webFrame)
             return;
 
-        webPage->send(Messages::WebPageProxy::DidFindTextManipulationItem(itemIdentifier, tokens));
+        webPage->send(Messages::WebPageProxy::DidFindTextManipulationItems(items));
     }, WTFMove(exclusionRules));
     // For now, we assume startObservingParagraphs find all paragraphs synchronously at once.
     completionHandler();
 }
 
-void WebPage::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
-    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, CompletionHandler<void(WebCore::TextManipulationController::ManipulationResult)>&& completionHandler)
+void completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>,
+    CompletionHandler<void(const HashSet<WebCore::TextManipulationController::ItemIdentifier, WebCore::TextManipulationController::ManipulationFailure>&)>&&);
+
+void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationController::ManipulationItem>& items,
+    CompletionHandler<void(bool allFailed, const Vector<WebCore::TextManipulationController::ManipulationFailure>&)>&& completionHandler)
 {
-    using ManipulationResult = WebCore::TextManipulationController::ManipulationResult;
-    auto completeManipulation = [&] {
-        if (!m_page)
-            return ManipulationResult::InvalidItem;
+    if (!m_page) {
+        completionHandler(true, { });
+        return;
+    }
 
-        auto mainDocument = makeRefPtr(m_page->mainFrame().document());
-        if (!mainDocument)
-            return ManipulationResult::InvalidItem;
+    auto mainDocument = makeRefPtr(m_page->mainFrame().document());
+    if (!mainDocument) {
+        completionHandler(true, { });
+        return;
+    }
 
-        auto* controller = mainDocument->textManipulationControllerIfExists();
-        if (!controller)
-            return ManipulationResult::InvalidItem;
+    auto* controller = mainDocument->textManipulationControllerIfExists();
+    if (!controller) {
+        completionHandler(true, { });
+        return;
+    }
 
-        return controller->completeManipulation(itemID, tokens);
-    };
-    completionHandler(completeManipulation());
+    completionHandler(false, controller->completeManipulation(items));
 }
 
 PAL::SessionID WebPage::sessionID() const

@@ -1,3 +1,52 @@
+2020-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Batch observations and completions of text manipulations
+        https://bugs.webkit.org/show_bug.cgi?id=208406
+
+        Reviewed by Wenson Hsieh.
+
+        Update WKWebView's SPI for text manipulations to batch observations and replacements of multiple paragraphs
+        at once instead of observing and replacing one paragraph at a time.
+
+        _WKTextManipulationDelegate now has a new callback, didFindTextManipulationItems, which gets an array of
+        _WKTextManipulationItem instead of a single _WKTextManipulationItem like didFindTextManipulationItem,
+        and WKWebView's _completeTextManipulationForItems replaces multiple paragraphs at once, and gives an array
+        of NSError for each _WKTextManipulationItem that failed to replace the respective content.
+
+        Tests: TestWebKitAPI.TextManipulation.StartTextManipulationSupportsLegacyDelegateCallback: Added.
+               TestWebKitAPI.TextManipulation.LegacyCompleteTextManipulationReplaceSimpleSingleParagraph: Added.
+               TestWebKitAPI.TextManipulation.CompleteTextManipulationReplaceMultipleSimpleParagraphsAtOnce: Added.
+               TestWebKitAPI.TextManipulation.CompleteTextManipulationShouldBatchItemCallback: Added.
+               TestWebKitAPI.TextManipulation.CompleteTextManipulationFailWhenItemIdentifierIsDuplicated: Added.
+               TestWebKitAPI.TextManipulation.CompleteTextManipulationCanHandleSubsetOfItemsToFail: Added.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]):
+        (coreTextManipulationItemIdentifierFromString): Added.
+        (coreTextManipulationTokenIdentifierFromString): Added.
+        (-[WKWebView _completeTextManipulation:completion:]): Updated to work with the new TextManipulationController
+        interface.
+        (makeFailureSetForAllTextManipulationItems): Added.
+        (wkTextManipulationErrors): Added.
+        (-[WKWebView _completeTextManipulationForItems:completion:]): Added. This is the new SPI.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationDelegate.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.h:
+        (_WKTextManipulationItemErrorDomain): Added.
+        (_WKTextManipulationItemErrorCode): Added.
+        (_WKTextManipulationItemErrorItemKey): Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.mm:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::startTextManipulations):
+        (WebKit::WebPage::completeTextManipulation): Updated per TextManipulationController interface change.
+        To avoid having to duplicate the code to create a vector of ManipulationFailure, this function's completion
+        handler has a boolean indicating that all replacements had failed.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Mapping from MIME type to UTI type should be done in the UI process
