@@ -451,6 +451,13 @@ void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWor
     if (userStyleSheetIdentifier && styleSheetsInWorld.findMatching([&](auto& pair) { return pair.first == userStyleSheetIdentifier; }) != notFound)
         return;
 
+    if (auto pageID = userStyleSheet.pageID()) {
+        if (auto* webPage = WebProcess::singleton().webPage(*pageID)) {
+            if (auto* page = webPage->corePage())
+                page->injectUserStyleSheet(userStyleSheet);
+        }
+    }
+
     styleSheetsInWorld.append(std::make_pair(userStyleSheetIdentifier, WTFMove(userStyleSheet)));
 }
 
@@ -487,8 +494,19 @@ void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScript
         return;
 
     auto& stylesheets = it->value;
-    bool sheetsChanged = stylesheets.removeFirstMatching([userStyleSheetIdentifier](auto& pair) {
-        return pair.first == userStyleSheetIdentifier;
+
+    bool sheetsChanged = stylesheets.removeFirstMatching([&](auto& pair) {
+        if (pair.first != userStyleSheetIdentifier)
+            return false;
+
+        auto& userStyleSheet = pair.second;
+        if (auto pageID = userStyleSheet.pageID()) {
+            if (auto* webPage = WebProcess::singleton().webPage(*pageID)) {
+                if (auto* page = webPage->corePage())
+                    page->removeInjectedUserStyleSheet(userStyleSheet);
+            }
+        }
+        return true;
     });
 
     if (!sheetsChanged)

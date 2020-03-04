@@ -328,6 +328,7 @@ static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document
 static const char* greenInRGB = "rgb(0, 128, 0)";
 static const char* redInRGB = "rgb(255, 0, 0)";
 static const char* whiteInRGB = "rgba(0, 0, 0, 0)";
+static const char* blueInRGB = "rgb(0, 0, 255)";
 
 static void expectScriptEvaluatesToColor(WKWebView *webView, NSString *script, const char* color)
 {
@@ -501,6 +502,153 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByNormalWorld)
     EXPECT_EQ(2u, [userContentController _userStyleSheets].count);
     EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][0]);
     EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][1]);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebView)
+{
+    RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr<WKWebView> otherWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+
+    [targetWebView _test_waitForDidFinishNavigation];
+    [otherWebView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
+    expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
+    expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewSharedConfiguration)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<WKWebView> otherWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+
+    [targetWebView _test_waitForDidFinishNavigation];
+    [otherWebView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
+    expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
+    expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemoval)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    [[webView configuration].userContentController _removeUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalAfterMultipleAdditions)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    [[webView configuration].userContentController _removeUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalAfterNavigation)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    [webView loadHTMLString:@"<body style='background-color: blue;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blueInRGB);
+}
+
+static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    return processPoolConfiguration;
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalAfterNavigationPSON)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    [webView loadHTMLString:@"<body style='background-color: blue;'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blueInRGB);
 }
 
 TEST(WKUserContentController, UserScriptRemove)

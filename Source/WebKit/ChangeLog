@@ -1,3 +1,31 @@
+2020-03-04  Antoine Quint  <graouts@apple.com>
+
+        Add an SPI to allow UserStyleSheet injection to target a specific WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=208575
+        <rdar://problem/59773690>
+
+        Reviewed by Brady Eidson.
+
+        Since WebCore adds a new Optional<PageIdentifier> member to UserStyleSheet, we now encode that member to be preserved
+        across UI and Web processes.
+
+        Using this new member, WebUserContentController now determines that a UserStyleSheet meant to target a specific page
+        was added in addUserStyleSheetInternal(), finds the matching WebPage, and calls injectUserStyleSheet() on its backing Page
+        object. Conversely, WebUserContentController::removeUserStyleSheetInternal() will call into Page::removeInjectedUserStyleSheet().
+
+        Finally, we offer a new initializer on _WKUserStyleSheet to target a specific WKWebView, and its page's ID will be set on the
+        backing UserStyleSheet.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<UserStyleSheet>::encode):
+        (IPC::ArgumentCoder<UserStyleSheet>::decode):
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:userContentWorld:]):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserStyleSheetInternal):
+        (WebKit::WebUserContentController::removeUserStyleSheetInternal):
+
 2020-03-04  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Modern EME API in the GPU Process

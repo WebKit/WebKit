@@ -25,9 +25,11 @@
  
 #pragma once
 
-#include <wtf/URL.h>
+#include "PageIdentifier.h"
 #include "UserContentTypes.h"
 #include "UserStyleSheetTypes.h"
+#include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,13 +43,14 @@ public:
     {
     }
 
-    UserStyleSheet(const String& source, const URL& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
+    UserStyleSheet(const String& source, const URL& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, Optional<PageIdentifier> pageID = WTF::nullopt)
         : m_source(source)
         , m_url(url)
         , m_whitelist(WTFMove(whitelist))
         , m_blacklist(WTFMove(blacklist))
         , m_injectedFrames(injectedFrames)
         , m_level(level)
+        , m_pageID(pageID)
     {
     }
 
@@ -57,6 +60,7 @@ public:
     const Vector<String>& blacklist() const { return m_blacklist; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     UserStyleLevel level() const { return m_level; }
+    Optional<PageIdentifier> pageID() const { return m_pageID; }
 
 private:
     String m_source;
@@ -65,6 +69,7 @@ private:
     Vector<String> m_blacklist;
     UserContentInjectedFrames m_injectedFrames;
     UserStyleLevel m_level;
+    Optional<PageIdentifier> m_pageID;
 };
 
 } // namespace WebCore

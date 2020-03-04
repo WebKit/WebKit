@@ -30,6 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class _WKUserContentWorld;
+@class WKWebView;
 
 WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 @interface _WKUserStyleSheet : NSObject <NSCopying>
@@ -43,6 +44,7 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly userContentWorld:(_WKUserContentWorld *)userContentWorld;
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld;
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld;
 #pragma clang diagnostic pop

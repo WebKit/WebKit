@@ -141,6 +141,7 @@ class StorageNamespaceProvider;
 class UserContentProvider;
 class UserContentURLPattern;
 class UserInputBridge;
+class UserStyleSheet;
 class ValidationMessageClient;
 class VisibleSelection;
 class VisitedLinkStore;
@@ -721,6 +722,9 @@ public:
     void forEachMediaElement(const WTF::Function<void(HTMLMediaElement&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
+
+    WEBCORE_EXPORT void injectUserStyleSheet(UserStyleSheet&);
+    WEBCORE_EXPORT void removeInjectedUserStyleSheet(UserStyleSheet&);
 
 private:
     struct Navigation {

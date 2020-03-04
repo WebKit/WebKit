@@ -122,6 +122,7 @@
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
 #include "UserInputBridge.h"
+#include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
@@ -3013,6 +3014,30 @@ bool Page::shouldDisableCorsForRequestTo(const URL& url) const
 void Page::revealCurrentSelection()
 {
     focusController().focusedOrMainFrame().selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded);
+}
+
+void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
+{
+    if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
+        if (auto* document = m_mainFrame->document())
+            document->extensionStyleSheets().injectPageSpecificUserStyleSheet(userStyleSheet);
+    } else {
+        forEachDocument([&] (Document& document) {
+            document.extensionStyleSheets().injectPageSpecificUserStyleSheet(userStyleSheet);
+        });
+    }
+}
+
+void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
+{
+    if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
+        if (auto* document = m_mainFrame->document())
+            document->extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
+    } else {
+        forEachDocument([&] (Document& document) {
+            document.extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
+        });
+    }
 }
 
 } // namespace WebCore

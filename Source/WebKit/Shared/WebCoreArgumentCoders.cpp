@@ -2130,6 +2130,7 @@ void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleShee
     encoder << userStyleSheet.blacklist();
     encoder.encodeEnum(userStyleSheet.injectedFrames());
     encoder.encodeEnum(userStyleSheet.level());
+    encoder << userStyleSheet.pageID();
 }
 
 bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& userStyleSheet)
@@ -2158,7 +2159,12 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     if (!decoder.decodeEnum(level))
         return false;
 
-    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blacklist), injectedFrames, level);
+    Optional<Optional<PageIdentifier>> pageID;
+    decoder >> pageID;
+    if (!pageID)
+        return false;
+
+    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blacklist), injectedFrames, level, WTFMove(*pageID));
     return true;
 }
 

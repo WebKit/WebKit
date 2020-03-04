@@ -1,3 +1,23 @@
+2020-03-04  Antoine Quint  <graouts@apple.com>
+
+        Add an SPI to allow UserStyleSheet injection to target a specific WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=208575
+        <rdar://problem/59773690>
+
+        Reviewed by Brady Eidson.
+
+        Add new tests for the new SPI which check:
+        
+        1. that specifying forWKWebView: when initializing a _WKUserStyleSheet will inject the provided CSS source in the
+           specified WKWebView alone,
+        2. that the same test works with two WKWebViews with a shared WKWebKitConfiguration,
+        3. that a WKWebView-specific _WKUserStyleSheet can be removed,
+        4. that a WKWebView-specific _WKUserStyleSheet can be added twice and removed once and be removed as expected,
+        5. and that a WKWebView-specific _WKUserStyleSheet is automatically removed when navigating to a new page,
+        6. and that the same test also works with PSON enabled.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+
 2020-03-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS] test-lldb-webkit failing on debug bots
