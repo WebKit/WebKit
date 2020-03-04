@@ -1,3 +1,10 @@
+2020-03-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=208591
+
+        * Shared/FrameTreeNodeData.h: Replaced #import with #include.
+
 2020-03-04  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView's frames accessor should return a traversable type

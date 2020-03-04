@@ -25,8 +25,8 @@
 
 #pragma once
 
-#import "ArgumentCoders.h"
-#import "FrameInfoData.h"
+#include "ArgumentCoders.h"
+#include "FrameInfoData.h"
 
 namespace WebKit {
 
