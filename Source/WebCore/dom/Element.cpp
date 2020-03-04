@@ -3292,8 +3292,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     const RenderStyle* computedStyle = nullptr;
 
     // Collect ancestors until we find one that has style.
-    auto composedAncestors = composedTreeAncestors(*this);
-    for (auto& ancestor : composedAncestors) {
+    for (auto& ancestor : composedTreeAncestors(*this)) {
         if (auto* existingStyle = ancestor.existingComputedStyle()) {
             computedStyle = existingStyle;
             break;
@@ -3349,7 +3348,7 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
     if (style->visibility() != Visibility::Visible)
         return false;
 
-    for (auto& element : ancestorsOfType<Element>(*this)) {
+    for (auto& element : composedTreeAncestors(const_cast<Element&>(*this))) {
         if (element.existingComputedStyle()->display() == DisplayType::None)
             return false;
     }
