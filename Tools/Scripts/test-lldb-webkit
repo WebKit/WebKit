@@ -70,10 +70,10 @@ class LldbTester(Tester):
                             default=False, help='Run quietly (errors, warnings, and progress only)')
         parser.add_argument('-p', '--pass-through', action='store_true', default=False,
                             help='Be debugger friendly by passing captured output through to the system')
-        parser.add_argument('--debug', const='debug',
+        parser.add_argument('--debug', const='Debug',
                             dest='configuration', action='store_const',
                             default=None, help='Alias for configuration=debug.')
-        parser.add_argument('--release', const='release',
+        parser.add_argument('--release', const='Release',
                             dest='configuration', action='store_const',
                             default=None, help='Alias for configuration=release.')
         parser.add_argument('--configuration',

@@ -1,3 +1,21 @@
+2020-03-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS] test-lldb-webkit failing on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=208545
+
+        Reviewed by Jonathan Bedard.
+
+        The lldb-webkit-test step must pass in the build configuration as an
+        argument to the test-lldb-webkit script so that it uses the lldbWebKitTester
+        binary that is downloaded with the rest of the build products. Without this
+        argument, the bots expect to find the binary in the 'WebKitBuild/Release' directory
+        regardless of their actual build configuration.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunLLDBWebKitTests): Pass in the build configuration to the test-lldb-webkit script.
+        * Scripts/test-lldb-webkit:
+        (LldbTester.parse_args): Capitalize the constants for Debug / Release since that is what webkitpy expects.
+
 2020-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build step to create local git commit for commit-queue (follow-up fix)

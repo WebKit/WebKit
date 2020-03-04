@@ -653,6 +653,7 @@ class RunLLDBWebKitTests(RunPythonTests):
         "./Tools/Scripts/test-lldb-webkit",
         "--verbose",
         "--no-build",
+        WithProperties("--%(configuration)s"),
     ]
     failedTestsFormatString = "%d lldb test%s failed"
 
