@@ -2459,3 +2459,33 @@ class FindModifiedChangeLogs(shell.ShellCommand):
             if self.is_path_to_changelog(filename):
                 filenames.append(filename)
         return filenames
+
+
+class CreateLocalGITCommit(shell.ShellCommand):
+    name = 'create-local-git-commit'
+    descriptionDone = ['Created local git commit']
+    command = ['git', 'commit', '--all', '-F']
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.failure_message = None
+        modified_changelogs = self.getProperty('modified_changelogs')
+        if not modified_changelogs:
+            self.failure_message = u'No modified ChangeLog file found'
+            self.finished(FAILURE)
+            return None
+
+        modified_changelogs = ' '.join(modified_changelogs)
+        self.command = 'perl Tools/Scripts/commit-log-editor --print-log {}'.format(modified_changelogs)
+        self.command += ' | git commit --all -F -'
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.failure_message:
+            return {u'step': self.failure_message}
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to create git commit'}
+        return shell.ShellCommand.getResultSummary(self)

@@ -1,3 +1,17 @@
+2020-03-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add build step to create local git commit for commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=208539
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CreateLocalGITCommit): Build step to create local git commit.
+        (CreateLocalGITCommit.start):
+        (CreateLocalGITCommit.getResultSummary): Set custom failure message.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests and restructured imports.
+        * BuildSlaveSupport/ews-build/factories.py:
+
 2020-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         (r256513) [ Mac ] fast/scrolling/programmatic-scroll-to-zero-zero.html is a flaky failure

@@ -34,14 +34,19 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
-                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory,
-                   CompileJSC, CompileJSCToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
-                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
-                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
-                   RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunJSCTestsWithoutPatch, RunWebKit1Tests,
-                   RunWebKitPerlTests, RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
-                   UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
+from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
+                   AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
+                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild,
+                   CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCToT, CompileWebKit,
+                   CompileWebKitToT, ConfigureBuild, CreateLocalGITCommit,
+                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults,
+                   FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
+                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests, ReRunWebKitTests,
+                   RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
+                   RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
+                   RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
+                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount,
+                   Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -3060,7 +3065,6 @@ M	Tools/Scripts/run-api-tests''') +
 
     def test_failure(self):
         self.setupStep(FindModifiedChangeLogs())
-        self.setProperty('bug_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=180,
@@ -3070,6 +3074,47 @@ M	Tools/Scripts/run-api-tests''') +
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find list of modified ChangeLogs')
+        return self.runStep()
+
+
+class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CreateLocalGITCommit())
+        self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog', 'Source/WebCore/ChangeLog'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command='perl Tools/Scripts/commit-log-editor --print-log Tools/Scripts/ChangeLog Source/WebCore/ChangeLog | git commit --all -F -') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Created local git commit')
+        return self.runStep()
+
+    def test_failure_no_changelog(self):
+        self.setupStep(CreateLocalGITCommit())
+        self.expectOutcome(result=FAILURE, state_string='No modified ChangeLog file found')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CreateLocalGITCommit())
+        self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command='perl Tools/Scripts/commit-log-editor --print-log Tools/Scripts/ChangeLog | git commit --all -F -') +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to create git commit')
         return self.runStep()
 
 
