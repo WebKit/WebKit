@@ -643,6 +643,7 @@
     (with report) (with telemetry)
 #endif
     (global-name "com.apple.PowerManagement.control")
+    (global-name "com.apple.cfprefsd.daemon")
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.tccd")

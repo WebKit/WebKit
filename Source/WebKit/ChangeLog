@@ -1,3 +1,29 @@
+2020-03-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r257879. rdar://problem/60055569
+
+    Partially revert r256756, since it introduced bugs related to Accessibility.
+    <rdar://problem/60005574>
+    
+    Unreviewed partial revert of r256756.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257879 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-04  Per Arne Vollan  <pvollan@apple.com>
+
+            Partially revert r256756, since it introduced bugs related to Accessibility.
+            <rdar://problem/60005574>
+
+            Unreviewed partial revert of r256756.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-02-26  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r257364. rdar://problem/59826931
