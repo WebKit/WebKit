@@ -295,11 +295,10 @@ void AuthenticatorManager::selectAssertionResponse(const HashSet<Ref<Authenticat
     });
 }
 
-void AuthenticatorManager::verifyUser(SecAccessControlRef accessControlRef, CompletionHandler<void(LAContext *)>&& completionHandler)
+void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler)
 {
-    RetainPtr<SecAccessControlRef> accessControl = accessControlRef;
-    dispatchPanelClientCall([accessControl = WTFMove(accessControl), completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.client().verifyUser(accessControl.get(), WTFMove(completionHandler));
+    dispatchPanelClientCall([completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
+        panel.client().decidePolicyForLocalAuthenticator(WTFMove(completionHandler));
     });
 }
 

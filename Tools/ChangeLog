@@ -1,3 +1,18 @@
+2020-03-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement -[_WKWebAuthenticationPanelDelegate panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:] SPI
+        https://bugs.webkit.org/show_bug.cgi?id=208533
+        <rdar://problem/60010184>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:]):
+        (TestWebKitAPI::TEST):
+        (-[TestWebAuthenticationPanelDelegate panel:verifyUserWithAccessControl:completionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-la.html: Removed.
+
 2020-03-04  Alex Christensen  <achristensen@webkit.org>
 
         callAsyncJavaScript with an invalid parameter and no completionHandler should not crash

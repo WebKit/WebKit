@@ -32,7 +32,6 @@
 #import "APIWebAuthenticationAssertionResponse.h"
 #import "CompletionHandlerCallChecker.h"
 #import "WKNSArray.h"
-#import "WebAuthenticationFlags.h"
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanel.h"
 #import <wtf/BlockPtr.h>
@@ -50,7 +49,7 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
     m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
     m_delegateMethods.panelSelectAssertionResponseCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:completionHandler:)];
-    m_delegateMethods.panelVerifyUserWithAccessControlCompletionHandler = [delegate respondsToSelector:@selector(panel:verifyUserWithAccessControl:completionHandler:)];
+    m_delegateMethods.panelDecidePolicyForLocalAuthenticatorCompletionHandler = [delegate respondsToSelector:@selector(panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
@@ -167,25 +166,37 @@ void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::A
     }).get()];
 }
 
-void WebAuthenticationPanelClient::verifyUser(SecAccessControlRef accessControl, CompletionHandler<void(LAContext *)>&& completionHandler) const
+static LocalAuthenticatorPolicy localAuthenticatorPolicy(_WKLocalAuthenticatorPolicy result)
 {
-    if (!m_delegateMethods.panelVerifyUserWithAccessControlCompletionHandler) {
-        completionHandler(adoptNS([allocLAContextInstance() init]).get());
+    switch (result) {
+    case _WKLocalAuthenticatorPolicyAllow:
+        return LocalAuthenticatorPolicy::Allow;
+    case _WKLocalAuthenticatorPolicyDisallow:
+        return LocalAuthenticatorPolicy::Disallow;
+    }
+    ASSERT_NOT_REACHED();
+    return LocalAuthenticatorPolicy::Allow;
+}
+
+void WebAuthenticationPanelClient::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler) const
+{
+    if (!m_delegateMethods.panelDecidePolicyForLocalAuthenticatorCompletionHandler) {
+        completionHandler(LocalAuthenticatorPolicy::Disallow);
         return;
     }
 
     auto delegate = m_delegate.get();
     if (!delegate) {
-        completionHandler(adoptNS([allocLAContextInstance() init]).get());
+        completionHandler(LocalAuthenticatorPolicy::Disallow);
         return;
     }
 
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:verifyUserWithAccessControl:completionHandler:));
-    [delegate panel:m_panel verifyUserWithAccessControl:accessControl completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](LAContext *context) mutable {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:));
+    [delegate panel:m_panel decidePolicyForLocalAuthenticatorWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKLocalAuthenticatorPolicy policy) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-        completionHandler(context);
+        completionHandler(localAuthenticatorPolicy(policy));
     }).get()];
 }
 

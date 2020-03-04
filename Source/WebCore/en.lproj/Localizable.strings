@@ -310,6 +310,9 @@
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
 
+/* Use passcode as a fallback to sign into this website */
+"Enter passcode to sign into this website." = "Enter passcode to sign into this website.";
+
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
 
@@ -876,6 +879,9 @@
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
+
+/* Use Touch ID to sign into this website */
+"Touch ID to sign into this website." = "Touch ID to sign into this website.";
 
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";

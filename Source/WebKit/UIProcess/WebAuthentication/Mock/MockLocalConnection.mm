@@ -44,9 +44,17 @@ MockLocalConnection::MockLocalConnection(const WebCore::MockWebAuthenticationCon
 {
 }
 
-bool MockLocalConnection::isUnlocked(LAContext *context) const
+void MockLocalConnection::verifyUser(SecAccessControlRef, UserVerificationCallback&& callback) const
 {
-    return m_configuration.local->acceptAuthentication;
+    // Mock async operations.
+    RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
+        ASSERT(configuration.local);
+        if (!configuration.local->acceptAuthentication) {
+            callback(UserVerification::No, nil);
+            return;
+        }
+        callback(UserVerification::Yes, adoptNS([allocLAContextInstance() init]).get());
+    });
 }
 
 RetainPtr<SecKeyRef> MockLocalConnection::createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const

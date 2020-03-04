@@ -353,7 +353,6 @@
 		573255A722139BC700396AE8 /* load-web-archive-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 573255A322139B9000396AE8 /* load-web-archive-2.html */; };
 		574217882400AC25002B303D /* web-authentication-make-credential-la-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 574217872400ABFD002B303D /* web-authentication-make-credential-la-error.html */; };
 		5742178A2400AED8002B303D /* web-authentication-make-credential-la-duplicate-credential.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 574217892400AED0002B303D /* web-authentication-make-credential-la-duplicate-credential.html */; };
-		5742178C2400CD47002B303D /* web-authentication-get-assertion-la.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5742178B2400CD2D002B303D /* web-authentication-get-assertion-la.html */; };
 		5742178E2400D2DF002B303D /* web-authentication-make-credential-la.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */; };
 		574F55D2204D47F0002948C6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		5758597F23A2527A00C74572 /* CtapPinTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5758597E23A2527A00C74572 /* CtapPinTest.cpp */; };
@@ -1529,7 +1528,6 @@
 				578DA44E23ECD28B00246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html in Copy Resources */,
 				570D26FC23C3F87000D5CF67 /* web-authentication-get-assertion-hid-pin.html in Copy Resources */,
 				57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */,
-				5742178C2400CD47002B303D /* web-authentication-get-assertion-la.html in Copy Resources */,
 				579833922368FA37008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html in Copy Resources */,
 				57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */,
 				577454D22359BB01008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html in Copy Resources */,
@@ -1982,7 +1980,6 @@
 		5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TestWebKitAPI-iOS.entitlements"; sourceTree = "<group>"; };
 		574217872400ABFD002B303D /* web-authentication-make-credential-la-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la-error.html"; sourceTree = "<group>"; };
 		574217892400AED0002B303D /* web-authentication-make-credential-la-duplicate-credential.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la-duplicate-credential.html"; sourceTree = "<group>"; };
-		5742178B2400CD2D002B303D /* web-authentication-get-assertion-la.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-la.html"; sourceTree = "<group>"; };
 		5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la.html"; sourceTree = "<group>"; };
 		5742178F2400D54D002B303D /* web-authentication-make-credential.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential.html"; sourceTree = "<group>"; };
 		574F55D0204D471C002948C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -3614,7 +3611,6 @@
 				578DA44D23ECD26100246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html */,
 				570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */,
 				57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */,
-				5742178B2400CD2D002B303D /* web-authentication-get-assertion-la.html */,
 				5798337B235EB65C008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html */,
 				57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */,
 				577454D12359BAD5008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html */,

@@ -1207,4 +1207,16 @@ String unacceptableTLSCertificate()
 }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+String touchIDPromptTitle()
+{
+    return WEB_UI_STRING("Touch ID to sign into this website.", "Use Touch ID to sign into this website");
+}
+
+String biometricFallbackPromptTitle()
+{
+    return WEB_UI_STRING("Enter passcode to sign into this website.", "Use passcode as a fallback to sign into this website");
+}
+#endif
+
 } // namespace WebCore

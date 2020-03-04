@@ -47,6 +47,8 @@
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
+#include "APIWebAuthenticationPanel.h"
+#include "APIWebAuthenticationPanelClient.h"
 #include "APIWebsitePolicies.h"
 #include "APIWindowFeatures.h"
 #include "AuthenticationChallengeDisposition.h"
@@ -2079,12 +2081,19 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
 #if ENABLE(WEB_AUTHN)
         // The current method is specialized for WebKitTestRunner.
-        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
+        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel& panel, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
         {
+            class PanelClient : public API::WebAuthenticationPanelClient {
+            public:
+                void decidePolicyForLocalAuthenticator(CompletionHandler<void(WebKit::LocalAuthenticatorPolicy)>&& completionHandler) const { completionHandler(WebKit::LocalAuthenticatorPolicy::Allow); }
+            };
+
             if (!m_client.runWebAuthenticationPanel) {
                 completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable);
                 return;
             }
+
+            panel.setClient(WTF::makeUniqueRef<PanelClient>());
             completionHandler(WebKit::WebAuthenticationPanelResult::Presented);
         }
 #endif

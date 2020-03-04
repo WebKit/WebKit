@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
@@ -39,13 +40,29 @@
 
 namespace WebKit {
 
-bool LocalConnection::isUnlocked(LAContext *context) const
+void LocalConnection::verifyUser(SecAccessControlRef accessControl, UserVerificationCallback&& completionHandler) const
 {
-    NSError *error = nil;
-    auto result = [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics options:@{ @(LAOptionNotInteractive): @YES } error:&error];
-    if (!result)
-        LOG_ERROR("Couldn't get user consent: %@", error);
-    return !!result;
+    auto context = adoptNS([allocLAContextInstance() init]);
+
+    auto options = adoptNS([[NSMutableDictionary alloc] init]);
+    if ([context biometryType] == LABiometryTypeTouchID)
+        [options setObject:WebCore::touchIDPromptTitle() forKey:@(LAOptionAuthenticationTitle)];
+    [options setObject:WebCore::biometricFallbackPromptTitle() forKey:@(LAOptionPasscodeTitle)];
+
+    auto reply = makeBlockPtr([context, completionHandler = WTFMove(completionHandler)] (NSDictionary *, NSError *error) mutable {
+        ASSERT(!RunLoop::isMain());
+
+        UserVerification verification = UserVerification::Yes;
+        if (error) {
+            LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
+            verification = UserVerification::No;
+        }
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification, context = WTFMove(context)] () mutable {
+            completionHandler(verification, context.get());
+        });
+    });
+
+    [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
 
 RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const

@@ -56,7 +56,7 @@ public:
         virtual void authenticatorStatusUpdated(WebAuthenticationStatus) = 0;
         virtual void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) = 0;
         virtual void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&&) = 0;
-        virtual void verifyUser(SecAccessControlRef, CompletionHandler<void(LAContext *)>&&) = 0;
+        virtual void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) = 0;
     };
 
     virtual ~Authenticator() = default;

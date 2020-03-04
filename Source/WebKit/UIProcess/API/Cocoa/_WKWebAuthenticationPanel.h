@@ -68,6 +68,11 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
     _WKWebAuthenticationTypeGet,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+typedef NS_ENUM(NSInteger, _WKLocalAuthenticatorPolicy) {
+    _WKLocalAuthenticatorPolicyAllow,
+    _WKLocalAuthenticatorPolicyDisallow,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
 @optional
@@ -76,7 +81,7 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRemainingRetries:(NSUInteger)retries completionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)panel:(_WKWebAuthenticationPanel *)panel selectAssertionResponse:(NSArray < _WKWebAuthenticationAssertionResponse *> *)responses completionHandler:(void (^)(_WKWebAuthenticationAssertionResponse *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)panel:(_WKWebAuthenticationPanel *)panel verifyUserWithAccessControl:(SecAccessControlRef)accessControl completionHandler:(void (^)(LAContext *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)panel:(_WKWebAuthenticationPanel *)panel decidePolicyForLocalAuthenticatorWithCompletionHandler:(void (^)(_WKLocalAuthenticatorPolicy policy))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
@@ -85,7 +90,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
 @property (nonatomic, readonly, copy) NSString *relyingPartyID;
-@property (nonatomic, readonly, copy) NSArray *transports;
+@property (nonatomic, readonly, copy) NSSet *transports;
 @property (nonatomic, readonly) _WKWebAuthenticationType type;
 
 - (void)cancel;

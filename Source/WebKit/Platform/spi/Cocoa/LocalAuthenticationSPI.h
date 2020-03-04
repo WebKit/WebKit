@@ -34,12 +34,13 @@
 #else
 
 typedef NS_ENUM(NSInteger, LAOption) {
-    LAOptionNotInteractive,
+    LAOptionAuthenticationTitle,
+    LAOptionPasscodeTitle,
 };
 
 @interface LAContext(Private) <NSSecureCoding>
 
-- (NSDictionary *)evaluatePolicy:(LAPolicy)policy options:(NSDictionary *)options error:(NSError **)error;
+- (void)evaluateAccessControl:(SecAccessControlRef)accessControl operation:(LAAccessControlOperation)operation options:(NSDictionary *)options reply:(void(^)(NSDictionary *result, NSError *error))reply;
 
 @end
 

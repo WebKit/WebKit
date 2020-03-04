@@ -160,6 +160,28 @@ void LocalAuthenticator::makeCredential()
 
     // Step 6.
     // Get user consent.
+    if (auto* observer = this->observer()) {
+        auto callback = [weakThis = makeWeakPtr(*this)] (LocalAuthenticatorPolicy policy) {
+            ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+
+            weakThis->continueMakeCredentialAfterDecidePolicy(policy);
+        };
+        observer->decidePolicyForLocalAuthenticator(WTFMove(callback));
+    }
+}
+
+void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthenticatorPolicy policy)
+{
+    ASSERT(m_state == State::RequestReceived);
+    m_state = State::PolicyDecided;
+
+    if (policy == LocalAuthenticatorPolicy::Disallow) {
+        receiveRespond(ExceptionData { UnknownError, "Disallow local authenticator."_s });
+        return;
+    }
+
     RetainPtr<SecAccessControlRef> accessControl;
     {
         CFErrorRef errorRef = nullptr;
@@ -171,29 +193,27 @@ void LocalAuthenticator::makeCredential()
         }
     }
 
-    if (auto* observer = this->observer()) {
-        SecAccessControlRef accessControlRef = accessControl.get();
-        auto callback = [accessControl = WTFMove(accessControl), weakThis = makeWeakPtr(*this)] (LAContext *context) {
-            ASSERT(RunLoop::isMain());
-            if (!weakThis)
-                return;
+    SecAccessControlRef accessControlRef = accessControl.get();
+    auto callback = [accessControl = WTFMove(accessControl), weakThis = makeWeakPtr(*this)] (LocalConnection::UserVerification verification, LAContext *context) {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
 
-            weakThis->continueMakeCredentialAfterUserConsented(accessControl.get(), context);
-        };
-        observer->verifyUser(accessControlRef, WTFMove(callback));
-    }
+        weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context);
+    };
+    m_connection->verifyUser(accessControlRef, WTFMove(callback));
 }
 
-void LocalAuthenticator::continueMakeCredentialAfterUserConsented(SecAccessControlRef accessControlRef, LAContext *context)
+void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)
 {
     using namespace LocalAuthenticatorInternal;
 
-    ASSERT(m_state == State::RequestReceived);
-    m_state = State::UserConsented;
+    ASSERT(m_state == State::PolicyDecided);
+    m_state = State::UserVerified;
     auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
-    if (!m_connection->isUnlocked(context)) {
-        receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
+    if (verification == LocalConnection::UserVerification::No) {
+        receiveException({ NotAllowedError, "Couldn't verify user."_s });
         return;
     }
 
@@ -309,7 +329,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
 {
     using namespace LocalAuthenticatorInternal;
 
-    ASSERT(m_state == State::UserConsented);
+    ASSERT(m_state == State::UserVerified);
     m_state = State::Attested;
     auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
@@ -392,7 +412,7 @@ void LocalAuthenticator::getAssertion()
         return;
     }
 
-    // Step 6.
+    // Step 6-7. User consent is implicitly acquired by selecting responses.
     for (NSDictionary *attribute : intersectedCredentialsAttributes) {
         auto addResult = m_assertionResponses.add(AuthenticatorAssertionResponse::create(
             toArrayBuffer(attribute[(id)kSecAttrApplicationLabel]),
@@ -422,28 +442,28 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     ASSERT(m_state == State::RequestReceived);
     m_state = State::ResponseSelected;
 
-    // Step 7. Get user consent.
-    if (auto* observer = this->observer()) {
-        auto accessControlRef = response->accessControl();
-        auto callback = [weakThis = makeWeakPtr(*this), response = WTFMove(response)] (LAContext *context) mutable {
-            ASSERT(RunLoop::isMain());
-            if (!weakThis)
-                return;
+    auto accessControlRef = response->accessControl();
+    auto callback = [
+        weakThis = makeWeakPtr(*this),
+        response = WTFMove(response)
+    ] (LocalConnection::UserVerification verification, LAContext *context) mutable {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
 
-            weakThis->continueGetAssertionAfterUserConsented(context, WTFMove(response));
-        };
-        observer->verifyUser(accessControlRef, WTFMove(callback));
-    }
+        weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, context);
+    };
+    m_connection->verifyUser(accessControlRef, WTFMove(callback));
 }
 
-void LocalAuthenticator::continueGetAssertionAfterUserConsented(LAContext *context, Ref<WebCore::AuthenticatorAssertionResponse>&& response)
+void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)
 {
     using namespace LocalAuthenticatorInternal;
     ASSERT(m_state == State::ResponseSelected);
-    m_state = State::UserConsented;
+    m_state = State::UserVerified;
 
-    if (!m_connection->isUnlocked(context)) {
-        receiveRespond(ExceptionData { NotAllowedError, "Couldn't get user consent."_s });
+    if (verification == LocalConnection::UserVerification::No) {
+        receiveException({ NotAllowedError, "Couldn't verify user."_s });
         return;
     }
 
@@ -456,23 +476,20 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LAContext *conte
     // Step 11.
     RetainPtr<CFDataRef> signature;
     {
-        auto query = adoptNS([[NSMutableDictionary alloc] init]);
-        [query addEntriesFromDictionary:@{
+        NSDictionary *query = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: toNSData(response->rawId()).get(),
+            (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
 #endif
-        }];
-        // context is nullptr in mock testing.
-        if (context)
-            [query setObject:context forKey:(id)kSecUseAuthenticationContext];
+        };
         CFTypeRef privateKeyRef = nullptr;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
+        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &privateKeyRef);
         if (status) {
             receiveException({ UnknownError, makeString("Couldn't get the private key reference: ", status) });
             return;

@@ -55,7 +55,7 @@ static bool webAuthenticationPanelUpdateLAError = false;
 static bool webAuthenticationPanelUpdateLAExcludeCredentialsMatched = false;
 static bool webAuthenticationPanelUpdateLANoCredential = false;
 static bool webAuthenticationPanelCancelImmediately = false;
-static bool webAuthenticationPanelVerifyUser = false;
+static _WKLocalAuthenticatorPolicy localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
 static String webAuthenticationPanelPin;
 static BOOL webAuthenticationPanelNullUserHandle = NO;
 static String testES256PrivateKeyBase64 =
@@ -151,11 +151,9 @@ static String testUserhandleBase64 = "AAECAwQFBgcICQ==";
     completionHandler(responses[index]);
 }
 
-- (void)panel:(_WKWebAuthenticationPanel *)panel verifyUserWithAccessControl:(SecAccessControlRef)accessControl completionHandler:(void (^)(LAContext *))completionHandler
+- (void)panel:(_WKWebAuthenticationPanel *)panel decidePolicyForLocalAuthenticatorWithCompletionHandler:(void (^)(_WKLocalAuthenticatorPolicy policy))completionHandler
 {
-    webAuthenticationPanelVerifyUser = true;
-    auto context = adoptNS([[LAContext alloc] init]);
-    completionHandler(context.get());
+    completionHandler(localAuthenticatorPolicy);
 }
 
 @end
@@ -300,24 +298,18 @@ static void reset()
     webAuthenticationPanelCancelImmediately = false;
     webAuthenticationPanelPin = emptyString();
     webAuthenticationPanelNullUserHandle = NO;
-    webAuthenticationPanelVerifyUser = false;
+    localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
 }
 
 static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
 {
     EXPECT_WK_STREQ(panel.relyingPartyID, relyingPartyID);
 
-    // Brute force given the maximum size of the array is 4.
-    auto *theTransports = panel.transports;
-    EXPECT_EQ(theTransports.count, transports.count);
+    EXPECT_EQ(panel.transports.count, transports.count);
     size_t count = 0;
     for (NSNumber *transport : transports) {
-        for (NSNumber *theTransport : theTransports) {
-            if (transport == theTransport) {
-                count++;
-                break;
-            }
-        }
+        if ([panel.transports containsObject:transport])
+            count++;
     }
     EXPECT_EQ(count, transports.count);
 
@@ -1259,11 +1251,10 @@ TEST(WebAuthenticationPanel, LAMakeCredentialNullDelegate)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Succeeded!"];
-    cleanUpKeychain("");
+    [webView waitForMessage:@"Disallow local authenticator."];
 }
 
-TEST(WebAuthenticationPanel, LAMakeCredential)
+TEST(WebAuthenticationPanel, LAMakeCredentialDisallowLocalAuthenticator)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1277,15 +1268,13 @@ TEST(WebAuthenticationPanel, LAMakeCredential)
     [webView setUIDelegate:delegate.get()];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::run(&webAuthenticationPanelVerifyUser);
-    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
-    [webView waitForMessage:@"Succeeded!"];
+    [webView waitForMessage:@"Disallow local authenticator."];
 }
 
-TEST(WebAuthenticationPanel, LAGetAssertion)
+TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 {
     reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
@@ -1295,11 +1284,10 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserhandleBase64));
+    localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyAllow;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::run(&webAuthenticationPanelVerifyUser);
-    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
     [webView waitForMessage:@"Succeeded!"];
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
     cleanUpKeychain("");
 }
 

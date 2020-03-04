@@ -55,6 +55,8 @@ bool LocalService::isAvailable()
 
 #if defined(LOCALSERVICE_ADDITIONS)
 LOCALSERVICE_ADDITIONS
+#else
+    return false;
 #endif
 
     return true;

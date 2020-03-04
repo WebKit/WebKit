@@ -51,6 +51,11 @@ enum class WebAuthenticationStatus : uint8_t {
     LANoCredential,
 };
 
+enum class LocalAuthenticatorPolicy : bool {
+    Allow,
+    Disallow
+};
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
