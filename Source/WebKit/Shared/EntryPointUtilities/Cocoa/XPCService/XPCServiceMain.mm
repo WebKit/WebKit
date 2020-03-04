@@ -117,8 +117,10 @@ int XPCServiceMain(int, const char**)
     });
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
     // Enable CF prefs direct mode to avoid connecting to the CF prefs daemon.
     _CFPrefsSetDirectModeEnabled(YES);
+#endif
 
     if (bootstrap) {
 #if PLATFORM(MAC)
