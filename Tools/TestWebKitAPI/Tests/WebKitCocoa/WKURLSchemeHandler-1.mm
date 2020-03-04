@@ -1080,7 +1080,12 @@ TEST(URLSchemeHandler, Frames)
         EXPECT_NE(child._handle.frameID, grandchild2._handle.frameID);
         EXPECT_NE(grandchild1._handle.frameID, grandchild2._handle.frameID);
 
-        done = true;
+        [webView _callAsyncJavaScript:@"window.customProperty = 'customValue'" arguments:nil inFrame:grandchild1 inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id, NSError *error) {
+            [webView _evaluateJavaScript:@"window.location.href + window.customProperty" inFrame:grandchild1 inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
+                EXPECT_WK_STREQ(result, "frame://host3/customValue");
+                done = true;
+            }];
+        }];
     }];
     TestWebKitAPI::Util::run(&done);
 }

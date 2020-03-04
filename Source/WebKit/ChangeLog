@@ -1,3 +1,33 @@
+2020-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to evaluate JavaScript in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=208605
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        (-[WKWebView evaluateJavaScript:inContentWorld:completionHandler:]):
+        (-[WKWebView callAsyncJavaScript:arguments:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScriptWithoutUserGesture:completionHandler:]):
+        (-[WKWebView _callAsyncJavaScript:arguments:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:completionHandler:inWorld:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld): Deleted.
+        (WebKit::WebPageProxy::runJavaScriptInFrame): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPage::runJavaScriptInMainFrameScriptWorld): Deleted.
+        (WebKit::WebPage::runJavaScriptInFrame): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-04  Per Arne Vollan  <pvollan@apple.com>
 
         Partially revert r256756, since it introduced bugs related to Accessibility.

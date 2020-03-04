@@ -210,9 +210,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetSourceForFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
     GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
 
-    // FIXME: These should use sendWithAsyncReply instead of callbackIDs
-    RunJavaScriptInMainFrameScriptWorld(struct WebCore::RunJavaScriptParameters parameters, std::pair<WebKit::ContentWorldIdentifier, String> world, WebKit::CallbackID callbackID)
-    RunJavaScriptInFrame(WebCore::FrameIdentifier frameID, String script, bool forceUserGesture, WebKit::CallbackID callbackID)
+    // FIXME: This should use sendWithAsyncReply instead of callbackIDs
+    RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, Optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world, WebKit::CallbackID callbackID)
 
     ForceRepaint(WebKit::CallbackID callbackID)
     SelectAll()

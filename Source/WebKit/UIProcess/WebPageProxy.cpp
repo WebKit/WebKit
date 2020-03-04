@@ -3980,10 +3980,10 @@ void WebPageProxy::launchInitialProcessIfNecessary()
 
 void WebPageProxy::runJavaScriptInMainFrame(RunJavaScriptParameters&& parameters, WTF::Function<void (API::SerializedScriptValue*, Optional<WebCore::ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
 {
-    runJavaScriptInMainFrameScriptWorld(WTFMove(parameters), API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
+    runJavaScriptInFrameInScriptWorld(WTFMove(parameters), WTF::nullopt, API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, API::ContentWorld& world, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, API::ContentWorld& world, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
 {
     // For backward-compatibility support running script in a WebView which has not done any loads yets.
     launchInitialProcessIfNecessary();
@@ -3993,15 +3993,8 @@ void WebPageProxy::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&&
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInMainFrameScriptWorld"_s));
-    send(Messages::WebPage::RunJavaScriptInMainFrameScriptWorld(parameters, world.worldData(), callbackID));
-}
-
-void WebPageProxy::runJavaScriptInFrame(FrameIdentifier frameID, const String& script, bool forceUserGesture, WTF::Function<void(API::SerializedScriptValue*, Optional<ExceptionDetails>, CallbackBase::Error)>&& callbackFunction)
-{
-    ASSERT(mainFrame()->frameID() != frameID);
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrame"_s));
-    send(Messages::WebPage::RunJavaScriptInFrame(frameID, script, forceUserGesture, callbackID));
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s));
+    send(Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldData(), callbackID));
 }
 
 void WebPageProxy::getRenderTreeExternalRepresentation(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)

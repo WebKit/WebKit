@@ -3469,17 +3469,11 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
     frame->coreFrame()->script().executeAsynchronousUserAgentScriptInWorld(world->coreWorld(), WTFMove(parameters), WTFMove(resolveFunction));
 }
 
-void WebPage::runJavaScriptInMainFrameScriptWorld(RunJavaScriptParameters&& parameters, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
+void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
 {
+    auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : mainWebFrame();
     m_userContentController->addContentWorld(worldData);
-    runJavaScript(mainWebFrame(), WTFMove(parameters), worldData.first, callbackID);
-}
-
-void WebPage::runJavaScriptInFrame(FrameIdentifier frameID, const String& script, bool forceUserGesture, CallbackID callbackID)
-{
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    ASSERT(mainWebFrame() != frame);
-    runJavaScript(frame, { script, false, WTF::nullopt, forceUserGesture }, pageContentWorldIdentifier(), callbackID);
+    runJavaScript(webFrame, WTFMove(parameters), worldData.first, callbackID);
 }
 
 void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CallbackID callbackID)
