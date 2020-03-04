@@ -1,3 +1,22 @@
+2020-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        [First paint] Going from visually empty to non-empty should immediately trigger layer unfreezing
+        https://bugs.webkit.org/show_bug.cgi?id=208385
+        <rdar://problem/59895900>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebKit::WebFrameLoaderClient::dispatchDidReachVisuallyNonEmptyState):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded): We don't have this case anymore.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleRenderingUpdate):
+
 2020-03-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: re-add `InspectorFrontendHost` support for moving the inspected window

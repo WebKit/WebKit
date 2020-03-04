@@ -2692,6 +2692,12 @@ void FrameLoader::didFirstLayout()
         m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
 }
 
+void FrameLoader::didReachVisuallyNonEmptyState()
+{
+    ASSERT(m_frame.isMainFrame());
+    m_client.dispatchDidReachVisuallyNonEmptyState();
+}
+
 void FrameLoader::frameLoadCompleted()
 {
     // Note: Can be called multiple times.
@@ -4073,9 +4079,9 @@ void FrameLoader::loadProgressingStatusChanged()
         view->loadProgressingStatusChanged();
 }
 
-void FrameLoader::forcePageTransitionIfNeeded()
+void FrameLoader::completePageTransitionIfNeeded()
 {
-    m_client.forcePageTransitionIfNeeded();
+    m_client.completePageTransitionIfNeeded();
 }
 
 void FrameLoader::clearTestingOverrides()

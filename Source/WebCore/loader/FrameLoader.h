@@ -211,6 +211,7 @@ public:
 
     void didReachLayoutMilestone(OptionSet<LayoutMilestone>);
     void didFirstLayout();
+    void didReachVisuallyNonEmptyState();
 
     void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);
     void tellClientAboutPastMemoryCacheLoads();
@@ -311,7 +312,7 @@ public:
 
     const URL& previousURL() const { return m_previousURL; }
 
-    void forcePageTransitionIfNeeded();
+    void completePageTransitionIfNeeded();
 
     void setOverrideCachePolicyForTesting(ResourceRequestCachePolicy policy) { m_overrideCachePolicyForTesting = policy; }
     void setOverrideResourceLoadPriorityForTesting(ResourceLoadPriority priority) { m_overrideResourceLoadPriorityForTesting = priority; }

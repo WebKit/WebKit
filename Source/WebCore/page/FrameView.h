@@ -397,7 +397,7 @@ public:
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
-    WEBCORE_EXPORT bool qualifiesAsVisuallyNonEmpty() const;
+    void checkAndDispatchDidReachVisuallyNonEmptyState();
 
     WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);

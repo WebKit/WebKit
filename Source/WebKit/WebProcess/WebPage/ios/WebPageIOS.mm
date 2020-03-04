@@ -3500,15 +3500,8 @@ void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
 
     auto textAutoSizingDelay = [&] {
         auto& frameView = *m_page->mainFrame().view();
-        auto isVisaullyNonEmpty = frameView.isVisuallyNonEmpty();
-        auto willBeVisuallyNonEmptySoon = !isVisaullyNonEmpty && frameView.qualifiesAsVisuallyNonEmpty();
-        if (willBeVisuallyNonEmptySoon) {
-            // Be a bit more agressive on the first display.
-            const Seconds shortTextAutoSizingDelayOnViewportChange = 20_ms;
-            return shortTextAutoSizingDelayOnViewportChange;
-        } 
-        if (!isVisaullyNonEmpty) {
-            // We don't anticipate any paining after the next upcoming layout.
+        if (!frameView.isVisuallyNonEmpty()) {
+            // We don't anticipate any painting after the next upcoming layout.
             const Seconds longTextAutoSizingDelayOnViewportChange = 100_ms;
             return longTextAutoSizingDelayOnViewportChange;
         }

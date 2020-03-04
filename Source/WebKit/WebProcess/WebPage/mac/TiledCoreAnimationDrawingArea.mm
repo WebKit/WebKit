@@ -196,10 +196,8 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
 
 void TiledCoreAnimationDrawingArea::scheduleRenderingUpdate()
 {
-    if (m_layerTreeStateIsFrozen) {
+    if (m_layerTreeStateIsFrozen)
         return;
-    }
-
     scheduleRenderingUpdateRunLoopObserver();
 }
 

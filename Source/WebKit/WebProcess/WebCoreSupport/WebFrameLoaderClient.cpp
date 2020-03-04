@@ -680,17 +680,18 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     webPage->didFinishLoad(*m_frame);
 }
 
-void WebFrameLoaderClient::forcePageTransitionIfNeeded()
+void WebFrameLoaderClient::completePageTransitionIfNeeded()
 {
     if (m_didCompletePageTransition)
         return;
 
-    WebPage* webPage = m_frame->page();
+    auto* webPage = m_frame->page();
     if (!webPage)
         return;
 
     webPage->didCompletePageTransition();
     m_didCompletePageTransition = true;
+    WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "completePageTransitionIfNeeded: dispatching didCompletePageTransition");
 }
 
 void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
@@ -742,18 +743,20 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     webPage->dispatchDidReachLayoutMilestone(milestones);
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
-        if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
-            WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition");
-            webPage->didCompletePageTransition();
-            m_didCompletePageTransition = true;
-        }
-
-        // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
-        // double duty with the new didLayout API.
+        ASSERT(!m_frame->isMainFrame() || webPage->corePage()->settings().suppressesIncrementalRendering() || m_didCompletePageTransition);
+        // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing double duty with the new didLayout API.
         WEBFRAMELOADERCLIENT_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame");
         webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(*webPage, *m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     }
+}
+
+void WebFrameLoaderClient::dispatchDidReachVisuallyNonEmptyState()
+{
+    if (!m_frame->page() || m_frame->page()->corePage()->settings().suppressesIncrementalRendering())
+        return;
+    ASSERT(m_frame->isMainFrame());
+    completePageTransitionIfNeeded();
 }
 
 void WebFrameLoaderClient::dispatchDidLayout()
@@ -1372,14 +1375,9 @@ String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLSc
 void WebFrameLoaderClient::frameLoadCompleted()
 {
     // Note: Can be called multiple times.
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
+    if (!m_frame->isMainFrame())
         return;
-
-    if (m_frame->isMainFrame() && !m_didCompletePageTransition) {
-        webPage->didCompletePageTransition();
-        m_didCompletePageTransition = true;
-    }
+    completePageTransitionIfNeeded();
 }
 
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)

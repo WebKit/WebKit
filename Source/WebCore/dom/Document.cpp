@@ -1356,7 +1356,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         renderView->repaintViewAndCompositedLayers();
 
     if (Frame* frame = this->frame())
-        frame->loader().forcePageTransitionIfNeeded();
+        frame->loader().completePageTransitionIfNeeded();
 }
 
 void Document::visualUpdatesSuppressionTimerFired()

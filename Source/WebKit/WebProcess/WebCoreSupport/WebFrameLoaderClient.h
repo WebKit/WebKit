@@ -125,6 +125,7 @@ private:
     void dispatchDidExplicitOpen(const URL&, const String& mimeType) final;
 
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
+    void dispatchDidReachVisuallyNonEmptyState() final;
     void dispatchDidLayout() final;
 
     WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) final;
@@ -256,7 +257,7 @@ private:
 
     Ref<WebCore::FrameNetworkingContext> createNetworkingContext() final;
 
-    void forcePageTransitionIfNeeded() final;
+    void completePageTransitionIfNeeded() final;
 
 #if USE(QUICK_LOOK)
     RefPtr<WebCore::LegacyPreviewLoaderClient> createPreviewLoaderClient(const String& fileName, const String& uti) final;

@@ -1,3 +1,16 @@
+2020-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        [First paint] Going from visually empty to non-empty should immediately trigger layer unfreezing
+        https://bugs.webkit.org/show_bug.cgi?id=208385
+        <rdar://problem/59895900>
+
+        Reviewed by Antti Koivisto.
+        
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked-expected.txt:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered-expected.txt:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html:
+
 2020-03-04  Antti Koivisto  <antti@apple.com>
 
         Avoid full style resolution on Element::focus()

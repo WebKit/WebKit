@@ -95,6 +95,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void dispatchDidFinishDocumentLoad() final { }
     void dispatchDidFinishLoad() final { }
     void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) final { }
+    void dispatchDidReachVisuallyNonEmptyState() final { }
 
     Frame* dispatchCreatePage(const NavigationAction&) final { return nullptr; }
     void dispatchShow() final { }

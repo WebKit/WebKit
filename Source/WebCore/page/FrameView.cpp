@@ -809,10 +809,7 @@ void FrameView::styleAndRenderTreeDidChange()
     if (!renderView)
         return;
 
-    if (!m_contentQualifiesAsVisuallyNonEmpty) {
-        // Let's check whether the newly constructed content qualifies as non-empty now.
-        m_contentQualifiesAsVisuallyNonEmpty = qualifiesAsVisuallyNonEmpty();
-    }
+    checkAndDispatchDidReachVisuallyNonEmptyState();
     auto* layerTreeMutationRoot = renderView->takeStyleChangeLayerTreeMutationRoot();
     if (layerTreeMutationRoot && !needsLayout())
         layerTreeMutationRoot->updateLayerPositionsAfterStyleChange();
@@ -4377,70 +4374,82 @@ bool FrameView::qualifiesAsSignificantRenderedText() const
     return m_hasReachedSignificantRenderedTextThreshold;
 }
 
-bool FrameView::qualifiesAsVisuallyNonEmpty() const
+void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
 {
-    // No content yet.
-    Element* documentElement = frame().document()->documentElement();
-    if (!documentElement || !documentElement->renderer())
-        return false;
-
-    // FIXME: We should also ignore renderers with non-final style.
-    if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
-        return false;
-
-    auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && (frame().document()->readyState() == Document::Interactive || frame().document()->readyState() == Document::Complete);
-    // Ensure that we always fire visually non-empty milestone eventually.
-    if (finishedParsingMainDocument && frame().loader().isComplete())
-        return true;
-
-    auto isVisible = [](const Element* element) {
-        if (!element || !element->renderer())
+    auto qualifiesAsVisuallyNonEmpty = [&] {
+        // No content yet.
+        Element* documentElement = frame().document()->documentElement();
+        if (!documentElement || !documentElement->renderer())
             return false;
-        if (!element->renderer()->opacity())
+
+        // FIXME: We should also ignore renderers with non-final style.
+        if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
             return false;
-        return element->renderer()->style().visibility() == Visibility::Visible;
+
+        auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && (frame().document()->readyState() == Document::Interactive || frame().document()->readyState() == Document::Complete);
+        // Ensure that we always fire visually non-empty milestone eventually.
+        if (finishedParsingMainDocument && frame().loader().isComplete())
+            return true;
+
+        auto isVisible = [](const Element* element) {
+            if (!element || !element->renderer())
+                return false;
+            if (!element->renderer()->opacity())
+                return false;
+            return element->renderer()->style().visibility() == Visibility::Visible;
+        };
+
+        if (!isVisible(documentElement))
+            return false;
+
+        if (!isVisible(frame().document()->body()))
+            return false;
+
+        // The first few hundred characters rarely contain the interesting content of the page.
+        if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
+            return true;
+
+        // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
+        if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
+            return true;
+
+        auto isMoreContentExpected = [&]() {
+            ASSERT(finishedParsingMainDocument);
+            // Pending css/font loading means we should wait a little longer. Classic non-async, non-defer scripts are all processed by now.
+            auto* documentLoader = frame().loader().documentLoader();
+            if (!documentLoader)
+                return false;
+
+            auto& resourceLoader = documentLoader->cachedResourceLoader();
+            if (!resourceLoader.requestCount())
+                return false;
+
+            auto& resources = resourceLoader.allCachedResources();
+            for (auto& resource : resources) {
+                if (resource.value->isLoaded())
+                    continue;
+                if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
+                    return true;
+            }
+            return false;
+        };
+
+        // Finished parsing the main document and we still don't yet have enough content. Check if we might be getting some more.
+        if (finishedParsingMainDocument)
+            return !isMoreContentExpected();
+
+        return false;
     };
 
-    if (!isVisible(documentElement))
-        return false;
+    if (m_contentQualifiesAsVisuallyNonEmpty)
+        return;
 
-    if (!isVisible(frame().document()->body()))
-        return false;
+    if (!qualifiesAsVisuallyNonEmpty())
+        return;
 
-    // The first few hundred characters rarely contain the interesting content of the page.
-    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
-        return true;
-
-    // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
-    if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
-        return true;
-
-    auto isMoreContentExpected = [&]() {
-        ASSERT(finishedParsingMainDocument);
-        // Pending css/font loading means we should wait a little longer. Classic non-async, non-defer scripts are all processed by now.
-        auto* documentLoader = frame().loader().documentLoader();
-        if (!documentLoader)
-            return false;
-
-        auto& resourceLoader = documentLoader->cachedResourceLoader();
-        if (!resourceLoader.requestCount())
-            return false;
-
-        auto& resources = resourceLoader.allCachedResources();
-        for (auto& resource : resources) {
-            if (resource.value->isLoaded())
-                continue;
-            if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
-                return true;
-        }
-        return false;
-    };
-
-    // Finished parsing the main document and we still don't yet have enough content. Check if we might be getting some more.
-    if (finishedParsingMainDocument)
-        return !isMoreContentExpected();
-
-    return false;
+    m_contentQualifiesAsVisuallyNonEmpty = true;
+    if (frame().isMainFrame())
+        frame().loader().didReachVisuallyNonEmptyState();
 }
 
 bool FrameView::isViewForDocumentInFrame() const
@@ -5090,9 +5099,7 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
     }
 
     if (m_firstVisuallyNonEmptyLayoutMilestoneIsPending) {
-        if (!m_contentQualifiesAsVisuallyNonEmpty)
-            m_contentQualifiesAsVisuallyNonEmpty = qualifiesAsVisuallyNonEmpty();
-
+        checkAndDispatchDidReachVisuallyNonEmptyState();
         if (m_contentQualifiesAsVisuallyNonEmpty) {
             m_firstVisuallyNonEmptyLayoutMilestoneIsPending = false;
 
