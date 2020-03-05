@@ -1,3 +1,11 @@
+2020-03-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r257877
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser const):
+        Restricts LAOptionPasscodeTitle to iOS for now.
+
 2020-03-04  Chris Dumez  <cdumez@apple.com>
 
         Adopt new and improved CFNetwork SPI for cookie change notifications

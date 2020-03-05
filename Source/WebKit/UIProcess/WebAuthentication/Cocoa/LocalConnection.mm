@@ -47,7 +47,9 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, UserVerifica
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
     if ([context biometryType] == LABiometryTypeTouchID)
         [options setObject:WebCore::touchIDPromptTitle() forKey:@(LAOptionAuthenticationTitle)];
+#if PLATFORM(iOS)
     [options setObject:WebCore::biometricFallbackPromptTitle() forKey:@(LAOptionPasscodeTitle)];
+#endif
 
     auto reply = makeBlockPtr([context, completionHandler = WTFMove(completionHandler)] (NSDictionary *, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
