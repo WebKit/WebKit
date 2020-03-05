@@ -644,7 +644,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         for key, value in contributors_json.iteritems():
             emails = value.get('emails')
             for email in emails:
-                contributors[email] = {'name': key, 'status': value.get('status')}
+                contributors[email.lower()] = {'name': key, 'status': value.get('status')}
         return contributors
 
     @defer.inlineCallbacks
@@ -693,13 +693,13 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             self.descriptionDone = 'Failed to get contributors information'
             self.build.buildFinished(['Failed to get contributors information'], FAILURE)
             return None
-        patch_committer = self.getProperty('patch_committer', '')
+        patch_committer = self.getProperty('patch_committer', '').lower()
         if not self.is_committer(patch_committer):
             self.fail_build(patch_committer, 'committer')
             return None
         self._addToLog('stdio', '{} is a valid commiter.\n'.format(patch_committer))
 
-        patch_reviewer = self.getProperty('patch_reviewer', '')
+        patch_reviewer = self.getProperty('patch_reviewer', '').lower()
         if not patch_reviewer:
             # Patch does not have r+ flag. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
             self.descriptionDone = 'Validated committer'
