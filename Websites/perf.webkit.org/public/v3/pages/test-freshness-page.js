@@ -431,7 +431,7 @@ class TestFreshnessPage extends PageWithHeading {
                 vertical-align: bottom;
             }
             #test-health .row-head {
-                min-width: 15.5rem;
+                min-width: 18.5rem;
             }
             #test-health th {
                 text-align: left;
