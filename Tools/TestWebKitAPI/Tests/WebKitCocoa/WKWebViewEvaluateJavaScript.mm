@@ -31,13 +31,16 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
@@ -136,10 +139,12 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     [webView synchronouslyLoadHTMLString:@"<html></html>"];
 
     // Set a variable in the main world via "normal" evaluateJavaScript
-    isDone = false;
+    __block bool isDone = false;
+    __block size_t testsPassed = 0;
     [webView evaluateJavaScript:@"var foo = 'bar'" completionHandler:^(id result, NSError *error) {
         isDone = true;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify that value is visible when evaluating in the pageWorld
@@ -147,45 +152,57 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify that value is not visible when evaluating in the defaultClientWorld
     [webView evaluateJavaScript:@"foo" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify that value is visible when calling a function in the pageWorld
-    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bar"]);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify that value is not visible when calling a function in the defaultClientWorld
-    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:[&] (id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return foo" arguments:nil inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Set a varibale value in a named world.
     RetainPtr<WKContentWorld> namedWorld = [WKContentWorld worldWithName:@"NamedWorld"];
-    [webView evaluateJavaScript:@"var bar = baz" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    [webView evaluateJavaScript:@"var bar = 'baz'" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    // Set a global varibale value in a named world via a function call.
-    [webView callAsyncJavaScript:@"window.baz = bat" arguments:nil inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+    // Set a global variable value in a named world via a function call.
+    [webView callAsyncJavaScript:@"window.baz = 'bat'" arguments:nil inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NULL(error);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify they are there in that named world.
@@ -193,41 +210,107 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"baz"]);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     [webView evaluateJavaScript:@"window.baz" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"bat"]);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify they aren't there in the defaultClientWorld.
     [webView evaluateJavaScript:@"bar" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     [webView evaluateJavaScript:@"window.baz" inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     // Verify they aren't there in the pageWorld.
     [webView evaluateJavaScript:@"bar" inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
     [webView evaluateJavaScript:@"window.baz" inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
+        testsPassed++;
     }];
+    TestWebKitAPI::Util::run(&isDone);
     isDone = false;
+    
+    EXPECT_EQ(testsPassed, 12u);
+}
+
+TEST(WKWebView, EvaluateJavaScriptInWorldsWithGlobalObjectAvailable)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentWorldPlugIn"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<html></html>"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.worldName" inContentWorld:[WKContentWorld worldWithName:@"testName"] completionHandler:^(id result, NSError *error) {
+        EXPECT_WK_STREQ(result, "testName");
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKWebView, EvaluateJavaScriptInWorldsWithGlobalObjectAvailableInCrossOriginIframe)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ContentWorldPlugIn"];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    __block bool childFrameLoaded = false;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *responseString = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"frame://host1/"])
+            responseString = @"<iframe src='frame://host2/' onload='fetch(\"loadedChildFrame\")'></iframe>";
+        else if ([task.request.URL.absoluteString isEqualToString:@"frame://host2/"])
+            responseString = @"frame content";
+        else if ([task.request.URL.path isEqualToString:@"/loadedChildFrame"]) {
+            responseString = @"fetched content";
+            childFrameLoaded = true;
+        }
+
+        ASSERT(responseString);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"frame"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
+
+    TestWebKitAPI::Util::run(&childFrameLoaded);
+    
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0] inContentWorld:[WKContentWorld worldWithName:@"testName"] completionHandler:^(id result, NSError *error) {
+            EXPECT_WK_STREQ(result, "testName");
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST(WebKit, EvaluateJavaScriptInAttachments)

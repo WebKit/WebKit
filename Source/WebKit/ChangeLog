@@ -1,3 +1,24 @@
+2020-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Call globalObjectIsAvailableForFrame before evaluating JavaScript in newly created worlds
+        https://bugs.webkit.org/show_bug.cgi?id=208615
+        <rdar://problem/59406743>
+
+        Reviewed by Alex Christensen.
+
+        globalObjectIsAvailableForFrame is often used for initialization code for a content world.
+        If we evaluate JavaScript in a content world as the first thing we do in that world, 
+        globalObjectIsAvailableForFrame hadn't been called, so things were not initialized.
+        So call it when evaluating JavaScript if we create the world to evaluate in.
+
+        Covered by new API tests.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentWorld):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+
 2020-03-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a build fix after r257877

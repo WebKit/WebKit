@@ -397,6 +397,7 @@
 		5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FB6CC1CA34BE500966124 /* EarlyKVOCrash.mm */; };
 		5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */; };
 		5C0BF8941DD599C900B00328 /* MenuTypesForMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A99D9931AD4A29D00373141 /* MenuTypesForMouseEvents.mm */; };
+		5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */; };
 		5C16F8FC230C94370074C4A8 /* TextSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C16F8FB230C942B0074C4A8 /* TextSize.mm */; };
 		5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */; };
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
@@ -2027,6 +2028,7 @@
 		5C0160C021A132320077FA32 /* JITEnabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JITEnabled.mm; sourceTree = "<group>"; };
 		5C0BF88C1DD5957400B00328 /* MemoryPressureHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandler.mm; sourceTree = "<group>"; };
 		5C0BF88F1DD5999B00B00328 /* WebViewCanPasteZeroPng.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteZeroPng.mm; sourceTree = "<group>"; };
+		5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentWorldPlugIn.mm; sourceTree = "<group>"; };
 		5C16F8FB230C942B0074C4A8 /* TextSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextSize.mm; sourceTree = "<group>"; };
 		5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookiePrivateBrowsing.mm; sourceTree = "<group>"; };
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
@@ -2977,6 +2979,7 @@
 				A14FC5861B8991B600D107EB /* ContentFiltering.mm */,
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
 				5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */,
+				5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */,
 				5C3B1D2522A74EA400BCF4D0 /* ContextMenus.mm */,
 				5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */,
 				5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */,
@@ -5227,6 +5230,7 @@
 				1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */,
 				5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */,
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
+				5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */,
 				CEA7F57D2089624B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm in Sources */,
 				518EE51920A78CE500E024F3 /* DoubleDefersLoadingPlugin.mm in Sources */,
 				5CB5B3C21FFC55CF00C27BB0 /* FrameHandleSerialization.mm in Sources */,

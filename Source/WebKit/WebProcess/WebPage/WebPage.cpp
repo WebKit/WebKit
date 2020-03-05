@@ -3472,7 +3472,13 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
 {
     auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : mainWebFrame();
-    m_userContentController->addContentWorld(worldData);
+
+    if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
+        auto& coreWorld = newWorld->coreWorld();
+        for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+            frame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
+    }
+
     runJavaScript(webFrame, WTFMove(parameters), worldData.first, callbackID);
 }
 

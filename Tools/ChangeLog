@@ -1,3 +1,19 @@
+2020-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Call globalObjectIsAvailableForFrame before evaluating JavaScript in newly created worlds
+        https://bugs.webkit.org/show_bug.cgi?id=208615
+        <rdar://problem/59406743>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentWorldPlugIn.mm: Added.
+        (-[ContentWorldPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[ContentWorldPlugIn webProcessPlugInBrowserContextController:globalObjectIsAvailableForFrame:inScriptWorld:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        Also make a test written in bug 206310 actually run code.
+
 2020-03-04  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Remove leaks queue

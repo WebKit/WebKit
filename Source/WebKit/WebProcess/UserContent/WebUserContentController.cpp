@@ -101,13 +101,13 @@ InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(ContentW
     return iterator == worldMap().end() ? nullptr : iterator->value.first.get();
 }
 
-void WebUserContentController::addContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
+InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
 {
     ASSERT(world.first);
     if (world.first == pageContentWorldIdentifier())
-        return;
-
-    worldMap().ensure(world.first, [&] {
+        return nullptr;
+    
+    auto addResult = worldMap().ensure(world.first, [&] {
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // The GLib API doesn't allow to create script worlds from the UI process. We need to
         // use the existing world created by the web extension if any. The world name is used
@@ -117,6 +117,10 @@ void WebUserContentController::addContentWorld(const std::pair<ContentWorldIdent
 #endif
         return std::make_pair(InjectedBundleScriptWorld::create(world.second, InjectedBundleScriptWorld::Type::User), 1);
     });
+    
+    if (addResult.isNewEntry)
+        return addResult.iterator->value.first.get();
+    return nullptr;
 }
 
 void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWorldIdentifier, String>>& worlds)
