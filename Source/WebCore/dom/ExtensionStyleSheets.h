@@ -75,6 +75,7 @@ public:
 
     void injectPageSpecificUserStyleSheet(const UserStyleSheet&);
     void removePageSpecificUserStyleSheet(const UserStyleSheet&);
+
     String contentForInjectedStyleSheet(const RefPtr<CSSStyleSheet>&) const;
 
     void detachFromDocument();

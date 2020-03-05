@@ -1,3 +1,20 @@
+2020-03-05  Antoine Quint  <graouts@apple.com>
+
+        Page-specific UserStyleSheets should wait until the initial empty document has been removed to be injected
+        https://bugs.webkit.org/show_bug.cgi?id=208644
+        <rdar://problem/60042429>
+
+        Reviewed by Brady Eidson.
+
+        Add new tests for -[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:userContentWorld:]) that check:
+        
+        1. that a _WKUserStyleSheet can be added immediately after a WKWebView's creation and will be injected once the initial
+           empty document has been removed in favor of the document for the requested URL,
+        2. that removing a _WKUserStyleSheet immediately after it was added but before the initial empty document was removed
+           correctly does not injected the style sheet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+
 2020-03-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add build step to push commit to WebKit repository

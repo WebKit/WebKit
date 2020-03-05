@@ -3018,6 +3018,12 @@ void Page::revealCurrentSelection()
 
 void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 {
+    // We need to wait until we're no longer displaying the initial empty document before we can inject the stylesheets.
+    if (m_mainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument()) {
+        m_userStyleSheetsPendingInjection.append(userStyleSheet);
+        return;
+    }
+
     if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
         if (auto* document = m_mainFrame->document())
             document->extensionStyleSheets().injectPageSpecificUserStyleSheet(userStyleSheet);
@@ -3030,6 +3036,13 @@ void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 
 void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
 {
+    if (!m_userStyleSheetsPendingInjection.isEmpty()) {
+        m_userStyleSheetsPendingInjection.removeFirstMatching([userStyleSheet](auto& storedUserStyleSheet) {
+            return storedUserStyleSheet.url() == userStyleSheet.url();
+        });
+        return;
+    }
+
     if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
         if (auto* document = m_mainFrame->document())
             document->extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
@@ -3038,6 +3051,14 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
             document.extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
         });
     }
+}
+
+void Page::mainFrameDidChangeToNonInitialEmptyDocument()
+{
+    ASSERT(!m_mainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument());
+    for (auto& userStyleSheet : m_userStyleSheetsPendingInjection)
+        injectUserStyleSheet(userStyleSheet);
+    m_userStyleSheetsPendingInjection.clear();
 }
 
 } // namespace WebCore

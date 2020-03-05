@@ -526,6 +526,35 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebView)
     expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
 }
 
+TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionImmediatelyAfterCreation)
+{
+    RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    [targetWebView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionAndRemovalImmediatelyAfterCreation)
+{
+    RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+    [[targetWebView configuration].userContentController _removeUserStyleSheet:styleSheet.get()];
+
+    [targetWebView _test_waitForDidFinishNavigation];
+
+    expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
+}
+
 TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewSharedConfiguration)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

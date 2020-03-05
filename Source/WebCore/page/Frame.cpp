@@ -294,6 +294,9 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     }
 #endif
 
+    if (m_page && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
+        m_page->mainFrameDidChangeToNonInitialEmptyDocument();
+
     InspectorInstrumentation::frameDocumentUpdated(*this);
 
     m_documentIsBeingReplaced = false;

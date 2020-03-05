@@ -255,6 +255,7 @@ public:
     bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
 
     void didChangeMainDocument();
+    void mainFrameDidChangeToNonInitialEmptyDocument();
 
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
 
@@ -1003,6 +1004,7 @@ private:
 #endif
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
+    Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
 };
 
 inline PageGroup& Page::group()
