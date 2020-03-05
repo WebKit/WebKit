@@ -27,9 +27,9 @@ from buildbot.steps import trigger
 from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
                    CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FindModifiedChangeLogs, InstallGtkDependencies,
-                   InstallWpeDependencies, KillOldProcesses, PrintConfiguration, RunAPITests, RunBindingsTests,
-                   RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests,
-                   RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
+                   InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
+                   RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
+                   RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
                    RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, SetBuildSummary, UpdateWorkingDirectory, ValidatePatch)
 
 
@@ -227,3 +227,5 @@ class CommitQueueFactory(Factory):
         self.addStep(ApplyPatch())
         self.addStep(FindModifiedChangeLogs())
         self.addStep(CreateLocalGITCommit())
+        self.addStep(PushCommitToWebKitRepo())
+        self.addStep(SetBuildSummary())

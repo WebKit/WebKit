@@ -1,5 +1,22 @@
 2020-03-05  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Add build step to push commit to WebKit repository
+        https://bugs.webkit.org/show_bug.cgi?id=208589
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo): Build step to push the local commit to WebKit repository.
+        (PushCommitToWebKitRepo.start): Initialize log observer.
+        (PushCommitToWebKitRepo.evaluateCommand): Check command return status and comment on bug accordingly.
+        (PushCommitToWebKitRepo.comment_text_for_bug): Generate comment text for commenting on bug.
+        (PushCommitToWebKitRepo.svn_revision_from_commit_text): Extract the svn revision from commit text.
+        (PushCommitToWebKitRepo.getResultSummary): Set custom failure message.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py:
+
+2020-03-05  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Add unit tests for ValidateCommiterAndReviewer build step
         https://bugs.webkit.org/show_bug.cgi?id=208262
 

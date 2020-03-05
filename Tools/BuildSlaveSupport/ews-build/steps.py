@@ -2488,3 +2488,55 @@ class CreateLocalGITCommit(shell.ShellCommand):
         if self.results != SUCCESS:
             return {u'step': u'Failed to create git commit'}
         return shell.ShellCommand.getResultSummary(self)
+
+
+class PushCommitToWebKitRepo(shell.ShellCommand):
+    name = 'push-commit-to-webkit-repo'
+    descriptionDone = ['Pushed commit to WebKit repository']
+    command = ['git', 'svn', 'dcommit', '--rmdir']
+    commit_success_regexp = '^Committed r(?P<svn_revision>\d+)$'
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == SUCCESS:
+            log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+            svn_revision = self.svn_revision_from_commit_text(log_text)
+            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision))
+            commit_summary = 'Committed r{}'.format(svn_revision)
+            self.descriptionDone = commit_summary
+            self.setProperty('build_summary', 'Committed r{}'.format(svn_revision))
+            self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
+        else:
+            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
+            self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
+            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        return rc
+
+    def url_for_revision(self, revision):
+        return 'https://trac.webkit.org/changeset/{}'.format(revision)
+
+    def comment_text_for_bug(self, svn_revision=None):
+        patch_id = self.getProperty('patch_id', '')
+        if not svn_revision:
+            return 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
+        comment = 'Committed r{}: <{}>'.format(svn_revision, self.url_for_revision(svn_revision))
+        comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
+        return comment
+
+    def svn_revision_from_commit_text(self, commit_text):
+        match = re.search(self.commit_success_regexp, commit_text, re.MULTILINE)
+        return match.group('svn_revision')
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to push commit to Webkit repository'}
+        return shell.ShellCommand.getResultSummary(self)
