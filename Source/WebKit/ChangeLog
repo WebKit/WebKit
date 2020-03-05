@@ -1,3 +1,63 @@
+2020-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Construct fewer unnecessary temporary WebProcessPool objects in WebsiteDataStore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=208610
+
+        Reviewed by Alex Christensen.
+
+        A lot of methods in WebsiteDataStore were calling ensureProcessPools() and then it a loop do something
+        if the pool already has a network process. When you construct a new process pool, the pool has initially
+        no network process. As a result, this code should be using processPools() instead of ensureProcessPools()
+        to avoid unnecessarily constructing a temporary WebProcessPool object.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::dumpResourceLoadStatistics):
+        (WebKit::WebsiteDataStore::isPrevalentResource):
+        (WebKit::WebsiteDataStore::isGrandfathered):
+        (WebKit::WebsiteDataStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebsiteDataStore::isVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setSubframeUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::WebsiteDataStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebsiteDataStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebsiteDataStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebsiteDataStore::clearPrevalentResource):
+        (WebKit::WebsiteDataStore::resetParametersToDefaultValues):
+        (WebKit::WebsiteDataStore::submitTelemetry):
+        (WebKit::WebsiteDataStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        (WebKit::WebsiteDataStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebsiteDataStore::setLastSeen):
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        (WebKit::WebsiteDataStore::logUserInteraction):
+        (WebKit::WebsiteDataStore::hasHadUserInteraction):
+        (WebKit::WebsiteDataStore::isRelationshipOnlyInDatabaseOnce):
+        (WebKit::WebsiteDataStore::clearUserInteraction):
+        (WebKit::WebsiteDataStore::setGrandfathered):
+        (WebKit::WebsiteDataStore::setUseITPDatabase):
+        (WebKit::WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting):
+        (WebKit::WebsiteDataStore::deleteCookiesForTesting):
+        (WebKit::WebsiteDataStore::hasLocalStorageForTesting const):
+        (WebKit::WebsiteDataStore::hasIsolatedSessionForTesting const):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::isResourceLoadStatisticsEphemeral const):
+        (WebKit::WebsiteDataStore::getLocalStorageDetails):
+        (WebKit::WebsiteDataStore::resetQuota):
+        (WebKit::WebsiteDataStore::hasAppBoundSession const):
+        (WebKit::WebsiteDataStore::setInAppBrowserPrivacyEnabled):
+
 2020-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Call globalObjectIsAvailableForFrame before evaluating JavaScript in newly created worlds
