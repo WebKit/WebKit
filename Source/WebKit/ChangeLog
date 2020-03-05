@@ -1,5 +1,12 @@
 2020-03-05  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed unified build fix; forward-declare and include GPUConnectionToWebProcess where it's used.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+
+2020-03-05  Jer Noble  <jer.noble@apple.com>
+
         [GPUP] Implement RemoteAudioSession
         https://bugs.webkit.org/show_bug.cgi?id=208583
 

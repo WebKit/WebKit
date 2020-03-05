@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteAudioSessionMessages.h"
 #include "RemoteAudioSessionProxyManager.h"
 #include "RemoteAudioSessionProxyMessages.h"

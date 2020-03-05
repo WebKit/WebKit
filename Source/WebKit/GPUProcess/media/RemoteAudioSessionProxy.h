@@ -40,6 +40,7 @@ class Connection;
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
 
 class RemoteAudioSessionProxy
