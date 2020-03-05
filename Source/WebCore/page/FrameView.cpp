@@ -590,7 +590,7 @@ void FrameView::didDestroyRenderTree()
     ASSERT(!m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty() || (m_embeddedObjectsToUpdate->size() == 1 && m_embeddedObjectsToUpdate->first() == nullptr));
 
     ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty());
-    ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->isEmpty());
+    ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->computesEmpty());
 
     ASSERT(!frame().animation().hasAnimations());
 }
@@ -1482,9 +1482,9 @@ void FrameView::addSlowRepaintObject(RenderElement& renderer)
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
-        m_slowRepaintObjects = makeUnique<HashSet<const RenderElement*>>();
+        m_slowRepaintObjects = makeUnique<WeakHashSet<RenderElement>>();
 
-    m_slowRepaintObjects->add(&renderer);
+    m_slowRepaintObjects->add(renderer);
     if (hadSlowRepaintObjects)
         return;
 
@@ -1501,8 +1501,8 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
     if (!m_slowRepaintObjects)
         return;
 
-    m_slowRepaintObjects->remove(&renderer);
-    if (!m_slowRepaintObjects->isEmpty())
+    m_slowRepaintObjects->remove(renderer);
+    if (!m_slowRepaintObjects->computesEmpty())
         return;
 
     m_slowRepaintObjects = nullptr;
@@ -2155,7 +2155,7 @@ void FrameView::repaintSlowRepaintObjects()
     // Renderers with fixed backgrounds may be in compositing layers, so we need to explicitly
     // repaint them after scrolling.
     for (auto& renderer : *m_slowRepaintObjects)
-        renderer->repaintSlowRepaintObject();
+        renderer.repaintSlowRepaintObject();
 }
 
 // Note that this gets called at painting time.

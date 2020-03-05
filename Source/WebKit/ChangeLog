@@ -1,3 +1,16 @@
+2020-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Make m_slowRepaintObjects a WeakHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=208623
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix namespace errors triggered by FrameView include changes.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::visitedLinkStore):
+        (API::PageConfiguration::setVisitedLinkStore):
+
 2020-03-04  Brady Eidson  <beidson@apple.com>
 
         Lay initial groundwork for new PDF loading model

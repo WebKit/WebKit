@@ -33,6 +33,7 @@
 #include "LayoutRect.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
+#include "RenderElement.h"
 #include "RenderPtr.h"
 #include "ScrollView.h"
 #include "StyleColor.h"
@@ -44,6 +45,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -289,8 +291,8 @@ public:
 
     void addSlowRepaintObject(RenderElement&);
     void removeSlowRepaintObject(RenderElement&);
-    bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(&renderer); }
-    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->size(); }
+    bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(renderer); }
+    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->computeSize(); }
 
     // Includes fixed- and sticky-position objects.
     typedef HashSet<RenderLayerModelObject*> ViewportConstrainedObjectSet;
@@ -822,7 +824,7 @@ private:
 
     HashSet<Widget*> m_widgetsInRenderTree;
     std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
-    std::unique_ptr<HashSet<const RenderElement*>> m_slowRepaintObjects;
+    std::unique_ptr<WeakHashSet<RenderElement>> m_slowRepaintObjects;
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
     RefPtr<Node> m_nodeToDraw;
