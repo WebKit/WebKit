@@ -1222,6 +1222,11 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     return MediaTime::invalidTime();
 }
 
+float MediaPlayerPrivateAVFoundationObjC::currentTime() const
+{
+    return currentMediaTime().toFloat();
+}
+
 MediaTime MediaPlayerPrivateAVFoundationObjC::currentMediaTime() const
 {
     if (!metaDataAvailable() || !m_avPlayerItem)
@@ -1498,7 +1503,16 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (videoOutputHasAvailableFrame())
+    // Callers of this will often call copyVideoTextureToPlatformTexture first,
+    // which calls updateLastPixelBuffer, which clears m_lastImage whenever the
+    // video delivers a new frame. This breaks videoOutputHasAvailableFrame's
+    // short-circuiting when m_lastImage is non-null, but the video often
+    // doesn't have a new frame to deliver since the last time
+    // hasNewPixelBufferForItemTime was called against m_videoOutput. To avoid
+    // changing the semantics of videoOutputHasAvailableFrame in ways that might
+    // break other callers, look for production of a recent pixel buffer from
+    // the video output, too.
+    if (videoOutputHasAvailableFrame() || (m_videoOutput && m_lastPixelBuffer))
         paintWithVideoOutput(context, rect);
     else
         paintWithImageGenerator(context, rect);
@@ -2220,7 +2234,11 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
+    // It's crucial to not wait synchronously for the next image. Videos that
+    // come down this path are performing slow-case software uploads, and such
+    // videos may not return metadata in a timely fashion. Use the most recently
+    // available pixel buffer, if any.
+    updateLastImage();
     if (!m_lastImage)
         return;
 

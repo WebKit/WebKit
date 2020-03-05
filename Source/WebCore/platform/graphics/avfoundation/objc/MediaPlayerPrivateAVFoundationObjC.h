@@ -153,6 +153,7 @@ public:
     bool waitingForKey() const final { return m_waitingForKey; }
 #endif
 
+    float currentTime() const override;
     MediaTime currentMediaTime() const override;
 
 private:
