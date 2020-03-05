@@ -1,3 +1,12 @@
+2020-03-05  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS iOS ] storage/indexeddb/modern/transactions-stop-on-navigation.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=208656
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-03-05  youenn fablet  <youenn@apple.com>
 
         In case an activating service worker is terminated, it should go to activated state
