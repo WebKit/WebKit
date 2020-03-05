@@ -466,6 +466,7 @@ public:
     Frame* frame() const override;
     Frame* mainFrame() const override;
     Document* topDocument() const override;
+    ScrollView* scrollView() const override { return nullptr; }
     ScrollView* scrollViewAncestor() const override;
     String language() const override;
     // 1-based, to match the aria-level spec.

@@ -875,6 +875,7 @@ public:
     virtual Frame* frame() const = 0;
     virtual Frame* mainFrame() const = 0;
     virtual Document* topDocument() const = 0;
+    virtual ScrollView* scrollView() const = 0;
     virtual ScrollView* scrollViewAncestor() const = 0;
     virtual String language() const = 0;
     // 1-based, to match the aria-level spec.

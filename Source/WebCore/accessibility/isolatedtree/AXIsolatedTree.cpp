@@ -228,6 +228,9 @@ void AXIsolatedTree::applyPendingChanges()
     m_focusedNodeID = m_pendingFocusedNodeID;
 
     for (const auto& axID : m_pendingRemovals) {
+        if (axID == InvalidAXID)
+            continue;
+
         if (auto object = nodeForID(axID))
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
         m_readerThreadNodeMap.remove(axID);
@@ -236,6 +239,8 @@ void AXIsolatedTree::applyPendingChanges()
 
     for (const auto& item : m_pendingAppends) {
         AXID axID = item.m_isolatedObject->objectID();
+        if (axID == InvalidAXID)
+            continue;
 
         if (m_readerThreadNodeMap.get(axID) != &item.m_isolatedObject.get()) {
             // The new IsolatedObject is a replacement for an existing object

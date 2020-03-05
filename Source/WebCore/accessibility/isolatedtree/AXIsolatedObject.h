@@ -827,6 +827,7 @@ private:
     Frame* frame() const override;
     Frame* mainFrame() const override;
     Document* topDocument() const override;
+    ScrollView* scrollView() const override;
     ScrollView* scrollViewAncestor() const override;
     void childrenChanged() override;
     void textChanged() override;

@@ -1611,6 +1611,13 @@ Document* AXIsolatedObject::topDocument() const
     return nullptr;
 }
 
+ScrollView* AXIsolatedObject::scrollView() const
+{
+    if (auto* object = associatedAXObject())
+        return object->scrollView();
+    return nullptr;
+}
+
 ScrollView* AXIsolatedObject::scrollViewAncestor() const
 {
     ASSERT_NOT_REACHED();
