@@ -22,6 +22,7 @@
 #include "JSSetLike.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -32,10 +33,13 @@
 #include "JSDOMSetLike.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
+#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -331,6 +335,27 @@ static inline JSC::EncodedJSValue jsSetLikePrototypeFunctionDeleteBody(JSC::JSGl
 EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionDelete(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSSetLike>::call<jsSetLikePrototypeFunctionDeleteBody>(*lexicalGlobalObject, *callFrame, "delete");
+}
+
+JSC::IsoSubspace* JSSetLike::subspaceForImpl(JSC::VM& vm)
+{
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& spaces = clientData.subspaces();
+    if (auto* space = spaces.m_subspaceForSetLike.get())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSSetLike> || !JSSetLike::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSSetLike>)
+        spaces.m_subspaceForSetLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSSetLike);
+    else
+        spaces.m_subspaceForSetLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSSetLike);
+    auto* space = spaces.m_subspaceForSetLike.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    if (&JSSetLike::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 void JSSetLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

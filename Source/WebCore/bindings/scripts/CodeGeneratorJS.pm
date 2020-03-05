@@ -2795,12 +2795,13 @@ sub GenerateHeader
         }
     }
 
-    # FIXME: We put this unconditionally to put all the WebCore JS wrappers in each IsoSubspace.
-    # https://bugs.webkit.org/show_bug.cgi?id=205107
-    if (IsDOMGlobalObject($interface)) {
-        push(@headerContent, "    template<typename, JSC::SubspaceAccess> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }\n");
-        push(@headerContent, "    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);\n");
-    }
+    push(@headerContent, "    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)\n");
+    push(@headerContent, "    {\n");
+    push(@headerContent, "        if constexpr (mode == JSC::SubspaceAccess::Concurrently)\n");
+    push(@headerContent, "            return nullptr;\n");
+    push(@headerContent, "        return subspaceForImpl(vm);\n");
+    push(@headerContent, "    }\n");
+    push(@headerContent, "    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);\n");
 
     # visit function
     if ($needsVisitChildren) {
@@ -2821,9 +2822,6 @@ sub GenerateHeader
             # program resumed since the last call to visitChildren or visitOutputConstraints. Since
             # this just calls visitAdditionalChildren, you usually don't have to worry about this.
             push(@headerContent, "    static void visitOutputConstraints(JSCell*, JSC::SlotVisitor&);\n");
-            if (!IsDOMGlobalObject($interface)) {
-                push(@headerContent, "    template<typename, JSC::SubspaceAccess> static JSC::CompleteSubspace* subspaceFor(JSC::VM& vm) { return outputConstraintSubspaceFor(vm); }\n");
-            }
         }
     }
 
@@ -4662,13 +4660,34 @@ sub GenerateImplementation
     GenerateIterableDefinition($interface) if $interface->iterable;
     GenerateSerializerDefinition($interface, $className) if $interface->serializable;
 
+    AddToImplIncludes("DOMIsoSubspaces.h");
+    AddToImplIncludes("WebCoreJSClientData.h");
+    AddToImplIncludes("<JavaScriptCore/JSDestructibleObjectHeapCellType.h>");
+    AddToImplIncludes("<JavaScriptCore/SubspaceInlines.h>");
+    push(@implContent, "JSC::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n");
+    push(@implContent, "    auto& spaces = clientData.subspaces();\n");
+    push(@implContent, "    if (auto* space = spaces.m_subspaceFor${interfaceName}.get())\n");
+    push(@implContent, "        return space;\n");
     if (IsDOMGlobalObject($interface)) {
-        AddToImplIncludes("WebCoreJSClientData.h");
-        push(@implContent, "JSC::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return &static_cast<JSVMClientData*>(vm.clientData)->subspaceFor${className}();\n");
-        push(@implContent, "}\n\n");
+        push(@implContent, "    spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeFor${className}.get(), ${className});\n");
+    } else {
+        push(@implContent, "    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${className}> || !${className}::needsDestruction);\n");
+        push(@implContent, "    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${className}>)\n");
+        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), ${className});\n");
+        push(@implContent, "    else\n");
+        push(@implContent, "        spaces.m_subspaceFor${interfaceName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), ${className});\n");
     }
+    push(@implContent, "    auto* space = spaces.m_subspaceFor${interfaceName}.get();\n");
+    push(@implContent, "IGNORE_WARNINGS_BEGIN(\"unreachable-code\")\n");
+    push(@implContent, "IGNORE_WARNINGS_BEGIN(\"tautological-compare\")\n");
+    push(@implContent, "    if (&${className}::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)\n");
+    push(@implContent, "        clientData.outputConstraintSpaces().append(space);\n");
+    push(@implContent, "IGNORE_WARNINGS_END\n");
+    push(@implContent, "IGNORE_WARNINGS_END\n");
+    push(@implContent, "    return space;\n");
+    push(@implContent, "}\n\n");
 
     if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");

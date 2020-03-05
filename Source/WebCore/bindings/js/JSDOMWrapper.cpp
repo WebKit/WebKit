@@ -44,11 +44,6 @@ JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalO
     ASSERT(scriptExecutionContext() || globalObject.classInfo(globalObject.vm()) == JSRemoteDOMWindow::info());
 }
 
-JSC::CompleteSubspace* outputConstraintSubspaceFor(JSC::VM& vm)
-{
-    return &static_cast<JSVMClientData*>(vm.clientData)->outputConstraintSpace();
-}
-
 JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSC::JSValue value)
 {
     if (isWorldCompatible(lexicalGlobalObject, value))
