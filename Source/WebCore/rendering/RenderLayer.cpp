@@ -283,6 +283,12 @@ static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
 
 #endif
 
+static ScrollingScope nextScrollingScope()
+{
+    static ScrollingScope currentScope = 0;
+    return ++currentScope;
+}
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
 
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
@@ -342,6 +348,9 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     setIsCSSStackingContext(shouldBeCSSStackingContext());
 
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
+
+    if (isRenderViewLayer())
+        m_boxScrollingScope = m_contentsScrollingScope = nextScrollingScope();
 
     if (!renderer().firstChild()) {
         m_visibleContentStatusDirty = false;
@@ -958,7 +967,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
 
     // Clear our cached clip rect information.
     clearClipRects();
-    
+
     if (hasOverflowControls()) {
         LayoutSize offsetFromRoot;
         if (geometryMap)
@@ -1734,15 +1743,27 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
         if (positionedParent->renderer().hasOverflowClip())
             localPoint -= toLayoutSize(positionedParent->scrollPosition());
         
-        if (renderer().isOutOfFlowPositioned() && positionedParent->renderer().isInFlowPositioned() && is<RenderInline>(positionedParent->renderer())) {
+        if (positionedParent->renderer().isInFlowPositioned() && is<RenderInline>(positionedParent->renderer())) {
             LayoutSize offset = downcast<RenderInline>(positionedParent->renderer()).offsetForInFlowPositionedInline(&downcast<RenderBox>(renderer()));
             localPoint += offset;
         }
-    } else if (parent()) {
-        if (parent()->renderer().hasOverflowClip())
+
+        ASSERT(positionedParent->contentsScrollingScope());
+        m_boxScrollingScope = positionedParent->contentsScrollingScope();
+    } else if (auto* parentLayer = parent()) {
+        if (parentLayer->renderer().hasOverflowClip())
             localPoint -= toLayoutSize(parent()->scrollPosition());
+
+        ASSERT(parentLayer->contentsScrollingScope());
+        m_boxScrollingScope = parentLayer->contentsScrollingScope();
     }
-    
+
+    if (hasCompositedScrollableOverflow()) {
+        if (!m_contentsScrollingScope)
+            m_contentsScrollingScope = nextScrollingScope();
+    } else if (!m_contentsScrollingScope)
+        m_contentsScrollingScope = m_boxScrollingScope;
+
     bool positionOrOffsetChanged = false;
     if (renderer().isInFlowPositioned()) {
         LayoutSize newOffset = downcast<RenderBoxModelObject>(renderer()).offsetForInFlowPosition();
@@ -7097,7 +7118,8 @@ static void outputPaintOrderTreeLegend(TextStream& stream)
     stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor, (t)transformed ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
-        "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
+        "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n"
+        "Scrolling scope: box contents\n";
     stream.nextLine();
 }
 
@@ -7165,6 +7187,12 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.needsCompositingConfigurationUpdate() ? "c" : "-");
     stream << (layer.needsCompositingLayerConnection() ? "x" : "-");
     stream << (layer.needsScrollingTreeUpdate() ? "s" : "-");
+
+    stream << " ";
+
+    stream << layer.boxScrollingScope();
+    stream << " ";
+    stream << layer.contentsScrollingScope();
 
     stream << " ";
 

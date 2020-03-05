@@ -53,6 +53,7 @@
 #include "ScrollBehavior.h"
 #include "ScrollableArea.h"
 #include <memory>
+#include <wtf/Markable.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -137,6 +138,8 @@ struct ScrollRectToVisibleOptions {
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
     ScrollBehavior behavior { ScrollBehavior::Auto };
 };
+
+using ScrollingScope = uint64_t;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
 class RenderLayer final : public ScrollableArea {
@@ -861,6 +864,10 @@ public:
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
     void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
 
+    // Layers with the same ScrollingScope are scrolled by some common ancestor scroller. Used for async scrolling.
+    Optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
+    Optional<ScrollingScope> contentsScrollingScope() const { return m_contentsScrollingScope; }
+
     bool paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
     {
         return (isTransparent() || hasBlendMode() || (isolatesBlending() && !renderer().isDocumentElementRenderer())) && ((paintBehavior & PaintBehavior::FlattenCompositingLayers) || !isComposited());
@@ -1320,6 +1327,9 @@ private:
     std::unique_ptr<ClipRectsCache> m_clipRectsCache;
     
     IntPoint m_cachedOverlayScrollbarOffset;
+
+    Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_boxScrollingScope;
+    Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
 
     std::unique_ptr<RenderMarquee> m_marquee; // Used for <marquee>.
     
