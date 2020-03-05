@@ -1,3 +1,20 @@
+2020-03-04  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Update screenshot/user_prompt expectations.
+
+        They were marked as FAIL in r239824 due to upstream w3c tests not handling
+        dialogs correctly and this handling not being in the spec.
+
+        The correct handling was added to wpt in
+        https://github.com/web-platform-tests/wpt/pull/17563, imported to webkit
+        in r252358, and have been passing since in the GTK test bot.
+
+        Also were added to the spec in https://github.com/w3c/webdriver/commit/32165846
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Automation: evaluateJavaScriptFunction should use Promises
