@@ -1,3 +1,14 @@
+2020-03-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Optimize Path::encode on platforms that support CGPathGetNumberOfElements
+        https://bugs.webkit.org/show_bug.cgi?id=208266
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        Add an SPI declaration for CGPathGetNumberOfElements.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2020-03-04  Chris Dumez  <cdumez@apple.com>
 
         Adopt new and improved CFNetwork SPI for cookie change notifications

@@ -141,6 +141,7 @@ public:
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
     FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
 
+    WEBCORE_EXPORT size_t elementCount() const;
     float length() const;
     PathTraversalState traversalStateAtLength(float length) const;
     FloatPoint pointAtLength(float length) const;
@@ -245,12 +246,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
 
 template<class Encoder> void Path::encode(Encoder& encoder) const
 {
-    uint64_t numPoints = 0;
-    apply([&numPoints](const PathElement&) {
-        ++numPoints;
-    });
-
-    encoder << numPoints;
+    encoder << static_cast<uint64_t>(elementCount());
 
     apply([&](auto& element) {
         encoder.encodeEnum(element.type);

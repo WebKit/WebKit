@@ -34,7 +34,6 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "StrokeStyleApplier.h"
-#include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
@@ -457,6 +456,15 @@ void Path::apply(const PathApplierFunction& function) const
 
     CGPathApply(m_path.get(), (void*)&function, CGPathApplierToPathApplier);
 }
+
+#if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
+
+size_t Path::elementCount() const
+{
+    return CGPathGetNumberOfElements(m_path);
+}
+
+#endif // HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 
 }
 

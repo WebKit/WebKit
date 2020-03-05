@@ -53,6 +53,19 @@ float Path::length() const
 }
 #endif
 
+#if !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
+
+size_t Path::elementCount() const
+{
+    size_t numPoints = 0;
+    apply([&numPoints](auto&) {
+        ++numPoints;
+    });
+    return numPoints;
+}
+
+#endif // !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
+
 PathTraversalState Path::traversalStateAtLength(float length) const
 {
     PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength, length);
