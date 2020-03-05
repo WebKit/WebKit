@@ -40,6 +40,7 @@
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
 #include "Logging.h"
+#include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
@@ -977,16 +978,24 @@ bool MediaElementSession::updateIsMainContent() const
     return m_isMainContent;
 }
 
-bool MediaElementSession::allowsNowPlayingControlsVisibility() const
-{
-    auto page = m_element.document().page();
-    return page && !page->isVisibleAndActive();
-}
-
 bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 {
     auto page = m_element.document().page();
     return page && page->allowsPlaybackControlsForAutoplayingAudio();
+}
+
+Optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
+{
+    auto* page = m_element.document().page();
+    bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
+    bool isPlaying = state() == PlatformMediaSession::Playing;
+    bool supportsSeeking = m_element.supportsSeeking();
+    double duration = supportsSeeking ? m_element.duration() : MediaPlayer::invalidTime();
+    double currentTime = m_element.currentTime();
+    if (!std::isfinite(currentTime) || !supportsSeeking)
+        currentTime = MediaPlayer::invalidTime();
+
+    return NowPlayingInfo { m_element.mediaSessionTitle(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaSessionUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility };
 }
 
 String convertEnumerationToString(const MediaPlaybackDenialReason enumerationValue)

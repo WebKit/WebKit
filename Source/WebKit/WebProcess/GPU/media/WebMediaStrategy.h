@@ -45,6 +45,10 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA)
     void registerCDMFactories(Vector<WebCore::CDMFactory*>&) override;
 #endif
+#if PLATFORM(COCOA)
+    void clearNowPlayingInfo() final;
+    void setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo&) final;
+#endif
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcess { false };

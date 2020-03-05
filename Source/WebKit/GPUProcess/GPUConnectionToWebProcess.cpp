@@ -63,6 +63,11 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/MediaSessionManagerCocoa.h>
+#include <WebCore/MediaSessionManagerIOS.h>
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMFactoryProxy.h"
 #include "RemoteCDMFactoryProxyMessages.h"
@@ -88,8 +93,17 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }
-    PlatformMediaSessionManager& sessionManager() final { return m_process.sessionManager(); }
-    void willStartCameraCapture() final { sessionManager().prepareToSendUserMediaPermissionRequest(); }
+#if PLATFORM(IOS)
+    void willStartCameraCapture() final
+    {
+        if (m_providedPresentingApplicationPID)
+            return;
+        m_providedPresentingApplicationPID = true;
+        MediaSessionManageriOS::providePresentingApplicationPID();
+    }
+
+    bool m_providedPresentingApplicationPID { false };
+#endif
 
     GPUConnectionToWebProcess& m_process;
 };
@@ -231,6 +245,18 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     ASSERT_UNUSED(found, found);
 }
 
+#if PLATFORM(COCOA)
+void GPUConnectionToWebProcess::clearNowPlayingInfo()
+{
+    MediaSessionManagerCocoa::clearNowPlayingInfo();
+}
+
+void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo)
+{
+    MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
+}
+#endif
+
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
@@ -370,13 +396,6 @@ const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
     return m_gpuProcess->mediaKeysStorageDirectory(m_sessionID);
 }
 #endif
-
-PlatformMediaSessionManager& GPUConnectionToWebProcess::sessionManager()
-{
-    if (!m_sessionManager)
-        m_sessionManager = PlatformMediaSessionManager::create();
-    return *m_sessionManager;
-}
 
 #if ENABLE(MEDIA_STREAM)
 void GPUConnectionToWebProcess::setOrientationForMediaCapture(uint64_t orientation)

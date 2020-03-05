@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebMediaStrategy.h"
 
+#include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
 #include "RemoteAudioDestinationProxy.h"
 #include "RemoteCDMFactory.h"
@@ -33,6 +34,11 @@
 #include <WebCore/AudioDestination.h>
 #include <WebCore/AudioIOCallback.h>
 #include <WebCore/CDMFactory.h>
+#include <WebCore/NowPlayingInfo.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/MediaSessionManagerCocoa.h>
+#endif
 
 namespace WebKit {
 
@@ -60,6 +66,32 @@ void WebMediaStrategy::registerCDMFactories(Vector<WebCore::CDMFactory*>& factor
     }
 #endif
     WebCore::CDMFactory::platformRegisterFactories(factories);
+}
+#endif
+
+#if PLATFORM(COCOA)
+void WebMediaStrategy::clearNowPlayingInfo()
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        connection.send(Messages::GPUConnectionToWebProcess::ClearNowPlayingInfo { }, 0);
+        return;
+    }
+#endif
+    MediaSessionManagerCocoa::clearNowPlayingInfo();
+}
+
+void WebMediaStrategy::setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo& nowPlayingInfo)
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_useGPUProcess) {
+        auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        connection.send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { setAsNowPlayingApplication, nowPlayingInfo }, 0);
+        return;
+    }
+#endif
+    MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
 }
 #endif
 

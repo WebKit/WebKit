@@ -174,7 +174,13 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
     if (m_havePresentedApplicationPID)
         return;
     m_havePresentedApplicationPID = true;
+    providePresentingApplicationPID();
+#endif
+}
 
+void MediaSessionManageriOS::providePresentingApplicationPID()
+{
+#if HAVE(CELESTIAL)
     if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
         return;
 

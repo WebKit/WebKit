@@ -1,3 +1,14 @@
+2020-03-05  youenn fablet  <youenn@apple.com>
+
+        Export NowPlaying commands to GPUProcess when media playing in GPUProcess is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=208568
+
+        Reviewed by Eric Carlson.
+
+        Use in-process now playing implementation.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
 2020-03-04  Ben Nham  <nham@apple.com>
 
         Remove initial layout throttler

@@ -43,6 +43,7 @@ class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 class PlatformMediaSessionManager;
 enum class DelayCallingUpdateNowPlaying { No, Yes };
+struct NowPlayingInfo;
 
 class PlatformMediaSession
     : public CanMakeWeakPtr<PlatformMediaSession>
@@ -113,13 +114,6 @@ public:
     virtual void suspendBuffering() { }
     virtual void resumeBuffering() { }
     
-#if ENABLE(VIDEO)
-    uint64_t uniqueIdentifier() const;
-    String title() const;
-    double duration() const;
-    double currentTime() const;
-#endif
-
     typedef union {
         double asDouble;
     } RemoteCommandArgument;
@@ -174,8 +168,6 @@ public:
     virtual void resetPlaybackSessionState() { }
     String sourceApplicationIdentifier() const;
 
-    virtual bool allowsNowPlayingControlsVisibility() const { return false; }
-
     bool hasPlayedSinceLastInterruption() const { return m_hasPlayedSinceLastInterruption; }
     void clearHasPlayedSinceLastInterruption() { m_hasPlayedSinceLastInterruption = false; }
 
@@ -194,6 +186,8 @@ public:
         virtual ~AudioCaptureSource() = default;
         virtual bool isCapturingAudio() const = 0;
     };
+
+    virtual Optional<NowPlayingInfo> nowPlayingInfo() const;
 
 protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
@@ -235,13 +229,6 @@ public:
     virtual void mayResumePlayback(bool shouldResume) = 0;
     virtual void suspendPlayback() = 0;
 
-#if ENABLE(VIDEO)
-    virtual uint64_t mediaSessionUniqueIdentifier() const;
-    virtual String mediaSessionTitle() const;
-    virtual double mediaSessionDuration() const;
-    virtual double mediaSessionCurrentTime() const;
-#endif
-    
     virtual bool canReceiveRemoteControlCommands() const = 0;
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) = 0;
     virtual bool supportsSeeking() const = 0;
@@ -261,7 +248,6 @@ public:
     virtual bool isPlayingOnSecondScreen() const { return false; }
 
     virtual DocumentIdentifier hostingDocumentIdentifier() const = 0;
-    virtual String sourceApplicationIdentifier() const = 0;
 
     virtual bool hasMediaStreamSource() const { return false; }
 

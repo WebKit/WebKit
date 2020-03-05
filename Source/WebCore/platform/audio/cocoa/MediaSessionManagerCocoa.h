@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+struct NowPlayingInfo;
+
 class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
     , private RemoteCommandListenerClient
@@ -54,6 +56,9 @@ public:
     uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
     void prepareToSendUserMediaPermissionRequest() final;
+
+    static WEBCORE_EXPORT void clearNowPlayingInfo();
+    static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&);
 
 protected:
     void scheduleUpdateNowPlayingInfo() final;

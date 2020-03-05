@@ -32,6 +32,7 @@ namespace WebCore {
 class AudioDestination;
 class AudioIOCallback;
 class CDMFactory;
+struct NowPlayingInfo;
 
 class WEBCORE_EXPORT MediaStrategy {
 public:
@@ -42,6 +43,11 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     virtual void registerCDMFactories(Vector<CDMFactory*>&) = 0;
 #endif
+#if PLATFORM(COCOA)
+    virtual void clearNowPlayingInfo() = 0;
+    virtual void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&) = 0;
+#endif
+
 protected:
     virtual ~MediaStrategy() = default;
 };

@@ -30,6 +30,7 @@
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
+#include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
@@ -275,28 +276,6 @@ PlatformMediaSession::MediaType PlatformMediaSession::presentationType() const
     return m_client.presentationType();
 }
 
-#if ENABLE(VIDEO)
-uint64_t PlatformMediaSession::uniqueIdentifier() const
-{
-    return m_client.mediaSessionUniqueIdentifier();
-}
-
-String PlatformMediaSession::title() const
-{
-    return m_client.mediaSessionTitle();
-}
-
-double PlatformMediaSession::duration() const
-{
-    return m_client.mediaSessionDuration();
-}
-
-double PlatformMediaSession::currentTime() const
-{
-    return m_client.mediaSessionCurrentTime();
-}
-#endif
-    
 bool PlatformMediaSession::canReceiveRemoteControlCommands() const
 {
     return m_client.canReceiveRemoteControlCommands();
@@ -312,11 +291,6 @@ void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandTy
 bool PlatformMediaSession::supportsSeeking() const
 {
     return m_client.supportsSeeking();
-}
-
-String PlatformMediaSession::sourceApplicationIdentifier() const
-{
-    return m_client.sourceApplicationIdentifier();
 }
 
 bool PlatformMediaSession::isSuspended() const
@@ -367,28 +341,6 @@ void PlatformMediaSession::canProduceAudioChanged()
     m_manager->sessionCanProduceAudioChanged();
 }
 
-#if ENABLE(VIDEO)
-uint64_t PlatformMediaSessionClient::mediaSessionUniqueIdentifier() const
-{
-    return 0;
-}
-
-String PlatformMediaSessionClient::mediaSessionTitle() const
-{
-    return String();
-}
-
-double PlatformMediaSessionClient::mediaSessionDuration() const
-{
-    return MediaPlayer::invalidTime();
-}
-
-double PlatformMediaSessionClient::mediaSessionCurrentTime() const
-{
-    return MediaPlayer::invalidTime();
-}
-#endif
-
 void PlatformMediaSession::clientCharacteristicsChanged()
 {
     m_manager->clientCharacteristicsChanged(*this);
@@ -407,6 +359,11 @@ bool PlatformMediaSession::shouldOverridePauseDuringRouteChange() const
 PlatformMediaSessionManager& PlatformMediaSession::manager()
 {
     return *m_manager;
+}
+
+Optional<NowPlayingInfo> PlatformMediaSession::nowPlayingInfo() const
+{
+    return { };
 }
 
 #if !RELEASE_LOG_DISABLED

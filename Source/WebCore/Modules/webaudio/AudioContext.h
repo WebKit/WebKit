@@ -355,7 +355,6 @@ private:
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override { }
     bool supportsSeeking() const override { return false; }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
-    String sourceApplicationIdentifier() const override;
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
 

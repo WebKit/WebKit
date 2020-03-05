@@ -68,14 +68,14 @@ public:
     RouteSharingPolicy routeSharingPolicy() const;
     String routingContextUID() const;
 
-    float sampleRate() const;
+    WEBCORE_EXPORT float sampleRate() const;
     size_t bufferSize() const;
     size_t numberOfOutputChannels() const;
 
     bool tryToSetActive(bool);
 
     WEBCORE_EXPORT size_t preferredBufferSize() const;
-    void setPreferredBufferSize(size_t);
+    WEBCORE_EXPORT void setPreferredBufferSize(size_t);
 
     class MutedStateObserver {
     public:

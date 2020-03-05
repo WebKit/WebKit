@@ -373,16 +373,6 @@ DocumentIdentifier AudioContext::hostingDocumentIdentifier() const
     return document ? document->identifier() : DocumentIdentifier { };
 }
 
-String AudioContext::sourceApplicationIdentifier() const
-{
-    Document* document = this->document();
-    if (Frame* frame = document ? document->frame() : nullptr) {
-        if (NetworkingContext* networkingContext = frame->loader().networkingContext())
-            return networkingContext->sourceApplicationIdentifier();
-    }
-    return emptyString();
-}
-
 bool AudioContext::isSuspended() const
 {
     return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();

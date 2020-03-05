@@ -53,6 +53,7 @@ public:
     void activeAudioRouteDidChange(Optional<bool>&&);
     void activeVideoRouteDidChange(Optional<bool>&&);
 #endif
+    static WEBCORE_EXPORT void providePresentingApplicationPID();
 
 private:
     friend class PlatformMediaSessionManager;

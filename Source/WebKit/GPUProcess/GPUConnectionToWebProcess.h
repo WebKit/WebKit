@@ -84,8 +84,6 @@ public:
     void setOrientationForMediaCapture(uint64_t orientation);
 #endif
 
-    WebCore::PlatformMediaSessionManager& sessionManager();
-
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
 #endif
@@ -108,6 +106,10 @@ private:
 #endif
     void createRenderingBackend(RenderingBackendIdentifier);
     void releaseRenderingBackend(RenderingBackendIdentifier);
+#if PLATFORM(COCOA)
+    void clearNowPlayingInfo();
+    void setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo&);
+#endif
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;

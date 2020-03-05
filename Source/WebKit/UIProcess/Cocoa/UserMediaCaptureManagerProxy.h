@@ -53,7 +53,6 @@ public:
         virtual void addMessageReceiver(IPC::StringReference, IPC::MessageReceiver&) = 0;
         virtual void removeMessageReceiver(IPC::StringReference) = 0;
         virtual IPC::Connection& connection() = 0;
-        virtual WebCore::PlatformMediaSessionManager& sessionManager() = 0;
         virtual void willStartCameraCapture() { }
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);

@@ -1,3 +1,38 @@
+2020-03-05  Youenn Fablet  <youenn@apple.com>
+
+        Export NowPlaying commands to GPUProcess when media playing in GPUProcess is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=208568
+
+        Reviewed by Eric Carlson.
+
+        Export NowPlaying orders to GPU process through IPC if GPUProcess is turned on.
+        Otherwise use the regular in process implementation.
+        Make sure to sync the hasAudio state so that it gets set properly in WebProcess.
+
+        Remove the use of a PlatformMediaSessionManager for capture since it is now using platform strategies in two places.
+        Instead use directly static methods of MediaSessionManageriOS to implement pid forwarding and AudioSession to set category and buffer size.
+        A follow-up refactoring should probably rearchitect AudioSession handling.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::clearNowPlayingInfo):
+        (WebKit::GPUConnectionToWebProcess::setNowPlayingInfo):
+        (WebKit::GPUConnectionToWebProcess::sessionManager): Deleted.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::clone):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/GPU/media/WebMediaStrategy.cpp:
+        (WebKit::WebMediaStrategy::clearNowPlayingInfo):
+        (WebKit::WebMediaStrategy::setNowPlayingInfo):
+        * WebProcess/GPU/media/WebMediaStrategy.h:
+
 2020-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r257667): [UNIX] Tests http/tests/incremental/split-hex-entities.pl and http/tests/misc/large-js-program.php are crashing

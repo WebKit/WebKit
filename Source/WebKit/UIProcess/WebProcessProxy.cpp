@@ -160,7 +160,6 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { m_process.addMessageReceiver(messageReceiverName, receiver); }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { m_process.removeMessageReceiver(messageReceiverName); }
     IPC::Connection& connection() final { return *m_process.connection(); }
-    PlatformMediaSessionManager& sessionManager() final { return PlatformMediaSessionManager::sharedManager(); }
 
     WebProcessProxy& m_process;
 };

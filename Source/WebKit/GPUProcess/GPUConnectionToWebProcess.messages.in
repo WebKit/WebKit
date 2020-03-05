@@ -25,6 +25,10 @@
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
+#if PLATFORM(COCOA)
+    void ClearNowPlayingInfo();
+    void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo);
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

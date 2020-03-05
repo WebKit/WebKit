@@ -679,6 +679,7 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.readyState = m_player->readyState();
     m_cachedState.paused = m_player->paused();
     m_cachedState.loadingProgressed = m_player->didLoadingProgress();
+    m_cachedState.hasAudio = m_player->hasAudio();
 
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
