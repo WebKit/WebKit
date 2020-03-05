@@ -270,6 +270,12 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
             return -1;
         }
 
+        if (message.msg_flags & MSG_CTRUNC) {
+            // Control data has been discarded, which is expected by processMessage(), so consider this a read failure.
+            buffer.shrink(previousBufferSize);
+            return -1;
+        }
+
         struct cmsghdr* controlMessage;
         for (controlMessage = CMSG_FIRSTHDR(&message); controlMessage; controlMessage = CMSG_NXTHDR(&message, controlMessage)) {
             if (controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {

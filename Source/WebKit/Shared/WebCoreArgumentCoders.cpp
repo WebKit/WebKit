@@ -122,16 +122,25 @@ using namespace WebKit;
 
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 {
-    SharedMemory::Handle handle;
     uint64_t bufferSize = buffer ? buffer->size() : 0;
     encoder << bufferSize;
     if (!bufferSize)
         return;
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+    // Do not use shared memory for SharedBuffer encoding in Unix, because it's easy to reach the
+    // maximum number of file descriptors open per process when sending large data in small chunks
+    // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
+    // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
+    for (const auto& element : *buffer)
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
+#else
+    SharedMemory::Handle handle;
     auto sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
     memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
+#endif
 }
 
 static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
@@ -143,12 +152,21 @@ static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
     if (!bufferSize)
         return true;
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+    Vector<uint8_t> data;
+    data.grow(bufferSize);
+    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
+        return false;
+
+    buffer = SharedBuffer::create(WTFMove(data));
+#else
     SharedMemory::Handle handle;
     if (!decoder.decode(handle))
         return false;
 
     auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
+#endif
 
     return true;
 }

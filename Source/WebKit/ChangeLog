@@ -1,3 +1,29 @@
+2020-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r257667): [UNIX] Tests http/tests/incremental/split-hex-entities.pl and http/tests/misc/large-js-program.php are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=208571
+
+        Reviewed by Alex Christensen.
+
+        We get a release assert in Connection::processMessage() when trying to get a file descriptor from
+        m_fileDescriptors array that is empty. The problem is that since r257667, a shared buffer is always used by the
+        network process to send data to the web process (NetworkResourceLoader::sendBuffer) and shared buffer
+        encoding/decoding was changed to always use shared memory and send the file descriptor over the IPC. When
+        sending large data in small chunks like these tests are doing, we easily end up with many messages queued in the
+        web process receiver (Connection::enqueueIncomingMessage), all of them having one file descriptor open. When the
+        maximum number of open file descriptors per process is reached, recvmsg doesn't fail but it sets the flag
+        MSG_CTRUNC in msg_flags and the file descriptor is not actually included as part of the control message. The
+        message info still claims to include a file descriptor, but it hasn't been created and added to the
+        m_fileDescriptors array. We could check msg_flags, but only to assert earlier, not to fix the problem, since we
+        are unable to get the file descriptor sent. So, at least in linux I think it's better to send the data over the
+        IPC instead of using shared memory. We are already using shared memory for any IPC message bigger than 4096.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket): Consider also a read failure when control data is discarded.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeSharedBuffer): Do not use shared memory to encode a SharedBuffer in Unix.
+        (IPC::decodeSharedBuffer): Do not use shared memory to decode a SharedBuffer in Unix.
+
 2020-03-04  Chris Dumez  <cdumez@apple.com>
 
         WebsiteDataStore methods often create process pools and launch network processes unnecessarily
