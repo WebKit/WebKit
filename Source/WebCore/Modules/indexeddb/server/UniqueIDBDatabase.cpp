@@ -116,7 +116,6 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
 {
     ASSERT(!isMainThread());
 
-    m_server.addDatabase(*this);
     LOG(IndexedDB, "UniqueIDBDatabase::UniqueIDBDatabase() (%p) %s", this, m_identifier.loggingString().utf8().data());
 }
 
@@ -132,8 +131,6 @@ UniqueIDBDatabase::~UniqueIDBDatabase()
     ASSERT(!m_versionChangeTransaction);
     ASSERT(!m_versionChangeDatabaseConnection);
     RELEASE_ASSERT(!m_backingStore);
-
-    m_server.removeDatabase(*this);
 }
 
 const IDBDatabaseInfo& UniqueIDBDatabase::info() const
