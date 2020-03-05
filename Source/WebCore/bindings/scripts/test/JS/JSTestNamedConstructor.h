@@ -50,6 +50,13 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
     static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);
+    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        return subspaceForImpl(vm);
+    }
+    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
     JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedConstructor>&&);

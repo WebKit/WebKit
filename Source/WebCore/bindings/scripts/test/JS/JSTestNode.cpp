@@ -22,6 +22,7 @@
 #include "JSTestNode.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
@@ -36,10 +37,13 @@
 #include "JSTestNode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -441,6 +445,27 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(JSGlobalObjec
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*lexicalGlobalObject, *callFrame, "toJSON");
+}
+
+JSC::IsoSubspace* JSTestNode::subspaceForImpl(JSC::VM& vm)
+{
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& spaces = clientData.subspaces();
+    if (auto* space = spaces.m_subspaceForTestNode.get())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode> || !JSTestNode::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestNode>)
+        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestNode);
+    else
+        spaces.m_subspaceForTestNode = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestNode);
+    auto* space = spaces.m_subspaceForTestNode.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    if (&JSTestNode::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 void JSTestNode::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

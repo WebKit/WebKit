@@ -22,6 +22,7 @@
 #include "JSTestEnabledForContext.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMIsoSubspaces.h"
 #include "Document.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -35,6 +36,8 @@
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
+#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -198,6 +201,27 @@ static inline bool setJSTestEnabledForContextTestSubObjEnabledForContextConstruc
 bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestEnabledForContext>::set<setJSTestEnabledForContextTestSubObjEnabledForContextConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSubObjEnabledForContext");
+}
+
+JSC::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm)
+{
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& spaces = clientData.subspaces();
+    if (auto* space = spaces.m_subspaceForTestEnabledForContext.get())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledForContext> || !JSTestEnabledForContext::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestEnabledForContext>)
+        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestEnabledForContext);
+    else
+        spaces.m_subspaceForTestEnabledForContext = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestEnabledForContext);
+    auto* space = spaces.m_subspaceForTestEnabledForContext.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    if (&JSTestEnabledForContext::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 void JSTestEnabledForContext::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
