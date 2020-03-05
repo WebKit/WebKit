@@ -88,6 +88,8 @@ enum TracePointCode {
     DispatchTouchEventsEnd,
     ParseHTMLStart,
     ParseHTMLEnd,
+    DisplayListReplayStart,
+    DisplayListReplayEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

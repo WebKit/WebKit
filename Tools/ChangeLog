@@ -1,3 +1,14 @@
+2020-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add system trace points around display list replay
+        https://bugs.webkit.org/show_bug.cgi?id=208616
+
+        Reviewed by Simon Fraser.
+
+        Add a new "Display list replay" trace point.
+
+        * Tracing/SystemTracePoints.plist:
+
 2020-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Call globalObjectIsAvailableForFrame before evaluating JavaScript in newly created worlds
