@@ -46,7 +46,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
                    RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount,
-                   Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
+                   Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
+                   UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -3117,6 +3118,63 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Failed to create git commit')
         return self.runStep()
 
+
+class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+
+        def mock_load_contributors(cls, *args, **kwargs):
+            return {'aakash_jain@apple.com': {'name': 'Aakash Jain', 'status': 'reviewer'},
+                    'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer'}}
+        ValidateCommiterAndReviewer.load_contributors = mock_load_contributors
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ValidateCommiterAndReviewer())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('patch_committer', 'committer@webkit.org')
+        self.setProperty('patch_reviewer', 'aakash_jain@apple.com')
+        self.expectHidden(False)
+        self.assertEqual(ValidateCommiterAndReviewer.haltOnFailure, False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        return self.runStep()
+
+    def test_success_no_reviewer(self):
+        self.setupStep(ValidateCommiterAndReviewer())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('patch_committer', 'aakash_jain@apple.com')
+        self.expectHidden(False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer')
+        return self.runStep()
+
+    def test_failure_load_contributors(self):
+        self.setupStep(ValidateCommiterAndReviewer())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('patch_committer', 'abc@webkit.org')
+        ValidateCommiterAndReviewer.load_contributors = lambda x: {}
+        self.expectHidden(False)
+        self.expectOutcome(result=FAILURE, state_string='Failed to get contributors information')
+        return self.runStep()
+
+    def test_failure_invalid_committer(self):
+        self.setupStep(ValidateCommiterAndReviewer())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('patch_committer', 'abc@webkit.org')
+        self.expectHidden(False)
+        self.expectOutcome(result=FAILURE, state_string='abc@webkit.org does not have committer permissions')
+        return self.runStep()
+
+    def test_failure_invalid_reviewer(self):
+        self.setupStep(ValidateCommiterAndReviewer())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('patch_committer', 'aakash_jain@apple.com')
+        self.setProperty('patch_reviewer', 'committer@webkit.org')
+        self.expectHidden(False)
+        self.expectOutcome(result=FAILURE, state_string='committer@webkit.org does not have reviewer permissions')
+        return self.runStep()
 
 if __name__ == '__main__':
     unittest.main()
