@@ -1,3 +1,12 @@
+2020-03-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r257760?) [ Mac wk2 Debug ] ASSERTION FAILED: child->parentObject() == this in WebCore::AccessibilityObject::insertChild
+        https://bugs.webkit.org/show_bug.cgi?id=208648
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-05  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION: [ Mac ] fast/canvas/webgl/texImage2D-video-flipY-false.html is Timing out
