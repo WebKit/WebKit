@@ -48,8 +48,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderHTMLCanvas);
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style), element.size())
 {
-    // Actual size is not known yet, report the default intrinsic size.
-    view().frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
 }
 
 HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const

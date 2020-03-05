@@ -32,13 +32,16 @@
 #include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderElement.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderGrid.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderLineBreak.h"
 #include "RenderMathMLFenced.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderReplaced.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
@@ -191,6 +194,12 @@ void RenderTreeBuilder::destroy(RenderObject& renderer)
 
 void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
+    reportVisuallyNonEmptyContent(parent, *child);
+    attachInternal(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
         if (&parent == &parentCandidate) {
             // Parents inside multicols can't call internal attach directly.
@@ -201,7 +210,7 @@ void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> ch
             attachToRenderElement(parent, WTFMove(child), beforeChild);
             return;
         }
-        attach(parentCandidate, WTFMove(child), beforeChild);
+        attachInternal(parentCandidate, WTFMove(child), beforeChild);
     };
 
     ASSERT(&parent.view() == &m_view);
@@ -342,7 +351,7 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
         return;
     }
 
-    attach(parent, WTFMove(child), beforeChild);
+    attachInternal(parent, WTFMove(child), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
@@ -384,11 +393,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
         return blockBuilder().detach(downcast<RenderBlock>(parent), child, canCollapseAnonymousBlock);
 
     return detachFromRenderElement(parent, child);
-}
-
-void RenderTreeBuilder::attach(RenderTreePosition& position, RenderPtr<RenderObject> child)
-{
-    attach(position.parent(), WTFMove(child), position.nextSibling());
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -911,6 +915,25 @@ void RenderTreeBuilder::attachToRenderGrid(RenderGrid& parent, RenderPtr<RenderO
     // The grid needs to be recomputed as it might contain auto-placed items that
     // will change their position.
     parent.dirtyGrid();
+}
+
+void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child)
+{
+    if (is<RenderText>(child)) {
+        auto& style = parent.style();
+        // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
+        if (style.visibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts()) {
+            auto& textRenderer = downcast<RenderText>(child);
+            m_view.frameView().incrementVisuallyNonEmptyCharacterCount(textRenderer.text());
+        }
+        return;
+    }
+    if (is<RenderHTMLCanvas>(child) || is<RenderEmbeddedObject>(child)) {
+        // Actual size is not known yet, report the default intrinsic size for replaced elements.
+        auto& replacedRenderer = downcast<RenderReplaced>(child);
+        m_view.frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
+        return;
+    }
 }
 
 }

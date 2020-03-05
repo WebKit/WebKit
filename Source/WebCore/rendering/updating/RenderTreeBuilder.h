@@ -42,7 +42,6 @@ public:
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
-    void attach(RenderTreePosition&, RenderPtr<RenderObject>);
     void attach(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
     enum class CanCollapseAnonymousBlock { No, Yes };
@@ -63,6 +62,8 @@ public:
 #endif
 
 private:
+    void attachInternal(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild);
+
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
     void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);
     void attachIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
@@ -85,6 +86,8 @@ private:
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject& originalBeforeChild);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
+
+    void reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child);
 
     class FirstLetter;
     class List;
