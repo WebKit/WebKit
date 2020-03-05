@@ -345,6 +345,7 @@
 		571F7FD01F2961FB00946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 571F7FCF1F2961E100946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal */; };
 		572B403421769A88000AD43E /* CtapRequestTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572B403321769A88000AD43E /* CtapRequestTest.cpp */; };
 		572B404421781B43000AD43E /* CtapResponseTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572B404321781B42000AD43E /* CtapResponseTest.cpp */; };
+		572CEF71240F874700C412A2 /* web-authentication-get-assertion-la.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 572CEF70240F86AE00C412A2 /* web-authentication-get-assertion-la.html */; };
 		57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAC2006C56000355965 /* CBORValueTest.cpp */; };
 		57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAB2006C55400355965 /* CBORWriterTest.cpp */; };
 		57303BCB2008376500355965 /* CBORReaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BC220071E2200355965 /* CBORReaderTest.cpp */; };
@@ -1529,6 +1530,7 @@
 				578DA44E23ECD28B00246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html in Copy Resources */,
 				570D26FC23C3F87000D5CF67 /* web-authentication-get-assertion-hid-pin.html in Copy Resources */,
 				57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */,
+				572CEF71240F874700C412A2 /* web-authentication-get-assertion-la.html in Copy Resources */,
 				579833922368FA37008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html in Copy Resources */,
 				57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */,
 				577454D22359BB01008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html in Copy Resources */,
@@ -1972,6 +1974,7 @@
 		572B403321769A88000AD43E /* CtapRequestTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CtapRequestTest.cpp; sourceTree = "<group>"; };
 		572B40352176A029000AD43E /* FidoTestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoTestData.h; sourceTree = "<group>"; };
 		572B404321781B42000AD43E /* CtapResponseTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CtapResponseTest.cpp; sourceTree = "<group>"; };
+		572CEF70240F86AE00C412A2 /* web-authentication-get-assertion-la.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-la.html"; sourceTree = "<group>"; };
 		57303BAB2006C55400355965 /* CBORWriterTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORWriterTest.cpp; sourceTree = "<group>"; };
 		57303BAC2006C56000355965 /* CBORValueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORValueTest.cpp; sourceTree = "<group>"; };
 		57303BC220071E2200355965 /* CBORReaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORReaderTest.cpp; sourceTree = "<group>"; };
@@ -3614,6 +3617,7 @@
 				578DA44D23ECD26100246010 /* web-authentication-get-assertion-hid-pin-invalid-error-retry.html */,
 				570D26FB23C3F86500D5CF67 /* web-authentication-get-assertion-hid-pin.html */,
 				57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */,
+				572CEF70240F86AE00C412A2 /* web-authentication-get-assertion-la.html */,
 				5798337B235EB65C008E5547 /* web-authentication-get-assertion-nfc-multiple-tags.html */,
 				57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */,
 				577454D12359BAD5008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html */,

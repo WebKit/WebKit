@@ -2083,9 +2083,18 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         // The current method is specialized for WebKitTestRunner.
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel& panel, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
         {
-            class PanelClient : public API::WebAuthenticationPanelClient {
+            class PanelClient final : public API::WebAuthenticationPanelClient {
             public:
-                void decidePolicyForLocalAuthenticator(CompletionHandler<void(WebKit::LocalAuthenticatorPolicy)>&& completionHandler) const { completionHandler(WebKit::LocalAuthenticatorPolicy::Allow); }
+                void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebKit::WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&& completionHandler) const final
+                {
+                    ASSERT(!responses.isEmpty());
+                    completionHandler(responses[0].ptr());
+                }
+
+                void decidePolicyForLocalAuthenticator(CompletionHandler<void(WebKit::LocalAuthenticatorPolicy)>&& completionHandler) const final
+                {
+                    completionHandler(WebKit::LocalAuthenticatorPolicy::Allow);
+                }
             };
 
             if (!m_client.runWebAuthenticationPanel) {

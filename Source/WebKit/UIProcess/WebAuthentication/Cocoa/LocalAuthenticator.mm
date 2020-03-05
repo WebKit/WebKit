@@ -423,17 +423,17 @@ void LocalAuthenticator::getAssertion()
     m_connection->filterResponses(m_assertionResponses);
 
     if (auto* observer = this->observer()) {
-        auto callback = [this, weakThis = makeWeakPtr(*this)] (const AuthenticatorAssertionResponse& response) {
+        auto callback = [this, weakThis = makeWeakPtr(*this)] (AuthenticatorAssertionResponse* response) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
 
-            auto returnResponse = m_assertionResponses.take(const_cast<AuthenticatorAssertionResponse*>(&response));
+            auto returnResponse = m_assertionResponses.take(response);
             if (!returnResponse)
                 return;
             continueGetAssertionAfterResponseSelected(WTFMove(*returnResponse));
         };
-        observer->selectAssertionResponse(m_assertionResponses, WTFMove(callback));
+        observer->selectAssertionResponse(m_assertionResponses, WebAuthenticationSource::Local, WTFMove(callback));
     }
 }
 

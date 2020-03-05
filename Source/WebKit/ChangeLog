@@ -1,3 +1,37 @@
+2020-03-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement SPI -[_WKWebAuthenticationPanelDelegate panel:selectAssertionResponse:source:completionHandler:]
+        https://bugs.webkit.org/show_bug.cgi?id=208626
+        <rdar://problem/60074148>
+
+        Reviewed by Brent Fulgham.
+
+        The patch adds a parameter (source) to the original SPI such that clients can know where those responses are from.
+        Besides that this patch also changes the completionHandler to accept a pointer instead of a reference such that clients
+        can pass a nullptr as a no op. In order to keep WebKitTestRunner running, the patch then overrides this SPI in the C API to
+        always return the first item.
+
+        * UIProcess/API/APIWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::selectAssertionResponse const):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::selectAssertionResponse):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::getAssertion):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::wkWebAuthenticationSource):
+        (WebKit::WebAuthenticationPanelClient::selectAssertionResponse const):
+        * UIProcess/WebAuthentication/WebAuthenticationFlags.h:
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+
 2020-03-05  Chris Dumez  <cdumez@apple.com>
 
         Running a single layout test makes 28 WebProcessPools (and launches 6 Network processes)

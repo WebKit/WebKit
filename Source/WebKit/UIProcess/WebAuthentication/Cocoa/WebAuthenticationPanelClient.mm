@@ -48,7 +48,7 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelUpdateWebAuthenticationPanel = [delegate respondsToSelector:@selector(panel:updateWebAuthenticationPanel:)];
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
     m_delegateMethods.panelRequestPinWithRemainingRetriesCompletionHandler = [delegate respondsToSelector:@selector(panel:requestPINWithRemainingRetries:completionHandler:)];
-    m_delegateMethods.panelSelectAssertionResponseCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:completionHandler:)];
+    m_delegateMethods.panelSelectAssertionResponseSourceCompletionHandler = [delegate respondsToSelector:@selector(panel:selectAssertionResponse:source:completionHandler:)];
     m_delegateMethods.panelDecidePolicyForLocalAuthenticatorCompletionHandler = [delegate respondsToSelector:@selector(panel:decidePolicyForLocalAuthenticatorWithCompletionHandler:)];
 }
 
@@ -137,18 +137,30 @@ void WebAuthenticationPanelClient::requestPin(uint64_t retries, CompletionHandle
     }).get()];
 }
 
-void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&& completionHandler) const
+static _WKWebAuthenticationSource wkWebAuthenticationSource(WebAuthenticationSource result)
+{
+    switch (result) {
+    case WebAuthenticationSource::Local:
+        return _WKWebAuthenticationSourceLocal;
+    case WebAuthenticationSource::External:
+        return _WKWebAuthenticationSourceExternal;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKWebAuthenticationSourceLocal;
+}
+
+void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&& completionHandler) const
 {
     ASSERT(!responses.isEmpty());
 
-    if (!m_delegateMethods.panelSelectAssertionResponseCompletionHandler) {
-        completionHandler(responses[0]);
+    if (!m_delegateMethods.panelSelectAssertionResponseSourceCompletionHandler) {
+        completionHandler(nullptr);
         return;
     }
 
     auto delegate = m_delegate.get();
     if (!delegate) {
-        completionHandler(responses[0]);
+        completionHandler(nullptr);
         return;
     }
 
@@ -157,11 +169,16 @@ void WebAuthenticationPanelClient::selectAssertionResponse(Vector<Ref<WebCore::A
     for (auto& response : responses)
         apiResponses.uncheckedAppend(API::WebAuthenticationAssertionResponse::create(response.copyRef()));
 
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:selectAssertionResponse:completionHandler:));
-    [delegate panel:m_panel selectAssertionResponse:wrapper(API::Array::create(WTFMove(apiResponses))) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebAuthenticationAssertionResponse *response) mutable {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(panel:selectAssertionResponse:source:completionHandler:));
+    [delegate panel:m_panel selectAssertionResponse:wrapper(API::Array::create(WTFMove(apiResponses))) source:wkWebAuthenticationSource(source) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebAuthenticationAssertionResponse *response) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
+
+        if (!response) {
+            completionHandler(nullptr);
+            return;
+        }
         completionHandler(static_cast<API::WebAuthenticationAssertionResponse&>([response _apiObject]).response());
     }).get()];
 }

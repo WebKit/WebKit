@@ -49,7 +49,7 @@ private:
     void updatePanel(WebAuthenticationStatus) const final;
     void dismissPanel(WebAuthenticationResult) const final;
     void requestPin(uint64_t, CompletionHandler<void(const WTF::String&)>&&) const final;
-    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, CompletionHandler<void(const WebCore::AuthenticatorAssertionResponse&)>&&) const final;
+    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) const final;
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) const final;
 
     _WKWebAuthenticationPanel *m_panel;
@@ -59,7 +59,7 @@ private:
         bool panelUpdateWebAuthenticationPanel : 1;
         bool panelDismissWebAuthenticationPanelWithResult : 1;
         bool panelRequestPinWithRemainingRetriesCompletionHandler : 1;
-        bool panelSelectAssertionResponseCompletionHandler : 1;
+        bool panelSelectAssertionResponseSourceCompletionHandler : 1;
         bool panelDecidePolicyForLocalAuthenticatorCompletionHandler : 1;
     } m_delegateMethods;
 };

@@ -43,7 +43,7 @@ public:
     const WTF::String& displayName() const { return m_response->displayName(); }
     RefPtr<Data> userHandle() const;
 
-    const WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
+    WebCore::AuthenticatorAssertionResponse* response() { return m_response.ptr(); }
 
 private:
     WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&&);

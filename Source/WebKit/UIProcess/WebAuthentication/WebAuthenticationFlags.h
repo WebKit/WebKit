@@ -56,6 +56,11 @@ enum class LocalAuthenticatorPolicy : bool {
     Disallow
 };
 
+enum class WebAuthenticationSource : bool {
+    Local,
+    External
+};
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
