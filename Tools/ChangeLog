@@ -1,3 +1,16 @@
+2020-03-04  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [MSVC] Add .natvis support of WebKit types
+        https://bugs.webkit.org/show_bug.cgi?id=193119
+
+        Reviewed by Don Olmstead.
+
+        To help the WebKit developer while debugging, this file defines how
+        WebKit types are displayed in debugger of Visual Studio.
+        Very limited set of WebKit types, but it changes the world.
+
+        * VisualStudio/WebKit.natvis: Added.
+
 2020-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add system trace points around display list replay
