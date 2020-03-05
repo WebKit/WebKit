@@ -1,5 +1,16 @@
 2020-03-05  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Reset position style on line breaks.
+        https://bugs.webkit.org/show_bug.cgi?id=208646
+        <rdar://problem/60086589>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/out-of-flow-positioned-line-break-expected.txt: Added.
+        * fast/inline/out-of-flow-positioned-line-break.html: Added.
+
+2020-03-05  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Invalidation] Incoming image data should invalidate layout tree content
         https://bugs.webkit.org/show_bug.cgi?id=208640
         <rdar://problem/60083229>
