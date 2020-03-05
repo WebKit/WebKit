@@ -1,3 +1,17 @@
+2020-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Generate layer event regions for async overflow scrolling on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=208649
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * fast/scrolling/mac/border-radius-event-region-expected.txt: Added.
+        * fast/scrolling/mac/border-radius-event-region.html: Added.
+        * fast/scrolling/mac/event-region-visibility-hidden-expected.txt: Added.
+        * fast/scrolling/mac/event-region-visibility-hidden.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-05  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r257760?) [ Mac wk2 Debug ] ASSERTION FAILED: child->parentObject() == this in WebCore::AccessibilityObject::insertChild

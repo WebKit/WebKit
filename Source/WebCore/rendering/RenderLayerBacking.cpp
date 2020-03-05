@@ -1614,15 +1614,18 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
 void RenderLayerBacking::updateEventRegion()
 {
-#if PLATFORM(IOS_FAMILY)
     if (paintsIntoCompositedAncestor())
         return;
 
     bool hasTouchActionElements = false;
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
     if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
+        return;
+
+    auto& settings = renderer().settings();
+    if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
         return;
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
@@ -1649,7 +1652,6 @@ void RenderLayerBacking::updateEventRegion()
 
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
-#endif
 }
 
 bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&& clippingData)
@@ -3015,7 +3017,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
     // The interactive part.
     auto& eventRegion = graphicsLayer->eventRegion();
-    Color regionColor(0, 0, 0, 5);
+    Color regionColor(0, 0, 255, 50);
     context.setFillColor(regionColor);
     for (auto rect : eventRegion.region().rects())
         context.fillRect(rect);
