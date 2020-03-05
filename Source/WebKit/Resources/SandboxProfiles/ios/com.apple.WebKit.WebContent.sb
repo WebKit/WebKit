@@ -738,6 +738,7 @@
         "kern.memorystatus_level"
         "kern.osproductversion"
         "kern.osrelease"
+        "kern.ostype"
         "kern.osvariant_status"
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.version"

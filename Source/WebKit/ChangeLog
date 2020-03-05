@@ -1,3 +1,20 @@
+2020-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox: Allow sysctl read of "kern.ostype"
+        https://bugs.webkit.org/show_bug.cgi?id=208650
+        <rdar://problem/60010603>
+
+        Reviewed by Alexey Proskuryakov.
+
+        NSURLSession needs access to "kern.ostype", so the Networking and WebContent
+        sandboxes should allow it. I corrected this for the iOS Network sandbox in
+        Bug 208346. I should have handled macOS and the WebContent process (on both
+        platforms) at the same time.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-05  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion failed: shouldBeActive() in BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()
