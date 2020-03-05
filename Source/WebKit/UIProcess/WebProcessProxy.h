@@ -170,6 +170,8 @@ public:
     bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }
     bool isStandaloneServiceWorkerProcess() const { return isRunningServiceWorkers() && !pageCount(); }
 
+    bool isDummyProcessProxy() const;
+
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);

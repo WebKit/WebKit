@@ -1,3 +1,38 @@
+2020-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Running a single layout test makes 28 WebProcessPools (and launches 6 Network processes)
+        https://bugs.webkit.org/show_bug.cgi?id=208541
+        <rdar://problem/60018602>
+
+        Reviewed by Youenn Fablet.
+
+        WebKitTestRunner was contructing a page / process pool and then calling into various
+        WebsiteDataStore APIs to reset / clear state. Because nothing had been loaded in the
+        view yet, the page would still be using a dummy process proxy (due to delayed process
+        launch optimization) at the time the WebsiteDataStore APIs are called. Because the
+        dummy process proxy would not register itself with the WebsiteDataStore (unlike other
+        processes), the WebsiteDataStore thought it had no associated process pool and would
+        thus construct a temporary one every time it needed one.
+
+        To address the issue, we now construct one dummy process proxy per session (instead of
+        one for all sessions). As a result, the dummy process proxy can now behave as a normal
+        WebProcessProxy and have an associated data store and register / unregister itself from
+        it, depending on whether or not it has pages.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchInitialProcessIfNecessary):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::isDummyProcessProxy const):
+        (WebKit::WebProcessProxy::updateRegistrationWithDataStore):
+        (WebKit::WebProcessProxy::maybeShutDown):
+        * UIProcess/WebProcessProxy.h:
+
 2020-03-05  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed unified build fix; forward-declare and include GPUConnectionToWebProcess where it's used.

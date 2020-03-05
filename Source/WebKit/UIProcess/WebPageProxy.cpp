@@ -3974,7 +3974,7 @@ void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String&
 
 void WebPageProxy::launchInitialProcessIfNecessary()
 {
-    if (&process() == process().processPool().dummyProcessProxy())
+    if (process().isDummyProcessProxy())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 }
 

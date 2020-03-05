@@ -262,12 +262,17 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 }
 
+bool WebProcessProxy::isDummyProcessProxy() const
+{
+    return m_websiteDataStore && processPool().dummyProcessProxy(m_websiteDataStore->sessionID()) == this;
+}
+
 void WebProcessProxy::updateRegistrationWithDataStore()
 {
     if (!m_websiteDataStore)
         return;
     
-    bool shouldBeRegistered = processPool().dummyProcessProxy() != this && (pageCount() || provisionalPageCount());
+    bool shouldBeRegistered = pageCount() || provisionalPageCount();
     if (shouldBeRegistered)
         m_websiteDataStore->registerProcess(*this);
     else
@@ -1030,7 +1035,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
 
 void WebProcessProxy::maybeShutDown()
 {
-    if (processPool().dummyProcessProxy() == this && m_pageMap.isEmpty()) {
+    if (isDummyProcessProxy() && m_pageMap.isEmpty()) {
         ASSERT(state() == State::Terminated);
         m_processPool->disconnectProcess(this);
         return;

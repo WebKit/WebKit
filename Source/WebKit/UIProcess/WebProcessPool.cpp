@@ -766,7 +766,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     WebProcessProxy* serviceWorkerProcessProxy { nullptr };
     if (!m_useSeparateServiceWorkerProcess) {
         for (auto& process : m_processes) {
-            if (process == m_prewarmedProcess || process == m_dummyProcessProxy)
+            if (process == m_prewarmedProcess || process->isDummyProcessProxy())
                 continue;
             if (&process->websiteDataStore() != websiteDataStore)
                 continue;
@@ -1156,10 +1156,11 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_prewarmedProcess == process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
         m_prewarmedProcess = nullptr;
+    } else {
+        auto dummyProcessIterator = m_dummyProcessProxies.find(process->sessionID());
+        if (dummyProcessIterator != m_dummyProcessProxies.end() && dummyProcessIterator->value == process)
+            m_dummyProcessProxies.remove(dummyProcessIterator);
     }
-
-    if (m_dummyProcessProxy == process)
-        m_dummyProcessProxy = nullptr;
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
@@ -1214,7 +1215,7 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
 #endif
 
     for (auto& process : m_processes) {
-        if (process == m_prewarmedProcess || process == m_dummyProcessProxy)
+        if (process == m_prewarmedProcess || process->isDummyProcessProxy())
             continue;
 #if ENABLE(SERVICE_WORKER)
         if (process->isRunningServiceWorkers())
@@ -1253,16 +1254,16 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
-        ASSERT(process.get() == m_dummyProcessProxy || pageConfiguration->websiteDataStore() == &process->websiteDataStore());
+        ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == &process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
     } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
-        if (!m_dummyProcessProxy) {
-            auto dummyProcessProxy = WebProcessProxy::create(*this, nullptr, WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
-            m_dummyProcessProxy = dummyProcessProxy.ptr();
-            m_processes.append(WTFMove(dummyProcessProxy));
+        process = dummyProcessProxy(pageConfiguration->websiteDataStore()->sessionID());
+        if (!process) {
+            process = WebProcessProxy::create(*this, pageConfiguration->websiteDataStore(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
+            m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), makeWeakPtr(*process));
+            m_processes.append(process.copyRef());
         }
-        process = m_dummyProcessProxy;
     } else
         process = &processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
 

@@ -56,6 +56,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -186,7 +187,7 @@ public:
 
     // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
     // null checks in WebPageProxy.
-    WebProcessProxy* dummyProcessProxy() const { return m_dummyProcessProxy; }
+    WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
 
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
     IPC::Connection* networkingProcessConnection();
@@ -624,7 +625,8 @@ private:
 
     Vector<RefPtr<WebProcessProxy>> m_processes;
     WebProcessProxy* m_prewarmedProcess { nullptr };
-    WebProcessProxy* m_dummyProcessProxy { nullptr }; // A lightweight WebProcessProxy without backing process.
+
+    HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
 #if ENABLE(SERVICE_WORKER)
     WeakHashSet<WebProcessProxy> m_serviceWorkerProcesses;
