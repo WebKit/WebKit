@@ -1091,6 +1091,3 @@ webkit.org/b/208577 [ Release ] fast/hidpi/image-srcset-relative-svg-canvas.html
 webkit.org/b/208584 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Pass Failure ]
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
-
-# LFC only failure.
-webkit.org/b/208600 [ Debug ] fast/layoutformattingcontext/block-only/replaced-intrinsic-width-simple.html [ Skip ]
