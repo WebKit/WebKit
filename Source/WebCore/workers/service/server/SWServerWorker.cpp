@@ -249,8 +249,13 @@ void SWServerWorker::setState(State state)
         m_shouldSkipHandleFetch = false;
         break;
     case State::Terminating:
+        callWhenActivatedHandler(false);
+        break;
     case State::NotRunning:
         callWhenActivatedHandler(false);
+        // As per https://w3c.github.io/ServiceWorker/#activate, a worker goes to activated even if activating fails.
+        if (m_data.state == ServiceWorkerState::Activating)
+            didFinishActivation();
         break;
     }
 }
