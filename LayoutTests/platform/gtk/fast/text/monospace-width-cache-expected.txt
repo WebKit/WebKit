@@ -2,16 +2,25 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 275x17
-        text run at (0,0) width 275: "g\x{153}\x{152}\x{D1}P\x{13}\x{2}\x{B3}\x{2019}\x{2C6}\x{C4}}\x{E1}\x{1A}\"X \x{2030}\x{201D}\x{B8}\x{B3}+\x{C7}O5\x{20AC}^A6@q\x{B}2\x{8D}\x{2C6}-\x{B8}"
-      RenderInline {R}©ÁALQ¥“Éó—Ì÷û^¬Âæ"ì¥9ÕÏZ»W¦PNMå�ƒ`TTÌ'ÈåZÉ4‹LS-+ÜU'×àH—_ÞçZ¯FWQY‹µÛOÿË®‡±FWÖ_E8ìÅ³û} at (0,0) size 773x89
-        RenderText {#text} at (275,0) size 440x17
-          text run at (275,0) width 440: "\x{F3}9\x{CC}\x{D3}F\x{E6}\x{DA}b\x{152}\x{D4}\x{DA}fV\x{FC}\x{1B}\x{DC}\x{8D}\x{DB}=\x{2018}i\x{8}\x{2C6}\x{E8}\x{2018}\x{AD}\x{A5}z\x{D8}\x{19}\x{13} \x{DC}-\x{160}\x{B9}\x{EE}\x{FF}\x{AD}\x{1A}\x{D9}\x{A3}\x{ED}\x{F4}\x{D3} \x{F}2j\x{B}V\x{160}\x{DB}\x{AB}@@\x{CD}\x{DC}\x{17E}_\x{F8}"
-        RenderInline {T} at (0,0) size 773x89
-          RenderText {#text} at (715,0) size 773x89
-            text run at (715,0) width 5: ")"
-            text run at (0,18) width 765: "\x{A2}\x{EE}>y=SI\x{F5}\x{F0}K\x{2018}wC\x{201C}\x{2030}\x{2030}\x{CD}\x{10}\x{201E}\x{DD}\x{160}o\x{2021}#y\x{A7}\x{11}\x{CF} \x{BF}N\x{F6}f\x{C7}\x{B1}\x{B4}\x{BC}\x{E4}t4\x{EE}\x{E9}GBA\x{F9}\x{201A}\x{F1}\x{1D}\x{ED}\x{BA}\x{178}'\x{2030}\x{A2}\x{EB}#S\x{E}4\x{B1}\x{AB}\x{2021}\x{153}  \x{BA}\"\x{12}4\x{DD}xP\x{203A}j\x{C2}\x{178}M\x{C}H4\x{2}\x{152}\x{C3}\x{161}\x{BD}\x{D4}jL\x{B5}\x{F6}\x{E}*\x{2}\x{EE}\x{BE}\x{DB}%\\"
-            text run at (0,36) width 441: "[\x{BB}\x{DD}[\x{7}\x{12}\x{1A}\x{1F}c\x{17D}\x{17E}\x{B9}(\x{2022}/\x{D2}\x{BD}\x{EE}\x{D5}\x{AB} :\x{CA}\x{F6}fY\\\x{2020}H\x{E3}z\x{B0}\x{19}R\x{EA}\x{7}EE\x{DF}+k\x{D5}?\x{FB}?c\x{3}H\x{FF}\x{DE}5n\x{BA}\x{EE}c\x{B9}{\x{DF}I\x{2}\x{CA}M\x{153}!"
-            text run at (0,54) width 752: "\x{EB}I\x{F8}\x{D8}\x{E3}\x{3}\x{B7}\x{9D}\x{D9}\x{FC}\x{C2}\x{C5}\x{B6}\x{A6}&`u\x{B8}\x{DA}\x{AE}\x{2019}\x{19}\x{BA}#\x{A9}\x{E8}\x{1D}\x{C3}\x{D7}\x{F2}:H\x{19}\x{F0}\x{C5}\x{D9}I>\x{BF}\x{1B}\x{F}U\x{178}N\x{2C6}\x{BA}\x{8F}\x{2039}@Q3\x{E1}\x{F4}\x{9D}t\x{C6},\x{17D}\x{D0}+\x{20AC};\x{EA}\x{16}6\x{B2}\x{CF}*\x{3}\x{A2}i\x{BD}\x{D6}%\x{7}\x{C3}f\x{CD}~n\x{20AC}\x{2013}\x{EE}\x{A6}Hanr\x{AF}\x{1A}I \x{1F}\x{1F}\\l\x{A1}\x{7}\x{D5}h{\x{BD}\x{8F}3D\x{2039}\x{A9}\x{2014}"
-            text run at (0,72) width 773: "\x{D6}\x{E6}\x{201D}Kb-\x{201A}\x{15}n\x{17D}r\x{2021}\x{F5}\x{CD}\x{B0}[\x{15}\x{B7}Y'\x{A7}\x{A9}c\x{BF}4\x{C1}\x{F6}\x{BF}\x{1E}w\x{FF}\x{11}a\x{2022}\x{DF}q\x{D4})\x{E} \x{1B}\x{A3}\x{E8}8\x{AE}C\x{161}\x{BB}~\x{2C6}!\x{C0}\x{8F}\x{E0}I\x{201C}Q\x{CE}5\x{FF}\x{6}\x{FA}\x{FC}\x{A1}\x{2026}\x{F1}\x{B5}+\x{2030}\x{AB}<\x{192};Lo\x{E6}l\x{1}\x{DC}s7\x{192}m\x{1}t\x{B8}\x{A8}\x{2019}\x{D4}\x{2020}?\x{18}\x{E8}\x{13}{\x{AB} \x{B0}\x{20AC}U\x{A7}\x{EF}R\x{2030}\x{EE}\x{CD}\x{CE}+\x{1E}\x{A3}"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 321x17
+          text run at (0,0) width 321: "Test for monospace width cache bug mentioned in "
+        RenderInline {A} at (0,0) size 68x17 [color=#0000EE]
+          RenderText {#text} at (320,0) size 68x17
+            text run at (320,0) width 68: "bug 11197"
+        RenderText {#text} at (387,0) size 5x17
+          text run at (387,0) width 5: " "
+        RenderInline {I} at (0,0) size 742x35
+          RenderText {#text} at (391,0) size 742x35
+            text run at (391,0) width 351: "REGRESSION: Specifying a counter for a CODE tag's"
+            text run at (0,18) width 347: "content style property on before or after causes a crash"
+        RenderText {#text} at (346,18) size 5x17
+          text run at (346,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 369x17
+          text run at (0,0) width 369: "The blue line and the black line should be the same length."
+      RenderBlock {P} at (0,86) size 784x18
+        RenderInline {SPAN} at (0,0) size 120x19 [border: none (1px solid #0000FF) none]
+          RenderText {#text} at (0,0) size 120x18
+            text run at (0,0) width 120: "\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}\x{2500}"

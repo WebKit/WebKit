@@ -1,3 +1,16 @@
+2020-03-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=208480
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/monospace-width-cache-expected.txt: Update
+          after r257305.
+        * platform/gtk/http/tests/navigation/javascriptlink-frames-expected.txt:
+          Update after r257626.
+
 2020-03-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r257839): two fast/forms/textarea are failing after commit r257839 (208576)

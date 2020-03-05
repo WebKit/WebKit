@@ -755,7 +755,6 @@ webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-o
 webkit.org/b/131347 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
@@ -1022,8 +1021,8 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
 # eventSender.callAfterScrollingCompletes doesn't work.
-webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure ]
-webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure Pass ]
+webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure Timeout ]
+webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure Pass Timeout ]
 
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
@@ -1344,6 +1343,12 @@ webkit.org/b/208180 http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.htm
 webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
+
+webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure ]
+
+webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1877,7 +1882,7 @@ webkit.org/b/158915 fast/forms/select/menulist-type-ahead-find.html [ Failure Pa
 
 webkit.org/b/158916 fast/forms/input-appearance-preventDefault.html [ Failure Pass ]
 
-webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.html [ Failure Pass ]
+webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.html [ Failure Pass Timeout ]
 
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure Pass ]
@@ -2182,9 +2187,7 @@ webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Fai
 
 webkit.org/b/177322 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
 
-webkit.org/b/193624 compositing/fixed-with-main-thread-scrolling.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/194381 editing/pasteboard/paste-4039777-fix.html [ Failure Pass ]
+webkit.org/b/194381 editing/pasteboard/paste-4039777-fix.html [ Failure Pass Timeout ]
 webkit.org/b/194381 editing/pasteboard/paste-4038267-fix.html [ Failure Pass ]
 
 webkit.org/b/194382 mathml/presentation/roots.xhtml [ Failure Pass ]
@@ -2734,6 +2737,9 @@ webkit.org/b/208428 media/media-ended-fired-once.html [ Failure Pass ]
 
 webkit.org/b/208429 fast/css/user-drag-none.html [ Timeout Pass ]
 
+imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Missing ]
+imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3134,6 +3140,13 @@ webkit.org/b/208000 [ Debug ] inspector/unit-tests/server-timing-entry.html [ Ti
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/throttler.html [ Failure Timeout ]
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/url-utilities.html [ Timeout ]
 
+# These entries are commented to avoid a lint error of duplicated bug entry.
+# webkit.org/b/208630 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Timeout ]
+# webkit.org/b/208630 fast/scrolling/overflow-scroll-past-max.html [ Timeout ]
+# webkit.org/b/208630 fast/scrolling/scroll-container-horizontally.html [ Timeout ]
+webkit.org/b/208630 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
+webkit.org/b/208630 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3380,7 +3393,6 @@ Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 # Some input type=range tests fail because of the size
 # of the slider thumb in GTK+ themes.
 Bug(GTK) fast/forms/range/slider-mouse-events.html [ Failure ]
-Bug(GTK) fast/forms/range/slider-zoomed.html [ Failure ]
 
 # Tests that fail across all platforms.
 # Even though some platforms don't skip these tests, there are platform-specific
@@ -3434,8 +3446,6 @@ webkit.org/b/62204 svg/custom/relative-sized-use-without-attributes-on-symbol.xh
 webkit.org/b/62204 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 webkit.org/b/62204 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
 
-webkit.org/b/73653 fast/forms/range/slider-in-multi-column.html [ Failure ]
-
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
@@ -3486,8 +3496,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 #webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
-
-webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOnlyFailure ]
 
 webkit.org/b/109469 [ Debug ] fast/events/mouse-cursor-image-set.html [ Crash ]
 
@@ -3734,7 +3742,6 @@ webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadm
 webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure Pass ]
 
@@ -4687,6 +4694,9 @@ webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family.html [ Pass ]
 
 http/tests/cookies/same-site [ Pass ]
+
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
