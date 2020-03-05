@@ -852,7 +852,12 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 
 void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children) const
 {
-    children = tree()->objectsForIDs(vectorAttributeValue<AXID>(propertyName));
+    Vector<AXID> childIDs = vectorAttributeValue<AXID>(propertyName);
+    children.reserveCapacity(childIDs.size());
+    for (const auto& childID : childIDs) {
+        if (auto object = tree()->nodeForID(childID))
+            children.uncheckedAppend(object);
+    }
 }
 
 void AXIsolatedObject::updateBackingStore()

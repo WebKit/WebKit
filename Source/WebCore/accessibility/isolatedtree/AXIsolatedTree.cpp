@@ -137,7 +137,8 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 
 Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) const
 {
-    Vector<RefPtr<AXCoreObject>> result(axIDs.size());
+    Vector<RefPtr<AXCoreObject>> result;
+    result.reserveCapacity(axIDs.size());
 
     for (const auto& axID : axIDs) {
         if (auto object = nodeForID(axID))
