@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,13 +45,18 @@ enum class RouteSharingPolicy : uint8_t {
     LongFormVideo
 };
 
-class AudioSession final {
+class WEBCORE_EXPORT AudioSession {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AudioSession);
+    friend class UniqueRef<AudioSession>;
+    friend UniqueRef<AudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<AudioSession>();
 public:
-    WEBCORE_EXPORT static AudioSession& sharedSession();
+    static UniqueRef<AudioSession> create();
+    static void setSharedSession(UniqueRef<AudioSession>&&);
+    static AudioSession& sharedSession();
+    virtual ~AudioSession();
 
-    enum CategoryType {
+    enum CategoryType : uint8_t {
         None,
         AmbientSound,
         SoloAmbientSound,
@@ -59,23 +65,23 @@ public:
         PlayAndRecord,
         AudioProcessing,
     };
-    WEBCORE_EXPORT void setCategory(CategoryType, RouteSharingPolicy);
-    WEBCORE_EXPORT CategoryType category() const;
+    virtual void setCategory(CategoryType, RouteSharingPolicy);
+    virtual CategoryType category() const;
 
     void setCategoryOverride(CategoryType);
     CategoryType categoryOverride() const;
 
-    RouteSharingPolicy routeSharingPolicy() const;
-    String routingContextUID() const;
+    virtual RouteSharingPolicy routeSharingPolicy() const;
+    virtual String routingContextUID() const;
 
-    WEBCORE_EXPORT float sampleRate() const;
-    size_t bufferSize() const;
-    size_t numberOfOutputChannels() const;
+    virtual float sampleRate() const;
+    virtual size_t bufferSize() const;
+    virtual size_t numberOfOutputChannels() const;
 
     bool tryToSetActive(bool);
 
-    WEBCORE_EXPORT size_t preferredBufferSize() const;
-    WEBCORE_EXPORT void setPreferredBufferSize(size_t);
+    virtual size_t preferredBufferSize() const;
+    virtual void setPreferredBufferSize(size_t);
 
     class MutedStateObserver {
     public:
@@ -87,17 +93,16 @@ public:
     void addMutedStateObserver(MutedStateObserver*);
     void removeMutedStateObserver(MutedStateObserver*);
 
-    bool isMuted() const;
-    void handleMutedStateChange();
+    virtual bool isMuted() const;
+    virtual void handleMutedStateChange();
 
-    bool isActive() const { return m_active; }
+    virtual bool isActive() const { return m_active; }
 
-private:
+protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
-    ~AudioSession();
 
-    bool tryToSetActiveInternal(bool);
+    virtual bool tryToSetActiveInternal(bool);
 
     std::unique_ptr<AudioSessionPrivate> m_private;
     HashSet<MutedStateObserver*> m_observers;
@@ -117,6 +122,19 @@ template<> struct EnumTraits<WebCore::RouteSharingPolicy> {
     WebCore::RouteSharingPolicy::LongFormAudio,
     WebCore::RouteSharingPolicy::Independent,
     WebCore::RouteSharingPolicy::LongFormVideo
+    >;
+};
+
+template <> struct EnumTraits<WebCore::AudioSession::CategoryType> {
+    using values = EnumValues <
+    WebCore::AudioSession::CategoryType,
+    WebCore::AudioSession::CategoryType::None,
+    WebCore::AudioSession::CategoryType::AmbientSound,
+    WebCore::AudioSession::CategoryType::SoloAmbientSound,
+    WebCore::AudioSession::CategoryType::MediaPlayback,
+    WebCore::AudioSession::CategoryType::RecordAudio,
+    WebCore::AudioSession::CategoryType::PlayAndRecord,
+    WebCore::AudioSession::CategoryType::AudioProcessing
     >;
 };
 

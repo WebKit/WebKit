@@ -234,6 +234,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::MediaRecorderIdentifier',
         'WebKit::RemoteAudioDestinationIdentifier',
+        'WebKit::RemoteAudioSessionIdentifier',
         'WebKit::RemoteCDMIdentifier',
         'WebKit::RemoteCDMInstanceIdentifier',
         'WebKit::RemoteCDMInstanceSessionIdentifier',

@@ -33,10 +33,25 @@
 
 namespace WebCore {
 
+static UniqueRef<AudioSession>& sharedAudioSession()
+{
+    static NeverDestroyed<UniqueRef<AudioSession>> session = AudioSession::create();
+    return session.get();
+}
+
+UniqueRef<AudioSession> AudioSession::create()
+{
+    return makeUniqueRef<AudioSession>();
+}
+
 AudioSession& AudioSession::sharedSession()
 {
-    static NeverDestroyed<AudioSession> session;
-    return session;
+    return sharedAudioSession();
+}
+
+void AudioSession::setSharedSession(UniqueRef<AudioSession>&& session)
+{
+    sharedAudioSession() = WTFMove(session);
 }
 
 bool AudioSession::tryToSetActive(bool active)

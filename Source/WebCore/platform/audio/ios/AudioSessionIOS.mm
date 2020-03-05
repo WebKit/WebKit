@@ -243,6 +243,15 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     ASSERT(!error);
 }
 
+bool AudioSession::isMuted() const
+{
+    return false;
+}
+
+void AudioSession::handleMutedStateChange()
+{
+}
+
 }
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)

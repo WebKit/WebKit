@@ -1,3 +1,82 @@
+2020-03-05  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement RemoteAudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=208583
+
+        Reviewed by Alex Christensen.
+
+        Add a subclass of AudioSession which, instead of modifying the audio behavior of the current process, modifies the
+        audio behavior of the GPU Process. And, in the GPU Process, since it represents the audio behavior of potentially
+        multiple separate WebContent processes.
+
+        Override the default shared AudioSession at WebProcess initialization time.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::audioSessionProxy):
+        (WebKit::GPUConnectionToWebProcess::ensureAudioSession):
+        (WebKit::GPUConnectionToWebProcess::legacyCdmFactoryProxy):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        (WebKit::GPUProcess::audioSessionManager const):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp: Added.
+        (WebKit::RemoteAudioSessionProxy::create):
+        (WebKit::RemoteAudioSessionProxy::RemoteAudioSessionProxy):
+        (WebKit::RemoteAudioSessionProxy::processIdentifier):
+        (WebKit::RemoteAudioSessionProxy::configuration):
+        (WebKit::RemoteAudioSessionProxy::setCategory):
+        (WebKit::RemoteAudioSessionProxy::setPreferredBufferSize):
+        (WebKit::RemoteAudioSessionProxy::tryToSetActive):
+        (WebKit::RemoteAudioSessionProxy::beginInterruption):
+        (WebKit::RemoteAudioSessionProxy::endInterruption):
+        (WebKit::RemoteAudioSessionProxy::audioSessionManager):
+        (WebKit::RemoteAudioSessionProxy::connection):
+        * GPUProcess/media/RemoteAudioSessionProxy.h: Added.
+        (WebKit::RemoteAudioSessionProxy::category const):
+        (WebKit::RemoteAudioSessionProxy::routeSharingPolicy const):
+        (WebKit::RemoteAudioSessionProxy::preferredBufferSize const):
+        (WebKit::RemoteAudioSessionProxy::isActive const):
+        * GPUProcess/media/RemoteAudioSessionProxy.messages.in:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp: Added.
+        (WebKit::RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::addProxy):
+        (WebKit::RemoteAudioSessionProxyManager::removeProxy):
+        (WebKit::RemoteAudioSessionProxyManager::getProxy):
+        (WebKit::RemoteAudioSessionProxyManager::setCategoryForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::tryToSetActiveForProcess):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        (WebKit::RemoteAudioSessionProxyManager::session const):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.messages.in:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp: Added.
+        (WebKit::RemoteAudioSession::create):
+        (WebKit::RemoteAudioSession::RemoteAudioSession):
+        (WebKit::RemoteAudioSession::connection):
+        (WebKit::RemoteAudioSession::setCategory):
+        (WebKit::RemoteAudioSession::setPreferredBufferSize):
+        (WebKit::RemoteAudioSession::tryToSetActiveInternal):
+        (WebKit::RemoteAudioSession::configurationChanged):
+        (WebKit::RemoteAudioSession::beginInterruption):
+        (WebKit::RemoteAudioSession::endInterruption):
+        * WebProcess/GPU/media/RemoteAudioSession.h: Added.
+        * WebProcess/GPU/media/RemoteAudioSession.messages.in:
+        * WebProcess/GPU/media/RemoteAudioSessionConfiguration.h: Added.
+        (WebKit::RemoteAudioSessionConfiguration::encode const):
+        (WebKit::RemoteAudioSessionConfiguration::decode):
+        * WebProcess/GPU/media/RemoteAudioSessionIdentifier.h:
+
 2020-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         Sandbox: Allow sysctl read of "kern.ostype"

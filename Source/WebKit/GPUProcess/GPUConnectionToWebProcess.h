@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "MessageReceiverMap.h"
+#include "RemoteAudioSessionIdentifier.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ProcessIdentifier.h>
@@ -48,12 +49,15 @@ class GPUProcess;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
 class RemoteAudioMediaStreamTrackRendererManager;
+class RemoteAudioSessionProxy;
+class RemoteAudioSessionProxyManager;
 class RemoteCDMFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
+struct RemoteAudioSessionConfiguration;
 
 class GPUConnectionToWebProcess
     : public RefCounted<GPUConnectionToWebProcess>
@@ -88,11 +92,15 @@ public:
     RemoteCDMFactoryProxy& cdmFactoryProxy();
 #endif
 
+    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    RemoteAudioSessionProxyManager& audioSessionManager();
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
 
     RemoteAudioDestinationManager& remoteAudioDestinationManager();
-    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecsProxy& libWebRTCCodecsProxy();
 #endif
@@ -104,11 +112,21 @@ private:
     RemoteSampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 #endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    RemoteAudioSessionProxy& audioSessionProxy();
+#endif
+
     void createRenderingBackend(RenderingBackendIdentifier);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 #if PLATFORM(COCOA)
     void clearNowPlayingInfo();
     void setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo&);
+#endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
+    void ensureAudioSession(EnsureAudioSessionCompletion&&);
 #endif
 
     // IPC::Connection::Client
@@ -148,6 +166,9 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
+#endif
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    std::unique_ptr<RemoteAudioSessionProxy> m_audioSessionProxy;
 #endif
 };
 

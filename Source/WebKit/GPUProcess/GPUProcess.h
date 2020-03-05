@@ -40,6 +40,7 @@ class GPUConnectionToWebProcess;
 struct GPUProcessCreationParameters;
 struct GPUProcessSessionParameters;
 class LayerHostingContext;
+class RemoteAudioSessionProxyManager;
 
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess>, public CanMakeWeakPtr<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
@@ -61,6 +62,10 @@ public:
     const String& mediaCacheDirectory(PAL::SessionID) const;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory(PAL::SessionID) const;
+#endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    RemoteAudioSessionProxyManager& audioSessionManager() const;
 #endif
 
 private:
@@ -102,6 +107,9 @@ private:
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
     bool m_canShowWhileLocked { false };
+#endif
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
 };
 

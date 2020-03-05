@@ -76,6 +76,11 @@
 #include "RemoteCDMProxyMessages.h"
 #endif
 
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#include "RemoteAudioSessionProxy.h"
+#include "RemoteAudioSessionProxyManager.h"
+#include "RemoteAudioSessionProxyMessages.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -134,6 +139,10 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection&)
 {
+    if (m_audioSessionProxy) {
+        gpuProcess().audioSessionManager().removeProxy(webProcessIdentifier());
+        m_audioSessionProxy = nullptr;
+    }
 }
 
 Logger& GPUConnectionToWebProcess::logger()
@@ -232,6 +241,17 @@ RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 }
 #endif
 
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
+{
+    if (!m_audioSessionProxy) {
+        m_audioSessionProxy = RemoteAudioSessionProxy::create(*this).moveToUniquePtr();
+        gpuProcess().audioSessionManager().addProxy(makeWeakPtr(m_audioSessionProxy.get()));
+    }
+    return *m_audioSessionProxy;
+}
+#endif
+
 void GPUConnectionToWebProcess::createRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
 {
     auto addResult = m_remoteRenderingBackendProxyMap.ensure(renderingBackendIdentifier, [&]() {
@@ -255,6 +275,13 @@ void GPUConnectionToWebProcess::clearNowPlayingInfo()
 void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo)
 {
     MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
+}
+#endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&& completion)
+{
+    completion(audioSessionProxy().configuration());
 }
 #endif
 
@@ -335,6 +362,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
+        audioSessionProxy().didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
@@ -379,6 +412,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSessionProxy::messageReceiverName()) {
         cdmFactoryProxy().didReceiveSyncCDMInstanceSessionMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
+        audioSessionProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }
 #endif

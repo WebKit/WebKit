@@ -42,6 +42,7 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
+#include "RemoteAudioSession.h"
 #include "StatisticsData.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -470,6 +471,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
+
+    setUseGPUProcessForMedia(parameters.useGPUProcessForMedia);
 
     RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting process = %d", WebCore::presentingApplicationPID());
 }
@@ -1996,6 +1999,21 @@ void WebProcess::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlock
     completionHandler();
 }
 #endif
+
+void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
+{
+    if (useGPUProcessForMedia == m_useGPUProcessForMedia)
+        return;
+
+    m_useGPUProcessForMedia = useGPUProcessForMedia;
+
+#if USE(AUDIO_SESSION)
+    if (useGPUProcessForMedia)
+        AudioSession::setSharedSession(RemoteAudioSession::create(*this));
+    else
+        AudioSession::setSharedSession(AudioSession::create());
+#endif
+}
 
 } // namespace WebKit
 

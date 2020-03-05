@@ -51,6 +51,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#include "RemoteAudioSessionProxyManager.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -209,6 +213,15 @@ const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) co
 {
     ASSERT(m_sessions.contains(sessionID));
     return m_sessions.find(sessionID)->value.mediaKeysStorageDirectory;
+}
+#endif
+
+#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
+{
+    if (!m_audioSessionManager)
+        m_audioSessionManager = WTF::makeUnique<RemoteAudioSessionProxyManager>();
+    return *m_audioSessionManager;
 }
 #endif
 
