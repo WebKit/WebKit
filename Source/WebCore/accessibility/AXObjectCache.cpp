@@ -3130,7 +3130,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 
     auto* axFocus = axObjectCache->focusedObject(document);
     if (axFocus)
-        tree->setFocusedNodeID(axFocus->objectID());
+        tree->setFocusedNode(axFocus->objectID());
 
     return makeRef(*tree);
 }

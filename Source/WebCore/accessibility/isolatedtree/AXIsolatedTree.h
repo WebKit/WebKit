@@ -74,9 +74,15 @@ public:
     void removeNode(AXID);
     void removeSubtree(AXID);
 
+    // Both setRootNode and setFocusedNode must be called only during the
+    // generation of the IsolatedTree.
+    // The focused node needs to be set during the generation because a request
+    // for it can come in before pending changes are applied. For focused node
+    // updates, use setFocusNodeID.
     void setRootNode(Ref<AXIsolatedObject>&);
+    void setFocusedNode(AXID);
     void setFocusedNodeID(AXID);
-    
+
     // Call on AX thread
     void applyPendingChanges();
 

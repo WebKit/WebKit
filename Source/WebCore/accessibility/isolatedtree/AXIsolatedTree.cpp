@@ -150,7 +150,6 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) c
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedUIElement()
 {
-    m_focusedNodeID = m_pendingFocusedNodeID;
     return nodeForID(m_focusedNodeID);
 }
     
@@ -166,6 +165,27 @@ void AXIsolatedTree::setRootNode(Ref<AXIsolatedObject>& root)
     m_readerThreadNodeMap.add(root->objectID(), WTFMove(root));
 }
     
+void AXIsolatedTree::setFocusedNode(AXID axID)
+{
+    ASSERT(isMainThread());
+    LockHolder locker { m_changeLogLock };
+    m_focusedNodeID = axID;
+    if (axID == InvalidAXID)
+        return;
+
+    if (m_readerThreadNodeMap.contains(m_focusedNodeID))
+        return; // Nothing to do, the focus is set.
+
+    // If the focused object is in the pending appends, add it to the reader
+    // map, so that we can return the right focused object if requested before
+    // pending appends are applied.
+    for (const auto& item : m_pendingAppends) {
+        if (item.m_isolatedObject->objectID() == m_focusedNodeID
+            && m_readerThreadNodeMap.add(m_focusedNodeID, item.m_isolatedObject.get()) && item.m_wrapper)
+            m_readerThreadNodeMap.get(m_focusedNodeID)->attachPlatformWrapper(item.m_wrapper);
+    }
+}
+
 void AXIsolatedTree::setFocusedNodeID(AXID axID)
 {
     LockHolder locker { m_changeLogLock };
