@@ -934,6 +934,24 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
         m_view.frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(replacedRenderer.intrinsicSize()));
         return;
     }
+    if (is<RenderSVGRoot>(child)) {
+        auto fixedSize = [] (const auto& renderer) -> Optional<IntSize> {
+            auto& style = renderer.style();
+            if (!style.width().isFixed() || !style.height().isFixed())
+                return { };
+            return makeOptional(IntSize { style.width().intValue(), style.height().intValue() });
+        };
+        // SVG content tends to have a fixed size construct. However this is known to be inaccurate in certain cases (box-sizing: border-box) or especially when the parent box is oversized.
+        auto candidateSize = IntSize { };
+        if (auto size = fixedSize(child))
+            candidateSize = *size;
+        else if (auto size = fixedSize(parent))
+            candidateSize = *size;
+
+        if (!candidateSize.isEmpty())
+            m_view.frameView().incrementVisuallyNonEmptyPixelCount(candidateSize);
+        return;
+    }
 }
 
 }
