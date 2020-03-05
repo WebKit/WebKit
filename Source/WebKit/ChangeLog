@@ -1,3 +1,16 @@
+2020-03-05  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion failed: shouldBeActive() in BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=208596
+
+        Reviewed by Chris Dumez.
+
+        Update state of BackgroundProcessResponsivenessTimer when ServiceWorker is enabled or disabled in web process.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disableServiceWorkers):
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+
 2020-03-05  youenn fablet  <youenn@apple.com>
 
         Add logging support for capture sources in GPUProcess
