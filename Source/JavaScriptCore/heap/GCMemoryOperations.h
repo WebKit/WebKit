@@ -306,7 +306,7 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
         bitwise_cast<volatile uint64_t*>(dst)[i] = 0;
 #endif // COMPILER(GCC_COMPATIBLE)
 #else
-    memset(dst, 0, bytes);
+    memset(reinterpret_cast<char*>(dst), 0, bytes);
 #endif // USE(JSVALUE64)
 }
 

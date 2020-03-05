@@ -1,3 +1,16 @@
+2020-03-05  Paulo Matos  <pmatos@igalia.com>
+
+        [JSCOnly] 32-bits warning on memset of JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=204411
+
+        Reviewed by Mark Lam.
+
+        Fixes warning on 32bit builds. This is required because GCC knows
+        it is not safe to use memset on non-POD types and warns against its use.
+
+        * heap/GCMemoryOperations.h:
+        (JSC::gcSafeZeroMemory):
+
 2020-03-04  Mark Lam  <mark.lam@apple.com>
 
         Handle an out of memory error while constructing the BytecodeGenerator.
