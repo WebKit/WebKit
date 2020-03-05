@@ -1217,10 +1217,12 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         } else if (layer.needsScrollingTreeUpdate())
             scrollingNodeChanges.add(ScrollingNodeChangeFlags::LayerGeometry);
 
+#if ENABLE(ASYNC_SCROLLING)
         // This needs to happen after any geometry update.
         // FIXME: Use separate bit for event region invalidation.
         if (layerNeedsUpdate || layer.needsCompositingConfigurationUpdate())
             layerBacking->updateEventRegion();
+#endif
 
         if (auto* reflection = layer.reflectionLayer()) {
             if (auto* reflectionBacking = reflection->backing()) {

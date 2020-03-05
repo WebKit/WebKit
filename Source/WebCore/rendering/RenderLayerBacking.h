@@ -220,8 +220,10 @@ public:
     
     void updateAllowsBackingStoreDetaching(const LayoutRect& absoluteBounds);
 
+#if ENABLE(ASYNC_SCROLLING)
     void updateEventRegion();
-    
+#endif
+
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers();
     

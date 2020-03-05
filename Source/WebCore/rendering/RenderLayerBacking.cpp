@@ -1612,6 +1612,7 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
         m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
 }
 
+#if ENABLE(ASYNC_SCROLLING)
 void RenderLayerBacking::updateEventRegion()
 {
     if (paintsIntoCompositedAncestor())
@@ -1653,6 +1654,7 @@ void RenderLayerBacking::updateEventRegion()
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
 }
+#endif
 
 bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&& clippingData)
 {
