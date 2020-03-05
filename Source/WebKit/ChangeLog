@@ -1,3 +1,33 @@
+2020-03-04  Chris Dumez  <cdumez@apple.com>
+
+        WebsiteDataStore methods often create process pools and launch network processes unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=208619
+
+        Reviewed by Alex Christensen.
+
+        These methods were potentially creating a temporary WebProcessPool object and launching a network
+        process only to go change something in memory in the network process. Since the newly created
+        WebProcessPool is temporary, it gets destroyed as soon as we get out of the for loop and the
+        network go away too. Therefore, the information in memory of the new network process would not
+        survive. Those methods should never be created a process pool and this patch fixes this.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setMaxStatisticsEntries):
+        (WebKit::WebsiteDataStore::setPruneEntriesDownTo):
+        (WebKit::WebsiteDataStore::setGrandfatheringTime):
+        (WebKit::WebsiteDataStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setPrevalentResource):
+        (WebKit::WebsiteDataStore::setVeryPrevalentResource):
+        (WebKit::WebsiteDataStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebsiteDataStore::setIsRunningResourceLoadStatisticsTest):
+        (WebKit::WebsiteDataStore::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebsiteDataStore::getAllStorageAccessEntries):
+        (WebKit::WebsiteDataStore::setTimeToLiveUserInteraction):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses):
+
 2020-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Make m_slowRepaintObjects a WeakHashSet
