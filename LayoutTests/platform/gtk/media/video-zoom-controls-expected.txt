@@ -17,12 +17,12 @@ layer at (65,212) size 225x45
       RenderFlexibleBox {DIV} at (0,0) size 38x6
         RenderBlock {DIV} at (0,-8) size 59x22
           RenderBlock {DIV} at (-11,0) size 22x21 [color=#FFFFFF] [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (133,0) size 109x45 [color=#FFFFFF]
-      RenderText {#text} at (0,11) size 108x22
-        text run at (0,11) width 108: "00:00 / 00:06"
-    RenderFlexibleBox {DIV} at (253,0) size 46x45
+    RenderBlock {DIV} at (133,0) size 97x45 [color=#FFFFFF]
+      RenderText {#text} at (0,11) size 96x22
+        text run at (0,11) width 96: "0:00 / 0:06"
+    RenderFlexibleBox {DIV} at (241,0) size 46x45
       RenderButton {BUTTON} at (0,0) size 45x45
-    RenderButton {BUTTON} at (301,0) size 46x45
+    RenderButton {BUTTON} at (289,0) size 46x45
 layer at (78,212) size 45x45
   RenderButton {BUTTON} at (13,0) size 46x45
 layer at (57,309) size 240x180
@@ -36,11 +36,11 @@ layer at (65,437) size 225x45
       RenderFlexibleBox {DIV} at (0,0) size 38x6
         RenderBlock {DIV} at (0,-8) size 59x22
           RenderBlock {DIV} at (-11,0) size 22x21 [color=#FFFFFF] [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (133,0) size 109x45 [color=#FFFFFF]
-      RenderText {#text} at (0,11) size 108x22
-        text run at (0,11) width 108: "00:00 / 00:06"
-    RenderFlexibleBox {DIV} at (253,0) size 46x45
+    RenderBlock {DIV} at (133,0) size 97x45 [color=#FFFFFF]
+      RenderText {#text} at (0,11) size 96x22
+        text run at (0,11) width 96: "0:00 / 0:06"
+    RenderFlexibleBox {DIV} at (241,0) size 46x45
       RenderButton {BUTTON} at (0,0) size 45x45
-    RenderButton {BUTTON} at (301,0) size 46x45
+    RenderButton {BUTTON} at (289,0) size 46x45
 layer at (78,437) size 45x45
   RenderButton {BUTTON} at (13,0) size 46x45
