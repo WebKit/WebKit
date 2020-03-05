@@ -34,6 +34,7 @@
 #include "Pagination.h"
 #include "PaintPhase.h"
 #include "RenderElement.h"
+#include "RenderLayerModelObject.h"
 #include "RenderPtr.h"
 #include "ScrollView.h"
 #include "StyleColor.h"
@@ -292,14 +293,13 @@ public:
     void addSlowRepaintObject(RenderElement&);
     void removeSlowRepaintObject(RenderElement&);
     bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(renderer); }
-    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->computeSize(); }
+    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && !m_slowRepaintObjects->computesEmpty(); }
 
     // Includes fixed- and sticky-position objects.
-    typedef HashSet<RenderLayerModelObject*> ViewportConstrainedObjectSet;
-    void addViewportConstrainedObject(RenderLayerModelObject*);
-    void removeViewportConstrainedObject(RenderLayerModelObject*);
-    const ViewportConstrainedObjectSet* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
-    bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && m_viewportConstrainedObjects->size() > 0; }
+    void addViewportConstrainedObject(RenderLayerModelObject&);
+    void removeViewportConstrainedObject(RenderLayerModelObject&);
+    const WeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
+    bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && !m_viewportConstrainedObjects->computesEmpty(); }
     
     float frameScaleFactor() const;
 
@@ -886,7 +886,7 @@ private:
     IntSize m_autoSizeContentSize;
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
-    std::unique_ptr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
+    std::unique_ptr<WeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 

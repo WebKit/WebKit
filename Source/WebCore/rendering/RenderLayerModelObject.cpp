@@ -70,7 +70,7 @@ void RenderLayerModelObject::willBeDestroyed()
 {
     if (isPositioned()) {
         if (style().hasViewportConstrainedPosition())
-            view().frameView().removeViewportConstrainedObject(this);
+            view().frameView().removeViewportConstrainedObject(*this);
     }
 
     if (hasLayer()) {
@@ -200,9 +200,9 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
     if (newStyleIsViewportConstrained != oldStyleIsViewportConstrained) {
         if (newStyleIsViewportConstrained && layer())
-            view().frameView().addViewportConstrainedObject(this);
+            view().frameView().addViewportConstrainedObject(*this);
         else
-            view().frameView().removeViewportConstrainedObject(this);
+            view().frameView().removeViewportConstrainedObject(*this);
     }
 
 #if ENABLE(CSS_SCROLL_SNAP)

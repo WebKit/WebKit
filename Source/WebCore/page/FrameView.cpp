@@ -589,7 +589,7 @@ void FrameView::didDestroyRenderTree()
     // Everything else should have removed itself as the tree was felled.
     ASSERT(!m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty() || (m_embeddedObjectsToUpdate->size() == 1 && m_embeddedObjectsToUpdate->first() == nullptr));
 
-    ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty());
+    ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->computesEmpty());
     ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->computesEmpty());
 
     ASSERT(!frame().animation().hasAnimations());
@@ -1514,10 +1514,10 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
     }
 }
 
-void FrameView::addViewportConstrainedObject(RenderLayerModelObject* object)
+void FrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (!m_viewportConstrainedObjects)
-        m_viewportConstrainedObjects = makeUnique<ViewportConstrainedObjectSet>();
+        m_viewportConstrainedObjects = makeUnique<WeakHashSet<RenderLayerModelObject>>();
 
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
@@ -1531,7 +1531,7 @@ void FrameView::addViewportConstrainedObject(RenderLayerModelObject* object)
     }
 }
 
-void FrameView::removeViewportConstrainedObject(RenderLayerModelObject* object)
+void FrameView::removeViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
         if (Page* page = frame().page()) {
@@ -2070,7 +2070,7 @@ OptionSet<StyleColor::Options> FrameView::styleColorOptions() const
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    if (!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty()) {
+    if (!m_viewportConstrainedObjects || m_viewportConstrainedObjects->computesEmpty()) {
         frame().page()->chrome().scroll(scrollDelta, rectToScroll, clipRect);
         return true;
     }
@@ -2080,14 +2080,14 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
     for (auto& renderer : *m_viewportConstrainedObjects) {
-        if (!renderer->style().hasViewportConstrainedPosition())
+        if (!renderer.style().hasViewportConstrainedPosition())
             continue;
-        if (renderer->isComposited())
+        if (renderer.isComposited())
             continue;
 
         // Fixed items should always have layers.
-        ASSERT(renderer->hasLayer());
-        RenderLayer* layer = downcast<RenderBoxModelObject>(*renderer).layer();
+        ASSERT(renderer.hasLayer());
+        RenderLayer* layer = downcast<RenderBoxModelObject>(renderer).layer();
 
         if (layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForBoundsOutOfView
             || layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForNoVisibleContent) {
@@ -2436,9 +2436,9 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
         return;
 
     for (auto& renderer : *m_viewportConstrainedObjects) {
-        renderer->setNeedsLayout();
-        if (renderer->hasLayer()) {
-            auto* layer = downcast<RenderBoxModelObject>(*renderer).layer();
+        renderer.setNeedsLayout();
+        if (renderer.hasLayer()) {
+            auto* layer = downcast<RenderBoxModelObject>(renderer).layer();
             layer->setNeedsCompositingGeometryUpdate();
         }
     }

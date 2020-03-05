@@ -719,8 +719,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         // We only get here if we didn't scroll on the scrolling thread, so this update needs to re-position viewport-constrained layers.
         if (m_renderView.settings().acceleratedCompositingForFixedPositionEnabled() && isPageScroll) {
             if (auto* viewportConstrainedObjects = m_renderView.frameView().viewportConstrainedObjects()) {
-                for (auto* renderer : *viewportConstrainedObjects) {
-                    if (auto* layer = renderer->layer())
+                for (auto& renderer : *viewportConstrainedObjects) {
+                    if (auto* layer = renderer.layer())
                         layer->setNeedsCompositingGeometryUpdate();
                 }
             }
