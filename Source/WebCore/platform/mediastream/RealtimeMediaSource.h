@@ -70,7 +70,7 @@ class WEBCORE_EXPORT RealtimeMediaSource
     : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
     , public CanMakeWeakPtr<RealtimeMediaSource>
 #if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
+    , protected LoggerHelper
 #endif
 {
 public:
@@ -185,7 +185,7 @@ public:
     virtual bool isIncomingVideoSource() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, const void*);
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }

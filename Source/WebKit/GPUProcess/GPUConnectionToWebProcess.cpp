@@ -90,6 +90,7 @@ public:
     }
 
 private:
+    Logger& logger() final { return m_process.logger(); }
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }

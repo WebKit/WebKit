@@ -156,8 +156,19 @@ Ref<RealtimeMediaSource> RealtimeVideoSource::clone()
     auto source = create(m_source.copyRef());
     source->m_currentSettings = m_currentSettings;
     source->setSize(size());
+#if !RELEASE_LOG_DISABLED
+    source->setLogger(logger(), childLogIdentifier(logIdentifier(), ++m_cloneCounter));
+#endif
     return source;
 }
+
+#if !RELEASE_LOG_DISABLED
+void RealtimeVideoSource::setLogger(const Logger& logger, const void* identifier)
+{
+    RealtimeMediaSource::setLogger(logger, identifier);
+    m_source->setLogger(logger, identifier);
+}
+#endif
 
 } // namespace WebCore
 

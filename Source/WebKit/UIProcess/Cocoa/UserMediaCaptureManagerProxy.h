@@ -54,6 +54,7 @@ public:
         virtual void removeMessageReceiver(IPC::StringReference) = 0;
         virtual IPC::Connection& connection() = 0;
         virtual void willStartCameraCapture() { }
+        virtual Logger& logger() = 0;
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();

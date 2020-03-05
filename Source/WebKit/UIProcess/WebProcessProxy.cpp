@@ -160,7 +160,16 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { m_process.addMessageReceiver(messageReceiverName, receiver); }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { m_process.removeMessageReceiver(messageReceiverName); }
     IPC::Connection& connection() final { return *m_process.connection(); }
+    Logger& logger() final
+    {
+        if (!m_logger) {
+            m_logger = Logger::create(this);
+            m_logger->setEnabled(this, m_process.sessionID().isAlwaysOnLoggingAllowed());
+        }
+        return *m_logger;
+    }
 
+    RefPtr<Logger> m_logger;
     WebProcessProxy& m_process;
 };
 #endif

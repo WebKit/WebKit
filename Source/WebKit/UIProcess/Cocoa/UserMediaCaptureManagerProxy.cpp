@@ -205,6 +205,9 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     WebCore::RealtimeMediaSourceSettings settings;
     if (sourceOrError) {
         auto source = sourceOrError.source();
+#if !RELEASE_LOG_DISABLED
+        source->setLogger(m_connectionProxy->logger(), LoggerHelper::uniqueLogIdentifier());
+#endif
         settings = source->settings();
         ASSERT(!m_proxies.contains(id));
         m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));

@@ -64,8 +64,13 @@ private:
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(const Logger&, const void*) final;
+#endif
+
     Ref<RealtimeVideoCaptureSource> m_source;
     RealtimeMediaSourceSettings m_currentSettings;
+    uint64_t m_cloneCounter { 0 };
 };
 
 } // namespace WebCore

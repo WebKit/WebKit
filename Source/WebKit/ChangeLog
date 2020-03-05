@@ -1,3 +1,21 @@
+2020-03-05  youenn fablet  <youenn@apple.com>
+
+        Add logging support for capture sources in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=208637
+
+        Reviewed by Eric Carlson.
+
+        Add a logger getter to the ConnectionProxy.
+        Implement it for GPUProcess and UIProcess.
+        Set source logger to the connection proxy logger.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+
 2020-03-05  Youenn Fablet  <youenn@apple.com>
 
         Export NowPlaying commands to GPUProcess when media playing in GPUProcess is enabled

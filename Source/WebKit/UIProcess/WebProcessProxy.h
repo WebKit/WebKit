@@ -51,6 +51,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakHashSet.h>
@@ -567,6 +568,7 @@ private:
 #if PLATFORM(COCOA)
     MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
 #endif
+    RefPtr<Logger> m_logger;
 
     struct ServiceWorkerInformation {
         WebPageProxyIdentifier serviceWorkerPageProxyID;
