@@ -220,7 +220,7 @@ class CommitQueueFactory(Factory):
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
-        self.addStep(RunWebKit1Tests())
+        self.addStep(RunWebKitTests())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource())
         self.addStep(UpdateWorkingDirectory())
