@@ -22,7 +22,6 @@
 #include "JSReadOnlySetLike.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -33,13 +32,10 @@
 #include "JSDOMSetLike.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
-#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -281,27 +277,6 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionForEachBody(
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSReadOnlySetLike>::call<jsReadOnlySetLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
-}
-
-JSC::IsoSubspace* JSReadOnlySetLike::subspaceForImpl(JSC::VM& vm)
-{
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForReadOnlySetLike.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSReadOnlySetLike> || !JSReadOnlySetLike::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSReadOnlySetLike>)
-        spaces.m_subspaceForReadOnlySetLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSReadOnlySetLike);
-    else
-        spaces.m_subspaceForReadOnlySetLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSReadOnlySetLike);
-    auto* space = spaces.m_subspaceForReadOnlySetLike.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    if (&JSReadOnlySetLike::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
 }
 
 void JSReadOnlySetLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

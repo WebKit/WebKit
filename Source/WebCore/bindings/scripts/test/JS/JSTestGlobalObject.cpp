@@ -22,7 +22,6 @@
 #include "JSTestGlobalObject.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -101,8 +100,6 @@
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -2782,19 +2779,7 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSec
 
 JSC::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForTestGlobalObject.get())
-        return space;
-    spaces.m_subspaceForTestGlobalObject = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, clientData.m_heapCellTypeForJSTestGlobalObject.get(), JSTestGlobalObject);
-    auto* space = spaces.m_subspaceForTestGlobalObject.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    if (&JSTestGlobalObject::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
+    return &static_cast<JSVMClientData*>(vm.clientData)->subspaceForJSTestGlobalObject();
 }
 
 void JSTestGlobalObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

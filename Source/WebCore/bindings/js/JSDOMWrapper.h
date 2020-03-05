@@ -66,6 +66,8 @@ protected:
     WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);
 };
 
+WEBCORE_EXPORT JSC::CompleteSubspace* outputConstraintSubspaceFor(JSC::VM&);
+
 template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;

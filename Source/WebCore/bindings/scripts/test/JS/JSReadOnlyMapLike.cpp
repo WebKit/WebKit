@@ -22,7 +22,6 @@
 #include "JSReadOnlyMapLike.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -33,13 +32,10 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
-#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -300,27 +296,6 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionForEachBody(
 EncodedJSValue JSC_HOST_CALL jsReadOnlyMapLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSReadOnlyMapLike>::call<jsReadOnlyMapLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
-}
-
-JSC::IsoSubspace* JSReadOnlyMapLike::subspaceForImpl(JSC::VM& vm)
-{
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForReadOnlyMapLike.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSReadOnlyMapLike> || !JSReadOnlyMapLike::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSReadOnlyMapLike>)
-        spaces.m_subspaceForReadOnlyMapLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSReadOnlyMapLike);
-    else
-        spaces.m_subspaceForReadOnlyMapLike = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSReadOnlyMapLike);
-    auto* space = spaces.m_subspaceForReadOnlyMapLike.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    if (&JSReadOnlyMapLike::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
 }
 
 void JSReadOnlyMapLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

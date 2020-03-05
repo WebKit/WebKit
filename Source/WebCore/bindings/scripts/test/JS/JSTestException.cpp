@@ -22,7 +22,6 @@
 #include "JSTestException.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -30,12 +29,9 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
-#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -186,27 +182,6 @@ static inline JSValue jsTestExceptionNameGetter(JSGlobalObject& lexicalGlobalObj
 EncodedJSValue jsTestExceptionName(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestException>::get<jsTestExceptionNameGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "name");
-}
-
-JSC::IsoSubspace* JSTestException::subspaceForImpl(JSC::VM& vm)
-{
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForTestException.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestException> || !JSTestException::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestException>)
-        spaces.m_subspaceForTestException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestException);
-    else
-        spaces.m_subspaceForTestException = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestException);
-    auto* space = spaces.m_subspaceForTestException.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    if (&JSTestException::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
 }
 
 void JSTestException::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

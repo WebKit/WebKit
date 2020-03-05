@@ -22,7 +22,6 @@
 #include "JSTestStringifierOperationImplementedAs.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
@@ -30,12 +29,9 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
-#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -205,27 +201,6 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototy
 EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationImplementedAsPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestStringifierOperationImplementedAs>::call<jsTestStringifierOperationImplementedAsPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
-}
-
-JSC::IsoSubspace* JSTestStringifierOperationImplementedAs::subspaceForImpl(JSC::VM& vm)
-{
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForTestStringifierOperationImplementedAs.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierOperationImplementedAs> || !JSTestStringifierOperationImplementedAs::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestStringifierOperationImplementedAs>)
-        spaces.m_subspaceForTestStringifierOperationImplementedAs = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestStringifierOperationImplementedAs);
-    else
-        spaces.m_subspaceForTestStringifierOperationImplementedAs = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestStringifierOperationImplementedAs);
-    auto* space = spaces.m_subspaceForTestStringifierOperationImplementedAs.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    if (&JSTestStringifierOperationImplementedAs::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
 }
 
 void JSTestStringifierOperationImplementedAs::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
