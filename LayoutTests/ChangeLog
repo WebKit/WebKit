@@ -1,3 +1,18 @@
+2020-03-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r257839): two fast/forms/textarea are failing after commit r257839 (208576)
+        https://bugs.webkit.org/show_bug.cgi?id=208627
+        <rdar://problem/60042801>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/forms/textarea-no-scroll-on-blur.html:
+        * fast/forms/textarea-scrolled-type.html:
+
+        Update the tests to use rAF instead of zero duration timers.
+        There must be a rendering update between focus() and blur() for actual scrolling to happen and
+        zero duration timer doesn't guarantee that.
+
 2020-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Rebaseline media controls tests after r257775

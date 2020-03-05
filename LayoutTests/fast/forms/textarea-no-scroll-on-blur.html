@@ -1,8 +1,8 @@
 <html>
 <head>
 <script>
-    function wait(seconds) {
-        return new Promise((resolve) => setTimeout(resolve, 0), seconds);
+    function rAF() {
+        return new Promise(resolve => requestAnimationFrame(resolve));
     }
 
     async function test() {
@@ -16,14 +16,14 @@
         // Send caret to bottom of textarea
         ta.focus();
         ta.setSelectionRange(ta.value.length, ta.value.length);
-        await wait(0);
+        await rAF();
         ta.blur();
 
-        await wait(0);
+        await rAF();
         ta.focus();
-        await wait(0);
+        await rAF();
         ta.blur();
-        await wait(0);
+        await rAF();
 
         document.getElementById('res').innerHTML = ta.scrollTop != 0 ? "Test Passed" : "Test Failed";
 

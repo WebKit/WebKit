@@ -2,9 +2,8 @@
 <head>
 <script src=../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
 <script>
-function wait(seconds)
-{
-    return new Promise((resolve) => setTimeout(resolve, 0), seconds);
+function rAF() {
+    return new Promise(resolve => requestAnimationFrame(resolve));
 }
 
 async function test()
@@ -17,14 +16,14 @@ async function test()
 
     // Send caret to bottom of textarea
     ta.focus();
-    await wait(0);
+    await rAF();
     ta.setSelectionRange(ta.value.length, ta.value.length);
-    await wait(0);
+    await rAF();
     ta.blur();
-    await wait(0);
+    await rAF();
 
     ta.focus();
-    await wait(0);
+    await rAF();
     ta.setSelectionRange(44, 44);
     typeCharacterCommand(' ');
     typeCharacterCommand('P');
