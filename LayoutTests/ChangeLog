@@ -1,3 +1,19 @@
+2020-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r257840?) [ Mac wk2 Release ] fast/hidpi/image-srcset-relative-svg-canvas.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208577
+        <rdar://problem/60043401>
+
+        Reviewed by Simon Fraser.
+
+        This is very similar to webkit.org/b/206254 [fast/hidpi/image-srcset-relative-svg-canvas-2x.html is a flaky]
+        These tests seem to be very racy (paint vs. layout).
+        Let's try to fix it by forcing layout (for details see
+        https://trac.webkit.org/changeset/255331/webkit/trunk/LayoutTests/ChangeLog)
+
+        * fast/hidpi/image-srcset-relative-svg-canvas-expected.html:
+        * fast/hidpi/image-srcset-relative-svg-canvas.html:
+
 2020-03-05  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] scrollingcoordinator/ios/fixed-frame-overflow-swipe.html is flaky failing
