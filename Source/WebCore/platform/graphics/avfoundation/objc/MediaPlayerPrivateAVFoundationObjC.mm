@@ -203,11 +203,12 @@ static void ensureOnMainThread(Function<void()>&& f)
 #endif
 
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
+    BinarySemaphore m_semaphore;
 }
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
+
+@property (nonatomic, readonly) BinarySemaphore& semaphore;
 @end
 
 namespace WebCore {
@@ -410,7 +411,6 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
-    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
 #endif
@@ -1070,7 +1070,8 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscre
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
+    if (videoFullscreenLayer)
+        updateLastImage(UpdateType::UpdateSynchronously);
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
     updateDisableExternalPlayback();
 }
@@ -2129,6 +2130,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
     ASSERT(m_videoOutput);
 
+    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] init]);
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
@@ -2266,14 +2268,9 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     // Wait for 1 second.
-    bool satisfied = m_videoOutputSemaphore.waitFor(1_s);
+    bool satisfied = [m_videoOutputDelegate semaphore].waitFor(1_s);
     if (!satisfied)
         ERROR_LOG(LOGIDENTIFIER, "timed out");
-}
-
-void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemVideoOutput *)
-{
-    m_videoOutputSemaphore.signal();
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -3565,18 +3562,12 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFPullDelegate
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
-{
-    self = [super init];
-    if (self)
-        m_player = WTFMove(player);
-    return self;
-}
+@synthesize semaphore=m_semaphore;
 
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
 {
-    if (m_player)
-        m_player->outputMediaDataWillChange(output);
+    UNUSED_PARAM(output);
+    m_semaphore.signal();
 }
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output

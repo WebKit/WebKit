@@ -126,8 +126,6 @@ public:
 
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
 
-    void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessDidChange();
 #endif
@@ -358,7 +356,6 @@ private:
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RetainPtr<CGImageRef> m_lastImage;
-    BinarySemaphore m_videoOutputSemaphore;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
 
