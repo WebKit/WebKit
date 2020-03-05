@@ -178,7 +178,6 @@ public:
     }
 
     WEBCORE_EXPORT void clear();
-    void removeItemsFromIndex(size_t);
 
     size_t itemCount() const { return m_list.size(); }
     size_t sizeInBytes() const;

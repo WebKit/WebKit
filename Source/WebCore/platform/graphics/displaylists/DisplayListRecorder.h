@@ -145,7 +145,6 @@ private:
         GraphicsContextStateChange stateChange;
         GraphicsContextState lastDrawingState;
         bool wasUsedForDrawing { false };
-        size_t saveItemIndex { 0 };
         
         ContextState(const GraphicsContextState& state, const AffineTransform& transform, const FloatRect& clip)
             : ctm(transform)
@@ -154,11 +153,10 @@ private:
         {
         }
         
-        ContextState cloneForSave(size_t saveIndex) const
+        ContextState cloneForSave() const
         {
             ContextState state(lastDrawingState, ctm, clipBounds);
             state.stateChange = stateChange;
-            state.saveItemIndex = saveIndex;
             return state;
         }
 
