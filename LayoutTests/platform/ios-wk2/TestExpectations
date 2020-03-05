@@ -1455,3 +1455,5 @@ webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ P
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
 webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
+
+webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
