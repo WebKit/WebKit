@@ -36,6 +36,13 @@
 #include <WebCore/FindOptions.h>
 #include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
+
+// For now, disable new PDF APIs by default even on platforms where otherwise enabled.
+// FIXME: Enable this when ready.
+#ifdef HAVE_INCREMENTAL_PDF_APIS
+#undef HAVE_INCREMENTAL_PDF_APIS
+#endif
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
@@ -115,6 +122,10 @@ public:
 
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
     WebCore::AXObjectCache* axObjectCache() const;
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    void getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t count)>&&);
+#endif
 
 private:
     explicit PDFPlugin(WebFrame&);
@@ -225,6 +236,7 @@ private:
     Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
     void pdfDocumentDidLoad();
+    void installPDFDocument();
     void addArchiveResource();
     void calculateSizes();
     void runScriptsInPDFDocument();
@@ -240,9 +252,6 @@ private:
     void updatePageAndDeviceScaleFactors();
 
     void createPasswordEntryForm();
-
-    RetainPtr<PDFDocument> pdfDocument() const { return m_pdfDocument; }
-    void setPDFDocument(RetainPtr<PDFDocument> document) { m_pdfDocument = document; }
 
     WebCore::IntSize pdfDocumentSize() const { return m_pdfDocumentSize; }
     void setPDFDocumentSize(WebCore::IntSize size) { m_pdfDocumentSize = size; }
@@ -302,11 +311,30 @@ private:
     RetainPtr<CFMutableDataRef> m_data;
 
     RetainPtr<PDFDocument> m_pdfDocument;
+
+    bool m_documentFinishedLoading { false };
     unsigned m_firstPageHeight { 0 };
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
 
     RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
     RefPtr<WebCore::Scrollbar> m_verticalScrollbar;
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    void threadEntry(Ref<PDFPlugin>&&);
+    void adoptBackgroundThreadDocument();
+
+    struct ByteRangeRequest {
+        off_t position { 0 };
+        size_t count { 0 };
+        CompletionHandler<void(const uint8_t*, size_t count)> completionHandler;
+    };
+    void unconditionalCompleteRangeRequest(ByteRangeRequest&);
+    void unconditionalCompleteOutstandingRangeRequests();
+
+    RetainPtr<PDFDocument> m_backgroundThreadDocument;
+    RefPtr<Thread> m_pdfThread;
+    Vector<ByteRangeRequest> m_outstandingByteRangeRequests;
+#endif
 };
 
 } // namespace WebKit

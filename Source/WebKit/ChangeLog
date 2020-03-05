@@ -1,3 +1,35 @@
+2020-03-04  Brady Eidson  <beidson@apple.com>
+
+        Lay initial groundwork for new PDF loading model
+        https://bugs.webkit.org/show_bug.cgi?id=208599
+
+        Reviewed by Alex Christensen.
+
+        First piece of adopting some new platform PDF APIs.
+        Disabled by default even on platforms that support it.
+        No behavior change for shipping configs.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::dataProviderGetByteRangesCallback):
+        (WebKit::dataProviderReleaseInfoCallback):
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::unconditionalCompleteRangeRequest):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::adoptBackgroundThreadDocument):
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        (WebKit::PDFPlugin::installPDFDocument):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData):
+        (WebKit::PDFPlugin::attemptToUnlockPDF):
+        (WebKit::PDFPlugin::calculateSizes):
+        (WebKit::PDFPlugin::handleMouseEvent):
+        (WebKit::PDFPlugin::saveToPDF):
+        (WebKit::PDFPlugin::openWithNativeApplication):
+        (WebKit::PDFPlugin::countFindMatches):
+        (WebKit::PDFPlugin::nextMatchForString):
+
 2020-03-04  Chris Dumez  <cdumez@apple.com>
 
         Construct fewer unnecessary temporary WebProcessPool objects in WebsiteDataStore implementation
