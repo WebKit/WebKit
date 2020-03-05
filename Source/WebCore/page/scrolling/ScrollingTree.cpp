@@ -482,14 +482,38 @@ String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behav
             m_rootNode->dump(ts, behavior | ScrollingStateTreeAsTextBehaviorIncludeLayerPositions);
         }
         
-        if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs && !m_overflowRelatedNodesMap.isEmpty()) {
-            TextStream::GroupScope scope(ts);
-            ts << "overflow related nodes";
-            {
-                TextStream::IndentScope indentScope(ts);
-                for (auto& it : m_overflowRelatedNodesMap)
-                    ts << "\n" << indent << it.key << " -> " << it.value;
+        if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs) {
+            if (!m_overflowRelatedNodesMap.isEmpty()) {
+                TextStream::GroupScope scope(ts);
+                ts << "overflow related nodes";
+                {
+                    TextStream::IndentScope indentScope(ts);
+                    for (auto& it : m_overflowRelatedNodesMap)
+                        ts << "\n" << indent << it.key << " -> " << it.value;
+                }
             }
+
+#if ENABLE(SCROLLING_THREAD)
+            if (!m_activeOverflowScrollProxyNodes.isEmpty()) {
+                TextStream::GroupScope scope(ts);
+                ts << "overflow scroll proxy nodes";
+                {
+                    TextStream::IndentScope indentScope(ts);
+                    for (auto& node : m_activeOverflowScrollProxyNodes)
+                        ts << "\n" << indent << node->scrollingNodeID();
+                }
+            }
+
+            if (!m_activePositionedNodes.isEmpty()) {
+                TextStream::GroupScope scope(ts);
+                ts << "active positioned nodes";
+                {
+                    TextStream::IndentScope indentScope(ts);
+                    for (const auto& node : m_activePositionedNodes)
+                        ts << "\n" << indent << node->scrollingNodeID();
+                }
+            }
+#endif // ENABLE(SCROLLING_THREAD)
         }
     }
     return ts.release();

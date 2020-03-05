@@ -168,7 +168,13 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
-    void setEventRegion(const EventRegion&) override { }
+    void setEventRegion(const EventRegion&) override;
+    bool eventRegionContainsPoint(IntPoint) const override;
+
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeID scrollingNodeID() const override { return m_scrollingNodeID; }
+    void setScrollingNodeID(ScrollingNodeID nodeID) override { m_scrollingNodeID = nodeID; }
+#endif
 
     GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
 
@@ -200,6 +206,10 @@ private:
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeID m_scrollingNodeID { 0 };
+#endif
+    EventRegion m_eventRegion;
     bool m_wantsDeepColorBackingStore { false };
     bool m_supportsSubpixelAntialiasedText { false };
     bool m_backingStoreAttached { true };

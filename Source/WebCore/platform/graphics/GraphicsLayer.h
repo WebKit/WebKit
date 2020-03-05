@@ -37,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "Region.h"
 #include "ScrollableArea.h"
+#include "ScrollTypes.h"
 #include "TimingFunction.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
@@ -322,6 +323,11 @@ public:
     // Scroll offset of the content layer inside its scrolling parent layer.
     ScrollOffset scrollOffset() const { return m_scrollOffset; }
     void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = SetNeedsDisplay);
+
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
+    virtual void setScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+#endif
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
@@ -683,6 +689,10 @@ protected:
     
     FilterOperations m_filters;
     FilterOperations m_backdropFilters;
+    
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeID m_scrollingNodeID { 0 };
+#endif
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode { BlendMode::Normal };

@@ -148,27 +148,7 @@ public:
         return 0;
     }
 
-    void setScrollingNodeIDForRole(ScrollingNodeID nodeID, ScrollCoordinationRole role)
-    {
-        switch (role) {
-        case ScrollCoordinationRole::Scrolling:
-            m_scrollingNodeID = nodeID;
-            break;
-        case ScrollCoordinationRole::ScrollingProxy:
-            // These nodeIDs are stored in m_ancestorClippingStack.
-            ASSERT_NOT_REACHED();
-            break;
-        case ScrollCoordinationRole::FrameHosting:
-            m_frameHostingNodeID = nodeID;
-            break;
-        case ScrollCoordinationRole::ViewportConstrained:
-            m_viewportConstrainedNodeID = nodeID;
-            break;
-        case ScrollCoordinationRole::Positioning:
-            m_positioningNodeID = nodeID;
-            break;
-        }
-    }
+    void setScrollingNodeIDForRole(ScrollingNodeID, ScrollCoordinationRole);
 
     ScrollingNodeID scrollingNodeIDForChildren() const;
 

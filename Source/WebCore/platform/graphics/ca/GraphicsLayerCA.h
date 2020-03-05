@@ -126,6 +126,9 @@ public:
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
 
     WEBCORE_EXPORT void setEventRegion(EventRegion&&) override;
+#if ENABLE(SCROLLING_THREAD)
+    WEBCORE_EXPORT void setScrollingNodeID(ScrollingNodeID) override;
+#endif
 
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
@@ -416,6 +419,9 @@ private:
     void updateContentsRects();
     void updateMasksToBoundsRect();
     void updateEventRegion();
+#if ENABLE(SCROLLING_THREAD)
+    void updateScrollingNode();
+#endif
     void updateMaskLayer();
     void updateReplicatedLayers();
 
@@ -536,6 +542,9 @@ private:
         UserInteractionEnabledChanged           = 1LLU << 38,
         NeedsComputeVisibleAndCoverageRect      = 1LLU << 39,
         EventRegionChanged                      = 1LLU << 40,
+#if ENABLE(SCROLLING_THREAD)
+        ScrollingNodeChanged                    = 1LLU << 41,
+#endif
     };
     typedef uint64_t LayerChangeFlags;
     void addUncommittedChanges(LayerChangeFlags);

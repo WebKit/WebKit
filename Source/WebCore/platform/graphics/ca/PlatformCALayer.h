@@ -235,8 +235,14 @@ public:
     virtual WindRule shapeWindRule() const = 0;
     virtual void setShapeWindRule(WindRule) = 0;
 
-    virtual void setEventRegion(const EventRegion&) = 0;
+    virtual void setEventRegion(const EventRegion&) { }
+    virtual bool eventRegionContainsPoint(IntPoint) const { return false; }
     
+#if ENABLE(SCROLLING_THREAD)
+    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual void setScrollingNodeID(ScrollingNodeID) { }
+#endif
+
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
 
