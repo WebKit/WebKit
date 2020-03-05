@@ -103,7 +103,7 @@ class ChangeLogChecker(object):
             "arbitrary code execution", "buffer overflow", "buffer overrun",
             "buffer underrun", "dangling pointer", "double free", "fuzzer", "fuzzing", "fuzz test",
             "invalid cast", "jsfunfuzz", "malicious", "memory corruption", "security bug",
-            "security flaw", "use after free", "use-after-free", "UXSS",
+            "security flaw", "use after free", "use-after-free", "UAF", "UXSS",
             "WTFCrashWithSecurityImplication",
             "spoof",  # Captures spoof, spoofed, spoofing
             "vulnerab",  # Captures vulnerable, vulnerability, vulnerabilities

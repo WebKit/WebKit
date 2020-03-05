@@ -1,3 +1,15 @@
+2020-03-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        style-checker: Add UAF to the list of security words to warn about.
+        https://bugs.webkit.org/show_bug.cgi?id=208643
+
+        Reviewed by Jonathan Bedard.
+
+        UAF is a common acronym used for use after free.
+
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_for_unwanted_security_phrases):
+
 2020-03-04  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [MSVC] Add .natvis support of WebKit types
