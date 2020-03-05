@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,7 @@ protected:
     InstructionStreamWriter m_writer;
     typename Traits::CodeBlock m_codeBlock;
 
+    bool m_outOfMemoryDuringConstruction { false };
     typename Traits::OpcodeID m_lastOpcodeID = Traits::opcodeForDisablingOptimizations;
     InstructionStream::MutableRef m_lastInstruction { m_writer.ref() };
 

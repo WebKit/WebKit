@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,18 @@ public:
             new (result + length) T(arguments...);
         return CagedUniquePtr(result, length);
     }
-    
+
+    template<typename... Arguments>
+    static CagedUniquePtr tryCreate(unsigned length, Arguments&&... arguments)
+    {
+        T* result = static_cast<T*>(Gigacage::tryMalloc(kind, sizeof(T) * length));
+        if (!result)
+            return { };
+        while (length--)
+            new (result + length) T(arguments...);
+        return CagedUniquePtr(result, length);
+    }
+
     CagedUniquePtr& operator=(CagedUniquePtr&& ptr)
     {
         destroy();

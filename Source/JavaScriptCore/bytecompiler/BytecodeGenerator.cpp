@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -157,6 +157,9 @@ FinallyContext::FinallyContext(BytecodeGenerator& generator, Label& finallyLabel
 
 ParserError BytecodeGenerator::generate()
 {
+    if (UNLIKELY(m_outOfMemoryDuringConstruction))
+        return ParserError(ParserError::OutOfMemory);
+
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
 
     emitLogShadowChickenPrologueIfNecessary();
@@ -490,8 +493,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // activation.
         
         if (capturesAnyArgumentByName) {
-            functionSymbolTable->setArgumentsLength(vm, parameters.size());
-            
+            bool success = functionSymbolTable->trySetArgumentsLength(vm, parameters.size());
+            if (UNLIKELY(!success)) {
+                m_outOfMemoryDuringConstruction = true;
+                return;
+            }
+
             // For each parameter, we have two possibilities:
             // Either it's a binding node with no function overlap, in which case it gets a name
             // in the symbol table - or it just gets space reserved in the symbol table. Either

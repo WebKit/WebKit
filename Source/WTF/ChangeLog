@@ -1,3 +1,14 @@
+2020-03-04  Mark Lam  <mark.lam@apple.com>
+
+        Handle an out of memory error while constructing the BytecodeGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=208622
+        <rdar://problem/59341136>
+
+        Reviewed by Saam Barati.
+
+        * wtf/CagedUniquePtr.h:
+        (WTF::CagedUniquePtr::tryCreate):
+
 2020-03-04  Brady Eidson  <beidson@apple.com>
 
         Lay initial groundwork for new PDF loading model

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,8 @@ private:
 public:
     static ScopedArgumentsTable* create(VM&);
     static ScopedArgumentsTable* create(VM&, uint32_t length);
-    
+    static ScopedArgumentsTable* tryCreate(VM&, uint32_t length);
+
     static void destroy(JSCell*);
 
     ScopedArgumentsTable* clone(VM&);

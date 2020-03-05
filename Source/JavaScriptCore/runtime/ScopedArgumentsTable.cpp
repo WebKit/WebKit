@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,21 @@ ScopedArgumentsTable* ScopedArgumentsTable::create(VM& vm, uint32_t length)
     ScopedArgumentsTable* result = create(vm);
     result->m_length = length;
     result->m_arguments = ArgumentsPtr::create(length);
+    return result;
+}
+
+ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
+{
+    void* buffer = tryAllocateCell<ScopedArgumentsTable>(vm.heap);
+    if (UNLIKELY(!buffer))
+        return nullptr;
+    ScopedArgumentsTable* result = new (NotNull, buffer) ScopedArgumentsTable(vm);
+    result->finishCreation(vm);
+
+    result->m_length = length;
+    result->m_arguments = ArgumentsPtr::tryCreate(length);
+    if (UNLIKELY(!result->m_arguments))
+        return nullptr;
     return result;
 }
 

@@ -1,3 +1,13 @@
+2020-03-04  Mark Lam  <mark.lam@apple.com>
+
+        Handle an out of memory error while constructing the BytecodeGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=208622
+        <rdar://problem/59341136>
+
+        Reviewed by Saam Barati.
+
+        * stress/out-of-memory-while-constructing-BytecodeGenerator.js: Added.
+
 2020-03-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] @hasOwnLengthProperty returns wrong value if "length" is attempted to be modified

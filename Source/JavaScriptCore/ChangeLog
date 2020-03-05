@@ -1,3 +1,24 @@
+2020-03-04  Mark Lam  <mark.lam@apple.com>
+
+        Handle an out of memory error while constructing the BytecodeGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=208622
+        <rdar://problem/59341136>
+
+        Reviewed by Saam Barati.
+
+        Added the ability to handle out of memory errors encountered during the
+        construction of the BytecodeGenerator.  Currently, we only use this for the
+        case where we fail to instantiate a ScopedArgumentsTable.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGeneratorBase.h:
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::tryCreate):
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SymbolTable.h:
+
 2020-03-04  Paulo Matos  <pmatos@igalia.com>
 
         JSC 32bits broken in debug mode by r257399
