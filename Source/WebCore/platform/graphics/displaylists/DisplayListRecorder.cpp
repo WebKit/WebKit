@@ -143,7 +143,7 @@ void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatR
 void Recorder::save()
 {
     appendItem(Save::create());
-    m_stateStack.append(m_stateStack.last().cloneForSave());
+    m_stateStack.append(m_stateStack.last().cloneForSave(m_displayList.itemCount() - 1));
 }
 
 void Recorder::restore()
@@ -152,12 +152,24 @@ void Recorder::restore()
         return;
 
     bool stateUsedForDrawing = currentState().wasUsedForDrawing;
+    size_t saveIndex = currentState().saveItemIndex;
 
     m_stateStack.removeLast();
     // Have to avoid eliding nested Save/Restore when a descendant state contains drawing items.
     currentState().wasUsedForDrawing |= stateUsedForDrawing;
 
+    if (!stateUsedForDrawing && saveIndex) {
+        // This Save/Restore didn't contain any drawing items. Roll back to just before the last save.
+        m_displayList.removeItemsFromIndex(saveIndex);
+        return;
+    }
+
     appendItem(Restore::create());
+
+    if (saveIndex) {
+        Save& saveItem = downcast<Save>(m_displayList.itemAt(saveIndex));
+        saveItem.setRestoreIndex(m_displayList.itemCount() - 1);
+    }
 }
 
 void Recorder::translate(float x, float y)

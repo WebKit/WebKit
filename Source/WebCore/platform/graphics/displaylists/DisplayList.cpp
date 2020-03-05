@@ -53,6 +53,11 @@ void DisplayList::clear()
     m_list.clear();
 }
 
+void DisplayList::removeItemsFromIndex(size_t index)
+{
+    m_list.resize(index);
+}
+
 bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)
 {
     switch (item.type()) {

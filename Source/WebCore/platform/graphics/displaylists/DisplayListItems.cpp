@@ -194,6 +194,12 @@ void Save::apply(GraphicsContext& context) const
     context.save();
 }
 
+static TextStream& operator<<(TextStream& ts, const Save& item)
+{
+    ts.dumpProperty("restore-index", item.restoreIndex());
+    return ts;
+}
+
 Restore::Restore()
     : Item(ItemType::Restore)
 {

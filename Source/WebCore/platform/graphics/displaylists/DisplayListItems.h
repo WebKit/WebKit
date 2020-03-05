@@ -75,6 +75,10 @@ public:
 
     WEBCORE_EXPORT virtual ~Save();
 
+    // Index in the display list of the corresponding Restore item. 0 if unmatched.
+    size_t restoreIndex() const { return m_restoreIndex; }
+    void setRestoreIndex(size_t index) { m_restoreIndex = index; }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Ref<Save>> decode(Decoder&);
 
@@ -82,17 +86,28 @@ private:
     WEBCORE_EXPORT Save();
 
     void apply(GraphicsContext&) const override;
+    
+    size_t m_restoreIndex { 0 };
 };
 
 template<class Encoder>
-void Save::encode(Encoder&) const
+void Save::encode(Encoder& encoder) const
 {
+    encoder << static_cast<uint64_t>(m_restoreIndex);
 }
 
 template<class Decoder>
-Optional<Ref<Save>> Save::decode(Decoder&)
+Optional<Ref<Save>> Save::decode(Decoder& decoder)
 {
-    return Save::create();
+    Optional<uint64_t> restoreIndex;
+    decoder >> restoreIndex;
+    if (!restoreIndex)
+        return WTF::nullopt;
+
+    // FIXME: Validate restoreIndex? But we don't have the list context here.
+    auto save = Save::create();
+    save->setRestoreIndex(static_cast<size_t>(*restoreIndex));
+    return save;
 }
 
 class Restore : public Item {
