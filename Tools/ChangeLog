@@ -1,3 +1,18 @@
+2020-03-06  Lauro Moura <lmoura@igalia.com>
+
+        [WPE][WebDriver] MiniBrowser should react to close session commands
+        https://bugs.webkit.org/show_bug.cgi?id=207529
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do not call g_object_unref on the first created view if it has already
+        been disposed in the "close" signal handler.
+
+        Based on original patch by Yury Semikhatsky.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2020-03-06  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Use Firefox user agent quirk more aggressively on Google Docs

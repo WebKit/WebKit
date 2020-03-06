@@ -288,6 +288,7 @@ int main(int argc, char *argv[])
         "is-controlled-by-automation", automationMode,
         nullptr));
     g_object_unref(settings);
+    g_object_add_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&webView));
 
     backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
 #if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
@@ -326,7 +327,10 @@ int main(int argc, char *argv[])
 
     g_main_loop_run(loop);
 
-    g_object_unref(webView);
+    if (webView) {
+        g_object_remove_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&webView));
+        g_object_unref(webView);
+    }
     if (privateMode || automationMode)
         g_object_unref(webContext);
     g_main_loop_unref(loop);
