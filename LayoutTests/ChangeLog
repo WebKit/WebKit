@@ -1,3 +1,14 @@
+2020-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Move synchronousScrollingReasons to ScrollingTreeScrollingNode
+        https://bugs.webkit.org/show_bug.cgi?id=208721
+
+        Reviewed by Antti Koivisto.
+
+		Rebaselined.
+
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+
 2020-03-06  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm is flaky failing.

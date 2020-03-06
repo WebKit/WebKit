@@ -62,6 +62,9 @@ public:
         ScrollPosition,
         ScrollOrigin,
         ScrollableAreaParams,
+#if ENABLE(SCROLLING_THREAD)
+        ReasonsForSynchronousScrolling,
+#endif
         RequestedScrollPosition,
 #if ENABLE(CSS_SCROLL_SNAP)
         HorizontalSnapOffsets,
@@ -117,6 +120,11 @@ public:
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     WEBCORE_EXPORT void setScrollableAreaParameters(const ScrollableAreaParameters& params);
+
+#if ENABLE(SCROLLING_THREAD)
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
+    WEBCORE_EXPORT void setSynchronousScrollingReasons(OptionSet<SynchronousScrollingReason>);
+#endif
 
     const RequestedScrollData& requestedScrollData() const { return m_requestedScrollData; }
     WEBCORE_EXPORT void setRequestedScrollData(const RequestedScrollData&);
@@ -176,7 +184,9 @@ private:
 
     ScrollableAreaParameters m_scrollableAreaParameters;
     RequestedScrollData m_requestedScrollData;
-
+#if ENABLE(SCROLLING_THREAD)
+    OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
+#endif
     bool m_isMonitoringWheelEvents { false };
 };
 

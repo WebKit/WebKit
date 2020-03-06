@@ -54,6 +54,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollData(stateNode.requestedScrollData())
+#if ENABLE(SCROLLING_THREAD)
+    , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
+#endif
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
 {
     if (hasChangedProperty(ScrollContainerLayer))
@@ -79,6 +82,9 @@ void ScrollingStateScrollingNode::setPropertyChangedBitsAfterReattach()
     setPropertyChangedBit(ScrollPosition);
     setPropertyChangedBit(ScrollOrigin);
     setPropertyChangedBit(ScrollableAreaParams);
+#if ENABLE(SCROLLING_THREAD)
+    setPropertyChangedBit(ReasonsForSynchronousScrolling);
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     setPropertyChangedBit(HorizontalSnapOffsets);
     setPropertyChangedBit(VerticalSnapOffsets);
@@ -207,6 +213,17 @@ void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAr
     setPropertyChanged(ScrollableAreaParams);
 }
 
+#if ENABLE(SCROLLING_THREAD)
+void ScrollingStateScrollingNode::setSynchronousScrollingReasons(OptionSet<SynchronousScrollingReason> reasons)
+{
+    if (m_synchronousScrollingReasons == reasons)
+        return;
+
+    m_synchronousScrollingReasons = reasons;
+    setPropertyChanged(ReasonsForSynchronousScrolling);
+}
+#endif
+
 void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollData& scrollData)
 {
     // Scroll position requests are imperative, not stateful, so we can't early return here.
@@ -323,6 +340,11 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
 #endif
 
     ts.dumpProperty("scrollable area parameters", m_scrollableAreaParameters);
+
+#if ENABLE(SCROLLING_THREAD)
+    if (!m_synchronousScrollingReasons.isEmpty())
+        ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
+#endif
 
     if (m_isMonitoringWheelEvents)
         ts.dumpProperty("expects wheel event test trigger", m_isMonitoringWheelEvents);

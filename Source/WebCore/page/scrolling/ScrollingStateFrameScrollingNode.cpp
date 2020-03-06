@@ -55,7 +55,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_topContentInset(stateNode.topContentInset())
     , m_headerHeight(stateNode.headerHeight())
     , m_footerHeight(stateNode.footerHeight())
-    , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
     , m_visualViewportIsSmallerThanLayoutViewport(stateNode.visualViewportIsSmallerThanLayoutViewport())
@@ -91,7 +90,6 @@ void ScrollingStateFrameScrollingNode::setPropertyChangedBitsAfterReattach()
 {
     setPropertyChangedBit(FrameScaleFactor);
     setPropertyChangedBit(EventTrackingRegion);
-    setPropertyChangedBit(ReasonsForSynchronousScrolling);
     setPropertyChangedBit(RootContentsLayer);
     setPropertyChangedBit(ScrolledContentsLayer);
     setPropertyChangedBit(CounterScrollingLayer);
@@ -131,15 +129,6 @@ void ScrollingStateFrameScrollingNode::setEventTrackingRegions(const EventTracki
 
     m_eventTrackingRegions = eventTrackingRegions;
     setPropertyChanged(EventTrackingRegion);
-}
-
-void ScrollingStateFrameScrollingNode::setSynchronousScrollingReasons(OptionSet<SynchronousScrollingReason> reasons)
-{
-    if (m_synchronousScrollingReasons == reasons)
-        return;
-
-    m_synchronousScrollingReasons = reasons;
-    setPropertyChanged(ReasonsForSynchronousScrolling);
 }
 
 void ScrollingStateFrameScrollingNode::setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements behaviorForFixed)
@@ -353,9 +342,6 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
         }
     }
 
-    if (!m_synchronousScrollingReasons.isEmpty())
-        ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
-    
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
 
     if (m_visualViewportIsSmallerThanLayoutViewport)

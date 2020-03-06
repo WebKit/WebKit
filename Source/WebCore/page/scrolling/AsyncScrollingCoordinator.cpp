@@ -743,7 +743,11 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(FrameView& frameV
     // in order to avoid layer positioning bugs.
     if (reasons)
         reconcileScrollPosition(frameView, ScrollingLayerPositionAction::Set);
+
+    // FIXME: Ideally all the "synchronousScrollingReasons" functions should be #ifdeffed.
+#if ENABLE(SCROLLING_THREAD)
     scrollingStateNode->setSynchronousScrollingReasons(reasons);
+#endif
 }
 
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const
