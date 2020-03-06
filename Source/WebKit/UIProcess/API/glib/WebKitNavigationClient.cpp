@@ -22,6 +22,7 @@
 
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
+#include "FrameInfoData.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitPrivate.h"
@@ -42,8 +43,10 @@ public:
     }
 
 private:
-    void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
+    void didStartProvisionalNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
     {
+        if (!frameInfo.isMainFrame)
+            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED);
     }
 
@@ -52,9 +55,9 @@ private:
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_REDIRECTED);
     }
 
-    void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
-        if (!frame.isMainFrame())
+        if (!frameInfo.isMainFrame)
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
@@ -65,19 +68,23 @@ private:
             webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().string().utf8().data(), error.get());
     }
 
-    void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
+    void didCommitNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
     {
+        if (!frameInfo.isMainFrame)
+            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_COMMITTED);
     }
 
-    void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
+    void didFinishNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
     {
+        if (!frameInfo.isMainFrame)
+            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_FINISHED);
     }
 
-    void didFailNavigationWithError(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
-        if (!frame.isMainFrame())
+        if (!frameInfo.isMainFrame)
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));

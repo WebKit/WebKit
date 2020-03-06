@@ -78,17 +78,16 @@ class NavigationClient {
 public:
     virtual ~NavigationClient() { }
 
-    virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, WebCore::ResourceRequest&&, Navigation*, Object*) { }
     virtual void didReceiveServerRedirectForProvisionalNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
     virtual void willPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& destinationURL, double) { }
     virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL) { }
     virtual void didCancelClientRedirect(WebKit::WebPageProxy&) { }
-    virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, Navigation*, const WebCore::ResourceError&, Object*) { }
-    virtual void didFailProvisionalLoadInSubframeWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, Navigation*, const WebCore::ResourceError&, Object*) { }
-    virtual void didCommitNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, WebCore::ResourceRequest&&, Navigation*, const WebCore::ResourceError&, Object*) { }
+    virtual void didCommitNavigation(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, WebCore::ResourceRequest&&, Navigation*, Object*) { }
     virtual void didFinishDocumentLoad(WebKit::WebPageProxy&, Navigation*, Object*) { }
-    virtual void didFinishNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
-    virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, Navigation*, const WebCore::ResourceError&, Object*) { }
+    virtual void didFinishNavigation(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, WebCore::ResourceRequest&&, Navigation*, Object*) { }
+    virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::FrameInfoData&&, WebCore::ResourceRequest&&, Navigation*, const WebCore::ResourceError&, Object*) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
 
     virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }

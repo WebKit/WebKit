@@ -94,17 +94,16 @@ private:
         ~NavigationClient();
 
     private:
-        void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        void didStartProvisionalNavigation(WebPageProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, API::Navigation*, API::Object*) override;
         void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void willPerformClientRedirect(WebPageProxy&, const WTF::String&, double) override;
         void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
         void didCancelClientRedirect(WebPageProxy&) override;
-        void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
-        void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, FrameInfoData&&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
-        void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
+        void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        void didCommitNavigation(WebPageProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, API::Navigation*, API::Object*) override;
         void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
-        void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
-        void didFailNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        void didFinishNavigation(WebPageProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, API::Navigation*, API::Object*) override;
+        void didFailNavigationWithError(WebPageProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
@@ -203,17 +202,23 @@ private:
 
         bool webViewDidStartProvisionalNavigation : 1;
         bool webViewDidStartProvisionalNavigationUserInfo : 1;
+        bool webViewDidStartProvisionalLoadWithRequestInFrame : 1;
         bool webViewDidReceiveServerRedirectForProvisionalNavigation : 1;
         bool webViewDidFailProvisionalNavigationWithError : 1;
+        bool webViewDidFailProvisionalLoadWithRequestInFrameWithError : 1;
         bool webViewNavigationDidFailProvisionalLoadInSubframeWithError : 1;
+        bool webViewDidFailProvisionalLoadWithRequestInFrame : 1;
         bool webViewWillPerformClientRedirect : 1;
         bool webViewDidPerformClientRedirect : 1;
         bool webViewDidCancelClientRedirect : 1;
         bool webViewDidCommitNavigation : 1;
+        bool webViewDidCommitLoadWithRequestInFrame : 1;
         bool webViewNavigationDidFinishDocumentLoad : 1;
         bool webViewDidFinishNavigation : 1;
+        bool webViewDidFinishLoadWithRequestInFrame : 1;
         bool webViewDidFailNavigationWithError : 1;
         bool webViewDidFailNavigationWithErrorUserInfo : 1;
+        bool webViewDidFailLoadWithRequestInFrameWithError : 1;
         bool webViewNavigationDidSameDocumentNavigation : 1;
 
         bool webViewRenderingProgressDidChange : 1;

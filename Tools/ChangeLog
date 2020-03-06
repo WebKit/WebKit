@@ -1,5 +1,24 @@
 2020-03-05  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKNavigationDelegatePrivate SPI to inform application of subframe navigations
+        https://bugs.webkit.org/show_bug.cgi?id=208670
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[FrameNavigationDelegate waitForNavigations:]):
+        (-[FrameNavigationDelegate requests]):
+        (-[FrameNavigationDelegate frames]):
+        (-[FrameNavigationDelegate callbacks]):
+        (-[FrameNavigationDelegate _webView:didStartProvisionalLoadWithRequest:inFrame:]):
+        (-[FrameNavigationDelegate _webView:didFailProvisionalLoadWithRequest:inFrame:withError:]):
+        (-[FrameNavigationDelegate _webView:didCommitLoadWithRequest:inFrame:]):
+        (-[FrameNavigationDelegate _webView:didFailLoadWithRequest:inFrame:withError:]):
+        (-[FrameNavigationDelegate _webView:didFinishLoadWithRequest:inFrame:]):
+        (TEST):
+
+2020-03-05  Alex Christensen  <achristensen@webkit.org>
+
         Add WKFrameInfo._parentFrameHandle SPI
         https://bugs.webkit.org/show_bug.cgi?id=208674
 

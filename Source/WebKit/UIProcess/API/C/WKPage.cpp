@@ -2139,8 +2139,10 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.decidePolicyForNavigationResponse(toAPI(&page), toAPI(navigationResponse.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didStartProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object* userData) override
+        void didStartProvisionalNavigation(WebPageProxy& page, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation* navigation, API::Object* userData) override
         {
+            if (!frameInfo.isMainFrame)
+                return;
             if (!m_client.didStartProvisionalNavigation)
                 return;
             m_client.didStartProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(userData), m_client.base.clientInfo);
@@ -2153,39 +2155,43 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didReceiveServerRedirectForProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didFailProvisionalNavigationWithError(WebPageProxy& page, WebFrameProxy&, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
+        void didFailProvisionalNavigationWithError(WebPageProxy& page, FrameInfoData&& frameInfo, WebCore::ResourceRequest&&, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
         {
-            if (!m_client.didFailProvisionalNavigation)
-                return;
-            m_client.didFailProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+            if (frameInfo.isMainFrame) {
+                if (m_client.didFailProvisionalNavigation)
+                    m_client.didFailProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+            } else {
+                if (m_client.didFailProvisionalLoadInSubframe)
+                    m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(WTFMove(frameInfo), &page).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+            }
         }
 
-        void didCommitNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object* userData) override
+        void didCommitNavigation(WebPageProxy& page, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation* navigation, API::Object* userData) override
         {
+            if (!frameInfo.isMainFrame)
+                return;
+
             if (!m_client.didCommitNavigation)
                 return;
             m_client.didCommitNavigation(toAPI(&page), toAPI(navigation), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didFinishNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object* userData) override
+        void didFinishNavigation(WebPageProxy& page, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation* navigation, API::Object* userData) override
         {
+            if (!frameInfo.isMainFrame)
+                return;
             if (!m_client.didFinishNavigation)
                 return;
             m_client.didFinishNavigation(toAPI(&page), toAPI(navigation), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didFailNavigationWithError(WebPageProxy& page, WebFrameProxy&, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
+        void didFailNavigationWithError(WebPageProxy& page, FrameInfoData&& frameInfo, WebCore::ResourceRequest&&, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
         {
+            if (!frameInfo.isMainFrame)
+                return;
             if (!m_client.didFailNavigation)
                 return;
             m_client.didFailNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& subframe, FrameInfoData&& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
-        {
-            if (!m_client.didFailProvisionalLoadInSubframe)
-                return;
-            m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(WTFMove(frameInfo), &page).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
         void didFinishDocumentLoad(WebPageProxy& page, API::Navigation* navigation, API::Object* userData) override

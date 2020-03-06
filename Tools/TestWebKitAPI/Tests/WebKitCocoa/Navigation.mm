@@ -32,8 +32,10 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestURLSchemeHandler.h"
 
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
@@ -96,6 +98,189 @@ TEST(WKNavigation, LoadRequest)
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+}
+
+@interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
+- (void)waitForNavigations:(size_t)count;
+@property (nonatomic, readonly) NSArray<NSURLRequest *> *requests;
+@property (nonatomic, readonly) NSArray<WKFrameInfo *> *frames;
+@property (nonatomic, readonly) NSArray<NSString *> *callbacks;
+@end
+
+@implementation FrameNavigationDelegate {
+    RetainPtr<NSMutableArray<NSURLRequest *>> _requests;
+    RetainPtr<NSMutableArray<WKFrameInfo *>> _frames;
+    RetainPtr<NSMutableArray<NSString *>> _callbacks;
+    size_t _navigationCount;
+}
+
+- (void)waitForNavigations:(size_t)expectedNavigationCount
+{
+    while (_navigationCount < expectedNavigationCount)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+- (NSArray<NSURLRequest *> *)requests
+{
+    return _requests.get();
+}
+
+- (NSArray<WKFrameInfo *> *)frames
+{
+    return _frames.get();
+}
+
+- (NSArray<NSString *> *)callbacks
+{
+    return _callbacks.get();
+}
+
+- (void)_webView:(WKWebView *)webView didStartProvisionalLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
+{
+    if (!_requests)
+        _requests = [NSMutableArray array];
+    [_requests addObject:request];
+
+    if (!_frames)
+        _frames = [NSMutableArray array];
+    [_frames addObject:frame];
+
+    if (!_callbacks)
+        _callbacks = [NSMutableArray array];
+    [_callbacks addObject:@"start provisional"];
+}
+
+- (void)_webView:(WKWebView *)webView didFailProvisionalLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame withError:(NSError *)error
+{
+    [_requests addObject:request];
+    [_frames addObject:frame];
+    [_callbacks addObject:@"fail provisional"];
+    _navigationCount++;
+}
+
+- (void)_webView:(WKWebView *)webView didCommitLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
+{
+    [_requests addObject:request];
+    [_frames addObject:frame];
+    [_callbacks addObject:@"commit"];
+}
+
+- (void)_webView:(WKWebView *)webView didFailLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame withError:(NSError *)error
+{
+    [_requests addObject:request];
+    [_frames addObject:frame];
+    [_callbacks addObject:@"fail"];
+    _navigationCount++;
+}
+
+- (void)_webView:(WKWebView *)webView didFinishLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
+{
+    [_requests addObject:request];
+    [_frames addObject:frame];
+    [_callbacks addObject:@"finish"];
+    _navigationCount++;
+}
+
+@end
+
+TEST(WKNavigation, Frames)
+{
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    TestURLSchemeHandler *handler = [[TestURLSchemeHandler new] autorelease];
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *responseString = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"frame://host1/"])
+            responseString = @"<iframe src='frame://host2/'></iframe>";
+        else if ([task.request.URL.absoluteString isEqualToString:@"frame://host2/"])
+            responseString = @"<script>function navigate() { window.location='frame://host3/' }</script><body onload='navigate()'></body>";
+        else if ([task.request.URL.absoluteString isEqualToString:@"frame://host3/"]) {
+            [task didFailWithError:[NSError errorWithDomain:@"testErrorDomain" code:42 userInfo:nil]];
+            return;
+        }
+
+        ASSERT(responseString);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"frame"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto delegate = adoptNS([FrameNavigationDelegate new]);
+        webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
+    [delegate waitForNavigations:3];
+    
+    struct ExpectedStrings {
+        const char* callback;
+        const char* frameRequest;
+        const char* frameSecurityOriginHost;
+        const char* request;
+    };
+    
+    auto checkCallbacks = [delegate] (Vector<ExpectedStrings> expectedVector) {
+        NSArray<NSURLRequest *> *requests = delegate.get().requests;
+        NSArray<WKFrameInfo *> *frames = delegate.get().frames;
+        NSArray<NSString *> *callbacks = delegate.get().callbacks;
+        EXPECT_EQ(requests.count, expectedVector.size());
+        EXPECT_EQ(frames.count, expectedVector.size());
+        EXPECT_EQ(callbacks.count, expectedVector.size());
+        
+        auto checkCallback = [] (NSString *callback, WKFrameInfo *frame, NSURLRequest *request, const ExpectedStrings& expected) {
+            EXPECT_WK_STREQ(callback, expected.callback);
+            EXPECT_WK_STREQ(frame.request.URL.absoluteString, expected.frameRequest);
+            EXPECT_WK_STREQ(frame.securityOrigin.host, expected.frameSecurityOriginHost);
+            EXPECT_WK_STREQ(request.URL.absoluteString, expected.request);
+        };
+        
+        for (size_t i = 0; i < expectedVector.size(); ++i)
+            checkCallback(callbacks[i], frames[i], requests[i], expectedVector[i]);
+    };
+    
+    checkCallbacks({
+        {
+            "start provisional",
+            "",
+            "",
+            "frame://host1/"
+        }, {
+            "commit",
+            "frame://host1/",
+            "host1",
+            "frame://host1/"
+        }, {
+            "start provisional",
+            "",
+            "host1",
+            "frame://host2/"
+        }, {
+            "commit",
+            "frame://host2/",
+            "host2",
+            "frame://host2/"
+        }, {
+            "finish",
+            "frame://host2/",
+            "host2",
+            "frame://host2/"
+        }, {
+            "finish",
+            "frame://host1/",
+            "host1",
+            "frame://host1/"
+        }, {
+            "start provisional",
+            "frame://host2/",
+            "host2",
+            "frame://host3/"
+        }, {
+            "fail provisional",
+            "frame://host2/",
+            "host2",
+            "frame://host3/"
+        }
+    });
 }
 
 @interface DidFailProvisionalNavigationDelegate : NSObject <WKNavigationDelegate>

@@ -1,5 +1,64 @@
 2020-03-05  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKNavigationDelegatePrivate SPI to inform application of subframe navigations
+        https://bugs.webkit.org/show_bug.cgi?id=208670
+
+        Reviewed by Brady Eidson.
+
+        There is no WKNavigation for subframe navigations, so just expose the NSURLRequest directly.
+        This is equivalent to WKNavigation._request, which is distinct from WKFrameInfo.request.
+        The former is the currently pending request, the latter is the request that has already loaded.
+        I needed to move the isMainFrame check to the NavigationClient implementations.
+        This is needed for <rdar://problem/57201034>.
+        Covered by API tests.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didStartProvisionalNavigation):
+        (API::NavigationClient::didFailProvisionalNavigationWithError):
+        (API::NavigationClient::didCommitNavigation):
+        (API::NavigationClient::didFinishNavigation):
+        (API::NavigationClient::didFailNavigationWithError):
+        (API::NavigationClient::didFailProvisionalLoadInSubframeWithError): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/glib/WebKitNavigationClient.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalNavigation):
+        (WebKit::createErrorWithRecoveryAttempter):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didCommitNavigation):
+        (WebKit::NavigationState::NavigationClient::didFinishNavigation):
+        (WebKit::NavigationState::NavigationClient::didFailNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError): Deleted.
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::cancel):
+        (WebKit::ProvisionalPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+
+2020-03-05  Alex Christensen  <achristensen@webkit.org>
+
         Add WKFrameInfo._parentFrameHandle SPI
         https://bugs.webkit.org/show_bug.cgi?id=208674
 
