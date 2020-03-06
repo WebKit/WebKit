@@ -199,6 +199,73 @@ TEST(ResourceLoadDelegate, Redirect)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(ResourceLoadDelegate, ResourceType)
+{
+    const char* testJS = R"TESTJS(
+    function loadMoreThingsAfterFetchAndXHR() {
+        navigator.sendBeacon('beaconTarget');
+
+        var img = document.createElement('img');
+        img.src = 'imageSource';
+        document.body.appendChild(img);
+
+        var style = document.createElement('link');
+        style.rel = 'stylesheet';
+        style.type = 'text/css';
+        style.href = 'styleSource';
+        document.head.appendChild(style);
+    }
+    fetch('fetchTarget', { body: 'a=b&c=d', method: 'post'}).then(()=>{
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4)
+                loadMoreThingsAfterFetchAndXHR();
+        };
+        xhr.open('GET', 'xhrTarget');
+        xhr.send();
+    })
+    )TESTJS";
+    TestWebKitAPI::HTTPServer server({
+        { "/", { "<script src='scriptSrc'></script><div>text needing a font</div>" } },
+        { "/scriptSrc", { {{ "Content-Type", "application/javascript" }}, testJS } },
+        { "/fetchTarget", { "hi" } },
+        { "/xhrTarget", { {{ "Content-Type", "application/octet-stream" }}, "hi" } },
+        { "/beaconTarget", { "hi" } },
+        { "/imageSource", { "not really an image" } },
+        { "/styleSource", { "@font-face { font-family: TestFontFamily; src: url(fontSource) } div { font-family: TestFontFamily }" } },
+        { "/fontSource", { "not really a font" } },
+    });
+
+    __block Vector<RetainPtr<_WKResourceLoadInfo>> loadInfos;
+
+    __block size_t requestCount = 0;
+    auto delegate = adoptNS([TestResourceLoadDelegate new]);
+    [delegate setDidSendRequest:^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSURLRequest *request) {
+        loadInfos.append(loadInfo);
+        requestCount++;
+    }];
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView _setResourceLoadDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+
+    Vector<_WKResourceLoadInfoResourceType> expectedTypes {
+        _WKResourceLoadInfoResourceTypeDocument,
+        _WKResourceLoadInfoResourceTypeScript,
+        _WKResourceLoadInfoResourceTypeFetch,
+        _WKResourceLoadInfoResourceTypeXMLHTTPRequest,
+        _WKResourceLoadInfoResourceTypeBeacon,
+        _WKResourceLoadInfoResourceTypeImage,
+        _WKResourceLoadInfoResourceTypeStylesheet,
+        _WKResourceLoadInfoResourceTypeFont,
+    };
+
+    while (requestCount < expectedTypes.size())
+        TestWebKitAPI::Util::spinRunLoop();
+    for (size_t i = 0; i < expectedTypes.size(); ++i)
+        EXPECT_EQ(loadInfos[i].get().resourceType, expectedTypes[i]);
+}
+
 TEST(ResourceLoadDelegate, LoadInfo)
 {
     TestWebKitAPI::HTTPServer server({
@@ -274,27 +341,28 @@ TEST(ResourceLoadDelegate, LoadInfo)
     EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[7].get().resourceLoadID);
     EXPECT_EQ(loadInfos[6].get().resourceLoadID, loadInfos[8].get().resourceLoadID);
     EXPECT_NE(loadInfos[6].get().resourceLoadID, loadInfos[0].get().resourceLoadID);
-    auto checkFrames = ^(size_t index, _WKFrameHandle *expectedFrame, _WKFrameHandle *expectedParent) {
+    auto checkFrames = ^(size_t index, _WKFrameHandle *expectedFrame, _WKFrameHandle *expectedParent, _WKResourceLoadInfoResourceType expectedType) {
         _WKResourceLoadInfo *info = loadInfos[index].get();
         EXPECT_EQ(!!info.frame, !!expectedFrame);
         EXPECT_EQ(!!info.parentFrame, !!expectedParent);
         EXPECT_EQ(info.frame.frameID, expectedFrame.frameID);
         EXPECT_EQ(info.parentFrame.frameID, expectedParent.frameID);
+        EXPECT_EQ(info.resourceType, expectedType);
     };
     _WKFrameHandle *main = loadInfos[0].get().frame;
     _WKFrameHandle *sub = loadInfos[8].get().frame;
     EXPECT_TRUE(!!main);
     EXPECT_TRUE(!!sub);
     EXPECT_TRUE(main.frameID != sub.frameID);
-    checkFrames(0, main, nil);
-    checkFrames(1, main, nil);
-    checkFrames(2, main, nil);
-    checkFrames(3, sub, main);
-    checkFrames(4, sub, main);
-    checkFrames(5, sub, main);
-    checkFrames(6, sub, main);
-    checkFrames(7, sub, main);
-    checkFrames(8, sub, main);
+    checkFrames(0, main, nil, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(1, main, nil, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(2, main, nil, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(3, sub, main, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(4, sub, main, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(5, sub, main, _WKResourceLoadInfoResourceTypeDocument);
+    checkFrames(6, sub, main, _WKResourceLoadInfoResourceTypeFetch);
+    checkFrames(7, sub, main, _WKResourceLoadInfoResourceTypeFetch);
+    checkFrames(8, sub, main, _WKResourceLoadInfoResourceTypeFetch);
 
     EXPECT_EQ(otherParameters.size(), 12ull);
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");
@@ -325,7 +393,7 @@ TEST(ResourceLoadDelegate, LoadInfo)
     _WKResourceLoadInfo *original = loadInfos[0].get();
     NSError *error = nil;
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:original requiringSecureCoding:YES error:&error];
-    EXPECT_EQ(archiveData.length, 589ull);
+    EXPECT_EQ(archiveData.length, 607ull);
     EXPECT_FALSE(error);
     _WKResourceLoadInfo *deserialized = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKResourceLoadInfo class] fromData:archiveData error:&error];
     EXPECT_FALSE(error);

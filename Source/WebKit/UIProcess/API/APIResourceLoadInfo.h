@@ -47,6 +47,7 @@ public:
     const WTF::String& originalHTTPMethod() const { return m_info.originalHTTPMethod; }
     WallTime eventTimestamp() const { return m_info.eventTimestamp; }
     bool loadedFromCache() const { return m_info.loadedFromCache; }
+    WebKit::ResourceLoadInfo::Type resourceLoadType() const { return m_info.type; }
 
 private:
     const WebKit::ResourceLoadInfo m_info;

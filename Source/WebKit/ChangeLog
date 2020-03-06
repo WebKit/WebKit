@@ -1,3 +1,23 @@
+2020-03-06  David Quesada  <david_quesada@apple.com>
+
+        Add _WKResourceLoadInfo.resourceType SPI
+        https://bugs.webkit.org/show_bug.cgi?id=208723
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        * Shared/ResourceLoadInfo.h:
+        (WebKit::ResourceLoadInfo::encode const):
+        (WebKit::ResourceLoadInfo::decode):
+        * UIProcess/API/APIResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.mm:
+        (toWKResourceLoadInfoResourceType):
+        (-[_WKResourceLoadInfo resourceType]):
+        (-[_WKResourceLoadInfo initWithCoder:]):
+        (-[_WKResourceLoadInfo encodeWithCoder:]):
+
 2020-03-06  Youenn Fablet  <youenn@apple.com>
 
         Add support for NowPlaying commands in GPUProcess

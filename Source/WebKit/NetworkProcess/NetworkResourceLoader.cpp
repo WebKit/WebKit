@@ -359,7 +359,62 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         }
         return false;
     };
-    
+
+    auto resourceType = [] (WebCore::ResourceRequestBase::Requester requester, WebCore::FetchOptions::Destination destination) {
+        switch (requester) {
+        case WebCore::ResourceRequestBase::Requester::XHR:
+            return ResourceLoadInfo::Type::XMLHTTPRequest;
+        case WebCore::ResourceRequestBase::Requester::Fetch:
+            return ResourceLoadInfo::Type::Fetch;
+        case WebCore::ResourceRequestBase::Requester::Ping:
+            return ResourceLoadInfo::Type::Ping;
+        case WebCore::ResourceRequestBase::Requester::Beacon:
+            return ResourceLoadInfo::Type::Beacon;
+        default:
+            break;
+        }
+
+        switch (destination) {
+        case WebCore::FetchOptions::Destination::EmptyString:
+            return ResourceLoadInfo::Type::Other;
+        case WebCore::FetchOptions::Destination::Audio:
+            return ResourceLoadInfo::Type::Media;
+        case WebCore::FetchOptions::Destination::Document:
+            return ResourceLoadInfo::Type::Document;
+        case WebCore::FetchOptions::Destination::Embed:
+            return ResourceLoadInfo::Type::Object;
+        case WebCore::FetchOptions::Destination::Font:
+            return ResourceLoadInfo::Type::Font;
+        case WebCore::FetchOptions::Destination::Image:
+            return ResourceLoadInfo::Type::Image;
+        case WebCore::FetchOptions::Destination::Manifest:
+            return ResourceLoadInfo::Type::ApplicationManifest;
+        case WebCore::FetchOptions::Destination::Object:
+            return ResourceLoadInfo::Type::Object;
+        case WebCore::FetchOptions::Destination::Report:
+            return ResourceLoadInfo::Type::CSPReport;
+        case WebCore::FetchOptions::Destination::Script:
+            return ResourceLoadInfo::Type::Script;
+        case WebCore::FetchOptions::Destination::Serviceworker:
+            return ResourceLoadInfo::Type::Other;
+        case WebCore::FetchOptions::Destination::Sharedworker:
+            return ResourceLoadInfo::Type::Other;
+        case WebCore::FetchOptions::Destination::Style:
+            return ResourceLoadInfo::Type::Stylesheet;
+        case WebCore::FetchOptions::Destination::Track:
+            return ResourceLoadInfo::Type::Media;
+        case WebCore::FetchOptions::Destination::Video:
+            return ResourceLoadInfo::Type::Media;
+        case WebCore::FetchOptions::Destination::Worker:
+            return ResourceLoadInfo::Type::Other;
+        case WebCore::FetchOptions::Destination::Xslt:
+            return ResourceLoadInfo::Type::XSLT;
+        }
+
+        ASSERT_NOT_REACHED();
+        return ResourceLoadInfo::Type::Other;
+    };
+
     return ResourceLoadInfo {
         m_resourceLoadID,
         m_parameters.webFrameID,
@@ -367,7 +422,8 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         originalRequest().url(),
         originalRequest().httpMethod(),
         WallTime::now(),
-        loadedFromCache(m_response)
+        loadedFromCache(m_response),
+        resourceType(originalRequest().requester(), m_parameters.options.destination)
     };
 }
 

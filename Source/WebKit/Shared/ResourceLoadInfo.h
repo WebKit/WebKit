@@ -35,6 +35,24 @@ namespace WebKit {
 
 struct ResourceLoadInfo {
 
+    enum class Type : uint8_t {
+        ApplicationManifest,
+        Beacon,
+        CSPReport,
+        Document,
+        Fetch,
+        Font,
+        Image,
+        Media,
+        Object,
+        Other,
+        Ping,
+        Script,
+        Stylesheet,
+        XMLHTTPRequest,
+        XSLT
+    };
+    
     NetworkResourceLoadIdentifier resourceLoadID;
     Optional<WebCore::FrameIdentifier> frameID;
     Optional<WebCore::FrameIdentifier> parentFrameID;
@@ -42,7 +60,8 @@ struct ResourceLoadInfo {
     String originalHTTPMethod;
     WallTime eventTimestamp;
     bool loadedFromCache { false };
-    
+    Type type { Type::Other };
+
     void encode(IPC::Encoder& encoder) const
     {
         encoder << resourceLoadID;
@@ -52,6 +71,7 @@ struct ResourceLoadInfo {
         encoder << originalHTTPMethod;
         encoder << eventTimestamp;
         encoder << loadedFromCache;
+        encoder << type;
     }
 
     static Optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
@@ -91,6 +111,11 @@ struct ResourceLoadInfo {
         if (!loadedFromCache)
             return WTF::nullopt;
 
+        Optional<Type> type;
+        decoder >> type;
+        if (!type)
+            return WTF::nullopt;
+
         return {{
             WTFMove(*resourceLoadID),
             WTFMove(*frameID),
@@ -99,8 +124,34 @@ struct ResourceLoadInfo {
             WTFMove(*originalHTTPMethod),
             WTFMove(*eventTimestamp),
             WTFMove(*loadedFromCache),
+            WTFMove(*type),
         }};
     }
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::ResourceLoadInfo::Type> {
+    using values = EnumValues<
+        WebKit::ResourceLoadInfo::Type,
+        WebKit::ResourceLoadInfo::Type::ApplicationManifest,
+        WebKit::ResourceLoadInfo::Type::Beacon,
+        WebKit::ResourceLoadInfo::Type::CSPReport,
+        WebKit::ResourceLoadInfo::Type::Document,
+        WebKit::ResourceLoadInfo::Type::Fetch,
+        WebKit::ResourceLoadInfo::Type::Font,
+        WebKit::ResourceLoadInfo::Type::Image,
+        WebKit::ResourceLoadInfo::Type::Media,
+        WebKit::ResourceLoadInfo::Type::Object,
+        WebKit::ResourceLoadInfo::Type::Other,
+        WebKit::ResourceLoadInfo::Type::Ping,
+        WebKit::ResourceLoadInfo::Type::Script,
+        WebKit::ResourceLoadInfo::Type::Stylesheet,
+        WebKit::ResourceLoadInfo::Type::XMLHTTPRequest,
+        WebKit::ResourceLoadInfo::Type::XSLT
+    >;
+};
+
+} // namespace WTF

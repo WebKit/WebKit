@@ -29,6 +29,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, _WKResourceLoadInfoResourceType) {
+    _WKResourceLoadInfoResourceTypeApplicationManifest,
+    _WKResourceLoadInfoResourceTypeBeacon,
+    _WKResourceLoadInfoResourceTypeCSPReport,
+    _WKResourceLoadInfoResourceTypeDocument,
+    _WKResourceLoadInfoResourceTypeImage,
+    _WKResourceLoadInfoResourceTypeFetch,
+    _WKResourceLoadInfoResourceTypeFont,
+    _WKResourceLoadInfoResourceTypeMedia,
+    _WKResourceLoadInfoResourceTypeObject,
+    _WKResourceLoadInfoResourceTypePing,
+    _WKResourceLoadInfoResourceTypeScript,
+    _WKResourceLoadInfoResourceTypeStylesheet,
+    _WKResourceLoadInfoResourceTypeXMLHTTPRequest,
+    _WKResourceLoadInfoResourceTypeXSLT,
+    _WKResourceLoadInfoResourceTypeOther = -1,
+};
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKResourceLoadInfo : NSObject <NSSecureCoding>
 
@@ -42,6 +60,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) NSString *originalHTTPMethod;
 @property (nonatomic, readonly) NSDate *eventTimestamp;
 @property (nonatomic, readonly) BOOL loadedFromCache;
+@property (nonatomic, readonly) _WKResourceLoadInfoResourceType resourceType;
 
 @end
 
