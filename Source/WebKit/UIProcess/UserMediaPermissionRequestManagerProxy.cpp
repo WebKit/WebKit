@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -247,7 +247,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     ++m_hasPendingCapture;
 
     SandboxExtension::Handle handle;
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
     if (!m_hasCreatedSandboxExtensionForTCCD) {
         SandboxExtension::createHandleForMachLookup("com.apple.tccd", m_page.process().connection()->getAuditToken(), handle);
         m_hasCreatedSandboxExtensionForTCCD = true;

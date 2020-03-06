@@ -1,3 +1,22 @@
+2020-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Create sandbox extension for "com.apple.tccd"
+        https://bugs.webkit.org/show_bug.cgi?id=208660
+        <rdar://problem/57666569>
+
+        Reviewed by Per Arne Vollan.
+
+        Make the same changes for macOS as we did for iOS in Bug 204367. Specifically, remove the
+        blanket mach-lookup permission for 'com.apple.tccd', and instead make a dynamic extension
+        only when a camera or microphone request is made.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest): Update to create the
+        extensions on macOS, too.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * WebProcess/com.apple.WebProcess.sb.in: Remove blanket access permissions and move them to
+        the dynamic access permissions section of the sandbox.
+
 2020-03-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI -[_WKWebAuthenticationPanelDelegate panel:selectAssertionResponse:source:completionHandler:]

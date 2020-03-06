@@ -647,9 +647,14 @@
     (global-name "com.apple.cfprefsd.daemon")
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.lsd.mapdb")
-    (global-name "com.apple.tccd")
-    (global-name "com.apple.tccd.system")
     (global-name "com.apple.trustd.agent")
+)
+
+(allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+    (with telemetry)
+#endif
+    (global-name "com.apple.tccd.system")
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
@@ -848,6 +853,7 @@
 #endif
             "com.apple.webinspector"
             "com.apple.cfprefsd.daemon"
+            "com.apple.tccd"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.audio.AudioComponentRegistrar" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
