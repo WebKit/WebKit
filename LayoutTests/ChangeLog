@@ -1,3 +1,11 @@
+2020-03-05  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden some webgl 2.0 failures.
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-05  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html is flaky failing.
