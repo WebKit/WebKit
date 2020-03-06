@@ -27,38 +27,52 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageBufferBackendHandle.h"
+#include "ImageBufferFlushIdentifier.h"
 #include "ImageBufferIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteImageBufferMessageHandler.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
+#include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
-#include <WebCore/ImageBuffer.h>
 #include <WebCore/RenderingMode.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class RemoteRenderingBackend
-    : private IPC::MessageSender
-    , private IPC::MessageReceiver {
+    : public IPC::MessageSender
+    , private IPC::MessageReceiver
+    , public CanMakeWeakPtr<RemoteRenderingBackend> {
 public:
     static std::unique_ptr<RemoteRenderingBackend> create();
 
     ~RemoteRenderingBackend();
 
+    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
+
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     std::unique_ptr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace);
     void releaseImageBuffer(ImageBufferIdentifier);
 
 private:
     RemoteRenderingBackend();
-        
-    using ImageBufferMap = HashMap<ImageBufferIdentifier, WebCore::ImageBuffer*>;
-    ImageBufferMap m_imageBufferMap;
+
+    // Messages to be received.
+    void createImageBufferBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& backendSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle, ImageBufferIdentifier);
+    void commitImageBufferFlushContext(ImageBufferFlushIdentifier, ImageBufferIdentifier);
+
+    using ImageBufferMessageHandlerMap = HashMap<ImageBufferIdentifier, RemoteImageBufferMessageHandler*>;
+    ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
     RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
 };
 

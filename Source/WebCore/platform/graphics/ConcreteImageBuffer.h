@@ -34,7 +34,7 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
+    static std::unique_ptr<ImageBufferType> create(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const HostWindow* hostWindow, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, resolutionScale, colorSpace, hostWindow);
         if (!backend)
@@ -43,7 +43,7 @@ public:
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
+    static std::unique_ptr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
     {
         auto backend = BackendType::create(size, context);
         if (!backend)

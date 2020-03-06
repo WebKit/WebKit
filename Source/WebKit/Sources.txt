@@ -24,6 +24,7 @@
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
+GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.cpp
 GPUProcess/graphics/RemoteRenderingBackendProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
@@ -535,6 +536,7 @@ WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
+WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackend.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp

@@ -40,7 +40,7 @@ class ImageBufferShareableIOSurfaceBackend : public WebCore::ImageBufferIOSurfac
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace);
+    static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, const WebCore::HostWindow*);
     static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;

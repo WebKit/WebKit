@@ -39,7 +39,7 @@ class ImageBufferShareableBitmapBackend : public WebCore::PlatformImageBufferBac
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const float resolutionScale, WebCore::ColorSpace, const WebCore::HostWindow*);
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& internalSize, float resolutionScale, WebCore::ColorSpace, ImageBufferBackendHandle);
 
     ImageBufferShareableBitmapBackend(const WebCore::FloatSize& logicalSize, const WebCore::IntSize& physicalSize, float resolutionScale, WebCore::ColorSpace, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);

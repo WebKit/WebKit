@@ -33,15 +33,15 @@ namespace DisplayList {
 
 class DrawingContext {
 public:
-    DrawingContext(const FloatSize& logicalSize);
+    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize);
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
     DisplayList& displayList() { return m_displayList; }
     const DisplayList& displayList() const { return m_displayList; }
     const DisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }
 
-    void setTracksDisplayListReplay(bool);
-    void replayDisplayList(GraphicsContext&);
+    WEBCORE_EXPORT void setTracksDisplayListReplay(bool);
+    WEBCORE_EXPORT void replayDisplayList(GraphicsContext&);
 
 protected:
     GraphicsContext m_context;
