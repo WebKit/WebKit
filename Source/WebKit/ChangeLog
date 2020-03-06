@@ -1,3 +1,16 @@
+2020-03-05  Brent Fulgham  <bfulgham@apple.com>
+
+        GPU Process sandbox errors
+        https://bugs.webkit.org/show_bug.cgi?id=208688
+        <rdar://problem/60085171>
+
+        Reviewed by Per Arne Vollan.
+
+        The new GPU Process needs access to a number of properties to support media playback
+        features available in our shipping software.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2020-03-05  Brady Eidson  <beidson@apple.com>
 
         Pre-fetch first page in new PDF loading model.
