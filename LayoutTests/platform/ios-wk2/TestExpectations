@@ -1459,3 +1459,5 @@ webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
 
 webkit.org/b/208718 [ Debug ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html [ Pass Crash ]
+
+webkit.org/b/208601 fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ Pass Failure ]
