@@ -1,5 +1,20 @@
 2020-03-06  Peng Liu  <peng.liu6@apple.com>
 
+        [GPUP] Enable Picture-in-Picture support on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=208732
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        RemoteMediaPlayerProxy needs to send "hasVideo" state to MediaPlayerPrivateRemote
+        in the Web process in order to enable the Picture-in-Picture mode support (on Mac).
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+
+2020-03-06  Peng Liu  <peng.liu6@apple.com>
+
         Use the feature flags mechanism to give default feature preference values
         https://bugs.webkit.org/show_bug.cgi?id=208607
 
