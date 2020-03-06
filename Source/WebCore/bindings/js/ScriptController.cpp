@@ -576,7 +576,7 @@ JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperW
 
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().isInAppBrowserPrivacyEnabled() && m_frame.isMainFrame() && m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain())
+    if (m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain())
         return jsNull();
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);

@@ -1,3 +1,18 @@
+2020-03-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove redundant flags in script evaluation checks
+        https://bugs.webkit.org/show_bug.cgi?id=208609
+        <rdar://problem/60058656>
+
+        Reviewed by Brent Fulgham.
+
+        hasNavigatedAwayFromAppBoundDomain only gets set in WebPageProxy if
+        its a main frame navigation and In-App Browser privacy is enabled,
+        we don't need to check again at the sites.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
 2020-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Use an OptionSet<> for SynchronousScrollingReasons

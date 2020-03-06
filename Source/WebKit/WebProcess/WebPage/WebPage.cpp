@@ -3460,7 +3460,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         send(Messages::WebPageProxy::ScriptValueCallback(dataReference, details, callbackID));
     };
     
-    if (RuntimeEnabledFeatures::sharedFeatures().isInAppBrowserPrivacyEnabled() && frame->isMainFrame() && hasNavigatedAwayFromAppBoundDomain() == NavigatedAwayFromAppBoundDomain::Yes) {
+    if (hasNavigatedAwayFromAppBoundDomain() == NavigatedAwayFromAppBoundDomain::Yes) {
         send(Messages::WebPageProxy::ScriptValueCallback({ }, ExceptionDetails { "Unable to execute JavaScript"_s }, callbackID));
         return;
     }
