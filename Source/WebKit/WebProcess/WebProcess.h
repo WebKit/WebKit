@@ -333,6 +333,8 @@ public:
     void updatePageScreenProperties();
 #endif
 
+    void setUseGPUProcessForMedia(bool);
+
 private:
     WebProcess();
     ~WebProcess();
@@ -516,8 +518,6 @@ private:
 #endif
 
     bool isAlwaysOnLoggingAllowed() { return m_sessionID ? m_sessionID->isAlwaysOnLoggingAllowed() : true; }
-
-    void setUseGPUProcessForMedia(bool);
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

@@ -472,8 +472,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
-    setUseGPUProcessForMedia(parameters.useGPUProcessForMedia);
-
     RELEASE_LOG_IF_ALLOWED(Process, "initializeWebProcess: Presenting process = %d", WebCore::presentingApplicationPID());
 }
 

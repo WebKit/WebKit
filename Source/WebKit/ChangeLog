@@ -1,3 +1,19 @@
+2020-03-06  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Set the WebProcess's useGPUProcessForMedia setting during the first page load
+        https://bugs.webkit.org/show_bug.cgi?id=208694
+
+        Reviewed by Youenn Fablet.
+
+        Until such a time as we can pass through the correct preference during WebProcess creation,
+        set the WebProcess's "useGPUProcessForMedia" setting just before the first page load.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+
 2020-03-06  Antoine Quint  <graouts@webkit.org>
 
         Remove the experimental flag for Pointer Events

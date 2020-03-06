@@ -3727,6 +3727,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     // FIXME: useGPUProcessForMedia should be a RuntimeEnabledFeature since it's global.
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMedia());
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
+    WebProcess::singleton().setUseGPUProcessForMedia(settings.useGPUProcessForMedia());
 #endif
 }
 
