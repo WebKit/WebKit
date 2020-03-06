@@ -1,3 +1,14 @@
+2020-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Absolute positioned table should generate a static table box inside the out-of-flow table wrapper box
+        https://bugs.webkit.org/show_bug.cgi?id=208713
+        <rdar://problem/60151358>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/absolute-positioned-simple-table-expected.html: Added.
+        * fast/layoutformattingcontext/absolute-positioned-simple-table.html: Added.
+
 2020-03-06  Antoine Quint  <graouts@webkit.org>
 
         Remove the experimental flag for Pointer Events

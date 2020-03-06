@@ -291,7 +291,10 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
         tableChild = tableChild->nextSibling();
     }
 
-    auto& tableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, RenderStyle::clone(tableRenderer.style()));
+    auto tableBoxStyle = RenderStyle::clone(tableRenderer.style());
+    tableBoxStyle.setPosition(PositionType::Static);
+    tableBoxStyle.setFloating(Float::No);
+    auto& tableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, WTFMove(tableBoxStyle));
     appendChild(tableWrapperBox, tableBox);
     auto* sectionRenderer = tableChild;
     while (sectionRenderer) {
