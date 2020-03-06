@@ -42,6 +42,7 @@ dictionary FontFaceDescriptors {
 };
 
 [
+    ActiveDOMObject,
     ConstructorCallWith=Document,
     Constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
@@ -55,6 +56,6 @@ dictionary FontFaceDescriptors {
 
     readonly attribute FontFaceLoadStatus status;
 
-    [ReturnsOwnPromise, PromiseProxy] Promise<FontFace> load();
-    readonly attribute Promise<FontFace> loaded;
+    [ReturnsOwnPromise, PromiseProxy, ImplementedAs=loadForBindings] Promise<FontFace> load();
+    [ImplementedAs=loadedForBindings] readonly attribute Promise<FontFace> loaded;
 };
