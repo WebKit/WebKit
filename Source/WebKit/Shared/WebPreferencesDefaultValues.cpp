@@ -28,6 +28,7 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 
 #if PLATFORM(COCOA)
+#include <pal/spi/cocoa/FeatureFlagsSPI.h>
 #include <wtf/spi/darwin/dyldSPI.h>
 #endif
 
@@ -79,5 +80,128 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
 #endif
     return true;
 }
+
+static bool defaultAsyncFrameAndOverflowScrollingEnabled()
+{
+#if PLATFORM(IOS_FAMILY) || USE(NICOSIA)
+    return true;
+#endif
+
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, async_frame_and_overflow_scrolling);
+#endif
+
+    return false;
+}
+
+bool defaultAsyncFrameScrollingEnabled()
+{
+    return defaultAsyncFrameAndOverflowScrollingEnabled();
+}
+
+bool defaultAsyncOverflowScrollingEnabled()
+{
+    return defaultAsyncFrameAndOverflowScrollingEnabled();
+}
+
+#if ENABLE(GPU_PROCESS)
+
+bool defaultUseGPUProcessForMedia()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, canvas_and_media_in_gpu_process);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(GPU_PROCESS)
+
+bool defaultRenderCanvasInGPUProcessEnabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, canvas_and_media_in_gpu_process);
+#endif
+
+    return false;
+}
+
+#if ENABLE(MEDIA_STREAM)
+
+bool defaultCaptureAudioInGPUProcessEnabled()
+{
+#if PLATFORM(MAC) && HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, webrtc_in_gpu_process);
+#endif
+
+#if PLATFORM(IOS_FAMILY) && HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, canvas_and_media_in_gpu_process);
+#endif
+
+    return false;
+}
+
+bool defaultCaptureAudioInUIProcessEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return false;
+#endif
+
+#if PLATFORM(MAC)
+    return !defaultCaptureAudioInGPUProcessEnabled();
+#endif
+
+    return false;
+}
+
+bool defaultCaptureVideoInGPUProcessEnabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, webrtc_in_gpu_process);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#if ENABLE(WEB_RTC)
+
+bool defaultWebRTCCodecsInGPUProcess()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, webrtc_in_gpu_process);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(WEB_RTC)
+
+#if ENABLE(WEBGL2)
+
+bool defaultWebGL2Enabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, WebGL2);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(WEBGL2)
+
+#if ENABLE(WEBGPU)
+
+bool defaultWebGPUEnabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, WebGPU);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(WEBGPU)
 
 } // namespace WebKit

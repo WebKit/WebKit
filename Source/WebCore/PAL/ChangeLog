@@ -1,3 +1,13 @@
+2020-03-06  Peng Liu  <peng.liu6@apple.com>
+
+        Use the feature flags mechanism to give default feature preference values
+        https://bugs.webkit.org/show_bug.cgi?id=208607
+
+        Reviewed by Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/FeatureFlagsSPI.h: Added.
+
 2020-03-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Optimize Path::encode on platforms that support CGPathGetNumberOfElements
