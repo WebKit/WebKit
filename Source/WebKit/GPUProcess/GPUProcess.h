@@ -34,6 +34,10 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class NowPlayingManager;
+}
+
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
@@ -67,6 +71,8 @@ public:
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager() const;
 #endif
+
+    WebCore::NowPlayingManager& nowPlayingManager();
 
 private:
     void lowMemoryHandler(Critical);
@@ -108,6 +114,7 @@ private:
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
     bool m_canShowWhileLocked { false };
 #endif
+    std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif

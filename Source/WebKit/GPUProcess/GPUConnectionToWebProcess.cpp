@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcess.h"
+#include "GPUProcessConnectionMessages.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
 #include "LibWebRTCCodecsProxy.h"
@@ -61,7 +62,7 @@
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
-#include <WebCore/PlatformMediaSessionManager.h>
+#include <WebCore/NowPlayingManager.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MediaSessionManagerCocoa.h>
@@ -266,17 +267,20 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     ASSERT_UNUSED(found, found);
 }
 
-#if PLATFORM(COCOA)
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
-    MediaSessionManagerCocoa::clearNowPlayingInfo();
+    gpuProcess().nowPlayingManager().clearNowPlayingInfoClient(*this);
 }
 
-void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo)
+void GPUConnectionToWebProcess::setNowPlayingInfo(bool setAsNowPlayingApplication, NowPlayingInfo&& nowPlayingInfo)
 {
-    MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
+    gpuProcess().nowPlayingManager().setNowPlayingInfo(*this, WTFMove(nowPlayingInfo));
 }
-#endif
+
+void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+{
+    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand { type, argument }, 0);
+}
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&& completion)

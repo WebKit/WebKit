@@ -42,6 +42,7 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockAudioSharedUnit.h>
+#include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
@@ -215,6 +216,13 @@ const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) co
     return m_sessions.find(sessionID)->value.mediaKeysStorageDirectory;
 }
 #endif
+
+NowPlayingManager& GPUProcess::nowPlayingManager()
+{
+    if (!m_nowPlayingManager)
+        m_nowPlayingManager = makeUnique<NowPlayingManager>();
+    return *m_nowPlayingManager;
+}
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const

@@ -44,6 +44,7 @@
 #include "WebPage.h"
 #include "WebPageMessages.h"
 #include "WebProcess.h"
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/SharedBuffer.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -126,6 +127,12 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
+}
+
+void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, Optional<double> argument)
+{
+    const PlatformMediaSession::RemoteCommandArgument value { argument ? *argument : 0 };
+    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument ? &value : nullptr);
 }
 
 } // namespace WebKit

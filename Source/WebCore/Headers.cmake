@@ -951,6 +951,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MediaSample.h
     platform/MediaSelectionOption.h
     platform/MediaStrategy.h
+    platform/NowPlayingManager.h
     platform/NotImplemented.h
     platform/OrientationNotifier.h
     platform/PODInterval.h

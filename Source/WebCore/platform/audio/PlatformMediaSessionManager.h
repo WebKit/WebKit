@@ -137,6 +137,8 @@ public:
     WEBCORE_EXPORT void addAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
     WEBCORE_EXPORT void removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource&);
 
+    WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
+
 protected:
     friend class PlatformMediaSession;
     PlatformMediaSessionManager();
@@ -163,7 +165,6 @@ protected:
     int countActiveAudioCaptureSources();
     bool hasNoSession() const;
 
-    WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
     bool computeSupportsSeeking() const;
 
     WEBCORE_EXPORT void processSystemWillSleep();
