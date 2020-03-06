@@ -1,3 +1,11 @@
+2020-03-06  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening.
+
+        Add missing force layout.
+
+        * fast/events/touch/ios/touch-handler-on-body-simple.html:
+
 2020-03-06  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION (r257840): [ iOS ] fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html is flaky failing
