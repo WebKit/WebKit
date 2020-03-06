@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << resourceLoadStatisticsDirectory;
     encoder << resourceLoadStatisticsDirectoryExtensionHandle;
     encoder << enableResourceLoadStatistics;
+    encoder << isItpStateExplicitlySet;
     encoder << enableResourceLoadStatisticsLogTestingEvent;
     encoder << shouldIncludeLocalhostInResourceLoadStatistics;
     encoder << enableResourceLoadStatisticsDebugMode;
@@ -177,6 +178,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<bool> enableResourceLoadStatistics;
     decoder >> enableResourceLoadStatistics;
     if (!enableResourceLoadStatistics)
+        return WTF::nullopt;
+
+    Optional<bool> isItpStateExplicitlySet;
+    decoder >> isItpStateExplicitlySet;
+    if (!isItpStateExplicitlySet)
         return WTF::nullopt;
 
     Optional<bool> enableResourceLoadStatisticsLogTestingEvent;
@@ -300,6 +306,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*resourceLoadStatisticsDirectory)
         , WTFMove(*resourceLoadStatisticsDirectoryExtensionHandle)
         , WTFMove(*enableResourceLoadStatistics)
+        , WTFMove(*isItpStateExplicitlySet)
         , WTFMove(*enableResourceLoadStatisticsLogTestingEvent)
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)

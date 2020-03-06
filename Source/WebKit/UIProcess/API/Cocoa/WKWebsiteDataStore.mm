@@ -278,6 +278,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
+    _websiteDataStore->useExplicitITPState();
     _websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
 }
 
