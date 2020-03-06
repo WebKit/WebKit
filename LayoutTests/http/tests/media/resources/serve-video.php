@@ -144,21 +144,26 @@ answering:
     if ($settings["stallDuration"])
         set_time_limit(0);
 
+    $stalledOnce = false;
     while (!feof($fn) && $offset <= $end && connection_status() == 0) {
         $readSize = min($settings["chunkSize"], ($end - $offset) + 1);
         $stallNow = false;
-        if ($settings["stallOffset"] && $settings["stallOffset"] >= $offset && $settings["stallOffset"] < $offset + $readSize) {
+        if (!$stalledOnce && $settings["stallOffset"] && $settings["stallOffset"] >= $offset && $settings["stallOffset"] < $offset + $readSize) {
             $readSize = min($settings["chunkSize"], $settings["stallOffset"] - $offset);
             $stallNow = true;
         }
 
         $buffer = fread($fn, $readSize);
+        $readLength = strlen($buffer);
+
         print($buffer);
         flush();
-        $offset += $settings["chunkSize"];
+        $offset += $readLength;
         
-        if ($stallNow)
+        if ($stallNow) {
             sleep($settings["stallDuration"]);
+            $stalledOnce = true;
+        }
     }
     fclose($fn);
 

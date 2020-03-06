@@ -1171,10 +1171,6 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     if (priv->haveSize && (newPosition > priv->size)) {
         GST_DEBUG_OBJECT(src, "Got position previous estimated content size (%" G_GINT64_FORMAT " > %" G_GINT64_FORMAT ")", newPosition, priv->size);
         newSize = newPosition;
-    } else if (!priv->haveSize) {
-        GST_DEBUG_OBJECT(src, "Got initial response without Content-Length, assuming response size as duration.");
-        newSize = length;
-        priv->haveSize = true;
     }
 
     if (newSize) {
