@@ -54,7 +54,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedGetterWithIdentifierPrototypeFuncti
 JSC::EncodedJSValue jsTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedGetterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedGetterWithIdentifierPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedGetterWithIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedGetterWithIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

@@ -47,7 +47,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsInterfaceNameConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSInterfaceNameConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSInterfaceNamePrototype : public JSC::JSNonFinalObject {
+class JSInterfaceNamePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSInterfaceNamePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

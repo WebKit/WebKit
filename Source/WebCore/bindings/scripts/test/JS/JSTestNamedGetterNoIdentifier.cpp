@@ -49,7 +49,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedGetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedGetterNoIdentifierPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedGetterNoIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedGetterNoIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

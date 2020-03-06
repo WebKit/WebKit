@@ -71,7 +71,7 @@ bool setJSTestSerializedScriptValueInterfaceCachedValue(JSC::JSGlobalObject*, JS
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePorts(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSNonFinalObject {
+class JSTestSerializedScriptValueInterfacePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

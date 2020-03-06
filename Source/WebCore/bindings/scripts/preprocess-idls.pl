@@ -153,7 +153,10 @@ foreach my $idlFile (sort keys %idlFileHash) {
     }
 
     if (!isCallbackInterfaceFromIDL($idlFileContents)) {
-        $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName};\n"
+        $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName};\n";
+        if (interfaceIsIterable($idlFileContents)) {
+            $isoSubspacesHeaderCode .= "    std::unique_ptr<JSC::IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
+        }
     }
 
     # For every interface that is exposed in a given ECMAScript global environment and:
@@ -379,6 +382,12 @@ sub isCallbackInterfaceFromIDL
 {
     my $fileContents = shift;
     return ($fileContents =~ /callback\s+interface\s+\w+/gs);
+}
+
+sub interfaceIsIterable
+{
+    my $fileContents = shift;
+    return ($fileContents =~ /iterable\s*<\s*\w+\s*/gs);
 }
 
 sub containsInterfaceOrExceptionFromIDL

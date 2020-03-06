@@ -56,7 +56,7 @@ JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins
 bool setJSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

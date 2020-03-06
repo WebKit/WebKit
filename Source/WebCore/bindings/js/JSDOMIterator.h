@@ -76,7 +76,7 @@ private:
 
 using IterationKind = JSC::IterationKind;
 
-template<typename JSWrapper, typename IteratorTraits> class JSDOMIterator : public JSDOMObject {
+template<typename JSWrapper, typename IteratorTraits> class JSDOMIteratorBase : public JSDOMObject {
 public:
     using Base = JSDOMObject;
 
@@ -88,18 +88,6 @@ public:
 
     DECLARE_INFO;
 
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
-    }
-
-    static JSDOMIterator* create(JSC::VM& vm, JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
-    {
-        JSDOMIterator* instance = new (NotNull, JSC::allocateCell<JSDOMIterator>(vm.heap)) JSDOMIterator(structure, iteratedObject, kind);
-        instance->finishCreation(vm);
-        return instance;
-    }
-
     static Prototype* createPrototype(JSC::VM& vm, JSC::JSGlobalObject& globalObject)
     {
         return Prototype::create(vm, &globalObject, Prototype::createStructure(vm, &globalObject, globalObject.iteratorPrototype()));
@@ -107,8 +95,10 @@ public:
 
     JSC::JSValue next(JSC::JSGlobalObject&);
 
-private:
-    JSDOMIterator(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
+    static void createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue); // Make use of createStructure for this compile-error.
+
+protected:
+    JSDOMIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
         : Base(structure, *iteratedObject.globalObject())
         , m_iterator(iteratedObject.wrapped().createIterator())
         , m_kind(kind)
@@ -150,7 +140,7 @@ template<typename JSIterator> JSC::JSValue iteratorCreate(typename JSIterator::W
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue> JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::JSGlobalObject& lexicalGlobalObject, IteratorValue& value)
+template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue> JSDOMIteratorBase<JSWrapper, IteratorTraits>::asJS(JSC::JSGlobalObject& lexicalGlobalObject, IteratorValue& value)
 {
     ASSERT(value);
     
@@ -168,7 +158,7 @@ template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue>
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-template<typename IteratorValue, typename T> inline EnableIfSet<T, JSC::JSValue> JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::JSGlobalObject& lexicalGlobalObject, IteratorValue& value)
+template<typename IteratorValue, typename T> inline EnableIfSet<T, JSC::JSValue> JSDOMIteratorBase<JSWrapper, IteratorTraits>::asJS(JSC::JSGlobalObject& lexicalGlobalObject, IteratorValue& value)
 {
     ASSERT(value);
 
@@ -229,14 +219,14 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-void JSDOMIterator<JSWrapper, IteratorTraits>::destroy(JSCell* cell)
+void JSDOMIteratorBase<JSWrapper, IteratorTraits>::destroy(JSCell* cell)
 {
-    JSDOMIterator<JSWrapper, IteratorTraits>* thisObject = static_cast<JSDOMIterator<JSWrapper, IteratorTraits>*>(cell);
-    thisObject->JSDOMIterator<JSWrapper, IteratorTraits>::~JSDOMIterator();
+    JSDOMIteratorBase<JSWrapper, IteratorTraits>* thisObject = static_cast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(cell);
+    thisObject->JSDOMIteratorBase<JSWrapper, IteratorTraits>::~JSDOMIteratorBase();
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-JSC::JSValue JSDOMIterator<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObject& lexicalGlobalObject)
+JSC::JSValue JSDOMIteratorBase<JSWrapper, IteratorTraits>::next(JSC::JSGlobalObject& lexicalGlobalObject)
 {
     if (m_iterator) {
         auto iteratorValue = m_iterator->next();
@@ -253,7 +243,7 @@ JSC::EncodedJSValue JSC_HOST_CALL JSDOMIteratorPrototype<JSWrapper, IteratorTrai
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto iterator = JSC::jsDynamicCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(vm, callFrame->thisValue());
+    auto iterator = JSC::jsDynamicCast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(vm, callFrame->thisValue());
     if (!iterator)
         return JSC::JSValue::encode(throwTypeError(globalObject, scope, "Cannot call next() on a non-Iterator object"_s));
 

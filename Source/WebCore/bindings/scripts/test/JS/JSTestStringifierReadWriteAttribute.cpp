@@ -56,7 +56,7 @@ bool setJSTestStringifierReadWriteAttributeConstructor(JSC::JSGlobalObject*, JSC
 JSC::EncodedJSValue jsTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestStringifierReadWriteAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestStringifierReadWriteAttributePrototype : public JSC::JSNonFinalObject {
+class JSTestStringifierReadWriteAttributePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierReadWriteAttributePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

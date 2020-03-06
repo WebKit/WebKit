@@ -55,7 +55,7 @@ JSC::EncodedJSValue jsTestStringifierReadOnlyAttributeConstructor(JSC::JSGlobalO
 bool setJSTestStringifierReadOnlyAttributeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestStringifierReadOnlyAttributeIdentifier(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestStringifierReadOnlyAttributePrototype : public JSC::JSNonFinalObject {
+class JSTestStringifierReadOnlyAttributePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierReadOnlyAttributePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

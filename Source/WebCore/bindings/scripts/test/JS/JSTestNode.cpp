@@ -74,7 +74,7 @@ bool setJSTestNodeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::En
 JSC::EncodedJSValue jsTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNodeName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNodePrototype : public JSC::JSNonFinalObject {
+class JSTestNodePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNodePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
@@ -376,10 +376,58 @@ struct TestNodeIteratorTraits {
     using ValueType = IDLInterface<TestNode>;
 };
 
-using TestNodeIterator = JSDOMIterator<JSTestNode, TestNodeIteratorTraits>;
+using TestNodeIteratorBase = JSDOMIteratorBase<JSTestNode, TestNodeIteratorTraits>;
+class TestNodeIterator final : public TestNodeIteratorBase {
+public:
+    using Base = TestNodeIteratorBase;
+    DECLARE_INFO;
+
+    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+        auto& spaces = clientData.subspaces();
+        if (auto* space = spaces.m_subspaceForTestNodeIterator.get())
+            return space;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator> || !TestNodeIterator::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestNodeIterator>)
+            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), TestNodeIterator);
+        else
+            spaces.m_subspaceForTestNodeIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), TestNodeIterator);
+        auto* space = spaces.m_subspaceForTestNodeIterator.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        if (&TestNodeIterator::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+            clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+        return space;
+    }
+
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    }
+
+    static TestNodeIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
+    {
+        auto* instance = new (NotNull, JSC::allocateCell<TestNodeIterator>(vm.heap)) TestNodeIterator(structure, iteratedObject, kind);
+        instance->finishCreation(vm);
+        return instance;
+    }
+
+private:
+    TestNodeIterator(JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
+        : Base(structure, iteratedObject, kind)
+    {
+    }
+};
+
 using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode, TestNodeIteratorTraits>;
 
 template<>
+const JSC::ClassInfo TestNodeIteratorBase::s_info = { "TestNode Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorBase) };
 const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIterator) };
 
 template<>

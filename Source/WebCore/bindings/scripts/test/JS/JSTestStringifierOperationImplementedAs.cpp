@@ -54,7 +54,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationImplementedAsPrototy
 JSC::EncodedJSValue jsTestStringifierOperationImplementedAsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestStringifierOperationImplementedAsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestStringifierOperationImplementedAsPrototype : public JSC::JSNonFinalObject {
+class JSTestStringifierOperationImplementedAsPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierOperationImplementedAsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

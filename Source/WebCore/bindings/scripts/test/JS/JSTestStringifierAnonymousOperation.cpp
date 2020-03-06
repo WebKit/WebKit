@@ -53,7 +53,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestStringifierAnonymousOperationPrototypeFu
 JSC::EncodedJSValue jsTestStringifierAnonymousOperationConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestStringifierAnonymousOperationConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestStringifierAnonymousOperationPrototype : public JSC::JSNonFinalObject {
+class JSTestStringifierAnonymousOperationPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestStringifierAnonymousOperationPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

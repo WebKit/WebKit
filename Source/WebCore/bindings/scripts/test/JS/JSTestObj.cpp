@@ -1808,7 +1808,7 @@ bool setJSTestObjConditionallyExposedToWorkerAttribute(JSC::JSGlobalObject*, JSC
 JSC::EncodedJSValue jsTestObjConditionallyExposedToWindowAndWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjConditionallyExposedToWindowAndWorkerAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestObjPrototype : public JSC::JSNonFinalObject {
+class JSTestObjPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestObjPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

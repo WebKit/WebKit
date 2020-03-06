@@ -65,7 +65,7 @@ JSC::EncodedJSValue jsSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSVal
 bool setJSSetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsSetLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSSetLikePrototype : public JSC::JSNonFinalObject {
+class JSSetLikePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSSetLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

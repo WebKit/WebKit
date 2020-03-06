@@ -50,7 +50,7 @@ JSC::EncodedJSValue jsTestExceptionConstructor(JSC::JSGlobalObject*, JSC::Encode
 bool setJSTestExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestExceptionName(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestExceptionPrototype : public JSC::JSNonFinalObject {
+class JSTestExceptionPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

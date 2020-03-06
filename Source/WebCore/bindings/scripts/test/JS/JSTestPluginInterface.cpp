@@ -48,7 +48,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestPluginInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestPluginInterfacePrototype : public JSC::JSNonFinalObject {
+class JSTestPluginInterfacePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestPluginInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

@@ -89,7 +89,7 @@ bool setJSTestSerializationEleventhSequenceAttribute(JSC::JSGlobalObject*, JSC::
 JSC::EncodedJSValue jsTestSerializationTwelfthInterfaceSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationTwelfthInterfaceSequenceAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestSerializationPrototype : public JSC::JSNonFinalObject {
+class JSTestSerializationPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializationPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

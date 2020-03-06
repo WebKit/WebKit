@@ -161,7 +161,7 @@ JSC::EncodedJSValue jsTestInterfaceReflectAttribute(JSC::JSGlobalObject*, JSC::E
 bool setJSTestInterfaceReflectAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 
-class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
+class JSTestInterfacePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestInterfacePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
@@ -1065,10 +1065,58 @@ struct TestInterfaceIteratorTraits {
     using ValueType = IDLInterface<TestObj>;
 };
 
-using TestInterfaceIterator = JSDOMIterator<JSTestInterface, TestInterfaceIteratorTraits>;
+using TestInterfaceIteratorBase = JSDOMIteratorBase<JSTestInterface, TestInterfaceIteratorTraits>;
+class TestInterfaceIterator final : public TestInterfaceIteratorBase {
+public:
+    using Base = TestInterfaceIteratorBase;
+    DECLARE_INFO;
+
+    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+        auto& spaces = clientData.subspaces();
+        if (auto* space = spaces.m_subspaceForTestInterfaceIterator.get())
+            return space;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, TestInterfaceIterator> || !TestInterfaceIterator::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, TestInterfaceIterator>)
+            spaces.m_subspaceForTestInterfaceIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), TestInterfaceIterator);
+        else
+            spaces.m_subspaceForTestInterfaceIterator = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), TestInterfaceIterator);
+        auto* space = spaces.m_subspaceForTestInterfaceIterator.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        if (&TestInterfaceIterator::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+            clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+        return space;
+    }
+
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    }
+
+    static TestInterfaceIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
+    {
+        auto* instance = new (NotNull, JSC::allocateCell<TestInterfaceIterator>(vm.heap)) TestInterfaceIterator(structure, iteratedObject, kind);
+        instance->finishCreation(vm);
+        return instance;
+    }
+
+private:
+    TestInterfaceIterator(JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
+        : Base(structure, iteratedObject, kind)
+    {
+    }
+};
+
 using TestInterfaceIteratorPrototype = JSDOMIteratorPrototype<JSTestInterface, TestInterfaceIteratorTraits>;
 
 template<>
+const JSC::ClassInfo TestInterfaceIteratorBase::s_info = { "TestInterface Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIteratorBase) };
 const JSC::ClassInfo TestInterfaceIterator::s_info = { "TestInterface Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIterator) };
 
 template<>

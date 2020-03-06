@@ -77,7 +77,7 @@ JSC::EncodedJSValue jsTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject
 bool setJSTestCallTracerTestAttributeWithVariant(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestCallTracerTestReadonlyAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestCallTracerPrototype : public JSC::JSNonFinalObject {
+class JSTestCallTracerPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCallTracerPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

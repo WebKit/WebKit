@@ -62,7 +62,7 @@ JSC::EncodedJSValue jsTestActiveDOMObjectConstructor(JSC::JSGlobalObject*, JSC::
 bool setJSTestActiveDOMObjectConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestActiveDOMObjectExcitingAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestActiveDOMObjectPrototype : public JSC::JSNonFinalObject {
+class JSTestActiveDOMObjectPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestActiveDOMObjectPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

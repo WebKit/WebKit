@@ -55,7 +55,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionM
 JSC::EncodedJSValue jsTestMediaQueryListListenerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestMediaQueryListListenerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestMediaQueryListListenerPrototype : public JSC::JSNonFinalObject {
+class JSTestMediaQueryListListenerPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestMediaQueryListListenerPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

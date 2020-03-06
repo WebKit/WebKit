@@ -59,7 +59,7 @@ bool setJSTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSVa
 JSC::EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestCEReactionsStringifierPrototype : public JSC::JSNonFinalObject {
+class JSTestCEReactionsStringifierPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCEReactionsStringifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

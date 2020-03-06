@@ -57,7 +57,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedSetterWithIndexedGetterAndSetterPro
 JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedSetterWithIndexedGetterAndSetterConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedSetterWithIndexedGetterAndSetterPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedSetterWithIndexedGetterAndSetterPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithIndexedGetterAndSetterPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

@@ -6502,10 +6502,58 @@ struct ${iteratorTraitsName} {
     using ValueType = ${iteratorTraitsValueType};
 };
 
-using ${iteratorName} = JSDOMIterator<${className}, ${iteratorTraitsName}>;
+using ${iteratorName}Base = JSDOMIteratorBase<${className}, ${iteratorTraitsName}>;
+class ${iteratorName} final : public ${iteratorName}Base {
+public:
+    using Base = ${iteratorName}Base;
+    DECLARE_INFO;
+
+    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+        auto& spaces = clientData.subspaces();
+        if (auto* space = spaces.m_subspaceFor${iteratorName}.get())
+            return space;
+        static_assert(std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}> || !${iteratorName}::needsDestruction);
+        if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, ${iteratorName}>)
+            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), ${iteratorName});
+        else
+            spaces.m_subspaceFor${iteratorName} = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), ${iteratorName});
+        auto* space = spaces.m_subspaceFor${iteratorName}.get();
+IGNORE_WARNINGS_BEGIN(\"unreachable-code\")
+IGNORE_WARNINGS_BEGIN(\"tautological-compare\")
+        if (&${iteratorName}::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+            clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+        return space;
+    }
+
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    }
+
+    static ${iteratorName}* create(JSC::VM& vm, JSC::Structure* structure, ${className}& iteratedObject, IterationKind kind)
+    {
+        auto* instance = new (NotNull, JSC::allocateCell<${iteratorName}>(vm.heap)) ${iteratorName}(structure, iteratedObject, kind);
+        instance->finishCreation(vm);
+        return instance;
+    }
+
+private:
+    ${iteratorName}(JSC::Structure* structure, ${className}& iteratedObject, IterationKind kind)
+        : Base(structure, iteratedObject, kind)
+    {
+    }
+};
+
 using ${iteratorPrototypeName} = JSDOMIteratorPrototype<${className}, ${iteratorTraitsName}>;
 
 template<>
+const JSC::ClassInfo ${iteratorName}Base::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${iteratorName}Base) };
 const JSC::ClassInfo ${iteratorName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${iteratorName}) };
 
 template<>
@@ -7209,7 +7257,7 @@ sub GeneratePrototypeDeclaration
     my $prototypeClassName = "${className}Prototype";
 
     my %structureFlags = ();
-    push(@$outputArray, "class ${prototypeClassName} : public JSC::JSNonFinalObject {\n");
+    push(@$outputArray, "class ${prototypeClassName} final : public JSC::JSNonFinalObject {\n");
     push(@$outputArray, "public:\n");
     push(@$outputArray, "    using Base = JSC::JSNonFinalObject;\n");
 

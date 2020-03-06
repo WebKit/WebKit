@@ -50,7 +50,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedAndIndexedSetterThrowingExceptionPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedAndIndexedSetterThrowingExceptionPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedAndIndexedSetterThrowingExceptionPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

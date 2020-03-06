@@ -132,7 +132,7 @@ bool setJSTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::Encode
 JSC::EncodedJSValue jsTestPromiseRejectionEventPromise(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestPromiseRejectionEventReason(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestPromiseRejectionEventPrototype : public JSC::JSNonFinalObject {
+class JSTestPromiseRejectionEventPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestPromiseRejectionEventPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

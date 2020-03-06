@@ -50,7 +50,7 @@ JSC::EncodedJSValue jsTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, J
 bool setJSTestGenerateIsReachableConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGenerateIsReachableASecretAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestGenerateIsReachablePrototype : public JSC::JSNonFinalObject {
+class JSTestGenerateIsReachablePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestGenerateIsReachablePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

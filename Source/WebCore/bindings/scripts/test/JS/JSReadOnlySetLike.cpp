@@ -62,7 +62,7 @@ JSC::EncodedJSValue jsReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::Enco
 bool setJSReadOnlySetLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsReadOnlySetLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSReadOnlySetLikePrototype : public JSC::JSNonFinalObject {
+class JSReadOnlySetLikePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSReadOnlySetLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

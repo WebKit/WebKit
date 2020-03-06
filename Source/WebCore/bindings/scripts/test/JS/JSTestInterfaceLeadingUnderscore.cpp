@@ -50,7 +50,7 @@ JSC::EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObj
 bool setJSTestInterfaceLeadingUnderscoreConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestInterfaceLeadingUnderscoreReadonly(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSTestInterfaceLeadingUnderscorePrototype : public JSC::JSNonFinalObject {
+class JSTestInterfaceLeadingUnderscorePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestInterfaceLeadingUnderscorePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

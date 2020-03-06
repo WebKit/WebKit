@@ -58,7 +58,7 @@ bool setJSTestSerializationInheritFinalFinalLongAttributeFoo(JSC::JSGlobalObject
 JSC::EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationInheritFinalFinalLongAttributeBar(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestSerializationInheritFinalPrototype : public JSC::JSNonFinalObject {
+class JSTestSerializationInheritFinalPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializationInheritFinalPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

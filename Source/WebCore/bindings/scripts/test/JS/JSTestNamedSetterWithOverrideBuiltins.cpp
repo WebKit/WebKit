@@ -49,7 +49,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestNamedSetterWithOverrideBuiltinsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedSetterWithOverrideBuiltinsConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedSetterWithOverrideBuiltinsPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedSetterWithOverrideBuiltinsPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedSetterWithOverrideBuiltinsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

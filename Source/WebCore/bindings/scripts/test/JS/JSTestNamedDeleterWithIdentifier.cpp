@@ -54,7 +54,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNamedDeleterWithIdentifierPrototypeFunct
 JSC::EncodedJSValue jsTestNamedDeleterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedDeleterWithIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedDeleterWithIdentifierPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedDeleterWithIdentifierPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedDeleterWithIdentifierPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

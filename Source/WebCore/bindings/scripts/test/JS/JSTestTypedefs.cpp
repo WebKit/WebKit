@@ -99,7 +99,7 @@ bool setJSTestTypedefsBufferSourceAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue
 JSC::EncodedJSValue jsTestTypedefsDomTimeStampAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestTypedefsDomTimeStampAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestTypedefsPrototype : public JSC::JSNonFinalObject {
+class JSTestTypedefsPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestTypedefsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

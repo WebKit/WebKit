@@ -470,7 +470,7 @@ static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITNodeNullableA
     DOMJIT::IDLResultTypeFilter<IDLNullable<IDLInterface<Node>>>::value
 };
 
-class JSTestDOMJITPrototype : public JSC::JSNonFinalObject {
+class JSTestDOMJITPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDOMJITPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

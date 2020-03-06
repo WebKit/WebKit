@@ -49,7 +49,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestNamedGetterCallWithConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestNamedGetterCallWithConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestNamedGetterCallWithPrototype : public JSC::JSNonFinalObject {
+class JSTestNamedGetterCallWithPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestNamedGetterCallWithPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

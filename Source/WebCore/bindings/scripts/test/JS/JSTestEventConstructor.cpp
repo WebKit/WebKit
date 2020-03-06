@@ -131,7 +131,7 @@ JSC::EncodedJSValue jsTestEventConstructorAttr2(JSC::JSGlobalObject*, JSC::Encod
 JSC::EncodedJSValue jsTestEventConstructorAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 
-class JSTestEventConstructorPrototype : public JSC::JSNonFinalObject {
+class JSTestEventConstructorPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEventConstructorPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

@@ -63,7 +63,7 @@ JSC::EncodedJSValue jsReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::Enco
 bool setJSReadOnlyMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsReadOnlyMapLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSReadOnlyMapLikePrototype : public JSC::JSNonFinalObject {
+class JSReadOnlyMapLikePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSReadOnlyMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

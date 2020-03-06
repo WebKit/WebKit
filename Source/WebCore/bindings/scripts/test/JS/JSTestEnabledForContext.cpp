@@ -53,7 +53,7 @@ bool setJSTestEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSV
 JSC::EncodedJSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestEnabledForContextPrototype : public JSC::JSNonFinalObject {
+class JSTestEnabledForContextPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEnabledForContextPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

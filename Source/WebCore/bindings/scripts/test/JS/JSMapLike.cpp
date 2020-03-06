@@ -66,7 +66,7 @@ JSC::EncodedJSValue jsMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSVal
 bool setJSMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsMapLikeSize(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
-class JSMapLikePrototype : public JSC::JSNonFinalObject {
+class JSMapLikePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSMapLikePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

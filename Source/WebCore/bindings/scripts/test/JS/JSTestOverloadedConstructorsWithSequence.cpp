@@ -52,7 +52,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestOverloadedConstructorsWithSequenceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestOverloadedConstructorsWithSequenceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestOverloadedConstructorsWithSequencePrototype : public JSC::JSNonFinalObject {
+class JSTestOverloadedConstructorsWithSequencePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestOverloadedConstructorsWithSequencePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

@@ -56,7 +56,7 @@ bool setJSTestSerializationInheritConstructor(JSC::JSGlobalObject*, JSC::Encoded
 JSC::EncodedJSValue jsTestSerializationInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationInheritInheritLongAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestSerializationInheritPrototype : public JSC::JSNonFinalObject {
+class JSTestSerializationInheritPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializationInheritPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

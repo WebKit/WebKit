@@ -68,7 +68,7 @@ JSC::EncodedJSValue jsTestEnabledBySettingEnabledBySettingAttribute(JSC::JSGloba
 bool setJSTestEnabledBySettingEnabledBySettingAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 
-class JSTestEnabledBySettingPrototype : public JSC::JSNonFinalObject {
+class JSTestEnabledBySettingPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestEnabledBySettingPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

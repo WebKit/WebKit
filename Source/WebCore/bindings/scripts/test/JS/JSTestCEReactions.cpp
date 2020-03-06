@@ -72,7 +72,7 @@ bool setJSTestCEReactionsReflectAttributeWithCEReactionsNotNeeded(JSC::JSGlobalO
 JSC::EncodedJSValue jsTestCEReactionsStringifierAttributeNotNeeded(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestCEReactionsStringifierAttributeNotNeeded(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestCEReactionsPrototype : public JSC::JSNonFinalObject {
+class JSTestCEReactionsPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestCEReactionsPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)

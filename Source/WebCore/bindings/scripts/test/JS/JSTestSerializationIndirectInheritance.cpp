@@ -46,7 +46,7 @@ using namespace JSC;
 JSC::EncodedJSValue jsTestSerializationIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationIndirectInheritanceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-class JSTestSerializationIndirectInheritancePrototype : public JSC::JSNonFinalObject {
+class JSTestSerializationIndirectInheritancePrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
     static JSTestSerializationIndirectInheritancePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
