@@ -944,14 +944,19 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     auto* requestingFrame = requester.frameID() ? WebProcess::singleton().webFrame(requester.frameID()) : nullptr;
     Optional<WebCore::FrameIdentifier> originatingFrameID;
-    if (requestingFrame)
+    Optional<WebCore::FrameIdentifier> parentFrameID;
+    if (requestingFrame) {
         originatingFrameID = requestingFrame->frameID();
+        if (auto* parentFrame = requestingFrame->parentFrame())
+            parentFrameID = parentFrame->frameID();
+    }
 
     FrameInfoData originatingFrameInfoData {
         navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes,
         ResourceRequest { requester.url() },
         requester.securityOrigin().data(),
-        WTFMove(originatingFrameID)
+        WTFMove(originatingFrameID),
+        WTFMove(parentFrameID),
     };
 
     Optional<WebPageProxyIdentifier> originatingPageID;

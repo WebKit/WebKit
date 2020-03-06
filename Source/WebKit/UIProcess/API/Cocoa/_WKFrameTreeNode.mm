@@ -79,6 +79,11 @@
     return [[wrapper(_node->handle()) retain] autorelease];
 }
 
+- (_WKFrameHandle *)_parentFrameHandle
+{
+    return [[wrapper(_node->parentFrameHandle()) retain] autorelease];
+}
+
 - (API::Object&)_apiObject
 {
     return *_node;

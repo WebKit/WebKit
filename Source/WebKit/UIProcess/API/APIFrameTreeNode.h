@@ -47,6 +47,7 @@ public:
     const WebCore::SecurityOriginData& securityOrigin() const { return m_data.info.securityOrigin; }
     const Vector<WebKit::FrameTreeNodeData>& childFrames() const { return m_data.children; }
     Ref<FrameHandle> handle() const;
+    RefPtr<FrameHandle> parentFrameHandle() const;
 
 private:
     FrameTreeNode(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page)

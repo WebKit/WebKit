@@ -89,4 +89,9 @@
     return [[wrapper(_frameInfo->handle()) retain] autorelease];
 }
 
+- (_WKFrameHandle *)_parentFrameHandle
+{
+    return [[wrapper(_frameInfo->parentFrameHandle()) retain] autorelease];
+}
+
 @end

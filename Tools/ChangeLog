@@ -1,3 +1,12 @@
+2020-03-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKFrameInfo._parentFrameHandle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=208674
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2020-03-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement SPI -[_WKWebAuthenticationPanelDelegate panel:selectAssertionResponse:source:completionHandler:]

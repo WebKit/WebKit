@@ -1,3 +1,33 @@
+2020-03-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKFrameInfo._parentFrameHandle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=208674
+
+        Reviewed by Brady Eidson.
+
+        I got carried away and removed it in r257872 but it's still needed for <rdar://problem/57201034>
+        Covered by API tests.
+
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::encode const):
+        (WebKit::FrameInfoData::decode):
+        * Shared/FrameInfoData.h:
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::parentFrameHandle const):
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/APIFrameTreeNode.cpp:
+        (API::FrameTreeNode::parentFrameHandle const):
+        * UIProcess/API/APIFrameTreeNode.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo _parentFrameHandle]):
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.mm:
+        (-[_WKFrameTreeNode _parentFrameHandle]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::info const):
+
 2020-03-05  Kate Cheney  <katherine_cheney@apple.com>
 
         Add web page additions to WebPageProxy

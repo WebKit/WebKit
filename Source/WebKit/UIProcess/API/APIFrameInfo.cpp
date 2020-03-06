@@ -49,4 +49,11 @@ Ref<FrameHandle> FrameInfo::handle() const
     return FrameHandle::create(m_data.frameID ? *m_data.frameID : WebCore::FrameIdentifier { });
 }
 
+RefPtr<FrameHandle> FrameInfo::parentFrameHandle() const
+{
+    if (!m_data.parentFrameID)
+        return nullptr;
+    return FrameHandle::create(*m_data.parentFrameID);
+}
+
 } // namespace API

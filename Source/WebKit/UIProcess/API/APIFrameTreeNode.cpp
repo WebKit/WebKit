@@ -38,4 +38,9 @@ Ref<FrameHandle> FrameTreeNode::handle() const
     return FrameHandle::create(m_data.info.frameID ? *m_data.info.frameID : WebCore::FrameIdentifier { });
 }
 
+RefPtr<FrameHandle> FrameTreeNode::parentFrameHandle() const
+{
+    return m_data.info.parentFrameID ? RefPtr<FrameHandle>(FrameHandle::create(*m_data.info.parentFrameID)) : nullptr;
+}
+
 } // namespace API

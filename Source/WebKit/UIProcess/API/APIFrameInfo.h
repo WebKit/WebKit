@@ -54,6 +54,7 @@ public:
     WebCore::SecurityOriginData& securityOrigin() { return m_data.securityOrigin; }
     Ref<FrameHandle> handle() const;
     WebKit::WebPageProxy* page() { return m_page.get(); }
+    RefPtr<FrameHandle> parentFrameHandle() const;
 
 private:
     FrameInfo(WebKit::FrameInfoData&&, WebKit::WebPageProxy*);
