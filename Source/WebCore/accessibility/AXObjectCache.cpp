@@ -3147,7 +3147,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification noti
     case AXChildrenChanged:
     case AXSelectedTextChanged:
     case AXValueChanged: {
-        tree->removeSubtree(object->objectID());
+        tree->removeNode(object->objectID());
         auto* parent = object->parentObject();
         AXID parentID = parent ? parent->objectID() : InvalidAXID;
         Vector<AXIsolatedTree::NodeChange> nodeChanges;

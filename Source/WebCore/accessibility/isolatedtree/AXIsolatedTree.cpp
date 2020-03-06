@@ -198,26 +198,11 @@ void AXIsolatedTree::removeNode(AXID axID)
     m_pendingRemovals.append(axID);
 }
 
-void AXIsolatedTree::removeSubtree(AXID axID)
+void AXIsolatedTree::appendNodeChanges(const Vector<NodeChange>& changes)
 {
     LockHolder locker { m_changeLogLock };
-    m_pendingRemovals.append(axID);
-
-    auto object = nodeForID(axID);
-    if (!object)
-        return;
-    auto childrenIDs(object->m_childrenIDs);
-    locker.unlockEarly();
-
-    for (const auto& childID : childrenIDs)
-        removeSubtree(childID);
-}
-
-void AXIsolatedTree::appendNodeChanges(const Vector<NodeChange>& log)
-{
-    LockHolder locker { m_changeLogLock };
-    for (const auto& node : log)
-        m_pendingAppends.append(node);
+    for (const auto& nodeChange : changes)
+        m_pendingAppends.append(nodeChange);
 }
 
 void AXIsolatedTree::applyPendingChanges()
@@ -227,15 +212,16 @@ void AXIsolatedTree::applyPendingChanges()
 
     m_focusedNodeID = m_pendingFocusedNodeID;
 
-    for (const auto& axID : m_pendingRemovals) {
+    while (m_pendingRemovals.size()) {
+        auto axID = m_pendingRemovals.takeLast();
         if (axID == InvalidAXID)
             continue;
 
-        if (auto object = nodeForID(axID))
+        if (auto object = nodeForID(axID)) {
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
-        m_readerThreadNodeMap.remove(axID);
+            m_pendingRemovals.appendVector(object->m_childrenIDs);
+        }
     }
-    m_pendingRemovals.clear();
 
     for (const auto& item : m_pendingAppends) {
         AXID axID = item.m_isolatedObject->objectID();
