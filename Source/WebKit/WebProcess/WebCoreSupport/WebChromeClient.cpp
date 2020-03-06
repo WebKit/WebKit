@@ -900,14 +900,10 @@ RemoteRenderingBackend& WebChromeClient::ensureRemoteRenderingBackend() const
 
 std::unique_ptr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, ColorSpace colorSpace) const
 {
-    RenderingMode mode;
-    if (m_page.shouldUseRemoteRenderingFor(purpose))
-        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::RemoteAccelerated : RenderingMode::RemoteUnaccelerated;
-    else if (shouldUseDisplayList == ShouldUseDisplayList::Yes)
-        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::DisplayListAccelerated : RenderingMode::DisplayListUnaccelerated;
-    else
-        mode = shouldAccelerate == ShouldAccelerate::Yes ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-    return ensureRemoteRenderingBackend().createImageBuffer(size, mode, resolutionScale, colorSpace);
+    if (!m_page.shouldUseRemoteRenderingFor(purpose))
+        return nullptr;
+
+    return ensureRemoteRenderingBackend().createImageBuffer(size, shouldAccelerate, resolutionScale, colorSpace);
 }
 
 #endif // ENABLE(GPU_PROCESS)

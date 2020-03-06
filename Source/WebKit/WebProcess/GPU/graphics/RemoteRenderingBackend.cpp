@@ -72,20 +72,30 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace)
+bool RemoteRenderingBackend::waitForCreateImageBufferBackend()
 {
-    if (renderingMode == RenderingMode::RemoteAccelerated) {
-        if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(size, renderingMode, resolutionScale, colorSpace, *this)) {
+    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+}
+
+bool RemoteRenderingBackend::waitForCommitImageBufferFlushContext()
+{
+    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CommitImageBufferFlushContext>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+}
+
+std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, float resolutionScale, ColorSpace colorSpace)
+{
+    if (shouldAccelerate == ShouldAccelerate::Yes) {
+        if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
             m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
             return imageBuffer;
         }
     }
 
-    if (renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated) {
-        if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(size, renderingMode, resolutionScale, colorSpace, *this)) {
-            m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
-            return imageBuffer;
-        }
+    if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
+        m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
+        return imageBuffer;
     }
 
     return nullptr;
