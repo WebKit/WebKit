@@ -30,6 +30,7 @@
 
 #import "ArgumentCoders.h"
 #import "DataReference.h"
+#import "Logging.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
 #import "PDFLayerControllerSPI.h"
@@ -88,10 +89,13 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/text/TextStream.h>
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 @interface PDFDocument ()
--(instancetype) initWithProvider:(CGDataProviderRef)dataProvider;
+-(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
+-(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
 @end
 #endif
 
@@ -622,6 +626,7 @@ PDFPlugin::~PDFPlugin()
 static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
 {
     ASSERT(!isMainThread());
+    LOG(PDF, "PDF data provider requesting %lu bytes at position %llu", count, position);
 
     Ref<PDFPlugin> plugin = *((PDFPlugin*)info);
     WTF::Semaphore dataSemaphore { 0 };
@@ -644,11 +649,23 @@ static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buff
 {
     ASSERT(!isMainThread());
 
+#ifndef NDEBUG
+    TextStream stream;
+    stream << "PDF data provider requesting " << count << " byte ranges (";
+    for (size_t i = 0; i < count; ++i) {
+        stream << ranges[i].length << " at " << ranges[i].location;
+        if (i < count - 1)
+            stream << ", ";
+    }
+    stream << ")";
+    LOG(PDF, "%s", stream.release().utf8().data());
+#endif
+
     Ref<PDFPlugin> plugin = *((PDFPlugin*)info);
     WTF::Semaphore dataSemaphore { 0 };
     Vector<RetainPtr<CFDataRef>> dataResults(count);
 
-    // FIXME: Once we support range requests, make a single request for all ranges instead of <count> individual requests.
+    // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <count> individual requests.
     RunLoop::main().dispatch([plugin = WTFMove(plugin), &dataResults, ranges, count, &dataSemaphore] {
         for (size_t i = 0; i < count; ++i) {
             plugin->getResourceBytesAtPosition(ranges[i].length, ranges[i].location, [i, &dataResults, &dataSemaphore](const uint8_t* bytes, size_t bytesCount) {
@@ -690,11 +707,21 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     CGDataProviderSetProperty(dataProvider.get(), kCGDataProviderHasHighLatency, kCFBooleanTrue);
     m_backgroundThreadDocument = adoptNS([[pdfDocumentClass() alloc] initWithProvider:dataProvider.get()]);
 
+    WTF::Semaphore firstPageSemaphore { 0 };
+    auto firstPageQueue = WorkQueue::create("PDF first page work queue");
+
+    [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, this] (NSIndexSet *) mutable {
+        callOnMainThread([this] {
+            adoptBackgroundThreadDocument();
+        });
+        firstPageSemaphore.signal();
+    }];
+
+    firstPageSemaphore.wait();
+
     // The main thread dispatch below removes the last reference to the PDF thread.
     // It must be the last code executed in this function.
-    callOnMainThread([this, protectedPlugin = WTFMove(protectedPlugin)] {
-        adoptBackgroundThreadDocument();
-    });
+    callOnMainThread([protectedPlugin = WTFMove(protectedPlugin)] { });
 }
 
 void PDFPlugin::unconditionalCompleteOutstandingRangeRequests()

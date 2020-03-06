@@ -1,3 +1,18 @@
+2020-03-05  Brady Eidson  <beidson@apple.com>
+
+        Pre-fetch first page in new PDF loading model.
+        https://bugs.webkit.org/show_bug.cgi?id=208669
+
+        Reviewed by Alex Christensen.
+
+        Also add some logging.
+
+        * Platform/Logging.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::dataProviderGetByteRangesCallback):
+        (WebKit::PDFPlugin::threadEntry):
+
 2020-03-05  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegatePrivate SPI to inform application of subframe navigations
