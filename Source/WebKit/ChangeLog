@@ -1,3 +1,18 @@
+2020-03-06  Youenn Fablet  <youenn@apple.com>
+
+        Make sure completion handler given to AuxiliaryProcessProxy::sendMessage is called asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=208701
+
+        Reviewed by Chris Dumez.
+
+        This is difficult to test as we change the behavior in the case a sendWithAsyncReply fails synchronously.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        sendMessage completion handler is always called asynchronously for usual cases except in rare cases
+        like terminated processes or invalid connections.
+        To make things more consistent, call completion handler asynchronously for these rare cases as well.
+
 2020-03-06  David Quesada  <david_quesada@apple.com>
 
         Add _WKResourceLoadInfo.resourceType SPI

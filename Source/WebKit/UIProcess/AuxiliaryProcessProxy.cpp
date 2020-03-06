@@ -165,8 +165,11 @@ bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, O
         break;
     }
 
-    if (asyncReplyInfo)
-        asyncReplyInfo->first(nullptr);
+    if (asyncReplyInfo) {
+        RunLoop::current().dispatch([completionHandler = WTFMove(asyncReplyInfo->first)]() mutable {
+            completionHandler(nullptr);
+        });
+    }
     
     return false;
 }
