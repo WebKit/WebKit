@@ -183,10 +183,8 @@ static void removePseudoAttributes(Node& node)
         removePseudoAttributes(*child);
 }
 
-ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(ScriptExecutionContext& context, double start, double end, DocumentFragment& cueFragment)
+ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double start, double end, DocumentFragment& cueFragment)
 {
-    auto& document = downcast<Document>(context);
-
     if (!cueFragment.firstChild())
         return Exception { InvalidNodeTypeError, "Empty cue fragment" };
 
@@ -224,10 +222,10 @@ TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const Med
 {
 }
 
-TextTrackCue::TextTrackCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end)
+TextTrackCue::TextTrackCue(Document& context, const MediaTime& start, const MediaTime& end)
     : m_startTime(start)
     , m_endTime(end)
-    , m_document(downcast<Document>(context))
+    , m_document(context)
 {
 }
 
@@ -242,7 +240,7 @@ void TextTrackCue::willChange()
         return;
 
     if (m_track)
-        m_track->cueWillChange(this);
+        m_track->cueWillChange(*this);
 }
 
 void TextTrackCue::didChange()
@@ -254,7 +252,7 @@ void TextTrackCue::didChange()
     m_displayTreeNeedsUpdate = true;
 
     if (m_track)
-        m_track->cueDidChange(this);
+        m_track->cueDidChange(*this);
 }
 
 TextTrack* TextTrackCue::track() const

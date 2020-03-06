@@ -63,14 +63,14 @@ void GenericTextTrackCueMap::remove(TextTrackCue& publicCue)
         m_dataToCueMap.remove(cueIdentifier);
 }
 
-inline InbandGenericTextTrack::InbandGenericTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : InbandTextTrack(context, client, trackPrivate)
+inline InbandGenericTextTrack::InbandGenericTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+    : InbandTextTrack(document, client, trackPrivate)
 {
 }
 
-Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
-    return adoptRef(*new InbandGenericTextTrack(context, client, trackPrivate));
+    return adoptRef(*new InbandGenericTextTrack(document, client, trackPrivate));
 }
 
 InbandGenericTextTrack::~InbandGenericTextTrack() = default;
@@ -119,9 +119,9 @@ void InbandGenericTextTrack::addGenericCue(InbandGenericCue& inbandCue)
     if (m_cueMap.find(inbandCue.uniqueId()))
         return;
 
-    auto cue = TextTrackCueGeneric::create(*scriptExecutionContext(), inbandCue.startTime(), inbandCue.endTime(), inbandCue.content());
+    auto cue = TextTrackCueGeneric::create(document(), inbandCue.startTime(), inbandCue.endTime(), inbandCue.content());
     updateCueFromCueData(cue.get(), inbandCue);
-    if (hasCue(cue.ptr(), TextTrackCue::IgnoreDuration)) {
+    if (hasCue(cue, TextTrackCue::IgnoreDuration)) {
         INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", cue.get());
         return;
     }
@@ -168,7 +168,7 @@ ExceptionOr<void> InbandGenericTextTrack::removeCue(TextTrackCue& cue)
 WebVTTParser& InbandGenericTextTrack::parser()
 {
     if (!m_webVTTParser)
-        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), scriptExecutionContext());
+        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), document());
     return *m_webVTTParser;
 }
 
@@ -184,31 +184,22 @@ void InbandGenericTextTrack::parseWebVTTFileHeader(String&& header)
 
 void InbandGenericTextTrack::newCuesParsed()
 {
-    Vector<RefPtr<WebVTTCueData>> cues;
-    parser().getNewCues(cues);
-
-    for (auto& cueData : cues) {
-        auto vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
-
-        if (hasCue(vttCue.ptr(), TextTrackCue::IgnoreDuration)) {
-            INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", vttCue.get());
+    for (auto& cueData : parser().takeCues()) {
+        auto cue = VTTCue::create(document(), cueData);
+        if (hasCue(cue, TextTrackCue::IgnoreDuration)) {
+            INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", cue.get());
             return;
         }
-
-        INFO_LOG(LOGIDENTIFIER, vttCue.get());
-
-        addCue(WTFMove(vttCue));
+        INFO_LOG(LOGIDENTIFIER, cue.get());
+        addCue(WTFMove(cue));
     }
 }
 
 void InbandGenericTextTrack::newRegionsParsed()
 {
-    Vector<RefPtr<VTTRegion>> newRegions;
-    parser().getNewRegions(newRegions);
-
-    for (auto& region : newRegions) {
+    for (auto& region : parser().takeRegions()) {
         region->setTrack(this);
-        regions()->add(region.releaseNonNull());
+        regions()->add(WTFMove(region));
     }
 }
 

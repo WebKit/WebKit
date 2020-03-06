@@ -111,7 +111,7 @@ public:
         Finished
     };
 
-    WebVTTParser(WebVTTParserClient*, ScriptExecutionContext*);
+    WebVTTParser(WebVTTParserClient&, Document&);
 
     static inline bool isRecognizedTag(const AtomString& tagName)
     {
@@ -150,17 +150,12 @@ public:
     void fileFinished();
 
     // Transfers ownership of last parsed cues to caller.
-    void getNewCues(Vector<RefPtr<WebVTTCueData>>&);
-    void getNewRegions(Vector<RefPtr<VTTRegion>>&);
-
-    Vector<String> getStyleSheets();
+    Vector<Ref<WebVTTCueData>> takeCues();
+    Vector<Ref<VTTRegion>> takeRegions();
+    Vector<String> takeStyleSheets();
     
     // Create the DocumentFragment representation of the WebVTT cue text.
     static Ref<DocumentFragment> createDocumentFragmentFromCueText(Document&, const String&);
-
-protected:
-    ScriptExecutionContext* m_scriptExecutionContext;
-    ParseState m_state;
 
 private:
     void parse();
@@ -185,6 +180,9 @@ private:
 
     static bool collectTimeStamp(VTTScanner& input, MediaTime& timeStamp);
 
+    Document& m_document;
+    ParseState m_state { Initial };
+
     BufferedLineReader m_lineReader;
     RefPtr<TextResourceDecoder> m_decoder;
     String m_currentId;
@@ -196,10 +194,10 @@ private:
     RefPtr<VTTRegion> m_currentRegion;
     String m_currentSourceStyleSheet;
     
-    WebVTTParserClient* m_client;
+    WebVTTParserClient& m_client;
 
-    Vector<RefPtr<WebVTTCueData>> m_cuelist;
-    Vector<RefPtr<VTTRegion>> m_regionList;
+    Vector<Ref<WebVTTCueData>> m_cuelist;
+    Vector<Ref<VTTRegion>> m_regionList;
     Vector<String> m_styleSheets;
 };
 

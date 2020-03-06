@@ -780,12 +780,12 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
         if (!textTrack)
             continue;
 
-        if (textTrack == TextTrack::captionMenuOffItem()) {
+        if (textTrack == &TextTrack::captionMenuOffItem()) {
             offMenuItem = trackItem;
             continue;
         }
 
-        if (textTrack == TextTrack::captionMenuAutomaticItem()) {
+        if (textTrack == &TextTrack::captionMenuAutomaticItem()) {
             if (displayMode == CaptionUserPreferences::Automatic)
                 trackItem->classList().add(selectedClassValue);
             else

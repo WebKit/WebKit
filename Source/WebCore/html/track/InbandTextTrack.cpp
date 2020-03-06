@@ -39,22 +39,22 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandTextTrack);
 
-Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandTextTrack> InbandTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
     switch (trackPrivate.cueFormat()) {
     case InbandTextTrackPrivate::CueFormat::Data:
-        return InbandDataTextTrack::create(context, client, trackPrivate);
+        return InbandDataTextTrack::create(document, client, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::Generic:
-        return InbandGenericTextTrack::create(context, client, trackPrivate);
+        return InbandGenericTextTrack::create(document, client, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::WebVTT:
-        return InbandWebVTTTextTrack::create(context, client, trackPrivate);
+        return InbandWebVTTTextTrack::create(document, client, trackPrivate);
     }
     ASSERT_NOT_REACHED();
-    return InbandDataTextTrack::create(context, client, trackPrivate);
+    return InbandDataTextTrack::create(document, client, trackPrivate);
 }
 
-InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : TextTrack(&context, &client, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
+InbandTextTrack::InbandTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+    : TextTrack(&document, &client, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
     m_private->setClient(this);

@@ -237,24 +237,19 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, c
 
 // ----------------------------
 
-Ref<VTTCue> VTTCue::create(ScriptExecutionContext& context, double start, double end, const String& content)
+Ref<VTTCue> VTTCue::create(Document& document, double start, double end, String&& content)
 {
-    return adoptRef(*new VTTCue(downcast<Document>(context), MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), content));
+    return adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(content)));
 }
 
-Ref<VTTCue> VTTCue::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
+Ref<VTTCue> VTTCue::create(Document& document, const WebVTTCueData& data)
 {
-    return adoptRef(*new VTTCue(downcast<Document>(context), start, end, content));
+    return adoptRef(*new VTTCue(document, data));
 }
 
-Ref<VTTCue> VTTCue::create(ScriptExecutionContext& context, const WebVTTCueData& data)
-{
-    return adoptRef(*new VTTCue(downcast<Document>(context), data));
-}
-
-VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, const String& content)
+VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, String&& content)
     : TextTrackCue(document, start, end)
-    , m_content(content)
+    , m_content(WTFMove(content))
     , m_originalStartTime(MediaTime::zeroTime())
 {
     initialize();

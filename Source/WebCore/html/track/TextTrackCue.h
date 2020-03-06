@@ -70,7 +70,7 @@ public:
     static const AtomString& cueBackdropShadowPseudoId();
     static const AtomString& cueBoxShadowPseudoId();
 
-    static ExceptionOr<Ref<TextTrackCue>> create(ScriptExecutionContext&, double start, double end, DocumentFragment&);
+    static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
 
     TextTrack* track() const;
     void setTrack(TextTrack*);
@@ -128,7 +128,7 @@ public:
     unsigned cueIndex() const;
 
 protected:
-    TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end);
+    TextTrackCue(Document&, const MediaTime& start, const MediaTime& end);
 
     Document& ownerDocument() { return m_document; }
 

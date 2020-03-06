@@ -42,36 +42,54 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DataCue);
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
-    : TextTrackCue(context, start, end)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
+    : TextTrackCue(document, start, end)
     , m_type(type)
 {
     setData(data);
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
-    : TextTrackCue(context, start, end)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
+    : TextTrackCue(document, start, end)
     , m_data(ArrayBuffer::create(data, length))
 {
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&& platformValue, const String& type)
-    : TextTrackCue(context, start, end)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
+    : TextTrackCue(document, start, end)
     , m_type(type)
     , m_platformValue(WTFMove(platformValue))
 {
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, JSC::JSValue value, const String& type)
-    : TextTrackCue(context, start, end)
+DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, JSC::JSValue value, const String& type)
+    : TextTrackCue(document, start, end)
     , m_type(type)
-    , m_value(context.vm(), value)
+    , m_value(document.vm(), value)
 {
 }
 
-DataCue::~DataCue()
+Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
 {
+    return adoptRef(*new DataCue(document, start, end, data, length));
 }
+
+Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
+{
+    return adoptRef(*new DataCue(document, start, end, WTFMove(platformValue), type));
+}
+
+Ref<DataCue> DataCue::create(Document& document, double start, double end, ArrayBuffer& data)
+{
+    return adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), data, emptyString()));
+}
+
+Ref<DataCue> DataCue::create(Document& document, double start, double end, JSC::JSValue value, const String& type)
+{
+    return adoptRef(*new DataCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), value, type));
+}
+
+DataCue::~DataCue() = default;
 
 RefPtr<ArrayBuffer> DataCue::data() const
 {

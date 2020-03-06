@@ -38,21 +38,21 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandDataTextTrack);
 
-inline InbandDataTextTrack::InbandDataTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : InbandTextTrack(context, client, trackPrivate)
+inline InbandDataTextTrack::InbandDataTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+    : InbandTextTrack(document, client, trackPrivate)
 {
 }
 
-Ref<InbandDataTextTrack> InbandDataTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandDataTextTrack> InbandDataTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
-    return adoptRef(*new InbandDataTextTrack(context, client, trackPrivate));
+    return adoptRef(*new InbandDataTextTrack(document, client, trackPrivate));
 }
 
 InbandDataTextTrack::~InbandDataTextTrack() = default;
 
 void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
 {
-    addCue(DataCue::create(*scriptExecutionContext(), start, end, data, length));
+    addCue(DataCue::create(document(), start, end, data, length));
 }
 
 #if ENABLE(DATACUE_VALUE)
@@ -62,8 +62,8 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
     if (findIncompleteCue(platformValue))
         return;
 
-    auto cue = DataCue::create(*scriptExecutionContext(), start, end, platformValue.copyRef(), type);
-    if (hasCue(cue.ptr(), TextTrackCue::IgnoreDuration)) {
+    auto cue = DataCue::create(document(), start, end, platformValue.copyRef(), type);
+    if (hasCue(cue, TextTrackCue::IgnoreDuration)) {
         INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", cue.get());
         return;
     }

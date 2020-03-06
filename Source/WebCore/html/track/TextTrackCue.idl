@@ -31,7 +31,7 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
     Constructor(double startTime, double endTime, DocumentFragment cueNode),
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=Document,
     ConstructorEnabledBySetting=GenericCueAPI,
     ConstructorMayThrowException,
 ] interface TextTrackCue : EventTarget {

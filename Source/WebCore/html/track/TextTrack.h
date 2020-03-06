@@ -54,28 +54,17 @@ public:
 class TextTrack : public TrackBase, public EventTargetWithInlineData, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(TextTrack);
 public:
-    static Ref<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
-    {
-        return adoptRef(*new TextTrack(context, client, kind, id, label, language, AddTrack));
-    }
+    static Ref<TextTrack> create(Document*, TextTrackClient*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
     virtual ~TextTrack();
 
-    EventTargetInterface eventTargetInterface() const final { return TextTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-
-    static TextTrack* captionMenuOffItem();
-    static TextTrack* captionMenuAutomaticItem();
+    static TextTrack& captionMenuOffItem();
+    static TextTrack& captionMenuAutomaticItem();
 
     static const AtomString& subtitlesKeyword();
     static bool isValidKindKeyword(const AtomString&);
 
-    static const AtomString& disabledKeyword();
-    static const AtomString& hiddenKeyword();
-    static const AtomString& showingKeyword();
-
     enum class Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, Forced };
     Kind kind() const;
-    void setKind(Kind);
 
     Kind kindForBindings() const;
     void setKindForBindings(Kind);
@@ -99,19 +88,16 @@ public:
     TextTrackCueList* cuesInternal() const { return m_cues.get(); }
 
     void clearClient() override { m_client = nullptr; }
-    TextTrackClient* client() { return m_client; }
 
     ExceptionOr<void> addCue(Ref<TextTrackCue>&&);
     virtual ExceptionOr<void> removeCue(TextTrackCue&);
 
-    bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
-
     VTTRegionList* regions();
-    void addRegion(RefPtr<VTTRegion>&&);
-    ExceptionOr<void> removeRegion(VTTRegion*);
+    void addRegion(Ref<VTTRegion>&&);
+    ExceptionOr<void> removeRegion(VTTRegion&);
 
-    void cueWillChange(TextTrackCue*);
-    void cueDidChange(TextTrackCue*);
+    void cueWillChange(TextTrackCue&);
+    void cueDidChange(TextTrackCue&);
 
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }
@@ -132,7 +118,6 @@ public:
     void setHasBeenConfigured(bool flag) { m_hasBeenConfigured = flag; }
 
     virtual bool isDefault() const { return false; }
-    virtual void setIsDefault(bool) { }
 
     void removeAllCues();
 
@@ -144,26 +129,35 @@ public:
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
 
-    using RefCounted<TrackBase>::ref;
-    using RefCounted<TrackBase>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
     const Optional<Vector<String>>& styleSheets() const { return m_styleSheets; }
 
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType);
 
-#if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "TextTrack"; }
-#endif
+    Document& document() const;
+    TextTrackClient* client() { return m_client; }
+
+    bool hasCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
+    void setKind(Kind);
 
     RefPtr<TextTrackCueList> m_cues;
     Optional<Vector<String>> m_styleSheets;
 
 private:
+    EventTargetInterface eventTargetInterface() const final { return TextTrackEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
     bool enabled() const override;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "TextTrack"; }
+#endif
 
     VTTRegionList& ensureVTTRegionList();
     RefPtr<VTTRegionList> m_regions;

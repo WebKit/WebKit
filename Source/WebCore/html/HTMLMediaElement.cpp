@@ -634,6 +634,7 @@ HTMLMediaElement::~HTMLMediaElement()
     m_mediaSession = nullptr;
     schedulePlaybackControlsManagerUpdate();
 }
+
 RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
 {
     Vector<MediaElementSessionInfo> candidateSessions;
@@ -4022,7 +4023,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
 {
     // 4.8.10.12.2 Sourcing in-band text tracks
     // 1. Associate the relevant data with a new text track and its corresponding new TextTrack object.
-    auto textTrack = InbandTextTrack::create(*ActiveDOMObject::scriptExecutionContext(), *this, track);
+    auto textTrack = InbandTextTrack::create(document(), *this, track);
     textTrack->setMediaElement(makeWeakPtr(this));
 
     // 2. Set the new text track's kind, label, and language based on the semantics of the relevant data,
@@ -4169,7 +4170,7 @@ ExceptionOr<TextTrack&> HTMLMediaElement::addTextTrack(const String& kind, const
 
     // 5. Create a new text track corresponding to the new object, and set its text track kind to kind, its text
     // track label to label, its text track language to language...
-    auto track = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, emptyString(), label, language);
+    auto track = TextTrack::create(&document(), this, kind, emptyString(), label, language);
     auto& trackReference = track.get();
 #if !RELEASE_LOG_DISABLED
     trackReference.setLogger(logger(), logIdentifier());
@@ -4432,7 +4433,7 @@ void HTMLMediaElement::updateCaptionContainer()
     ensureMediaControlsShadowRoot();
 
     if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(this);
+        m_mediaControlsHost = MediaControlsHost::create(*this);
 
     setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
@@ -4505,10 +4506,10 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     if (!trackList || !trackList->length())
         return;
 
-    if (trackToSelect == TextTrack::captionMenuAutomaticItem()) {
+    if (trackToSelect == &TextTrack::captionMenuAutomaticItem()) {
         if (captionDisplayMode() != CaptionUserPreferences::Automatic)
             m_textTracks->scheduleChangeEvent();
-    } else if (trackToSelect == TextTrack::captionMenuOffItem()) {
+    } else if (trackToSelect == &TextTrack::captionMenuOffItem()) {
         for (int i = 0, length = trackList->length(); i < length; ++i)
             trackList->item(i)->setMode(TextTrack::Mode::Disabled);
 
@@ -4532,9 +4533,9 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
 
     auto& captionPreferences = document().page()->group().captionPreferences();
     CaptionUserPreferences::CaptionDisplayMode displayMode;
-    if (trackToSelect == TextTrack::captionMenuOffItem())
+    if (trackToSelect == &TextTrack::captionMenuOffItem())
         displayMode = CaptionUserPreferences::ForcedOnly;
-    else if (trackToSelect == TextTrack::captionMenuAutomaticItem())
+    else if (trackToSelect == &TextTrack::captionMenuAutomaticItem())
         displayMode = CaptionUserPreferences::Automatic;
     else {
         displayMode = CaptionUserPreferences::AlwaysOn;
@@ -6338,7 +6339,7 @@ void HTMLMediaElement::updateTextTrackDisplay()
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     ensureMediaControlsShadowRoot();
     if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(this);
+        m_mediaControlsHost = MediaControlsHost::create(*this);
     m_mediaControlsHost->updateTextTrackContainer();
 #else
     if (!hasMediaControls() && !createMediaControls())
@@ -7372,7 +7373,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
             return false;
 
         if (!m_mediaControlsHost)
-            m_mediaControlsHost = MediaControlsHost::create(this);
+            m_mediaControlsHost = MediaControlsHost::create(*this);
 
         auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
         auto mediaControlsHostJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *m_mediaControlsHost);

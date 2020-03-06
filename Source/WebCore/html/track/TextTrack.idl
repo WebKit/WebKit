@@ -49,7 +49,6 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     attribute EventHandler oncuechange;
 
     readonly attribute VTTRegionList regions;
-    // FIXME: region parameter should not be nullable in addRegion and removeRegion.
-    void addRegion(VTTRegion? region);
-    [MayThrowException] void removeRegion(VTTRegion? region);
+    void addRegion(VTTRegion region);
+    [MayThrowException] void removeRegion(VTTRegion region);
 };

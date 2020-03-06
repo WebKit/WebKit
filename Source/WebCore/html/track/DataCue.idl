@@ -28,7 +28,7 @@
     Conditional=VIDEO_TRACK,
     Constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
     Constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
-    ConstructorCallWith=ScriptExecutionContext
+    ConstructorCallWith=Document
 ] interface DataCue : TextTrackCue {
     attribute ArrayBuffer data;
 

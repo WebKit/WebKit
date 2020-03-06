@@ -198,9 +198,9 @@ Vector<String> CaptionUserPreferences::preferredAudioCharacteristics() const
 
 static String trackDisplayName(TextTrack* track)
 {
-    if (track == TextTrack::captionMenuOffItem())
+    if (track == &TextTrack::captionMenuOffItem())
         return textTrackOffMenuItemText();
-    if (track == TextTrack::captionMenuAutomaticItem())
+    if (track == &TextTrack::captionMenuAutomaticItem())
         return textTrackAutomaticMenuItemText();
 
     if (track->label().isEmpty() && track->validBCP47Language().isEmpty())
@@ -218,9 +218,9 @@ String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
 MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTrack* track) const
 {
     auto type = MediaSelectionOption::Type::Regular;
-    if (track == TextTrack::captionMenuOffItem())
+    if (track == &TextTrack::captionMenuOffItem())
         type = MediaSelectionOption::Type::LegibleOff;
-    else if (track == TextTrack::captionMenuAutomaticItem())
+    else if (track == &TextTrack::captionMenuAutomaticItem())
         type = MediaSelectionOption::Type::LegibleAuto;
     return { displayNameForTrack(track), type };
 }
@@ -242,8 +242,8 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
         return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
     });
 
-    tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
-    tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());
+    tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
+    tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
 
     return tracksForMenu;
 }

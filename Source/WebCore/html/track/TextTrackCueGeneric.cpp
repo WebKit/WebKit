@@ -160,7 +160,7 @@ Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& con
 }
 
 TextTrackCueGeneric::TextTrackCueGeneric(Document& document, const MediaTime& start, const MediaTime& end, const String& content)
-    : VTTCue(document, start, end, content)
+    : VTTCue(document, start, end, String { content })
 {
 }
 
@@ -219,8 +219,8 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 
     if (is<TextTrackCueGeneric>(*that) && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
-        std::pair<double, double> thisPosition = getPositionCoordinates();
-        std::pair<double, double> thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
+        auto thisPosition = getPositionCoordinates();
+        auto thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
 
@@ -232,8 +232,8 @@ bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
     if (is<TextTrackCueGeneric>(*that)) {
         if (startTime() == that->startTime() && endTime() == that->endTime()) {
             // Further order generic cues by their calculated line value.
-            std::pair<double, double> thisPosition = getPositionCoordinates();
-            std::pair<double, double> thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
+            auto thisPosition = getPositionCoordinates();
+            auto thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
             return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
         }
         return startTime() > that->startTime();

@@ -45,34 +45,10 @@ class ScriptExecutionContext;
 class DataCue final : public TextTrackCue {
     WTF_MAKE_ISO_ALLOCATED(DataCue);
 public:
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data)
-    {
-        return adoptRef(*new DataCue(context, start, end, data, emptyString()));
-    }
-
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
-    {
-        return adoptRef(*new DataCue(context, start, end, data, length));
-    }
-
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
-    {
-        return adoptRef(*new DataCue(context, start, end, data, type));
-    }
-
-    static Ref<DataCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&& platformValue, const String& type)
-    {
-        return adoptRef(*new DataCue(context, start, end, WTFMove(platformValue), type));
-    }
-
-    static Ref<DataCue> create(ScriptExecutionContext& context, double start, double end, ArrayBuffer& data)
-    {
-        return adoptRef(*new DataCue(context, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), data, emptyString()));
-    }
-    static Ref<DataCue> create(ScriptExecutionContext& context, double start, double end, JSC::JSValue value, const String& type)
-    {
-        return adoptRef(*new DataCue(context, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), value, type));
-    }
+    static Ref<DataCue> create(Document&, double start, double end, ArrayBuffer& data);
+    static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, const String& type);
+    static Ref<DataCue> create(Document&, const MediaTime& start, const MediaTime& end, const void* data, unsigned length);
+    static Ref<DataCue> create(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String& type);
 
     virtual ~DataCue();
 
@@ -88,10 +64,10 @@ public:
     void setType(const String& type) { m_type = type; }
 
 private:
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, RefPtr<SerializedPlatformDataCue>&&, const String&);
-    DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
+    DataCue(Document&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
 
     JSC::JSValue valueOrNull() const;
     CueType cueType() const final { return Data; }

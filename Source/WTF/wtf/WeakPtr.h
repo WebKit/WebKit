@@ -104,6 +104,7 @@ public:
         return m_impl ? static_cast<T*>(m_impl->get<T>()) : nullptr;
     }
 
+    bool operator!() const { return !m_impl || !*m_impl; }
     explicit operator bool() const { return m_impl && *m_impl; }
 
     WeakPtr& operator=(std::nullptr_t) { m_impl = nullptr; return *this; }

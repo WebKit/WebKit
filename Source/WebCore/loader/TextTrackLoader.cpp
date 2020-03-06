@@ -45,13 +45,10 @@
 
 namespace WebCore {
     
-TextTrackLoader::TextTrackLoader(TextTrackLoaderClient& client, ScriptExecutionContext* context)
+TextTrackLoader::TextTrackLoader(TextTrackLoaderClient& client, Document& document)
     : m_client(client)
-    , m_scriptExecutionContext(context)
+    , m_document(document)
     , m_cueLoadTimer(*this, &TextTrackLoader::cueLoadTimerFired)
-    , m_state(Idle)
-    , m_parseOffset(0)
-    , m_newCuesAvailable(false)
 {
 }
 
@@ -67,7 +64,7 @@ void TextTrackLoader::cueLoadTimerFired()
         m_newCuesAvailable = false;
         m_client.newCuesAvailable(*this);
     }
-    
+
     if (m_state >= Finished)
         m_client.cueLoadingCompleted(*this, m_state == Failed);
 }
@@ -92,7 +89,7 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
         return;
 
     if (!m_cueParser)
-        m_cueParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient*>(this), m_scriptExecutionContext);
+        m_cueParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), m_document);
 
     while (m_parseOffset < buffer->size()) {
         auto data = buffer->getSomeData(m_parseOffset);
@@ -115,8 +112,7 @@ void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource& resourc
 void TextTrackLoader::corsPolicyPreventedLoad()
 {
     static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin text track load denied by Cross-Origin Resource Sharing policy."));
-    Document* document = downcast<Document>(m_scriptExecutionContext);
-    document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+    m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
     m_state = Failed;
 }
 
@@ -148,20 +144,17 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
 {
     cancelLoad();
 
-    ASSERT(is<Document>(m_scriptExecutionContext));
-    Document& document = downcast<Document>(*m_scriptExecutionContext);
-
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.contentSecurityPolicyImposition = element.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    ResourceRequest resourceRequest(document.completeURL(url));
+    ResourceRequest resourceRequest(m_document.completeURL(url));
 
     if (auto mediaElement = element.mediaElement())
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*mediaElement));
 
-    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, element.mediaElementCrossOriginAttribute(), SameOriginFlag::Yes);
-    m_resource = document.cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
+    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), m_document, element.mediaElementCrossOriginAttribute(), SameOriginFlag::Yes);
+    m_resource = m_document.cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
     if (!m_resource)
         return false;
     m_resource->addClient(*this);
@@ -205,29 +198,28 @@ Vector<Ref<VTTCue>> TextTrackLoader::getNewCues()
     if (!m_cueParser)
         return { };
 
-    Vector<RefPtr<WebVTTCueData>> newCues;
-    m_cueParser->getNewCues(newCues);
-
+    auto cues = m_cueParser->takeCues();
     Vector<Ref<VTTCue>> result;
-    result.reserveInitialCapacity(newCues.size());
-    for (auto& cueData : newCues)
-        result.uncheckedAppend(VTTCue::create(*m_scriptExecutionContext, *cueData));
+    result.reserveInitialCapacity(cues.size());
+    for (auto& cueData : cues)
+        result.uncheckedAppend(VTTCue::create(m_document, cueData));
     return result;
 }
 
-void TextTrackLoader::getNewRegions(Vector<RefPtr<VTTRegion>>& outputRegions)
+Vector<Ref<VTTRegion>> TextTrackLoader::getNewRegions()
 {
     ASSERT(m_cueParser);
-    if (m_cueParser)
-        m_cueParser->getNewRegions(outputRegions);
+    if (!m_cueParser)
+        return { };
+    return m_cueParser->takeRegions();
 }
 
 Vector<String> TextTrackLoader::getNewStyleSheets()
 {
     ASSERT(m_cueParser);
-    if (m_cueParser)
-        return m_cueParser->getStyleSheets();
-    return Vector<String>();
+    if (!m_cueParser)
+        return { };
+    return m_cueParser->takeStyleSheets();
 }
 
 }

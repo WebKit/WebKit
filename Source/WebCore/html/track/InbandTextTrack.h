@@ -35,7 +35,7 @@ namespace WebCore {
 class InbandTextTrack : public TextTrack, private InbandTextTrackPrivateClient {
     WTF_MAKE_ISO_ALLOCATED(InbandTextTrack);
 public:
-    static Ref<InbandTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
+    static Ref<InbandTextTrack> create(Document&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandTextTrack();
 
     bool isClosedCaptions() const override;
@@ -55,7 +55,7 @@ public:
 #endif
 
 protected:
-    InbandTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
+    InbandTextTrack(Document&, TextTrackClient&, InbandTextTrackPrivate&);
 
     void setModeInternal(Mode);
     void updateKindFromPrivate();
@@ -73,8 +73,8 @@ private:
 
 #if ENABLE(DATACUE_VALUE)
     void addDataCue(const MediaTime&, const MediaTime&, Ref<SerializedPlatformDataCue>&&, const String&) override { ASSERT_NOT_REACHED(); }
-    void updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override  { ASSERT_NOT_REACHED(); }
-    void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override  { ASSERT_NOT_REACHED(); }
+    void updateDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override { ASSERT_NOT_REACHED(); }
+    void removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformDataCue&) override { ASSERT_NOT_REACHED(); }
 #endif
 
     void addGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }

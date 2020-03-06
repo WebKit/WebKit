@@ -681,9 +681,9 @@ String CaptionUserPreferencesMediaAF::displayNameForTrack(AudioTrack* track) con
 
 static String trackDisplayName(TextTrack* track)
 {
-    if (track == TextTrack::captionMenuOffItem())
+    if (track == &TextTrack::captionMenuOffItem())
         return textTrackOffMenuItemText();
-    if (track == TextTrack::captionMenuAutomaticItem())
+    if (track == &TextTrack::captionMenuAutomaticItem())
         return textTrackAutomaticMenuItemText();
 
     StringBuilder displayNameBuilder;
@@ -971,8 +971,8 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     std::sort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
 
-    tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
-    tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());
+    tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
+    tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
 
     return tracksForMenu;
 }

@@ -86,16 +86,16 @@ static const AtomString& forcedKeyword()
     return forced;
 }
 
-TextTrack* TextTrack::captionMenuOffItem()
+TextTrack& TextTrack::captionMenuOffItem()
 {
     static TextTrack& off = TextTrack::create(nullptr, nullptr, "off menu item", emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return &off;
+    return off;
 }
 
-TextTrack* TextTrack::captionMenuAutomaticItem()
+TextTrack& TextTrack::captionMenuAutomaticItem()
 {
     static TextTrack& automatic = TextTrack::create(nullptr, nullptr, "automatic menu item", emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return &automatic;
+    return automatic;
 }
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
@@ -116,6 +116,11 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
         m_kind = Kind::Metadata;
 }
 
+Ref<TextTrack> TextTrack::create(Document* document, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
+{
+    return adoptRef(*new TextTrack(document, client, kind, id, label, language, AddTrack));
+}
+
 TextTrack::~TextTrack()
 {
     if (m_cues) {
@@ -128,6 +133,12 @@ TextTrack::~TextTrack()
         for (size_t i = 0; i < m_regions->length(); ++i)
             m_regions->item(i)->setTrack(nullptr);
     }
+}
+
+Document& TextTrack::document() const
+{
+    ASSERT(scriptExecutionContext());
+    return downcast<Document>(*scriptExecutionContext());
 }
 
 bool TextTrack::enabled() const
@@ -380,11 +391,8 @@ VTTRegionList* TextTrack::regions()
     return &ensureVTTRegionList();
 }
 
-void TextTrack::addRegion(RefPtr<VTTRegion>&& region)
+void TextTrack::addRegion(Ref<VTTRegion>&& region)
 {
-    if (!region)
-        return;
-
     auto& regionList = ensureVTTRegionList();
 
     // 1. If the given region is in a text track list of regions, then remove
@@ -399,51 +407,48 @@ void TextTrack::addRegion(RefPtr<VTTRegion>&& region)
     // attributes with those of region.
     auto existingRegion = makeRefPtr(regionList.getRegionById(region->id()));
     if (existingRegion) {
-        existingRegion->updateParametersFromRegion(*region);
+        existingRegion->updateParametersFromRegion(region);
         return;
     }
 
     // Otherwise: add region to the method's TextTrack object's text track list of regions.
     region->setTrack(this);
-    regionList.add(region.releaseNonNull());
+    regionList.add(WTFMove(region));
 }
 
-ExceptionOr<void> TextTrack::removeRegion(VTTRegion* region)
+ExceptionOr<void> TextTrack::removeRegion(VTTRegion& region)
 {
-    if (!region)
-        return { };
-
     // 1. If the given region is not currently listed in the method's TextTrack
     // object's text track list of regions, then throw a NotFoundError exception.
-    if (region->track() != this)
+    if (region.track() != this)
         return Exception { NotFoundError };
 
     ASSERT(m_regions);
-    m_regions->remove(*region);
-    region->setTrack(nullptr);
+    m_regions->remove(region);
+    region.setTrack(nullptr);
     return { };
 }
 
-void TextTrack::cueWillChange(TextTrackCue* cue)
+void TextTrack::cueWillChange(TextTrackCue& cue)
 {
     if (!m_client)
         return;
 
     // The cue may need to be repositioned in the media element's interval tree, may need to
     // be re-rendered, etc, so remove it before the modification...
-    m_client->textTrackRemoveCue(*this, *cue);
+    m_client->textTrackRemoveCue(*this, cue);
 }
 
-void TextTrack::cueDidChange(TextTrackCue* cue)
+void TextTrack::cueDidChange(TextTrackCue& cue)
 {
     if (!m_client)
         return;
 
     // Make sure the TextTrackCueList order is up-to-date.
-    ensureTextTrackCueList().updateCueIndex(*cue);
+    ensureTextTrackCueList().updateCueIndex(cue);
 
     // ... and add it back again.
-    m_client->textTrackAddCue(*this, *cue);
+    m_client->textTrackAddCue(*this, cue);
 }
 
 int TextTrack::trackIndex()
@@ -485,9 +490,9 @@ int TextTrack::trackIndexRelativeToRenderedTracks()
     return m_renderedTrackIndex.value();
 }
 
-bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
+bool TextTrack::hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules match)
 {
-    if (cue->startMediaTime() < MediaTime::zeroTime() || cue->endMediaTime() < MediaTime::zeroTime())
+    if (cue.startMediaTime() < MediaTime::zeroTime() || cue.endMediaTime() < MediaTime::zeroTime())
         return false;
     
     if (!m_cues || !m_cues->length())
@@ -509,7 +514,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
 
             // If there is more than one cue with the same start time, back up to first one so we
             // consider all of them.
-            while (searchStart >= 2 && cue->hasEquivalentStartTime(*m_cues->item(searchStart - 2)))
+            while (searchStart >= 2 && cue.hasEquivalentStartTime(*m_cues->item(searchStart - 2)))
                 --searchStart;
             
             bool firstCompare = true;
@@ -524,17 +529,17 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
                 if (!existingCue)
                     return false;
 
-                if (cue->startMediaTime() > (existingCue->startMediaTime() + startTimeVariance()))
+                if (cue.startMediaTime() > (existingCue->startMediaTime() + startTimeVariance()))
                     return false;
 
-                if (existingCue->isEqual(*cue, match))
+                if (existingCue->isEqual(cue, match))
                     return true;
             }
         }
         
         size_t index = (searchStart + searchEnd) / 2;
         existingCue = m_cues->item(index);
-        if ((cue->startMediaTime() + startTimeVariance()) < existingCue->startMediaTime() || (match != TextTrackCue::IgnoreDuration && cue->hasEquivalentStartTime(*existingCue) && cue->endMediaTime() > existingCue->endMediaTime()))
+        if ((cue.startMediaTime() + startTimeVariance()) < existingCue->startMediaTime() || (match != TextTrackCue::IgnoreDuration && cue.hasEquivalentStartTime(*existingCue) && cue.endMediaTime() > existingCue->endMediaTime()))
             searchEnd = index;
         else
             searchStart = index + 1;

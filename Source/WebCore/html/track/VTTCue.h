@@ -78,9 +78,8 @@ private:
 class VTTCue : public TextTrackCue {
     WTF_MAKE_ISO_ALLOCATED(VTTCue);
 public:
-    static Ref<VTTCue> create(ScriptExecutionContext&, double start, double end, const String& content);
-    static Ref<VTTCue> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
-    static Ref<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
+    static Ref<VTTCue> create(Document&, double start, double end, String&& content);
+    static Ref<VTTCue> create(Document&, const WebVTTCueData&);
 
     virtual ~VTTCue();
 
@@ -167,7 +166,7 @@ public:
     double calculateComputedTextPosition() const;
 
 protected:
-    VTTCue(Document&, const MediaTime& start, const MediaTime& end, const String& content);
+    VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);
 
     bool cueContentsMatch(const TextTrackCue&) const override;
 

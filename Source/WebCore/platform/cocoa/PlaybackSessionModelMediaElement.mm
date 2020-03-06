@@ -298,7 +298,7 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
     if (index < m_legibleTracksForMenu.size())
         textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].get();
     else
-        textTrack = TextTrack::captionMenuOffItem();
+        textTrack = &TextTrack::captionMenuOffItem();
 
     m_mediaElement->setSelectedTextTrack(textTrack);
 }
@@ -496,39 +496,36 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
 
 uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 {
-    uint64_t selectedIndex = std::numeric_limits<uint64_t>::max();
-    uint64_t offIndex = 0;
-    bool trackMenuItemSelected = false;
-
     auto host = m_mediaElement ? m_mediaElement->mediaControlsHost() : nullptr;
-
     if (!host)
-        return selectedIndex;
+        return std::numeric_limits<uint64_t>::max();
 
     AtomString displayMode = host->captionDisplayMode();
-    TextTrack* offItem = host->captionMenuOffItem();
-    TextTrack* automaticItem = host->captionMenuAutomaticItem();
+    TextTrack& offItem = TextTrack::captionMenuOffItem();
+    TextTrack& automaticItem = TextTrack::captionMenuAutomaticItem();
+
+    Optional<uint64_t> selectedIndex;
+    Optional<uint64_t> offIndex;
 
     for (size_t index = 0; index < m_legibleTracksForMenu.size(); index++) {
         auto& track = m_legibleTracksForMenu[index];
-        if (track == offItem)
+
+        if (track == &offItem)
             offIndex = index;
 
-        if (track == automaticItem && displayMode == MediaControlsHost::automaticKeyword()) {
-            selectedIndex = index;
-            trackMenuItemSelected = true;
-        }
-
-        if (displayMode != MediaControlsHost::automaticKeyword() && track->mode() == TextTrack::Mode::Showing) {
-            selectedIndex = index;
-            trackMenuItemSelected = true;
+        if (displayMode == MediaControlsHost::automaticKeyword()) {
+            if (track == &automaticItem)
+                selectedIndex = index;
+        } else {
+            if (track->mode() == TextTrack::Mode::Showing)
+                selectedIndex = index;
         }
     }
 
-    if (offItem && !trackMenuItemSelected && displayMode == MediaControlsHost::forcedOnlyKeyword())
+    if (!selectedIndex && displayMode == MediaControlsHost::forcedOnlyKeyword())
         selectedIndex = offIndex;
 
-    return selectedIndex;
+    return selectedIndex.valueOr(std::numeric_limits<uint64_t>::max());
 }
 
 bool PlaybackSessionModelMediaElement::externalPlaybackEnabled() const

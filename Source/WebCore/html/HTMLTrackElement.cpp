@@ -111,8 +111,6 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomStrin
         track().setLabel(value);
     else if (name == srclangAttr)
         track().setLanguage(value);
-    else if (name == defaultAttr)
-        track().setIsDefault(!value.isNull());
 
     HTMLElement::parseAttribute(name, value);
 }

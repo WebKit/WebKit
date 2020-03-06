@@ -53,11 +53,11 @@ private:
 class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
     WTF_MAKE_ISO_ALLOCATED(InbandGenericTextTrack);
 public:
-    static Ref<InbandGenericTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
+    static Ref<InbandGenericTextTrack> create(Document&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandGenericTextTrack();
 
 private:
-    InbandGenericTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
+    InbandGenericTextTrack(Document&, TextTrackClient&, InbandTextTrackPrivate&);
 
     void addGenericCue(InbandGenericCue&) final;
     void updateGenericCue(InbandGenericCue&) final;
