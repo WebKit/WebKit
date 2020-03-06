@@ -38,7 +38,7 @@ namespace WebKit {
 class LocalAuthenticator final : public Authenticator {
 public:
     // Here is the FSM.
-    // MakeCredential: Init => RequestReceived => PolicyDecided => UserVerified => Attested => End
+    // MakeCredential: Init => RequestReceived => PolicyDecided => UserVerified => (Attested) => End
     // GetAssertion: Init => RequestReceived => ResponseSelected => UserVerified => End
     enum class State {
         Init,
@@ -60,7 +60,7 @@ private:
     void makeCredential() final;
     void continueMakeCredentialAfterDecidePolicy(LocalAuthenticatorPolicy);
     void continueMakeCredentialAfterUserVerification(SecAccessControlRef, LocalConnection::UserVerification, LAContext *);
-    void continueMakeCredentialAfterAttested(SecKeyRef, Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *);
+    void continueMakeCredentialAfterAttested(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *);
 
     void getAssertion() final;
     void continueGetAssertionAfterResponseSelected(Ref<WebCore::AuthenticatorAssertionResponse>&&);

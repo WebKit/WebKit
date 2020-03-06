@@ -1,3 +1,25 @@
+2020-03-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Do not perform Attestation with type is 'none'
+        https://bugs.webkit.org/show_bug.cgi?id=208676
+        <rdar://problem/59692104>
+
+        Reviewed by Brent Fulgham.
+
+        Besides the suggested title, this patch also adds a whitelist to restrict
+        access until validation is complete. The whitelist allows file URLs and
+        test-related domains.
+
+        Covered by existing tests with new contents.
+
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::selectAssertionResponse const):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::whitelistedRpId):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+
 2020-03-06  Youenn Fablet  <youenn@apple.com>
 
         Make sure completion handler given to AuxiliaryProcessProxy::sendMessage is called asynchronously

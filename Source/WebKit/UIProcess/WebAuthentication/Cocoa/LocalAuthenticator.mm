@@ -98,6 +98,17 @@ static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
     return ArrayBuffer::create(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
 }
 
+// FIXME(<rdar://problem/60108131>): Remove this whitelist once testing is complete.
+static const HashSet<String>& whitelistedRpId()
+{
+    static NeverDestroyed<HashSet<String>> whitelistedRpId = std::initializer_list<String> {
+        "",
+        "localhost",
+        "tlstestwebkit.org",
+    };
+    return whitelistedRpId;
+}
+
 } // LocalAuthenticatorInternal
 
 LocalAuthenticator::LocalAuthenticator(UniqueRef<LocalConnection>&& connection)
@@ -313,19 +324,25 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // Step 12.
     auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, attestedCredentialData);
 
+    // Skip Apple Attestation for none attestation, and non whitelisted RP ID for now.
+    if (creationOptions.attestation == AttestationConveyancePreference::None || !whitelistedRpId().contains(creationOptions.rp.id)) {
+        auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
+        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
+        return;
+    }
+
     // Step 13. Apple Attestation
-    auto *privateKeyRef = privateKey.get();
     auto nsAuthData = toNSData(authData);
-    auto callback = [privateKey = WTFMove(privateKey), credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = makeWeakPtr(*this)] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
+    auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = makeWeakPtr(*this)] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
-        weakThis->continueMakeCredentialAfterAttested(privateKey.get(), WTFMove(credentialId), WTFMove(authData), certificates, error);
+        weakThis->continueMakeCredentialAfterAttested(WTFMove(credentialId), WTFMove(authData), certificates, error);
     };
-    m_connection->getAttestation(privateKeyRef, nsAuthData.get(), toNSData(requestData().hash).get(), WTFMove(callback));
+    m_connection->getAttestation(privateKey.get(), nsAuthData.get(), toNSData(requestData().hash).get(), WTFMove(callback));
 }
 
-void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKey, Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *error)
+void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *error)
 {
     using namespace LocalAuthenticatorInternal;
 
