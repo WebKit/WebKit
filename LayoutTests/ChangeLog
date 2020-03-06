@@ -1,3 +1,12 @@
+2020-03-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 Release ] fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208678
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the optimization for discarding no operation DisplayList items between Save and Restore items
