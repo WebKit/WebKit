@@ -92,7 +92,7 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
 }
 
 CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
-    : m_fontSelector(fontSelector)
+    : m_fontSelector(makeWeakPtr(fontSelector))
     , m_cssConnection(cssConnection)
     , m_wrapper(makeWeakPtr(wrapper))
     , m_isLocalFallback(isLocalFallback)
@@ -346,8 +346,8 @@ void CSSFontFace::fontLoadEventOccurred()
     if (m_sourcesPopulated)
         pump(ExternalResourceDownloadPolicy::Forbid);
 
-    ASSERT(m_fontSelector);
-    m_fontSelector->fontLoaded();
+    if (m_fontSelector)
+        m_fontSelector->fontLoaded();
 
     iterateClients(m_clients, [&](Client& client) {
         client.fontLoaded(*this);
