@@ -279,7 +279,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyAdditions.h>
 #else
-#define WEB_PAGE_PROXY_ADDITIONS
+#define WEB_PAGE_PROXY_ADDITIONS_ISAPPBOUNDDOMAIN
+#define WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -3097,7 +3098,7 @@ private:
 
 bool WebPageProxy::isAppBoundDomain(const WebCore::RegistrableDomain& domain) const
 {
-    WEB_PAGE_PROXY_ADDITIONS
+    WEB_PAGE_PROXY_ADDITIONS_ISAPPBOUNDDOMAIN
     return true;
 }
 
@@ -3109,6 +3110,7 @@ bool WebPageProxy::isAppBoundDomain(const URL& url) const
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL)
 {
     if (m_preferences->isInAppBrowserPrivacyEnabled() && isMainFrame) {
+        WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
         if (!isAppBoundDomain(requestURL)) {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;

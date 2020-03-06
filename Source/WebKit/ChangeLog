@@ -1,3 +1,15 @@
+2020-03-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add web page additions to WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=208666
+        <rdar://problem/60100413>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isAppBoundDomain const):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
 2020-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Create sandbox extension for "com.apple.tccd"
