@@ -1095,4 +1095,4 @@ webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash 
 
 webkit.org/b/208648 [ Debug ] editing/execCommand/append-node-under-document.html [ Pass Crash ]
 
-webkit.org/b/208678 [ Release ] fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Pass crash ]
+webkit.org/b/208678 [ Release ] fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Pass Failure ]
