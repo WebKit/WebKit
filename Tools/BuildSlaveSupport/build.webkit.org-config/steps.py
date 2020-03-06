@@ -439,7 +439,6 @@ class RunWebKitTests(shell.Test):
                "--master-name", "webkit.org",
                "--buildbot-master", BUILD_WEBKIT_URL,
                "--report", RESULTS_WEBKIT_URL,
-               "--test-results-server", "webkit-test-results.webkit.org",
                "--exit-after-n-crashes-or-timeouts", "50",
                "--exit-after-n-failures", "500",
                WithProperties("--%(configuration)s")]
