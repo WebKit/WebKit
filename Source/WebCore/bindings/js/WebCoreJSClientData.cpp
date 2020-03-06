@@ -27,6 +27,7 @@
 #include "WebCoreJSClientData.h"
 
 #include "DOMGCOutputConstraint.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
 #include "JSDOMWindow.h"
@@ -77,18 +78,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), RuntimeMethod) // Hash:0xf70c4a85
     , m_runtimeObjectSpace ISO_SUBSPACE_INIT(vm.heap, m_runtimeObjectHeapCellType.get(), JSC::Bindings::RuntimeObject)
     , m_windowProxySpace ISO_SUBSPACE_INIT(vm.heap, m_windowProxyHeapCellType.get(), JSWindowProxy)
-    , m_subspaceForJSDOMWindow ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSDOMWindow.get(), JSDOMWindow)
-    , m_subspaceForJSDedicatedWorkerGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSDedicatedWorkerGlobalScope.get(), JSDedicatedWorkerGlobalScope)
-    , m_subspaceForJSRemoteDOMWindow ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSRemoteDOMWindow.get(), JSRemoteDOMWindow)
-    , m_subspaceForJSWorkerGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSWorkerGlobalScope.get(), JSWorkerGlobalScope)
-#if ENABLE(SERVICE_WORKER)
-    , m_subspaceForJSServiceWorkerGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSServiceWorkerGlobalScope.get(), JSServiceWorkerGlobalScope)
-#endif
-#if ENABLE(CSS_PAINTING_API)
-    , m_subspaceForJSPaintWorkletGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSPaintWorkletGlobalScope.get(), JSPaintWorkletGlobalScope)
-    , m_subspaceForJSWorkletGlobalScope ISO_SUBSPACE_INIT(vm.heap, m_heapCellTypeForJSWorkletGlobalScope.get(), JSWorkletGlobalScope)
-#endif
-    , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, vm.destructibleObjectHeapCellType.get(), vm.fastMallocAllocator.get()) // Hash:0x7724c2e4
+    , m_subspaces(makeUnique<DOMIsoSubspaces>())
 {
 }
 

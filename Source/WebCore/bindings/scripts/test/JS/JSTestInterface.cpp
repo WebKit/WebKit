@@ -25,6 +25,7 @@
 #include "JSTestInterface.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMIsoSubspaces.h"
 #include "HTMLNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -38,10 +39,13 @@
 #include "JSTestObj.h"
 #include "ScriptExecutionContext.h"
 #include "TestSupplemental.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
+#include <JavaScriptCore/SubspaceInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/URL.h>
@@ -1108,6 +1112,27 @@ static inline EncodedJSValue jsTestInterfacePrototypeFunctionForEachCaller(JSGlo
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionForEach(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
     return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionForEachCaller>(*lexicalGlobalObject, *callFrame, "forEach");
+}
+
+JSC::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)
+{
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& spaces = clientData.subspaces();
+    if (auto* space = spaces.m_subspaceForTestInterface.get())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterface> || !JSTestInterface::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestInterface>)
+        spaces.m_subspaceForTestInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestInterface);
+    else
+        spaces.m_subspaceForTestInterface = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestInterface);
+    auto* space = spaces.m_subspaceForTestInterface.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    if (&JSTestInterface::visitOutputConstraints != &JSC::JSCell::visitOutputConstraints)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 void JSTestInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

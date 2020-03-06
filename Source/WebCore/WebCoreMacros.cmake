@@ -48,6 +48,7 @@ option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings" 
 #   target is a new target name to be added
 #   OUTPUT_SOURCE is a list name which will contain generated sources.(eg. WebCore_SOURCES)
 #   INPUT_FILES are IDL files to generate.
+#   PP_INPUT_FILES are IDL files to preprocess.
 #   BASE_DIR is base directory where script is called.
 #   IDL_INCLUDES is value of --include argument. (eg. ${WEBCORE_DIR}/bindings/js)
 #   FEATURES is a value of --defines argument.
@@ -59,11 +60,12 @@ option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings" 
 function(GENERATE_BINDINGS target)
     set(options)
     set(oneValueArgs OUTPUT_SOURCE BASE_DIR FEATURES DESTINATION GENERATOR SUPPLEMENTAL_DEPFILE)
-    set(multiValueArgs INPUT_FILES IDL_INCLUDES PP_EXTRA_OUTPUT PP_EXTRA_ARGS)
+    set(multiValueArgs INPUT_FILES PP_INPUT_FILES IDL_INCLUDES PP_EXTRA_OUTPUT PP_EXTRA_ARGS)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(binding_generator ${WEBCORE_DIR}/bindings/scripts/generate-bindings-all.pl)
     set(idl_attributes_file ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.json)
     set(idl_files_list ${CMAKE_CURRENT_BINARY_DIR}/idl_files_${target}.tmp)
+    set(pp_idl_files_list ${CMAKE_CURRENT_BINARY_DIR}/pp_idl_files_${target}.tmp)
     set(_supplemental_dependency)
 
     set(content)
@@ -75,11 +77,21 @@ function(GENERATE_BINDINGS target)
     endforeach ()
     file(WRITE ${idl_files_list} ${content})
 
+    set(pp_content)
+    foreach (f ${arg_PP_INPUT_FILES})
+        if (NOT IS_ABSOLUTE ${f})
+            set(f ${CMAKE_CURRENT_SOURCE_DIR}/${f})
+        endif ()
+        set(pp_content "${pp_content}${f}\n")
+    endforeach ()
+    file(WRITE ${pp_idl_files_list} ${pp_content})
+
     set(args
         --defines ${arg_FEATURES}
         --generator ${arg_GENERATOR}
         --outputDir ${arg_DESTINATION}
         --idlFilesList ${idl_files_list}
+        --ppIDLFilesList ${pp_idl_files_list}
         --preprocessor "${CODE_GENERATOR_PREPROCESSOR}"
         --idlAttributesFile ${idl_attributes_file}
     )
