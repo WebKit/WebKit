@@ -39,36 +39,36 @@ namespace WebCore {
 
 const HashSet<String>& defaultSupportedImageTypes()
 {
-    // CG at least supports the following standard image types:
-    static NeverDestroyed<HashSet<String>> defaultSupportedImageTypes = std::initializer_list<String> {
-        "com.compuserve.gif"_s,
-        "com.microsoft.bmp"_s,
-        "com.microsoft.cur"_s,
-        "com.microsoft.ico"_s,
-        "public.jpeg"_s,
-        "public.png"_s,
-        "public.tiff"_s,
+    static const auto defaultSupportedImageTypes = makeNeverDestroyed([] {
+        const String defaultSupportedImageTypes[] = {
+            "com.compuserve.gif"_s,
+            "com.microsoft.bmp"_s,
+            "com.microsoft.cur"_s,
+            "com.microsoft.ico"_s,
+            "public.jpeg"_s,
+            "public.png"_s,
+            "public.tiff"_s,
 #if !PLATFORM(WIN)
-        "public.jpeg-2000"_s,
-        "public.mpo-image"_s,
+            "public.jpeg-2000"_s,
+            "public.mpo-image"_s,
 #endif
 #if HAVE(WEBP)
-        "public.webp"_s,
+            "public.webp"_s,
+            "com.google.webp"_s,
 #endif
-    };
+        };
 
-#ifndef NDEBUG
-    // Make sure that CG supports them.
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
         RetainPtr<CFArrayRef> systemImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
         CFIndex count = CFArrayGetCount(systemImageTypes.get());
-        for (auto& imageType : defaultSupportedImageTypes.get()) {
+
+        HashSet<String> defaultCGSupportedImageTypes;
+        for (auto& imageType : defaultSupportedImageTypes) {
             RetainPtr<CFStringRef> string = imageType.createCFString();
-            ASSERT(CFArrayContainsValue(systemImageTypes.get(), CFRangeMake(0, count), string.get()));
+            if (CFArrayContainsValue(systemImageTypes.get(), CFRangeMake(0, count), string.get()))
+                defaultCGSupportedImageTypes.add(imageType);
         }
-    });
-#endif
+        return defaultCGSupportedImageTypes;
+    }());
 
     return defaultSupportedImageTypes;
 }
