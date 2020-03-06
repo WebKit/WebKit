@@ -1,3 +1,13 @@
+2020-03-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should show the trac url for the commit on the build page
+        https://bugs.webkit.org/show_bug.cgi?id=208715
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo.evaluateCommand):
+
 2020-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix ResourceLoadDelegate.LoadInfo API test after r257816

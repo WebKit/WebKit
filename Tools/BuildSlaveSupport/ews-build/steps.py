@@ -2515,6 +2515,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             self.descriptionDone = commit_summary
             self.setProperty('build_summary', 'Committed r{}'.format(svn_revision))
             self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
+            self.addURL('r{}'.format(svn_revision), self.url_for_revision(svn_revision))
         else:
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
