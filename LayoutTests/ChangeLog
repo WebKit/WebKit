@@ -1,3 +1,16 @@
+2020-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Put an event region on scroll container layers
+        https://bugs.webkit.org/show_bug.cgi?id=208684
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/ios/event-region-scrolled-contents-layer-expected.txt:
+        * fast/scrolling/mac/event-region-scrolled-contents-layer-expected.txt: Copied from LayoutTests/fast/scrolling/ios/event-region-scrolled-contents-layer-expected.txt.
+        * fast/scrolling/mac/event-region-scrolled-contents-layer.html: Added.
+        * fast/scrolling/mac/event-region-subframe-expected.txt: Added.
+        * fast/scrolling/mac/event-region-subframe.html: Added.
+
 2020-03-06  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, rolling out r258001.

@@ -1635,10 +1635,18 @@ void RenderLayerBacking::updateEventRegion()
         auto eventRegionContext = eventRegion.makeContext();
         auto layerOffset = graphicsLayer.scrollOffset() - roundedIntSize(graphicsLayer.offsetFromRenderer());
 
-        if (&graphicsLayer == m_scrolledContentsLayer && renderer().visibleToHitTesting()) {
-            // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
-            // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
-            eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), RenderStyle::defaultStyle());
+        if (renderer().visibleToHitTesting()) {
+            if (&graphicsLayer == m_scrollContainerLayer) {
+                eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer.size())), RenderStyle::defaultStyle());
+                graphicsLayer.setEventRegion(WTFMove(eventRegion));
+                return;
+            }
+
+            if (&graphicsLayer == m_scrolledContentsLayer) {
+                // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
+                // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
+                eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), RenderStyle::defaultStyle());
+            }
         }
 
         auto dirtyRect = enclosingIntRect(FloatRect(FloatPoint(graphicsLayer.offsetFromRenderer()), graphicsLayer.size()));
@@ -1650,6 +1658,9 @@ void RenderLayerBacking::updateEventRegion()
     };
 
     updateEventRegionForLayer(*m_graphicsLayer);
+
+    if (m_scrollContainerLayer)
+        updateEventRegionForLayer(*m_scrollContainerLayer);
 
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
