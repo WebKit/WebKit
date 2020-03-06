@@ -1,3 +1,9 @@
+2020-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Mark fast/images/image-map-outline-in-positioned-container.html as expected failure
+
+        * platform/gtk/TestExpectations:
+
 2020-03-05  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Garden some webgl 2.0 failures.
