@@ -635,6 +635,18 @@ Document::~Document()
     if (m_logger)
         m_logger->removeObserver(*this);
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    if (m_intersectionObserverData) {
+        for (const auto& observer : m_intersectionObserverData->observers) {
+            if (observer)
+                observer->rootDestroyed();
+        }
+        m_intersectionObserverData->observers.clear();
+        // Document cannot be a target.
+        ASSERT(m_intersectionObserverData->registrations.isEmpty());
+    }
+#endif
+
     ASSERT(allDocumentsMap().contains(m_identifier));
     allDocumentsMap().remove(m_identifier);
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this Document from another thread is safe.
@@ -7574,7 +7586,7 @@ void Document::updateIntersectionObservations()
         if (!observer->createTimestamp(timestamp))
             continue;
         for (Element* target : observer->observationTargets()) {
-            auto& targetRegistrations = target->intersectionObserverData()->registrations;
+            auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
             auto index = targetRegistrations.findMatching([observer](auto& registration) {
                 return registration.observer.get() == observer;
             });
@@ -7659,6 +7671,13 @@ void Document::scheduleInitialIntersectionObservationUpdate()
         scheduleTimedRenderingUpdate();
     else if (!m_intersectionObserversInitialUpdateTimer.isActive())
         m_intersectionObserversInitialUpdateTimer.startOneShot(intersectionObserversInitialUpdateDelay);
+}
+
+IntersectionObserverData& Document::ensureIntersectionObserverData()
+{
+    if (!m_intersectionObserverData)
+        m_intersectionObserverData = makeUnique<IntersectionObserverData>();
+    return *m_intersectionObserverData;
 }
 
 #endif

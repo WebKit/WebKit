@@ -2065,7 +2065,7 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, newDocument);
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    if (auto* observerData = intersectionObserverData()) {
+    if (auto* observerData = intersectionObserverDataIfExists()) {
         for (const auto& observer : observerData->observers) {
             if (observer->hasObservationTargets()) {
                 oldDocument.removeIntersectionObserver(*observer);
@@ -3724,16 +3724,20 @@ void Element::requestPointerLock()
 
 void Element::disconnectFromIntersectionObservers()
 {
-    auto* observerData = intersectionObserverData();
+    auto* observerData = intersectionObserverDataIfExists();
     if (!observerData)
         return;
 
-    for (const auto& registration : observerData->registrations)
-        registration.observer->targetDestroyed(*this);
+    for (const auto& registration : observerData->registrations) {
+        if (registration.observer)
+            registration.observer->targetDestroyed(*this);
+    }
     observerData->registrations.clear();
 
-    for (const auto& observer : observerData->observers)
-        observer->rootDestroyed();
+    for (const auto& observer : observerData->observers) {
+        if (observer)
+            observer->rootDestroyed();
+    }
     observerData->observers.clear();
 }
 
@@ -3745,7 +3749,7 @@ IntersectionObserverData& Element::ensureIntersectionObserverData()
     return *rareData.intersectionObserverData();
 }
 
-IntersectionObserverData* Element::intersectionObserverData()
+IntersectionObserverData* Element::intersectionObserverDataIfExists()
 {
     return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }

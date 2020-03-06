@@ -85,7 +85,7 @@ IntersectionObserver* LazyLoadImageObserver::intersectionObserver(Document& docu
 {
     if (!m_lazyLoadIntersectionObserver) {
         auto callback = LazyImageLoadIntersectionObserverCallback::create(document);
-        IntersectionObserver::Init options { nullptr, emptyString(), { } };
+        IntersectionObserver::Init options { WTF::nullopt, emptyString(), { } };
         auto observer = IntersectionObserver::create(document, WTFMove(callback), WTFMove(options));
         if (observer.hasException())
             return nullptr;

@@ -33,7 +33,7 @@
     Constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options),
     EnabledAtRuntime=IntersectionObserver
 ] interface IntersectionObserver {
-    readonly attribute Element? root;
+    readonly attribute Node? root;
     readonly attribute DOMString rootMargin;
     readonly attribute sequence<double> thresholds;
 
@@ -48,7 +48,7 @@
     EnabledBySetting=IntersectionObserver
 ]
 dictionary IntersectionObserverInit {
-    Element? root = null;
+    (Element or Document)? root = null;
     DOMString rootMargin = "0px";
     (double or sequence<double>) threshold = 0.0;
 };

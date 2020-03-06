@@ -1,3 +1,13 @@
+2020-03-06  Frederic Wang  <fwang@igalia.com>
+
+        [intersection-observer] Accept a Document as an explicit root
+        https://bugs.webkit.org/show_bug.cgi?id=208047
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/intersection-observer/document-scrolling-element-root-expected.txt:
+        Update expectation now that the test passes.
+
 2020-03-02  Rob Buis  <rbuis@igalia.com>
 
         Fix behavior of pings regarding Origin header

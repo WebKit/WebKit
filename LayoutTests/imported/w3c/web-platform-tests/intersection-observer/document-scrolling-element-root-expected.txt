@@ -1,3 +1,4 @@
 
-FAIL Observer with explicit root which is the document. Type error
+PASS Observer with explicit root which is the document. 
+PASS First rAF. 
 

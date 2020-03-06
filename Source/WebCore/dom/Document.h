@@ -252,6 +252,7 @@ class HTMLAttachmentElement;
 
 #if ENABLE(INTERSECTION_OBSERVER)
 class IntersectionObserver;
+struct IntersectionObserverData;
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
@@ -1389,6 +1390,8 @@ public:
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
     void updateIntersectionObservations();
     void scheduleInitialIntersectionObservationUpdate();
+    IntersectionObserverData& ensureIntersectionObserverData();
+    IntersectionObserverData* intersectionObserverDataIfExists() { return m_intersectionObserverData.get(); }
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
@@ -1823,6 +1826,8 @@ private:
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
     Timer m_intersectionObserversNotifyTimer;
     Timer m_intersectionObserversInitialUpdateTimer;
+    // This is only non-null when this document is an explicit root.
+    std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)

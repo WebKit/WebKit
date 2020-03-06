@@ -591,7 +591,7 @@ public:
 
 #if ENABLE(INTERSECTION_OBSERVER)
     IntersectionObserverData& ensureIntersectionObserverData();
-    IntersectionObserverData* intersectionObserverData();
+    IntersectionObserverData* intersectionObserverDataIfExists();
 #endif
 
 #if ENABLE(RESIZE_OBSERVER)
