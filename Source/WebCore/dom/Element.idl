@@ -100,9 +100,9 @@
     [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] void webkitRequestFullscreen(); // Prefixed W3C version.
 
     // Extensions from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-element-interface).
-    [Conditional=POINTER_EVENTS, EnabledAtRuntime=PointerEvents, MayThrowException] void setPointerCapture(long pointerId);
-    [Conditional=POINTER_EVENTS, EnabledAtRuntime=PointerEvents, MayThrowException] void releasePointerCapture(long pointerId);
-    [Conditional=POINTER_EVENTS, EnabledAtRuntime=PointerEvents] boolean hasPointerCapture(long pointerId);
+    [Conditional=POINTER_EVENTS, MayThrowException] void setPointerCapture(long pointerId);
+    [Conditional=POINTER_EVENTS, MayThrowException] void releasePointerCapture(long pointerId);
+    [Conditional=POINTER_EVENTS] boolean hasPointerCapture(long pointerId);
 
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-element-interface).
     [Conditional=POINTER_LOCK] void requestPointerLock();

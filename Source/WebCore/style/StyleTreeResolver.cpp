@@ -246,7 +246,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
 #if ENABLE(POINTER_EVENTS) && PLATFORM(IOS_FAMILY)
     // FIXME: Track this exactly.
-    if (update.style->touchActions() != TouchAction::Auto && !m_document.quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+    if (update.style->touchActions() != TouchAction::Auto && !m_document.quirks().shouldDisablePointerEventsQuirk())
         m_document.setMayHaveElementsWithNonAutoTouchAction();
 #endif
 

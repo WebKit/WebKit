@@ -1310,14 +1310,6 @@ VisualViewportAPIEnabled:
   humanReadableDescription: "Enable Visual Viewport API"
   category: experimental
 
-PointerEventsEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "Pointer Events"
-  humanReadableDescription: "Enable Pointer Events"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: experimental
-
 SyntheticEditingCommandsEnabled:
   type: bool
   defaultValue: true

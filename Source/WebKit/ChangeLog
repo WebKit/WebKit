@@ -1,3 +1,13 @@
+2020-03-06  Antoine Quint  <graouts@webkit.org>
+
+        Remove the experimental flag for Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=208655
+        <rdar://problem/60090545>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+
 2020-03-05  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove reporting for some well-understood framebuffer routines

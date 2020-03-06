@@ -1,3 +1,21 @@
+2020-03-06  Antoine Quint  <graouts@webkit.org>
+
+        Remove the experimental flag for Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=208655
+        <rdar://problem/60090545>
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences syntheticEditingCommandsEnabled]):
+        (-[WebPreferences setSyntheticEditingCommandsEnabled:]):
+        (-[WebPreferences pointerEventsEnabled]): Deleted.
+        (-[WebPreferences setPointerEventsEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+
 2020-03-05  youenn fablet  <youenn@apple.com>
 
         Export NowPlaying commands to GPUProcess when media playing in GPUProcess is enabled

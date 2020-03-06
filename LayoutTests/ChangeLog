@@ -1,3 +1,15 @@
+2020-03-06  Antoine Quint  <graouts@webkit.org>
+
+        Remove the experimental flag for Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=208655
+        <rdar://problem/60090545>
+
+        Reviewed by Dean Jackson.
+
+        * fast/events/pointer/ios/tap-gives-pointerdown-pointerup.html:
+        * pointerevents/disabled-expected.html: Removed.
+        * pointerevents/disabled.html: Removed.
+
 2020-03-06  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Streaming aac/mp3 audio doesn't always work

@@ -174,9 +174,6 @@ public:
     void setCSSCustomPropertiesAndValuesEnabled(bool isEnabled) { m_CSSCustomPropertiesAndValuesEnabled = isEnabled; }
     bool cssCustomPropertiesAndValuesEnabled() const { return m_CSSCustomPropertiesAndValuesEnabled; }
 
-    void setPointerEventsEnabled(bool isEnabled) { m_pointerEventsEnabled = isEnabled; }
-    bool pointerEventsEnabled() const { return m_pointerEventsEnabled; }
-
     void setSyntheticEditingCommandsEnabled(bool isEnabled) { m_syntheticEditingCommandsEnabled = isEnabled; }
     bool syntheticEditingCommandsEnabled() const { return m_syntheticEditingCommandsEnabled; }
 
@@ -452,7 +449,6 @@ private:
     bool m_attrStyleEnabled { false };
     bool m_webAPIStatisticsEnabled { false };
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
-    bool m_pointerEventsEnabled { true };
     bool m_syntheticEditingCommandsEnabled { true };
     bool m_dialogElementEnabled { false };
     bool m_webSQLEnabled { false };

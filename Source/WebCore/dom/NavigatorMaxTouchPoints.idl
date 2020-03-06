@@ -28,8 +28,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=POINTER_EVENTS,
-    EnabledAtRuntime=PointerEvents
+    Conditional=POINTER_EVENTS
 ] interface MaxTouchPoints {
     readonly attribute long maxTouchPoints;
 };

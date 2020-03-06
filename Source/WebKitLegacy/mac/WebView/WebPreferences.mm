@@ -657,7 +657,6 @@ public:
 #endif
         @NO, WebKitDirectoryUploadEnabledPreferenceKey,
         @YES, WebKitWebAnimationsEnabledPreferenceKey,
-        @YES, WebKitPointerEventsEnabledPreferenceKey,
         @YES, WebKitSyntheticEditingCommandsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
@@ -3238,24 +3237,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey];
 }
 
-- (BOOL)pointerEventsEnabled
-{
-    return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];
-}
-
-- (void)setPointerEventsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitPointerEventsEnabledPreferenceKey];
-}
-
 - (BOOL)syntheticEditingCommandsEnabled
 {
-    return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitSyntheticEditingCommandsEnabledPreferenceKey];
 }
 
 - (void)setSyntheticEditingCommandsEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitPointerEventsEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitSyntheticEditingCommandsEnabledPreferenceKey];
 }
 
 - (BOOL)fetchAPIKeepAliveEnabled
