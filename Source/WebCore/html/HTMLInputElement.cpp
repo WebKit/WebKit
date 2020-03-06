@@ -2055,19 +2055,19 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(int start, int 
 static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
 {
     CSSGradientColorStop firstStop;
-    firstStop.m_color = CSSValuePool::singleton().createColorValue(Color::black);
-    firstStop.m_position = CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE);
+    firstStop.color = CSSValuePool::singleton().createColorValue(Color::black);
+    firstStop.position = CSSValuePool::singleton().createValue(50, CSSUnitType::CSS_PERCENTAGE);
 
     CSSGradientColorStop secondStop;
-    secondStop.m_color = CSSValuePool::singleton().createColorValue(Color::transparent);
-    secondStop.m_position = CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE);
+    secondStop.color = CSSValuePool::singleton().createColorValue(Color::transparent);
+    secondStop.position = CSSValuePool::singleton().createValue(100, CSSUnitType::CSS_PERCENTAGE);
 
     auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient);
     gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSUnitType::CSS_DEG));
-    gradient->addStop(firstStop);
-    gradient->addStop(secondStop);
+    gradient->addStop(WTFMove(firstStop));
+    gradient->addStop(WTFMove(secondStop));
+    gradient->doneAddingStops();
     gradient->resolveRGBColors();
-
     return gradient;
 }
 

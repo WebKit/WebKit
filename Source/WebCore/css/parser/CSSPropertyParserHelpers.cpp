@@ -1021,9 +1021,9 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
             return false;
     }
 
-    stop.m_position = CSSValuePool::singleton().createValue(position, CSSUnitType::CSS_NUMBER);
-    stop.m_color = consumeDeprecatedGradientStopColor(args, cssParserMode);
-    return stop.m_color && args.atEnd();
+    stop.position = CSSValuePool::singleton().createValue(position, CSSUnitType::CSS_NUMBER);
+    stop.color = consumeDeprecatedGradientStopColor(args, cssParserMode);
+    return stop.color && args.atEnd();
 }
 
 static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode)
@@ -1041,11 +1041,11 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     auto point = consumeDeprecatedGradientPoint(args, true);
     if (!point)
         return nullptr;
-    result->setFirstX(point.copyRef());
+    result->setFirstX(WTFMove(point));
     point = consumeDeprecatedGradientPoint(args, false);
     if (!point)
         return nullptr;
-    result->setFirstY(point.copyRef());
+    result->setFirstY(WTFMove(point));
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
@@ -1055,17 +1055,17 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
         auto radius = consumeNumber(args, ValueRangeNonNegative);
         if (!radius || !consumeCommaIncludingWhitespace(args))
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(radius.copyRef());
+        downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(WTFMove(radius));
     }
 
     point = consumeDeprecatedGradientPoint(args, true);
     if (!point)
         return nullptr;
-    result->setSecondX(point.copyRef());
+    result->setSecondX(WTFMove(point));
     point = consumeDeprecatedGradientPoint(args, false);
     if (!point)
         return nullptr;
-    result->setSecondY(point.copyRef());
+    result->setSecondY(WTFMove(point));
 
     // For radial gradients only, we now expect the second radius.
     if (isDeprecatedRadialGradient) {
@@ -1074,94 +1074,78 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
         auto radius = consumeNumber(args, ValueRangeNonNegative);
         if (!radius)
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(radius.copyRef());
+        downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(WTFMove(radius));
     }
 
     CSSGradientColorStop stop;
     while (consumeCommaIncludingWhitespace(args)) {
         if (!consumeDeprecatedGradientColorStop(args, stop, cssParserMode))
             return nullptr;
-        result->addStop(stop);
+        result->addStop(WTFMove(stop));
     }
 
     result->doneAddingStops();
     return result;
 }
 
-static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue& gradient)
+static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode mode, CSSGradientValue& gradient)
 {
     bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient || gradient.gradientType() == CSSConicGradient;
     
-    bool isConicGradient = gradient.gradientType() == CSSConicGradient;
+    auto consumeStopPosition = [&] {
+        return gradient.gradientType() == CSSConicGradient
+            ? consumeAngleOrPercent(range, mode, ValueRangeAll, UnitlessQuirk::Forbid)
+            : consumeLengthOrPercent(range, mode, ValueRangeAll);
+    };
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
     do {
-        CSSGradientColorStop stop;
-        stop.m_color = consumeColor(range, cssParserMode);
-        // Two hints in a row are not allowed.
-        if (!stop.m_color && (!supportsColorHints || previousStopWasColorHint))
-            return false;
-        
-        previousStopWasColorHint = !stop.m_color;
-        
-        // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
-        stop.isMidpoint = !stop.m_color;
-
-        if (isConicGradient)
-            stop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
-        else
-            stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
-        
-        if (!stop.m_color && !stop.m_position)
+        CSSGradientColorStop stop { consumeColor(range, mode), consumeStopPosition(), { } };
+        if (!stop.color && !stop.position)
             return false;
 
-        gradient.addStop(stop);
+        // Two color hints in a row are not allowed.
+        if (!stop.color && (!supportsColorHints || previousStopWasColorHint))
+            return false;
+        previousStopWasColorHint = !stop.color;
 
-        if (!stop.m_color || !stop.m_position)
-            continue;
-
-        CSSGradientColorStop secondStop;
-        if (isConicGradient)
-            secondStop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
-        else
-            secondStop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
-        
-        if (secondStop.m_position)
-            gradient.addStop(secondStop);
-        
+        // Stops with both a color and a position can have a second position, which shares the same color.
+        if (stop.color && stop.position) {
+            if (auto secondPosition = consumeStopPosition()) {
+                gradient.addStop(CSSGradientColorStop { stop });
+                stop.position = WTFMove(secondPosition);
+            }
+        }
+        gradient.addStop(WTFMove(stop));
     } while (consumeCommaIncludingWhitespace(range));
-
-    gradient.doneAddingStops();
 
     // The last color stop cannot be a color hint.
     if (previousStopWasColorHint)
         return false;
 
-    // Must have 2 or more stops to be valid.
-    return gradient.stopCount() >= 2;
+    // Must have two or more stops to be valid.
+    if (!gradient.hasAtLeastTwoStops())
+        return false;
+
+    gradient.doneAddingStops();
+    return true;
 }
 
 static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient);
+    auto result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient);
+
     RefPtr<CSSPrimitiveValue> centerX;
     RefPtr<CSSPrimitiveValue> centerY;
     consumeOneOrTwoValuedPosition(args, cssParserMode, UnitlessQuirk::Forbid, centerX, centerY);
     if ((centerX || centerY) && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    result->setFirstX(centerX.copyRef());
-    result->setFirstY(centerY.copyRef());
-    result->setSecondX(centerX.copyRef());
-    result->setSecondY(centerY.copyRef());
-
     auto shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
     auto sizeKeyword = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueContain, CSSValueCover>(args);
     if (!shape)
         shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
-    result->setShape(shape.copyRef());
-    result->setSizingBehavior(sizeKeyword.copyRef());
 
     // Or, two lengths or percentages
     if (!shape && !sizeKeyword) {
@@ -1172,16 +1156,24 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
-            result->setEndHorizontalSize(horizontalSize.copyRef());
-            result->setEndVerticalSize(verticalSize.copyRef());
+            result->setEndHorizontalSize(WTFMove(horizontalSize));
+            result->setEndVerticalSize(WTFMove(verticalSize));
         }
     } else {
         consumeCommaIncludingWhitespace(args);
     }
-    if (!consumeGradientColorStops(args, cssParserMode, *result))
+
+    if (!consumeGradientColorStops(args, cssParserMode, result))
         return nullptr;
 
-    return result;
+    result->setFirstX(centerX.copyRef());
+    result->setFirstY(centerY.copyRef());
+    result->setSecondX(WTFMove(centerX));
+    result->setSecondY(WTFMove(centerY));
+    result->setShape(WTFMove(shape));
+    result->setSizingBehavior(WTFMove(sizeKeyword));
+
+    return WTFMove(result);
 }
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
@@ -1242,11 +1234,6 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
         || (verticalSize && verticalSize->isCalculatedPercentageWithLength()))
         return nullptr;
 
-    result->setShape(shape.copyRef());
-    result->setSizingBehavior(sizeKeyword.copyRef());
-    result->setEndHorizontalSize(horizontalSize.copyRef());
-    result->setEndVerticalSize(verticalSize.copyRef());
-
     RefPtr<CSSPrimitiveValue> centerX;
     RefPtr<CSSPrimitiveValue> centerY;
     if (args.peek().id() == CSSValueAt) {
@@ -1267,6 +1254,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
         return nullptr;
     if (!consumeGradientColorStops(args, cssParserMode, *result))
         return nullptr;
+
+    result->setShape(WTFMove(shape));
+    result->setSizingBehavior(WTFMove(sizeKeyword));
+    result->setEndHorizontalSize(WTFMove(horizontalSize));
+    result->setEndVerticalSize(WTFMove(verticalSize));
+
     return result;
 }
 
@@ -1290,8 +1283,8 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
             endX = consumeIdent<CSSValueLeft, CSSValueRight>(args);
         }
 
-        result->setFirstX(endX.copyRef());
-        result->setFirstY(endY.copyRef());
+        result->setFirstX(WTFMove(endX));
+        result->setFirstY(WTFMove(endY));
     } else {
         expectComma = false;
     }
@@ -1314,24 +1307,24 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
             auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
             if (!angle)
                 return nullptr;
-            result->setAngle(angle.releaseNonNull());
+            result->setAngle(WTFMove(angle));
             expectComma = true;
         }
-        
+
         if (consumeIdent<CSSValueAt>(args)) {
             RefPtr<CSSPrimitiveValue> centerX;
             RefPtr<CSSPrimitiveValue> centerY;
             consumePosition(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position, centerX, centerY);
             if (!(centerX && centerY))
                 return nullptr;
-            
+
             result->setFirstX(centerX.copyRef());
             result->setFirstY(centerY.copyRef());
-            
+
             // Right now, conic gradients have the same start and end centers.
-            result->setSecondX(centerX.copyRef());
-            result->setSecondY(centerY.copyRef());
-    
+            result->setSecondX(WTFMove(centerX));
+            result->setSecondY(WTFMove(centerY));
+
             expectComma = true;
         }
     }
