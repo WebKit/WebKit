@@ -36,6 +36,23 @@
         * fast/hidpi/image-srcset-relative-svg-canvas-expected.html:
         * fast/hidpi/image-srcset-relative-svg-canvas.html:
 
+2020-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r257938): 5 event-region tests in fast/scrolling/ios are failing
+        https://bugs.webkit.org/show_bug.cgi?id=208673
+
+        Unreviewed test fix.
+
+        The code now bails frome event region building by checking settings, so these tests
+        need to enable async overflow scrolling.
+
+        * fast/scrolling/ios/border-radius-event-region-expected.txt:
+        * fast/scrolling/ios/border-radius-event-region.html:
+        * fast/scrolling/ios/event-region-pointer-events.html:
+        * fast/scrolling/ios/event-region-scale-transform-shared.html:
+        * fast/scrolling/ios/event-region-translate-transform-shared.html:
+        * fast/scrolling/ios/event-region-visibility-hidden.html:
+
 2020-03-05  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] scrollingcoordinator/ios/fixed-frame-overflow-swipe.html is flaky failing
