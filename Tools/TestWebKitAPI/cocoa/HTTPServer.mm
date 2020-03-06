@@ -98,14 +98,15 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
             request.append(static_cast<const char*>(buffer), size);
             return true;
         });
-        request.append(0);
+        request.append('\0');
 
         const char* getPathPrefix = "GET ";
         const char* postPathPrefix = "POST ";
         const char* pathSuffix = " HTTP/1.1\r\n";
         const char* pathEnd = strstr(request.data(), pathSuffix);
         ASSERT_WITH_MESSAGE(pathEnd, "HTTPServer assumes request is HTTP 1.1");
-        ASSERT_WITH_MESSAGE(strstr(request.data(), "\r\n\r\n"), "HTTPServer assumes entire HTTP request is received at once");
+        const char* doubleNewline = strstr(request.data(), "\r\n\r\n");
+        ASSERT_WITH_MESSAGE(doubleNewline, "HTTPServer assumes entire HTTP request is received at once");
         size_t pathPrefixLength = 0;
         if (!memcmp(request.data(), getPathPrefix, strlen(getPathPrefix)))
             pathPrefixLength = strlen(getPathPrefix);
@@ -144,14 +145,20 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
             });
         };
 
-        if (strstr(request.data(), "Content-Length")) {
-            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
-                if (error || !content)
-                    return;
-                sendResponse();
-            }).get());
-        } else
-            sendResponse();
+        if (auto* contentLengthBegin = strstr(request.data(), "Content-Length")) {
+            size_t contentLength = atoi(contentLengthBegin + strlen("Content-Length: "));
+            size_t headerLength = doubleNewline - request.data() + strlen("\r\n\r\n");
+            constexpr size_t nullTerminationLength = 1;
+            if (request.size() - nullTerminationLength - headerLength < contentLength) {
+                nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
+                    if (error || !content)
+                        return;
+                    sendResponse();
+                }).get());
+                return;
+            }
+        }
+        sendResponse();
     });
 }
 

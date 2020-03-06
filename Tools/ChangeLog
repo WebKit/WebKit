@@ -1,3 +1,13 @@
+2020-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ResourceLoadDelegate.LoadInfo API test after r257816
+        https://bugs.webkit.org/show_bug.cgi?id=208550
+
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        Sometimes we need a separate read to read the HTTP body after a request header, sometimes it comes in the same read.
+        If it comes in the same read, send the response immediately.  Otherwise read the HTTP body then send the response.
+
 2020-03-06  Lauro Moura <lmoura@igalia.com>
 
         [WPE][WebDriver] MiniBrowser should react to close session commands
