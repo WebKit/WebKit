@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT void updateIsMonitoringWheelEventsForFrameView(const FrameView&) override;
 
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
-    void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons);
+    void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>);
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
@@ -133,7 +133,7 @@ private:
     WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
-    WEBCORE_EXPORT void setSynchronousScrollingReasons(FrameView&, SynchronousScrollingReasons) final;
+    WEBCORE_EXPORT void setSynchronousScrollingReasons(FrameView&, OptionSet<SynchronousScrollingReason>) final;
 
     virtual void scheduleTreeStateCommit() = 0;
 

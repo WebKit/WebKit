@@ -25,13 +25,13 @@
 
 #pragma once
 
+#include "ScrollingCoordinatorTypes.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-typedef unsigned SynchronousScrollingReasons;
 
 class PerformanceLoggingClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -43,7 +43,7 @@ public:
     };
     virtual void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) = 0;
 
-    WEBCORE_EXPORT static String synchronousScrollingReasonsAsString(SynchronousScrollingReasons);
+    WEBCORE_EXPORT static String synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason>);
 
     virtual ~PerformanceLoggingClient() = default;
 };

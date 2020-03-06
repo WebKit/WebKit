@@ -29,7 +29,13 @@
 
 namespace WebCore {
 
-typedef unsigned SynchronousScrollingReasons;
+enum class SynchronousScrollingReason {
+    ForcedOnMainThread                                          = 1 << 0,
+    HasSlowRepaintObjects                                       = 1 << 1,
+    HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 2,
+    HasNonLayerViewportConstrainedObjects                       = 1 << 3,
+    IsImageDocument                                             = 1 << 4
+};
 
 enum class ScrollingNodeType : uint8_t {
     MainFrame,

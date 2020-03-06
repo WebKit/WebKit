@@ -1,3 +1,16 @@
+2020-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an OptionSet<> for SynchronousScrollingReasons
+        https://bugs.webkit.org/show_bug.cgi?id=208697
+
+        Reviewed by Antti Koivisto.
+
+        Convert SynchronousScrollingReasons to an OptionSet<SynchronousScrollingReason>.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * UIProcess/WebPageProxy.cpp:
+
 2020-03-06  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Set the WebProcess's useGPUProcessForMedia setting during the first page load

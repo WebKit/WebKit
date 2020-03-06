@@ -168,21 +168,13 @@ public:
     // Generated a unique id for scrolling nodes.
     ScrollingNodeID uniqueScrollingNodeID();
 
-    enum MainThreadScrollingReasonFlags {
-        ForcedOnMainThread                                          = 1 << 0,
-        HasSlowRepaintObjects                                       = 1 << 1,
-        HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 2,
-        HasNonLayerViewportConstrainedObjects                       = 1 << 3,
-        IsImageDocument                                             = 1 << 4
-    };
-
-    SynchronousScrollingReasons synchronousScrollingReasons(const FrameView&) const;
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(const FrameView&) const;
     bool shouldUpdateScrollLayerPositionSynchronously(const FrameView&) const;
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
 
-    static String synchronousScrollingReasonsAsText(SynchronousScrollingReasons);
+    static String synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);
     String synchronousScrollingReasonsAsText() const;
 
     EventTrackingRegions absoluteEventTrackingRegions() const;
@@ -205,7 +197,7 @@ protected:
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
-    virtual void setSynchronousScrollingReasons(FrameView&, SynchronousScrollingReasons) { }
+    virtual void setSynchronousScrollingReasons(FrameView&, OptionSet<SynchronousScrollingReason>) { }
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);

@@ -26,27 +26,26 @@
 #include "config.h"
 #include "PerformanceLoggingClient.h"
 
-#include "ScrollingCoordinator.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-String PerformanceLoggingClient::synchronousScrollingReasonsAsString(SynchronousScrollingReasons synchronousScrollingReasons)
+String PerformanceLoggingClient::synchronousScrollingReasonsAsString(OptionSet<SynchronousScrollingReason> synchronousScrollingReasons)
 {
-    if (!synchronousScrollingReasons)
+    if (synchronousScrollingReasons.isEmpty())
         return emptyString();
 
     StringBuilder reasons;
 
-    if (synchronousScrollingReasons & ScrollingCoordinator::ForcedOnMainThread)
+    if (synchronousScrollingReasons & SynchronousScrollingReason::ForcedOnMainThread)
         reasons.appendLiteral("forced,");
-    if (synchronousScrollingReasons & ScrollingCoordinator::HasSlowRepaintObjects)
+    if (synchronousScrollingReasons & SynchronousScrollingReason::HasSlowRepaintObjects)
         reasons.appendLiteral("slow-repaint objects,");
-    if (synchronousScrollingReasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
+    if (synchronousScrollingReasons & SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
         reasons.appendLiteral("viewport-constrained objects,");
-    if (synchronousScrollingReasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
+    if (synchronousScrollingReasons & SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects)
         reasons.appendLiteral("non-layer viewport-constrained objects,");
-    if (synchronousScrollingReasons & ScrollingCoordinator::IsImageDocument)
+    if (synchronousScrollingReasons & SynchronousScrollingReason::IsImageDocument)
         reasons.appendLiteral("image document,");
 
     // Strip the trailing comma.

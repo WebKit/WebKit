@@ -156,7 +156,7 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingSt
         ts.dumpProperty("header height", m_headerHeight);
     if (m_footerHeight)
         ts.dumpProperty("footer height", m_footerHeight);
-    if (m_synchronousScrollingReasons)
+    if (!m_synchronousScrollingReasons.isEmpty())
         ts.dumpProperty("synchronous scrolling reasons", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
 
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);

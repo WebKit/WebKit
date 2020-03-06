@@ -92,7 +92,7 @@ public:
 
     void notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode);
 
-    virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
+    virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>) { }
     virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
 
 #if PLATFORM(IOS_FAMILY)

@@ -41,8 +41,8 @@ public:
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     
-    SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
-    bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
+    bool shouldUpdateScrollLayerPositionSynchronously() const { return !m_synchronousScrollingReasons.isEmpty(); }
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
 
@@ -85,7 +85,7 @@ private:
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
     
-    SynchronousScrollingReasons m_synchronousScrollingReasons { 0 };
+    OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
     ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
     
     bool m_fixedElementsLayoutRelativeToFrame { false };

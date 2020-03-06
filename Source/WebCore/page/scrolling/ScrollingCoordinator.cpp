@@ -327,18 +327,18 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
     return false;
 }
 
-SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons(const FrameView& frameView) const
+OptionSet<SynchronousScrollingReason> ScrollingCoordinator::synchronousScrollingReasons(const FrameView& frameView) const
 {
-    SynchronousScrollingReasons synchronousScrollingReasons = (SynchronousScrollingReasons)0;
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons;
 
     if (m_forceSynchronousScrollLayerPositionUpdates)
-        synchronousScrollingReasons |= ForcedOnMainThread;
+        synchronousScrollingReasons.add(SynchronousScrollingReason::ForcedOnMainThread);
     if (frameView.hasSlowRepaintObjects())
-        synchronousScrollingReasons |= HasSlowRepaintObjects;
+        synchronousScrollingReasons.add(SynchronousScrollingReason::HasSlowRepaintObjects);
     if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
-        synchronousScrollingReasons |= HasNonLayerViewportConstrainedObjects;
+        synchronousScrollingReasons.add(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects);
     if (frameView.frame().mainFrame().document() && frameView.frame().document()->isImageDocument())
-        synchronousScrollingReasons |= IsImageDocument;
+        synchronousScrollingReasons.add(SynchronousScrollingReason::IsImageDocument);
 
     return synchronousScrollingReasons;
 }
@@ -371,7 +371,7 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const FrameView& frameView) const
 {
     if (&frameView == m_page->mainFrame().view())
-        return synchronousScrollingReasons(frameView);
+        return !synchronousScrollingReasons(frameView).isEmpty();
     
     return true;
 }
@@ -387,19 +387,19 @@ String ScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBe
     return String();
 }
 
-String ScrollingCoordinator::synchronousScrollingReasonsAsText(SynchronousScrollingReasons reasons)
+String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason> reasons)
 {
     StringBuilder stringBuilder;
 
-    if (reasons & ScrollingCoordinator::ForcedOnMainThread)
+    if (reasons & SynchronousScrollingReason::ForcedOnMainThread)
         stringBuilder.appendLiteral("Forced on main thread, ");
-    if (reasons & ScrollingCoordinator::HasSlowRepaintObjects)
+    if (reasons & SynchronousScrollingReason::HasSlowRepaintObjects)
         stringBuilder.appendLiteral("Has slow repaint objects, ");
-    if (reasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
+    if (reasons & SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
         stringBuilder.appendLiteral("Has viewport constrained objects without supporting fixed layers, ");
-    if (reasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
+    if (reasons & SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects)
         stringBuilder.appendLiteral("Has non-layer viewport-constrained objects, ");
-    if (reasons & ScrollingCoordinator::IsImageDocument)
+    if (reasons & SynchronousScrollingReason::IsImageDocument)
         stringBuilder.appendLiteral("Is image document, ");
 
     if (stringBuilder.length())

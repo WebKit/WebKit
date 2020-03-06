@@ -75,7 +75,7 @@ protected:
 #endif
 
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
-    void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) override;
+    void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>) override;
 
 private:
     bool isThreadedScrollingTree() const override { return true; }

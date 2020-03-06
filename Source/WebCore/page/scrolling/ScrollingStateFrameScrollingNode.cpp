@@ -133,7 +133,7 @@ void ScrollingStateFrameScrollingNode::setEventTrackingRegions(const EventTracki
     setPropertyChanged(EventTrackingRegion);
 }
 
-void ScrollingStateFrameScrollingNode::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
+void ScrollingStateFrameScrollingNode::setSynchronousScrollingReasons(OptionSet<SynchronousScrollingReason> reasons)
 {
     if (m_synchronousScrollingReasons == reasons)
         return;
@@ -353,7 +353,7 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
         }
     }
 
-    if (m_synchronousScrollingReasons)
+    if (!m_synchronousScrollingReasons.isEmpty())
         ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
     
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
