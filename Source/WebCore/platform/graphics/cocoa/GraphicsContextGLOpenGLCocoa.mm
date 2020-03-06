@@ -347,6 +347,15 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     }
     eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     eglContextAttributes.append(EGL_TRUE);
+    // WebGL requires that all resources are cleared at creation.
+    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+    eglContextAttributes.append(EGL_TRUE);
+    // WebGL doesn't allow client arrays.
+    eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    eglContextAttributes.append(EGL_FALSE);
+    // WebGL doesn't allow implicit creation of objects on bind.
+    eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    eglContextAttributes.append(EGL_FALSE);
 
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
