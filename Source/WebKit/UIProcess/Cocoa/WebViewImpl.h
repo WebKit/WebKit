@@ -297,7 +297,7 @@ public:
     bool windowOcclusionDetectionEnabled() const { return m_windowOcclusionDetectionEnabled; }
 
     void prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<void()>&& completionHandler);
-    NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation; }
+    NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation.get(); }
 
     void updateSecureInputState();
     void resetSecureInputState();
@@ -677,6 +677,8 @@ private:
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
     void flushPendingMouseEventCallbacks();
 
+    void viewWillMoveToWindowImpl(NSWindow *);
+
 #if ENABLE(DRAG_SUPPORT)
     void sendDragEndToPage(CGPoint endPoint, NSDragOperation);
 #endif
@@ -732,7 +734,7 @@ private:
 
     bool m_shouldDeferViewInWindowChanges { false };
     bool m_viewInWindowChangeWasDeferred { false };
-    NSWindow *m_targetWindowForMovePreparation { nullptr };
+    RetainPtr<NSWindow> m_targetWindowForMovePreparation;
 
     id m_flagsChangedEventMonitor { nullptr };
 

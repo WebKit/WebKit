@@ -1,3 +1,31 @@
+2020-03-06  Sihui Liu  <sihui_liu@apple.com>
+
+        UIProcess crash after using _prepareForMoveToWindow, then deallocating the WKWebView before moving to the window
+        https://bugs.webkit.org/show_bug.cgi?id=208365
+        <rdar://problem/59877296>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix the issue that observers in WebView may not be removed when WebView is prepared to move to some window but 
+        does not actually move. Make WebView hold strong reference to the target window so it knows to stop observing at
+        dealloc even if the move does not happen. The strong reference will be released when WebView actually moves to a
+        window to avoid reference cycle.
+
+        New API tests: WKWebView.PrepareForMoveToWindowThenViewDeallocBeforeMoving
+                       WKWebView.PrepareForMoveToWindowThenWindowDeallocBeforeMoving
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::targetWindowForMovePreparation const):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::intrinsicDeviceScaleFactor const):
+        (WebKit::WebViewImpl::windowDidChangeScreen):
+        (WebKit::WebViewImpl::viewWillMoveToWindowImpl):
+        (WebKit::WebViewImpl::viewWillMoveToWindow):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::colorSpace):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+
 2020-03-06  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove redundant flags in script evaluation checks

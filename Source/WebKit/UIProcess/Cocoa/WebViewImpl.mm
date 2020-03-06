@@ -1445,6 +1445,11 @@ WebViewImpl::~WebViewImpl()
 #endif
 #endif
 
+    if (m_targetWindowForMovePreparation) {
+        [m_windowVisibilityObserver stopObserving:m_targetWindowForMovePreparation.get()];
+        m_targetWindowForMovePreparation = nil;
+    }
+
     m_page->close();
 
     WebProcessPool::statistics().wkViewCount--;
@@ -2035,7 +2040,7 @@ float WebViewImpl::intrinsicDeviceScaleFactor() const
     if (m_overrideDeviceScaleFactor)
         return m_overrideDeviceScaleFactor;
     if (m_targetWindowForMovePreparation)
-        return m_targetWindowForMovePreparation.backingScaleFactor;
+        return [m_targetWindowForMovePreparation backingScaleFactor];
     if (NSWindow *window = [m_view window])
         return window.backingScaleFactor;
     return [NSScreen mainScreen].backingScaleFactor;
@@ -2106,7 +2111,7 @@ void WebViewImpl::windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor
 
 void WebViewImpl::windowDidChangeScreen()
 {
-    NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation : [m_view window];
+    NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
     m_page->windowScreenDidChange([[[[window screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
 }
 
@@ -2198,7 +2203,7 @@ bool WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint poin
     return NSMouseInRect(localPoint, visibleThumbRect, [m_view isFlipped]);
 }
 
-void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
+void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
 {
     // If we're in the middle of preparing to move to a window, we should only be moved to that window.
     ASSERT(!m_targetWindowForMovePreparation || (m_targetWindowForMovePreparation == window));
@@ -2209,14 +2214,20 @@ void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 
     clearAllEditCommands();
 
-    NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation : [m_view window];
+    NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
     [m_windowVisibilityObserver stopObserving:stopObservingWindow];
     [m_windowVisibilityObserver startObserving:window];
 }
 
+void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
+{
+    viewWillMoveToWindowImpl(window);
+    m_targetWindowForMovePreparation = nil;
+}
+
 void WebViewImpl::viewDidMoveToWindow()
 {
-    NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation : [m_view window];
+    NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
 
     LOG(ActivityState, "WebViewImpl %p viewDidMoveToWindow %p", this, window);
 
@@ -2323,7 +2334,7 @@ ColorSpaceData WebViewImpl::colorSpace()
 {
     if (!m_colorSpace) {
         if (m_targetWindowForMovePreparation)
-            m_colorSpace = m_targetWindowForMovePreparation.colorSpace;
+            m_colorSpace = [m_targetWindowForMovePreparation colorSpace];
         else if (NSWindow *window = [m_view window])
             m_colorSpace = window.colorSpace;
         else
@@ -2414,22 +2425,14 @@ void WebViewImpl::endDeferringViewInWindowChangesSync()
 void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<void()>&& completionHandler)
 {
     m_shouldDeferViewInWindowChanges = true;
-    viewWillMoveToWindow(targetWindow);
+    viewWillMoveToWindowImpl(targetWindow);
     m_targetWindowForMovePreparation = targetWindow;
     viewDidMoveToWindow();
 
     m_shouldDeferViewInWindowChanges = false;
 
     auto weakThis = makeWeakPtr(*this);
-    m_page->installActivityStateChangeCompletionHandler([weakThis, completionHandler = WTFMove(completionHandler)]() {
-        completionHandler();
-
-        if (!weakThis)
-            return;
-
-        ASSERT(![weakThis->m_view window] || [weakThis->m_view window] == weakThis->m_targetWindowForMovePreparation);
-        weakThis->m_targetWindowForMovePreparation = nil;
-    });
+    m_page->installActivityStateChangeCompletionHandler(WTFMove(completionHandler));
 
     dispatchSetTopContentInset();
     m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
