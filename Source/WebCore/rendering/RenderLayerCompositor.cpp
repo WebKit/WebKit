@@ -27,6 +27,7 @@
 
 #include "RenderLayerCompositor.h"
 
+#include "AsyncScrollingCoordinator.h"
 #include "CSSAnimationController.h"
 #include "CSSPropertyNames.h"
 #include "CanvasRenderingContext.h"
@@ -517,6 +518,9 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         SetForScope<bool> flushingLayersScope(m_flushingLayers, true);
 
         if (auto* rootLayer = rootGraphicsLayer()) {
+#if ENABLE(SCROLLING_THREAD)
+            LayerTreeHitTestLocker layerLocker(scrollingCoordinator());
+#endif
             FloatRect visibleRect = visibleRectForLayerFlushing();
             LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (is root " << isFlushRoot << ") visible rect " << visibleRect);
             rootLayer->flushCompositingState(visibleRect);

@@ -175,6 +175,29 @@ private:
     bool m_eventTrackingRegionsDirty { false };
 };
 
+#if ENABLE(SCROLLING_THREAD)
+class LayerTreeHitTestLocker {
+public:
+    LayerTreeHitTestLocker(ScrollingCoordinator* scrollingCoordinator)
+    {
+        if (is<AsyncScrollingCoordinator>(scrollingCoordinator)) {
+            m_scrollingTree = downcast<AsyncScrollingCoordinator>(*scrollingCoordinator).scrollingTree();
+            if (m_scrollingTree)
+                m_scrollingTree->lockLayersForHitTesting();
+        }
+    }
+    
+    ~LayerTreeHitTestLocker()
+    {
+        if (m_scrollingTree)
+            m_scrollingTree->unlockLayersForHitTesting();
+    }
+
+private:
+    RefPtr<ScrollingTree> m_scrollingTree;
+};
+#endif
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_COORDINATOR(WebCore::AsyncScrollingCoordinator, isAsyncScrollingCoordinator());

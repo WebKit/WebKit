@@ -71,4 +71,14 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     return ScrollingTreeFixedNode::create(*this, nodeID);
 }
 
+void ScrollingTreeMac::lockLayersForHitTesting()
+{
+    m_layerHitTestMutex.lock();
+}
+
+void ScrollingTreeMac::unlockLayersForHitTesting()
+{
+    m_layerHitTestMutex.unlock();
+}
+
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

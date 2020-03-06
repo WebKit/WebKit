@@ -27,8 +27,8 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -47,7 +47,7 @@ class PlatformCALayerClient;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
-class WEBCORE_EXPORT PlatformCALayer : public RefCounted<PlatformCALayer> {
+class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer> {
 #if PLATFORM(COCOA)
     friend class PlatformCALayerCocoa;
 #elif PLATFORM(WIN)

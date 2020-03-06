@@ -161,6 +161,9 @@ public:
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     bool inCommitTreeState() const { return m_inCommitTreeState; }
 
+    virtual void lockLayersForHitTesting() { }
+    virtual void unlockLayersForHitTesting() { }
+
 protected:
     void setMainFrameScrollPosition(FloatPoint);
 
@@ -214,6 +217,7 @@ private:
     Lock m_swipeStateMutex;
     SwipeState m_swipeState;
 
+private:
     unsigned m_fixedOrStickyNodeCount { 0 };
     bool m_isHandlingProgrammaticScroll { false };
     bool m_isMonitoringWheelEvents { false };
@@ -222,7 +226,7 @@ private:
     bool m_wasScrolledByDelegatedScrollingSincePreviousCommit { false };
     bool m_inCommitTreeState { false };
 };
-    
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(ToValueTypeName, predicate) \

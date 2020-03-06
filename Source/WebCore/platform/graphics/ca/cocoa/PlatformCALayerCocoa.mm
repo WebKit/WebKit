@@ -77,11 +77,14 @@ static LayerToPlatformCALayerMap& layerToPlatformLayerMap()
     return layerMap;
 }
 
+
 RefPtr<PlatformCALayer> PlatformCALayer::platformCALayerForLayer(void* platformLayer)
 {
     if (!platformLayer)
-        return 0;
+        return nullptr;
 
+    static Lock lock;
+    LockHolder lockHolder(lock);
     return layerToPlatformLayerMap().get(platformLayer);
 }
 
