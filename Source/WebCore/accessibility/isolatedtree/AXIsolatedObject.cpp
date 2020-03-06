@@ -957,9 +957,11 @@ bool AXIsolatedObject::isAccessibilityScrollbar() const
     return false;
 }
 
-bool AXIsolatedObject::isAccessibilityScrollViewInstance() const
+bool AXIsolatedObject::isAccessibilityScrollView() const
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: this should be ASSERT_NOT_REACHED, but it is called by
+    // AXObjectCache::rootWebArea, that in turn is called by
+    // AXObjectCache::postTextStateChangePlatformNotification.
     return false;
 }
 

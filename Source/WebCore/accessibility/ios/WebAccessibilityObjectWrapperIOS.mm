@@ -1666,10 +1666,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     // Mock objects can have their parents detached but still exist in the cache.
     if (self.axBackingObject->isDetachedFromParent())
         return nil;
-
+    
     // The only object without a parent wrapper at this point should be a scroll view.
-    ASSERT(self.axBackingObject->isScrollView());
-
+    ASSERT(self.axBackingObject->isAccessibilityScrollView());
+    
     // Verify this is the top document. If not, we might need to go through the platform widget.
     FrameView* frameView = self.axBackingObject->documentFrameView();
     Document* document = self.axBackingObject->document();

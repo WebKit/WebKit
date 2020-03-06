@@ -48,14 +48,3 @@
 @end
 
 #endif // PLATFORM(MAC)
-
-namespace WebCore {
-
-// TextMarker utility functions.
-
-id textMarkerRangeFromMarkers(id textMarker1, id textMarker2);
-id textMarkerForVisiblePosition(AXObjectCache*, const VisiblePosition&);
-id textMarkerRangeFromVisiblePositions(AXObjectCache*, const VisiblePosition&, const VisiblePosition&);
-
-}
-

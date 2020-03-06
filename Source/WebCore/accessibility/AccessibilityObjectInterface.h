@@ -485,7 +485,7 @@ public:
     virtual bool isAccessibilityNodeObject() const = 0;
     virtual bool isAccessibilityRenderObject() const = 0;
     virtual bool isAccessibilityScrollbar() const = 0;
-    virtual bool isAccessibilityScrollViewInstance() const = 0;
+    virtual bool isAccessibilityScrollView() const = 0;
     virtual bool isAccessibilitySVGRoot() const = 0;
     virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;

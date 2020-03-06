@@ -50,7 +50,7 @@ private:
     ScrollableArea* getScrollableAreaIfScrollable() const override;
     void scrollTo(const IntPoint&) const override;
     bool computeAccessibilityIsIgnored() const override;
-    bool isAccessibilityScrollViewInstance() const override { return true; }
+    bool isAccessibilityScrollView() const override { return true; }
     bool isEnabled() const override { return true; }
     
     bool isAttachment() const override;
@@ -84,4 +84,4 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollView, isAccessibilityScrollViewInstance())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityScrollView, isAccessibilityScrollView())
