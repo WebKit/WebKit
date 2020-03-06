@@ -105,6 +105,11 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext& script
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
     }
 
+    // Verify that we have a valid wrapper protecting our function from
+    // garbage collection. That is except for when we're not in the normal
+    // world and can have zombie m_jsFunctions.
+    ASSERT(!m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction);
+
     // If m_wrapper is null, then m_jsFunction is zombied, and should never be accessed.
     if (!m_wrapper)
         return nullptr;
