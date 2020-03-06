@@ -194,12 +194,6 @@ void Save::apply(GraphicsContext& context) const
     context.save();
 }
 
-static TextStream& operator<<(TextStream& ts, const Save& item)
-{
-    ts.dumpProperty("restore-index", item.restoreIndex());
-    return ts;
-}
-
 Restore::Restore()
     : Item(ItemType::Restore)
 {
@@ -1404,9 +1398,6 @@ TextStream& operator<<(TextStream& ts, const Item& item)
 
     // FIXME: Make a macro which takes a macro for all these enumeration switches
     switch (item.type()) {
-    case ItemType::Save:
-        ts << downcast<Save>(item);
-        break;
     case ItemType::Translate:
         ts << downcast<Translate>(item);
         break;
@@ -1537,6 +1528,7 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
 
     // Items with no additional data.
+    case ItemType::Save:
     case ItemType::Restore:
     case ItemType::EndTransparencyLayer:
 #if USE(CG)

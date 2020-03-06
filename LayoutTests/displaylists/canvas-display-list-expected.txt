@@ -1,6 +1,5 @@
  
-(save
-  (restore-index 0))
+(save)
 (set-state
   (change-flags 1050912)
   (stroke-thickness 1.00)

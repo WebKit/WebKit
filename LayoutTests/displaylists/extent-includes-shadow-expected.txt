@@ -2,8 +2,7 @@
 (translate
   (x 0.00)
   (y 0.00))
-(save
-  (restore-index 4))
+(save)
 (set-state
   (change-flags 1024)
   (shadow-blur 12.00)

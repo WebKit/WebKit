@@ -4,8 +4,7 @@
   (y 22.00))
 (concatentate-ctm
   (ctm {m=((0.87,0.50)(-0.50,0.87)) t=(81.70,-18.30)}))
-(save
-  (restore-index 5))
+(save)
 (set-state
   (change-flags 1024)
   (shadow-blur 12.00)
