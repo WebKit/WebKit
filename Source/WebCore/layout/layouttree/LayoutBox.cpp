@@ -73,20 +73,23 @@ bool Box::establishesBlockFormattingContext() const
     if (!parent())
         return true;
 
+    if (isTableWrapperBox())
+        return true;
+
     // 9.4.1 Block formatting contexts
     // Floats, absolutely positioned elements, block containers (such as inline-blocks, table-cells, and table-captions)
     // that are not block boxes, and block boxes with 'overflow' other than 'visible' (except when that value has been propagated to the viewport)
     // establish new block formatting contexts for their contents.
-    if (isFloatingPositioned() || isAbsolutelyPositioned())
-        return true;
+    if (isFloatingPositioned() || isAbsolutelyPositioned()) {
+        // Not all floating or out-of-positioned block level boxes establish BFC.
+        // See [9.7 Relationships between 'display', 'position', and 'float'] for details.
+        return style().display() == DisplayType::Block;
+    }
 
     if (isBlockContainerBox() && !isBlockLevelBox())
         return true;
 
     if (isBlockLevelBox() && !isOverflowVisible())
-        return true;
-
-    if (isTableWrapperBox())
         return true;
 
     return false;
