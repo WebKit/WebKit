@@ -85,7 +85,7 @@ static bool urlRequiresFirefoxBrowser(const URL& url)
     // to reproduce the warnings you will need to sign out of Google, then click
     // on a link to a non-public document that requires signing in. The
     // unsupported browser warning will be displayed after signing in.
-    if (domain == "accounts.youtube.com")
+    if (domain == "accounts.youtube.com" || domain == "docs.google.com")
         return true;
 
     // Google Drive shows an unsupported browser warning with WebKitGTK's
