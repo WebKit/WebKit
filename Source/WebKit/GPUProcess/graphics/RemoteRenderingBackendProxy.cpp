@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 
 namespace WebKit {
@@ -71,39 +70,32 @@ void RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& logicalSize
     if (!gpuConnectionToWebProcess)
         return;
 
-    if (m_imageBufferMessageHandlerMap.contains(imageBufferIdentifier)) {
+    if (m_imageBufferMap.contains(imageBufferIdentifier)) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    if (renderingMode == RenderingMode::RemoteAccelerated) {
-        if (auto imageBuffer = AcceleratedRemoteImageBufferProxy::create(logicalSize, resolutionScale, colorSpace, *this, imageBufferIdentifier)) {
-            m_imageBufferMessageHandlerMap.add(imageBufferIdentifier, WTFMove(imageBuffer));
-            return;
-        }
+    std::unique_ptr<ImageBuffer> imageBuffer;
+
+    switch (renderingMode) {
+    case RenderingMode::RemoteAccelerated:
+    case RenderingMode::RemoteUnaccelerated:
+        // FIXME: create the remote ImageBuffer proxy.
+    default:
+        ASSERT_NOT_REACHED();
     }
 
-    if (renderingMode == RenderingMode::RemoteAccelerated || renderingMode == RenderingMode::RemoteUnaccelerated) {
-        if (auto imageBuffer = UnacceleratedRemoteImageBufferProxy::create(logicalSize, resolutionScale, colorSpace, *this, imageBufferIdentifier)) {
-            m_imageBufferMessageHandlerMap.add(imageBufferIdentifier, WTFMove(imageBuffer));
-            return;
-        }
-    }
+    if (!imageBuffer)
+        return;
 
-    ASSERT_NOT_REACHED();
+    m_imageBufferMap.add(imageBufferIdentifier, WTFMove(imageBuffer));
 }
 
 void RemoteRenderingBackendProxy::releaseImageBuffer(ImageBufferIdentifier imageBufferIdentifier)
 {
     // CreateImageBuffer message should have been received before this one.
-    bool found = m_imageBufferMessageHandlerMap.remove(imageBufferIdentifier);
+    bool found = m_imageBufferMap.remove(imageBufferIdentifier);
     ASSERT_UNUSED(found, found);
-}
-
-void RemoteRenderingBackendProxy::flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier, ImageBufferIdentifier imageBufferIdentifier)
-{
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
-        imageBuffer->flushDrawingContext(displayList, flushIdentifier);
 }
 
 } // namespace WebKit

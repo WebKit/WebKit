@@ -28,15 +28,13 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "ImageBufferFlushIdentifier.h"
 #include "ImageBufferIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteImageBufferMessageHandlerProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/ColorSpace.h>
-#include <WebCore/DisplayListItems.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/RenderingMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
@@ -46,13 +44,11 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 
 class RemoteRenderingBackendProxy
-    : public IPC::MessageSender
+    : private IPC::MessageSender
     , private IPC::MessageReceiver {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
     virtual ~RemoteRenderingBackendProxy();
-
-    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
 
 private:
     RemoteRenderingBackendProxy(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
@@ -64,13 +60,11 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, ImageBufferIdentifier);
     void releaseImageBuffer(ImageBufferIdentifier);
-    void flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier, ImageBufferIdentifier);
 
-    using ImageBufferMessageHandlerMap = HashMap<ImageBufferIdentifier, std::unique_ptr<RemoteImageBufferMessageHandlerProxy>>;
-    ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;
+    using ImageBufferMap = HashMap<ImageBufferIdentifier, std::unique_ptr<WebCore::ImageBuffer>>;
+    ImageBufferMap m_imageBufferMap;
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
 };

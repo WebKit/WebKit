@@ -52,11 +52,6 @@ public:
     {
     }
 
-    ImageBuffer(const FloatSize& size)
-        : m_drawingContext(size)
-    {
-    }
-
     ~ImageBuffer()
     {
         flushDrawingContext();

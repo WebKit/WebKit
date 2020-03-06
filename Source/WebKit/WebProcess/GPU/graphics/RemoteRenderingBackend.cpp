@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessConnection.h"
-#include "PlatformRemoteImageBuffer.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 
@@ -72,30 +71,16 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-bool RemoteRenderingBackend::waitForCreateImageBufferBackend()
+std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize&, RenderingMode renderingMode, float, ColorSpace)
 {
-    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
-}
+    switch (renderingMode) {
+    case RenderingMode::RemoteAccelerated:
+    case RenderingMode::RemoteUnaccelerated:
+        // FIXME: Create the remote ImageBuffer
+        return nullptr;
 
-bool RemoteRenderingBackend::waitForCommitImageBufferFlushContext()
-{
-    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackend::CommitImageBufferFlushContext>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
-}
-
-std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const FloatSize& size, ShouldAccelerate shouldAccelerate, float resolutionScale, ColorSpace colorSpace)
-{
-    if (shouldAccelerate == ShouldAccelerate::Yes) {
-        if (auto imageBuffer = AcceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteAccelerated, resolutionScale, colorSpace, *this)) {
-            m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
-            return imageBuffer;
-        }
-    }
-
-    if (auto imageBuffer = UnacceleratedRemoteImageBuffer::create(size, RenderingMode::RemoteUnaccelerated, resolutionScale, colorSpace, *this)) {
-        m_imageBufferMessageHandlerMap.add(imageBuffer->imageBufferIdentifier(), imageBuffer.get());
-        return imageBuffer;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     return nullptr;
@@ -104,20 +89,10 @@ std::unique_ptr<ImageBuffer> RemoteRenderingBackend::createImageBuffer(const Flo
 void RemoteRenderingBackend::releaseImageBuffer(ImageBufferIdentifier imageBufferIdentifier)
 {
     // CreateImageBuffer message should have been received before this one.
-    bool found = m_imageBufferMessageHandlerMap.remove(imageBufferIdentifier);
+    bool found = m_imageBufferMap.remove(imageBufferIdentifier);
     ASSERT_UNUSED(found, found);
-}
 
-void RemoteRenderingBackend::createImageBufferBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace colorSpace, ImageBufferBackendHandle handle, ImageBufferIdentifier imageBufferIdentifier)
-{
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
-        imageBuffer->createBackend(logicalSize, backendSize, resolutionScale, colorSpace, WTFMove(handle));
-}
-
-void RemoteRenderingBackend::commitImageBufferFlushContext(ImageBufferFlushIdentifier flushIdentifier, ImageBufferIdentifier imageBufferIdentifier)
-{
-    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
-        imageBuffer->commitFlushContext(flushIdentifier);
+    send(Messages::RemoteRenderingBackendProxy::ReleaseImageBuffer(imageBufferIdentifier), m_renderingBackendIdentifier);
 }
 
 } // namespace WebKit

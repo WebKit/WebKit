@@ -177,7 +177,7 @@ public:
         return m_list[index].get();
     }
 
-    WEBCORE_EXPORT void clear();
+    void clear();
     void removeItemsFromIndex(size_t);
 
     size_t itemCount() const { return m_list.size(); }
@@ -251,3 +251,6 @@ Optional<DisplayList> DisplayList::decode(Decoder& decoder)
 WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList::DisplayList&);
 
 } // WebCore
+
+using WebCore::DisplayList::DisplayList;
+
