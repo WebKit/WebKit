@@ -53,7 +53,7 @@ public:
     String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
     double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
-    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
+    MediaSessionIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
     void prepareToSendUserMediaPermissionRequest() final;
 
@@ -103,7 +103,7 @@ private:
     String m_lastUpdatedNowPlayingTitle;
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
-    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
+    MediaSessionIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
 

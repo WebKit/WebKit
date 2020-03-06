@@ -4165,7 +4165,7 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
     return { { PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingTitle(),
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingDuration(),
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingElapsedTime(),
-        PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingInfoUniqueIdentifier(),
+        PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64(),
         PlatformMediaSessionManager::sharedManager().hasActiveNowPlayingSession(),
         PlatformMediaSessionManager::sharedManager().registeredAsNowPlayingApplication()
     } };

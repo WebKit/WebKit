@@ -70,7 +70,7 @@ void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)
         title = sharedManager->lastUpdatedNowPlayingTitle();
         duration = sharedManager->lastUpdatedNowPlayingDuration();
         elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
-        uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier();
+        uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64();
         registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
     }
 

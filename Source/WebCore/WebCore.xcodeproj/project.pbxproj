@@ -1055,6 +1055,7 @@
 		413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413C2C331BC29A7B0075204C /* JSDOMConstructor.h */; };
 		413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 413CCD4820DE013C0065A21A /* MockMediaDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */ = {isa = PBXBuildFile; fileRef = 413E00781DB0E4DE002341D2 /* MemoryRelease.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 414460A02412994100814BE7 /* MediaSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		414598C223C8D177002B9CC8 /* LocalSampleBufferDisplayLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414598C123C8AD79002B9CC8 /* LocalSampleBufferDisplayLayer.mm */; };
 		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
 		414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7317,6 +7318,7 @@
 		413E00781DB0E4DE002341D2 /* MemoryRelease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryRelease.h; sourceTree = "<group>"; };
 		413E007B1DB0E707002341D2 /* MemoryReleaseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryReleaseCocoa.mm; sourceTree = "<group>"; };
 		413FC4CD1FD1DD8C00541C4B /* ServiceWorkerClientQueryOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientQueryOptions.h; sourceTree = "<group>"; };
+		414460A02412994100814BE7 /* MediaSessionIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSessionIdentifier.h; sourceTree = "<group>"; };
 		414598BE23C8AAB8002B9CC8 /* SampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBufferDisplayLayer.h; sourceTree = "<group>"; };
 		414598C023C8AD78002B9CC8 /* LocalSampleBufferDisplayLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalSampleBufferDisplayLayer.h; sourceTree = "<group>"; };
 		414598C123C8AD79002B9CC8 /* LocalSampleBufferDisplayLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalSampleBufferDisplayLayer.mm; sourceTree = "<group>"; };
@@ -25968,6 +25970,7 @@
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
 				CD641EC7181ED60100EE4C41 /* MediaSample.h */,
 				A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */,
+				414460A02412994100814BE7 /* MediaSessionIdentifier.h */,
 				9B1229C623FE4D5F008CA751 /* MediaStrategy.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
 				BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */,
@@ -32794,6 +32797,7 @@
 				E4C91A0E1802343100A17F6D /* TextPaintStyle.h in Headers */,
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
+				414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */,
 				448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */,
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,

@@ -950,6 +950,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MIMETypeRegistry.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
+    platform/MediaSessionIdentifier.h
     platform/MediaStrategy.h
     platform/NowPlayingManager.h
     platform/NotImplemented.h

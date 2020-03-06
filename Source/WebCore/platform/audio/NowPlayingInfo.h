@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "MediaSessionIdentifier.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ struct NowPlayingInfo {
     double duration { 0 };
     double currentTime { 0 };
     bool supportsSeeking { false };
-    uint64_t uniqueIdentifier { 0 };
+    MediaSessionIdentifier uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
 
@@ -70,7 +71,7 @@ template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(D
     if (!decoder.decode(supportsSeeking))
         return { };
 
-    uint64_t uniqueIdentifier;
+    MediaSessionIdentifier uniqueIdentifier;
     if (!decoder.decode(uniqueIdentifier))
         return { };
 
