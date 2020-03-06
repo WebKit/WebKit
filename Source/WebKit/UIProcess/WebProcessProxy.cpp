@@ -1691,6 +1691,7 @@ void WebProcessProxy::disableServiceWorkers()
         return;
 
     m_serviceWorkerInformation = { };
+    updateBackgroundResponsivenessTimer();
 
 #if ENABLE(SERVICE_WORKER)
     processPool().removeFromServiceWorkerProcesses(*this);
@@ -1734,6 +1735,7 @@ void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerI
         nullptr,
         { }
     };
+    updateBackgroundResponsivenessTimer();
 #if ENABLE(SERVICE_WORKER)
     updateServiceWorkerProcessAssertion();
 #endif
