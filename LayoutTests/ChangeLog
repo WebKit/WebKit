@@ -1,3 +1,20 @@
+2020-03-06  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Streaming aac/mp3 audio doesn't always work
+        https://bugs.webkit.org/show_bug.cgi?id=205801
+
+        Reviewed by Philippe Normand.
+
+        The new test checks that end-of-stream (thus, end of playback) isn't triggered when a live
+        audio stream is being played. Live streams don't have Content-Length and are loaded as
+        they are generated (no future data is available immediately). This is simulated by omitting
+        Content-Length and artificially stalling the stream at a given offset.
+
+        * http/tests/media/resources/serve-video.php: Now the file continues to be served after
+        the stall when stallOffset/stallDuration are used.
+        * http/tests/media/video-no-content-length-stall-expected.txt: Added.
+        * http/tests/media/video-no-content-length-stall.html: Added.
+
 2020-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Mark fast/images/image-map-outline-in-positioned-container.html as expected failure
