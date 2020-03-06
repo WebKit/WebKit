@@ -1,3 +1,13 @@
+2020-03-06  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Use Firefox user agent quirk more aggressively on Google Docs
+        https://bugs.webkit.org/show_bug.cgi?id=208647
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-03-05  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegatePrivate SPI to inform application of subframe navigations
