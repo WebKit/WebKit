@@ -1,3 +1,9 @@
+2020-03-06  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed unified build fix; Include what you use, in this case: FrameInfoData.h.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+
 2020-03-06  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Enable Picture-in-Picture support on Mac

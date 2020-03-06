@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "FrameInfoData.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebFrame.h"
 #include "WebPage.h"
