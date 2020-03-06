@@ -371,7 +371,7 @@ static void restartLoaderIfNeeded(WebKitWebSrc* src)
     }
 
     size_t queueSize = gst_adapter_available(priv->adapter.get());
-    GST_TRACE_OBJECT(src, "queue size %" G_GUINT64_FORMAT " (min %1.0f)", queueSize
+    GST_TRACE_OBJECT(src, "queue size %zd (min %1.0f)", queueSize
         , priv->size * HIGH_QUEUE_FACTOR_THRESHOLD * LOW_QUEUE_FACTOR_THRESHOLD);
 
     if (queueSize >= priv->size * HIGH_QUEUE_FACTOR_THRESHOLD * LOW_QUEUE_FACTOR_THRESHOLD) {
@@ -403,7 +403,7 @@ static void stopLoaderIfNeeded(WebKitWebSrc* src)
     }
 
     size_t queueSize = gst_adapter_available(priv->adapter.get());
-    GST_TRACE_OBJECT(src, "queue size %" G_GUINT64_FORMAT " (max %1.0f)", queueSize, priv->size * HIGH_QUEUE_FACTOR_THRESHOLD);
+    GST_TRACE_OBJECT(src, "queue size %zd (max %1.0f)", queueSize, priv->size * HIGH_QUEUE_FACTOR_THRESHOLD);
     if (queueSize <= priv->size * HIGH_QUEUE_FACTOR_THRESHOLD) {
         GST_TRACE_OBJECT(src, "queue size under high watermark, not stopping download");
         return;
