@@ -286,8 +286,7 @@ WI.contentLoaded = function()
     WI.tabBar = new WI.TabBar(document.getElementById("tab-bar"));
 
     WI._contentElement = document.getElementById("content");
-    WI._contentElement.setAttribute("role", "main");
-    WI._contentElement.setAttribute("aria-label", WI.UIString("Content"));
+    WI._contentElement.role = "tabpanel";
 
     WI.clearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "K", WI._clear);
 
@@ -1924,8 +1923,13 @@ WI._setupViewHierarchy = function()
 
 WI._tabBrowserSelectedTabContentViewDidChange = function(event)
 {
-    if (WI.tabBar.selectedTabBarItem && WI.tabBar.selectedTabBarItem.representedObject.constructor.shouldSaveTab())
-        WI._selectedTabIndexSetting.value = WI.tabBar.tabBarItems.indexOf(WI.tabBar.selectedTabBarItem);
+    let selectedTabBarItem = WI.tabBar.selectedTabBarItem;
+    if (selectedTabBarItem) {
+        WI._contentElement.ariaLabel = selectedTabBarItem.title || "";
+
+        if (selectedTabBarItem.representedObject.constructor.shouldSaveTab())
+            WI._selectedTabIndexSetting.value = WI.tabBar.tabBarItems.indexOf(selectedTabBarItem);
+    }
 
     if (WI.doesCurrentTabSupportSplitContentBrowser()) {
         if (WI._shouldRevealSpitConsoleIfSupported) {

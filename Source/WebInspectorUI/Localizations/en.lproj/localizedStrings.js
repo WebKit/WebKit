@@ -320,7 +320,6 @@ localizedStrings["Console cleared at %s"] = "Console cleared at %s";
 localizedStrings["Console opened at %s"] = "Console opened at %s";
 localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Containing"] = "Containing";
-localizedStrings["Content"] = "Content";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
 localizedStrings["Continuation Frame"] = "Continuation Frame";
 localizedStrings["Continue script execution (%s or %s)"] = "Continue script execution (%s or %s)";

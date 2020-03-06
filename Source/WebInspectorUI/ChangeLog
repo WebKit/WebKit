@@ -1,5 +1,16 @@
 2020-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: AXI: annotate tab panels
+        https://bugs.webkit.org/show_bug.cgi?id=208542
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        Remove `role=main` since it was providing very generic and not useful description to VoiceOver.
+
+2020-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: AXI: can't leave Styles and Computed panels by pressing Tab
         https://bugs.webkit.org/show_bug.cgi?id=208549
         <rdar://problem/60020149>
