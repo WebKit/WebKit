@@ -1,5 +1,19 @@
 2020-03-05  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Remove reporting for some well-understood framebuffer routines
+        https://bugs.webkit.org/show_bug.cgi?id=208686
+        <rdar://problem/59181061>
+
+        Reviewed by Per Arne Vollan.
+
+        We have captured backlogs capturing the use of more framebuffer-related rules. We
+        should remove this reporting to reduce log spam.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-03-05  Brent Fulgham  <bfulgham@apple.com>
+
         GPU Process sandbox errors
         https://bugs.webkit.org/show_bug.cgi?id=208688
         <rdar://problem/60085171>

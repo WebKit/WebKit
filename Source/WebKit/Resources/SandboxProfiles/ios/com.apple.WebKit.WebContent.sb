@@ -86,7 +86,7 @@
     (allow user-preference-read user-preference-write (apply preference-domain domains)))
 
 (define-once (framebuffer-access)
-    (allow iokit-open (with report) (with telemetry)
+    (allow iokit-open
            (iokit-user-client-class "IOMobileFramebufferUserClient"))
 
     ; IOMobileFramebuffer
@@ -775,6 +775,7 @@
     (iokit-property "device-colors") ;; <rdar://problem/51322072>
     (iokit-property "device-id")
     (iokit-property "device-perf-memory-class")
+    (iokit-property "dfr")
     (iokit-property "display-corner-radius") ;; <rdar://problem/50602737>
     (iokit-property "emu")
     (iokit-property "graphics-featureset-class") ;; <rdar://problem/49497720>
