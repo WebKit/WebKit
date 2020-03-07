@@ -29,6 +29,7 @@
 #import "CookieStorageUtilsCF.h"
 #import "SandboxUtilities.h"
 #import "StorageManager.h"
+#import "WebFramePolicyListenerProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
@@ -43,6 +44,12 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/text/StringBuilder.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebsiteDataStoreAdditions.h>
+#else
+#define WEBSITE_DATA_STORE_ADDITIONS
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
@@ -60,6 +67,14 @@ static HashSet<WebsiteDataStore*>& dataStores()
 }
 
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
+
+static WorkQueue& appBoundDomainQueue()
+{
+    static auto& queue = WorkQueue::create("com.apple.WebKit.AppBoundDomains", WorkQueue::Type::Serial).leakRef();
+    return queue;
+}
+
+static std::atomic<bool> hasInitializedAppBoundDomains = false;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
@@ -244,6 +259,8 @@ void WebsiteDataStore::platformInitialize()
 {
     ASSERT(!dataStores().contains(this));
     dataStores().add(this);
+
+    initializeAppBoundDomains();
 }
 
 void WebsiteDataStore::platformDestroy()
@@ -417,6 +434,77 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
         LOG_ERROR("Failed to create directory %@", url);
 
     return url.absoluteURL.path.fileSystemRepresentation;
+}
+
+static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<HashSet<WebCore::RegistrableDomain>> appBoundDomains;
+    return appBoundDomains;
+}
+
+void WebsiteDataStore::initializeAppBoundDomains()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (hasInitializedAppBoundDomains)
+        return;
+    
+    static const auto maxAppBoundDomainCount = 10;
+    
+    appBoundDomainQueue().dispatch([] () mutable {
+        if (hasInitializedAppBoundDomains)
+            return;
+        
+        NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
+        
+        RunLoop::main().dispatch([domains = retainPtr(domains)] {
+            for (NSString *domain in domains.get()) {
+                URL url { URL(), domain };
+                if (!url.isValid())
+                    continue;
+                WebCore::RegistrableDomain appBoundDomain { url };
+                if (appBoundDomain.isEmpty())
+                    continue;
+                appBoundDomains().add(appBoundDomain);
+                if (appBoundDomains().size() >= maxAppBoundDomainCount)
+                    break;
+            }
+            WEBSITE_DATA_STORE_ADDITIONS
+            hasInitializedAppBoundDomains = true;
+        });
+    });
+}
+
+void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+{
+    if (hasInitializedAppBoundDomains) {
+        completionHandler(appBoundDomains());
+        return;
+    }
+
+    appBoundDomainQueue().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
+            ASSERT(hasInitializedAppBoundDomains);
+            completionHandler(appBoundDomains());
+        });
+    });
+}
+
+void WebsiteDataStore::beginAppBoundDomainCheck(WebCore::RegistrableDomain&& domain, WebFramePolicyListenerProxy& listener)
+{
+    ASSERT(RunLoop::isMain());
+
+    ensureAppBoundDomains([domain = WTFMove(domain), listener = makeRef(listener)] (auto& domains) mutable {
+        listener->didReceiveAppBoundDomainResult(domains.contains(domain));
+    });
+}
+
+void WebsiteDataStore::appBoundDomainsForTesting(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+{
+    ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
+        completionHandler(domains);
+    });
 }
 
 }

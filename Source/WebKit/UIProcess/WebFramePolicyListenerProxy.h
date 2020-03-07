@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "PolicyDecision.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
@@ -38,16 +39,17 @@ namespace WebKit {
 
 class SafeBrowsingWarning;
 
-enum class ProcessSwapRequestedByClient { No, Yes };
-enum class ShouldExpectSafeBrowsingResult { No, Yes };
+enum class ProcessSwapRequestedByClient : bool { No, Yes };
+enum class ShouldExpectSafeBrowsingResult : bool { No, Yes };
+enum class ShouldExpectAppBoundDomainResult : bool { No, Yes };
 
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>;
-    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
+    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, NavigatingToAppBoundDomain)>;
+    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));
+        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expectSafeBrowsingResult, expectAppBoundDomainResult));
     }
     ~WebFramePolicyListenerProxy();
 
@@ -56,12 +58,14 @@ public:
     void ignore();
     
     void didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&&);
+    void didReceiveAppBoundDomainResult(bool);
 
 private:
-    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult);
+    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult);
 
     Optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
     Optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
+    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
     Reply m_reply;
 };
 

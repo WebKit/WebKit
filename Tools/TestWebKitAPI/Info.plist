@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>WKAppBoundDomains</key>
+	<array>
+		<string>testDomain1</string>
+		<string>https://sub.domain.webkit.org/road/to/nowhere/</string>
+		<string>https://webkit.org</string>
+		<string>https://localhost:8000</string>
+		<string>http://localhost/road/to/nowhere/</string>
+		<string>file:///some/file</string>
+		<string>127.0.0.1</string>
+		<string></string>
+		<string>   </string>
+		<string>https://sub.domain.webkit.org</string>
+		<string>https://www.apple.com/</string>
+		<string>https://webkit.org</string>
+		<string>https://www.apple.com/iphone/</string>
+		<string>http://www.example.com/</string>
+		<string>http://bar.com/</string>
+		<string>http://foo.com/</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleIdentifier</key>

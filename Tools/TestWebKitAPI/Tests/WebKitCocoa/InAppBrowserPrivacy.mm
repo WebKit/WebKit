@@ -29,13 +29,17 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebCore/RegistrableDomain.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/text/WTFString.h>
+
+static bool isDone;
 
 #if USE(APPLE_INTERNAL_SDK)
 
-static bool isDone;
 static NSString * const userScriptSource = @"window.wkUserScriptInjected = true";
 
 @interface TestInAppBrowserScriptMessageHandler : NSObject <WKScriptMessageHandler>
@@ -50,7 +54,7 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
 
 @end
 
-TEST(WebKit, NonAppBoundDomainFailedUserScripts)
+TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScripts)
 {
     auto messageHandler = adoptNS([[TestInAppBrowserScriptMessageHandler alloc] init]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
@@ -95,7 +99,7 @@ TEST(WebKit, NonAppBoundDomainFailedUserScripts)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(WebKit, NonAppBoundDomainFailedUserAgentScripts)
+TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:NO];
@@ -132,7 +136,7 @@ TEST(WebKit, NonAppBoundDomainFailedUserAgentScripts)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(WebKit, SwapBackToAppBoundRejectsUserScript)
+TEST(InAppBrowserPrivacy, SwapBackToAppBoundRejectsUserScript)
 {
     auto messageHandler = adoptNS([[TestInAppBrowserScriptMessageHandler alloc] init]);
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
@@ -176,3 +180,22 @@ TEST(WebKit, SwapBackToAppBoundRejectsUserScript)
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+TEST(InAppBrowserPrivacy, AppBoundDomains)
+{
+    isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] _appBoundDomains:^(NSArray<NSString *> *domains) {
+        NSArray *domainsToCompare = [NSArray arrayWithObjects:@"apple.com", @"bar.com", @"example.com", @"foo.com", @"localhost", @"webkit.org", nil];
+
+        NSArray *sortedDomains = [domains sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
+        int length = [sortedDomains count];
+        EXPECT_EQ(length, 6);
+        for (int i = 0; i < length; i++)
+            EXPECT_WK_STREQ([sortedDomains objectAtIndex:i], [domainsToCompare objectAtIndex:i]);
+
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+

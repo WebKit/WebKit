@@ -35,30 +35,45 @@
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult)
     : m_reply(WTFMove(reply))
 {
-    if (expect == ShouldExpectSafeBrowsingResult::No)
+    if (expectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::No)
         didReceiveSafeBrowsingResults({ });
+    if (expectAppBoundDomainResult == ShouldExpectAppBoundDomainResult::No)
+        didReceiveAppBoundDomainResult({ });
 }
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
 
+void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(bool isNavigatingToAppBoundDomain)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto isAppBound = isNavigatingToAppBoundDomain ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
+    if (m_policyResult && m_safeBrowsingWarning) {
+        if (m_reply)
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(*m_safeBrowsingWarning), isAppBound);
+    } else
+        m_isNavigatingToAppBoundDomain = isAppBound;
+}
+
 void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning)
 {
+    ASSERT(isMainThread());
     ASSERT(!m_safeBrowsingWarning);
-    if (m_policyResult) {
+    if (m_policyResult && m_isNavigatingToAppBoundDomain) {
         if (m_reply)
-            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning));
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(safeBrowsingWarning), *m_isNavigatingToAppBoundDomain);
     } else
         m_safeBrowsingWarning = WTFMove(safeBrowsingWarning);
 }
 
 void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
-    if (m_safeBrowsingWarning) {
+    if (m_safeBrowsingWarning && m_isNavigatingToAppBoundDomain) {
         if (m_reply)
-            m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning));
+            m_reply(WebCore::PolicyAction::Use, policies, processSwapRequestedByClient, WTFMove(*m_safeBrowsingWarning), *m_isNavigatingToAppBoundDomain);
     } else if (!m_policyResult)
         m_policyResult = {{ policies, processSwapRequestedByClient }};
 }
@@ -66,13 +81,13 @@ void WebFramePolicyListenerProxy::use(API::WebsitePolicies* policies, ProcessSwa
 void WebFramePolicyListenerProxy::download()
 {
     if (m_reply)
-        m_reply(WebCore::PolicyAction::Download, nullptr, ProcessSwapRequestedByClient::No, { });
+        m_reply(WebCore::PolicyAction::Download, nullptr, ProcessSwapRequestedByClient::No, { }, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
     if (m_reply)
-        m_reply(WebCore::PolicyAction::Ignore, nullptr, ProcessSwapRequestedByClient::No, { });
+        m_reply(WebCore::PolicyAction::Ignore, nullptr, ProcessSwapRequestedByClient::No, { }, { });
 }
 
 } // namespace WebKit

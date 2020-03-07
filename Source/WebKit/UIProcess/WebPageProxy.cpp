@@ -279,7 +279,6 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyAdditions.h>
 #else
-#define WEB_PAGE_PROXY_ADDITIONS_ISAPPBOUNDDOMAIN
 #define WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
 #endif
 
@@ -3095,23 +3094,11 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
-
-bool WebPageProxy::isAppBoundDomain(const WebCore::RegistrableDomain& domain) const
-{
-    WEB_PAGE_PROXY_ADDITIONS_ISAPPBOUNDDOMAIN
-    return true;
-}
-
-bool WebPageProxy::isAppBoundDomain(const URL& url) const
-{
-    return isAppBoundDomain(RegistrableDomain(url));
-}
-
-void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL)
+void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     if (m_preferences->isInAppBrowserPrivacyEnabled() && isMainFrame) {
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
-        if (!isAppBoundDomain(requestURL)) {
+        if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
             m_hasNavigatedAwayFromAppBoundDomain = NavigatedAwayFromAppBoundDomain::Yes;
@@ -5013,8 +5000,6 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (navigationID && !fromAPI)
         m_pageLoadState.clearPendingAPIRequest(transaction);
 
-    setIsNavigatingToAppBoundDomain(frame.isMainFrame(), request.url());
-
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
         RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it is outside the sandbox");
         sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain(), PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt });
@@ -5070,7 +5055,15 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (!m_preferences->safeBrowsingEnabled())
         shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::No;
 
-    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning) mutable {
+    ShouldExpectAppBoundDomainResult shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::No;
+#if PLATFORM(COCOA)
+    shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
+#endif
+    
+    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, NavigatingToAppBoundDomain isAppBoundDomain) mutable {
+
+        if (policyAction != PolicyAction::Ignore)
+            setIsNavigatingToAppBoundDomain(frame->isMainFrame(), navigation->currentRequest().url(), isAppBoundDomain);
 
         auto completionHandler = [this, protectedThis = protectedThis.copyRef(), frame = frame.copyRef(), sender = WTFMove(sender), navigation, processSwapRequestedByClient, policies = makeRefPtr(policies)] (PolicyAction policyAction) mutable {
             if (frame->isMainFrame()) {
@@ -5118,10 +5111,12 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
         completionHandler(policyAction);
 
-    }, shouldExpectSafeBrowsingResult));
+    }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult));
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
-
+#if PLATFORM(COCOA)
+    m_websiteDataStore->beginAppBoundDomainCheck(RegistrableDomain { request.url() }, listener);
+#endif
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;
 
@@ -5251,7 +5246,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
     MESSAGE_CHECK(m_process, frame);
     MESSAGE_CHECK_URL(m_process, request.url());
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), identifier, listenerID, frameID] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning) mutable {
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), identifier, listenerID, frameID] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
@@ -5261,7 +5256,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
         });
 
         receivedPolicyDecision(policyAction, nullptr, WTF::nullopt, WTFMove(sender));
-    }, ShouldExpectSafeBrowsingResult::No));
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No));
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationActionData, request, frameName, WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
@@ -5297,10 +5292,9 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK_URL(process, request.url());
     MESSAGE_CHECK_URL(process, response.url());
-
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, identifier, listenerID, navigation = WTFMove(navigation),
-        process = process.copyRef()] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning) mutable {
+        process = process.copyRef()] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
@@ -5310,8 +5304,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         });
         
         receivedPolicyDecision(policyAction, navigation.get(), WTF::nullopt, WTFMove(sender));
-    }, ShouldExpectSafeBrowsingResult::No));
-
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No));
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
     else {

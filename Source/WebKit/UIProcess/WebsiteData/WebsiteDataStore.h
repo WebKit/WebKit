@@ -28,6 +28,7 @@
 #include "LocalStorageDatabaseTracker.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStoreClient.h"
@@ -282,7 +283,12 @@ public:
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
     void setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&&);
 
+    void beginAppBoundDomainCheck(WebCore::RegistrableDomain&&, WebFramePolicyListenerProxy&);
+    void appBoundDomainsForTesting(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+    void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+
 private:
+    void initializeAppBoundDomains();
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();

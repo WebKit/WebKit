@@ -1,3 +1,18 @@
+2020-03-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        UIProcess needs mechanism to specify AppBound domains
+        https://bugs.webkit.org/show_bug.cgi?id=208528
+        <rdar://problem/59980340>
+
+        Reviewed by Brent Fulgham.
+
+        Added test app-bound domains to the plist and tested that the domains
+        are properly stored in the website data store after a navigation.
+
+        * TestWebKitAPI/Info.plist:
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+
 2020-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable cross origin access control checks

@@ -1,3 +1,64 @@
+2020-03-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        UIProcess needs mechanism to specify AppBound domains
+        https://bugs.webkit.org/show_bug.cgi?id=208528
+        <rdar://problem/59980340>
+
+        Reviewed by Brent Fulgham.
+
+        Adds functionality to read app-bound domains from the Info.plist on
+        background thread via the WebFramePolicyListenerProxy and report
+        whether a domain is app-bound. 
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _appBoundDomains:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        Test API call to get appBoundDomains.
+
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::WebFramePolicyListenerProxy):
+        (WebKit::WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult):
+        (WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults):
+        (WebFramePolicyListenerProxy::use):
+        (WebFramePolicyListenerProxy::download):
+        (WebFramePolicyListenerProxy::ignore):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        Added a new function to WebFramePolicyListenerProxy to wait for the
+        app-bound domains to be read before completing a navigation. Each
+        other function must now check if m_isNavigatingToAppBoundDomain has
+        been set before sending a full reply. Also added an enum class
+        ShouldExpectAppBoundDomainResult to tell the listener not to wait for
+        the results in unecessary cases.
+
+        (WebKit::WebPageProxy::isAppBoundDomain const): Deleted
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        After the listener responds with the results, set the new
+        value in WebPageProxy. We no longer need to check for isAppBound
+        domain now that we have received the value.
+
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        No need to listen for app-bound domain response here.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::appBoundDomains):
+        (WebKit::appBoundDomainQueue):
+        Add a separate static queue for reading app-bound domains to avoid
+        raciness.
+
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        (WebKit::WebsiteDataStore::getAppBoundDomainsForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Read the app-bound domain list on the background thread, and once
+        done, call the listener on the main thread.
+
 2020-03-06  David Kilzer  <ddkilzer@apple.com>
 
         IPC hardening for WebPageProxy::SaveImageToLibrary message

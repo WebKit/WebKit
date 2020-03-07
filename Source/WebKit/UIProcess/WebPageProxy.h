@@ -345,7 +345,7 @@ struct URLSchemeTaskParameters;
 struct UserMessage;
 
 enum class NegotiatedLegacyTLS : bool;
-enum class ProcessSwapRequestedByClient;
+enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
 
@@ -2265,9 +2265,7 @@ private:
     void tryCloseTimedOut();
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
         
-    bool isAppBoundDomain(const WebCore::RegistrableDomain&) const;
-    bool isAppBoundDomain(const URL&) const;
-    void setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL&);
+    void setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL&, NavigatingToAppBoundDomain);
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
         

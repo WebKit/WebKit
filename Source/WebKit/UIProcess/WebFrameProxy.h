@@ -53,8 +53,8 @@ class SafeBrowsingWarning;
 class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
 class WebsiteDataStore;
-enum class ShouldExpectSafeBrowsingResult;
-enum class ProcessSwapRequestedByClient;
+enum class ShouldExpectSafeBrowsingResult : bool;
+enum class ProcessSwapRequestedByClient : bool;
 struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
@@ -120,7 +120,7 @@ public:
     void didSameDocumentNavigation(const URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>&&, ShouldExpectSafeBrowsingResult);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, NavigatingToAppBoundDomain)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }

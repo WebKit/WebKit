@@ -123,7 +123,7 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
-enum class ProcessSwapRequestedByClient;
+enum class ProcessSwapRequestedByClient : bool;
 
 class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, public CanMakeWeakPtr<WebProcessPool>, private IPC::MessageReceiver {
 public:

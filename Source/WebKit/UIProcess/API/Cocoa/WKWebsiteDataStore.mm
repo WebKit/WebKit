@@ -600,4 +600,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return wrapper(_websiteDataStore->configuration().copy());
 }
 
+- (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
+{
+    _websiteDataStore->appBoundDomainsForTesting([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
+        Vector<RefPtr<API::Object>> apiDomains;
+        apiDomains.reserveInitialCapacity(domains.size());
+        for (auto& domain : domains)
+            apiDomains.uncheckedAppend(API::String::create(domain.string()));
+        completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
+    });
+}
+
 @end
