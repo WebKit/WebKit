@@ -32,8 +32,15 @@ namespace JSC {
 
 class StringIteratorPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringIteratorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static StringIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

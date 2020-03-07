@@ -31,8 +31,15 @@ namespace Inspector {
 
 class JSInjectedScriptHostPrototype final : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
+
+    template<typename CellType, JSC::SubspaceAccess>
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSInjectedScriptHostPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     DECLARE_INFO;
 

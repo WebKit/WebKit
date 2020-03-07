@@ -37,6 +37,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AsyncGeneratorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     static AsyncGeneratorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
         AsyncGeneratorPrototype* prototype = new (NotNull, allocateCell<AsyncGeneratorPrototype>(vm.heap)) AsyncGeneratorPrototype(vm, structure);

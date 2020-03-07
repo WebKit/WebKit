@@ -31,7 +31,14 @@ namespace JSC {
 
 class JSArrayBufferPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSArrayBufferPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
 protected:
     JSArrayBufferPrototype(VM&, Structure*);

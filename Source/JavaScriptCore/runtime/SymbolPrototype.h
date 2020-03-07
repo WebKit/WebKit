@@ -34,8 +34,15 @@ namespace JSC {
 // In the ES6 spec, Symbol.prototype object is an ordinary JS object, not one of the symbol wrapper object instance.
 class SymbolPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SymbolPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static SymbolPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

@@ -33,6 +33,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AsyncFromSyncIteratorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     DECLARE_INFO;
 
     static AsyncFromSyncIteratorPrototype* create(VM&, JSGlobalObject*, Structure*);

@@ -35,6 +35,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BigIntPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     static BigIntPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         BigIntPrototype* prototype = new (NotNull, allocateCell<BigIntPrototype>(vm.heap)) BigIntPrototype(vm, structure);

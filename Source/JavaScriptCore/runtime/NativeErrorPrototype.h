@@ -29,7 +29,13 @@ private:
     NativeErrorPrototype(VM&, Structure*);
 
 public:
-    typedef ErrorPrototypeBase Base;
+    using Base = ErrorPrototypeBase;
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NativeErrorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

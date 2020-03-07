@@ -378,6 +378,8 @@ public:
     std::unique_ptr<IsoHeapCellType> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType> globalLexicalEnvironmentHeapCellType;
     std::unique_ptr<IsoHeapCellType> globalObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> injectedScriptHostSpaceHeapCellType;
+    std::unique_ptr<IsoHeapCellType> javaScriptCallFrameHeapCellType;
     std::unique_ptr<IsoHeapCellType> jsModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType> moduleNamespaceObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> nativeStdFunctionHeapCellType;
@@ -440,6 +442,7 @@ public:
     CompleteSubspace variableSizedCellSpace; // FIXME: This space is problematic because we have things in here like DirectArguments and ScopedArguments; those should be split into JSValueOOB cells and JSValueStrict auxiliaries. https://bugs.webkit.org/show_bug.cgi?id=182858
     CompleteSubspace destructibleObjectSpace;
     
+    IsoSubspace arraySpace;
     IsoSubspace bigIntSpace;
     IsoSubspace calleeSpace;
     IsoSubspace clonedArgumentsSpace;
@@ -455,6 +458,7 @@ public:
     IsoSubspace jsProxySpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace numberObjectSpace;
+    IsoSubspace plainObjectSpace;
     IsoSubspace promiseSpace;
     IsoSubspace propertyNameEnumeratorSpace;
     IsoSubspace propertyTableSpace;
@@ -512,9 +516,11 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(functionRareDataSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(generatorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(globalObjectSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(injectedScriptHostSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int16ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(javaScriptCallFrameSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsModuleRecordSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapBucketSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapIteratorSpace)

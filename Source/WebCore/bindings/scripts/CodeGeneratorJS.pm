@@ -7270,6 +7270,13 @@ sub GeneratePrototypeDeclaration
 
     push(@$outputArray, "    DECLARE_INFO;\n");
 
+    push(@$outputArray, "    template<typename CellType, JSC::SubspaceAccess>\n");
+    push(@$outputArray, "    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(${prototypeClassName}, Base);\n");
+    push(@$outputArray, "        return &vm.plainObjectSpace;\n");
+    push(@$outputArray, "    }\n");
+
     push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");

@@ -34,8 +34,15 @@ namespace JSC {
 
 class WebAssemblyRuntimeErrorPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyRuntimeErrorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static WebAssemblyRuntimeErrorPrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

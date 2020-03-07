@@ -47,6 +47,12 @@ public:
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
         return sizeof(JSArray);
     }
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.arraySpace;
+    }
         
 protected:
     explicit JSArray(VM& vm, Structure* structure, Butterfly* butterfly)

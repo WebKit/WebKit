@@ -35,6 +35,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(RegExpStringIteratorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     static RegExpStringIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         auto prototype = new (NotNull, allocateCell<RegExpStringIteratorPrototype>(vm.heap)) RegExpStringIteratorPrototype(vm, structure);

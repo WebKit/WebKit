@@ -206,6 +206,12 @@ public:
     typedef JSNonFinalObject Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::MasqueradesAsUndefined;
 
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
     static Masquerader* create(VM& vm, JSGlobalObject* globalObject)
     {
         globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(vm, "Masquerading object allocated");
@@ -1383,6 +1389,12 @@ EncodedJSValue JSC_HOST_CALL functionHeapSize(JSGlobalObject* globalObject, Call
 class JSCMemoryFootprint : public JSDestructibleObject {
     using Base = JSDestructibleObject;
 public:
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace;
+    }
+
     JSCMemoryFootprint(VM& vm, Structure* structure)
         : Base(vm, structure)
     { }

@@ -103,7 +103,9 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
+#include "JSInjectedScriptHost.h"
 #include "JSInternalPromise.h"
+#include "JSJavaScriptCallFrame.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -321,6 +323,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , errorInstanceHeapCellType(IsoHeapCellType::create<ErrorInstance>())
     , globalLexicalEnvironmentHeapCellType(IsoHeapCellType::create<JSGlobalLexicalEnvironment>())
     , globalObjectHeapCellType(IsoHeapCellType::create<JSGlobalObject>())
+    , injectedScriptHostSpaceHeapCellType(IsoHeapCellType::create<Inspector::JSInjectedScriptHost>())
+    , javaScriptCallFrameHeapCellType(IsoHeapCellType::create<Inspector::JSJavaScriptCallFrame>())
     , jsModuleRecordHeapCellType(IsoHeapCellType::create<JSModuleRecord>())
     , moduleNamespaceObjectHeapCellType(IsoHeapCellType::create<JSModuleNamespaceObject>())
     , nativeStdFunctionHeapCellType(IsoHeapCellType::create<JSNativeStdFunction>())
@@ -359,6 +363,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , cellSpace("JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xadfb5a79
     , variableSizedCellSpace("Variable Sized JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbcd769cc
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
+    , arraySpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSArray)
     , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
     , calleeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCallee)
     , clonedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ClonedArguments)
@@ -374,6 +379,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , jsProxySpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSProxy)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
     , numberObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), NumberObject)
+    , plainObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSNonFinalObject) // Mainly used for prototypes.
     , promiseSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPromise)
     , propertyNameEnumeratorSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPropertyNameEnumerator)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
@@ -1461,10 +1467,12 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(float64ArraySpace, cellHeapCellType.get(
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(functionRareDataSpace, destructibleCellHeapCellType.get(), FunctionRareData)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(generatorSpace, cellHeapCellType.get(), JSGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(globalObjectSpace, globalObjectHeapCellType.get(), JSGlobalObject)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsModuleRecordSpace, jsModuleRecordHeapCellType.get(), JSModuleRecord)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(injectedScriptHostSpace, injectedScriptHostSpaceHeapCellType.get(), Inspector::JSInjectedScriptHost)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int8ArraySpace, cellHeapCellType.get(), JSInt8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int16ArraySpace, cellHeapCellType.get(), JSInt16Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int32ArraySpace, cellHeapCellType.get(), JSInt32Array)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType.get(), Inspector::JSJavaScriptCallFrame)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsModuleRecordSpace, jsModuleRecordHeapCellType.get(), JSModuleRecord)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapBucketSpace, cellHeapCellType.get(), JSMap::BucketType)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapIteratorSpace, cellHeapCellType.get(), JSMapIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapSpace, cellHeapCellType.get(), JSMap)

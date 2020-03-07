@@ -34,8 +34,15 @@ private:
     ReflectObject(VM&, Structure*);
 
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ReflectObject, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static ReflectObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

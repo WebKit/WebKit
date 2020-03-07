@@ -106,12 +106,6 @@ class JSObject : public JSCell {
 public:
     using Base = JSCell;
 
-    // Don't call this directly. Call JSC::subspaceFor<Type>(vm) instead.
-    // FIXME: Refer to Subspace by reference.
-    // https://bugs.webkit.org/show_bug.cgi?id=166988
-    template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM&);
-
     // This is a super dangerous method for JITs. Sometimes the JITs will want to create either a
     // JSFinalObject or a JSArray. This is the method that will do that.
     static JSObject* createRawObject(VM& vm, Structure* structure, Butterfly* = nullptr);
@@ -1136,10 +1130,12 @@ class JSFinalObject;
 // storage to fully make use of the collector cell containing it.
 class JSFinalObject final : public JSObject {
     friend class JSObject;
-
 public:
-    typedef JSObject Base;
+    using Base = JSObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM&);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {

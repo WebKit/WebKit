@@ -35,6 +35,13 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AsyncIteratorPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     static AsyncIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         AsyncIteratorPrototype* prototype = new (NotNull, allocateCell<AsyncIteratorPrototype>(vm.heap)) AsyncIteratorPrototype(vm, structure);

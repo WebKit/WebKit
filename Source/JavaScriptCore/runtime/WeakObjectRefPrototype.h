@@ -33,6 +33,13 @@ class WeakObjectRefPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakObjectRefPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
+
     static WeakObjectRefPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         WeakObjectRefPrototype* prototype = new (NotNull, allocateCell<WeakObjectRefPrototype>(vm.heap)) WeakObjectRefPrototype(vm, structure);

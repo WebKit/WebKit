@@ -25,15 +25,22 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include "JavaScriptCallFrame.h"
 
 namespace Inspector {
 
-class JSJavaScriptCallFrame final : public JSC::JSDestructibleObject {
+class JSJavaScriptCallFrame final : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSDestructibleObject Base;
+    using Base = JSC::JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
+    static constexpr bool needsDestruction = true;
+
+    template<typename CellType, JSC::SubspaceAccess mode>
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        return vm.javaScriptCallFrameSpace<mode>();
+    }
 
     DECLARE_INFO;
 

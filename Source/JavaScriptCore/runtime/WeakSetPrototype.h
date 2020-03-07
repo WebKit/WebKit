@@ -31,7 +31,14 @@ namespace JSC {
 
 class WeakSetPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WeakSetPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static WeakSetPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

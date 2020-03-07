@@ -31,8 +31,15 @@ namespace JSC {
 
 class JSDataViewPrototype final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDataViewPrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
 protected:
     JSDataViewPrototype(VM&, Structure*);

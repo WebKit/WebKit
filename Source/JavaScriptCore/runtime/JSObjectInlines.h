@@ -36,7 +36,7 @@
 namespace JSC {
 
 template<typename CellType, SubspaceAccess>
-CompleteSubspace* JSObject::subspaceFor(VM& vm)
+CompleteSubspace* JSFinalObject::subspaceFor(VM& vm)
 {
     static_assert(!CellType::needsDestruction);
     return &vm.cellSpace;

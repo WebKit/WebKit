@@ -1,3 +1,95 @@
+2020-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Put remaining fixed-sized cells into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=208754
+
+        Reviewed by Keith Miller.
+
+        Put remaining fixed-sized cells into IsoSubspace. Now all the fixed-sized cells have their own IsoSubspaces.
+
+        1. JSArray (We need to care about RAMification number, or compensate RAMification regression with improvements).
+        2. Inspector's objects
+        3. All prototype objects have one IsoSubspace since they are plain objects.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::JSInjectedScriptHost):
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::JSJavaScriptCallFrame):
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * jsc.cpp:
+        (JSC::Masquerader::subspaceFor):
+        (JSCMemoryFootprint::subspaceFor):
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/AsyncFromSyncIteratorPrototype.h:
+        * runtime/AsyncFunctionPrototype.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AsyncGeneratorPrototype.h:
+        * runtime/AsyncIteratorPrototype.h:
+        * runtime/AtomicsObject.h:
+        * runtime/BigIntPrototype.h:
+        * runtime/ConsoleObject.h:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/ExceptionHelpers.h:
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/InspectorInstrumentationObject.h:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IteratorPrototype.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::subspaceFor):
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSDestructibleObject.h:
+        (JSC::JSDestructibleObject::subspaceFor): Deleted.
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/JSModuleLoader.h:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSFinalObject::subspaceFor):
+        (JSC::JSObject::subspaceFor): Deleted.
+        * runtime/JSPromisePrototype.h:
+        (JSC::JSPromisePrototype::subspaceFor):
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/MapIteratorPrototype.h:
+        * runtime/MapPrototype.h:
+        * runtime/MathObject.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/ObjectPrototype.h:
+        * runtime/ReflectObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/RegExpStringIteratorPrototype.h:
+        * runtime/SetIteratorPrototype.h:
+        * runtime/SetPrototype.h:
+        * runtime/StringIteratorPrototype.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakObjectRefPrototype.h:
+        * runtime/WeakSetPrototype.h:
+        * tools/JSDollarVM.cpp:
+        * tools/JSDollarVM.h:
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyGlobalPrototype.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+
 2020-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.stringify should call replacer on deleted properties

@@ -62,8 +62,15 @@ JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(JSGlobalObject*, 
 
 class TerminatedExecutionError final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TerminatedExecutionError, Base);
+        return &vm.plainObjectSpace;
+    }
 
     static TerminatedExecutionError* create(VM& vm)
     {

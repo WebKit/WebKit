@@ -111,6 +111,12 @@ namespace {
 class JSDollarVMCallFrame : public JSNonFinalObject {
     using Base = JSNonFinalObject;
 public:
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
     JSDollarVMCallFrame(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
@@ -195,6 +201,11 @@ public:
     }
 
     typedef JSNonFinalObject Base;
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     Root* root() const { return m_root.get(); }
     void setRoot(VM& vm, Root* root) { m_root.set(vm, this, root); }
@@ -248,6 +259,13 @@ public:
 
 class Root : public JSDestructibleObject {
 public:
+    using Base = JSDestructibleObject;
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace;
+    }
+
     Root(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
@@ -274,8 +292,6 @@ public:
         root->finishCreation(vm);
         return root;
     }
-
-    typedef JSDestructibleObject Base;
 
     DECLARE_INFO;
 
@@ -307,6 +323,11 @@ public:
 
     typedef JSNonFinalObject Base;
     static constexpr bool needsDestruction = false;
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     static SimpleObject* create(VM& vm, JSGlobalObject* globalObject)
     {
@@ -360,6 +381,12 @@ public:
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::OverridesGetOwnPropertySlot;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -428,6 +455,12 @@ public:
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -499,6 +532,12 @@ class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     static RuntimeArray* create(JSGlobalObject* globalObject, CallFrame* callFrame)
     {
@@ -661,6 +700,12 @@ public:
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot;
 
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         DollarVMAssertScope assertScope;
@@ -688,6 +733,12 @@ public:
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
 public:
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
     ObjectDoingSideEffectPutWithoutCorrectSlotStatus(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
@@ -732,6 +783,12 @@ public:
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -1241,6 +1298,12 @@ public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
+
     JSTestCustomGetterSetter(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
@@ -1370,6 +1433,13 @@ static EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserFinalize(JSGlobal
 
 class WasmStreamingParser : public JSDestructibleObject {
 public:
+    using Base = JSDestructibleObject;
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace;
+    }
+
     class Client final : public Wasm::StreamingParserClient {
     public:
         explicit Client(WasmStreamingParser* parser)
@@ -1392,8 +1462,6 @@ public:
     {
         DollarVMAssertScope assertScope;
     }
-
-    using Base = JSDestructibleObject;
 
     static WasmStreamingParser* create(VM& vm, JSGlobalObject* globalObject)
     {

@@ -29,7 +29,7 @@ class ObjectPrototype;
 // Superclass for ErrorPrototype and NativeErrorPrototype.
 class ErrorPrototypeBase : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
 
 protected:
     ErrorPrototypeBase(VM&, Structure*);
@@ -38,8 +38,15 @@ protected:
 
 class ErrorPrototype final : public ErrorPrototypeBase {
 public:
-    typedef ErrorPrototypeBase Base;
+    using Base = ErrorPrototypeBase;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ErrorPrototypeBase, Base);
+        return &vm.plainObjectSpace;
+    }
 
     DECLARE_INFO;
 

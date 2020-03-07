@@ -88,7 +88,7 @@ using namespace JSC;
 const ClassInfo JSInjectedScriptHost::s_info = { "InjectedScriptHost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInjectedScriptHost) };
 
 JSInjectedScriptHost::JSInjectedScriptHost(VM& vm, Structure* structure, Ref<InjectedScriptHost>&& impl)
-    : JSDestructibleObject(vm, structure)
+    : Base(vm, structure)
     , m_wrapped(WTFMove(impl))
 {
 }
