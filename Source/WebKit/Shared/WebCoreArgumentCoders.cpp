@@ -3342,4 +3342,30 @@ Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode
     return { imageData.releaseNonNull() };
 }
 
+void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder& encoder, const RefPtr<WebCore::ImageData>& imageData)
+{
+    if (!imageData) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    ArgumentCoder<Ref<WebCore::ImageData>>::encode(encoder, imageData.copyRef().releaseNonNull());
+}
+
+Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::decode(Decoder& decoder)
+{
+    bool isEngaged;
+    if (!decoder.decode(isEngaged))
+        return WTF::nullopt;
+
+    if (!isEngaged)
+        return RefPtr<WebCore::ImageData>();
+
+    auto result = ArgumentCoder<Ref<WebCore::ImageData>>::decode(decoder);
+    if (!result)
+        return WTF::nullopt;
+    return { WTFMove(*result) };
+}
+
 } // namespace IPC

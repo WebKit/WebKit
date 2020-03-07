@@ -65,6 +65,11 @@ private:
         commitFlushContext(flushIdentifier);
     }
 
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    {
+        return BaseConcreteImageBuffer::getImageData(outputFormat, srcRect);
+    }
+
     bool apply(DisplayList::Item& item, GraphicsContext&) override
     {
         if (item.type() != DisplayList::ItemType::PutImageData)

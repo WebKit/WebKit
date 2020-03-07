@@ -33,6 +33,11 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/FloatSize.h>
 
+namespace WebCore {
+enum class AlphaPremultiplication : uint8_t;
+class ImageData;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
@@ -43,6 +48,7 @@ public:
 
     // Messages to be received. See RemoteRenderingBackendProxy.messages.in.
     virtual void flushDrawingContext(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier) = 0;
+    virtual RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const = 0;
 
 protected:
     RemoteImageBufferMessageHandlerProxy(RemoteRenderingBackendProxy&, ImageBufferIdentifier);

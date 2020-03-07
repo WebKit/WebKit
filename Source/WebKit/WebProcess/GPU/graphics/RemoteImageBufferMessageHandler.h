@@ -34,6 +34,10 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/RenderingMode.h>
 
+namespace WebCore {
+enum class AlphaPremultiplication : uint8_t;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackend;
@@ -55,11 +59,14 @@ protected:
     virtual bool isBackendCreated() const = 0;
     bool isPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
 
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const;
+
     void waitForCreateImageBufferBackend();
     void waitForCommitImageBufferFlushContext();
 
     // Messages to be sent. See RemoteRenderingBackendProxy.messages.in.
     void flushDrawingContext(const WebCore::DisplayList::DisplayList&);
+    void flushDrawingContextAndWaitCommit(const WebCore::DisplayList::DisplayList&);
 
 private:
     WeakPtr<RemoteRenderingBackend> m_remoteRenderingBackend;

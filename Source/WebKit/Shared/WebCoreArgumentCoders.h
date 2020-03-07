@@ -859,6 +859,11 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector> {
 };
 #endif
 
+template<> struct ArgumentCoder<RefPtr<WebCore::ImageData>> {
+    static void encode(Encoder&, const RefPtr<WebCore::ImageData>&);
+    static Optional<RefPtr<WebCore::ImageData>> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<Ref<WebCore::ImageData>> {
     static void encode(Encoder&, const Ref<WebCore::ImageData>&);
     static Optional<Ref<WebCore::ImageData>> decode(Decoder&);

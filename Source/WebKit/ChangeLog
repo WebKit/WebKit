@@ -1,3 +1,55 @@
+2020-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Implement CanvasRenderingContext2D.getImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=208560
+        <rdar://problem/60060618>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Adds a new synchronous message between the Web Process and the GPU Process.
+        Unfortunately, getImageData() synchronously returns results, and we don't
+        have the infrastructure to make JavaScript interruptible, so this means that
+        the message has to be synchronous, at least until we add that infrastructure.
+
+        When the RemoteImageBuffer receives the getImageData() call, it first
+        asynchronously flushes the pending display list, doesn't wait for a response, 
+        and then sends the synchronous getImageData() message. Because the GPU Process
+        receives messages in-order, the Web Process doesn't have to wait for the
+        response from the flush message.
+
+        After this patch, there are a few optimization opportunities we can exploit
+        where we use SharedBuffer directly instead of copying into and out of the
+        ImageData.
+
+        No new tests because there is no behavior change. We're just using the GPU
+        process now, instead of implementing the command locally in the Web Process.
+
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h:
+        * GPUProcess/graphics/RemoteImageBufferProxy.h:
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getImageData):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in:
+        * Platform/IPC/ImageDataReference.h: Added.
+        (IPC::ImageDataReference::ImageDataReference):
+        (IPC::ImageDataReference::buffer):
+        (IPC::ImageDataReference::buffer const):
+        (IPC::ImageDataReference::encode const):
+        (IPC::ImageDataReference::decode):
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendSync):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RefPtr<WebCore::ImageData>>::encode):
+        (IPC::ArgumentCoder<RefPtr<WebCore::ImageData>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteImageBuffer.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp:
+        (WebKit::RemoteImageBufferMessageHandler::getImageData const):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+
 2020-03-07  chris fleizach  <cfleizach@apple.com>
 
         Unreviewed, rolling out r258047.

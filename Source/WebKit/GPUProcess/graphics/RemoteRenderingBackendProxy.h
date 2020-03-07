@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "ImageBufferFlushIdentifier.h"
 #include "ImageBufferIdentifier.h"
+#include "ImageDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteImageBufferMessageHandlerProxy.h"
@@ -63,11 +64,13 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::ColorSpace, ImageBufferIdentifier);
     void releaseImageBuffer(ImageBufferIdentifier);
     void flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList&, ImageBufferFlushIdentifier, ImageBufferIdentifier);
+    void getImageData(WebCore::AlphaPremultiplication outputFormat, WebCore::IntRect srcRect, ImageBufferIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&&);
 
     using ImageBufferMessageHandlerMap = HashMap<ImageBufferIdentifier, std::unique_ptr<RemoteImageBufferMessageHandlerProxy>>;
     ImageBufferMessageHandlerMap m_imageBufferMessageHandlerMap;

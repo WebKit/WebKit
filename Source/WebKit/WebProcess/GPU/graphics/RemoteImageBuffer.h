@@ -73,6 +73,15 @@ protected:
         return m_backend.get();
     }
 
+    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    {
+        auto& displayList = m_drawingContext.displayList();
+        const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
+        auto result = const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::getImageData(outputFormat, srcRect);
+        // getImageData is synchronous, which means we've already received the CommitImageBufferFlushContext message.
+        return result;
+    }
+
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }) override
     {
         // The math inside ImageData::create() doesn't agree with the math inside ImageBufferBackend::putImageData() about how m_resolutionScale interacts with the data in the ImageBuffer.
@@ -91,8 +100,7 @@ protected:
     {
         auto& displayList = m_drawingContext.displayList();
         if (displayList.itemCount()) {
-            RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
-            RemoteImageBufferMessageHandler::waitForCommitImageBufferFlushContext();
+            RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(displayList);
             displayList.clear();
         }
     }

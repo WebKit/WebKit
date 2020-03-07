@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ImageDataReference.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 
@@ -49,6 +50,13 @@ RemoteImageBufferMessageHandler::~RemoteImageBufferMessageHandler()
     m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::ReleaseImageBuffer(m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
 }
 
+RefPtr<ImageData> RemoteImageBufferMessageHandler::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+{
+    IPC::ImageDataReference imageDataReference;
+    m_remoteRenderingBackend->sendSync(Messages::RemoteRenderingBackendProxy::GetImageData(outputFormat, srcRect, m_imageBufferIdentifier), Messages::RemoteRenderingBackendProxy::GetImageData::Reply(imageDataReference), m_remoteRenderingBackend->renderingBackendIdentifier(), 1_s);
+    return imageDataReference.buffer();
+}
+
 void RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend()
 {
     if (m_remoteRenderingBackend && !isBackendCreated())
@@ -65,8 +73,16 @@ void RemoteImageBufferMessageHandler::flushDrawingContext(const WebCore::Display
 {
     if (!m_remoteRenderingBackend)
         return;
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+}
+
+void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(const WebCore::DisplayList::DisplayList& displayList)
+{
+    if (!m_remoteRenderingBackend)
+        return;
     m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
     m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    waitForCommitImageBufferFlushContext();
 }
 
 void RemoteImageBufferMessageHandler::commitFlushContext(ImageBufferFlushIdentifier flushIdentifier)
