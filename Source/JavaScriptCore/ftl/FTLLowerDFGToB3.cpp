@@ -5195,7 +5195,6 @@ private:
                     if constexpr (kind == DelByKind::Normal)
                         return CCallHelpers::TrustedImmPtr(subscriptValue);
                     else {
-                        ASSERT(base.gpr() != params[2].gpr());
                         ASSERT(params.gpScratch(0) != params[2].gpr());
                         if (node->child2().useKind() == UntypedUse)
                             slowCases.append(jit.branchIfNotCell(JSValueRegs(params[2].gpr())));

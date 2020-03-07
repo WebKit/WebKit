@@ -1,3 +1,18 @@
+2020-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Remove bad assertion in FTLLowerDFGToB3's compileDelBy().
+        https://bugs.webkit.org/show_bug.cgi?id=208764
+        <rdar://problem/59940095>
+
+        Reviewed by Keith Miller.
+
+        The assertion ASSERT(base.gpr() != params[2].gpr()) is wrong because it is legal
+        JS to pass in the same value as the base and subscript.  The runtime will handle
+        it properly.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+
 2020-03-05  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h

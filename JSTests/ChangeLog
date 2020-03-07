@@ -1,3 +1,14 @@
+2020-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Remove bad assertion in FTLLowerDFGToB3's compileDelBy().
+        https://bugs.webkit.org/show_bug.cgi?id=208764
+        <rdar://problem/59940095>
+
+        Reviewed by Keith Miller.
+
+        * stress/delete-by-val-with-base-and-subscript-using-same-cell.js: Added.
+        * stress/delete-by-val-with-base-and-subscript-using-same-non-cell.js: Added.
+
 2020-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable public class fields
