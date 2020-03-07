@@ -333,7 +333,7 @@ private:
 
     AVPlayer *objCAVFoundationAVPlayer() const final { return m_avPlayer.get(); }
 
-    bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
+    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
     void setShouldObserveTimeControlStatus(bool);
 
     RetainPtr<AVURLAsset> m_avAsset;

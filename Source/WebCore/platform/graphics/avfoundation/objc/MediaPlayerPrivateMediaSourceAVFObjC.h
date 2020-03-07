@@ -252,7 +252,7 @@ private:
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 
-    bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) final;
+    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
 
     void ensureLayer();
     void destroyLayer();

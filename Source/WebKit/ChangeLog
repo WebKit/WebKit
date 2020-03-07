@@ -1,3 +1,41 @@
+2020-03-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement setWirelessPlaybackTarget, performTaskAtMediaTime, and wouldTaintOrigin in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=208651
+        <rdar://problem/60088298>
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage): Dispatch player manager messages.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage): Dispatch player messages.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy): Clear the completion handler
+        do its destructor doesn't assert.
+        (WebKit::RemoteMediaPlayerProxy::setWirelessPlaybackTarget): Implement.
+        (WebKit::RemoteMediaPlayerProxy::performTaskAtMediaTime): Ditto.
+        (WebKit::RemoteMediaPlayerProxy::wouldTaintOrigin): Ditto.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState): Update wireless playback target name.
+        (WebKit::MediaPlayerPrivateRemote::load): Don't log as unimplemented.
+        (WebKit::MediaPlayerPrivateRemote::wirelessPlaybackTargetName const): Return cached name.
+        (WebKit::MediaPlayerPrivateRemote::setWirelessPlaybackTarget): Implement.
+        (WebKit::MediaPlayerPrivateRemote::wouldTaintOrigin const): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::setClosedCaptionsVisible): Deleted, not needed.
+        (WebKit::MediaPlayerPrivateRemote::simulateAudioInterruption): Ditto.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerConfiguration.h:
+        (WebKit::RemoteMediaPlayerConfiguration::decode): Decode supportsFullscreen too.
+
 2020-03-07  Brady Eidson  <beidson@apple.com>
 
         Add runtime flag for incremental PDF loading.

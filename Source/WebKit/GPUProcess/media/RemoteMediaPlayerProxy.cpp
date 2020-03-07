@@ -52,6 +52,11 @@
 #include "RemoteCDMFactoryProxy.h"
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <WebCore/MediaPlaybackTargetCocoa.h>
+#include <WebCore/MediaPlaybackTargetMock.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -73,6 +78,8 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
+    if (m_performTaskAtMediaTimeCompletionHandler)
+        m_performTaskAtMediaTimeCompletionHandler(WTF::nullopt);
 }
 
 void RemoteMediaPlayerProxy::invalidate()
@@ -140,12 +147,12 @@ void RemoteMediaPlayerProxy::pause()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::seek(MediaTime&& time)
+void RemoteMediaPlayerProxy::seek(const MediaTime& time)
 {
     m_player->seek(time);
 }
 
-void RemoteMediaPlayerProxy::seekWithTolerance(MediaTime&& time, MediaTime&& negativeTolerance, MediaTime&& positiveTolerance)
+void RemoteMediaPlayerProxy::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
     m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
 }
@@ -282,6 +289,7 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
     m_cachedState.hasSingleSecurityOrigin = m_player->hasSingleSecurityOrigin();
     m_cachedState.didPassCORSAccessCheck = m_player->didPassCORSAccessCheck();
+    m_cachedState.wouldTaintDocumentSecurityOrigin = m_player->wouldTaintOrigin(m_configuration.documentSecurityOrigin.securityOrigin());
 
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::ReadyStateChanged(m_cachedState), m_id);
 }
@@ -558,6 +566,25 @@ void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
+
+void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(const WebCore::MediaPlaybackTargetContext& targetContext)
+{
+#if !PLATFORM(IOS_FAMILY)
+    switch (targetContext.type()) {
+    case MediaPlaybackTargetContext::AVOutputContextType:
+        m_player->setWirelessPlaybackTarget(WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
+        break;
+    case MediaPlaybackTargetContext::MockType:
+        m_player->setWirelessPlaybackTarget(WebCore::MediaPlaybackTargetMock::create(targetContext.mockDeviceName(), targetContext.mockState()));
+        break;
+    case MediaPlaybackTargetContext::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+#else
+    UNUSED_PARAM(targetContext);
+#endif
+}
 #endif
 
 void RemoteMediaPlayerProxy::mediaPlayerEnterFullscreen()
@@ -768,6 +795,39 @@ void RemoteMediaPlayerProxy::tracksChanged()
 void RemoteMediaPlayerProxy::syncTextTrackBounds()
 {
     m_player->syncTextTrackBounds();
+}
+
+void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, CompletionHandler<void(Optional<MediaTime>)>&& completionHandler)
+{
+    if (m_performTaskAtMediaTimeCompletionHandler) {
+        // A media player is only expected to track one pending task-at-time at once (e.g. see
+        // MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime), so cancel the existing
+        // CompletionHandler.
+        auto handler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
+        handler(WTF::nullopt);
+    }
+
+    auto transmissionTime = MediaTime::createWithDouble((WallTime::now() - messageTime).value(), 1);
+    auto adjustedTaskTime = taskTime - transmissionTime;
+    auto currentTime = m_player->currentTime();
+    if (adjustedTaskTime <= currentTime) {
+        completionHandler(currentTime);
+        return;
+    }
+
+    m_performTaskAtMediaTimeCompletionHandler = WTFMove(completionHandler);
+    m_player->performTaskAtMediaTime([this, weakThis = makeWeakPtr(this)]() mutable {
+        if (!weakThis || !m_performTaskAtMediaTimeCompletionHandler)
+            return;
+
+        auto completionHandler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
+        completionHandler(m_player->currentTime());
+    }, adjustedTaskTime);
+}
+
+void RemoteMediaPlayerProxy::wouldTaintOrigin(struct WebCore::SecurityOriginData originData, CompletionHandler<void(Optional<bool>)>&& completionHandler)
+{
+    completionHandler(m_player->wouldTaintOrigin(originData.securityOrigin()));
 }
 
 } // namespace WebKit

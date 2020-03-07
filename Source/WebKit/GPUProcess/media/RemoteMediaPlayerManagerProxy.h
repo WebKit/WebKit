@@ -59,6 +59,7 @@ public:
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     void didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder) { didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveSyncPlayerMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;

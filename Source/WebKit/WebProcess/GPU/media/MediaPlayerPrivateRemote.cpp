@@ -87,9 +87,10 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     INFO_LOG(LOGIDENTIFIER);
 }
 
-void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration)
+void MediaPlayerPrivateRemote::setConfiguration(RemoteMediaPlayerConfiguration&& configuration, WebCore::SecurityOriginData&& documentSecurityOrigin)
 {
     m_configuration = WTFMove(configuration);
+    m_documentSecurityOrigin = WTFMove(documentSecurityOrigin);
     m_player->mediaEngineUpdated();
 }
 
@@ -366,6 +367,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.naturalSize = state.naturalSize;
     m_cachedState.movieLoadType = state.movieLoadType;
     m_cachedState.wirelessPlaybackTargetType = state.wirelessPlaybackTargetType;
+    m_cachedState.wirelessPlaybackTargetName = state.wirelessPlaybackTargetName;
 
     m_cachedState.startDate = state.startDate;
     m_cachedState.startTime = state.startTime;
@@ -595,7 +597,6 @@ void MediaPlayerPrivateRemote::remoteVideoTrackConfigurationChanged(TrackPrivate
 #if ENABLE(MEDIA_SOURCE)
 void MediaPlayerPrivateRemote::load(const String&, MediaSourcePrivateClient*)
 {
-    notImplemented();
     callOnMainThread([weakThis = makeWeakPtr(*this), this] {
         if (!weakThis)
             return;
@@ -719,11 +720,6 @@ bool MediaPlayerPrivateRemote::hasClosedCaptions() const
     return m_cachedState.hasClosedCaptions;
 }
 
-void MediaPlayerPrivateRemote::setClosedCaptionsVisible(bool)
-{
-    notImplemented();
-}
-
 double MediaPlayerPrivateRemote::maxFastForwardRate() const
 {
     return m_cachedState.maxFastForwardRate;
@@ -797,8 +793,7 @@ bool MediaPlayerPrivateRemote::hasAvailableVideoFrame() const
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 String MediaPlayerPrivateRemote::wirelessPlaybackTargetName() const
 {
-    notImplemented();
-    return emptyString();
+    return m_cachedState.wirelessPlaybackTargetName;
 }
 
 MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateRemote::wirelessPlaybackTargetType() const
@@ -827,9 +822,9 @@ bool MediaPlayerPrivateRemote::isCurrentPlaybackTargetWireless() const
     return m_isCurrentPlaybackTargetWireless;
 }
 
-void MediaPlayerPrivateRemote::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&)
+void MediaPlayerPrivateRemote::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    notImplemented();
+    connection().send(Messages::RemoteMediaPlayerProxy::SetWirelessPlaybackTarget(target->targetContext()), m_id);
 }
 
 void MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -848,10 +843,21 @@ bool MediaPlayerPrivateRemote::didPassCORSAccessCheck() const
     return m_cachedState.didPassCORSAccessCheck;
 }
 
-Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin&) const
+Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
-    notImplemented();
-    return WTF::nullopt;
+    if (origin.data() == m_documentSecurityOrigin)
+        return m_cachedState.wouldTaintDocumentSecurityOrigin;
+
+    if (auto result = m_wouldTaintOriginCache.get(origin.data()))
+        return result;
+
+    Optional<bool> wouldTaint;
+    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), Messages::RemoteMediaPlayerProxy::WouldTaintOrigin::Reply(wouldTaint), m_id))
+        return WTF::nullopt;
+
+    m_wouldTaintOriginCache.add(origin.data(), wouldTaint);
+
+    return wouldTaint;
 }
 
 MediaTime MediaPlayerPrivateRemote::mediaTimeForTimeValue(const MediaTime& timeValue) const
@@ -982,13 +988,6 @@ void MediaPlayerPrivateRemote::tracksChanged()
 }
 #endif
 
-#if USE(GSTREAMER)
-void MediaPlayerPrivateRemote::simulateAudioInterruption()
-{
-    notImplemented();
-}
-#endif
-
 void MediaPlayerPrivateRemote::beginSimulatedHDCPError()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::BeginSimulatedHDCPError(), m_id);
@@ -1039,10 +1038,19 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
     connection().send(Messages::RemoteMediaPlayerProxy::ApplicationDidBecomeActive(), m_id);
 }
 
-bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime)
+bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    notImplemented();
-    return false;
+    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime) mutable {
+        if (!weakThis || !currentTime)
+            return;
+
+        m_cachedState.currentTime = *currentTime;
+        completionHandler();
+    };
+
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtMediaTime(mediaTime, WallTime::now()), WTFMove(asyncReplyHandler), m_id);
+
+    return true;
 }
 
 void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)

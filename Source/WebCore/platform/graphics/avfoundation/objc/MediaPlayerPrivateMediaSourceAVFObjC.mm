@@ -1218,7 +1218,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() con
 }
 #endif
 
-bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, const MediaTime& time)
 {
     __block WTF::Function<void()> taskIn = WTFMove(task);
 

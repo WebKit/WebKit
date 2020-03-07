@@ -103,6 +103,7 @@ struct RemoteMediaPlayerConfiguration {
             WTFMove(*engineDescription),
             *maximumDurationToCacheMediaTime,
             *supportsScanning,
+            *supportsFullscreen,
             *supportsPictureInPicture,
             *supportsAcceleratedRendering,
             *canPlayToWirelessPlaybackTarget,

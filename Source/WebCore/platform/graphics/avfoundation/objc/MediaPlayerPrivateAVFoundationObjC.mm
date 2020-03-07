@@ -3237,7 +3237,7 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoP
 #endif
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+bool MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime(WTF::Function<void()>&& task, const MediaTime& time)
 {
     if (!m_avPlayer)
         return false;

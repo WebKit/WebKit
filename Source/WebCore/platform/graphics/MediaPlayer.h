@@ -77,6 +77,7 @@ class TextTrackRepresentation;
 
 struct Cookie;
 struct GraphicsDeviceAdapter;
+struct SecurityOriginData;
 
 struct MediaEngineSupportParameters {
     ContentType type;
@@ -269,6 +270,8 @@ public:
 
     virtual void mediaPlayerBufferedTimeRangesChanged() { }
     virtual void mediaPlayerSeekableTimeRangesChanged() { }
+
+    virtual SecurityOriginData documentSecurityOrigin() const { return { }; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
@@ -600,7 +603,7 @@ public:
     AVPlayer *objCAVFoundationAVPlayer() const;
 #endif
 
-    bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime);
+    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&);
 
     bool shouldIgnoreIntrinsicSize();
 
@@ -618,6 +621,7 @@ public:
     bool isLooping() const { return client().mediaPlayerIsLooping(); }
 
     void remoteEngineFailedToLoad();
+    SecurityOriginData documentSecurityOrigin() const;
 
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }

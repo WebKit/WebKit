@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/ContentType.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -39,6 +40,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     String networkInterfaceName;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
     Vector<String> preferredAudioCharacteristics;
+    WebCore::SecurityOriginData documentSecurityOrigin;
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
     bool isVideo { 0 };
@@ -52,6 +54,7 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << networkInterfaceName;
         encoder << mediaContentTypesRequiringHardwareSupport;
         encoder << preferredAudioCharacteristics;
+        encoder << documentSecurityOrigin;
         encoder << logIdentifier;
         encoder << shouldUsePersistentCache;
         encoder << isVideo;
@@ -90,6 +93,11 @@ struct RemoteMediaPlayerProxyConfiguration {
         if (!preferredAudioCharacteristics)
             return WTF::nullopt;
 
+        Optional<WebCore::SecurityOriginData> documentSecurityOrigin;
+        decoder >> documentSecurityOrigin;
+        if (!documentSecurityOrigin)
+            return WTF::nullopt;
+
         Optional<uint64_t> logIdentifier;
         decoder >> logIdentifier;
         if (!logIdentifier)
@@ -112,6 +120,7 @@ struct RemoteMediaPlayerProxyConfiguration {
             WTFMove(*networkInterfaceName),
             WTFMove(*mediaContentTypesRequiringHardwareSupport),
             WTFMove(*preferredAudioCharacteristics),
+            WTFMove(*documentSecurityOrigin),
             *logIdentifier,
             *shouldUsePersistentCache,
             *isVideo,

@@ -98,7 +98,7 @@ void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscre
     if (m_videoLayer) {
         CAContext *oldContext = [m_videoLayer context];
 
-        if (m_videoInlineLayer)
+        if (m_videoInlineLayer && currentImage)
             [m_videoInlineLayer setContents:(__bridge id)currentImage.get()];
 
         if (m_videoFullscreenLayer) {

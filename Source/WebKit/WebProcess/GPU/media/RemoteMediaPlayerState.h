@@ -54,6 +54,7 @@ struct RemoteMediaPlayerState {
     double seekableTimeRangesLastModifiedTime { 0 };
     double liveUpdateInterval { 0 };
     unsigned long long totalBytes { 0 };
+    Optional<bool> wouldTaintDocumentSecurityOrigin { true };
     bool paused { true };
     bool loadingProgressed { false };
     bool canSaveMediaData { false };
@@ -88,6 +89,7 @@ struct RemoteMediaPlayerState {
         encoder << seekableTimeRangesLastModifiedTime;
         encoder << liveUpdateInterval;
         encoder << totalBytes;
+        encoder << wouldTaintDocumentSecurityOrigin;
         encoder << paused;
         encoder << loadingProgressed;
         encoder << canSaveMediaData;
@@ -195,6 +197,11 @@ struct RemoteMediaPlayerState {
         if (!totalBytes)
             return WTF::nullopt;
 
+        Optional<Optional<bool>> wouldTaintDocumentSecurityOrigin;
+        decoder >> wouldTaintDocumentSecurityOrigin;
+        if (!wouldTaintDocumentSecurityOrigin)
+            return WTF::nullopt;
+
         Optional<bool> paused;
         decoder >> paused;
         if (!paused)
@@ -270,6 +277,7 @@ struct RemoteMediaPlayerState {
             *seekableTimeRangesLastModifiedTime,
             *liveUpdateInterval,
             *totalBytes,
+            WTFMove(*wouldTaintDocumentSecurityOrigin),
             *paused,
             *loadingProgressed,
             *canSaveMediaData,

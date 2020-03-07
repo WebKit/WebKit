@@ -1580,7 +1580,7 @@ AVPlayer* MediaPlayer::objCAVFoundationAVPlayer() const
 
 #endif
 
-bool MediaPlayer::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime time)
+bool MediaPlayer::performTaskAtMediaTime(WTF::Function<void()>&& task, const MediaTime& time)
 {
     return m_private->performTaskAtMediaTime(WTFMove(task), time);
 }
@@ -1594,6 +1594,12 @@ void MediaPlayer::remoteEngineFailedToLoad()
 {
     client().mediaPlayerEngineFailedToLoad();
 }
+
+SecurityOriginData MediaPlayer::documentSecurityOrigin() const
+{
+    return client().documentSecurityOrigin();
+}
+
 
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()

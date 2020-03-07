@@ -285,7 +285,7 @@ public:
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
 #endif
 
-    virtual bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) { return false; }
+    virtual bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) { return false; }
 
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
 };

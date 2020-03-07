@@ -1732,7 +1732,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     INFO_LOG(LOGIDENTIFIER, "nextInterestingTime:", nextInterestingTime);
 
     if (nextInterestingTime.isValid() && m_player) {
-        m_player->performTaskAtMediaTime([this, weakThis = makeWeakPtr(this), nextInterestingTime] {
+        m_player->performTaskAtMediaTime([this, weakThis = makeWeakPtr(this)] {
             if (!weakThis)
                 return;
 
@@ -8181,6 +8181,11 @@ void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
     if (!scriptExecutionContext())
         return;
     scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
+}
+
+SecurityOriginData HTMLMediaElement::documentSecurityOrigin() const
+{
+    return document().securityOrigin().data();
 }
 
 }
