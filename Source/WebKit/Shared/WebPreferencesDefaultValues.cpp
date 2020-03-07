@@ -204,4 +204,13 @@ bool defaultWebGPUEnabled()
 
 #endif // ENABLE(WEBGPU)
 
+bool defaultInAppBrowserPrivacy()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, InAppBrowserPrivacy);
+#endif
+
+    return false;
+}
+
 } // namespace WebKit
