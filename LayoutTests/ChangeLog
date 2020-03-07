@@ -1,3 +1,14 @@
+2020-03-06  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden some crashes and update expectation
+
+        Moving the webgl texture 2d failures to its own bug and gardening some
+        crashes.
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix scrolling tree hit-testing on scrolled and zoomed pages
