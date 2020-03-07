@@ -1,3 +1,9 @@
+2020-03-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed unified build fix; forward declare referenced types. In this case, WebCore::ImageData.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+
 2020-03-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Implement CanvasRenderingContext2D.getImageData()

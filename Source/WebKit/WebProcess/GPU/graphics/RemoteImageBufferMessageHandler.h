@@ -35,6 +35,7 @@
 #include <WebCore/RenderingMode.h>
 
 namespace WebCore {
+class ImageData;
 enum class AlphaPremultiplication : uint8_t;
 }
 
