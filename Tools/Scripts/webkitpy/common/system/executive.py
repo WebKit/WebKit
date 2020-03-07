@@ -321,24 +321,30 @@ class Executive(AbstractExecutive):
             process_name = "%s.exe" % name
         return process_name
 
+    def _windows_kill_command(self):
+        if self._is_native_win:
+            return os.path.join("C:", os.sep, "WINDOWS", "system32", "taskkill.exe")
+        else:
+            return 'taskkill.exe'
+
     def interrupt(self, pid):
-        interrupt_signal = signal.CTRL_C_EVENT if self._is_native_win else signal.SIGINT
-        try:
-            os.kill(pid, interrupt_signal)
-        except OSError:
-            # Silently ignore when the pid doesn't exist.
-            # It's impossible for callers to avoid race conditions with process shutdown.
-            pass
+        if self._is_native_win:
+            command = [self._windows_kill_command(), "/f", "/t", "/pid", str(pid)]
+            self.run_command(command, ignore_errors=True)
+        else:
+            try:
+                os.kill(pid, signal.SIGINT)
+            except OSError:
+                # Silently ignore when the pid doesn't exist.
+                # It's impossible for callers to avoid race conditions with process shutdown.
+                pass
 
     def kill_all(self, process_name):
         """Attempts to kill processes matching process_name.
         Will fail silently if no process are found."""
         if self._is_cygwin or self._is_native_win:
             image_name = self._windows_image_name(process_name)
-            killCommmand = 'taskkill.exe'
-            if self._is_native_win:
-                killCommand = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
-            command = [killCommmand, "/f", "/im", image_name]
+            command = [self._windows_kill_command(), "/f", "/im", image_name]
             # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, ignore_errors=True)
             return

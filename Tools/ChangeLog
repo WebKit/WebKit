@@ -1,3 +1,20 @@
+2020-03-06  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [webkitpy] Fix executive on Windows to run wpt server correctly
+        https://bugs.webkit.org/show_bug.cgi?id=208693
+
+        Reviewed by Jonathan Bedard.
+
+        Bug fix for Windows environment a) fixing a typo. b) fixing path
+        c) fix how to kill subprocesses.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._windows_kill_command):
+        (Executive.interrupt):
+        (Executive.kill_all):
+        * Scripts/webkitpy/port/base.py:
+        (Port.web_platform_test_server_doc_root):
+
 2020-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Evaluating JavaScript in main frame before loading should succeed

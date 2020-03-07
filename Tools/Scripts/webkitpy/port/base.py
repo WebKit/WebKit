@@ -1036,7 +1036,7 @@ class Port(object):
         self._web_platform_test_server.start()
 
     def web_platform_test_server_doc_root(self):
-        return web_platform_test_server.doc_root(self) + self.TEST_PATH_SEPARATOR
+        return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
 
     def web_platform_test_server_base_http_url(self):
         return web_platform_test_server.base_http_url(self)
