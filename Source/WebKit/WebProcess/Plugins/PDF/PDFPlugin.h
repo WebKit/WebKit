@@ -261,8 +261,6 @@ private:
     NSData *rawData() const { return (__bridge NSData *)m_data.get(); }
 #endif
 
-    WebFrame* webFrame() const { return m_frame; }
-
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
@@ -274,7 +272,7 @@ private:
     PluginView* pluginView();
     const PluginView* pluginView() const;
 
-    WebFrame* m_frame;
+    WebFrame& m_frame;
 
     bool m_isPostScript { false };
     bool m_pdfDocumentWasMutated { false };
@@ -309,6 +307,7 @@ private:
 
     String m_suggestedFilename;
     RetainPtr<CFMutableDataRef> m_data;
+    uint64_t m_streamedBytes { 0 };
 
     RetainPtr<PDFDocument> m_pdfDocument;
 
