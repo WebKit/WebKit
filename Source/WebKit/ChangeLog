@@ -1,3 +1,15 @@
+2020-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Evaluating JavaScript in main frame before loading should succeed
+        https://bugs.webkit.org/show_bug.cgi?id=208733
+
+        Reviewed by Tim Horton.
+
+        This fixes a bug in the SPI I introduced in r257882 with a test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+
 2020-03-06  Brent Fulgham  <bfulgham@apple.com>
 
         Expand the feature flags mechanism with additional default feature preference values

@@ -920,8 +920,10 @@ static bool validateArgument(id argument)
     }
     
     Optional<WebCore::FrameIdentifier> frameID;
-    if (frame)
-        frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(frame._handle.frameID);
+    if (frame) {
+        if (uint64_t identifier = frame._handle.frameID)
+            frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
+    }
 
     _page->runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters { javaScriptString, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)

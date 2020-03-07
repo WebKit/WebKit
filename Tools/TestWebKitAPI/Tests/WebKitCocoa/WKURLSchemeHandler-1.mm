@@ -31,6 +31,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
@@ -1090,6 +1091,18 @@ TEST(URLSchemeHandler, Frames)
                 EXPECT_WK_STREQ(result, "frame://host3/customValue");
                 done = true;
             }];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+    
+    done = false;
+    auto emptyWebView = adoptNS([WKWebView new]);
+    [emptyWebView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_NOT_NULL(mainFrame._handle);
+        EXPECT_EQ(mainFrame._handle.frameID, 0u);
+        [emptyWebView _evaluateJavaScript:@"window.location.href" inFrame:mainFrame inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
+            EXPECT_WK_STREQ(result, "about:blank");
+            done = true;
         }];
     }];
     TestWebKitAPI::Util::run(&done);
