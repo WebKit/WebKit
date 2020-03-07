@@ -3475,18 +3475,12 @@ void Editor::textDidChangeInTextArea(Element* e)
 
 void Editor::applyEditingStyleToBodyElement() const
 {
-    // FIXME: Not clear it's valuable to do this to all body elements rather than just doing it on the single one returned by Document::body.
-    Vector<Ref<HTMLBodyElement>> bodies;
-    for (auto& body : descendantsOfType<HTMLBodyElement>(document()))
-        bodies.append(body);
-
-    for (auto& body : bodies) {
-        // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
-        auto& style = body->cssomStyle();
-        style.setPropertyInternal(CSSPropertyWordWrap, "break-word", false);
-        style.setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false);
-        style.setPropertyInternal(CSSPropertyLineBreak, "after-white-space", false);
-    }
+    auto body = makeRefPtr(document().body());
+    if (!body)
+        return;
+    body->setInlineStyleProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+    body->setInlineStyleProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
+    body->setInlineStyleProperty(CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
 }
 
 bool Editor::findString(const String& target, FindOptions options)
