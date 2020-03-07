@@ -138,6 +138,9 @@ public:
     const Vector<WTF::String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
 
+    bool crossOriginAccessControlCheckEnabled() const { return m_crossOriginAccessControlCheckEnabled; }
+    void setCrossOriginAccessControlCheckEnabled(bool enabled) { m_crossOriginAccessControlCheckEnabled = enabled; }
+
     const WTF::String& processDisplayName() const { return m_processDisplayName; }
     void setProcessDisplayName(const WTF::String& name) { m_processDisplayName = name; }
 
@@ -181,6 +184,7 @@ private:
 
     HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
     Vector<WTF::String> m_corsDisablingPatterns;
+    bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
 };

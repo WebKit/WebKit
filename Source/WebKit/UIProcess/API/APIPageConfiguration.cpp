@@ -90,6 +90,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     for (auto& pair : this->m_urlSchemeHandlers)
         copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
     copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;
+    copy->m_crossOriginAccessControlCheckEnabled = this->m_crossOriginAccessControlCheckEnabled;
     copy->m_webViewCategory = this->m_webViewCategory;
 
     copy->m_processDisplayName = this->m_processDisplayName;

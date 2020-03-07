@@ -89,8 +89,8 @@ private:
     void releaseResources() override;
 
     bool checkForHTTPStatusCodeError();
-    bool checkResponseCrossOriginAccessControl(const ResourceResponse&, String&);
-    bool checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest, String&);
+    Expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
+    Expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
     void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 

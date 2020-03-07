@@ -913,6 +913,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pageConfiguration->setCORSDisablingPatterns(WTFMove(vector));
 }
 
+- (void)_setCrossOriginAccessControlCheckEnabled:(BOOL)enabled
+{
+    _pageConfiguration->setCrossOriginAccessControlCheckEnabled(enabled);
+}
+
+- (BOOL)_crossOriginAccessControlCheckEnabled
+{
+    return _pageConfiguration->crossOriginAccessControlCheckEnabled();
+}
+
 - (BOOL)_drawsBackground
 {
     return _drawsBackground;

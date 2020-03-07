@@ -35,6 +35,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
+#include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/Timer.h>
@@ -68,6 +69,7 @@ class NetworkResourceLoader final
     , public NetworkLoadClient
     , public IPC::MessageSender
     , public WebCore::ContentSecurityPolicyClient
+    , public WebCore::CrossOriginAccessControlCheckDisabler
     , public CanMakeWeakPtr<NetworkResourceLoader> {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&& reply = nullptr)
@@ -114,6 +116,9 @@ public:
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&) final;
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
+    // CrossOriginAccessControlCheckDisabler
+    bool crossOriginAccessControlCheckEnabled() const override;
+        
     void convertToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequest::Requester::Main; }

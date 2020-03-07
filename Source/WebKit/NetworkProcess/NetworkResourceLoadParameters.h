@@ -63,6 +63,7 @@ public:
     bool isHTTPSUpgradeEnabled { false };
     bool pageHasResourceLoadClient { false };
     Optional<WebCore::FrameIdentifier> parentFrameID;
+    bool crossOriginAccessControlCheckEnabled { true };
 
 #if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };

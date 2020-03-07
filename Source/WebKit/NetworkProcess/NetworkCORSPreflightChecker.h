@@ -42,6 +42,7 @@ class SecurityOrigin;
 namespace WebKit {
 
 class NetworkProcess;
+class NetworkResourceLoader;
 
 class NetworkCORSPreflightChecker final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -58,7 +59,7 @@ public:
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 
-    NetworkCORSPreflightChecker(NetworkProcess&, Parameters&&, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&&);
+    NetworkCORSPreflightChecker(NetworkProcess&, NetworkResourceLoader*, Parameters&&, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&&);
     ~NetworkCORSPreflightChecker();
     const WebCore::ResourceRequest& originalRequest() const { return m_parameters.originalRequest; }
 
@@ -84,6 +85,7 @@ private:
     RefPtr<NetworkDataTask> m_task;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     WebCore::NetworkTransactionInformation m_loadInformation;
+    WeakPtr<NetworkResourceLoader> m_networkResourceLoader;
 };
 
 } // namespace WebKit

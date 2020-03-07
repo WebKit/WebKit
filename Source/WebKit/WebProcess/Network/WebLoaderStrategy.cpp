@@ -262,8 +262,10 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     return true;
 }
 
-static void addParametersFromFrame(const Frame* frame, NetworkResourceLoadParameters& parameters)
+static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters)
 {
+    parameters.crossOriginAccessControlCheckEnabled = CrossOriginAccessControlCheckDisabler::singleton().crossOriginAccessControlCheckEnabled();
+
     if (!frame)
         return;
 
@@ -311,7 +313,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
-    addParametersFromFrame(frame, loadParameters);
+    addParametersShared(frame, loadParameters);
 
 #if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
@@ -608,7 +610,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsi
     if (webPage)
         loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
 
-    addParametersFromFrame(webFrame->coreFrame(), loadParameters);
+    addParametersShared(webFrame->coreFrame(), loadParameters);
 
     data.shrink(0);
 
@@ -681,7 +683,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
         if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
-    addParametersFromFrame(&frame, loadParameters);
+    addParametersShared(&frame, loadParameters);
     
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
     auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;

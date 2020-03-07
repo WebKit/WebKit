@@ -1,3 +1,13 @@
+2020-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable cross origin access control checks
+        https://bugs.webkit.org/show_bug.cgi?id=208748
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        Add a test that verifies this SPI allows Access-Control-Allow-Origin: * with credentials.
+
 2020-03-06  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [webkitpy] Fix executive on Windows to run wpt server correctly

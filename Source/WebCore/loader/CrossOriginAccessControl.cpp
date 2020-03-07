@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <mutex>
@@ -206,55 +207,74 @@ void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, OptionSet
         request.clearHTTPAcceptEncoding();
 }
 
-bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)
+CrossOriginAccessControlCheckDisabler& CrossOriginAccessControlCheckDisabler::singleton()
+{
+    ASSERT(!isInNetworkProcess());
+    static NeverDestroyed<CrossOriginAccessControlCheckDisabler> disabler;
+    return disabler.get();
+}
+
+void CrossOriginAccessControlCheckDisabler::setCrossOriginAccessControlCheckEnabled(bool enabled)
+{
+    ASSERT(!isInNetworkProcess());
+    m_accessControlCheckEnabled = enabled;
+}
+
+bool CrossOriginAccessControlCheckDisabler::crossOriginAccessControlCheckEnabled() const
+{
+    ASSERT(!isInNetworkProcess());
+    return m_accessControlCheckEnabled;
+}
+
+Expected<void, String> passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
     const String& accessControlOriginString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowOrigin);
-    if (accessControlOriginString == "*" && storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
-        return true;
+    bool starAllowed = storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse;
+    if (!starAllowed)
+        starAllowed = checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled();
+    if (accessControlOriginString == "*" && starAllowed)
+        return { };
 
     String securityOriginString = securityOrigin.toString();
     if (accessControlOriginString != securityOriginString) {
         if (accessControlOriginString == "*")
-            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s;
-        else if (accessControlOriginString.find(',') != notFound)
-            errorDescription = "Access-Control-Allow-Origin cannot contain more than one origin."_s;
-        else
-            errorDescription = makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin.");
-        return false;
+            return makeUnexpected("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s);
+        if (accessControlOriginString.find(',') != notFound)
+            return makeUnexpected("Access-Control-Allow-Origin cannot contain more than one origin."_s);
+        return makeUnexpected(makeString("Origin ", securityOriginString, " is not allowed by Access-Control-Allow-Origin."));
     }
 
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
-        if (accessControlCredentialsString != "true") {
-            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
-            return false;
-        }
+        if (accessControlCredentialsString != "true")
+            return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
     }
 
-    return true;
+    return { };
 }
 
-bool validatePreflightResponse(const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)
+Expected<void, String> validatePreflightResponse(const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
-    if (!response.isSuccessful()) {
-        errorDescription = "Preflight response is not successful"_s;
-        return false;
-    }
+    if (!response.isSuccessful())
+        return makeUnexpected("Preflight response is not successful"_s);
 
-    if (!passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, errorDescription))
-        return false;
+    auto accessControlCheckResult = passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, checkDisabler);
+    if (!accessControlCheckResult)
+        return accessControlCheckResult;
 
     auto result = makeUnique<CrossOriginPreflightResultCacheItem>(storedCredentialsPolicy);
+    String errorDescription;
+    // FIXME: allowsCrossOriginMethod and allowsCrossOriginHeaders should return Expected<void, String> to avoid having an out parameter.
     if (!result->parse(response)
         || !result->allowsCrossOriginMethod(request.httpMethod(), storedCredentialsPolicy, errorDescription)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), storedCredentialsPolicy, errorDescription)) {
-        return false;
+        return makeUnexpected(errorDescription);
     }
 
     CrossOriginPreflightResultCache::singleton().appendEntry(securityOrigin.toString(), request.url(), WTFMove(result));
-    return true;
+    return { };
 }
 
 static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigin& origin, const ResourceResponse& response)

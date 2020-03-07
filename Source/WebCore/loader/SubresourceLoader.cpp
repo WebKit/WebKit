@@ -281,9 +281,9 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTFMove(newRequest));
         }
 
-        String errorDescription;
-        if (!checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest, errorDescription)) {
-            String errorMessage = "Cross-origin redirection to " + newRequest.url().string() + " denied by Cross-Origin Resource Sharing policy: " + errorDescription;
+        auto accessControlCheckResult = checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest);
+        if (!accessControlCheckResult) {
+            auto errorMessage = makeString("Cross-origin redirection to ", newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", accessControlCheckResult.error());
             if (m_frame && m_frame->document())
                 m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
             RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load canceled because crosss-origin redirection denied by CORS policy");
@@ -411,12 +411,12 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             m_frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    String errorDescription;
-    if (!checkResponseCrossOriginAccessControl(response, errorDescription)) {
+    auto accessControlCheckResult = checkResponseCrossOriginAccessControl(response);
+    if (!accessControlCheckResult) {
         if (m_frame && m_frame->document())
-            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorDescription);
+            m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, accessControlCheckResult.error());
         RELEASE_LOG_IF_ALLOWED("didReceiveResponse: canceling load because of cross origin access control");
-        cancel(ResourceError(String(), 0, request().url(), errorDescription, ResourceError::Type::AccessControl));
+        cancel(ResourceError(String(), 0, request().url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
         return;
     }
 
@@ -600,22 +600,27 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
     frame->page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceLoadedKey(), resourceType, ShouldSample::Yes);
 }
 
-bool SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response, String& errorDescription)
+Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response)
 {
     if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
-        return true;
+        return { };
 
 #if ENABLE(SERVICE_WORKER)
-    if (response.source() == ResourceResponse::Source::ServiceWorker)
-        return response.tainting() != ResourceResponse::Tainting::Opaque;
+    if (response.source() == ResourceResponse::Source::ServiceWorker) {
+        if (response.tainting() == ResourceResponse::Tainting::Opaque) {
+            // FIXME: This should have an error message.
+            return makeUnexpected(String());
+        }
+        return { };
+    }
 #endif
 
     ASSERT(m_origin);
 
-    return passesAccessControlCheck(response, options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse, *m_origin, errorDescription);
+    return passesAccessControlCheck(response, options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
 }
 
-bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest, String& errorMessage)
+Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
 {
     bool crossOriginFlag = m_resource->isCrossOrigin();
     bool isNextRequestCrossOrigin = m_origin && !m_origin->canRequest(newRequest.url());
@@ -629,14 +634,17 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
     if (options().mode == FetchOptions::Mode::Cors) {
         if (m_resource->isCrossOrigin()) {
             auto locationString = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
-            errorMessage = validateCrossOriginRedirectionURL(URL(redirectResponse.url(), locationString));
+            String errorMessage = validateCrossOriginRedirectionURL(URL(redirectResponse.url(), locationString));
             if (!errorMessage.isNull())
-                return false;
+                return makeUnexpected(WTFMove(errorMessage));
         }
 
         ASSERT(m_origin);
-        if (crossOriginFlag && !passesAccessControlCheck(redirectResponse, options().storedCredentialsPolicy, *m_origin, errorMessage))
-            return false;
+        if (crossOriginFlag) {
+            auto accessControlCheckResult = passesAccessControlCheck(redirectResponse, options().storedCredentialsPolicy, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
+            if (!accessControlCheckResult)
+                return accessControlCheckResult;
+        }
     }
 
     bool redirectingToNewOrigin = false;
@@ -661,7 +669,7 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
     
     updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer());
 
-    return true;
+    return { };
 }
 
 void SubresourceLoader::updateReferrerPolicy(const String& referrerPolicyValue)
