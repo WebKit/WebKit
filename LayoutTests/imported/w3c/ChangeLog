@@ -1,3 +1,20 @@
+2020-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Fix original-crossorigin-applied.sub.html WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=208119
+
+        Reviewed by Darin Adler.
+
+        Rename original-crossorigin-applied.sub.html to
+        image-loading-lazy-crossorigin-change.sub.html and change the
+        test to expect the latest rather than the original crossorigin
+        attribute value since crossorigin is a relevant mutation.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-crossorigin-change.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-crossorigin-change.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub-expected.txt: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/original-crossorigin-applied.sub.html: Removed.
+
 2020-03-06  Frederic Wang  <fwang@igalia.com>
 
         [intersection-observer] Accept a Document as an explicit root

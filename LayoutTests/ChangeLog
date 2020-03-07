@@ -1,3 +1,15 @@
+2020-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Fix original-crossorigin-applied.sub.html WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=208119
+
+        Reviewed by Darin Adler.
+
+        Skip test on mac-wk1 and win.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-06  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Garden some crashes and update expectation
