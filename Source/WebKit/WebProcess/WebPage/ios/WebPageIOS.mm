@@ -127,6 +127,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
+#import <WebCore/TextPlaceholderElement.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
@@ -3979,6 +3980,24 @@ bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
 #else
     return false;
 #endif
+}
+
+void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const Optional<WebCore::ElementContext>&)>&& completionHandler)
+{
+    // Inserting the placeholder may run JavaScript, which can do anything, including frame destruction.
+    Ref<Frame> frame = corePage()->focusController().focusedOrMainFrame();
+    auto placeholder = frame->editor().insertTextPlaceholder(size);
+    completionHandler(placeholder ? contextForElement(*placeholder) : WTF::nullopt);
+}
+
+void WebPage::removeTextPlaceholder(const WebCore::ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
+{
+    if (RefPtr<Element> element = elementForContext(placeholder)) {
+        RELEASE_ASSERT(is<TextPlaceholderElement>(element));
+        if (RefPtr<Frame> frame = element->document().frame())
+            frame->editor().removeTextPlaceholder(downcast<TextPlaceholderElement>(*element));
+    }
+    completionHandler();
 }
 
 void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)

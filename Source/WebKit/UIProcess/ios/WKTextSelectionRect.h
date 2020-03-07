@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIKit.h>
@@ -35,6 +33,7 @@ class SelectionRect;
 
 @interface WKTextSelectionRect : UITextSelectionRect
 
+- (instancetype)initWithCGRect:(CGRect)rect;
 - (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect;
 
 @end

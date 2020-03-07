@@ -1,3 +1,41 @@
+2020-03-06  Daniel Bates  <dabates@apple.com>
+
+        Add support for inserting and removing a text placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=208661
+        <rdar://problem/59371073>
+
+        Reviewed by Simon Fraser and Ryosuke Niwa.
+
+        Implements the UITextInput protocol functions -insertTextPlaceholderWithSize and -removeTextPlaceholder.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertTextPlaceholderWithSize:completionHandler:]):
+        (-[WKContentView removeTextPlaceholder:willInsertText:completionHandler:]):
+        Implement more of the UITextInput protocol. These functions turn around and call
+        the corresponding WebPageProxy functions.
+
+        * UIProcess/ios/WKTextPlaceholder.h:
+        * UIProcess/ios/WKTextPlaceholder.mm: Added.
+        (-[WKTextPlaceholder initWithElementContext:]):
+        (-[WKTextPlaceholder elementContext]):
+        (-[WKTextPlaceholder rects]):
+        * UIProcess/ios/WKTextSelectionRect.h: Remove an unncessary #pragma once since I am here.
+        This file is only included from Objective-C/C++ files so that #pragma is unnecessary.
+
+        * UIProcess/ios/WKTextSelectionRect.mm:
+        (-[WKTextSelectionRect initWithCGRect:]): Added.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::insertTextPlaceholder): Added
+        (WebKit::WebPageProxy::removeTextPlaceholder): Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add new messages to insert and remove a placeholder.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::insertTextPlaceholder):
+        (WebKit::WebPage::removeTextPlaceholder):
+        Turn around and call the corresponding Editor functions.
+
 2020-03-06  Andres Gonzalez  <andresg_22@apple.com>
 
         Implementation of AccessibilitySupport AXSIsolatedTreeMode.

@@ -185,6 +185,7 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextIterator.h"
+#include "TextPlaceholderElement.h"
 #include "TreeScope.h"
 #include "TypeConversions.h"
 #include "UserGestureIndicator.h"
@@ -1434,6 +1435,17 @@ void Internals::setCanShowPlaceholder(Element& element, bool canShowPlaceholder)
 {
     if (is<HTMLTextFormControlElement>(element))
         downcast<HTMLTextFormControlElement>(element).setCanShowPlaceholder(canShowPlaceholder);
+}
+
+Element* Internals::insertTextPlaceholder(int width, int height)
+{
+    return frame()->editor().insertTextPlaceholder(IntSize { width, height }).get();
+}
+
+void Internals::removeTextPlaceholder(Element& element)
+{
+    if (is<TextPlaceholderElement>(element))
+        frame()->editor().removeTextPlaceholder(downcast<TextPlaceholderElement>(element));
 }
 
 void Internals::selectColorInColorChooser(HTMLInputElement& element, const String& colorValue)

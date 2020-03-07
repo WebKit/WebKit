@@ -82,6 +82,7 @@ class StyleProperties;
 class Text;
 class TextCheckerClient;
 class TextEvent;
+class TextPlaceholderElement;
 
 struct CompositionHighlight;
 struct FontAttributes;
@@ -548,6 +549,9 @@ public:
 #endif
 
     WEBCORE_EXPORT RefPtr<HTMLImageElement> insertEditableImage();
+
+    WEBCORE_EXPORT RefPtr<TextPlaceholderElement> insertTextPlaceholder(const IntSize&);
+    WEBCORE_EXPORT void removeTextPlaceholder(TextPlaceholderElement&);
 
 private:
     Document& document() const;

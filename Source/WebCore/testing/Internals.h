@@ -238,6 +238,9 @@ public:
     String visiblePlaceholder(Element&);
     void setCanShowPlaceholder(Element&, bool);
 
+    Element* insertTextPlaceholder(int width, int height);
+    void removeTextPlaceholder(Element&);
+
     void selectColorInColorChooser(HTMLInputElement&, const String& colorValue);
     ExceptionOr<Vector<String>> formControlStateOfPreviousHistoryItem();
     ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);

@@ -1,0 +1,12 @@
+@font-face {
+    font-family: Ahem;
+    src: url("../../../resources/Ahem.ttf");
+}
+
+.test {
+    font: 25px/1 Ahem;
+    -webkit-text-size-adjust: 100%%;
+    /* To make debugging easier, make the caret stand out. */
+    caret-color: blue;
+    color: yellow;
+}

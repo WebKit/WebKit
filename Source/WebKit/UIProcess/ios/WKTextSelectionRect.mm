@@ -34,6 +34,13 @@
     WebCore::SelectionRect _selectionRect;
 }
 
+- (instancetype)initWithCGRect:(CGRect)rect
+{
+    WebCore::SelectionRect selectionRect;
+    selectionRect.setRect(WebCore::enclosingIntRect(rect));
+    return [self initWithSelectionRect:WTFMove(selectionRect)];
+}
+
 - (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect
 {
     if (!(self = [super init]))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,6 +110,7 @@
 #include "TextCheckingHelper.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
+#include "TextPlaceholderElement.h"
 #include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
@@ -3307,6 +3308,48 @@ String Editor::selectedText(TextIteratorBehavior behavior) const
     // We remove '\0' characters because they are not visibly rendered to the user.
     auto& selection = m_frame.selection().selection();
     return plainText(selection.start(), selection.end(), behavior).replaceWithLiteral('\0', "");
+}
+
+RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)
+{
+    if (m_frame.selection().isNone() || !m_frame.selection().selection().isContentEditable())
+        return nullptr;
+
+    Ref<Document> document { this->document() };
+
+    // FIXME: Write in terms of replaceSelectionWithFragment(). See <https://bugs.webkit.org/show_bug.cgi?id=208744>.
+    deleteSelectionWithSmartDelete(false);
+
+    auto range = m_frame.selection().toNormalizedRange();
+    if (!range)
+        return nullptr;
+
+    auto placeholder = TextPlaceholderElement::create(document, size);
+    range->insertNode(placeholder.copyRef());
+
+    VisibleSelection newSelection { positionBeforeNode(placeholder.ptr()), positionAfterNode(placeholder.ptr()) };
+    m_frame.selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+
+    return placeholder;
+}
+
+void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
+{
+    ASSERT(placeholder.isConnected());
+
+    Ref<Document> document { this->document() };
+
+    // Save off state so that we can set the text insertion position to just before the placeholder element after removal.
+    auto savedRootEditableElement = makeRefPtr(placeholder.rootEditableElement());
+    auto savedPositionBeforePlaceholder = positionBeforeNode(&placeholder).parentAnchoredEquivalent();
+
+    // FIXME: Save the current selection if it has changed since the placeholder was inserted
+    // and restore it after text insertion.
+    placeholder.remove();
+
+    // To match the Legacy WebKit implementation, set the text insertion point to be before where the placeholder use to be.
+    if (m_frame.selection().isFocusedAndActive() && document->focusedElement() == savedRootEditableElement)
+        m_frame.selection().setSelection(VisibleSelection { savedPositionBeforePlaceholder, SEL_DEFAULT_AFFINITY }, FrameSelection::defaultSetSelectionOptions(UserTriggered));
 }
 
 static inline void collapseCaretWidth(IntRect& rect)

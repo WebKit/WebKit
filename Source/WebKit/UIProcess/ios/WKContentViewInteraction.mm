@@ -65,6 +65,7 @@
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 #import "WKTextInputListViewController.h"
+#import "WKTextPlaceholder.h"
 #import "WKTextSelectionRect.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
@@ -290,7 +291,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 + (WKTextPosition *)textPositionWithRect:(CGRect)positionRect;
 
 @end
-
 
 @interface WKAutocorrectionRects : UIWKAutocorrectionRects
 + (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
@@ -7435,6 +7435,27 @@ static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *r
 }
 
 #endif
+
+- (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler
+{
+    _page->insertTextPlaceholder(WebCore::IntSize { size }, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ElementContext>& placeholder) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || ![strongSelf webView] || !placeholder) {
+            completionHandler(nil);
+            return;
+        }
+        WebCore::ElementContext placeholderToUse { *placeholder };
+        placeholderToUse.boundingRect = [strongSelf convertRect:placeholderToUse.boundingRect fromView:[strongSelf webView]];
+        completionHandler([[[WKTextPlaceholder alloc] initWithElementContext:placeholderToUse] autorelease]);
+    });
+}
+
+- (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler
+{
+    // FIXME: Implement support for willInsertText. See <https://bugs.webkit.org/show_bug.cgi?id=208747>.
+    if (auto* wkTextPlaceholder = dynamic_objc_cast<WKTextPlaceholder>(placeholder))
+        _page->removeTextPlaceholder(wkTextPlaceholder.elementContext, makeBlockPtr(completionHandler));
+}
 
 static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingItems(NSArray<NSItemProvider *> *itemProviders)
 {

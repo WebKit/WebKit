@@ -119,6 +119,8 @@ messages -> WebPage LegacyReceiver {
     RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response) Async
 GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType command)
     SetShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
+    InsertTextPlaceholder(WebCore::IntSize size) -> (Optional<WebCore::ElementContext> placeholder) Async
+    RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> () Async
 #endif
 
     SetControlledByAutomation(bool controlled)
