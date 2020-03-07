@@ -258,6 +258,10 @@
 #define ENABLE_ENCRYPTED_MEDIA 0
 #endif
 
+#if !defined(ENABLE_FAST_JIT_PERMISSIONS)
+#define ENABLE_FAST_JIT_PERMISSIONS 0
+#endif
+
 #if !defined(ENABLE_FILTERS_LEVEL_2)
 #define ENABLE_FILTERS_LEVEL_2 0
 #endif
@@ -435,6 +439,10 @@
 #if ASAN_ENABLED || !defined(NDEBUG)
 #define ENABLE_SECURITY_ASSERTIONS 1
 #endif
+#endif
+
+#if !defined(ENABLE_SEPARATED_WX_HEAP)
+#define ENABLE_SEPARATED_WX_HEAP 0
 #endif
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)
@@ -711,10 +719,6 @@
    Turned on for debug builds. */
 #if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT) && !defined(NDEBUG)
 #define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 1
-#endif
-
-#if !defined(ENABLE_SEPARATED_WX_HEAP) && PLATFORM(IOS_FAMILY) && CPU(ARM64) && (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E))
-#define ENABLE_SEPARATED_WX_HEAP 1
 #endif
 
 /* Determine if we need to enable Computed Goto Opcodes or not: */

@@ -1,3 +1,14 @@
+2020-03-05  Sam Weinig  <weinig@apple.com>
+
+        Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h
+        https://bugs.webkit.org/show_bug.cgi?id=207436
+        <rdar://problem/59296762>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove JSC related defines.
+
 2020-03-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed unified build fix; forward declare referenced types. In this case, WebCore::ImageData.
