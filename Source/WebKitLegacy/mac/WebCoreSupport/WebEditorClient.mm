@@ -1211,16 +1211,16 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 
 @interface WebEditorSpellCheckResponder : NSObject
 {
-    WebEditorClient* _client;
+    WeakPtr<WebEditorClient> _client;
     int _sequence;
     RetainPtr<NSArray> _results;
 }
-- (id)initWithClient:(WebEditorClient*)client sequence:(int)sequence results:(NSArray*)results;
+- (id)initWithClient:(WeakPtr<WebEditorClient>)client sequence:(int)sequence results:(NSArray*)results;
 - (void)perform;
 @end
 
 @implementation WebEditorSpellCheckResponder
-- (id)initWithClient:(WebEditorClient*)client sequence:(int)sequence results:(NSArray*)results
+- (id)initWithClient:(WeakPtr<WebEditorClient>)client sequence:(int)sequence results:(NSArray*)results
 {
     self = [super init];
     if (!self)
@@ -1233,7 +1233,8 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 
 - (void)perform
 {
-    _client->didCheckSucceed(_sequence, _results.get());
+    if (_client)
+        _client->didCheckSucceed(_sequence, _results.get());
 }
 
 @end
@@ -1256,9 +1257,10 @@ void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& requ
     int sequence = m_textCheckingRequest->data().sequence();
     NSRange range = NSMakeRange(0, m_textCheckingRequest->data().text().length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
+    WeakPtr<WebEditorClient> weakThis = makeWeakPtr(*this);
     NSDictionary *options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->data().text() range:range types:NSTextCheckingAllSystemTypes options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
-        RetainPtr<WebEditorSpellCheckResponder> responder = adoptNS([[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results]);
+        RetainPtr<WebEditorSpellCheckResponder> responder = adoptNS([[WebEditorSpellCheckResponder alloc] initWithClient:weakThis sequence:sequence results:results]);
         [currentLoop performBlock:^{
             [responder perform];
         }];

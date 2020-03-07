@@ -3,6 +3,22 @@
         Flaky Test: editing/spelling/spellcheck-async.html
         https://bugs.webkit.org/show_bug.cgi?id=160571
 
+        Reviewed by Ryosuke Niwa.
+        
+        Second try to fix this crash; the WebEditorClient can go away before all the NSSpellChecker
+        callbacks are done (which happens off the main thread), so store a WeakPtr<WebEditorClient>.
+        We have to create the WeakPtr on the main thread, and it gets copied into the first block.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditorSpellCheckResponder initWithClient:sequence:results:]):
+        (-[WebEditorSpellCheckResponder perform]):
+        (WebEditorClient::requestCheckingOfString):
+
+2020-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Flaky Test: editing/spelling/spellcheck-async.html
+        https://bugs.webkit.org/show_bug.cgi?id=160571
+
         Reviewed by Tim Horton.
         
         The old code called -performSelector:target:... with an autoreleased target,
