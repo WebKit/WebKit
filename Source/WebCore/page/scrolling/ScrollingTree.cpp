@@ -111,7 +111,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     if (m_rootNode) {
         FloatPoint position = wheelEvent.position();
-        ScrollingTreeNode* node = scrollingNodeForPoint(position);
+        auto node = scrollingNodeForPoint(position);
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position << "\n");
 
@@ -128,10 +128,10 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     return ScrollingEventResult::DidNotHandleEvent;
 }
 
-ScrollingTreeNode* ScrollingTree::scrollingNodeForPoint(FloatPoint)
+RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
 {
     ASSERT(asyncFrameOrOverflowScrollingEnabled());
-    return m_rootNode.get();
+    return m_rootNode;
 }
 
 void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double)

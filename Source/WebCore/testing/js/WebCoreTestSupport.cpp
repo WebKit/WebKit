@@ -85,7 +85,7 @@ void monitorWheelEvents(WebCore::Frame& frame)
     if (!page)
         return;
 
-    page->ensureWheelEventTestMonitor();
+    page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
 }
 
 void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)

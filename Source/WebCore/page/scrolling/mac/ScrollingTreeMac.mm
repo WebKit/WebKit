@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollingTreeMac.h"
 
+#include "PlatformCALayer.h"
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeMac.h"
@@ -33,6 +34,7 @@
 #include "ScrollingTreeOverflowScrollingNodeMac.h"
 #include "ScrollingTreePositionedNode.h"
 #include "ScrollingTreeStickyNode.h"
+#include "WebLayer.h"
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
@@ -69,6 +71,111 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     }
     ASSERT_NOT_REACHED();
     return ScrollingTreeFixedNode::create(*this, nodeID);
+}
+
+
+static void collectDescendantLayersAtPoint(Vector<CALayer *, 16>& layersAtPoint, CALayer *parent, CGPoint point)
+{
+    if (parent.masksToBounds && ![parent containsPoint:point])
+        return;
+
+    for (CALayer *layer in [parent sublayers]) {
+        CALayer *layerWithResolvedAnimations = layer;
+
+        if ([[layer animationKeys] count])
+            layerWithResolvedAnimations = [layer presentationLayer];
+
+        CGPoint subviewPoint = [layerWithResolvedAnimations convertPoint:point fromLayer:parent];
+
+        auto handlesEvent = [&] {
+            if (CGRectIsEmpty([layerWithResolvedAnimations frame]))
+                return false;
+
+            if (![layerWithResolvedAnimations containsPoint:subviewPoint])
+                return false;
+
+            auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
+            if (platformCALayer) {
+                // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
+                FloatPoint boundsOrigin = layer.bounds.origin;
+                FloatPoint localPoint = subviewPoint - toFloatSize(boundsOrigin);
+                return platformCALayer->eventRegionContainsPoint(IntPoint(localPoint));
+            }
+            
+            return false;
+        }();
+
+        if (handlesEvent)
+            layersAtPoint.append(layer);
+
+        if ([layer sublayers])
+            collectDescendantLayersAtPoint(layersAtPoint, layer, subviewPoint);
+    };
+}
+
+static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)
+{
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
+    return platformCALayer ? platformCALayer->scrollingNodeID() : 0;
+}
+
+static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNodeID, CALayer *hitLayer)
+{
+    for (CALayer *layer = hitLayer; layer; layer = [layer superlayer]) {
+        auto nodeID = scrollingNodeIDForLayer(layer);
+        if (nodeID == scrollingNodeID)
+            return true;
+
+        auto* scrollingNode = tree.nodeForID(nodeID);
+        if (is<ScrollingTreeOverflowScrollProxyNode>(scrollingNode)) {
+            ScrollingNodeID actingOverflowScrollingNodeID = downcast<ScrollingTreeOverflowScrollProxyNode>(*scrollingNode).overflowScrollingNodeID();
+            if (actingOverflowScrollingNodeID == scrollingNodeID)
+                return true;
+        }
+
+        if (is<ScrollingTreePositionedNode>(scrollingNode)) {
+            if (downcast<ScrollingTreePositionedNode>(*scrollingNode).relatedOverflowScrollingNodes().contains(scrollingNodeID))
+                return false;
+        }
+    }
+
+    return false;
+}
+
+RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
+{
+    auto* rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return nullptr;
+
+    LockHolder lockHolder(m_layerHitTestMutex);
+
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+
+    Vector<CALayer *, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point);
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
+#if !LOG_DISABLED
+    for (auto *layer : WTF::makeReversedRange(layersAtPoint))
+        LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
+#endif
+
+    for (auto *layer : WTF::makeReversedRange(layersAtPoint)) {
+        auto nodeID = scrollingNodeIDForLayer(layer);
+        
+        auto* scrollingNode = nodeForID(nodeID);
+        if (!is<ScrollingTreeScrollingNode>(scrollingNode))
+            continue;
+        
+        if (isScrolledBy(*this, nodeID, layersAtPoint.last()))
+            return scrollingNode;
+
+        // FIXME: Hit-test scroll indicator layers.
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found no scrollable layers; using root node");
+    return rootScrollingNode;
 }
 
 void ScrollingTreeMac::lockLayersForHitTesting()

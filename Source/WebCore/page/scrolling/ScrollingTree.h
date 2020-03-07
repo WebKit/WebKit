@@ -177,7 +177,7 @@ private:
 
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
 
-    ScrollingTreeNode* scrollingNodeForPoint(FloatPoint);
+    WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
 
     Lock m_treeMutex; // Protects the scrolling tree.
 

@@ -28,6 +28,25 @@ window.UIHelper = class UIHelper {
         eventSender.mouseMoveTo(x2, y2);
         eventSender.mouseUp();
     }
+    
+    static async mouseWheelScrollAt(x, y)
+    {
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+        return new Promise(resolve => {
+            eventSender.callAfterScrollingCompletes(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
+    }
+
+    static async animationFrame()
+    {
+        return new Promise(requestAnimationFrame);
+    }
 
     static sendEventStream(eventStream)
     {

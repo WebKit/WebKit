@@ -58,12 +58,41 @@
 
 2020-03-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Hit-test CALayers on the scrolling thread for async frame/overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=208740
+        <rdar://problem/48028836>
+
+        Reviewed by Tim Horton.
+
+        Add some UIHelper functions for mousewheel scrolling, and use them in new tests.
+        Fix some old malformed expectations.
+
+        * fast/scrolling/ios/hit-testing-iframe-001-expected.html: Was malformed.
+        * fast/scrolling/ios/hit-testing-iframe-002-expected.html:
+        * fast/scrolling/ios/hit-testing-iframe-003-expected.html:
+        * fast/scrolling/ios/hit-testing-iframe-004-expected.html:
+        * fast/scrolling/ios/hit-testing-iframe-005-expected.html:
+        * fast/scrolling/ios/hit-testing-iframe-006-expected.html:
+        * fast/scrolling/mac/absolute-in-overflow-scroll-expected.txt: Added.
+        * fast/scrolling/mac/absolute-in-overflow-scroll.html: Added.
+        * fast/scrolling/mac/async-scroll-overflow-expected.txt: Added.
+        * fast/scrolling/mac/async-scroll-overflow.html: Added.
+        * fast/scrolling/mac/move-node-in-overflow-scroll-expected.txt: Added.
+        * fast/scrolling/mac/move-node-in-overflow-scroll.html: Added.
+        * fast/scrolling/mac/overlapped-overflow-scroll-expected.txt: Added.
+        * fast/scrolling/mac/overlapped-overflow-scroll.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.async mouseWheelScrollAt):
+        (window.UIHelper.async animationFrame):
+
+2020-03-06  Simon Fraser  <simon.fraser@apple.com>
+
         Move synchronousScrollingReasons to ScrollingTreeScrollingNode
         https://bugs.webkit.org/show_bug.cgi?id=208721
 
         Reviewed by Antti Koivisto.
 
-		Rebaselined.
+        Rebaselined.
 
         * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
 

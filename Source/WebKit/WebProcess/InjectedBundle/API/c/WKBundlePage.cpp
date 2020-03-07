@@ -701,7 +701,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     if (!page)
         return;
 
-    page->ensureWheelEventTestMonitor();
+    page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
 }
 
 bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
