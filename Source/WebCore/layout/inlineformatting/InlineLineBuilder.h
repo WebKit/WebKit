@@ -186,8 +186,6 @@ private:
     void adjustBaselineAndLineHeight(const Run&);
     InlineLayoutUnit runContentHeight(const Run&) const;
 
-    bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
-    bool isTextAlignRight() const { return m_horizontalAlignment == TextAlignMode::Right || m_horizontalAlignment == TextAlignMode::WebKitRight || m_horizontalAlignment == TextAlignMode::End; }
     void justifyRuns(InlineLayoutUnit availableWidth);
 
     bool isVisuallyNonEmpty(const Run&) const;

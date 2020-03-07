@@ -236,20 +236,30 @@ void LineBuilder::justifyRuns(InlineLayoutUnit availableWidth)
 void LineBuilder::alignHorizontally(const HangingContent& hangingContent, IsLastLineWithInlineContent isLastLine)
 {
     ASSERT(!m_isIntrinsicSizing);
+
     auto availableWidth = this->availableWidth() + hangingContent.width();
     if (m_runs.isEmpty() || availableWidth <= 0)
         return;
 
-    if (isTextAlignJustify()) {
-        // Unless otherwise specified by text-align-last, the last line before a forced break or
-        // the end of the block is start-aligned.
-        if (!m_runs.last().isLineBreak() && isLastLine == IsLastLineWithInlineContent::No)
-            justifyRuns(availableWidth);
+    auto computedHorizontalAlignment = [&] {
+        ASSERT(m_horizontalAlignment);
+        if (m_horizontalAlignment != TextAlignMode::Justify)
+            return *m_horizontalAlignment;
+        // Text is justified according to the method specified by the text-justify property,
+        // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
+        // the last line before a forced break or the end of the block is start-aligned.
+        if (m_runs.last().isLineBreak() || isLastLine == IsLastLineWithInlineContent::Yes)
+            return TextAlignMode::Start;
+        return TextAlignMode::Justify;
+    }();
+
+    if (computedHorizontalAlignment == TextAlignMode::Justify) {
+        justifyRuns(availableWidth);
         return;
     }
 
-    auto adjustmentForAlignment = [&]() -> Optional<InlineLayoutUnit> {
-        switch (*m_horizontalAlignment) {
+    auto adjustmentForAlignment = [] (auto horizontalAlignment, auto availableWidth) -> Optional<InlineLayoutUnit> {
+        switch (horizontalAlignment) {
         case TextAlignMode::Left:
         case TextAlignMode::WebKitLeft:
         case TextAlignMode::Start:
@@ -269,7 +279,7 @@ void LineBuilder::alignHorizontally(const HangingContent& hangingContent, IsLast
         return { };
     };
 
-    auto adjustment = adjustmentForAlignment();
+    auto adjustment = adjustmentForAlignment(computedHorizontalAlignment, availableWidth);
     if (!adjustment)
         return;
     // Horizontal alignment means that we not only adjust the runs but also make sure
@@ -288,7 +298,14 @@ void LineBuilder::removeTrailingTrimmableContent()
 
     // Complex line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        if (m_runs.last().isLineBreak() && availableWidth() >= 0 && !isTextAlignRight()) {
+        auto isTextAlignRight = [&] {
+            ASSERT(m_horizontalAlignment);
+            return m_horizontalAlignment == TextAlignMode::Right
+                || m_horizontalAlignment == TextAlignMode::WebKitRight
+                || m_horizontalAlignment == TextAlignMode::End;
+            }();
+
+        if (m_runs.last().isLineBreak() && availableWidth() >= 0 && !isTextAlignRight) {
             m_trimmableTrailingContent.reset();
             return;
         }
