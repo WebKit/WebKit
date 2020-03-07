@@ -1837,6 +1837,12 @@ GENERATE_BINDINGS(WebCoreTestSupportBindings
     DESTINATION ${WebCore_DERIVED_SOURCES_DIR}
     GENERATOR JS)
 
+# WebCoreTestSupportBindings needs to have a direct or indirect
+# dependency to WebCoreBindings for CMake Visual Studio generator to
+# eliminate duplicated custom commands. Otherwise,
+# GenerateSettings.rb will be triggered in both projects.
+add_dependencies(WebCoreTestSupportBindings WebCoreBindings)
+
 # WebCore JS Builtins
 
 set(WebCore_BUILTINS_SOURCES

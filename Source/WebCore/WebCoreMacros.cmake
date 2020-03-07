@@ -188,9 +188,6 @@ endmacro()
 macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/Scripts/GenerateSettings.rb)
 
-    # Do not list the output in more than one independent target that may
-    # build in parallel or the two instances of the rule may conflict.
-    # <https://cmake.org/cmake/help/v3.0/command/add_custom_command.html>
     set(_extra_output
         ${WebCore_DERIVED_SOURCES_DIR}/Settings.cpp
         ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.h
