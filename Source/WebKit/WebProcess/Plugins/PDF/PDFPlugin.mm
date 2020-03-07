@@ -80,6 +80,7 @@
 #import <WebCore/PluginData.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/RenderBoxModelObject.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
@@ -586,7 +587,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     , m_pdfLayerController(adoptNS([[pdfLayerControllerClass() alloc] init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 #if HAVE(INCREMENTAL_PDF_APIS)
-    , m_pdfThread(Thread::create("PDF document thread", [protectedThis = makeRef(*this), this] () mutable { threadEntry(WTFMove(protectedThis)); }))
+    , m_incrementalPDFLoadingEnabled(WebCore::RuntimeEnabledFeatures::sharedFeatures().incrementalPDFLoadingEnabled())
 #endif
 {
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
@@ -614,6 +615,14 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = m_frame.coreFrame()->view();
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
+    }
+#endif
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    if (m_incrementalPDFLoadingEnabled) {
+        m_pdfThread = Thread::create("PDF document thread", [protectedThis = makeRef(*this), this] () mutable {
+            threadEntry(WTFMove(protectedThis));
+        });
     }
 #endif
 }
@@ -1121,12 +1130,15 @@ void PDFPlugin::pdfDocumentDidLoad()
     m_documentFinishedLoading = true;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
-    // At this point we know all data for the document, and therefore we know how to answer any outstanding range requests.
-    unconditionalCompleteOutstandingRangeRequests();
-#else
-    m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
-    installPDFDocument();
+    if (m_incrementalPDFLoadingEnabled) {
+        // At this point we know all data for the document, and therefore we know how to answer any outstanding range requests.
+        unconditionalCompleteOutstandingRangeRequests();
+    } else
 #endif
+    {
+        m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
+        installPDFDocument();
+    }
 }
 
 void PDFPlugin::installPDFDocument()
@@ -1222,15 +1234,17 @@ void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
     m_streamedBytes += length;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
-    size_t index = 0;
-    while (index < m_outstandingByteRangeRequests.size()) {
-        auto& request = m_outstandingByteRangeRequests[index];
-        if (m_streamedBytes >= request.position + request.count) {
-            request.completionHandler(CFDataGetBytePtr(m_data.get()) + request.position, request.count);
-            m_outstandingByteRangeRequests.remove(index);
-            continue;
+    if (m_incrementalPDFLoadingEnabled) {
+        size_t index = 0;
+        while (index < m_outstandingByteRangeRequests.size()) {
+            auto& request = m_outstandingByteRangeRequests[index];
+            if (m_streamedBytes >= request.position + request.count) {
+                request.completionHandler(CFDataGetBytePtr(m_data.get()) + request.position, request.count);
+                m_outstandingByteRangeRequests.remove(index);
+                continue;
+            }
+            ++index;
         }
-        ++index;
     }
 #endif
 }
@@ -1245,7 +1259,8 @@ void PDFPlugin::manualStreamDidFail(bool)
 {
     m_data = nullptr;
 #if HAVE(INCREMENTAL_PDF_APIS)
-    unconditionalCompleteOutstandingRangeRequests();
+    if (m_incrementalPDFLoadingEnabled)
+        unconditionalCompleteOutstandingRangeRequests();
 #endif
 }
 

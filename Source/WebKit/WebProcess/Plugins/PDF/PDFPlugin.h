@@ -38,12 +38,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
-// For now, disable new PDF APIs by default even on platforms where otherwise enabled.
-// FIXME: Enable this when ready.
-#ifdef HAVE_INCREMENTAL_PDF_APIS
-#undef HAVE_INCREMENTAL_PDF_APIS
-#endif
-
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
@@ -333,6 +327,7 @@ private:
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;
     Vector<ByteRangeRequest> m_outstandingByteRangeRequests;
+    bool m_incrementalPDFLoadingEnabled;
 #endif
 };
 

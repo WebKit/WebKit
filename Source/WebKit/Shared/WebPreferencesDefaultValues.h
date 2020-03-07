@@ -334,4 +334,8 @@ bool defaultWebGPUEnabled();
 
 bool defaultInAppBrowserPrivacy();
 
+#if HAVE(INCREMENTAL_PDF_APIS)
+bool defaultIncrementalPDFEnabled();
+#endif
+
 } // namespace WebKit

@@ -402,6 +402,11 @@ public:
     void setWebShareFileAPIEnabled(bool isEnabled) { m_webShareFileAPIEnabled = isEnabled; }
     bool webShareFileAPIEnabled() const { return m_webShareFileAPIEnabled; }
 
+#if HAVE(INCREMENTAL_PDF_APIS)
+    void setIncrementalPDFLoadingEnabled(bool isEnabled) { m_incrementalPDFLoadingEnabled = isEnabled; }
+    bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -607,6 +612,10 @@ private:
     bool m_accessibilityIsolatedTree { false };
 #endif
     bool m_webShareFileAPIEnabled { false };
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    bool m_incrementalPDFLoadingEnabled { false };
+#endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

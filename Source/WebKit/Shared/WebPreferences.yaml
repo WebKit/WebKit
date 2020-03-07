@@ -1962,6 +1962,15 @@ WebShareFileAPIEnabled:
     webcoreBinding: RuntimeEnabledFeatures
     category: experimental
 
+IncrementalPDFLoadingEnabled:
+  type: bool
+  defaultValue: defaultIncrementalPDFEnabled()
+  humanReadableName: "Incremental PDF Loading"
+  humanReadableDescription: "Enable Incremental PDF Loading on supported platforms"
+  category: experimental
+  condition: HAVE(INCREMENTAL_PDF_APIS)
+  webcoreBinding: RuntimeEnabledFeatures
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

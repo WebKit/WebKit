@@ -1,3 +1,22 @@
+2020-03-07  Brady Eidson  <beidson@apple.com>
+
+        Add runtime flag for incremental PDF loading.
+        https://bugs.webkit.org/show_bug.cgi?id=208763
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultIncrementalPDFEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData):
+        (WebKit::PDFPlugin::manualStreamDidFail):
+
 2020-03-05  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h

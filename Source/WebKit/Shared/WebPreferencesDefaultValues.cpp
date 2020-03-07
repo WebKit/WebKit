@@ -213,4 +213,15 @@ bool defaultInAppBrowserPrivacy()
     return false;
 }
 
+#if HAVE(INCREMENTAL_PDF_APIS)
+bool defaultIncrementalPDFEnabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, incremental_pdf);
+#endif
+
+    return false;
+}
+#endif
+
 } // namespace WebKit
