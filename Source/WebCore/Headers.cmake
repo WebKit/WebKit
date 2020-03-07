@@ -628,6 +628,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLUnknownElement.h
     html/HTMLVideoElement.h
     html/ImageBitmap.h
+    html/ImageData.h
     html/ImageDocument.h
     html/InputMode.h
     html/LabelableElement.h
