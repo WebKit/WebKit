@@ -68,6 +68,11 @@
     display: inline-flex;
     height: auto;
     border-bottom: none;
+    overflow: visible;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar {
+    overflow: visible;
 }
 
 .content-view.audit-test-group > header > nav:empty {

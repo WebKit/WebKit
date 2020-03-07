@@ -68,6 +68,10 @@
     opacity: var(--scope-bar-background-opacity);
 }
 
+.scope-bar > li:focus {
+    outline: none;
+}
+
 .scope-bar > li:matches(.selected, :hover) {
     --scope-bar-text-color-default: var(--selected-foreground-color);
     --scope-bar-background-color-default: var(--glyph-color-active);
@@ -94,6 +98,12 @@
     margin: 0;
     opacity: 0;
     pointer-events: none;
+}
+
+.scope-bar > li:focus::after,
+.scope-bar > li.multiple > select:focus {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -1px;
 }
 
 body[dir=ltr] .scope-bar > li.multiple > select {

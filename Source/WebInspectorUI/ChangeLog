@@ -1,3 +1,37 @@
+2020-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: AXI: scope bars should be focusable when navigating by pressing Tab
+        https://bugs.webkit.org/show_bug.cgi?id=208277
+        <rdar://problem/59828111>
+
+        Reviewed by Devin Rousso.
+
+        Make resource type filter in the Network tab and message type filter in the Console tab focusable.
+
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > header > nav):
+        (.content-view.audit-test-group > header > nav > .scope-bar):
+        Prevent outline of the focused scope bar item from clipping.
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li:focus):
+        (.scope-bar > li:focus::after,):
+        * UserInterface/Views/ScopeBar.js:
+        (WI.ScopeBar):
+        (WI.ScopeBar.prototype._handleKeyDown):
+        Make Arrow Left an Arrow Right keys move focus within the scope bar.
+        This matches the behavior of macOS radio buttons.
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WI.ScopeBarItem.prototype.get scopeBar):
+        (WI.ScopeBarItem.prototype.set scopeBar):
+        (WI.ScopeBarItem.prototype.toggle):
+        (WI.ScopeBarItem.prototype._updateSelected):
+        (WI.ScopeBarItem.prototype._handleMouseDown):
+
+        (WI.ScopeBarItem.prototype._handleKeyDown):
+        Allow to toggle focused scope bar item by pressing Space or Enter.
+
 2020-03-06  Jon Davis  <jond@apple.com>
 
         Fixed missing icons for WI.ThreadTreeElement and selected Heap Snapshots

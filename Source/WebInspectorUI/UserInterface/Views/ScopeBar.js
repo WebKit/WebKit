@@ -35,9 +35,14 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         this._defaultItem = defaultItem;
         this._shouldGroupNonExclusiveItems = shouldGroupNonExclusiveItems || false;
 
+        for (let item of this._items)
+            item.scopeBar = this;
+
         this._minimumWidth = 0;
 
         this._populate();
+
+        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
 
     // Public
@@ -172,6 +177,33 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         }
 
         this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
+    }
+
+    _handleKeyDown(event)
+    {
+        if (event.code === "ArrowLeft" || event.code === "ArrowRight") {
+            event.stop();
+            let focusedIndex = -1;
+
+            for (let i = 0; i < this._items.length; ++i) {
+                let element = this._items[i].element;
+                if (element === document.activeElement) {
+                    focusedIndex = i;
+                    break;
+                }
+            }
+
+            if (focusedIndex === -1)
+                return;
+
+            let delta = (event.code === "ArrowLeft") ? -1 : 1;
+            if (WI.resolveLayoutDirectionForElement(this._element) === WI.LayoutDirection.RTL)
+                delta *= -1;
+
+            focusedIndex += delta;
+            focusedIndex = (focusedIndex + this._items.length) % this._items.length;
+            this._items[focusedIndex].element.focus();
+        }
     }
 };
 
