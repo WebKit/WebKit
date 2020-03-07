@@ -1,3 +1,57 @@
+2020-03-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Re-enable CFPrefs direct mode
+        https://bugs.webkit.org/show_bug.cgi?id=208690
+
+        Reviewed by Brent Fulgham.
+
+        This patch re-enabled CF prefs direct mode on iOS and macOS, and addresses performance issues and Accessibility issues
+        with the original patch. Performance issues are addressed by creating the NSUserDefaults objects in the UI process on
+        a non-main thread, while the Accessibility issues are fixed by issuing an extension to the preferences service when
+        Accessibility is enabled.
+
+        API test: WebKit.GrantAccessPreferencesService
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _grantAccessToPreferenceService]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (registerDefaultsOverride):
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+        (-[WKPreferenceObserver init]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::grantAccessToPreferenceService):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+        (WebKit::WebProcessProxy::unblockPreferenceServiceIfNeeded):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::unblockAccessibilityServer): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::unblockPreferenceService):
+        (WebKit::WebProcess::unblockAccessibilityServer):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-06  Kate Cheney  <katherine_cheney@apple.com>
 
         UIProcess needs mechanism to specify AppBound domains

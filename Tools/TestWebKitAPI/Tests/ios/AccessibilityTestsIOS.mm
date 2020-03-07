@@ -36,6 +36,12 @@
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_LIBRARY(libAccessibility)
+SOFT_LINK(libAccessibility, _AXSZoomTouchSetEnabled, void, (Boolean enabled), (enabled));
+SOFT_LINK(libAccessibility, _AXSApplicationAccessibilitySetEnabled, void, (Boolean enabled), (enabled));
+
 @implementation WKWebView (WKAccessibilityTesting)
 - (NSArray<NSValue *> *)rectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text
 {
@@ -148,6 +154,9 @@ TEST(AccessibilityTests, StoreSelection)
 
 TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)
 {
+    _AXSZoomTouchSetEnabled(true);
+    _AXSApplicationAccessibilitySetEnabled(true);
+
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AccessibilityTestPlugin"];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(AccessibilityTestSupportProtocol)];
@@ -171,6 +180,9 @@ TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
+
+    _AXSZoomTouchSetEnabled(false);
+    _AXSApplicationAccessibilitySetEnabled(false);
 }
 
 } // namespace TestWebKitAPI

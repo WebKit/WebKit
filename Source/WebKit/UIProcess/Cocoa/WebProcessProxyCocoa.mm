@@ -225,4 +225,43 @@ void WebProcessProxy::enableRemoteInspectorIfNeeded()
         send(Messages::WebProcess::EnableRemoteWebInspector(handle), 0);
 }
 #endif
+
+void WebProcessProxy::unblockAccessibilityServerIfNeeded()
+{
+    if (m_hasSentMessageToUnblockAccessibilityServer)
+        return;
+    if (!_AXSApplicationAccessibilityEnabled())
+        return;
+    if (!processIdentifier())
+        return;
+    if (!canSendMessage())
+        return;
+
+    SandboxExtension::Handle handle;
+#if PLATFORM(IOS_FAMILY)
+    if (!SandboxExtension::createHandleForMachLookup("com.apple.iphone.axserver-systemwide", connection() ? connection()->getAuditToken() : WTF::nullopt, handle))
+        return;
+#endif
+
+    send(Messages::WebProcess::UnblockAccessibilityServer(handle), 0);
+    m_hasSentMessageToUnblockAccessibilityServer = true;
+}
+
+void WebProcessProxy::unblockPreferenceServiceIfNeeded()
+{
+    if (m_hasSentMessageToUnblockPreferenceService)
+        return;
+    if (!processIdentifier())
+        return;
+    if (!canSendMessage())
+        return;
+
+    SandboxExtension::Handle handle;
+    if (!SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", connection() ? connection()->getAuditToken() : WTF::nullopt, handle))
+        return;
+
+    send(Messages::WebProcess::UnblockPreferenceService(handle), 0);
+    m_hasSentMessageToUnblockPreferenceService = true;
+}
+
 }

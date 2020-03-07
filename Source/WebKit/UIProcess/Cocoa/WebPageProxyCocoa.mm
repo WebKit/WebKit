@@ -314,4 +314,9 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
 }
 #endif
 
+void WebPageProxy::grantAccessToPreferenceService()
+{
+    process().unblockPreferenceServiceIfNeeded();
+}
+
 } // namespace WebKit

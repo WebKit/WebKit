@@ -1706,6 +1706,10 @@ public:
     void revokeAccessToAssetServices();
 #endif
 
+#if PLATFORM(COCOA)
+    void grantAccessToPreferenceService();
+#endif
+
     void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
 
 private:

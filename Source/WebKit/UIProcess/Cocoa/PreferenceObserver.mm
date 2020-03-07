@@ -28,10 +28,25 @@
 
 #import "WebProcessPool.h"
 
+#import <wtf/ObjCRuntimeExtras.h>
+
+static IMP registerDefaultsOriginal = nil;
+static bool registeringDefaults = false;
+
+static void registerDefaultsOverride(id self, SEL selector, NSDictionary<NSString *, id> *dictionary)
+{
+    registeringDefaults = true;
+    wtfCallIMP<void>(registerDefaultsOriginal, self, selector, dictionary);
+    registeringDefaults = false;
+}
+
 @implementation WKUserDefaults
 
 - (void)_notifyObserversOfChangeFromValuesForKeys:(NSDictionary<NSString *, id> *)oldValues toValuesForKeys:(NSDictionary<NSString *, id> *)newValues
 {
+    if (registeringDefaults)
+        return;
+
     [super _notifyObserversOfChangeFromValuesForKeys:oldValues toValuesForKeys:newValues];
 
     if ([oldValues isEqualToDictionary:newValues])
@@ -87,6 +102,9 @@
 
 - (instancetype)init
 {
+    Method registerDefaultsMethod = class_getInstanceMethod(objc_getClass("NSUserDefaults"), @selector(registerDefaults:));
+    registerDefaultsOriginal = method_setImplementation(registerDefaultsMethod, (IMP)registerDefaultsOverride);
+
     std::initializer_list<NSString*> domains = {
         @"com.apple.Accessibility",
 #if PLATFORM(IOS_FAMILY)

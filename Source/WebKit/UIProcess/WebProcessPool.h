@@ -706,7 +706,7 @@ private:
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
 #endif
 

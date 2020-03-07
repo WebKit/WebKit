@@ -1975,14 +1975,6 @@ void WebProcess::clearCurrentModifierStateForTesting()
     PlatformKeyboardEvent::setCurrentModifierState({ });
 }
 
-#if PLATFORM(IOS_FAMILY)
-void WebProcess::unblockAccessibilityServer(const SandboxExtension::Handle& handle)
-{
-    bool ok = SandboxExtension::consumePermanently(handle);
-    ASSERT_UNUSED(ok, ok);
-}
-#endif
-
 bool WebProcess::areAllPagesThrottleable() const
 {
     return WTF::allOf(m_pageMap.values(), [](auto& page) {

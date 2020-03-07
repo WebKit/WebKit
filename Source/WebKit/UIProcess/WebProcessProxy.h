@@ -336,8 +336,9 @@ public:
     void enableRemoteInspectorIfNeeded();
 #endif
     
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     void unblockAccessibilityServerIfNeeded();
+    void unblockPreferenceServiceIfNeeded();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -531,8 +532,12 @@ private:
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
 #if PLATFORM(IOS_FAMILY)
-    bool m_hasSentMessageToUnblockAccessibilityServer { false };
     std::unique_ptr<WebCore::DeferrableOneShotTimer> m_unexpectedActivityTimer;
+#endif
+
+#if PLATFORM(COCOA)
+    bool m_hasSentMessageToUnblockAccessibilityServer { false };
+    bool m_hasSentMessageToUnblockPreferenceService { false };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

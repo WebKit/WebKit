@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
+#import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "Logging.h"
@@ -75,7 +76,6 @@
 #if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
 #else
-#import "AccessibilitySupportSPI.h"
 #import "UIKitSPI.h"
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -173,6 +173,13 @@ void WebProcessPool::platformInitialize()
         installMemoryPressureHandler();
 
     setLegacyCustomProtocolManagerClient(makeUnique<LegacyCustomProtocolManagerClient>());
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+        // Start observing preference changes.
+        [WKPreferenceObserver sharedInstance];
+    });
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -196,11 +203,6 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
     m_resolvedPaths.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::cookieStorageDirectory());
     m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::webContentCachesDirectory());
     m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
-#endif
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    // Start observing preference changes.
-    [WKPreferenceObserver sharedInstance];
 #endif
 }
 
@@ -442,10 +444,13 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         for (size_t i = 0, size = services.size(); i < size; ++i)
             SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, parameters.mediaExtensionHandles[i]);
     }
-#if !ENABLE(CFPREFS_DIRECT_MODE)
-    SandboxExtension::Handle preferencesExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", WTF::nullopt, preferencesExtensionHandle);
-    parameters.preferencesExtensionHandle = WTFMove(preferencesExtensionHandle);
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    if (_AXSApplicationAccessibilityEnabled()) {
+        SandboxExtension::Handle preferencesExtensionHandle;
+        SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", WTF::nullopt, preferencesExtensionHandle);
+        parameters.preferencesExtensionHandle = WTFMove(preferencesExtensionHandle);
+    }
 #endif
 }
 
@@ -647,15 +652,17 @@ void WebProcessPool::registerNotificationObservers()
 #elif !PLATFORM(MACCATALYST)
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, backlightLevelDidChangeCallback, static_cast<CFStringRef>(UIBacklightLevelChangedNotification), nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #if PLATFORM(IOS)
-    m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
-        for (size_t i = 0; i < m_processes.size(); ++i)
-            m_processes[i]->unblockAccessibilityServerIfNeeded();
-    }];
 #if ENABLE(REMOTE_INSPECTOR)
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, remoteWebInspectorEnabledCallback, static_cast<CFStringRef>(CFSTR(WIRServiceEnabledNotification)), nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
+    m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+        for (size_t i = 0; i < m_processes.size(); ++i) {
+            m_processes[i]->unblockPreferenceServiceIfNeeded();
+            m_processes[i]->unblockAccessibilityServerIfNeeded();
+        }
+    }];
 }
 
 void WebProcessPool::unregisterNotificationObservers()

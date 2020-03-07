@@ -288,11 +288,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // FIXME(207716): The following should be removed when the GPU process is complete.
     for (size_t i = 0, size = parameters.mediaExtensionHandles.size(); i < size; ++i)
         SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
-
-#if !ENABLE(CFPREFS_DIRECT_MODE)
-    if (parameters.preferencesExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandle);
 #endif
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    if (parameters.preferencesExtensionHandle) {
+        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandle);
+        _CFPrefsSetDirectModeEnabled(false);
+    }
 #endif
 }
 
@@ -571,8 +573,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
         m_processType = ProcessType::PrewarmedWebContent;
     else
         m_processType = ProcessType::WebContent;
-
-    registerWithAccessibility();
 
 #if USE(OS_STATE)
     registerWithStateDumper();
@@ -945,6 +945,7 @@ void WebProcess::setMediaMIMETypes(const Vector<String> types)
         cache.addSupportedTypes(types);
 }
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
 {
     auto defaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain]);
@@ -962,6 +963,14 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
         return;
     [defaults setObject:object.get() forKey:key];
 }
+
+void WebProcess::unblockPreferenceService(const SandboxExtension::Handle& handle)
+{
+    bool ok = SandboxExtension::consumePermanently(handle);
+    ASSERT_UNUSED(ok, ok);
+    _CFPrefsSetDirectModeEnabled(false);
+}
+#endif
 
 #if PLATFORM(IOS)
 void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetHandle,  WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)
@@ -1007,6 +1016,17 @@ void WebProcess::updatePageScreenProperties()
     setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
 }
 #endif
+
+void WebProcess::unblockAccessibilityServer(const SandboxExtension::Handle& handle)
+{
+#if PLATFORM(IOS_FAMILY)
+    bool ok = SandboxExtension::consumePermanently(handle);
+    ASSERT_UNUSED(ok, ok);
+#endif
+    
+    registerWithAccessibility();
+}
+
 
 } // namespace WebKit
 

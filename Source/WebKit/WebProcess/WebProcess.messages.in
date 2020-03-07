@@ -154,10 +154,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetBackForwardCacheCapacity(unsigned capacity);
     ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> () Async
 
-#if PLATFORM(IOS_FAMILY)
-    UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
 #endif
@@ -174,5 +170,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
 #if PLATFORM(COCOA)
     NotifyPreferencesChanged(String domain, String key, Optional<String> encodedValue)
+    UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
+    UnblockPreferenceService(WebKit::SandboxExtension::Handle handle)
 #endif
 }

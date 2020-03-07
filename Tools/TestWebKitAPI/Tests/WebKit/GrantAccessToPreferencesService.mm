@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessProxy.h"
+#include "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if WK_HAVE_C_SPI
 
-#import "AccessibilitySupportSPI.h"
-#import "WKFullKeyboardAccessWatcher.h"
-#import "WebProcessMessages.h"
+#import "PlatformUtilities.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 
-namespace WebKit {
-
-bool WebProcessProxy::fullKeyboardAccessEnabled()
+TEST(WebKit, GrantAccessPreferencesService)
 {
-#if ENABLE(FULL_KEYBOARD_ACCESS)
-    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
-#else
-    return NO;
-#endif
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    [webView _grantAccessToPreferenceService];
+
+    auto sandboxAccess = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.cfprefsd.daemon')"].boolValue;
+    };
+
+    ASSERT_TRUE(sandboxAccess);
 }
 
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY)
+#endif

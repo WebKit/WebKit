@@ -2915,6 +2915,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
 }
 
+- (void)_grantAccessToPreferenceService
+{
+    if (_page)
+        _page->grantAccessToPreferenceService();
+}
+
 #pragma mark - scrollPerformanceData
 
 - (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled

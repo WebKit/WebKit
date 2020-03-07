@@ -299,8 +299,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void accessibilityProcessSuspendedNotification(bool);
-    
-    void unblockAccessibilityServer(const SandboxExtension::Handle&);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -313,6 +311,8 @@ public:
     void enableRemoteWebInspector(const SandboxExtension::Handle&);
 #endif
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
+    void unblockAccessibilityServer(const SandboxExtension::Handle&);
+    void unblockPreferenceService(const SandboxExtension::Handle&);
 #endif
 
     bool areAllPagesThrottleable() const;

@@ -342,6 +342,8 @@ for this property.
 
 - (void)_setIsNavigatingToAppBoundDomain:(BOOL)isNavigatingToAppBoundDomain completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_grantAccessToPreferenceService WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE
