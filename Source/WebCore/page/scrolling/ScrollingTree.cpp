@@ -111,6 +111,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     if (m_rootNode) {
         FloatPoint position = wheelEvent.position();
+        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
         auto node = scrollingNodeForPoint(position);
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position << "\n");
