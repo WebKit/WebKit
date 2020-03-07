@@ -253,7 +253,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
         // Isolated tree frames have the offset encoded into them so we don't need to undo here.
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled() || !_AXUIElementRequestServicedBySecondaryAXThread();
+        bool queryingIsolatedTree = WebCore::AXObjectCache::clientSupportsIsolatedTree() && _AXUIElementRequestServicedBySecondaryAXThread();
+        applyContentOffset = !queryingIsolatedTree;
 #endif
         if (auto pluginView = WebKit::WebPage::pluginViewForFrame(protectedSelf->m_page->mainFrame()))
             applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();

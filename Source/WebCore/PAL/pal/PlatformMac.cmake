@@ -20,7 +20,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
 
-    spi/cocoa/AccessibilitySupportSPI.h
     spi/cocoa/AppSSOSPI.h
     spi/cocoa/AuthKitSPI.h
     spi/cocoa/AVKitSPI.h

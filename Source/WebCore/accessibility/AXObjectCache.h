@@ -352,9 +352,8 @@ public:
     RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
+    WEBCORE_EXPORT static bool clientSupportsIsolatedTree();
 private:
-    static bool clientSupportsIsolatedTree();
     AXCoreObject* isolatedTreeRootObject();
     static AXCoreObject* isolatedTreeFocusedObject(Document&);
     void setIsolatedTreeFocusedObject(Node*);
