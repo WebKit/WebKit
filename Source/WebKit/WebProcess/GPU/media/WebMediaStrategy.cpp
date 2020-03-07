@@ -56,19 +56,6 @@ std::unique_ptr<WebCore::AudioDestination> WebMediaStrategy::createAudioDestinat
 }
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-void WebMediaStrategy::registerCDMFactories(Vector<WebCore::CDMFactory*>& factories)
-{
-#if ENABLE(GPU_PROCESS)
-    if (m_useGPUProcess) {
-        WebProcess::singleton().ensureGPUProcessConnection().cdmFactory().registerFactory(factories);
-        return;
-    }
-#endif
-    WebCore::CDMFactory::platformRegisterFactories(factories);
-}
-#endif
-
 #if PLATFORM(COCOA)
 void WebMediaStrategy::clearNowPlayingInfo()
 {

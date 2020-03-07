@@ -40,9 +40,6 @@ public:
     virtual std::unique_ptr<AudioDestination> createAudioDestination(
         AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) = 0;
 #endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    virtual void registerCDMFactories(Vector<CDMFactory*>&) = 0;
-#endif
 #if PLATFORM(COCOA)
     virtual void clearNowPlayingInfo() = 0;
     virtual void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&) = 0;

@@ -1998,12 +1998,23 @@ void WebProcess::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlock
 }
 #endif
 
+#if ENABLE(GPU_PROCESS)
 void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 {
     if (useGPUProcessForMedia == m_useGPUProcessForMedia)
         return;
 
     m_useGPUProcessForMedia = useGPUProcessForMedia;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    auto& cdmFactories = CDMFactory::registeredFactories();
+    cdmFactories.clear();
+
+    if (useGPUProcessForMedia)
+        ensureGPUProcessConnection().cdmFactory().registerFactory(cdmFactories);
+    else
+        CDMFactory::platformRegisterFactories(cdmFactories);
+#endif
 
 #if USE(AUDIO_SESSION)
     if (useGPUProcessForMedia)
@@ -2012,6 +2023,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         AudioSession::setSharedSession(AudioSession::create());
 #endif
 }
+#endif
 
 } // namespace WebKit
 

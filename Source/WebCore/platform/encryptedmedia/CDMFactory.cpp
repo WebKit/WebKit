@@ -43,7 +43,7 @@ Vector<CDMFactory*>& CDMFactory::registeredFactories()
     static NeverDestroyed<Vector<CDMFactory*>> factories;
     static std::once_flag once;
     std::call_once(once, [&] {
-        platformStrategies()->mediaStrategy().registerCDMFactories(factories);
+        platformRegisterFactories(factories);
     });
 
     return factories;

@@ -75,12 +75,6 @@ private:
         return AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
     }
 #endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    void registerCDMFactories(Vector<CDMFactory*>& factories) override
-    {
-        return WebCore::CDMFactory::platformRegisterFactories(factories);
-    }
-#endif
     void clearNowPlayingInfo() final
     {
         MediaSessionManagerCocoa::clearNowPlayingInfo();

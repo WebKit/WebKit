@@ -333,7 +333,9 @@ public:
     void updatePageScreenProperties();
 #endif
 
+#if ENABLE(GPU_PROCESS)
     void setUseGPUProcessForMedia(bool);
+#endif
 
 private:
     WebProcess();
