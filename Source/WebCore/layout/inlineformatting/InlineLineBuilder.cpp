@@ -233,7 +233,7 @@ void LineBuilder::justifyRuns(InlineLayoutUnit availableWidth)
     }
 }
 
-void LineBuilder::alignHorizontally(const HangingContent& hangingContent, IsLastLineWithInlineContent lastLine)
+void LineBuilder::alignHorizontally(const HangingContent& hangingContent, IsLastLineWithInlineContent isLastLine)
 {
     ASSERT(!m_isIntrinsicSizing);
     auto availableWidth = this->availableWidth() + hangingContent.width();
@@ -241,8 +241,9 @@ void LineBuilder::alignHorizontally(const HangingContent& hangingContent, IsLast
         return;
 
     if (isTextAlignJustify()) {
-        // Do not justify align the last line.
-        if (lastLine == IsLastLineWithInlineContent::No)
+        // Unless otherwise specified by text-align-last, the last line before a forced break or
+        // the end of the block is start-aligned.
+        if (!m_runs.last().isLineBreak() && isLastLine == IsLastLineWithInlineContent::No)
             justifyRuns(availableWidth);
         return;
     }
