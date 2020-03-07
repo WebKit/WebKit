@@ -233,19 +233,19 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
         switch (opcodeID) {
             case op_jless:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleLessThan, fpRegT2, fpRegT0), target);
+                addJump(branchDouble(DoubleLessThanAndOrdered, fpRegT2, fpRegT0), target);
                 break;
             case op_jlesseq:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT2, fpRegT0), target);
+                addJump(branchDouble(DoubleLessThanOrEqualAndOrdered, fpRegT2, fpRegT0), target);
                 break;
             case op_jgreater:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleGreaterThan, fpRegT2, fpRegT0), target);
+                addJump(branchDouble(DoubleGreaterThanAndOrdered, fpRegT2, fpRegT0), target);
                 break;
             case op_jgreatereq:
                 emitLoadDouble(op1, fpRegT2);
-                addJump(branchDouble(DoubleGreaterThanOrEqual, fpRegT2, fpRegT0), target);
+                addJump(branchDouble(DoubleGreaterThanOrEqualAndOrdered, fpRegT2, fpRegT0), target);
                 break;
             case op_jnless:
                 emitLoadDouble(op1, fpRegT2);
@@ -290,19 +290,19 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
         switch (opcodeID) {
             case op_jless:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThan, fpRegT0, fpRegT1), target);
+                addJump(branchDouble(DoubleLessThanAndOrdered, fpRegT0, fpRegT1), target);
                 break;
             case op_jlesseq:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleLessThanOrEqual, fpRegT0, fpRegT1), target);
+                addJump(branchDouble(DoubleLessThanOrEqualAndOrdered, fpRegT0, fpRegT1), target);
                 break;
             case op_jgreater:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleGreaterThan, fpRegT0, fpRegT1), target);
+                addJump(branchDouble(DoubleGreaterThanAndOrdered, fpRegT0, fpRegT1), target);
                 break;
             case op_jgreatereq:
                 emitLoadDouble(op2, fpRegT1);
-                addJump(branchDouble(DoubleGreaterThanOrEqual, fpRegT0, fpRegT1), target);
+                addJump(branchDouble(DoubleGreaterThanOrEqualAndOrdered, fpRegT0, fpRegT1), target);
                 break;
             case op_jnless:
                 emitLoadDouble(op2, fpRegT1);

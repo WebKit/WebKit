@@ -88,12 +88,12 @@ public:
     // FIXME: it would be neat to rename this to FloatingPointCondition in every assembler.
     enum DoubleCondition {
         // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
-        DoubleEqual = X86Assembler::ConditionE | DoubleConditionBitSpecial,
-        DoubleNotEqual = X86Assembler::ConditionNE,
-        DoubleGreaterThan = X86Assembler::ConditionA,
-        DoubleGreaterThanOrEqual = X86Assembler::ConditionAE,
-        DoubleLessThan = X86Assembler::ConditionA | DoubleConditionBitInvert,
-        DoubleLessThanOrEqual = X86Assembler::ConditionAE | DoubleConditionBitInvert,
+        DoubleEqualAndOrdered = X86Assembler::ConditionE | DoubleConditionBitSpecial,
+        DoubleNotEqualAndOrdered = X86Assembler::ConditionNE,
+        DoubleGreaterThanAndOrdered = X86Assembler::ConditionA,
+        DoubleGreaterThanOrEqualAndOrdered = X86Assembler::ConditionAE,
+        DoubleLessThanAndOrdered = X86Assembler::ConditionA | DoubleConditionBitInvert,
+        DoubleLessThanOrEqualAndOrdered = X86Assembler::ConditionAE | DoubleConditionBitInvert,
         // If either operand is NaN, these conditions always evaluate to true.
         DoubleEqualOrUnordered = X86Assembler::ConditionE,
         DoubleNotEqualOrUnordered = X86Assembler::ConditionNE | DoubleConditionBitSpecial,
@@ -2080,7 +2080,7 @@ public:
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         m_assembler.xorpd_rr(scratch, scratch);
-        return branchDouble(DoubleNotEqual, reg, scratch);
+        return branchDouble(DoubleNotEqualAndOrdered, reg, scratch);
     }
 
     Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)
@@ -2324,7 +2324,7 @@ public:
         else
             m_assembler.ucomisd_rr(right, left);
 
-        if (cond == DoubleEqual) {
+        if (cond == DoubleEqualAndOrdered) {
             if (left == right) {
                 m_assembler.cmovnpl_rr(src, dest);
                 return;
@@ -3037,33 +3037,33 @@ public:
     static DoubleCondition invert(DoubleCondition cond)
     {
         switch (cond) {
-        case DoubleEqual:
+        case DoubleEqualAndOrdered:
             return DoubleNotEqualOrUnordered;
-        case DoubleNotEqual:
+        case DoubleNotEqualAndOrdered:
             return DoubleEqualOrUnordered;
-        case DoubleGreaterThan:
+        case DoubleGreaterThanAndOrdered:
             return DoubleLessThanOrEqualOrUnordered;
-        case DoubleGreaterThanOrEqual:
+        case DoubleGreaterThanOrEqualAndOrdered:
             return DoubleLessThanOrUnordered;
-        case DoubleLessThan:
+        case DoubleLessThanAndOrdered:
             return DoubleGreaterThanOrEqualOrUnordered;
-        case DoubleLessThanOrEqual:
+        case DoubleLessThanOrEqualAndOrdered:
             return DoubleGreaterThanOrUnordered;
         case DoubleEqualOrUnordered:
-            return DoubleNotEqual;
+            return DoubleNotEqualAndOrdered;
         case DoubleNotEqualOrUnordered:
-            return DoubleEqual;
+            return DoubleEqualAndOrdered;
         case DoubleGreaterThanOrUnordered:
-            return DoubleLessThanOrEqual;
+            return DoubleLessThanOrEqualAndOrdered;
         case DoubleGreaterThanOrEqualOrUnordered:
-            return DoubleLessThan;
+            return DoubleLessThanAndOrdered;
         case DoubleLessThanOrUnordered:
-            return DoubleGreaterThanOrEqual;
+            return DoubleGreaterThanOrEqualAndOrdered;
         case DoubleLessThanOrEqualOrUnordered:
-            return DoubleGreaterThan;
+            return DoubleGreaterThanAndOrdered;
         }
         RELEASE_ASSERT_NOT_REACHED();
-        return DoubleEqual; // make compiler happy
+        return DoubleEqualAndOrdered; // make compiler happy
     }
 
     static bool isInvertible(ResultCondition cond)
@@ -4122,7 +4122,7 @@ private:
     {
         if (cond & DoubleConditionBitSpecial) {
             ASSERT(!(cond & DoubleConditionBitInvert));
-            if (cond == DoubleEqual) {
+            if (cond == DoubleEqualAndOrdered) {
                 if (left == right) {
                     compare(right, left);
                     set32(X86Assembler::ConditionNP, dest);
@@ -4164,7 +4164,7 @@ private:
 
     Jump jumpAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
-        if (cond == DoubleEqual) {
+        if (cond == DoubleEqualAndOrdered) {
             if (left == right)
                 return Jump(m_assembler.jnp());
             Jump isUnordered(m_assembler.jp());
@@ -4199,7 +4199,7 @@ private:
 #if CPU(X86_64)
     void moveConditionallyAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
     {
-        if (cond == DoubleEqual) {
+        if (cond == DoubleEqualAndOrdered) {
             if (left == right) {
                 m_assembler.cmovnpq_rr(src, dest);
                 return;

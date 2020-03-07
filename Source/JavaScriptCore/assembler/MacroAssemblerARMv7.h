@@ -128,12 +128,12 @@ public:
 
     enum DoubleCondition {
         // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
-        DoubleEqual = ARMv7Assembler::ConditionEQ,
-        DoubleNotEqual = ARMv7Assembler::ConditionVC, // Not the right flag! check for this & handle differently.
-        DoubleGreaterThan = ARMv7Assembler::ConditionGT,
-        DoubleGreaterThanOrEqual = ARMv7Assembler::ConditionGE,
-        DoubleLessThan = ARMv7Assembler::ConditionLO,
-        DoubleLessThanOrEqual = ARMv7Assembler::ConditionLS,
+        DoubleEqualAndOrdered = ARMv7Assembler::ConditionEQ,
+        DoubleNotEqualAndOrdered = ARMv7Assembler::ConditionVC, // Not the right flag! check for this & handle differently.
+        DoubleGreaterThanAndOrdered = ARMv7Assembler::ConditionGT,
+        DoubleGreaterThanOrEqualAndOrdered = ARMv7Assembler::ConditionGE,
+        DoubleLessThanAndOrdered = ARMv7Assembler::ConditionLO,
+        DoubleLessThanOrEqualAndOrdered = ARMv7Assembler::ConditionLS,
         // If either operand is NaN, these conditions always evaluate to true.
         DoubleEqualOrUnordered = ARMv7Assembler::ConditionVS, // Not the right flag! check for this & handle differently.
         DoubleNotEqualOrUnordered = ARMv7Assembler::ConditionNE,
@@ -1218,7 +1218,7 @@ public:
         m_assembler.vcmp(left, right);
         m_assembler.vmrs();
 
-        if (cond == DoubleNotEqual) {
+        if (cond == DoubleNotEqualAndOrdered) {
             // ConditionNE jumps if NotEqual *or* unordered - force the unordered cases not to jump.
             Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
             Jump result = makeBranch(ARMv7Assembler::ConditionNE);

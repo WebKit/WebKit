@@ -2806,7 +2806,7 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
     jit.loadDouble(JITCompiler::TrustedImmPtr(&zero), scratch);
     MacroAssembler::Jump tooSmall = jit.branchDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered, source, scratch);
     jit.loadDouble(JITCompiler::TrustedImmPtr(&byteMax), scratch);
-    MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThan, source, scratch);
+    MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThanAndOrdered, source, scratch);
     
     jit.loadDouble(JITCompiler::TrustedImmPtr(&half), scratch);
     // FIXME: This should probably just use a floating point round!
@@ -5646,7 +5646,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
                     m_jit.loadDouble(TrustedImmPtr(&halfConstant), scratchFPR);
                     m_jit.addDouble(resultFPR, scratchFPR);
 
-                    JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqual, scratchFPR, valueFPR);
+                    JITCompiler::Jump shouldUseCeiled = m_jit.branchDouble(JITCompiler::DoubleLessThanOrEqualAndOrdered, scratchFPR, valueFPR);
                     static constexpr double oneConstant = -1.0;
                     m_jit.loadDouble(TrustedImmPtr(&oneConstant), scratchFPR);
                     m_jit.addDouble(scratchFPR, resultFPR);
@@ -5797,10 +5797,10 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
 
         MacroAssembler::JumpList done;
 
-        MacroAssembler::Jump op1Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleLessThan : MacroAssembler::DoubleGreaterThan, op1FPR, op2FPR);
+        MacroAssembler::Jump op1Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleLessThanAndOrdered : MacroAssembler::DoubleGreaterThanAndOrdered, op1FPR, op2FPR);
 
         // op2 is eather the lesser one or one of then is NaN
-        MacroAssembler::Jump op2Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleGreaterThanOrEqual : MacroAssembler::DoubleLessThanOrEqual, op1FPR, op2FPR);
+        MacroAssembler::Jump op2Less = m_jit.branchDouble(node->op() == ArithMin ? MacroAssembler::DoubleGreaterThanOrEqualAndOrdered : MacroAssembler::DoubleLessThanOrEqualAndOrdered, op1FPR, op2FPR);
 
         // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding 
         // op1 + op2 and putting it into result.
@@ -5937,10 +5937,10 @@ void SpeculativeJIT::compileArithPow(Node* node)
             FPRReg resultFpr = result.fpr();
 
             m_jit.moveZeroToDouble(resultFpr);
-            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqualAndOrdered, xOperandFpr, resultFpr);
 
             m_jit.loadDouble(TrustedImmPtr(&minusInfinityConstant), resultFpr);
-            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqualAndOrdered, xOperandFpr, resultFpr);
             m_jit.sqrtDouble(xOperandFpr, resultFpr);
             MacroAssembler::Jump doneWithSqrt = m_jit.jump();
 
@@ -5964,10 +5964,10 @@ void SpeculativeJIT::compileArithPow(Node* node)
             FPRReg resultFpr = result.fpr();
 
             m_jit.moveZeroToDouble(resultFpr);
-            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+            MacroAssembler::Jump xIsZeroOrNegativeZero = m_jit.branchDouble(MacroAssembler::DoubleEqualAndOrdered, xOperandFpr, resultFpr);
 
             m_jit.loadDouble(TrustedImmPtr(&minusInfinityConstant), resultFpr);
-            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqual, xOperandFpr, resultFpr);
+            MacroAssembler::Jump xIsMinusInfinity = m_jit.branchDouble(MacroAssembler::DoubleEqualAndOrdered, xOperandFpr, resultFpr);
 
             static constexpr double oneConstant = 1.;
             m_jit.loadDouble(TrustedImmPtr(&oneConstant), resultFpr);
@@ -6157,14 +6157,14 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
-            compilePeepHoleDoubleBranch(node, branchNode, MacroAssembler::DoubleEqual);
+            compilePeepHoleDoubleBranch(node, branchNode, MacroAssembler::DoubleEqualAndOrdered);
             use(node->child1());
             use(node->child2());
             m_indexInBlock = branchIndexInBlock;
             m_currentNode = branchNode;
             return true;
         }
-        compileDoubleCompare(node, MacroAssembler::DoubleEqual);
+        compileDoubleCompare(node, MacroAssembler::DoubleEqualAndOrdered);
         return false;
     }
 
@@ -8710,7 +8710,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         auto loop = m_jit.label();
         auto notFound = m_jit.branch32(CCallHelpers::Equal, indexGPR, lengthGPR);
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), tempFPR);
-        auto found = m_jit.branchDouble(CCallHelpers::DoubleEqual, tempFPR, searchElementFPR);
+        auto found = m_jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, tempFPR, searchElementFPR);
         m_jit.add32(TrustedImm32(1), indexGPR);
         m_jit.jump().linkTo(loop, &m_jit);
 
@@ -12023,7 +12023,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
     notNaN.link(&m_jit);
     m_jit.truncateDoubleToInt32(doubleValueFPR, scratchGPR);
     m_jit.convertInt32ToDouble(scratchGPR, tempFPR);
-    passThroughCases.append(m_jit.branchDouble(JITCompiler::DoubleNotEqual, doubleValueFPR, tempFPR));
+    passThroughCases.append(m_jit.branchDouble(JITCompiler::DoubleNotEqualAndOrdered, doubleValueFPR, tempFPR));
 
     m_jit.boxInt32(scratchGPR, resultRegs);
     doneCases.append(m_jit.jump());

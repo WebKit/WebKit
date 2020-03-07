@@ -10496,7 +10496,7 @@ private:
             FPRReg input = params[1].fpr();
             FPRReg temp = params.fpScratch(0);
             jit.roundTowardZeroDouble(input, temp);
-            jit.compareDouble(MacroAssembler::DoubleEqual, input, temp, result);
+            jit.compareDouble(MacroAssembler::DoubleEqualAndOrdered, input, temp, result);
         });
         ValueFromBlock patchpointResult = m_out.anchor(patchpoint);
         m_out.jump(continuation);

@@ -1093,7 +1093,7 @@ public:
 
     Jump branchIfNotNaN(FPRReg fpr)
     {
-        return branchDouble(DoubleEqual, fpr, fpr);
+        return branchDouble(DoubleEqualAndOrdered, fpr, fpr);
     }
 
     Jump branchIfRopeStringImpl(GPRReg stringImplGPR)

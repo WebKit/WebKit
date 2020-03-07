@@ -95,22 +95,22 @@ void JIT::emit_op_jngreatereq(const Instruction* currentInstruction)
 
 void JIT::emitSlow_op_jless(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJless>(currentInstruction, DoubleLessThan, operationCompareLess, false, iter);
+    emit_compareAndJumpSlow<OpJless>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLess, false, iter);
 }
 
 void JIT::emitSlow_op_jlesseq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJlesseq>(currentInstruction, DoubleLessThanOrEqual, operationCompareLessEq, false, iter);
+    emit_compareAndJumpSlow<OpJlesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEq, false, iter);
 }
 
 void JIT::emitSlow_op_jgreater(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJgreater>(currentInstruction, DoubleGreaterThan, operationCompareGreater, false, iter);
+    emit_compareAndJumpSlow<OpJgreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreater, false, iter);
 }
 
 void JIT::emitSlow_op_jgreatereq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    emit_compareAndJumpSlow<OpJgreatereq>(currentInstruction, DoubleGreaterThanOrEqual, operationCompareGreaterEq, false, iter);
+    emit_compareAndJumpSlow<OpJgreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEq, false, iter);
 }
 
 void JIT::emitSlow_op_jnless(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

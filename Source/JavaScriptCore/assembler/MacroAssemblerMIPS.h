@@ -99,12 +99,12 @@ public:
     };
 
     enum DoubleCondition {
-        DoubleEqual,
-        DoubleNotEqual,
-        DoubleGreaterThan,
-        DoubleGreaterThanOrEqual,
-        DoubleLessThan,
-        DoubleLessThanOrEqual,
+        DoubleEqualAndOrdered,
+        DoubleNotEqualAndOrdered,
+        DoubleGreaterThanAndOrdered,
+        DoubleGreaterThanOrEqualAndOrdered,
+        DoubleLessThanAndOrdered,
+        DoubleLessThanOrEqualAndOrdered,
         DoubleEqualOrUnordered,
         DoubleNotEqualOrUnordered,
         DoubleGreaterThanOrUnordered,
@@ -3204,27 +3204,27 @@ public:
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
-        if (cond == DoubleEqual) {
+        if (cond == DoubleEqualAndOrdered) {
             m_assembler.ceqd(left, right);
             return branchTrue();
         }
-        if (cond == DoubleNotEqual) {
+        if (cond == DoubleNotEqualAndOrdered) {
             m_assembler.cueqd(left, right);
             return branchFalse(); // false
         }
-        if (cond == DoubleGreaterThan) {
+        if (cond == DoubleGreaterThanAndOrdered) {
             m_assembler.cngtd(left, right);
             return branchFalse(); // false
         }
-        if (cond == DoubleGreaterThanOrEqual) {
+        if (cond == DoubleGreaterThanOrEqualAndOrdered) {
             m_assembler.cnged(left, right);
             return branchFalse(); // false
         }
-        if (cond == DoubleLessThan) {
+        if (cond == DoubleLessThanAndOrdered) {
             m_assembler.cltd(left, right);
             return branchTrue();
         }
-        if (cond == DoubleLessThanOrEqual) {
+        if (cond == DoubleLessThanOrEqualAndOrdered) {
             m_assembler.cled(left, right);
             return branchTrue();
         }
@@ -3305,7 +3305,7 @@ public:
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         m_assembler.vmov(scratch, MIPSRegisters::zero, MIPSRegisters::zero);
-        return branchDouble(DoubleNotEqual, reg, scratch);
+        return branchDouble(DoubleNotEqualAndOrdered, reg, scratch);
     }
 
     Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)

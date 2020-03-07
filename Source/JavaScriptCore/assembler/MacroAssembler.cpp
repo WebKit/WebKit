@@ -127,23 +127,23 @@ void printInternal(PrintStream& out, MacroAssembler::ResultCondition cond)
 void printInternal(PrintStream& out, MacroAssembler::DoubleCondition cond)
 {
     switch (cond) {
-    case MacroAssembler::DoubleEqual:
-        out.print("DoubleEqual");
+    case MacroAssembler::DoubleEqualAndOrdered:
+        out.print("DoubleEqualAndOrdered");
         return;
-    case MacroAssembler::DoubleNotEqual:
-        out.print("DoubleNotEqual");
+    case MacroAssembler::DoubleNotEqualAndOrdered:
+        out.print("DoubleNotEqualAndOrdered");
         return;
-    case MacroAssembler::DoubleGreaterThan:
-        out.print("DoubleGreaterThan");
+    case MacroAssembler::DoubleGreaterThanAndOrdered:
+        out.print("DoubleGreaterThanAndOrdered");
         return;
-    case MacroAssembler::DoubleGreaterThanOrEqual:
-        out.print("DoubleGreaterThanOrEqual");
+    case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered:
+        out.print("DoubleGreaterThanOrEqualAndOrdered");
         return;
-    case MacroAssembler::DoubleLessThan:
-        out.print("DoubleLessThan");
+    case MacroAssembler::DoubleLessThanAndOrdered:
+        out.print("DoubleLessThanAndOrdered");
         return;
-    case MacroAssembler::DoubleLessThanOrEqual:
-        out.print("DoubleLessThanOrEqual");
+    case MacroAssembler::DoubleLessThanOrEqualAndOrdered:
+        out.print("DoubleLessThanOrEqualAndOrdered");
         return;
     case MacroAssembler::DoubleEqualOrUnordered:
         out.print("DoubleEqualOrUnordered");

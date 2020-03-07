@@ -1,3 +1,116 @@
+2020-03-06  Mark Lam  <mark.lam@apple.com>
+
+        Add "AndOrdered" to the names of ordered DoubleConditions.
+        https://bugs.webkit.org/show_bug.cgi?id=208736
+
+        Reviewed by Keith Miller.
+
+        Renamed the following:
+            DoubleEqual ==> DoubleEqualAndOrdered
+            DoubleNotEqual ==> DoubleNotEqualAndOrdered
+            DoubleGreaterThan ==> DoubleGreaterThanAndOrdered
+            DoubleGreaterThanOrEqual ==> DoubleGreaterThanOrEqualAndOrdered
+            DoubleLessThan ==> DoubleLessThanAndOrdered
+            DoubleLessThanOrEqual ==> DoubleLessThanOrEqualAndOrdered
+
+        The comment for these enums in MacroAssemblerARM64.h says:
+            // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
+
+        Adding "AndOrdered" to their names makes this property explicit.
+
+        From reading the original names, one might intuitively think that these conditions
+        map directly to the C++ double comparisons.  This intuition is incorrect.
+        Consider the DoubleNotEqual case: let's compare 2 doubles, a and b:
+
+            result = (a != b);
+
+        For C++, if either a or b are NaNs, then a != b will actually return true.
+        This is contrary to the behavior documented in the MacroAssemblerARM64.h comment
+        above about how DoubleNotEqual should behave.  In our code, DoubleNotEqual actually
+        means DoubleNotEqualAndOrdered.  The C++ != behavior actually matches our
+        DoubleNotEqualOrUnordered condition instead.
+
+        The tendency to want to associate DoubleNotEqual with the behavior of the C++
+        != operator is precisely why we should give these conditions better names.
+        Adding the "AndOperand" name make the expected behavior explicit in the name, and
+        leave no room for confusion with C++ double comparison semantics.
+
+        * assembler/MacroAssembler.cpp:
+        (WTF::printInternal):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::invert):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::moveConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::moveDoubleConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::jumpAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::floatingPointCompare):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchDouble):
+        (JSC::MacroAssemblerMIPS::branchDoubleNonZero):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchDoubleNonZero):
+        (JSC::MacroAssemblerX86Common::moveConditionallyDouble):
+        (JSC::MacroAssemblerX86Common::invert):
+        (JSC::MacroAssemblerX86Common::floatingPointCompare):
+        (JSC::MacroAssemblerX86Common::jumpAfterFloatingPointCompare):
+        (JSC::MacroAssemblerX86Common::moveConditionallyAfterFloatingPointCompare):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::truncateDoubleToUint64):
+        (JSC::MacroAssemblerX86_64::truncateFloatToUint64):
+        * assembler/testmasm.cpp:
+        (JSC::testCompareDouble):
+        (JSC::testCompareDoubleSameArg):
+        (JSC::testMoveConditionallyFloatingPoint):
+        (JSC::testMoveDoubleConditionallyDouble):
+        (JSC::testMoveDoubleConditionallyDoubleDestSameAsThenCase):
+        (JSC::testMoveDoubleConditionallyDoubleDestSameAsElseCase):
+        (JSC::testMoveDoubleConditionallyFloat):
+        (JSC::testMoveDoubleConditionallyFloatDestSameAsThenCase):
+        (JSC::testMoveDoubleConditionallyFloatDestSameAsElseCase):
+        (JSC::testMoveConditionallyFloatingPointSameArg):
+        (JSC::run):
+        * b3/B3LowerToAir.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::compileClampDoubleToByte):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileArithMinMax):
+        (JSC::DFG::SpeculativeJIT::compileArithPow):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberIsInteger):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNotNaN):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jgreater):
+        (JSC::JIT::emitSlow_op_jgreatereq):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC::roundThunkGenerator):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Le>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Lt>):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointMinOrMax):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Gt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Ge>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Lt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Le>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Ge>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Gt>):
+
 2020-03-06  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r258038): Build failure on Windows 10 bots

@@ -504,17 +504,17 @@ void testCompareDouble(MacroAssembler::DoubleCondition condition)
             return x != x;
         };
         switch (condition) {
-        case MacroAssembler::DoubleEqual:
+        case MacroAssembler::DoubleEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a == b);
-        case MacroAssembler::DoubleNotEqual:
+        case MacroAssembler::DoubleNotEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a != b);
-        case MacroAssembler::DoubleGreaterThan:
+        case MacroAssembler::DoubleGreaterThanAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a > b);
-        case MacroAssembler::DoubleGreaterThanOrEqual:
+        case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a >= b);
-        case MacroAssembler::DoubleLessThan:
+        case MacroAssembler::DoubleLessThanAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a < b);
-        case MacroAssembler::DoubleLessThanOrEqual:
+        case MacroAssembler::DoubleLessThanOrEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a <= b);
         case MacroAssembler::DoubleEqualOrUnordered:
             return isUnordered(a) || isUnordered(b) || (a == b);
@@ -576,17 +576,17 @@ void testCompareDoubleSameArg(MacroAssembler::DoubleCondition condition)
             return x != x;
         };
         switch (condition) {
-        case MacroAssembler::DoubleEqual:
+        case MacroAssembler::DoubleEqualAndOrdered:
             return !isUnordered(a) && (a == a);
-        case MacroAssembler::DoubleNotEqual:
+        case MacroAssembler::DoubleNotEqualAndOrdered:
             return !isUnordered(a) && (a != a);
-        case MacroAssembler::DoubleGreaterThan:
+        case MacroAssembler::DoubleGreaterThanAndOrdered:
             return !isUnordered(a) && (a > a);
-        case MacroAssembler::DoubleGreaterThanOrEqual:
+        case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered:
             return !isUnordered(a) && (a >= a);
-        case MacroAssembler::DoubleLessThan:
+        case MacroAssembler::DoubleLessThanAndOrdered:
             return !isUnordered(a) && (a < a);
-        case MacroAssembler::DoubleLessThanOrEqual:
+        case MacroAssembler::DoubleLessThanOrEqualAndOrdered:
             return !isUnordered(a) && (a <= a);
         case MacroAssembler::DoubleEqualOrUnordered:
             return isUnordered(a) || (a == a);
@@ -701,17 +701,17 @@ void testMoveConditionallyFloatingPoint(MacroAssembler::DoubleCondition conditio
             return x != x;
         };
         switch (condition) {
-        case MacroAssembler::DoubleEqual:
+        case MacroAssembler::DoubleEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a == b) ? selectionA : selectionB;
-        case MacroAssembler::DoubleNotEqual:
+        case MacroAssembler::DoubleNotEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a != b) ? selectionA : selectionB;
-        case MacroAssembler::DoubleGreaterThan:
+        case MacroAssembler::DoubleGreaterThanAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a > b) ? selectionA : selectionB;
-        case MacroAssembler::DoubleGreaterThanOrEqual:
+        case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a >= b) ? selectionA : selectionB;
-        case MacroAssembler::DoubleLessThan:
+        case MacroAssembler::DoubleLessThanAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a < b) ? selectionA : selectionB;
-        case MacroAssembler::DoubleLessThanOrEqual:
+        case MacroAssembler::DoubleLessThanOrEqualAndOrdered:
             return !isUnordered(a) && !isUnordered(b) && (a <= b) ? selectionA : selectionB;
         case MacroAssembler::DoubleEqualOrUnordered:
             return isUnordered(a) || isUnordered(b) || (a == b) ? selectionA : selectionB;
@@ -1039,12 +1039,12 @@ void testMoveDoubleConditionallyDouble(MacroAssembler::DoubleCondition condition
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionA), tempFPR);
-        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionAFPR, tempFPR);
+        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionAFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionA), destFPR);
         aIsUnchanged.link(&jit);
 
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionB), tempFPR);
-        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionBFPR, tempFPR);
+        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionBFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionB), destFPR);
         bIsUnchanged.link(&jit);
 
@@ -1085,7 +1085,7 @@ void testMoveDoubleConditionallyDoubleDestSameAsThenCase(MacroAssembler::DoubleC
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionB), tempFPR);
-        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionBFPR, tempFPR);
+        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionBFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionB), destFPR);
         bIsUnchanged.link(&jit);
 
@@ -1126,7 +1126,7 @@ void testMoveDoubleConditionallyDoubleDestSameAsElseCase(MacroAssembler::DoubleC
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionA), tempFPR);
-        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionAFPR, tempFPR);
+        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionAFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionA), destFPR);
         aIsUnchanged.link(&jit);
 
@@ -1168,12 +1168,12 @@ void testMoveDoubleConditionallyFloat(MacroAssembler::DoubleCondition condition)
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionA), tempFPR);
-        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionAFPR, tempFPR);
+        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionAFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionA), destFPR);
         aIsUnchanged.link(&jit);
 
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionB), tempFPR);
-        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionBFPR, tempFPR);
+        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionBFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionB), destFPR);
         bIsUnchanged.link(&jit);
 
@@ -1214,7 +1214,7 @@ void testMoveDoubleConditionallyFloatDestSameAsThenCase(MacroAssembler::DoubleCo
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionB), tempFPR);
-        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionBFPR, tempFPR);
+        auto bIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionBFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionB), destFPR);
         bIsUnchanged.link(&jit);
 
@@ -1255,7 +1255,7 @@ void testMoveDoubleConditionallyFloatDestSameAsElseCase(MacroAssembler::DoubleCo
 
         FPRReg tempFPR = FPRInfo::fpRegT5;
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&selectionA), tempFPR);
-        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqual, selectionAFPR, tempFPR);
+        auto aIsUnchanged = jit.branchDouble(CCallHelpers::DoubleEqualAndOrdered, selectionAFPR, tempFPR);
         jit.loadDouble(CCallHelpers::TrustedImmPtr(&corruptedSelectionA), destFPR);
         aIsUnchanged.link(&jit);
 
@@ -1274,17 +1274,17 @@ void testMoveConditionallyFloatingPointSameArg(MacroAssembler::DoubleCondition c
             return x != x;
         };
         switch (condition) {
-        case MacroAssembler::DoubleEqual:
+        case MacroAssembler::DoubleEqualAndOrdered:
             return !isUnordered(a) && (a == a) ? selectionA : selectionB;
-        case MacroAssembler::DoubleNotEqual:
+        case MacroAssembler::DoubleNotEqualAndOrdered:
             return !isUnordered(a) && (a != a) ? selectionA : selectionB;
-        case MacroAssembler::DoubleGreaterThan:
+        case MacroAssembler::DoubleGreaterThanAndOrdered:
             return !isUnordered(a) && (a > a) ? selectionA : selectionB;
-        case MacroAssembler::DoubleGreaterThanOrEqual:
+        case MacroAssembler::DoubleGreaterThanOrEqualAndOrdered:
             return !isUnordered(a) && (a >= a) ? selectionA : selectionB;
-        case MacroAssembler::DoubleLessThan:
+        case MacroAssembler::DoubleLessThanAndOrdered:
             return !isUnordered(a) && (a < a) ? selectionA : selectionB;
-        case MacroAssembler::DoubleLessThanOrEqual:
+        case MacroAssembler::DoubleLessThanOrEqualAndOrdered:
             return !isUnordered(a) && (a <= a) ? selectionA : selectionB;
         case MacroAssembler::DoubleEqualOrUnordered:
             return isUnordered(a) || (a == a) ? selectionA : selectionB;
@@ -2205,12 +2205,12 @@ void run(const char* filter)
 
 #define FOR_EACH_DOUBLE_CONDITION_RUN(__test) \
     do { \
-        RUN(__test(MacroAssembler::DoubleEqual)); \
-        RUN(__test(MacroAssembler::DoubleNotEqual)); \
-        RUN(__test(MacroAssembler::DoubleGreaterThan)); \
-        RUN(__test(MacroAssembler::DoubleGreaterThanOrEqual)); \
-        RUN(__test(MacroAssembler::DoubleLessThan)); \
-        RUN(__test(MacroAssembler::DoubleLessThanOrEqual)); \
+        RUN(__test(MacroAssembler::DoubleEqualAndOrdered)); \
+        RUN(__test(MacroAssembler::DoubleNotEqualAndOrdered)); \
+        RUN(__test(MacroAssembler::DoubleGreaterThanAndOrdered)); \
+        RUN(__test(MacroAssembler::DoubleGreaterThanOrEqualAndOrdered)); \
+        RUN(__test(MacroAssembler::DoubleLessThanAndOrdered)); \
+        RUN(__test(MacroAssembler::DoubleLessThanOrEqualAndOrdered)); \
         RUN(__test(MacroAssembler::DoubleEqualOrUnordered)); \
         RUN(__test(MacroAssembler::DoubleNotEqualOrUnordered)); \
         RUN(__test(MacroAssembler::DoubleGreaterThanOrUnordered)); \
