@@ -43,7 +43,7 @@
 }
 
 .timeline-overview-graph.heap-allocations > img.snapshot.selected {
-    content: url(../Images/HeapSnapshotSelected.svg);
+    content: url(../Images/TypeIcons.svg#HeapSnapshot-selected);
 }
 
 .timeline-overview-graph.heap-allocations:not(.selected) > img.snapshot.selected {

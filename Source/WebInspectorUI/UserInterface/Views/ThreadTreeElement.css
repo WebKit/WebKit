@@ -24,7 +24,7 @@
  */
 
 .tree-outline > .item.thread .icon {
-    content: url(../Images/Thread.svg);
+    content: url(../Images/IdentifierIcons.svg#Thread-light);
     width: 15px;
     height: 15px;
 }
@@ -62,6 +62,16 @@
 
 .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
     -webkit-margin-start: 0;
-    content: url(../Images/Function.svg);
+    content: url(../Images/TypeIcons.svg#Function-light);
     opacity: 0.6;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree-outline > .item.thread .icon {
+        content: url(../Images/IdentifierIcons.svg#Thread-dark);
+    }
+
+    .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }    
 }

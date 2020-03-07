@@ -24,35 +24,35 @@
  */
 
 .network-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#NetworkInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#NetworkInstrument-light);
 }
 
 .script-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#ScriptsInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#ScriptsInstrument-light);
 }
 
 .cpu-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#CPUInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#CPUInstrument-light);
 }
 
 .memory-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#MemoryInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#MemoryInstrument-light);
 }
 
 .heap-allocations-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#HeapAllocationsInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#HeapAllocationsInstrument-light);
 }
 
 .layout-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#LayoutInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#LayoutInstrument-light);
 }
 
 .rendering-frame-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#RenderingFramesInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#RenderingFramesInstrument-light);
 }
 
 .media-icon .icon {
-    content: url(../Images/InstrumentIcons.svg#MediaInstrument-light);
+    content: url(../Images/IdentifierIcons.svg#MediaInstrument-light);
 }
 
 .stopwatch-icon .icon {
@@ -143,35 +143,35 @@
     }
 
     .network-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#NetworkInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#NetworkInstrument-dark);
     }
 
     .script-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#ScriptsInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#ScriptsInstrument-dark);
     }
 
     .cpu-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#CPUInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#CPUInstrument-dark);
     }
 
     .memory-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#MemoryInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#MemoryInstrument-dark);
     }
 
     .heap-allocations-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#HeapAllocationsInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#HeapAllocationsInstrument-dark);
     }
 
     .layout-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#LayoutInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#LayoutInstrument-dark);
     }
 
     .rendering-frame-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#RenderingFramesInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#RenderingFramesInstrument-dark);
     }
 
     .media-icon .icon {
-        content: url(../Images/InstrumentIcons.svg#MediaInstrument-dark);
+        content: url(../Images/IdentifierIcons.svg#MediaInstrument-dark);
     }
 
     .stopwatch-icon .icon {

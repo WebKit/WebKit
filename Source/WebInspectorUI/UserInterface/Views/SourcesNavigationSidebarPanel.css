@@ -160,5 +160,11 @@
 }
 
 .sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon {
-    content: url(../Images/TypeObject.svg);
+    content: url(../Images/TypeIcons.svg#TypeObject-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon {
+        content: url(../Images/TypeIcons.svg#TypeObject-dark);
+    }    
 }

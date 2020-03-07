@@ -16,6 +16,14 @@
                 --shadow: hsla(0, 0%, 0%, 0.5);
             }
 
+            .selected {
+                --outline: hsla(0, 0%, 100%, 0);
+                --fill: hsl(212, 92%, 54%);
+                --stroke: hsl(212, 92%, 54%);
+                --light: hsl(212, 92%, 54%);
+                --shadow: hsl(212, 92%, 54%);
+            }
+
             .light.grey {
                 --fill: hsl(0, 0%, 85%);
                 --stroke: hsl(0, 0%, 60%);
@@ -324,6 +332,7 @@
     <g id="Function-light" class="light green"><use href="#box"/><use href="#f"/></g>
     <g id="HeapSnapshot-dark" class="dark beige"><use href="#box"/><use href="#S"/></g>
     <g id="HeapSnapshot-light" class="light beige"><use href="#box"/><use href="#S"/></g>
+    <g id="HeapSnapshot-selected" class="selected"><use href="#box"/><use href="#S"/></g>
     <g id="HeapSnapshotDiff-dark" class="dark green"><use href="#box"/><use href="#D"/></g>
     <g id="HeapSnapshotDiff-light" class="light green"><use href="#box"/><use href="#D"/></g>
     <g id="HeapSnapshotInstances-dark" class="dark yellow"><use href="#box"/><use href="#O"/></g>

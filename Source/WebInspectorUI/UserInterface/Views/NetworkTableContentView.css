@@ -59,7 +59,7 @@
 }
 
 .network-table > .table .cell.dom-node.name .icon {
-    content: url(../Images/InstrumentIcons.svg#DOMElement-light);
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
 }
 
 .network-table > .table .cell.dom-node.name .disclosure {

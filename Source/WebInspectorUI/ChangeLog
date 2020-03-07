@@ -1,3 +1,42 @@
+2020-03-06  Jon Davis  <jond@apple.com>
+
+        Fixed missing icons for WI.ThreadTreeElement and selected Heap Snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=208719
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Images/InstrumentIcons.svg: Removed.
+        * UserInterface/Images/TypeIcons.svg:
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.css:
+        (.timeline-overview-graph.heap-allocations > img.snapshot.selected):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .table .cell.dom-node.name .icon):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon):
+        (@media (prefers-color-scheme: dark) .sidebar > .panel.navigation.sources > .content > .breakpoints-container .tree-outline .item.event-target-window .icon):
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline > .item.thread .icon):
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline > .item.thread .icon):
+        (@media (prefers-color-scheme: dark) .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        * UserInterface/Views/TimelineIcons.css:
+        (.network-icon .icon):
+        (.script-icon .icon):
+        (.cpu-icon .icon):
+        (.memory-icon .icon):
+        (.heap-allocations-icon .icon):
+        (.layout-icon .icon):
+        (.rendering-frame-icon .icon):
+        (.media-icon .icon):
+        (@media (prefers-color-scheme: dark) .network-icon .icon):
+        (@media (prefers-color-scheme: dark) .script-icon .icon):
+        (@media (prefers-color-scheme: dark) .cpu-icon .icon):
+        (@media (prefers-color-scheme: dark) .memory-icon .icon):
+        (@media (prefers-color-scheme: dark) .heap-allocations-icon .icon):
+        (@media (prefers-color-scheme: dark) .layout-icon .icon):
+        (@media (prefers-color-scheme: dark) .rendering-frame-icon .icon):
+        (@media (prefers-color-scheme: dark) .media-icon .icon):
+
 2020-03-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: AXI: annotate tab panels
