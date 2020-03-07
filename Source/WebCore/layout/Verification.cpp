@@ -242,12 +242,18 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         };
     };
 
-    auto& displayBox = context.displayBoxForLayoutBox(layoutBox);
-
-    auto frameRect = renderer.frameRect();
     // rendering does not offset for relative positioned boxes.
+    auto frameRect = renderer.frameRect();
     if (renderer.isInFlowPositioned())
         frameRect.move(renderer.offsetForInFlowPosition());
+
+    auto displayBox = Display::Box { context.displayBoxForLayoutBox(layoutBox) };
+    if (layoutBox.isTableBox()) {
+        // When the <table> is out-of-flow positioned, the wrapper table box has the offset
+        // while the actual table box is static, inflow.
+        auto& tableWrapperDisplayBox = context.displayBoxForLayoutBox(*layoutBox.containingBlock());
+        displayBox.moveBy(tableWrapperDisplayBox.topLeft());
+    }
 
     if (!areEssentiallyEqual(frameRect, displayBox.rect())) {
         outputRect("frameBox", renderer.frameRect(), displayBox.rect());
