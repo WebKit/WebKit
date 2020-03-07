@@ -1095,9 +1095,6 @@ test/built-ins/JSON/parse/reviver-array-non-configurable-prop-create.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/JSON/stringify/replacer-function-object-deleted-property.js:
-  default: 'Test262Error: Expected SameValue(«{"a":1}», «{"a":1,"b":"<replaced>"}») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«{"a":1}», «{"a":1,"b":"<replaced>"}») to be true'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'

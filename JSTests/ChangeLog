@@ -1,3 +1,14 @@
+2020-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.stringify should call replacer on deleted properties
+        https://bugs.webkit.org/show_bug.cgi?id=208725
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/json-stringify-many-objects-to-json.js: Added.
+        * microbenchmarks/json-stringify-many-objects.js: Added.
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-03-04  Mark Lam  <mark.lam@apple.com>
 
         Handle an out of memory error while constructing the BytecodeGenerator.

@@ -113,7 +113,6 @@ private:
     friend class Holder;
 
     JSValue toJSON(JSValue, const PropertyNameForFunctionCall&);
-    JSValue toJSONImpl(VM&, JSValue, JSValue toJSONFunction, const PropertyNameForFunctionCall&);
 
     enum StringifyResult { StringifyFailed, StringifySucceeded, StringifyFailedDueToUndefinedOrSymbolValue };
     StringifyResult appendStringifiedValue(StringBuilder&, JSValue, const Holder&, const PropertyNameForFunctionCall&);
@@ -302,19 +301,9 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     auto scope = DECLARE_THROW_SCOPE(vm);
     scope.assertNoException();
 
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
-    bool hasProperty = baseValue.getPropertySlot(m_globalObject, vm.propertyNames->toJSON, slot);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (!hasProperty)
-        return baseValue;
-
-    JSValue toJSONFunction = slot.getValue(m_globalObject, vm.propertyNames->toJSON);
+    JSValue toJSONFunction = baseValue.get(m_globalObject, vm.propertyNames->toJSON);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, toJSONImpl(vm, baseValue, toJSONFunction, propertyName));
-}
 
-JSValue Stringifier::toJSONImpl(VM& vm, JSValue baseValue, JSValue toJSONFunction, const PropertyNameForFunctionCall& propertyName)
-{
     CallType callType;
     CallData callData;
     if (!toJSONFunction.isCallable(vm, callType, callData))
@@ -528,13 +517,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         if (m_isJSArray && m_object->canGetIndexQuickly(index))
             value = m_object->getIndexQuickly(index);
         else {
-            PropertySlot slot(m_object, PropertySlot::InternalMethodType::Get);
-            bool hasProperty = m_object->getPropertySlot(globalObject, index, slot);
-            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-            if (hasProperty)
-                value = slot.getValue(globalObject, index);
-            else
-                value = jsUndefined();
+            value = m_object->get(globalObject, index);
             RETURN_IF_EXCEPTION(scope, false);
         }
 
@@ -548,13 +531,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         ASSERT(stringifyResult != StringifyFailedDueToUndefinedOrSymbolValue);
     } else {
         // Get the value.
-        PropertySlot slot(m_object, PropertySlot::InternalMethodType::Get);
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        bool hasProperty = m_object->getPropertySlot(globalObject, propertyName, slot);
-        EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-        if (!hasProperty)
-            return true;
-        JSValue value = slot.getValue(globalObject, propertyName);
+        JSValue value = m_object->get(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
 
         rollBackPoint = builder.length();

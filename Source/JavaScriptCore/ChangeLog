@@ -1,3 +1,24 @@
+2020-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.stringify should call replacer on deleted properties
+        https://bugs.webkit.org/show_bug.cgi?id=208725
+
+        Reviewed by Ross Kirsling.
+
+        This change removes extra `hasProperty` check from `appendNextProperty` as
+        it does not exist in the spec [1], aligning JSC with V8 and SpiderMonkey.
+
+        This patch also replaces 3 usages of `getPropertySlot` with semantically
+        equivalent (yet more concise) `get` and inlines `toJSONImpl` (this change
+        is performance-neutral).
+
+        [1]: https://tc39.es/ecma262/#sec-serializejsonobject (steps 6, 8.a)
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Stringifier::toJSONImpl): Deleted.
+
 2020-03-06  Mark Lam  <mark.lam@apple.com>
 
         Fix some issues in the ARM64 moveConditionallyAfterFloatingPointCompare() and moveDoubleConditionallyAfterFloatingPointCompare().
