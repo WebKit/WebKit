@@ -343,9 +343,9 @@ sub getFileContents
 {
     my $idlFile = shift;
 
-    open FILE, "<", $idlFile;
-    my @lines = <FILE>;
-    close FILE;
+    open my $file, "<", $idlFile or die "Could not open $idlFile for reading: $!";
+    my @lines = <$file>;
+    close $file;
 
     # Filter out preprocessor lines.
     @lines = grep(!/^\s*#/, @lines);

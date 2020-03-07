@@ -151,6 +151,7 @@ function(GENERATE_BINDINGS target)
     endif ()
     add_custom_target(${target}
         COMMAND ${PERL_EXECUTABLE} ${binding_generator} ${args}
+        DEPENDS ${arg_INPUT_FILES} ${arg_PP_INPUT_FILES}
         WORKING_DIRECTORY ${arg_BASE_DIR}
         COMMENT "Generate bindings (${target})"
         VERBATIM ${act_args})
@@ -205,9 +206,8 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
     )
 
-    set(_args BYPRODUCTS ${_extra_output})
     add_custom_command(
-        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/${_outfile}
+        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/${_outfile} ${_extra_output}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS}
         COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${WebCore_DERIVED_SOURCES_DIR}
