@@ -3,7 +3,7 @@
 flags:
   BigInt: useBigInt
   WeakRef: useWeakRefs
-  class-fields-public: useClassFields
+  class-fields-public: usePublicClassFields
 skip:
   features:
     - SharedArrayBuffer

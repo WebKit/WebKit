@@ -1,3 +1,30 @@
+2020-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=208756
+
+        Reviewed by Mark Lam.
+
+        Rename useClassFields to usePublicClassFields to keep separate from usePrivateClassFields once
+        it is implemented.
+
+        * stress/big-int-as-property-name.js:
+        * stress/class-fields-bytecode-cache.js:
+        * stress/class-fields-computed-to-property-key.js:
+        * stress/class-fields-function-name.js:
+        * stress/class-fields-harmony.js:
+        * stress/class-fields-proxy-define-property.js:
+        * stress/class-fields-stress-instance.js:
+        * stress/class-fields-to-property-key-const-string-ftl.js:
+        * stress/class-fields-to-property-key-const-symbol-ftl.js:
+        * stress/class-fields-to-property-key-slow-object-tostring-ftl.js:
+        * stress/class-fields-to-property-key-slow-object-valueof-ftl.js:
+        * stress/class-fields-to-property-key-string-object-ftl.js:
+        * stress/class-fields-to-property-key-string-or-string-object-ftl.js:
+        * stress/generator-syntax.js:
+        * stress/method-name.js:
+        * test262/config.yaml:
+
 2020-03-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.stringify should call replacer on deleted properties

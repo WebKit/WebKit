@@ -982,7 +982,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
             generator.emitPutThisToArrowFunctionContextScope();
 
         // Initialize instance fields after super-call.
-        if (Options::useClassFields() && generator.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {
+        if (Options::usePublicClassFields() && generator.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {
             ASSERT(generator.isConstructor() || generator.isDerivedConstructorContext());
             func = generator.emitLoadDerivedConstructor();
             generator.emitInstanceFieldInitializationIfNeeded(generator.thisRegister(), func.get(), divot(), divotStart(), divotEnd());

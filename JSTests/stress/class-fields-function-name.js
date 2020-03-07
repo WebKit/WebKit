@@ -1,4 +1,4 @@
-//@ requireOptions("--useClassFields=true")
+//@ requireOptions("--usePublicClassFields=true")
 
 function assert(a, message) {
     if (!a)

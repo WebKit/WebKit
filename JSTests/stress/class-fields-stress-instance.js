@@ -1,4 +1,4 @@
-//@ requireOptions("--useClassFields=true")
+//@ requireOptions("--usePublicClassFields=true")
 
 class A {
     a = 0;

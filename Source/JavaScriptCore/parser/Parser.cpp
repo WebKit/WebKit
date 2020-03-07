@@ -2951,7 +2951,7 @@ parseMethod:
             type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
             property = parseGetterSetter(context, alwaysStrictInsideClass, type, methodStart, ConstructorKind::None, tag);
             failIfFalse(property, "Cannot parse this method");
-        } else if (Options::useClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
+        } else if (Options::usePublicClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
             ASSERT(!isGetter && !isSetter);
             if (ident)
                 semanticFailIfTrue(*ident == propertyNames.constructor, "Cannot declare class field named 'constructor'");

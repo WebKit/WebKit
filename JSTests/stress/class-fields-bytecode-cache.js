@@ -1,4 +1,4 @@
-//@ runBytecodeCache("--useClassFields=true")
+//@ runBytecodeCache("--usePublicClassFields=true")
 
 function assert(a, e) {
     if (a !== e)

@@ -1,4 +1,4 @@
-//@ runDefault("--useBigInt=true", "--useClassFields=true")
+//@ runDefault("--useBigInt=true", "--usePublicClassFields=true")
 
 let assert = {
     sameValue(a, e) {

@@ -699,7 +699,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 case ConstructorKind::None:
                 case ConstructorKind::Base:
                     emitCreateThis(&m_thisRegister);
-                    if (Options::useClassFields())
+                    if (Options::usePublicClassFields())
                         emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());
                     break;
                 case ConstructorKind::Extends:

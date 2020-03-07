@@ -1,3 +1,22 @@
+2020-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable public class fields
+        https://bugs.webkit.org/show_bug.cgi?id=208756
+
+        Reviewed by Mark Lam.
+
+        This patch turns public-class-fields feature on, implemented in r254653.
+        To separate from private-class-fields, this patch renames the flag from useClassFields to usePublicClassFields,
+        and first enable public-class-fields feature.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallValueNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * runtime/OptionsList.h:
+
 2020-03-06  Mark Lam  <mark.lam@apple.com>
 
         Add "AndOrdered" to the names of ordered DoubleConditions.

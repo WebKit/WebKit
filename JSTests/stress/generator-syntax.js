@@ -1,4 +1,4 @@
-//@ requireOptions("--useClassFields=1")
+//@ requireOptions("--usePublicClassFields=1")
 
 function testSyntax(script) {
     try {
