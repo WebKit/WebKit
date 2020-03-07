@@ -81,6 +81,7 @@ enum class ItemType : uint8_t {
     FillRectWithRoundedHole,
     FillPath,
     FillEllipse,
+    PutImageData,
     StrokeRect,
     StrokePath,
     StrokeEllipse,

@@ -29,6 +29,8 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "SharedBufferDataReference.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>
@@ -3241,6 +3243,20 @@ Optional<RefPtr<SharedBuffer>> ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::dec
     return buffer;
 }
 
+void ArgumentCoder<Ref<WebCore::SharedBuffer>>::encode(Encoder& encoder, const Ref<WebCore::SharedBuffer>& buffer)
+{
+    encodeSharedBuffer(encoder, buffer.ptr());
+}
+
+Optional<Ref<SharedBuffer>> ArgumentCoder<Ref<WebCore::SharedBuffer>>::decode(Decoder& decoder)
+{
+    RefPtr<SharedBuffer> buffer;
+    if (!decodeSharedBuffer(decoder, buffer) || !buffer)
+        return WTF::nullopt;
+
+    return buffer.releaseNonNull();
+}
+
 #if ENABLE(ENCRYPTED_MEDIA)
 void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)
 {
@@ -3295,5 +3311,35 @@ Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CD
     return keyStatuses;
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
+
+void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<WebCore::ImageData>& imageData)
+{
+    // FIXME: Copying from the ImageData to the SharedBuffer is slow. Invent some way for the SharedBuffer to be populated directly.
+    auto sharedBuffer = WebCore::SharedBuffer::create(imageData->data()->data(), imageData->data()->byteLength());
+    encoder << imageData->size();
+    encoder << sharedBuffer;
+}
+
+Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode(Decoder& decoder)
+{
+    Optional<IntSize> imageDataSize;
+    Optional<Ref<SharedBuffer>> data;
+
+    decoder >> imageDataSize;
+    if (!imageDataSize)
+        return WTF::nullopt;
+
+    decoder >> data;
+    if (!data)
+        return WTF::nullopt;
+
+    // FIXME: Copying from the SharedBuffer into the ImageData is slow. Invent some way for the ImageData to simply just retain the SharedBuffer, and use it internally.
+    // Alternatively, we could create an overload for putImageData() which operates on the SharedBuffer directly.
+    auto imageData = ImageData::create(*imageDataSize, Uint8ClampedArray::create(reinterpret_cast<const uint8_t*>((*data)->data()), (*data)->size()));
+    if (!imageData)
+        return WTF::nullopt;
+
+    return { imageData.releaseNonNull() };
+}
 
 } // namespace IPC

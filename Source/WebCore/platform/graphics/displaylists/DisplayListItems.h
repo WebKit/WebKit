@@ -25,13 +25,16 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
 #include "DisplayList.h"
 #include "FloatPoint.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "Image.h"
+#include "ImageData.h"
 #include "Pattern.h"
+#include "SharedBuffer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
@@ -41,6 +44,7 @@ class TextStream;
 
 namespace WebCore {
 
+class ImageData;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -59,6 +63,10 @@ public:
     // Return bounds of this drawing operation in local coordinates.
     // Does not include effets of transform, shadow etc in the state.
     virtual Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
+
+    // Some operations (e.g. putImageData) operate in global bounds. For these operations, override this method.
+    // If applicable, the return value needs to include the effects of shadows, clipping, etc.
+    virtual Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
 
 private:
     bool isDrawingItem() const override { return true; }
@@ -2442,6 +2450,77 @@ Optional<Ref<FillEllipse>> FillEllipse::decode(Decoder& decoder)
     return FillEllipse::create(*rect);
 }
 
+class PutImageData : public DrawingItem {
+public:
+    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    {
+        return adoptRef(*new PutImageData(inputFormat, imageData, srcRect, destPoint));
+    }
+    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, Ref<ImageData>&& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    {
+        return adoptRef(*new PutImageData(inputFormat, WTFMove(imageData), srcRect, destPoint));
+    }
+
+    WEBCORE_EXPORT virtual ~PutImageData();
+
+    AlphaPremultiplication inputFormat() const { return m_inputFormat; }
+    ImageData& imageData() const { return m_imageData; }
+    IntRect srcRect() const { return m_srcRect; }
+    IntPoint destPoint() const { return m_destPoint; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<PutImageData>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint);
+    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&&, const IntRect& srcRect, const IntPoint& destPoint);
+
+    void apply(GraphicsContext&) const override;
+
+    Optional<FloatRect> globalBounds() const override { return FloatRect(m_destPoint, m_srcRect.size()); }
+
+    IntRect m_srcRect;
+    IntPoint m_destPoint;
+    Ref<ImageData> m_imageData;
+    AlphaPremultiplication m_inputFormat;
+};
+
+template<class Encoder>
+void PutImageData::encode(Encoder& encoder) const
+{
+    encoder << m_inputFormat;
+    encoder << m_imageData;
+    encoder << m_srcRect;
+    encoder << m_destPoint;
+}
+
+template<class Decoder>
+Optional<Ref<PutImageData>> PutImageData::decode(Decoder& decoder)
+{
+    Optional<AlphaPremultiplication> inputFormat;
+    Optional<Ref<ImageData>> imageData;
+    Optional<IntRect> srcRect;
+    Optional<IntPoint> destPoint;
+
+    decoder >> inputFormat;
+    if (!inputFormat)
+        return WTF::nullopt;
+
+    decoder >> imageData;
+    if (!imageData)
+        return WTF::nullopt;
+
+    decoder >> srcRect;
+    if (!srcRect)
+        return WTF::nullopt;
+
+    decoder >> destPoint;
+    if (!destPoint)
+        return WTF::nullopt;
+
+    return PutImageData::create(*inputFormat, WTFMove(*imageData), *srcRect, *destPoint);
+}
+
 class StrokeRect : public DrawingItem {
 public:
     static Ref<StrokeRect> create(const FloatRect& rect, float lineWidth)
@@ -2837,6 +2916,9 @@ void Item::encode(Encoder& encoder) const
     case ItemType::FillEllipse:
         encoder << downcast<FillEllipse>(*this);
         break;
+    case ItemType::PutImageData:
+        encoder << downcast<PutImageData>(*this);
+        break;
     case ItemType::StrokeRect:
         encoder << downcast<StrokeRect>(*this);
         break;
@@ -3036,6 +3118,10 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         if (auto item = FillEllipse::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
+    case ItemType::PutImageData:
+        if (auto item = PutImageData::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
     case ItemType::StrokeRect:
         if (auto item = StrokeRect::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
@@ -3135,6 +3221,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRoundedRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillRectWithRoundedHole)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(FillEllipse)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(PutImageData)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeRect)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokePath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(StrokeEllipse)
@@ -3194,6 +3281,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillRectWithRoundedHole,
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
+    WebCore::DisplayList::ItemType::PutImageData,
     WebCore::DisplayList::ItemType::StrokeRect,
     WebCore::DisplayList::ItemType::StrokePath,
     WebCore::DisplayList::ItemType::StrokeEllipse,

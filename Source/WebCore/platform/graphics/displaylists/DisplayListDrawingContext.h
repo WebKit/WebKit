@@ -36,6 +36,7 @@ public:
     WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize);
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
+    WEBCORE_EXPORT Recorder& recorder();
     DisplayList& displayList() { return m_displayList; }
     const DisplayList& displayList() const { return m_displayList; }
     const DisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }

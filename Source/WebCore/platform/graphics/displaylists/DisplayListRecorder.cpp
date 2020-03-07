@@ -50,6 +50,11 @@ Recorder::~Recorder()
     LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
+void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint)
+{
+    appendItem(WebCore::DisplayList::PutImageData::create(inputFormat, imageData, srcRect, destPoint));
+}
+
 void Recorder::willAppendItem(const Item& item)
 {
     if (item.isDrawingItem()
@@ -395,6 +400,8 @@ void Recorder::updateItemExtent(DrawingItem& item) const
 {
     if (Optional<FloatRect> rect = item.localBounds(graphicsContext()))
         item.setExtent(extentFromLocalBounds(rect.value()));
+    else if (Optional<FloatRect> rect = item.globalBounds())
+        item.setExtent(rect.value());
 }
 
 // FIXME: share with ShadowData

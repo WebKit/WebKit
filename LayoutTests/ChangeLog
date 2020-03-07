@@ -1,3 +1,14 @@
+2020-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Implement CanvasRenderingContext2D.putImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=208621
+        <rdar://problem/60068047>
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/putImageData-multiple-expected.html: Added.
+        * fast/canvas/putImageData-multiple.html: Added.
+
 2020-03-06  Daniel Bates  <dabates@apple.com>
 
         Add support for inserting and removing a text placeholder

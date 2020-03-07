@@ -34,7 +34,7 @@
 namespace WebKit {
 
 template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy {
+class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy, public DisplayList::Replayer::Delegate {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::m_backend;
 
@@ -53,15 +53,26 @@ public:
 
 private:
     using BaseConcreteImageBuffer::flushDrawingContext;
+    using BaseConcreteImageBuffer::putImageData;
 
     void flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier) override
     {
         if (displayList.itemCount()) {
-            WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList);
+            WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList, this);
             replayer.replay();
         }
         m_backend->flushContext();
         commitFlushContext(flushIdentifier);
+    }
+
+    bool apply(DisplayList::Item& item, GraphicsContext&) override
+    {
+        if (item.type() != DisplayList::ItemType::PutImageData)
+            return false;
+
+        auto& putImageDataItem = static_cast<DisplayList::PutImageData&>(item);
+        putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint());
+        return true;
     }
 };
 

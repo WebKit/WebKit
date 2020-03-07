@@ -30,6 +30,7 @@
 #include "RemoteImageBufferMessageHandler.h"
 #include <WebCore/DisplayListImageBuffer.h>
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/DisplayListRecorder.h>
 
 namespace WebKit {
 
@@ -70,6 +71,14 @@ protected:
         if (!m_backend)
             const_cast<RemoteImageBuffer&>(*this).RemoteImageBufferMessageHandler::waitForCreateImageBufferBackend();
         return m_backend.get();
+    }
+
+    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }) override
+    {
+        // The math inside ImageData::create() doesn't agree with the math inside ImageBufferBackend::putImageData() about how m_resolutionScale interacts with the data in the ImageBuffer.
+        // This means that putImageData() is only called when m_resolutionScale == 1.
+        ASSERT(m_backend->resolutionScale() == 1);
+        m_drawingContext.recorder().putImageData(inputFormat, imageData, srcRect, destPoint);
     }
 
     void flushContext() override

@@ -27,6 +27,8 @@
 #include "DisplayListItems.h"
 
 #include "FontCascade.h"
+#include "ImageData.h"
+#include "SharedBuffer.h"
 #include <wtf/text/TextStream.h>
 
 #if USE(CG)
@@ -138,6 +140,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<FillPath>(item));
     case ItemType::FillEllipse:
         return sizeof(downcast<FillEllipse>(item));
+    case ItemType::PutImageData:
+        return sizeof(downcast<PutImageData>(item));
     case ItemType::StrokeRect:
         return sizeof(downcast<StrokeRect>(item));
     case ItemType::StrokePath:
@@ -1147,6 +1151,42 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
+PutImageData::PutImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    : DrawingItem(ItemType::PutImageData)
+    , m_srcRect(srcRect)
+    , m_destPoint(destPoint)
+    , m_imageData(imageData.deepClone()) // This copy is actually required to preserve the semantics of putImageData().
+    , m_inputFormat(inputFormat)
+{
+}
+
+PutImageData::PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    : DrawingItem(ItemType::PutImageData)
+    , m_srcRect(srcRect)
+    , m_destPoint(destPoint)
+    , m_imageData(WTFMove(imageData))
+    , m_inputFormat(inputFormat)
+{
+}
+
+PutImageData::~PutImageData() = default;
+
+void PutImageData::apply(GraphicsContext&) const
+{
+    // Should be handled by the delegate.
+    ASSERT_NOT_REACHED();
+}
+
+static TextStream& operator<<(TextStream& ts, const PutImageData& item)
+{
+    ts << static_cast<const DrawingItem&>(item);
+    ts.dumpProperty("inputFormat", item.inputFormat());
+    ts.dumpProperty("imageDataSize", item.imageData().size());
+    ts.dumpProperty("srcRect", item.srcRect());
+    ts.dumpProperty("destPoint", item.destPoint());
+    return ts;
+}
+
 StrokeRect::StrokeRect(const FloatRect& rect, float lineWidth)
     : DrawingItem(ItemType::StrokeRect)
     , m_rect(rect)
@@ -1375,6 +1415,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::FillRectWithRoundedHole: ts << "fill-rect-with-rounded-hole"; break;
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
+    case ItemType::PutImageData: ts << "put-image-data"; break;
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
@@ -1507,6 +1548,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::FillEllipse:
         ts << downcast<FillEllipse>(item);
+        break;
+    case ItemType::PutImageData:
+        ts << downcast<PutImageData>(item);
         break;
     case ItemType::StrokeRect:
         ts << downcast<StrokeRect>(item);

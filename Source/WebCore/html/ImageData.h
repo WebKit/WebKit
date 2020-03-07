@@ -47,6 +47,8 @@ public:
 
     Uint8ClampedArray* data() const { return m_data.ptr(); }
 
+    Ref<ImageData> deepClone() const;
+
 private:
     explicit ImageData(const IntSize&);
     ImageData(const IntSize&, Ref<Uint8ClampedArray>&&);

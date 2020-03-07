@@ -31,22 +31,32 @@
 
 namespace WebCore {
 
+enum class AlphaPremultiplication : uint8_t;
 class FloatRect;
 class GraphicsContext;
+class ImageData;
 
 namespace DisplayList {
 
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&);
+    class Delegate;
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, Delegate* = nullptr);
     WEBCORE_EXPORT ~Replayer();
 
     WEBCORE_EXPORT std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
+
+    class Delegate {
+    public:
+        virtual ~Delegate() { }
+        virtual bool apply(Item&, GraphicsContext&) { return false; }
+    };
     
 private:
     const DisplayList& m_displayList;
     GraphicsContext& m_context;
+    Delegate* m_delegate;
 };
 
 }

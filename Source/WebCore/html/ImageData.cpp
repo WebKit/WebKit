@@ -108,5 +108,10 @@ ImageData::ImageData(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((size.area() * 4).unsafeGet() <= m_data->length());
 }
 
+Ref<ImageData> ImageData::deepClone() const
+{
+    return adoptRef(*new ImageData(m_size, Uint8ClampedArray::create(m_data->data(), m_data->length())));
+}
+
 }
 

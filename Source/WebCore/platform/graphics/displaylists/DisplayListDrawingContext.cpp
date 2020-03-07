@@ -46,6 +46,13 @@ void DrawingContext::setTracksDisplayListReplay(bool tracksDisplayListReplay)
     m_replayedDisplayList.reset();
 }
 
+Recorder& DrawingContext::recorder()
+{
+    auto* graphicsContextImpl = context().impl();
+    ASSERT(graphicsContextImpl);
+    return static_cast<Recorder&>(*graphicsContextImpl);
+}
+
 void DrawingContext::replayDisplayList(GraphicsContext& destContext)
 {
     if (!m_displayList.itemCount())

@@ -33,12 +33,14 @@
 
 namespace WebCore {
 
+enum class AlphaPremultiplication : uint8_t;
 class FloatPoint;
 class FloatRect;
 class GlyphBuffer;
 class FloatPoint;
 class Font;
 class Image;
+class ImageData;
 
 struct GraphicsContextState;
 struct ImagePaintingOptions;
@@ -53,6 +55,8 @@ class Recorder : public GraphicsContextImpl {
 public:
     WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);
     WEBCORE_EXPORT virtual ~Recorder();
+
+    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint);
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 
@@ -124,7 +128,7 @@ private:
     void clipOut(const Path&) override;
     void clipPath(const Path&, WindRule) override;
     IntRect clipBounds() override;
-    void clipToImageBuffer(ImageBuffer&, const FloatRect&) override;
+    void clipToImageBuffer(WebCore::ImageBuffer&, const FloatRect&) override;
     
     void applyDeviceScaleFactor(float) override;
 
