@@ -765,6 +765,7 @@ public:
     uint64_t sessionID() const override;
     String documentURI() const override;
     String documentEncoding() const override;
+    AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
 protected:
     AccessibilityObject() = default;

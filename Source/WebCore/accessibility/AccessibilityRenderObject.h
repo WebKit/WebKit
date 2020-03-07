@@ -138,7 +138,7 @@ public:
     String actionVerb() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
-    virtual void getDocumentLinks(AccessibilityChildrenVector&);
+    AccessibilityChildrenVector documentLinks() override;
     FrameView* documentFrameView() const override;
 
     void clearChildren() override;

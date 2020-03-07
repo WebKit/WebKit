@@ -384,6 +384,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::SessionID, object.sessionID());
         setProperty(AXPropertyName::DocumentURI, object.documentURI());
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding());
+        setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
     }
 }
 
@@ -637,6 +638,7 @@ void AXIsolatedObject::setSelected(bool value)
         object->setSelected(value);
     });
 }
+
 void AXIsolatedObject::setSelectedRows(AccessibilityChildrenVector& value)
 {
     performFunctionOnMainThread([&value](AXCoreObject* object) {

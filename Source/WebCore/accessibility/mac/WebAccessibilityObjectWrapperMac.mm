@@ -2454,11 +2454,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 
     if (backingObject->isWebArea()) {
-        if ([attributeName isEqualToString:@"AXLinkUIElements"]) {
-            AccessibilityObject::AccessibilityChildrenVector links;
-            downcast<AccessibilityRenderObject>(*backingObject).getDocumentLinks(links);
-            return convertToNSArray(links);
-        }
+        if ([attributeName isEqualToString:@"AXLinkUIElements"])
+            return convertToNSArray(backingObject->documentLinks());
+
         if ([attributeName isEqualToString:@"AXLoaded"])
             return [NSNumber numberWithBool:backingObject->isLoaded()];
         if ([attributeName isEqualToString:@"AXLayoutCount"])

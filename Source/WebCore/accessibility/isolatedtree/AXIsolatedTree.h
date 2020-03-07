@@ -64,7 +64,7 @@ public:
 
     struct NodeChange {
         Ref<AXIsolatedObject> m_isolatedObject;
-        AccessibilityObjectWrapper* m_wrapper;
+        RetainPtr<AccessibilityObjectWrapper> m_wrapper;
         NodeChange(AXIsolatedObject&, AccessibilityObjectWrapper*);
         NodeChange(const NodeChange&);
     };

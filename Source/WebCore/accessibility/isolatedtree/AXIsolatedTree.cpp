@@ -182,7 +182,7 @@ void AXIsolatedTree::setFocusedNode(AXID axID)
     for (const auto& item : m_pendingAppends) {
         if (item.m_isolatedObject->objectID() == m_focusedNodeID
             && m_readerThreadNodeMap.add(m_focusedNodeID, item.m_isolatedObject.get()) && item.m_wrapper)
-            m_readerThreadNodeMap.get(m_focusedNodeID)->attachPlatformWrapper(item.m_wrapper);
+            m_readerThreadNodeMap.get(m_focusedNodeID)->attachPlatformWrapper(item.m_wrapper.get());
     }
 }
 
@@ -238,7 +238,7 @@ void AXIsolatedTree::applyPendingChanges()
         }
 
         if (m_readerThreadNodeMap.add(axID, item.m_isolatedObject.get()) && item.m_wrapper)
-            m_readerThreadNodeMap.get(axID)->attachPlatformWrapper(item.m_wrapper);
+            m_readerThreadNodeMap.get(axID)->attachPlatformWrapper(item.m_wrapper.get());
 
         // The reference count of the just added IsolatedObject must be 2
         // because it is referenced by m_readerThreadNodeMap and m_pendingAppends.

@@ -1899,9 +1899,10 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
     
     return nullptr;
 }
-    
-void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLinks()
 {
+    AccessibilityChildrenVector result;
     Document& document = m_renderer->document();
     Ref<HTMLCollection> links = document.links();
     for (unsigned i = 0; auto* current = links->item(i); ++i) {
@@ -1923,6 +1924,8 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
             }
         }
     }
+
+    return result;
 }
 
 FrameView* AccessibilityRenderObject::documentFrameView() const 
