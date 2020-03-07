@@ -3978,6 +3978,7 @@
 		C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */ = {isa = PBXBuildFile; fileRef = 14813BF309EDF88E00F757E1 /* IDLParser.pm */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0E2F3272412BF29009C73EC /* libAccessibility.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0E2F3252412BF29009C73EC /* libAccessibility.tbd */; };
 		C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */ = {isa = PBXBuildFile; fileRef = C0F2A43F13869A280066C534 /* preprocessor.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C11A9ECE21403A5C00CFB20A /* SwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13501,6 +13502,7 @@
 		BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivate.h; sourceTree = "<group>"; };
 		C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedStrings.cpp; sourceTree = "<group>"; };
 		C078376023DF253E00C9C5C8 /* AXIsolatedObjectMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AXIsolatedObjectMac.mm; path = mac/AXIsolatedObjectMac.mm; sourceTree = "<group>"; };
+		C0E2F3252412BF29009C73EC /* libAccessibility.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAccessibility.tbd; path = usr/lib/libAccessibility.tbd; sourceTree = SDKROOT; };
 		C0F2A43F13869A280066C534 /* preprocessor.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = preprocessor.pm; path = scripts/preprocessor.pm; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
@@ -15970,6 +15972,7 @@
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
 				1AB33DA512551E320024457A /* IOKit.framework in Frameworks */,
 				93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */,
+				C0E2F3272412BF29009C73EC /* libAccessibility.tbd in Frameworks */,
 				1C022F0022CFED68006DF01B /* libcompression.tbd in Frameworks */,
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */,
@@ -16569,6 +16572,7 @@
 				A15E6BF01E212A6A0080AF34 /* Foundation.framework */,
 				1AB33DA412551E320024457A /* IOKit.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
+				C0E2F3252412BF29009C73EC /* libAccessibility.tbd */,
 				1C8D26D022C09CDE00D125F3 /* libcompression.tbd */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,

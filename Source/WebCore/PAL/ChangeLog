@@ -1,3 +1,13 @@
+2020-03-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of AccessibilitySupport AXSIsolatedTreeMode.
+        https://bugs.webkit.org/show_bug.cgi?id=208691
+
+        Reviewed by Chris Fleizach.
+
+        * pal/spi/cocoa/AccessibilitySupportSPI.h:
+        Added constants and prototypes used in AXIsolatedTreeMode support.
+
 2020-03-06  Peng Liu  <peng.liu6@apple.com>
 
         Use the feature flags mechanism to give default feature preference values
