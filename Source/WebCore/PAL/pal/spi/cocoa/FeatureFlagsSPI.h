@@ -25,15 +25,16 @@
 
 #pragma once
 
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <os/feature_private.h>
 
 #else
 
-#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
 #define os_feature_enabled(d, f) _os_feature_enabled_impl(#d, #f)
 extern "C" bool _os_feature_enabled_impl(const char *domain, const char *feature);
 #endif
 
-#endif
+#endif // HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
