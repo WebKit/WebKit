@@ -312,7 +312,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     MarkedArgumentBuffer args;
     args.append(propertyName.value(m_globalObject));
     ASSERT(!args.hasOverflowed());
-    return call(m_globalObject, asObject(toJSONFunction), callType, callData, baseValue, args);
+    RELEASE_AND_RETURN(scope, call(m_globalObject, asObject(toJSONFunction), callType, callData, baseValue, args));
 }
 
 Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& builder, JSValue value, const Holder& holder, const PropertyNameForFunctionCall& propertyName)

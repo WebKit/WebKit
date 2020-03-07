@@ -1,3 +1,13 @@
+2020-03-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r258049): Unchecked JS exception in jsc::Stringifier::toJSON
+        https://bugs.webkit.org/show_bug.cgi?id=208766
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON): Add missing RELEASE_AND_RETURN.
+
 2020-03-07  Mark Lam  <mark.lam@apple.com>
 
         Remove bad assertion in FTLLowerDFGToB3's compileDelBy().
