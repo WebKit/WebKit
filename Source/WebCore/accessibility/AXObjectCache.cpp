@@ -721,10 +721,7 @@ bool AXObjectCache::clientSupportsIsolatedTree()
     if (!RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled())
         return false;
 
-    AXClientType type = _AXGetClientForCurrentRequestUntrusted();
-    // FIXME: Remove unknown client before setting isAccessibilityIsolatedTreeEnabled initial value = true.
-    return type == kAXClientTypeVoiceOver
-        || type == kAXClientTypeUnknown;
+    return _AXGetClientForCurrentRequestUntrusted() == kAXClientTypeVoiceOver;
 }
 #endif
 

@@ -520,6 +520,8 @@ class Driver(object):
             cmd.append('--no-timeout')
         if self._port.get_option('show_touches'):
             cmd.append('--show-touches')
+        if self._port.get_option('accessibility_isolated_tree'):
+            cmd.append('--accessibility-isolated-tree')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

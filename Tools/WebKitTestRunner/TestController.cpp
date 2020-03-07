@@ -476,7 +476,9 @@ void TestController::initialize(int argc, const char* argv[])
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
     m_internalFeatures = options.internalFeatures;
     m_experimentalFeatures = options.experimentalFeatures;
-
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_accessibilityIsolatedTreeMode = options.accessibilityIsolatedTreeMode;
+#endif
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
     if (m_usingServerMode)
         m_printSeparators = true;
@@ -961,6 +963,10 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetShouldUseServiceWorkerShortTimeout(preferences, options.contextOptions.useServiceWorkerShortTimeout);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WKPreferencesSetIsAccessibilityIsolatedTreeEnabled(preferences, accessibilityIsolatedTreeMode());
+#endif
+    
     platformResetPreferencesToConsistentValues();
 }
 
@@ -991,6 +997,12 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     }
     WKDictionarySetItem(resetMessageBody.get(), allowedHostsKey.get(), allowedHostsValue.get());
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WKRetainPtr<WKStringRef> axIsolatedModeKey = adoptWK(WKStringCreateWithUTF8CString("AccessibilityIsolatedTree"));
+    WKRetainPtr<WKBooleanRef> axIsolatedModeValue = adoptWK(WKBooleanCreate(m_accessibilityIsolatedTreeMode));
+    WKDictionarySetItem(resetMessageBody.get(), axIsolatedModeKey.get(), axIsolatedModeValue.get());
+#endif
+    
     if (options.jscOptions.length()) {
         WKRetainPtr<WKStringRef> jscOptionsKey = adoptWK(WKStringCreateWithUTF8CString("JSCOptions"));
         WKRetainPtr<WKStringRef> jscOptionsValue = adoptWK(WKStringCreateWithUTF8CString(options.jscOptions.c_str()));

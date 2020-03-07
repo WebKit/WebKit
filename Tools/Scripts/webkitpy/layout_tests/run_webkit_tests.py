@@ -302,6 +302,7 @@ def parse_args(args):
             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
+        optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
     ]))
 
     option_group_definitions.append(("iOS Options", [

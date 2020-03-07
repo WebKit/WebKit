@@ -133,6 +133,10 @@ public:
 
     void simulateWebNotificationClick(uint64_t notificationID);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool accessibilityIsolatedTreeMode() const { return m_accessibilityIsolatedTreeMode; }
+#endif
+    
     // Geolocation.
     void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
@@ -597,6 +601,10 @@ private:
 
     bool m_allowAnyHTTPSCertificateForAllowedHosts { false };
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool m_accessibilityIsolatedTreeMode { false };
+#endif
+    
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
     bool m_shouldDecideResponsePolicyAfterDelay { false };
 

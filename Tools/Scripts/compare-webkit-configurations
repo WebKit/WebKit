@@ -58,6 +58,8 @@ def main():
 def flag_for_comparison(comparison_name):
     if comparison_name == "remote-layer-tree":
         return "--remote-layer-tree"
+    if comparison_name == "accessibility-isolated-tree":
+        return "--accessibility-isolated-tree"
     if comparison_name == "accelerated-drawing":
         return "--accelerated-drawing"
     if comparison_name == "webkit2":

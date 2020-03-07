@@ -197,6 +197,7 @@ private:
     bool m_useWorkQueue { false };
     bool m_pixelResultIsPending { false };
     bool m_dumpJSConsoleLogInStdErr { false };
+    bool m_accessibilityIsolatedTreeMode { false };
 
     WTF::Seconds m_timeout;
 

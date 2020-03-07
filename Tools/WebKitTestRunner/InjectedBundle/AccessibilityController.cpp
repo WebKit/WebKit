@@ -32,7 +32,9 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSAccessibilityController.h"
-
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#include <pal/spi/mac/HIServicesSPI.h>
+#endif
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
@@ -46,14 +48,26 @@ Ref<AccessibilityController> AccessibilityController::create()
 
 AccessibilityController::AccessibilityController()
 {
-#if PLATFORM(MAC)
-    m_useAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
-#endif
 }
 
 AccessibilityController::~AccessibilityController()
 {
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AccessibilityController::setAccessibilityIsolatedTreeMode(bool flag)
+{
+    m_accessibilityIsolatedTreeMode = flag;
+    updateIsolatedTreeMode();
+}
+
+void AccessibilityController::updateIsolatedTreeMode()
+{
+    // Override to set identifier to VoiceOver so that requests are handled in isolated mode.
+    _AXSetClientIdentificationOverride(m_accessibilityIsolatedTreeMode ? kAXClientTypeVoiceOver : kAXClientTypeNoActiveRequestFound);
+    m_useMockAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
+}
+#endif
 
 void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
@@ -93,7 +107,8 @@ Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
 
 void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& function)
 {
-    if (m_useAXThread) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (m_useMockAXThread) {
         AXThread::dispatch([&function, this] {
             function();
             m_semaphore.signal();
@@ -106,6 +121,7 @@ void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& fun
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, .25, false);
         m_semaphore.wait();
     } else
+#endif
         function();
 }
 #endif

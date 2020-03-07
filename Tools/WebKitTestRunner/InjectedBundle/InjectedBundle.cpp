@@ -242,6 +242,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (shouldGC)
             WKBundleGarbageCollectJavaScriptObjects(m_bundle);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        WKRetainPtr<WKStringRef> axIsolatedModeKey = adoptWK(WKStringCreateWithUTF8CString("AccessibilityIsolatedTree"));
+        m_accessibilityIsolatedTreeMode = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, axIsolatedModeKey.get())));
+#endif
+        
         WKRetainPtr<WKStringRef> allowedHostsKey = adoptWK(WKStringCreateWithUTF8CString("AllowedHosts"));
         WKTypeRef allowedHostsValue = WKDictionaryGetItemForKey(messageBodyDictionary, allowedHostsKey.get());
         if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
@@ -557,6 +562,9 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_textInputController = TextInputController::create();
 #if HAVE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_accessibilityController->setAccessibilityIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
+#endif
 #endif
 
     // Don't change experimental or internal features here; those should be set in TestController::resetPreferencesToConsistentValues().

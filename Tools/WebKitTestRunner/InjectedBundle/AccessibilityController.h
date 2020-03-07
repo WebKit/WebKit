@@ -51,6 +51,10 @@ public:
     // Enhanced accessibility.
     void enableEnhancedAccessibility(bool);
     bool enhancedAccessibilityEnabled();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void setAccessibilityIsolatedTreeMode(bool);
+#endif
     
     JSRetainPtr<JSStringRef> platformName();
 
@@ -91,12 +95,15 @@ private:
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 
-#if PLATFORM(COCOA)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void updateIsolatedTreeMode();
+    
     // _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
     // do not work for WebKitTestRunner since this is calling directly into
     // WebCore/accessibility via JavaScript without going through HIServices.
     // Thus to simulate the behavior of HIServices, AccessibilityController is spawning a secondary thread to service the JavaScript requests.
-    bool m_useAXThread { false };
+    bool m_useMockAXThread { false };
+    bool m_accessibilityIsolatedTreeMode { false };
     BinarySemaphore m_semaphore;
 #endif
 };

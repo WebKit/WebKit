@@ -60,6 +60,9 @@ def parse_args(extra_args=None, tests_included=False, new_results=False, print_n
     if not '--world-leaks' in extra_args:
         args.append('--world-leaks')
 
+    if not '--accessibility-isolated-tree' in extra_args:
+        args.append('--accessibility-isolated-tree')
+
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.

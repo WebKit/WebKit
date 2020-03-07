@@ -99,6 +99,14 @@ static bool handleOptionAllowAnyHTTPSCertificateForAllowedHosts(Options& options
     return true;
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+static bool handleOptionAccessibilityIsolatedTreeMode(Options& options, const char*, const char*)
+{
+    options.accessibilityIsolatedTreeMode = true;
+    return true;
+}
+#endif
+
 static bool handleOptionAllowedHost(Options& options, const char*, const char* host)
 {
     options.allowedHosts.insert(host);
@@ -154,7 +162,10 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--world-leaks", "Check for leaks of world objects (currently, documents)", handleOptionCheckForWorldLeaks));
     optionList.append(Option("--experimental-feature", "Enable experimental feature", handleOptionExperimentalFeature, true));
     optionList.append(Option("--internal-feature", "Enable internal feature", handleOptionInternalFeature, true));
-
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    optionList.append(Option("--accessibility-isolated-tree", "Enable accessibility isolated tree mode for tests", handleOptionAccessibilityIsolatedTreeMode));
+#endif
+    
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
 

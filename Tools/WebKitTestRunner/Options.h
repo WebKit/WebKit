@@ -52,6 +52,9 @@ struct Options {
     bool shouldShowTouches { false };
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool accessibilityIsolatedTreeMode { false };
+#endif
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     HashMap<String, bool> internalFeatures;
