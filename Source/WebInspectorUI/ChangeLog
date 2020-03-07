@@ -1,5 +1,29 @@
 2020-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: AXI: no way to expand/collapse sidebar sections with Tab navigation
+        https://bugs.webkit.org/show_bug.cgi?id=208562
+        <rdar://problem/60028941>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header):
+        (.details-section > .header::before):
+        Increase the height of the clickble area so it matches the height
+        of the header section.
+
+        (.details-section .header:focus):
+        (.details-section .header:focus::before):
+        Adjust the focus ring around the expand/collapse triangle so it has rounded corners.
+
+        * UserInterface/Views/DetailsSection.js:
+        (WI.DetailsSection):
+        (WI.DetailsSection.prototype._headerElementClicked):
+        (WI.DetailsSection.prototype._headerElementMouseDown):
+        (WI.DetailsSection.prototype._headerElementKeyPress):
+
+2020-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: AXI: scope bars should be focusable when navigating by pressing Tab
         https://bugs.webkit.org/show_bug.cgi?id=208277
         <rdar://problem/59828111>

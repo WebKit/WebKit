@@ -48,8 +48,8 @@
 .details-section > .header {
     position: sticky;
     top: var(--details-section-header-top);
-    height: 23px;
-    padding: 4px 0;
+    height: var(--details-section-header-height);
+    padding: var(--details-section-header-vertical-padding) 0;
     -webkit-padding-end: 5px;
     font-size: 11px;
     font-weight: bold;
@@ -61,6 +61,9 @@
 
     /* Ensure the headers are displayed above scrollbars. */
     z-index: var(--z-index-header);
+
+    --details-section-header-height: 23px;
+    --details-section-header-vertical-padding: 4px;
 }
 
 .details-section > .header > .options > .navigation-bar {
@@ -100,12 +103,23 @@ body[dir=rtl] .details-section > .header > .options {
 .details-section > .header::before {
     display: block;
     width: 21px;
-    height: 100%;
+    height: var(--details-section-header-height);
+    margin-top: calc(-1 * var(--details-section-header-vertical-padding));
     content: "";
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
+}
+
+.details-section .header:focus {
+    outline: none;
+}
+
+.details-section .header:focus::before {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -5px;
+    border-radius: 9px;
 }
 
 body[dir=rtl] .details-section > .header::before {

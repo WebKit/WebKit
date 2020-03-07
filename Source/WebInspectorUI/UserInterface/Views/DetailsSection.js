@@ -35,8 +35,11 @@ WI.DetailsSection = class DetailsSection extends WI.Object
         this._element.classList.add(identifier, "details-section");
 
         this._headerElement = document.createElement("div");
+        this._headerElement.addEventListener("mousedown", this._headerElementMouseDown.bind(this));
         this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
+        this._headerElement.addEventListener("keypress", this._headerElementKeyPress.bind(this));
         this._headerElement.className = "header";
+        this._headerElement.tabIndex = 0;
         this._element.appendChild(this._headerElement);
 
         if (optionsElement instanceof HTMLElement) {
@@ -131,16 +134,40 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
     // Private
 
-    _headerElementClicked(event)
+    _headerElementMouseDown(event)
     {
-        if (this._optionsElement && this._optionsElement.contains(event.target))
+        if (this._optionsElement?.contains(event.target))
             return;
 
-        var collapsed = this.collapsed;
+        // Don't lose focus if already focused.
+        if (document.activeElement === this._headerElement)
+            return;
+
+        event.preventDefault();
+    }
+
+    _headerElementClicked(event)
+    {
+        if (this._optionsElement?.contains(event.target))
+            return;
+
+        let collapsed = this.collapsed;
         this.collapsed = !collapsed;
         this._expandedByUser = collapsed;
 
         this._element.scrollIntoViewIfNeeded(false);
+    }
+
+    _headerElementKeyPress(event)
+    {
+        if (event.code === "Space" || event.code === "Enter") {
+            if (this._optionsElement?.contains(event.target))
+                return;
+
+            let collapsed = this.collapsed;
+            this.collapsed = !collapsed;
+            this._expandedByUser = collapsed;
+        }
     }
 
     _optionsElementMouseDown(event)
