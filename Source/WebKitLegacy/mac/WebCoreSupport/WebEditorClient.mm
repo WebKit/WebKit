@@ -1258,10 +1258,11 @@ void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& requ
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
     NSDictionary *options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->data().text() range:range types:NSTextCheckingAllSystemTypes options:options inSpellDocumentWithTag:0 completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
-            [currentLoop performSelector:@selector(perform) 
-                                  target:[[[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results] autorelease]
-                                argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        RetainPtr<WebEditorSpellCheckResponder> responder = adoptNS([[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results]);
+        [currentLoop performBlock:^{
+            [responder perform];
         }];
+    }];
 #endif
 }
 

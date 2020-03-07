@@ -1,3 +1,19 @@
+2020-03-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Flaky Test: editing/spelling/spellcheck-async.html
+        https://bugs.webkit.org/show_bug.cgi?id=160571
+
+        Reviewed by Tim Horton.
+        
+        The old code called -performSelector:target:... with an autoreleased target,
+        and nothing keeps the target alive until the call to -perform on the main thread.
+
+        Change this to a block which copies in a RetainPtr<> to make ownership clearer
+        and fix the crash.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCheckingOfString):
+
 2020-03-06  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Convert CDMFactory away from platformStrategies() and use WebProcess settings instead
