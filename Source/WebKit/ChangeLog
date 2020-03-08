@@ -1,3 +1,22 @@
+2020-03-08  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Null-dereference crash in GPUProcessProxy::openGPUProcessConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=208772
+
+        Reviewed by Maciej Stachowiak.
+
+        AuxiliaryProcessProxy::connection() will return a null-pointer if called before the remote
+        process has launched and a connection established. Rather than send a message directly to
+        the proxy's IPC::Connection object (which can be null), just call sendWithAsyncReply()
+        directly on the proxy inself, which will correctly enqueue the message for sending when the
+        connection is fully established.
+
+        Because this crash occurs whenever the "useGPUProcessForMedia" setting is enabled, this is
+        covered by existing WP2 tests when those tests are run with that setting enabled.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::openGPUProcessConnection):
+
 2020-03-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Canvas drawing commands have to be flushed to the GPUProcess in batches
