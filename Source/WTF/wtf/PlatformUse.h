@@ -271,9 +271,6 @@
 
 #if PLATFORM(COCOA)
 #define USE_MEDIAREMOTE 1
-#endif
-
-#if PLATFORM(MAC)
 #define USE_DICTATION_ALTERNATIVES 1
 #endif
 
