@@ -50,6 +50,13 @@
 - (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler;
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
 - (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
+- (void)callUIProcessMethodWithReplyBlock;
+
+@end
+
+@protocol LocalObjectProtocol <NSObject>
+
+- (void)doSomethingWithCompletionHandler:(void (^)(void))completionHandler;
 
 @end
 
@@ -58,6 +65,13 @@ static inline _WKRemoteObjectInterface *remoteObjectInterface()
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RemoteObjectProtocol)];
 
     [interface setClasses:[NSSet setWithObjects:[NSDictionary class], [NSString class], [NSURL class], nil] forSelector:@selector(selectionAndClickInformationForClickAtPoint:completionHandler:) argumentIndex:0 ofReply:YES];
+
+    return interface;
+}
+
+static inline _WKRemoteObjectInterface *localObjectInterface()
+{
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(LocalObjectProtocol)];
 
     return interface;
 }

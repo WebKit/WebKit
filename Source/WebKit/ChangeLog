@@ -1,3 +1,21 @@
+2020-03-07  David Quesada  <david_quesada@apple.com>
+
+        Crash in -[_WKRemoteObjectRegistry _invokeMethod:] block when calling a reply block after the web view has deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=208781
+        rdar://problem/60061016
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+            When the app calls a reply block for a message from the injected bundle, add a nil
+            check for the underlying WebKit::RemoteObjectRegistry before attempting to send the
+            reply details back to the web process. It's possible that before this block is
+            called, the associated web view could have been deallocated, which would invalidate
+            this _WKRemoteObjectRegistry.
+
 2020-03-07  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt UIContextMenu for WKFileUploadPanel

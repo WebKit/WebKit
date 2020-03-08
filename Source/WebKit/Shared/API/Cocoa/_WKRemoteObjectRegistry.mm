@@ -291,7 +291,8 @@ static bool validateReplyBlockSignature(NSMethodSignature *wireBlockSignature, P
                 auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
                 [encoder encodeObject:invocation forKey:invocationKey];
 
-                remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
+                if (remoteObjectRegistry->_remoteObjectRegistry)
+                    remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
                 checker->didCallReplyBlock();
             });
 

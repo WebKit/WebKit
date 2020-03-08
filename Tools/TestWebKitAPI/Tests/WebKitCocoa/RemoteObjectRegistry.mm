@@ -33,8 +33,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 TEST(WebKit, RemoteObjectRegistry)
 {
@@ -157,4 +159,54 @@ TEST(WebKit, RemoteObjectRegistry)
         }];
         TestWebKitAPI::Util::run(&isDone);
     }
+}
+
+@interface LocalObject : NSObject<LocalObjectProtocol> {
+@public
+    BlockPtr<void()> completionHandlerFromWebProcess;
+    bool hasCompletionHandler;
+}
+@end
+
+@implementation LocalObject
+
+- (void)doSomethingWithCompletionHandler:(void (^)(void))completionHandler
+{
+    completionHandlerFromWebProcess = completionHandler;
+    hasCompletionHandler = true;
+}
+
+@end
+
+TEST(WebKit, RemoteObjectRegistry_CallReplyBlockAfterOriginatingWebViewDeallocates)
+{
+    LocalObject *localObject = [[[LocalObject alloc] init] autorelease];
+    WeakObjCPtr<WKWebView> weakWebViewPtr;
+
+    @autoreleasepool {
+        NSString * const testPlugInClassName = @"RemoteObjectRegistryPlugIn";
+        auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        weakWebViewPtr = webView.get();
+
+        _WKRemoteObjectInterface *interface = remoteObjectInterface();
+        id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
+
+        [[webView _remoteObjectRegistry] registerExportedObject:localObject interface:localObjectInterface()];
+
+        [object callUIProcessMethodWithReplyBlock];
+
+        TestWebKitAPI::Util::run(&localObject->hasCompletionHandler);
+    }
+
+    while (true) {
+        @autoreleasepool {
+            if (!weakWebViewPtr.get())
+                break;
+
+            TestWebKitAPI::Util::spinRunLoop();
+        }
+    }
+
+    localObject->completionHandlerFromWebProcess();
 }

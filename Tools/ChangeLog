@@ -1,3 +1,25 @@
+2020-03-07  David Quesada  <david_quesada@apple.com>
+
+        Crash in -[_WKRemoteObjectRegistry _invokeMethod:] block when calling a reply block after the web view has deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=208781
+        rdar://problem/60061016
+
+        Reviewed by Alex Christensen.
+
+        Add a test that recreates the conditions of this crash:
+        - Send a message from the injected bundle to the UI process that contains a reply block.
+        - Hold a reference to the reply block.
+        - Let the web view deallocate.
+        - Call the block, and expect not to crash.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        (localObjectInterface):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (-[LocalObject doSomethingWithCompletionHandler:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn callUIProcessMethodWithReplyBlock]):
+
 2020-03-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         TextManipulationController should work with ARIA labels
