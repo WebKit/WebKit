@@ -1,3 +1,26 @@
+2020-03-08  Brady Eidson  <beidson@apple.com>
+
+        Better stream loader management with incremental PDF loading.
+        https://bugs.webkit.org/show_bug.cgi?id=208790
+
+        Reviewed by Tim Horton.
+
+        When a stream loader was completing normally, we were leaking it forever.
+        This adds much better management of outstanding stream loaders
+        (and logging to help verify the count is as expected)
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithBytes):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::ByteRangeRequest::maybeComplete):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeUnconditionally):
+        (WebKit::PDFPlugin::didReceiveResponse):
+        (WebKit::PDFPlugin::didFinishLoading):
+        (WebKit::PDFPlugin::forgetLoader):
+        (WebKit::PDFPlugin::cancelAndForgetLoader):
+
 2020-03-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Some fixes for building Mac port

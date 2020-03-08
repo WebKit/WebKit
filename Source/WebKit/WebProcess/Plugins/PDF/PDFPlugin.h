@@ -345,8 +345,8 @@ private:
         void clearStreamLoader();
         void addData(const uint8_t* data, size_t count) { m_accumulatedData.append(data, count); }
 
-        void completeWithBytes(const uint8_t*, size_t);
-        void completeWithAccumulatedData();
+        void completeWithBytes(const uint8_t*, size_t, PDFPlugin&);
+        void completeWithAccumulatedData(PDFPlugin&);
 
         bool maybeComplete(PDFPlugin&);
         void completeUnconditionally(PDFPlugin&);
@@ -361,6 +361,7 @@ private:
     void unconditionalCompleteOutstandingRangeRequests();
 
     ByteRangeRequest* byteRangeRequestForLoader(WebCore::NetscapePlugInStreamLoader&);
+    void forgetLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetLoader(WebCore::NetscapePlugInStreamLoader&);
 
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
