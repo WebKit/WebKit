@@ -626,6 +626,11 @@ std::unique_ptr<LegacyCDMSession> MediaPlayer::createSession(const String& keySy
     return m_private->createSession(keySystem, client);
 }
 
+void MediaPlayer::setCDM(LegacyCDM* cdm)
+{
+    m_private->setCDM(cdm);
+}
+
 void MediaPlayer::setCDMSession(LegacyCDMSession* session)
 {
     m_private->setCDMSession(session);

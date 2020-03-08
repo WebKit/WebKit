@@ -5128,6 +5128,11 @@ void HTMLMediaElement::mediaEngineWasUpdated()
         m_player->cdmInstanceAttached(m_mediaKeys->cdmInstance());
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (m_player && m_webKitMediaKeys)
+        m_player->setCDM(&m_webKitMediaKeys->cdm());
+#endif
+
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (!m_player)
         return;

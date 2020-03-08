@@ -64,6 +64,7 @@ class CachedResourceLoader;
 class GraphicsContextGLOpenGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
+class LegacyCDM;
 class LegacyCDMSessionClient;
 class MediaPlaybackTarget;
 class MediaPlayer;
@@ -358,6 +359,7 @@ public:
     enum MediaKeyException { NoError, InvalidPlayerState, KeySystemNotSupported };
 
     std::unique_ptr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient*);
+    void setCDM(LegacyCDM*);
     void setCDMSession(LegacyCDMSession*);
     void keyAdded();
 #endif
@@ -626,6 +628,8 @@ public:
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback) { client().requestInstallMissingPlugins(details, description, callback); }
 #endif
+
+    const MediaPlayerPrivateInterface* playerPrivate() const { return m_private.get(); }
 
 private:
     MediaPlayer(MediaPlayerClient&);

@@ -4195,6 +4195,8 @@
 		CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */; };
 		CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */; };
 		CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */; };
+		CDE555242405CCF2008A3DDB /* LegacyCDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA98E0A1603CD5900FEA3B1 /* LegacyCDM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDE555252405CCF2008A3DDB /* LegacyCDMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA98E0C1603CF3C00FEA3B1 /* LegacyCDMPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE595951BF16DF300A1CBE8 /* CDMSessionAVContentKeySession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE595931BF166AD00A1CBE8 /* CDMSessionAVContentKeySession.mm */; };
 		CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE595961BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h */; };
 		CDE5959D1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */; };
@@ -31393,6 +31395,8 @@
 				11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */,
 				141DC0481648348F00371E5A /* LayoutUnit.h in Headers */,
 				E451C6312394027900993190 /* LayoutUnits.h in Headers */,
+				CDE555242405CCF2008A3DDB /* LegacyCDM.h in Headers */,
+				CDE555252405CCF2008A3DDB /* LegacyCDMPrivate.h in Headers */,
 				CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */,
 				CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */,
 				CDE8B5F11A69778B00B4B66A /* LegacyCDMSessionClearKey.h in Headers */,

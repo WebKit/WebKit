@@ -128,13 +128,18 @@ bool WebKitMediaKeys::isTypeSupported(const String& keySystem, const String& mim
 
 void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
 {
-    if (m_mediaElement && m_mediaElement->player())
+    if (m_mediaElement && m_mediaElement->player()) {
         m_mediaElement->player()->setCDMSession(nullptr);
+        m_mediaElement->player()->setCDM(nullptr);
+    }
 
     m_mediaElement = makeWeakPtr(element);
 
-    if (m_mediaElement && m_mediaElement->player() && !m_sessions.isEmpty())
-        m_mediaElement->player()->setCDMSession(m_sessions.last()->session());
+    if (m_mediaElement && m_mediaElement->player()) {
+        m_mediaElement->player()->setCDM(m_cdm.get());
+        if (!m_sessions.isEmpty())
+            m_mediaElement->player()->setCDMSession(m_sessions.last()->session());
+    }
 }
 
 RefPtr<MediaPlayer> WebKitMediaKeys::cdmMediaPlayer(const LegacyCDM*) const

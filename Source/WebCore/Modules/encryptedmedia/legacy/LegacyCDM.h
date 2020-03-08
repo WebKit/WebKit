@@ -39,9 +39,9 @@ class LegacyCDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface> (LegacyCDM*)>;
-typedef bool (*CDMSupportsKeySystem)(const String&);
-typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
+using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
+using CDMSupportsKeySystem = WTF::Function<bool(const String&)>;
+using CDMSupportsKeySystemAndMimeType = WTF::Function<bool(const String&, const String&)>;
 
 class LegacyCDMClient {
 public:
@@ -50,7 +50,7 @@ public:
     virtual RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const = 0;
 };
 
-class LegacyCDM final {
+class WEBCORE_EXPORT LegacyCDM final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LegacyCDM(const String& keySystem);
@@ -59,8 +59,11 @@ public:
     static bool supportsKeySystem(const String&);
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
     static std::unique_ptr<LegacyCDM> create(const String& keySystem);
-    WEBCORE_EXPORT static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem, CDMSupportsKeySystemAndMimeType);
+    static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem&&, CDMSupportsKeySystemAndMimeType&&);
     ~LegacyCDM();
+
+    static void resetFactories();
+    static void clearFactories();
 
     bool supportsMIMEType(const String&) const;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&);
@@ -71,6 +74,7 @@ public:
     void setClient(LegacyCDMClient* client) { m_client = client; }
 
     RefPtr<MediaPlayer> mediaPlayer() const;
+    CDMPrivateInterface* cdmPrivate() const { return m_private.get(); }
 
 private:
     String m_keySystem;
