@@ -1334,7 +1334,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
 
 - (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
 {
-    auto* backingObject = self.updateObjectBackingStore;
+    auto* backingObject = self.axBackingObject;
     if (!backingObject)
         return nil;
 
