@@ -577,15 +577,6 @@ static inline BOOL AXObjectIsTextMarkerRange(id object)
     return object && CFGetTypeID((__bridge CFTypeRef)object) == AXTextMarkerRangeGetTypeID();
 }
 
-static id AXTextMarkerRange(id startMarker, id endMarker)
-{
-    ASSERT(startMarker != nil);
-    ASSERT(endMarker != nil);
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
-    ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
-    return CFBridgingRelease(AXTextMarkerRangeCreate(kCFAllocatorDefault, (AXTextMarkerRef)startMarker, (AXTextMarkerRef)endMarker));
-}
-
 static id AXTextMarkerRangeStart(id range)
 {
     ASSERT(range != nil);
@@ -918,19 +909,6 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
     return characterOffsetForTextMarker(self.axBackingObject->axObjectCache(), (__bridge CFTypeRef)textMarker);
 }
 
-static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
-{
-    ASSERT(cache);
-    if (!cache)
-        return nil;
-    
-    auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
-    if (!textMarkerData)
-        return nil;
-
-    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
-}
-
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
 {
     return textMarkerForVisiblePosition(self.axBackingObject->axObjectCache(), visiblePos);
@@ -975,14 +953,6 @@ static VisiblePosition visiblePositionForStartOfTextMarkerRange(AXObjectCache* c
 static VisiblePosition visiblePositionForEndOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
 {
     return visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeEnd(textMarkerRange));
-}
-
-static id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
-{
-    if (!textMarker1 || !textMarker2)
-        return nil;
-    
-    return AXTextMarkerRange(textMarker1, textMarker2);
 }
 
 // When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
@@ -1320,16 +1290,6 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
         return [attrString autorelease];
     });
-}
-
-static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
-{
-    if (!cache)
-        return nil;
-    
-    id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
-    id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
-    return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);
 }
 
 - (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition

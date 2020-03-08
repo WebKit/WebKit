@@ -3861,8 +3861,10 @@ String AccessibilityRenderObject::passwordFieldValue() const
 ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
 {
     // If the parent is a scroll view, then this object isn't really scrollable, the parent ScrollView should handle the scrolling.
-    if (parentObject() && parentObject()->isAccessibilityScrollView())
-        return nullptr;
+    if (auto* parent = parentObject()) {
+        if (parent->isScrollView())
+            return nullptr;
+    }
 
     if (!is<RenderBox>(renderer()))
         return nullptr;
