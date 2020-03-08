@@ -6814,6 +6814,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         completion(nil, nil);
 }
 
+- (CGPoint)contextMenuPresentationLocationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return [self lastInteractionLocation];
+}
+
 - (BOOL)_shouldUseContextMenus
 {
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)

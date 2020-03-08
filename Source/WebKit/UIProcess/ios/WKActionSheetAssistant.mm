@@ -97,6 +97,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
+    RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
     WeakObjCPtr<UIView> _view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;
@@ -632,6 +633,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self cleanupSheet];
 }
 
+#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU)
+- (void)removeContextMenuInteraction
+{
+    if (_dataDetectorContextMenuInteraction) {
+        [_view removeInteraction:_dataDetectorContextMenuInteraction.get()];
+        _dataDetectorContextMenuInteraction = nil;
+    }
+}
+
+- (void)ensureContextMenuInteraction
+{
+    if (!_dataDetectorContextMenuInteraction) {
+        _dataDetectorContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
+        [_view addInteraction:_dataDetectorContextMenuInteraction.get()];
+    }
+}
+#endif
+
 - (void)showDataDetectorsSheet
 {
 #if ENABLE(DATA_DETECTION)
@@ -667,6 +686,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSArray *dataDetectorsActions = [controller actionsForURL:targetURL identifier:_positionInformation->dataDetectorIdentifier selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
     if ([dataDetectorsActions count] == 0)
         return;
+    
+#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU)
+    auto delegate = _delegate.get();
+    if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)]) {
+        [self ensureContextMenuInteraction];
+        [_dataDetectorContextMenuInteraction _presentMenuAtLocation:[delegate contextMenuPresentationLocationForActionSheetAssistant:self]];
+        return;
+    }
+#endif
 
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
@@ -687,6 +715,55 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self cleanupSheet];
 #endif
 }
+
+#if USE(UICONTEXTMENU)
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
+{
+    DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+    NSDictionary *context = nil;
+    NSString *textAtSelection = nil;
+
+    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
+        context = [_delegate dataDetectionContextForActionSheetAssistant:self];
+    if ([_delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
+        textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
+
+    NSDictionary *newContext = nil;
+    DDResultRef ddResult = [controller resultForURL:_positionInformation->url identifier:_positionInformation->dataDetectorIdentifier selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
+
+    auto ddContextMenuActionClass = getDDContextMenuActionClass();
+    if (ddResult)
+        return [ddContextMenuActionClass contextMenuConfigurationWithResult:ddResult inView:_view.getAutoreleased() context:context menuIdentifier:nil];
+    return [ddContextMenuActionClass contextMenuConfigurationWithURL:_positionInformation->url inView:_view.getAutoreleased() context:context menuIdentifier:nil];
+}
+
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    auto delegate = _delegate.get();
+    CGPoint center = CGPointZero;
+    if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)])
+        center = [delegate contextMenuPresentationLocationForActionSheetAssistant:self];
+    RetainPtr<UIPreviewParameters> unusedPreviewParameters = adoptNS([[UIPreviewParameters alloc] init]);
+    RetainPtr<UIPreviewTarget> previewTarget = adoptNS([[UIPreviewTarget alloc] initWithContainer:_view.getAutoreleased() center:center]);
+    RetainPtr<UITargetedPreview> preview = adoptNS([[UITargetedPreview alloc] initWithView:_view.getAutoreleased() parameters:unusedPreviewParameters.get() target:previewTarget.get()]);
+
+    return preview.autorelease();
+}
+
+- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
+    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
+    return style;
+}
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:^{
+        [self removeContextMenuInteraction];
+    }];
+}
+#endif
 
 - (void)cleanupSheet
 {

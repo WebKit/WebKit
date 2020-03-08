@@ -40,6 +40,7 @@ struct InteractionInformationAtPosition;
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
 @protocol WKActionSheetDelegate;
+@protocol UIContextMenuInteractionDelegate;
 
 @protocol WKActionSheetAssistantDelegate <NSObject>
 @required
@@ -61,11 +62,12 @@ struct InteractionInformationAtPosition;
 - (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 - (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant getAlternateURLForImage:(UIImage *)image completion:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completion;
+- (CGPoint)contextMenuPresentationLocationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 
 @end
 
-#if ENABLE(DATA_DETECTION)
-@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
+#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU)
+@interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate, UIContextMenuInteractionDelegate>
 #else
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
 #endif

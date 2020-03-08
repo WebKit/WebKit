@@ -1,3 +1,24 @@
+2020-03-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt Context Menus for Data Detectors
+        https://bugs.webkit.org/show_bug.cgi?id=208779
+
+        Switch to context menus for data detector action sheets.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant removeContextMenuInteraction]):
+        (-[WKActionSheetAssistant ensureContextMenuInteraction]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKActionSheetAssistant _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:willEndForConfiguration:animator:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuDisplayLocationForActionSheetAssistant:]):
+
 2020-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Create a flag to disable in-app browser quirks
