@@ -72,7 +72,7 @@ open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
 close($fh) or die;
 
 my @ppIDLFiles;
-open(my $fh, '<', $ppIDLFilesList) or die "Cannot open $ppIDLFilesList";
+open($fh, '<', $ppIDLFilesList) or die "Cannot open $ppIDLFilesList";
 @ppIDLFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
 close($fh) or die;
 
