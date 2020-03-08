@@ -1,3 +1,43 @@
+2020-03-07  Brady Eidson  <beidson@apple.com>
+
+        Make PDF range requests to the network.
+        https://bugs.webkit.org/show_bug.cgi?id=208776
+
+        Reviewed by Alex Christensen.
+
+        We already handle a set of range requests from our data provider callbacks.
+        The current strategy is "wait until we've streamed enough of the entire resource, 
+        perform that request's callback"
+        
+        For linearized PDFs the second request ever made is for the very end of the PDF document,
+        so we have to wait for the entire document to load (which is what we already do in non-incremental mode)
+        
+        Now, we'll actually make the requests for missing data chunks from the network by using the document's request
+        and adding range headers.
+        
+        While it is now entirely misnamed, NetscapePlugInStreamLoader is a perfect fit for this.
+        
+        Once the range request completes from the network we can unblock the PDF thread and go to the next request.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::unconditionalCompleteOutstandingRangeRequests):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::ByteRangeRequest::clearStreamLoader):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithBytes):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::ByteRangeRequest::maybeComplete):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeUnconditionally):
+        (WebKit::PDFPlugin::willSendRequest):
+        (WebKit::PDFPlugin::didReceiveResponse):
+        (WebKit::PDFPlugin::didReceiveData):
+        (WebKit::PDFPlugin::didFail):
+        (WebKit::PDFPlugin::didFinishLoading):
+        (WebKit::PDFPlugin::byteRangeRequestForLoader):
+        (WebKit::PDFPlugin::cancelAndForgetLoader):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData):
+        (WebKit::PDFPlugin::unconditionalCompleteRangeRequest): Deleted.
+
 2020-03-07  David Quesada  <david_quesada@apple.com>
 
         Crash in -[_WKRemoteObjectRegistry _invokeMethod:] block when calling a reply block after the web view has deallocated

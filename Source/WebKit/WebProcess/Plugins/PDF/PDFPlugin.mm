@@ -43,6 +43,7 @@
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebFindOptions.h"
+#import "WebLoaderStrategy.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardProxyMessages.h"
@@ -91,7 +92,6 @@
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WorkQueue.h>
-#import <wtf/text/TextStream.h>
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 @interface PDFDocument ()
@@ -735,41 +735,50 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 
 void PDFPlugin::unconditionalCompleteOutstandingRangeRequests()
 {
-    for (auto& request : m_outstandingByteRangeRequests)
-        unconditionalCompleteRangeRequest(request);
+    for (auto& request : m_outstandingByteRangeRequests.values())
+        request.completeUnconditionally(*this);
     m_outstandingByteRangeRequests.clear();
-}
-
-void PDFPlugin::unconditionalCompleteRangeRequest(ByteRangeRequest& request)
-{
-    if (static_cast<uint64_t>(request.position) >= m_streamedBytes) {
-        request.completionHandler(nullptr, 0);
-        return;
-    }
-
-    ASSERT(m_data);
-
-    auto count = request.position + request.count > m_streamedBytes ? m_streamedBytes - request.position : request.count;
-    request.completionHandler(CFDataGetBytePtr(m_data.get()) + request.position, count);
 }
 
 void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t)>&& completionHandler)
 {
     ASSERT(isMainThread()); 
+    ASSERT(position >= 0);
 
-    if (m_streamedBytes >= position + count) {
-        ASSERT(m_data);
-        completionHandler(CFDataGetBytePtr(m_data.get()) + position, count);
+    ByteRangeRequest request = { static_cast<uint64_t>(position), count, WTFMove(completionHandler) };
+    if (request.maybeComplete(*this))
         return;
-    }
 
-    ByteRangeRequest request = { position, count, WTFMove(completionHandler) };
     if (m_documentFinishedLoading) {
-        unconditionalCompleteRangeRequest(request);
+        request.completeUnconditionally(*this);
         return;
     }
 
-    m_outstandingByteRangeRequests.append(WTFMove(request));
+    auto identifier = request.identifier();
+    m_outstandingByteRangeRequests.set(identifier, WTFMove(request));
+
+    auto* coreFrame = m_frame.coreFrame();
+    if (!coreFrame)
+        return;
+
+    auto* documentLoader = coreFrame->loader().documentLoader();
+    if (!documentLoader)
+        return;
+
+    auto resourceRequest = documentLoader->request();
+    resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
+    resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
+
+    LOG(PDF, "Scheduling a stream loader for request %llu (%lu bytes at %llu)\n", identifier, count, position);
+
+    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, *this, WTFMove(resourceRequest), [this, protectedThis = makeRef(*this), identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+        auto iterator = m_outstandingByteRangeRequests.find(identifier);
+        if (iterator == m_outstandingByteRangeRequests.end())
+            return;
+
+        iterator->value.setStreamLoader(loader.get());
+        m_streamLoaderMap.set(WTFMove(loader), identifier);
+    });
 }
 
 void PDFPlugin::adoptBackgroundThreadDocument()
@@ -791,6 +800,134 @@ void PDFPlugin::adoptBackgroundThreadDocument()
         return;
 
     installPDFDocument();
+}
+
+void PDFPlugin::ByteRangeRequest::clearStreamLoader()
+{
+    ASSERT(m_streamLoader);
+    m_streamLoader = nullptr;
+    m_accumulatedData.clear();
+}
+
+void PDFPlugin::ByteRangeRequest::completeWithBytes(const uint8_t* data, size_t count)
+{
+    LOG(PDF, "Completing range request %llu (%lu bytes at %llu) with %lu bytes from the main PDF buffer", identifier(), m_count, m_position, count);
+    m_completionHandler(data, count);
+}
+
+void PDFPlugin::ByteRangeRequest::completeWithAccumulatedData()
+{
+    LOG(PDF, "Completing range request %llu (%lu bytes at %llu) with %lu bytes from the network", identifier(), m_count, m_position, m_accumulatedData.size());
+    m_completionHandler(m_accumulatedData.data(), m_accumulatedData.size());
+}
+
+bool PDFPlugin::ByteRangeRequest::maybeComplete(PDFPlugin& plugin)
+{
+    if (plugin.m_streamedBytes >= m_position + m_count) {
+        completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, m_count);
+        return true;
+    }
+    return false;
+}
+
+void PDFPlugin::ByteRangeRequest::completeUnconditionally(PDFPlugin& plugin)
+{
+    if (m_position >= plugin.m_streamedBytes) {
+        completeWithBytes(nullptr, 0);
+        return;
+    }
+
+    ASSERT(plugin.m_data);
+
+    auto count = m_position + m_count > plugin.m_streamedBytes ? plugin.m_streamedBytes - m_position : m_count;
+    completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, count);
+}
+
+void PDFPlugin::willSendRequest(NetscapePlugInStreamLoader* loader, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&)
+{
+    // Redirections for range requests are unexpected.
+    cancelAndForgetLoader(*loader);
+}
+
+void PDFPlugin::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
+{
+    auto* request = byteRangeRequestForLoader(*loader);
+    if (!request)
+        cancelAndForgetLoader(*loader);
+
+    ASSERT(request->streamLoader() == loader);
+
+    // Range success! We'll expect to receive the data in future didReceiveData callbacks.
+    if (response.httpStatusCode() == 206)
+        return;
+
+    // If the response wasn't a successful range response, we don't need this stream loader anymore.
+    // This can happen, for example, if the server doesn't support range requests.
+    // We'll still resolve the ByteRangeRequest later once enough of the full resource has loaded.
+    cancelAndForgetLoader(*loader);
+
+    // The server might support range requests and explicitly told us this range was not satisfiable.
+    // In this case, we can reject the ByteRangeRequest right away.
+    if (response.httpStatusCode() == 416 && request) {
+        request->completeWithAccumulatedData();
+        m_outstandingByteRangeRequests.remove(request->identifier());
+    }
+}
+
+void PDFPlugin::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int count)
+{
+    auto* request = byteRangeRequestForLoader(*loader);
+    if (!request)
+        return;
+
+    request->addData(reinterpret_cast<const uint8_t*>(data), count);
+}
+
+void PDFPlugin::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
+{
+    if (m_documentFinishedLoading) {
+        auto identifier = m_streamLoaderMap.get(loader);
+        if (identifier)
+            m_outstandingByteRangeRequests.remove(identifier);
+    }
+
+    cancelAndForgetLoader(*loader);
+}
+
+void PDFPlugin::didFinishLoading(NetscapePlugInStreamLoader* loader)
+{
+    auto* request = byteRangeRequestForLoader(*loader);
+    if (!request)
+        return;
+
+    request->completeWithAccumulatedData();
+    m_outstandingByteRangeRequests.remove(request->identifier());
+}
+
+PDFPlugin::ByteRangeRequest* PDFPlugin::byteRangeRequestForLoader(NetscapePlugInStreamLoader& loader)
+{
+    uint64_t identifier = m_streamLoaderMap.get(&loader);
+    if (!identifier)
+        return nullptr;
+
+    auto request = m_outstandingByteRangeRequests.find(identifier);
+    if (request == m_outstandingByteRangeRequests.end())
+        return nullptr;
+
+    return &(request->value);
+}
+
+void PDFPlugin::cancelAndForgetLoader(NetscapePlugInStreamLoader& loader)
+{
+    if (auto* request = byteRangeRequestForLoader(loader)) {
+        if (request->streamLoader()) {
+            ASSERT(request->streamLoader() == &loader);
+            request->clearStreamLoader();
+        }
+    }
+
+    loader.cancel(loader.cancelledError());
+    m_streamLoaderMap.remove(&loader);
 }
 #endif // HAVE(INCREMENTAL_PDF_APIS)
 
@@ -1235,15 +1372,16 @@ void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {
-        size_t index = 0;
-        while (index < m_outstandingByteRangeRequests.size()) {
-            auto& request = m_outstandingByteRangeRequests[index];
-            if (m_streamedBytes >= request.position + request.count) {
-                request.completionHandler(CFDataGetBytePtr(m_data.get()) + request.position, request.count);
-                m_outstandingByteRangeRequests.remove(index);
-                continue;
-            }
-            ++index;
+        HashSet<uint64_t> handledRequests;
+        for (auto& request : m_outstandingByteRangeRequests.values()) {
+            if (request.maybeComplete(*this))
+                handledRequests.add(request.identifier());
+        }
+
+        for (auto identifier : handledRequests) {
+            auto request = m_outstandingByteRangeRequests.take(identifier);
+            if (request.streamLoader())
+                cancelAndForgetLoader(*request.streamLoader());
         }
     }
 #endif
