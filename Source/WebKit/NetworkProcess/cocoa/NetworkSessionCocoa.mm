@@ -778,7 +778,9 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
             else
                 networkLoadMetrics.remoteAddress = m.remoteAddress;
 #else
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
@@ -787,8 +789,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
             networkLoadMetrics.tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
             networkLoadMetrics.tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
 #else
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             networkLoadMetrics.tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
             networkLoadMetrics.tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
+            ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #endif
 
@@ -810,10 +814,12 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
                 responseBodyBytesReceived += transactionMetrics.countOfResponseBodyBytesReceived;
                 responseBodyDecodedSize += transactionMetrics.countOfResponseBodyBytesAfterDecoding ? transactionMetrics.countOfResponseBodyBytesAfterDecoding : transactionMetrics.countOfResponseBodyBytesReceived;
 #else
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
                 responseBodyBytesReceived += transactionMetrics._responseBodyBytesReceived;
                 responseBodyDecodedSize += transactionMetrics._responseBodyBytesDecoded ? transactionMetrics._responseBodyBytesDecoded : transactionMetrics._responseBodyBytesReceived;
+                ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             }
 

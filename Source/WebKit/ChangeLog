@@ -1,3 +1,10 @@
+2020-03-08  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the watchOS build
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2020-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Build Fix
