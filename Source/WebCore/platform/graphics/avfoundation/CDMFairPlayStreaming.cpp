@@ -216,8 +216,11 @@ void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
     factories.append(&CDMFactoryClearKey::singleton());
     factories.append(&CDMFactoryFairPlayStreaming::singleton());
 
-    InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
-    InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
+        InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
+    });
 }
 
 CDMFactoryFairPlayStreaming& CDMFactoryFairPlayStreaming::singleton()
