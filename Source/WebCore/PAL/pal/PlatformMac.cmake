@@ -20,11 +20,12 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
 
+    spi/cocoa/AVFoundationSPI.h
+    spi/cocoa/AVKitSPI.h
     spi/cocoa/AccessibilitySupportSPI.h
     spi/cocoa/AccessibilitySupportSoftLink.h
     spi/cocoa/AppSSOSPI.h
     spi/cocoa/AuthKitSPI.h
-    spi/cocoa/AVKitSPI.h
     spi/cocoa/AudioToolboxSPI.h
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CommonCryptoSPI.h
@@ -65,7 +66,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/ios/DataDetectorsUISPI.h
     spi/ios/GraphicsServicesSPI.h
 
-    spi/mac/AVFoundationSPI.h
     spi/mac/CoreUISPI.h
     spi/mac/DataDetectorsSPI.h
     spi/mac/HIServicesSPI.h
@@ -97,7 +97,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSViewSPI.h
     spi/mac/NSWindowSPI.h
     spi/mac/PIPSPI.h
-    spi/mac/QTKitSPI.h
     spi/mac/QuickLookMacSPI.h
     spi/mac/SpeechSynthesisSPI.h
     spi/mac/TelephonyUtilitiesSPI.h

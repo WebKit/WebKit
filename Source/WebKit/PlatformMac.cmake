@@ -44,7 +44,7 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_SOURCES
-    UIProcess/API/Cocoa/_WKContentWorld.mm
+    UIProcess/API/Cocoa/WKContentWorld.mm
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
 )

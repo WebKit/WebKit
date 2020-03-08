@@ -181,7 +181,7 @@ list(APPEND WebCore_SOURCES
     page/scrolling/mac/ScrollingCoordinatorMac.mm
     page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
     page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
-    page/scrolling/mac/ScrollingTreeMac.cpp
+    page/scrolling/mac/ScrollingTreeMac.mm
 
     platform/CPUMonitor.cpp
     platform/LocalizedStrings.cpp
