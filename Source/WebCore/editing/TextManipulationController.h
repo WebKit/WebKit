@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Position.h"
+#include "QualifiedName.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
@@ -126,16 +127,20 @@ public:
 
 private:
     bool isInManipulatedElement(Element&);
-    void observeParagraphs(VisiblePosition& start, VisiblePosition& end);
+    void observeParagraphs(const Position& start, const Position& end);
     void scheduleObservartionUpdate();
 
     struct ManipulationItemData {
         Position start;
         Position end;
+
+        WeakPtr<Element> element;
+        QualifiedName attributeName { nullQName() };
+
         Vector<ManipulationToken> tokens;
     };
 
-    void addItem(const Position& startOfParagraph, const Position& endOfParagraph, Vector<ManipulationToken>&&);
+    void addItem(ManipulationItemData&&);
     void flushPendingItemsForCallback();
     Optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<ManipulationToken>&);
 
