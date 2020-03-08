@@ -1618,6 +1618,9 @@ class RunWebKitTests(shell.Test):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
         self.incorrectLayoutLines = []
 
+    def doStepIf(self, step):
+        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
+
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
@@ -1922,9 +1925,6 @@ class RunWebKit1Tests(RunWebKitTests):
     def start(self):
         self.setProperty('use-dump-render-tree', True)
         return RunWebKitTests.start(self)
-
-    def doStepIf(self, step):
-        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):

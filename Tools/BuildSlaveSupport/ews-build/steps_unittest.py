@@ -1518,6 +1518,15 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectOutcome(result=WARNINGS, state_string='2 flakes')
         return self.runStep()
 
+    def test_skip_for_rollout_patches_on_commit_queue(self):
+        self.configureStep()
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('fullPlatform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('rollout', True)
+        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        return self.runStep()
+
     def test_parse_results_json_regression(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')

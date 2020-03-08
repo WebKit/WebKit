@@ -1,3 +1,15 @@
+2020-03-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit queue is not skipping layout tests for rollout patches
+        https://bugs.webkit.org/show_bug.cgi?id=208716
+
+        Unreviewed minor fix.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.doStepIf):
+        (RunWebKit1Tests.doStepIf): Moved to base class RunWebKitTests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test.
+
 2020-03-05  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h
