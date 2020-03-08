@@ -97,7 +97,9 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
+#if USE(UICONTEXTMENU)
     RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
+#endif
     WeakObjCPtr<UIView> _view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;

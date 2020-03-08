@@ -150,7 +150,12 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
 
 #pragma mark - WKFileUploadPanel
 
-@interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIContextMenuInteractionDelegate>
+
+@interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate
+#if USE(UICONTEXTMENU)
+, UIContextMenuInteractionDelegate
+#endif
+>
 @end
 
 @implementation WKFileUploadPanel {
@@ -165,7 +170,9 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<UIPopoverController> _presentationPopover; // iPad for action sheet and Photo Library.
     ALLOW_DEPRECATED_DECLARATIONS_END
+#if USE(UICONTEXTMENU)
     RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;
+#endif
     RetainPtr<UIDocumentPickerViewController> _documentPickerController;
     WebCore::MediaCaptureType _mediaCaptureType;
 }
@@ -183,8 +190,9 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     [_imagePicker setDelegate:nil];
     [_presentationPopover setDelegate:nil];
     [_documentPickerController setDelegate:nil];
+#if USE(UICONTEXTMENU)
     [self removeContextMenuInteraction];
-
+#endif
     [super dealloc];
 }
 
@@ -491,6 +499,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)showDocumentPickerMenu
 {
+#if USE(UICONTEXTMENU)
 #if PLATFORM(MACCATALYST)
     // FIXME 49961589: Support picking media with UIImagePickerController
     BOOL shouldPresentDocumentMenuViewController = NO;
@@ -504,6 +513,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         [self ensureContextMenuInteraction];
         [_documentContextMenuInteraction _presentMenuAtLocation:CGPointMake(_interactionPoint.x, _interactionPoint.y)];
     } else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
+#endif
         [self showFilePickerMenu];
     
     // Clear out the view controller we just presented. Don't save a reference to the UIDocumentPickerViewController as it is self dismissing.
