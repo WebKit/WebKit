@@ -9449,9 +9449,11 @@ bool LayerFlushController::flushLayers()
 
 - (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext
 {
+#if USE(AUTOCORRECTION_PANEL)
     _private->m_alternativeTextUIController->showAlternatives(self, [self _convertRectFromRootView:boundingBoxOfDictatedText], dictationContext, ^(NSString* acceptedAlternative) {
         [self handleAcceptedAlternativeText:acceptedAlternative];
     });
+#endif
 }
 
 - (void)_removeDictationAlternatives:(uint64_t)dictationContext

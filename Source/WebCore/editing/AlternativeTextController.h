@@ -115,15 +115,12 @@ private:
     };
 
     String dismissSoon(ReasonForDismissingAlternativeText);
-    void applyAlternativeTextToRange(const Range&, const String& alternative, AlternativeTextType, OptionSet<DocumentMarker::MarkerType>);
     void timerFired();
     void recordSpellcheckerResponseForModifiedCorrection(Range& rangeOfCorrection, const String& corrected, const String& correction);
-    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);
 
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
     bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
 
-    AlternativeTextClient* alternativeTextClient();
     EditorClient* editorClient();
     
     TextCheckerClient* textChecker();
@@ -140,6 +137,11 @@ private:
 
     String m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;
+#endif
+#if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
+    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);
+    void applyAlternativeTextToRange(const Range&, const String&, AlternativeTextType, OptionSet<DocumentMarker::MarkerType>);
+    AlternativeTextClient* alternativeTextClient();
 #endif
 
     Frame& m_frame;

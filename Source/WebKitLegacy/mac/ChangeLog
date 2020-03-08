@@ -1,3 +1,23 @@
+2020-03-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement support for dictation alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=208720
+        <rdar://problem/58540114>
+
+        Reviewed by Brent Fulgham.
+
+        Part 3
+
+        Guard code that requires USE(AUTOCORRECTION_PANEL) to be enabled. Specifically, -_showDictationAlternativeUI
+        calls -handleAcceptedAlternativeText, but the latter is only compiled in when USE(AUTOCORRECTION_PANEL)
+        is enabled.
+
+        Note that I haven't enable USE_DICTATION_ALTERNATIVES on iOS. So, this code isn't being
+        compiled for iOS. I will do that in a subsequent change once after all the code is in place
+        to do so.
+
+        * WebView/WebView.mm:
+
 2020-03-05  Sam Weinig  <weinig@apple.com>
 
         Move JavaScriptCore related feature defines from FeatureDefines.xcconfig to PlatformEnableCocoa.h

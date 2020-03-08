@@ -2074,18 +2074,18 @@ private:
     void toggleAutomaticTextReplacement();
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
+    void removeDictationAlternatives(uint64_t dictationContext);
+    void dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&&);
+#endif
+
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(CompletionHandler<void(bool)>&&);
     void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     void dismissCorrectionPanel(int32_t reason);
     void dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&&);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
-
-#if USE(DICTATION_ALTERNATIVES)
-    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
-    void removeDictationAlternatives(uint64_t dictationContext);
-    void dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&&);
-#endif
 
     void setEditableElementIsFocused(bool);
 #endif // PLATFORM(MAC)

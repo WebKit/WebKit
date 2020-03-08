@@ -8342,6 +8342,25 @@ void WebPageProxy::toggleAutomaticTextReplacement()
 
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+
+void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+{
+    pageClient().showDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext);
+}
+
+void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
+{
+    pageClient().removeDictationAlternatives(dictationContext);
+}
+
+void WebPageProxy::dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    completionHandler(pageClient().dictationAlternatives(dictationContext));
+}
+
+#endif
+
 #if PLATFORM(MAC)
 
 void WebPageProxy::substitutionsPanelIsShowing(CompletionHandler<void(bool)>&& completionHandler)
@@ -8378,23 +8397,6 @@ void WebPageProxy::handleAlternativeTextUIResult(const String& result)
     if (!isClosed())
         send(Messages::WebPage::HandleAlternativeTextUIResult(result));
 }
-
-#if USE(DICTATION_ALTERNATIVES)
-void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
-{
-    pageClient().showDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext);
-}
-
-void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
-{
-    pageClient().removeDictationAlternatives(dictationContext);
-}
-
-void WebPageProxy::dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    completionHandler(pageClient().dictationAlternatives(dictationContext));
-}
-#endif
 
 void WebPageProxy::setEditableElementIsFocused(bool editableElementIsFocused)
 {

@@ -54,13 +54,13 @@ OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSSet;
+OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS WKDrawingView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
 OBJC_CLASS WKView;
-OBJC_CLASS NSTextAlternatives;
 #endif
 #endif
 
