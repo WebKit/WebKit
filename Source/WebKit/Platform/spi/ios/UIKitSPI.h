@@ -93,11 +93,12 @@
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
 #import <UIKit/UIPreviewItemController.h>
+#endif
+
 #if USE(UICONTEXTMENU)
 #import <UIKit/UIContextMenuInteraction_ForSpringBoardOnly.h>
 #import <UIKit/UIContextMenuInteraction_ForWebKitOnly.h>
 #import <UIKit/UIContextMenuInteraction_Private.h>
-#endif
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

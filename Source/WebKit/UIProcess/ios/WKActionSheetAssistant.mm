@@ -716,7 +716,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && ENABLE(DATA_DETECTION)
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
     DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];

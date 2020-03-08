@@ -1,3 +1,16 @@
+2020-03-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Build Fix
+        https://bugs.webkit.org/show_bug.cgi?id=208787
+        <rdar://problem/60203011>
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showDocumentPickerMenu]):
+
 2020-03-06  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Move AVSystemController code into the GPU process

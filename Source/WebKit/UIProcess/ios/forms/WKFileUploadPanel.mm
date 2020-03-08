@@ -397,6 +397,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     return WEB_UI_STRING_KEY("Take Photo", "Take Photo (file upload action sheet)", "File Upload alert sheet camera button string for taking only photos");
 }
 
+#if USE(UICONTEXTMENU)
+
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
     RetainPtr<UIPreviewParameters> unusedPreviewParameters = adoptNS([[UIPreviewParameters alloc] init]);
@@ -474,6 +476,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     }
 }
 
+#endif
+
 - (void)showFilePickerMenu
 {
     NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
@@ -487,12 +491,11 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)showDocumentPickerMenu
 {
-    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
-    
 #if PLATFORM(MACCATALYST)
     // FIXME 49961589: Support picking media with UIImagePickerController
     BOOL shouldPresentDocumentMenuViewController = NO;
 #else
+    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
     BOOL allowsImageMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeImage);
     BOOL allowsVideoMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeMovie);
     BOOL shouldPresentDocumentMenuViewController = allowsImageMediaType || allowsVideoMediaType;
