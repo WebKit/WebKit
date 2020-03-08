@@ -1,3 +1,16 @@
+2020-03-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of AccessibilitySupport AXSIsolatedTreeMode.
+        https://bugs.webkit.org/show_bug.cgi?id=208691
+        <rdar://problem/60178602>
+
+        Reviewed by Chris Fleizach.
+
+        Honors system AccessibilitySupport IsolatedTreeMode setting.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2020-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Build Fix Watch

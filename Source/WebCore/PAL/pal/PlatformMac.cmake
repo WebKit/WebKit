@@ -20,6 +20,8 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
 
+    spi/cocoa/AccessibilitySupportSPI.h
+    spi/cocoa/AccessibilitySupportSoftLink.h
     spi/cocoa/AppSSOSPI.h
     spi/cocoa/AuthKitSPI.h
     spi/cocoa/AVKitSPI.h
@@ -124,6 +126,8 @@ list(APPEND PAL_SOURCES
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
     mac/LookupSoftLink.mm
+
+    spi/cocoa/AccessibilitySupportSoftLink.cpp
 
     system/cocoa/SleepDisablerCocoa.cpp
 

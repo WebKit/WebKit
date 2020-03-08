@@ -1,3 +1,19 @@
+2020-03-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of AccessibilitySupport AXSIsolatedTreeMode.
+        https://bugs.webkit.org/show_bug.cgi?id=208691
+        <rdar://problem/60178602>
+
+        Reviewed by Chris Fleizach.
+
+        Added softlinking for the AccessibilitySupport library (libAccessibility.tbd).
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/spi/cocoa/AccessibilitySupportSPI.h: Added.
+        * pal/spi/cocoa/AccessibilitySupportSoftLink.cpp: Added.
+        * pal/spi/cocoa/AccessibilitySupportSoftLink.h: Added.
+
 2020-03-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement support for dictation alternatives

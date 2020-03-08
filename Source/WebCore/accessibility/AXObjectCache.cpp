@@ -104,6 +104,8 @@
 #include "TextIterator.h"
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && PLATFORM(MAC)
+#include <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #include <pal/spi/mac/HIServicesSPI.h>
 #endif
 
@@ -392,6 +394,8 @@ AXCoreObject* AXObjectCache::isolatedTreeFocusedObject(Document& document)
         tree = generateIsolatedTree(*pageID, document);
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
+        if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
+            _AXUIElementUseSecondaryAXThread(true);
         _AXUIElementUseSecondaryAXThread(true);
     }
 
@@ -430,7 +434,7 @@ AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     focusedDocument->updateStyleIfNeeded();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (clientSupportsIsolatedTree())
+    if (isIsolatedTreeEnabled())
         return isolatedTreeFocusedObject(*focusedDocument);
 #endif
 
@@ -723,6 +727,12 @@ bool AXObjectCache::clientSupportsIsolatedTree()
 
     return _AXGetClientForCurrentRequestUntrusted() == kAXClientTypeVoiceOver;
 }
+
+bool AXObjectCache::isIsolatedTreeEnabled()
+{
+    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff && clientSupportsIsolatedTree();
+}
+
 #endif
 
 AXCoreObject* AXObjectCache::rootObject()
@@ -752,7 +762,8 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 
         // Now that we have created our tree, initialize the secondary thread,
         // so future requests come in on the other thread.
-        _AXUIElementUseSecondaryAXThread(true);
+        if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
+            _AXUIElementUseSecondaryAXThread(true);
     }
 
     if (tree)
@@ -773,7 +784,7 @@ bool AXObjectCache::canUseSecondaryAXThread()
     // _AXUIElementRequestServicedBySecondaryAXThread returns false for
     // LayoutTests, but we still want to run LayoutTests using isolated tree on
     // a secondary thread to simulate the actual execution.
-    return clientSupportsIsolatedTree();
+    return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && clientSupportsIsolatedTree();
 #else
     return false;
 #endif

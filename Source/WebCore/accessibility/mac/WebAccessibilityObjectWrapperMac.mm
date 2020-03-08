@@ -1437,7 +1437,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [additional addObject:NSAccessibilityExpandedTextValueAttribute];
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread() && AXObjectCache::clientSupportsIsolatedTree())
+    if (AXObjectCache::isIsolatedTreeEnabled() && _AXUIElementRequestServicedBySecondaryAXThread())
         [additional addObject:NSAccessibilityRelativeFrameAttribute];
 #endif
     

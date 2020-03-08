@@ -111,6 +111,8 @@
 		1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F420D871930047B097 /* CoreUISPI.h */; };
 		1CCEE4F720D8743F0047B097 /* NSAppearanceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */; };
 		1D12CC4B2411BCAE00FDA0A3 /* FeatureFlagsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */; };
+		293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */; };
+		293EE4A924154F8F0047493D /* AccessibilitySupportSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */; };
 		2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */; };
 		2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */; };
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
@@ -285,6 +287,8 @@
 		1CCEE4F420D871930047B097 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
 		1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAppearanceSPI.h; sourceTree = "<group>"; };
 		1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeatureFlagsSPI.h; sourceTree = "<group>"; };
+		293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySupportSoftLink.cpp; sourceTree = "<group>"; };
+		293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSoftLink.h; sourceTree = "<group>"; };
 		2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSPI.h; sourceTree = "<group>"; };
 		2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSoftLink.h; sourceTree = "<group>"; };
 		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
@@ -340,6 +344,7 @@
 		A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
+		C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSUserDefaultsSPI.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
 		CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaToolboxSoftLink.cpp; sourceTree = "<group>"; };
@@ -411,6 +416,9 @@
 		0C2DA1201F3BE9E700DBC317 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */,
+				293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */,
+				C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */,
 				576CA9D522B854AB0030143C /* AppSSOSPI.h */,
 				2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */,
 				572A107722B456F500F410C8 /* AuthKitSPI.h */,
@@ -710,6 +718,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				293EE4A924154F8F0047493D /* AccessibilitySupportSoftLink.h in Headers */,
 				57FD318B22B35989008D0E8B /* AppSSOSoftLink.h in Headers */,
 				576CA9D622B854AB0030143C /* AppSSOSPI.h in Headers */,
 				2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */,
@@ -925,6 +934,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */,
 				57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */,
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
 				0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */,

@@ -327,7 +327,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     _identifier = InvalidAXID;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainThread()) {
-        ASSERT(AXObjectCache::clientSupportsIsolatedTree());
+        ASSERT(AXObjectCache::isIsolatedTreeEnabled());
         [self detachIsolatedObject];
         return;
     }
@@ -366,7 +366,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainThread()) {
-        ASSERT(AXObjectCache::clientSupportsIsolatedTree());
+        ASSERT(AXObjectCache::isIsolatedTreeEnabled());
         return m_isolatedObject;
     }
 #endif
