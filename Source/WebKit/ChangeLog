@@ -6,6 +6,37 @@
 
         Reviewed by Wenson Hsieh.
 
+        Part 2
+
+        Move insertDictatedTextAsync() from the Mac-specific implementation files to Cocoa-specific
+        implementation files as it can be shared by both Mac and iOS. I did very minor C++ modernization:
+        just more uses of auto and uniform initializer syntax.
+
+        Note that I haven't enable USE_DICTATION_ALTERNATIVES on iOS. So, this code isn't being
+        compiled for iOS. I will do that in a subsequent change once after all the code is in place
+        to do so.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::insertDictatedTextAsync):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertDictatedTextAsync): Deleted.
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::insertDictatedTextAsync):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::insertDictatedTextAsync): Deleted.
+
+2020-03-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement support for dictation alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=208720
+        <rdar://problem/58540114>
+
+        Reviewed by Wenson Hsieh.
+
         Part 1
 
         Move some of the PageClientMac dictation alternatives code to PageClientImplCocoa so that it

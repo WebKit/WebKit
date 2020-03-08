@@ -320,25 +320,6 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
-void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    Ref<Frame> protector(frame);
-
-    if (replacementEditingRange.location != notFound) {
-        RefPtr<Range> replacementRange = EditingRange::toRange(frame, replacementEditingRange);
-        if (replacementRange)
-            frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
-    }
-
-    if (registerUndoGroup)
-        send(Messages::WebPageProxy::RegisterInsertionUndoGrouping());
-    
-    ASSERT(!frame.editor().hasComposition());
-    frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
-}
-
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

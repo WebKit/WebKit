@@ -8526,6 +8526,7 @@ void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
     send(Messages::WebPage::ChangeFont(WTFMove(changes)));
 }
 
+// FIXME: Move these functions to WebPageProxyCocoa.mm.
 #if PLATFORM(COCOA)
 
 void WebPageProxy::setTextAsync(const String& text)

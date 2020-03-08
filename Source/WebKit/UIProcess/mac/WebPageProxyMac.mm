@@ -184,37 +184,6 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     process().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_webPageID);
 }
 
-void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, bool registerUndoGroup)
-{
-#if USE(DICTATION_ALTERNATIVES)
-    if (!hasRunningProcess())
-        return;
-
-    Vector<DictationAlternative> dictationAlternatives;
-
-    for (const TextAlternativeWithRange& alternativeWithRange : dictationAlternativesWithRange) {
-        uint64_t dictationContext = pageClient().addDictationAlternatives(alternativeWithRange.alternatives);
-        if (dictationContext)
-            dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
-    }
-
-    if (dictationAlternatives.isEmpty()) {
-        InsertTextOptions options;
-        options.registerUndoGroup = registerUndoGroup;
-
-        insertTextAsync(text, replacementRange, WTFMove(options));
-        return;
-    }
-
-    process().send(Messages::WebPage::InsertDictatedTextAsync(text, replacementRange, dictationAlternatives, registerUndoGroup), m_webPageID);
-#else
-    InsertTextOptions options;
-    options.registerUndoGroup = registerUndoGroup;
-
-    insertTextAsync(text, replacementRange, WTFMove(options));
-#endif
-}
-
 void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, WTF::Function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {

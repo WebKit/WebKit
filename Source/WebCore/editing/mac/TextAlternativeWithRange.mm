@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,19 @@
 #import "TextAlternativeWithRange.h"
 
 #if USE(DICTATION_ALTERNATIVES)
+
+#if USE(APPKIT)
 #import <AppKit/NSTextAlternatives.h>
+#elif PLATFORM(IOS_FAMILY)
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
+#endif
 
 namespace WebCore {
 
-TextAlternativeWithRange::TextAlternativeWithRange(NSTextAlternatives* anAlternatives, NSRange aRange)
-: range(aRange)
-, alternatives(anAlternatives)
+TextAlternativeWithRange::TextAlternativeWithRange(NSTextAlternatives *anAlternatives, NSRange aRange)
+    : range { aRange }
+    , alternatives { anAlternatives }
 {
 }
 
@@ -49,5 +55,7 @@ void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlt
         effectiveRange.location = NSMaxRange(effectiveRange);
     } while (effectiveRange.location < length);
 }
-}
-#endif
+
+} // namespace WebCore
+
+#endif // USE(DICTATION_ALTERNATIVES)

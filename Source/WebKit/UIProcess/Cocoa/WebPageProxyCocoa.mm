@@ -29,6 +29,7 @@
 #import "APIAttachment.h"
 #import "APIUIClient.h"
 #import "DataDetectionResult.h"
+#import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PageClient.h"
 #import "SafeBrowsingSPI.h"
@@ -43,6 +44,10 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
+
+#if USE(DICTATION_ALTERNATIVES)
+#import <WebCore/TextAlternativeWithRange.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -161,6 +166,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Ha
     pageClient().startDrag(dragItem, dragImageHandle);
 }
 
+// FIXME: Move these functions to WebPageProxyIOS.mm.
 #if PLATFORM(IOS_FAMILY)
 
 void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, uint64_t, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, uint64_t)
@@ -224,6 +230,36 @@ void WebPageProxy::performDictionaryLookupOfCurrentSelection()
         return;
     
     process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_webPageID);
+}
+
+void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, bool registerUndoGroup)
+{
+#if USE(DICTATION_ALTERNATIVES)
+    if (!hasRunningProcess())
+        return;
+
+    Vector<DictationAlternative> dictationAlternatives;
+    for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
+        uint64_t dictationContext = pageClient().addDictationAlternatives(alternativeWithRange.alternatives);
+        if (dictationContext)
+            dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
+    }
+
+    if (dictationAlternatives.isEmpty()) {
+        InsertTextOptions options;
+        options.registerUndoGroup = registerUndoGroup;
+
+        insertTextAsync(text, replacementRange, WTFMove(options));
+        return;
+    }
+
+    process().send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, registerUndoGroup }, m_webPageID);
+#else
+    InsertTextOptions options;
+    options.registerUndoGroup = registerUndoGroup;
+
+    insertTextAsync(text, replacementRange, WTFMove(options));
+#endif
 }
     
 #if ENABLE(APPLE_PAY)

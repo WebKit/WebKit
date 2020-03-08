@@ -186,6 +186,24 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     return dictionaryPopupInfo;
 }
 
+void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup)
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    Ref<Frame> protector { frame };
+
+    if (replacementEditingRange.location != notFound) {
+        auto replacementRange = EditingRange::toRange(frame, replacementEditingRange);
+        if (replacementRange)
+            frame.selection().setSelection(VisibleSelection { *replacementRange, SEL_DEFAULT_AFFINITY });
+    }
+
+    if (registerUndoGroup)
+        send(Messages::WebPageProxy::RegisterInsertionUndoGrouping { });
+
+    ASSERT(!frame.editor().hasComposition());
+    frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr /* triggeringEvent */);
+}
+
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
 {
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
