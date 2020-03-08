@@ -175,6 +175,7 @@ void WebProcessPool::platformInitialize()
     setLegacyCustomProtocolManagerClient(makeUnique<LegacyCustomProtocolManagerClient>());
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
+    [WKPreferenceObserver swizzleRegisterDefaults];
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
         // Start observing preference changes.
         [WKPreferenceObserver sharedInstance];

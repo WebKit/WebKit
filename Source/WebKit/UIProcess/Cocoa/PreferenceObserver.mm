@@ -36,7 +36,8 @@ static bool registeringDefaults = false;
 static void registerDefaultsOverride(id self, SEL selector, NSDictionary<NSString *, id> *dictionary)
 {
     registeringDefaults = true;
-    wtfCallIMP<void>(registerDefaultsOriginal, self, selector, dictionary);
+    if (registerDefaultsOriginal)
+        wtfCallIMP<void>(registerDefaultsOriginal, self, selector, dictionary);
     registeringDefaults = false;
 }
 
@@ -100,11 +101,17 @@ static void registerDefaultsOverride(id self, SEL selector, NSDictionary<NSStrin
     return instance;
 }
 
++ (void)swizzleRegisterDefaults
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        Method registerDefaultsMethod = class_getInstanceMethod(objc_getClass("NSUserDefaults"), @selector(registerDefaults:));
+        registerDefaultsOriginal = method_setImplementation(registerDefaultsMethod, (IMP)registerDefaultsOverride);
+    });
+}
+
 - (instancetype)init
 {
-    Method registerDefaultsMethod = class_getInstanceMethod(objc_getClass("NSUserDefaults"), @selector(registerDefaults:));
-    registerDefaultsOriginal = method_setImplementation(registerDefaultsMethod, (IMP)registerDefaultsOverride);
-
     std::initializer_list<NSString*> domains = {
         @"com.apple.Accessibility",
 #if PLATFORM(IOS_FAMILY)
