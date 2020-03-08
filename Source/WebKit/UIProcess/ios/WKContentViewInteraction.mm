@@ -165,6 +165,11 @@
 #import <WebCore/TouchAction.h>
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+#import "UIKitSPI.h"
+#import <WebCore/TextAlternativeWithRange.h>
+#endif
+
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
@@ -4741,6 +4746,22 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 }
+
+#if USE(DICTATION_ALTERNATIVES)
+
+- (void)insertText:(NSString *)aStringValue alternatives:(NSArray<NSString *> *)alternatives style:(UITextAlternativeStyle)style
+{
+    if (!alternatives.count)
+        [self insertText:aStringValue];
+    else {
+        BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
+        auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
+        WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
+        _page->insertDictatedTextAsync(aStringValue, WebKit::EditingRange { }, { textAlternativeWithRange }, false /* registerUndoGroup */);
+    }
+}
+
+#endif
 
 - (BOOL)hasText
 {
