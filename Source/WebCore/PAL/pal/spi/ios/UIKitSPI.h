@@ -32,6 +32,7 @@ WTF_EXTERN_C_END
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSParagraphStyle_Private.h>
+#import <UIKit/NSTextAlternatives.h>
 #import <UIKit/NSTextAttachment_Private.h>
 #import <UIKit/NSTextList.h>
 #import <UIKit/UIApplicationSceneConstants.h>
@@ -96,6 +97,10 @@ typedef enum {
 @property (readonly, copy) NSString *markerFormat;
 @property NSInteger startingItemNumber;
 - (NSString *)markerForItemNumber:(NSInteger)itemNum;
+@end
+
+@interface NSTextAlternatives : NSObject
+@property (readonly) NSArray<NSString *> *alternativeStrings;
 @end
 
 @interface UIApplication ()

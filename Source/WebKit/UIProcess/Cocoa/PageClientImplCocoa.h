@@ -26,20 +26,29 @@
 #pragma once
 
 #include "PageClient.h"
+#include <wtf/Forward.h>
 #include <wtf/WeakObjCPtr.h>
 
+@class NSTextAlternatives;
 @class WKWebView;
 
 namespace API {
 class Attachment;
 }
 
+namespace WebCore {
+class AlternativeTextUIController;
+}
+
 namespace WebKit {
 
 class PageClientImplCocoa : public PageClient {
 public:
-    PageClientImplCocoa(WKWebView *webView)
-        : m_webView(webView) { }
+    PageClientImplCocoa(WKWebView *);
+    virtual ~PageClientImplCocoa();
+
+    void pageClosed() override;
+
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 
@@ -53,8 +62,17 @@ public:
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+    uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) final;
+    void removeDictationAlternatives(uint64_t dictationContext) final;
+    Vector<String> dictationAlternatives(uint64_t dictationContext) final;
+#endif
+
 protected:
     WeakObjCPtr<WKWebView> m_webView;
+#if USE(DICTATION_ALTERNATIVES)
+    std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
+#endif
 };
 
 }

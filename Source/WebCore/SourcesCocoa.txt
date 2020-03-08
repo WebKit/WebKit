@@ -79,6 +79,8 @@ dom/ios/TouchEvents.cpp
 editing/SelectionRectGatherer.cpp
 editing/SmartReplaceCF.cpp
 
+editing/cocoa/AlternativeTextContextController.mm
+editing/cocoa/AlternativeTextUIController.mm
 editing/cocoa/AutofillElements.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/DictionaryLookup.mm
@@ -94,7 +96,6 @@ editing/cocoa/WebContentReaderCocoa.mm
 editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm
 
-editing/mac/AlternativeTextUIController.mm
 editing/mac/DictionaryLookupLegacy.mm
 editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm

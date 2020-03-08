@@ -1,3 +1,45 @@
+2020-03-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement support for dictation alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=208720
+        <rdar://problem/58540114>
+
+        Reviewed by Wenson Hsieh.
+
+        Part 1
+
+        Move some of the PageClientMac dictation alternatives code to PageClientImplCocoa so that it
+        can be shared with iOS.
+
+        Note that I haven't enable USE_DICTATION_ALTERNATIVES on iOS. So, this code isn't being
+        compiled for iOS. I will do that in a subsequent change once after all the code is in place
+        to do so.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        (WebKit::PageClientImplCocoa::PageClientImplCocoa): Deleted; moved to be out-of-line to avoid
+        needing to #include AlternativeTextUIController.h from this file. Declare out-of-line destructor
+        for the same reason.
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::PageClientImplCocoa): Moved from PageClientImplCocoa.h.
+        (WebKit::PageClientImplCocoa::pageClosed):
+        (WebKit::PageClientImplCocoa::addDictationAlternatives): Moved from PageClientImplMac.mm.
+        (WebKit::PageClientImplCocoa::removeDictationAlternatives): Ditto.
+        (WebKit::PageClientImplCocoa::dictationAlternatives): Ditto.
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showDictationAlternativeUI): Added; stub function.
+        (WebKit::PageClientImpl::pageClosed): Deleted; now we will use the base class implementation.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::PageClientImpl): Moved AlternativeTextUIController logic from here to PageClientImplCocoa::PageClientImplCocoa().
+        (WebKit::PageClientImpl::pageClosed): Moved AlternativeTextUIController logic from here to PageClientImplCocoa::pageClosed()
+        so it can be shared and modified this function to call the base class implementation.
+        (WebKit::PageClientImpl::~PageClientImpl): Deleted; moved to PageClientImplCocoa.mm.
+        (WebKit::PageClientImpl::addDictationAlternatives): Deleted; moved to PageClientImplCocoa.mm.
+        (WebKit::PageClientImpl::removeDictationAlternatives): Deleted; moved to PageClientImplCocoa.mm.
+        (WebKit::PageClientImpl::dictationAlternatives): Deleted; moved to PageClientImplCocoa.mm.
+
 2020-03-07  Eric Carlson  <eric.carlson@apple.com>
 
         Implement setWirelessPlaybackTarget, performTaskAtMediaTime, and wouldTaintOrigin in GPUProcess

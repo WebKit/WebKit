@@ -32,6 +32,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
+OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
@@ -77,7 +78,6 @@ private:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed() override;
 #endif
-    void pageClosed() override;
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;
     void decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, const FrameInfoData&, Function<void(bool)>&) override;
@@ -260,6 +260,10 @@ private:
 #if ENABLE(POINTER_EVENTS)
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
+#endif
+
+#if USE(DICTATION_ALTERNATIVES)
+    void showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t dictationContext) override;
 #endif
 
     WeakObjCPtr<WKContentView> m_contentView;

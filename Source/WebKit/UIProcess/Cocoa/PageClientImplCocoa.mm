@@ -29,8 +29,23 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
+#import <wtf/Vector.h>
+
+#if USE(DICTATION_ALTERNATIVES)
+#import <WebCore/AlternativeTextUIController.h>
+#endif
 
 namespace WebKit {
+
+PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
+    : m_webView { webView }
+#if USE(DICTATION_ALTERNATIVES)
+    , m_alternativeTextUIController { makeUnique<AlternativeTextUIController>() }
+#endif
+{
+}
+
+PageClientImplCocoa::~PageClientImplCocoa() = default;
 
 void PageClientImplCocoa::isPlayingAudioWillChange()
 {
@@ -80,5 +95,32 @@ NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
 }
 
 #endif
+
+void PageClientImplCocoa::pageClosed()
+{
+#if USE(DICTATION_ALTERNATIVES)
+    m_alternativeTextUIController->clear();
+#endif
+}
+
+#if USE(DICTATION_ALTERNATIVES)
+
+uint64_t PageClientImplCocoa::addDictationAlternatives(const RetainPtr<NSTextAlternatives>& alternatives)
+{
+    return m_alternativeTextUIController->addAlternatives(alternatives);
+}
+
+void PageClientImplCocoa::removeDictationAlternatives(uint64_t dictationContext)
+{
+    m_alternativeTextUIController->removeAlternatives(dictationContext);
+}
+
+Vector<String> PageClientImplCocoa::dictationAlternatives(uint64_t dictationContext)
+{
+    return m_alternativeTextUIController->alternativesForContext(dictationContext);
+}
+
+#endif
+
     
 }
