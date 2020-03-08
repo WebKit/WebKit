@@ -55,12 +55,17 @@ private:
     using BaseConcreteImageBuffer::flushDrawingContext;
     using BaseConcreteImageBuffer::putImageData;
 
-    void flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier) override
+    void flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList) override
     {
         if (displayList.itemCount()) {
             WebCore::DisplayList::Replayer replayer(BaseConcreteImageBuffer::context(), displayList, this);
             replayer.replay();
         }
+    }
+
+    void flushDrawingContextAndCommit(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier) override
+    {
+        flushDrawingContext(displayList);
         m_backend->flushContext();
         commitFlushContext(flushIdentifier);
     }

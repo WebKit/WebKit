@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DisplayList.h"
+#include "DisplayListRecorder.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
@@ -33,7 +34,7 @@ namespace DisplayList {
 
 class DrawingContext {
 public:
-    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize);
+    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, Recorder::Observer*);
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
     WEBCORE_EXPORT Recorder& recorder();

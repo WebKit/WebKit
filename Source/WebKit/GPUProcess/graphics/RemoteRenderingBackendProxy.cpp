@@ -108,10 +108,16 @@ void RemoteRenderingBackendProxy::getImageData(WebCore::AlphaPremultiplication o
     }
 }
 
-void RemoteRenderingBackendProxy::flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier, ImageBufferIdentifier imageBufferIdentifier)
+void RemoteRenderingBackendProxy::flushImageBufferDrawingContext(const WebCore::DisplayList::DisplayList& displayList, ImageBufferIdentifier imageBufferIdentifier)
 {
     if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
-        imageBuffer->flushDrawingContext(displayList, flushIdentifier);
+        imageBuffer->flushDrawingContext(displayList);
+}
+
+void RemoteRenderingBackendProxy::flushImageBufferDrawingContextAndCommit(const WebCore::DisplayList::DisplayList& displayList, ImageBufferFlushIdentifier flushIdentifier, ImageBufferIdentifier imageBufferIdentifier)
+{
+    if (auto imageBuffer = m_imageBufferMessageHandlerMap.get(imageBufferIdentifier))
+        imageBuffer->flushDrawingContextAndCommit(displayList, flushIdentifier);
 }
 
 } // namespace WebKit

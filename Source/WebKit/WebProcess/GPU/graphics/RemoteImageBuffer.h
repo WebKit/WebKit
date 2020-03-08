@@ -104,6 +104,16 @@ protected:
             displayList.clear();
         }
     }
+    
+    void willAppendItem(const WebCore::DisplayList::Item&) override
+    {
+        constexpr size_t DisplayListBatchSize = 512;
+        auto& displayList = m_drawingContext.displayList();
+        if (displayList.itemCount() >= DisplayListBatchSize) {
+            RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
+            displayList.clear();
+        }
+    }
 };
 
 } // namespace WebKit

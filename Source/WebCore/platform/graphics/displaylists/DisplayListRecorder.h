@@ -53,12 +53,19 @@ class Recorder : public GraphicsContextImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
-    WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);
+    class Observer;
+    WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Observer* = nullptr);
     WEBCORE_EXPORT virtual ~Recorder();
 
     WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint);
 
     size_t itemCount() const { return m_displayList.itemCount(); }
+
+    class Observer {
+    public:
+        virtual ~Observer() { }
+        virtual void willAppendItem(const Item&) { };
+    };
 
 private:
     bool hasPlatformContext() const override { return false; }
@@ -175,6 +182,7 @@ private:
     ContextState& currentState();
 
     DisplayList& m_displayList;
+    Observer* m_observer;
 
     Vector<ContextState, 32> m_stateStack;
 };

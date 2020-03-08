@@ -36,9 +36,10 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& baseCTM)
+Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& baseCTM, Observer* observer)
     : GraphicsContextImpl(context, initialClip, baseCTM)
     , m_displayList(displayList)
+    , m_observer(observer)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
     m_stateStack.append(ContextState(state, baseCTM, initialClip));
@@ -57,6 +58,9 @@ void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const W
 
 void Recorder::willAppendItem(const Item& item)
 {
+    if (m_observer)
+        m_observer->willAppendItem(item);
+
     if (item.isDrawingItem()
 #if USE(CG)
         || item.type() == ItemType::ApplyStrokePattern || item.type() == ItemType::ApplyStrokePattern

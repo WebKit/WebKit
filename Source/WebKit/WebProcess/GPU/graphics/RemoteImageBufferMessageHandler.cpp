@@ -73,7 +73,8 @@ void RemoteImageBufferMessageHandler::flushDrawingContext(const WebCore::Display
 {
     if (!m_remoteRenderingBackend)
         return;
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
 }
 
 void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(const WebCore::DisplayList::DisplayList& displayList)
@@ -81,7 +82,7 @@ void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(const Web
     if (!m_remoteRenderingBackend)
         return;
     m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
-    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
     waitForCommitImageBufferFlushContext();
 }
 
@@ -93,4 +94,3 @@ void RemoteImageBufferMessageHandler::commitFlushContext(ImageBufferFlushIdentif
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)
-
