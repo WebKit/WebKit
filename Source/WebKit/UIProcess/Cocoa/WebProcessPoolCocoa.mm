@@ -377,9 +377,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (!WebCore::IOSApplication::isMobileSafari()) {
+    if (!WebCore::IOSApplication::isMobileSafari() || _AXSApplicationAccessibilityEnabled()) {
         static const char* services[] = {
             "com.apple.lsd.open",
+            "com.apple.lsd.mapdb",
             "com.apple.mobileassetd",
             "com.apple.iconservices",
             "com.apple.PowerManagement.control",
@@ -430,8 +431,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
     parameters.localizedDeviceModel = localizedDeviceModel();
+#if USE(UTTYPE_SWIZZLER)
+    parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
 #endif
-
+#endif
     
     // Allow microphone access if either preference is set because WebRTC requires microphone access.
     bool needWebProcessExtensions = !m_defaultPageGroup->preferences().useGPUProcessForMedia()

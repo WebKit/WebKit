@@ -103,6 +103,7 @@
 #import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
+#import <WebCore/UTTypeRecordSwizzler.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
@@ -295,6 +296,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandle);
         _CFPrefsSetDirectModeEnabled(false);
     }
+#endif
+        
+#if USE(UTTYPE_SWIZZLER)
+    swizzleUTTypeRecord();
+    setVectorOfUTTypeItem(WTFMove(parameters.vectorOfUTTypeItem));
 #endif
 }
 

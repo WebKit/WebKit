@@ -1,3 +1,12 @@
+2020-03-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Mapping to UTI from tag and tag class should be performed in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=208783
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2020-03-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         Replace the use of term "rollout" to "revert" in various tools

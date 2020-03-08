@@ -161,6 +161,12 @@ bool isDeclaredUTI(const String& UTI)
     return UTTypeIsDeclared(UTI.createCFString().get());
 }
 
+String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
+{
+    auto u = adoptCF(UTTypeCreatePreferredIdentifierForTag(tagClass.createCFString().get(), tag.createCFString().get(), conformingToUTI.createCFString().get()));
+    return String(u.get());
+}
+
 static const Vector<String>& additionalMIMETypes()
 {
     static NeverDestroyed<Vector<String>> mimeTypes = std::initializer_list<String> {

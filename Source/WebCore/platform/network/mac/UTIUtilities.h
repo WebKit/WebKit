@@ -33,6 +33,7 @@ WEBCORE_EXPORT String MIMETypeFromUTI(const String&);
 String MIMETypeFromUTITree(const String&);
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
+WEBCORE_EXPORT String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);
 
 WEBCORE_EXPORT void setUTIFromMIMETypeMap(HashMap<String, String>&&);
 WEBCORE_EXPORT const HashMap<String, String>& createUTIFromMIMETypeMap();

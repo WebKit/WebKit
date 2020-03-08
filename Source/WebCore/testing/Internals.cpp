@@ -5501,6 +5501,11 @@ String Internals::getUTIFromMIMEType(const String& mimeType)
 {
     return emptyString();
 }
+
+String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
+{
+    return emptyString();
+}
 #endif
 
 String Internals::mediaMIMETypeForExtension(const String& extension)
