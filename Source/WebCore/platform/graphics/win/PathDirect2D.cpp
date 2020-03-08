@@ -301,11 +301,8 @@ void Path::transform(const AffineTransform& transform)
     ASSERT(refCount(m_path.get()) == 1);
 }
 
-FloatRect Path::boundingRect() const
+FloatRect Path::boundingRectSlowCase() const
 {
-    if (isNull())
-        return FloatRect();
-
     D2D1_RECT_F bounds = { };
     if (!SUCCEEDED(m_path->GetBounds(nullptr, &bounds)))
         return FloatRect();
@@ -313,11 +310,8 @@ FloatRect Path::boundingRect() const
     return bounds;
 }
 
-FloatRect Path::fastBoundingRect() const
+FloatRect Path::fastBoundingRectSlowCase() const
 {
-    if (isNull())
-        return FloatRect();
-
     D2D1_RECT_F bounds = { };
     if (!SUCCEEDED(m_path->GetBounds(nullptr, &bounds)))
         return FloatRect();
@@ -374,7 +368,7 @@ void Path::openFigureAtCurrentPointIfNecessary()
     m_figureIsOpened = true;
 }
 
-void Path::moveTo(const FloatPoint& point)
+void Path::moveToSlowCase(const FloatPoint& point)
 {
     if (m_activePath)
         closeAnyOpenGeometries(D2D1_FIGURE_END_OPEN);
@@ -394,7 +388,7 @@ void Path::moveTo(const FloatPoint& point)
     m_figureIsOpened = true;
 }
 
-void Path::addLineTo(const FloatPoint& point)
+void Path::addLineToSlowCase(const FloatPoint& point)
 {
     openFigureAtCurrentPointIfNecessary();
     m_activePath->AddLine(point);
@@ -525,7 +519,7 @@ static void drawArcSection(ID2D1GeometrySink* sink, const FloatPoint& center, fl
     sink->AddArc(D2D1::ArcSegment(endPoint, D2D1::SizeF(radius, radius), 0, direction, D2D1_ARC_SIZE_SMALL));
 }
 
-void Path::addArc(const FloatPoint& center, float radius, float startAngle, float endAngle, bool anticlockwise)
+void Path::addArcSlowCase(const FloatPoint& center, float radius, float startAngle, float endAngle, bool anticlockwise)
 {
     auto arcStartPoint = arcStart(center, radius, startAngle);
     if (!m_activePath)
@@ -621,11 +615,8 @@ void Path::clear()
     clearGeometries();
 }
 
-bool Path::isEmpty() const
+bool Path::isEmptySlowCase() const
 {
-    if (isNull())
-        return true;
-
     if (!m_path->GetSourceGeometryCount())
         return true;
 
@@ -634,16 +625,8 @@ bool Path::isEmpty() const
     return false;
 }
 
-bool Path::hasCurrentPoint() const
+FloatPoint Path::currentPointSlowCase() const
 {
-    return !isEmpty();
-}
-    
-FloatPoint Path::currentPoint() const 
-{
-    if (isNull())
-        return FloatPoint();
-
     float length = 0;
     HRESULT hr = m_path->ComputeLength(nullptr, &length);
     if (!SUCCEEDED(hr))
@@ -668,12 +651,14 @@ float Path::length() const
     return length;
 }
 
-void Path::apply(const PathApplierFunction& function) const
+void Path::applySlowCase(const PathApplierFunction&) const
 {
-    if (isNull())
-        return;
-
     notImplemented();
+}
+
+bool Path::isNull() const
+{
+    return !m_path;
 }
 
 }

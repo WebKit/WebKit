@@ -817,6 +817,9 @@
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
+#if !defined(ENABLE_INLINE_PATH_DATA) && USE(CG)
+#define ENABLE_INLINE_PATH_DATA 1
+#endif
 
 /* Disable SharedArrayBuffers until Spectre security concerns are mitigated. */
 #define ENABLE_SHARED_ARRAY_BUFFER 0

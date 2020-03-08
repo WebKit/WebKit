@@ -4982,6 +4982,7 @@
 		F442C35923E3ADD200499582 /* CompositionHighlight.h in Headers */ = {isa = PBXBuildFile; fileRef = F442C35723E3AC5100499582 /* CompositionHighlight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44A5F591FED38F2007F5944 /* LegacyNSPasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F44EBBD81DB5D21400277334 /* StaticRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F45775CE241437D5002DF1A0 /* InlinePathData.h in Headers */ = {isa = PBXBuildFile; fileRef = F45775CD241437D5002DF1A0 /* InlinePathData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F46C447E234654540039A79D /* ClipboardItemBindingsDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */; };
@@ -15473,6 +15474,7 @@
 		F44EBBD61DB5D1B600277334 /* StaticRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StaticRange.idl; sourceTree = "<group>"; };
 		F44EBBD81DB5D21400277334 /* StaticRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticRange.h; sourceTree = "<group>"; };
 		F44EBBDA1DB5DD9D00277334 /* StaticRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticRange.cpp; sourceTree = "<group>"; };
+		F45775CD241437D5002DF1A0 /* InlinePathData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlinePathData.h; sourceTree = "<group>"; };
 		F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AxisScrollSnapOffsets.cpp; sourceTree = "<group>"; };
 		F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisScrollSnapOffsets.h; sourceTree = "<group>"; };
 		F4628A9E234D3BBF00BC884C /* PlatformPasteboardCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardCocoa.mm; sourceTree = "<group>"; };
@@ -25137,6 +25139,7 @@
 				0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */,
 				07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */,
 				07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */,
+				F45775CD241437D5002DF1A0 /* InlinePathData.h */,
 				2D46F04D17B96FBD005647F0 /* IntPoint.cpp */,
 				B27535440B053814002CE64F /* IntPoint.h */,
 				E462A4A0113E71BE004A4220 /* IntPointHash.h */,
@@ -30428,6 +30431,7 @@
 				6FB2400523DFF12800796458 /* InlineLineBoxBuilder.h in Headers */,
 				6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */,
 				6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */,
+				F45775CE241437D5002DF1A0 /* InlinePathData.h in Headers */,
 				6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* InlineStyleSheetOwner.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,

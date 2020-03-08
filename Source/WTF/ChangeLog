@@ -1,3 +1,17 @@
+2020-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Lazily generate CGPaths for some simple types of paths, such as arcs and lines
+        https://bugs.webkit.org/show_bug.cgi?id=208464
+        <rdar://problem/59963226>
+
+        Reviewed by Daniel Bates, Darin Adler and Tim Horton.
+
+        Add a feature flag for INLINE_PATH_DATA. This feature flag exists to ensure that we can avoid having
+        m_inlineData on Path in ports that don't implement the necessary facilities for inline path data yet, since it
+        would just end up being wasted memory.
+
+        * wtf/PlatformEnable.h:
+
 2020-03-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement support for dictation alternatives

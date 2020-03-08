@@ -1127,6 +1127,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/InbandGenericCue.h
     platform/graphics/InbandTextTrackPrivate.h
     platform/graphics/InbandTextTrackPrivateClient.h
+    platform/graphics/InlinePathData.h
     platform/graphics/IntPoint.h
     platform/graphics/IntPointHash.h
     platform/graphics/IntRect.h

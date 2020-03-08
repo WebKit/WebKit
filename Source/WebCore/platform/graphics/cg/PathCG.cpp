@@ -81,6 +81,30 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
     return path;
 }
 
+void Path::createCGPath() const
+{
+    if (m_path)
+        return;
+
+    m_path = adoptCF(CGPathCreateMutable());
+
+    WTF::switchOn(m_inlineData,
+        [&](Monostate) { }, // Start with an empty path.
+        [&](const MoveData& move) {
+            CGPathMoveToPoint(m_path.get(), nullptr, move.location.x(), move.location.y());
+        },
+        [&](const LineData& line) {
+            CGPathMoveToPoint(m_path.get(), nullptr, line.start.x(), line.start.y());
+            CGPathAddLineToPoint(m_path.get(), nullptr, line.end.x(), line.end.y());
+        },
+        [&](const ArcData& arc) {
+            if (arc.hasOffset)
+                CGPathMoveToPoint(m_path.get(), nullptr, arc.offset.x(), arc.offset.y());
+            CGPathAddArc(m_path.get(), nullptr, arc.center.x(), arc.center.y(), arc.radius, arc.startAngle, arc.endAngle, arc.clockwise);
+        }
+    );
+}
+
 Path::Path(RetainPtr<CGMutablePathRef>&& path)
     : m_path(WTFMove(path))
 {
@@ -89,21 +113,34 @@ Path::Path(RetainPtr<CGMutablePathRef>&& path)
 Path::Path() = default;
 Path::~Path() = default;
 
+PlatformPathPtr Path::platformPath() const
+{
+    if (!m_path && hasAnyInlineData())
+        createCGPath();
+    return m_path.get();
+}
+
 PlatformPathPtr Path::ensurePlatformPath()
 {
-    if (!m_path)
-        m_path = adoptCF(CGPathCreateMutable());
-    else if (m_copyPathBeforeMutation) {
+    createCGPath();
+    if (m_copyPathBeforeMutation) {
         if (CFGetRetainCount(m_path.get()) > 1)
             m_path = adoptCF(CGPathCreateMutableCopy(m_path.get()));
         m_copyPathBeforeMutation = false;
     }
+    m_inlineData = Monostate { };
     return m_path.get();
+}
+
+bool Path::isNull() const
+{
+    return !m_path && !hasAnyInlineData();
 }
 
 Path::Path(const Path& other)
 {
     m_path = { other.m_path };
+    m_inlineData = other.m_inlineData;
     if (m_path) {
         m_copyPathBeforeMutation = true;
         other.m_copyPathBeforeMutation = true;
@@ -112,6 +149,7 @@ Path::Path(const Path& other)
 
 Path::Path(Path&& other)
     : m_path(std::exchange(other.m_path, nullptr))
+    , m_inlineData(std::exchange(other.m_inlineData, Monostate { }))
     , m_copyPathBeforeMutation(std::exchange(other.m_copyPathBeforeMutation, false))
 {
 }
@@ -119,6 +157,7 @@ Path::Path(Path&& other)
 void Path::swap(Path& otherPath)
 {
     std::swap(m_path, otherPath.m_path);
+    std::swap(m_inlineData, otherPath.m_inlineData);
     std::swap(m_copyPathBeforeMutation, otherPath.m_copyPathBeforeMutation);
 }
 
@@ -179,7 +218,7 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
         return false;
 
     // CGPathContainsPoint returns false for non-closed paths, as a work-around, we copy and close the path first.  Radar 4758998 asks for a better CG API to use
-    auto path = adoptCF(copyCGPathClosingSubpaths(m_path.get()));
+    auto path = adoptCF(copyCGPathClosingSubpaths(platformPath()));
     bool ret = CGPathContainsPoint(path.get(), 0, point, rule == WindRule::EvenOdd ? true : false);
     return ret;
 }
@@ -217,31 +256,31 @@ void Path::transform(const AffineTransform& transform)
     CGAffineTransform transformCG = transform;
 #if PLATFORM(WIN)
     auto path = adoptCF(CGPathCreateMutable());
-    CGPathAddPath(path.get(), &transformCG, m_path.get());
+    CGPathAddPath(path.get(), &transformCG, platformPath());
 #else
-    auto path = adoptCF(CGPathCreateMutableCopyByTransformingPath(m_path.get(), &transformCG));
+    auto path = adoptCF(CGPathCreateMutableCopyByTransformingPath(platformPath(), &transformCG));
 #endif
     m_path = WTFMove(path);
     m_copyPathBeforeMutation = false;
+    m_inlineData = Monostate { };
 }
 
-FloatRect Path::boundingRect() const
+static inline FloatRect zeroRectIfNull(CGRect rect)
 {
-    if (isNull())
-        return CGRectZero;
+    if (CGRectIsNull(rect))
+        return { };
+    return rect;
+}
 
+FloatRect Path::boundingRectSlowCase() const
+{
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox does not.
-
-    CGRect bound = CGPathGetPathBoundingBox(m_path.get());
-    return CGRectIsNull(bound) ? CGRectZero : bound;
+    return zeroRectIfNull(CGPathGetPathBoundingBox(platformPath()));
 }
 
-FloatRect Path::fastBoundingRect() const
+FloatRect Path::fastBoundingRectSlowCase() const
 {
-    if (isNull())
-        return CGRectZero;
-    CGRect bound = CGPathGetBoundingBox(m_path.get());
-    return CGRectIsNull(bound) ? CGRectZero : bound;
+    return zeroRectIfNull(CGPathGetBoundingBox(platformPath()));
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
@@ -267,12 +306,12 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     return CGRectIsNull(box) ? CGRectZero : box;
 }
 
-void Path::moveTo(const FloatPoint& point)
+void Path::moveToSlowCase(const FloatPoint& point)
 {
     CGPathMoveToPoint(ensurePlatformPath(), nullptr, point.x(), point.y());
 }
 
-void Path::addLineTo(const FloatPoint& p)
+void Path::addLineToSlowCase(const FloatPoint& p)
 {
     CGPathAddLineToPoint(ensurePlatformPath(), nullptr, p.x(), p.y());
 }
@@ -350,12 +389,8 @@ void Path::closeSubpath()
     CGPathCloseSubpath(ensurePlatformPath());
 }
 
-void Path::addArc(const FloatPoint& p, float radius, float startAngle, float endAngle, bool clockwise)
+void Path::addArcSlowCase(const FloatPoint& p, float radius, float startAngle, float endAngle, bool clockwise)
 {
-    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle
-    if (!std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
-
     CGPathAddArc(ensurePlatformPath(), nullptr, p.x(), p.y(), radius, startAngle, endAngle, clockwise);
 }
 
@@ -402,25 +437,19 @@ void Path::clear()
     if (isNull())
         return;
 
-    m_path = adoptCF(CGPathCreateMutable());
+    m_path.clear();
+    m_inlineData = Monostate { };
     m_copyPathBeforeMutation = false;
 }
 
-bool Path::isEmpty() const
+bool Path::isEmptySlowCase() const
 {
-    return isNull() || CGPathIsEmpty(m_path.get());
+    return CGPathIsEmpty(m_path.get());
 }
 
-bool Path::hasCurrentPoint() const
+FloatPoint Path::currentPointSlowCase() const
 {
-    return !isEmpty();
-}
-    
-FloatPoint Path::currentPoint() const 
-{
-    if (isNull())
-        return FloatPoint();
-    return CGPathGetCurrentPoint(m_path.get());
+    return CGPathGetCurrentPoint(platformPath());
 }
 
 static void CGPathApplierToPathApplier(void* info, const CGPathElement* element)
@@ -449,19 +478,16 @@ static void CGPathApplierToPathApplier(void* info, const CGPathElement* element)
     function(pathElement);
 }
 
-void Path::apply(const PathApplierFunction& function) const
+void Path::applySlowCase(const PathApplierFunction& function) const
 {
-    if (isNull())
-        return;
-
-    CGPathApply(m_path.get(), (void*)&function, CGPathApplierToPathApplier);
+    CGPathApply(platformPath(), (void*)&function, CGPathApplierToPathApplier);
 }
 
 #if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 
-size_t Path::elementCount() const
+size_t Path::elementCountSlowCase() const
 {
-    return CGPathGetNumberOfElements(m_path);
+    return CGPathGetNumberOfElements(platformPath());
 }
 
 #endif // HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)

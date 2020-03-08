@@ -117,21 +117,13 @@ void Path::clear()
     cairo_new_path(cr);
 }
 
-bool Path::isEmpty() const
+bool Path::isEmptySlowCase() const
 {
-    return isNull() || !cairo_has_current_point(platformPath()->context());
+    return !cairo_has_current_point(platformPath()->context());
 }
 
-bool Path::hasCurrentPoint() const
+FloatPoint Path::currentPointSlowCase() const
 {
-    return !isEmpty();
-}
-
-FloatPoint Path::currentPoint() const 
-{
-    if (isNull())
-        return FloatPoint();
-
     // FIXME: Is this the correct way?
     double x;
     double y;
@@ -145,13 +137,13 @@ void Path::translate(const FloatSize& p)
     cairo_translate(cr, -p.width(), -p.height());
 }
 
-void Path::moveTo(const FloatPoint& p)
+void Path::moveToSlowCase(const FloatPoint& p)
 {
     cairo_t* cr = ensurePlatformPath()->context();
     cairo_move_to(cr, p.x(), p.y());
 }
 
-void Path::addLineTo(const FloatPoint& p)
+void Path::addLineToSlowCase(const FloatPoint& p)
 {
     cairo_t* cr = ensurePlatformPath()->context();
     cairo_line_to(cr, p.x(), p.y());
@@ -189,13 +181,8 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
                    controlPoint3.x(), controlPoint3.y());
 }
 
-void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
+void Path::addArcSlowCase(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
 {
-    // http://bugs.webkit.org/show_bug.cgi?id=16449
-    // cairo_arc() functions hang or crash when passed inf as radius or start/end angle
-    if (!std::isfinite(r) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
-
     cairo_t* cr = ensurePlatformPath()->context();
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
@@ -353,12 +340,8 @@ void Path::closeSubpath()
     cairo_close_path(cr);
 }
 
-FloatRect Path::boundingRect() const
+FloatRect Path::boundingRectSlowCase() const
 {
-    // Should this be isEmpty() or can an empty path have a non-zero origin?
-    if (isNull())
-        return FloatRect();
-
     cairo_t* cr = platformPath()->context();
     double x0, x1, y0, y1;
     cairo_path_extents(cr, &x0, &y0, &x1, &y1);
@@ -408,11 +391,8 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
     return cairo_in_stroke(cr, point.x(), point.y());
 }
 
-void Path::apply(const PathApplierFunction& function) const
+void Path::applySlowCase(const PathApplierFunction& function) const
 {
-    if (isNull())
-        return;
-
     cairo_t* cr = platformPath()->context();
     auto pathCopy = cairo_copy_path(cr);
     cairo_path_data_t* data;
@@ -447,12 +427,22 @@ void Path::apply(const PathApplierFunction& function) const
     cairo_path_destroy(pathCopy);
 }
 
+FloatRect Path::fastBoundingRectSlowCase() const
+{
+    return boundingRect();
+}
+
 void Path::transform(const AffineTransform& transform)
 {
     cairo_t* cr = ensurePlatformPath()->context();
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
     cairo_transform(cr, &matrix);
+}
+
+bool Path::isNull() const
+{
+    return !m_path;
 }
 
 } // namespace WebCore

@@ -55,7 +55,7 @@ float Path::length() const
 
 #if !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 
-size_t Path::elementCount() const
+size_t Path::elementCountSlowCase() const
 {
     size_t numPoints = 0;
     apply([&numPoints](auto&) {
@@ -167,6 +167,185 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
     closeSubpath();
 }
 
+void Path::apply(const PathApplierFunction& function) const
+{
+    if (isNull())
+        return;
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (hasInlineData<MoveData>()) {
+        PathElement element;
+        element.type = PathElement::Type::MoveToPoint;
+        element.points[0] = WTF::get<MoveData>(m_inlineData).location;
+        function(element);
+        return;
+    }
+
+    if (hasInlineData<LineData>()) {
+        auto& line = WTF::get<LineData>(m_inlineData);
+        PathElement element;
+        element.type = PathElement::Type::MoveToPoint;
+        element.points[0] = line.start;
+        function(element);
+        element.type = PathElement::Type::AddLineToPoint;
+        element.points[0] = line.end;
+        function(element);
+        return;
+    }
+#endif
+
+    applySlowCase(function);
+}
+
+bool Path::isEmpty() const
+{
+    if (isNull())
+        return true;
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (hasAnyInlineData())
+        return false;
+#endif
+
+    return isEmptySlowCase();
+}
+
+bool Path::hasCurrentPoint() const
+{
+    return !isEmpty();
+}
+
+FloatPoint Path::currentPoint() const
+{
+    if (isNull())
+        return { };
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (hasInlineData<MoveData>())
+        return WTF::get<MoveData>(m_inlineData).location;
+
+    if (hasInlineData<LineData>())
+        return WTF::get<LineData>(m_inlineData).end;
+#endif
+
+    return currentPointSlowCase();
+}
+
+size_t Path::elementCount() const
+{
+#if ENABLE(INLINE_PATH_DATA)
+    if (hasInlineData<MoveData>())
+        return 1;
+
+    if (hasInlineData<LineData>())
+        return 2;
+#endif
+
+    return elementCountSlowCase();
+}
+
+void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, bool anticlockwise)
+{
+    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle,
+    // as well as http://bugs.webkit.org/show_bug.cgi?id=16449, since cairo_arc() functions hang or crash when
+    // passed inf as radius or start/end angle.
+    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+        return;
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (isNull() || hasInlineData<MoveData>()) {
+        ArcData arc;
+        if (hasAnyInlineData()) {
+            arc.hasOffset = true;
+            arc.offset = WTF::get<MoveData>(m_inlineData).location;
+        }
+        arc.center = point;
+        arc.radius = radius;
+        arc.startAngle = startAngle;
+        arc.endAngle = endAngle;
+        // FIXME: Either ArcData::clockwise needs to be renamed to anticlockwise, or the last argument to
+        // Path::addArc needs to be renamed to clockwise.
+        arc.clockwise = anticlockwise;
+        m_inlineData = { WTFMove(arc) };
+        return;
+    }
+#endif
+
+    addArcSlowCase(point, radius, startAngle, endAngle, anticlockwise);
+}
+
+void Path::addLineTo(const FloatPoint& point)
+{
+#if ENABLE(INLINE_PATH_DATA)
+    if (isNull() || hasInlineData<MoveData>()) {
+        LineData line;
+        line.start = hasAnyInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        line.end = point;
+        m_inlineData = { WTFMove(line) };
+        return;
+    }
+#endif
+
+    addLineToSlowCase(point);
+}
+
+void Path::moveTo(const FloatPoint& point)
+{
+#if ENABLE(INLINE_PATH_DATA)
+    if (isNull() || hasInlineData<MoveData>()) {
+        m_inlineData = MoveData { point };
+        return;
+    }
+#endif
+
+    moveToSlowCase(point);
+}
+
+FloatRect Path::boundingRect() const
+{
+    if (isNull())
+        return { };
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (auto rect = boundingRectFromInlineData())
+        return *rect;
+#endif
+
+    return boundingRectSlowCase();
+}
+
+FloatRect Path::fastBoundingRect() const
+{
+    if (isNull())
+        return { };
+
+#if ENABLE(INLINE_PATH_DATA)
+    if (auto rect = boundingRectFromInlineData())
+        return *rect;
+#endif
+
+    return fastBoundingRectSlowCase();
+}
+
+#if ENABLE(INLINE_PATH_DATA)
+
+Optional<FloatRect> Path::boundingRectFromInlineData() const
+{
+    if (hasInlineData<MoveData>())
+        return FloatRect { };
+
+    if (hasInlineData<LineData>()) {
+        FloatRect result;
+        auto& line = WTF::get<LineData>(m_inlineData);
+        result.fitToPoints(line.start, line.end);
+        return result;
+    }
+
+    return WTF::nullopt;
+}
+
+#endif
+
 #if !USE(CG) && !USE(DIRECT2D)
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 {
@@ -180,11 +359,6 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 
     path.closeSubpath();
     return path;
-}
-
-FloatRect Path::fastBoundingRect() const
-{
-    return boundingRect();
 }
 #endif
 

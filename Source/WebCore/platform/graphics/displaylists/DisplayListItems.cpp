@@ -1228,7 +1228,7 @@ Optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) cons
 
 void StrokePath::apply(GraphicsContext& context) const
 {
-    context.strokePath(m_path);
+    context.strokePath(WTFMove(m_path));
 }
 
 static TextStream& operator<<(TextStream& ts, const StrokePath& item)

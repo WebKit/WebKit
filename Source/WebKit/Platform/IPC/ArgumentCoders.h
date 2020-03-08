@@ -33,6 +33,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/SHA1.h>
 #include <wtf/Unexpected.h>
+#include <wtf/Variant.h>
 #include <wtf/WallTime.h>
 
 namespace IPC {
@@ -690,5 +691,10 @@ template<> struct ArgumentCoder<audit_token_t> {
     static bool decode(Decoder&, audit_token_t&);
 };
 #endif
+
+template<> struct ArgumentCoder<Monostate> {
+    static void encode(Encoder&, const Monostate&);
+    static Optional<Monostate> decode(Decoder&);
+};
 
 } // namespace IPC

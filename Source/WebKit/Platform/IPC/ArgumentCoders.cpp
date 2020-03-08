@@ -205,4 +205,13 @@ bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& audit
 }
 #endif
 
+void ArgumentCoder<Monostate>::encode(Encoder&, const Monostate&)
+{
+}
+
+Optional<Monostate> ArgumentCoder<Monostate>::decode(Decoder&)
+{
+    return Monostate { };
+}
+
 } // namespace IPC

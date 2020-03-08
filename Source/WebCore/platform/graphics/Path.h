@@ -25,10 +25,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Path_h
-#define Path_h
+#pragma once
 
 #include "FloatRect.h"
+#include "InlinePathData.h"
 #include "WindRule.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
@@ -147,10 +147,12 @@ public:
     FloatPoint pointAtLength(float length) const;
 
     WEBCORE_EXPORT void clear();
-    bool isNull() const { return !m_path; }
+    WEBCORE_EXPORT bool isNull() const;
     bool isEmpty() const;
     // Gets the current point of the current path, which is conceptually the final point reached by the path so far.
     // Note the Path can be empty (isEmpty() == true) and still have a current point.
+    // FIXME: The above comment might need to be updated; on all supported platforms, the result of hasCurrentPoint() is identical
+    // to !isEmpty().
     bool hasCurrentPoint() const;
     FloatPoint currentPoint() const;
 
@@ -185,7 +187,7 @@ public:
     FloatRect fastBoundingRectForStroke(const PlatformContextDirect2D&) const;
     PlatformPathPtr platformPath() const { return m_path.get(); }
 #elif USE(CG)
-    PlatformPathPtr platformPath() const { return m_path.get(); }
+    WEBCORE_EXPORT PlatformPathPtr platformPath() const;
 #else
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
@@ -225,7 +227,25 @@ public:
     template<class Decoder> static Optional<Path> decode(Decoder&);
 
 private:
+#if ENABLE(INLINE_PATH_DATA)
+    template<typename DataType> bool hasInlineData() const;
+    bool hasAnyInlineData() const;
+    Optional<FloatRect> boundingRectFromInlineData() const;
+#endif
+
+    void moveToSlowCase(const FloatPoint&);
+    void addLineToSlowCase(const FloatPoint&);
+    void addArcSlowCase(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
+
+    FloatRect boundingRectSlowCase() const;
+    FloatRect fastBoundingRectSlowCase() const;
+    bool isEmptySlowCase() const;
+    FloatPoint currentPointSlowCase() const;
+    size_t elementCountSlowCase() const;
+    void applySlowCase(const PathApplierFunction&) const;
+
 #if USE(CG)
+    void createCGPath() const;
     void swap(Path&);
 #endif
 
@@ -237,6 +257,9 @@ private:
     mutable bool m_figureIsOpened { false };
 #endif
 
+#if ENABLE(INLINE_PATH_DATA)
+    InlinePathData m_inlineData;
+#endif
 #if USE(CG)
     mutable bool m_copyPathBeforeMutation { false };
 #endif
@@ -246,6 +269,15 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Path&);
 
 template<class Encoder> void Path::encode(Encoder& encoder) const
 {
+#if ENABLE(INLINE_PATH_DATA)
+    bool hasInlineData = hasAnyInlineData();
+    encoder << hasInlineData;
+    if (hasInlineData) {
+        encoder << m_inlineData;
+        return;
+    }
+#endif
+
     encoder << static_cast<uint64_t>(elementCount());
 
     apply([&](auto& element) {
@@ -276,6 +308,20 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
 template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 {
     Path path;
+
+#if ENABLE(INLINE_PATH_DATA)
+    bool hasInlineData;
+    if (!decoder.decode(hasInlineData))
+        return WTF::nullopt;
+
+    if (hasInlineData) {
+        if (!decoder.decode(path.m_inlineData))
+            return WTF::nullopt;
+
+        return path;
+    }
+#endif
+
     uint64_t numPoints;
     if (!decoder.decode(numPoints))
         return WTF::nullopt;
@@ -339,6 +385,18 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
     return path;
 }
 
+#if ENABLE(INLINE_PATH_DATA)
+
+template <typename DataType> inline bool Path::hasInlineData() const
+{
+    return WTF::holds_alternative<DataType>(m_inlineData);
+}
+
+inline bool Path::hasAnyInlineData() const
+{
+    return !hasInlineData<Monostate>();
 }
 
 #endif
+
+} // namespace WebCore
