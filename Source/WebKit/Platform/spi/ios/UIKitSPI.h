@@ -1098,13 +1098,25 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, strong) UIImage *image;
 @end
 
+typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
+    _UIContextMenuLayoutActionsOnly = 1,
+    _UIContextMenuLayoutCompactMenu = 3,
+};
+
 @interface _UIContextMenuStyle : NSObject <NSCopying>
+@property (nonatomic) _UIContextMenuLayout preferredLayout;
++ (instancetype)defaultStyle;
 @end
 
 #if USE(UICONTEXTMENU)
 @interface UITargetedPreview ()
 @property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
 @end
+
+@interface UIContextMenuInteraction ()
+- (void)_presentMenuAtLocation:(CGPoint)location;
+@end
+
 #endif // USE(UICONTEXTMENU)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)

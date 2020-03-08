@@ -1,3 +1,34 @@
+2020-03-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Adopt UIContextMenu for WKFileUploadPanel
+        https://bugs.webkit.org/show_bug.cgi?id=208687
+
+        Reviewed by Tim Horton.
+
+        Move from the depricated UIDocumentMenuViewController to UIContextMenu.
+        UI change, not currently testable.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel dealloc]):
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        (-[WKFileUploadPanel dismiss]):
+        (-[WKFileUploadPanel _browseFilesButtonLabel]):
+        (-[WKFileUploadPanel contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKFileUploadPanel _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        (-[WKFileUploadPanel contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKFileUploadPanel contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKFileUploadPanel _removeInteraction]):
+        (-[WKFileUploadPanel _initInteraction]):
+        (-[WKFileUploadPanel _showFilePickerMenu]):
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        (-[WKFileUploadPanel _presentPopoverWithContentViewController:animated:]):
+        (-[WKFileUploadPanel _presentFullscreenViewController:animated:]):
+        (photoLibraryIcon): Deleted.
+        (cameraIcon): Deleted.
+        (-[WKFileUploadPanel documentMenu:didPickDocumentPicker:]): Deleted.
+        (-[WKFileUploadPanel documentMenuWasCancelled:]): Deleted.
+
 2020-03-07  Peng Liu  <peng.liu6@apple.com>
 
         Use the feature flags mechanism to give default feature preference values
