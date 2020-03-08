@@ -1,3 +1,13 @@
+2020-03-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [GTK] Fix compilation with disabled OpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=208773
+
+        Reviewed by Yusuke Suzuki.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+
 2020-03-08  Megan Gardner  <megan_gardner@apple.com>
 
         Adopt Context Menus for Data Detectors

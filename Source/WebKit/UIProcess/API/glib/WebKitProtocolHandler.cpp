@@ -346,6 +346,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         " </tbody></tr>",
         hardwareAccelerationPolicy(request));
 
+#if ENABLE(OPENGL)
     g_string_append_printf(html,
         " <tbody><tr>"
         "  <td><div class=\"titlename\">WebGL enabled</div></td>"
@@ -479,6 +480,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             eglQueryString(eglDisplay, EGL_EXTENSIONS));
     }
 #endif
+#endif // ENABLE(OPENGL)
 
     g_string_append(html, "<table>");
 
