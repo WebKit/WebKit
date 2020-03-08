@@ -183,6 +183,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaRecordersMessagesReplies
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaResourceManagerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaSessionHelperProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h

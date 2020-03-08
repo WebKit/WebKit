@@ -26,6 +26,7 @@ VPATH = \
     $(WebKit2)/GPUProcess/graphics \
     $(WebKit2)/GPUProcess/mac \
     $(WebKit2)/GPUProcess/media \
+    $(WebKit2)/GPUProcess/media/ios \
     $(WebKit2)/GPUProcess/webrtc \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
@@ -54,6 +55,7 @@ VPATH = \
     $(WebKit2)/WebProcess/GPU \
     $(WebKit2)/WebProcess/GPU/graphics \
     $(WebKit2)/WebProcess/GPU/media \
+    $(WebKit2)/WebProcess/GPU/media/ios \
     $(WebKit2)/WebProcess/GPU/webrtc \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/Inspector \
@@ -164,6 +166,8 @@ MESSAGE_RECEIVERS = \
     RemoteMediaRecorder \
     RemoteMediaRecorderManager \
     RemoteMediaResourceManager \
+    RemoteMediaSessionHelper \
+    RemoteMediaSessionHelperProxy \
     RemoteObjectRegistry \
     RemoteRenderingBackend \
     RemoteRenderingBackendProxy \

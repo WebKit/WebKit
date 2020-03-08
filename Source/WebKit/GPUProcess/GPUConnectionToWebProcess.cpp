@@ -83,6 +83,10 @@
 #include "RemoteAudioSessionProxyMessages.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "RemoteMediaSessionHelperProxy.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -286,6 +290,20 @@ void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSess
 void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&& completion)
 {
     completion(audioSessionProxy().configuration());
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+RemoteMediaSessionHelperProxy& GPUConnectionToWebProcess::mediaSessionHelperProxy()
+{
+    if (!m_mediaSessionHelperProxy)
+        m_mediaSessionHelperProxy = makeUnique<RemoteMediaSessionHelperProxy>(*this);
+    return *m_mediaSessionHelperProxy;
+}
+
+void GPUConnectionToWebProcess::ensureMediaSessionHelper()
+{
+    mediaSessionHelperProxy();
 }
 #endif
 

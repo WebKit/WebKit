@@ -5070,6 +5070,12 @@
 		CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaybackSessionManagerProxyMessages.h; path = DerivedSources/WebKit2/PlaybackSessionManagerProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA93DAE22F8BCF300490A69 /* FullscreenTouchSecheuristicParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FullscreenTouchSecheuristicParameters.h; path = ios/fullscreen/FullscreenTouchSecheuristicParameters.h; sourceTree = "<group>"; };
 		CDA93DAF22F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FullscreenTouchSecheuristicParameters.cpp; path = ios/fullscreen/FullscreenTouchSecheuristicParameters.cpp; sourceTree = "<group>"; };
+		CDA9593A2412B17500910EEF /* RemoteMediaSessionHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionHelper.cpp; sourceTree = "<group>"; };
+		CDA9593B2412B17500910EEF /* RemoteMediaSessionHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionHelper.h; sourceTree = "<group>"; };
+		CDA9593C2412B64500910EEF /* RemoteMediaSessionHelper.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaSessionHelper.messages.in; sourceTree = "<group>"; };
+		CDA959452412C4F500910EEF /* RemoteMediaSessionHelperProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionHelperProxy.h; sourceTree = "<group>"; };
+		CDA959462412C4F500910EEF /* RemoteMediaSessionHelperProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionHelperProxy.cpp; sourceTree = "<group>"; };
+		CDA959472412C91900910EEF /* RemoteMediaSessionHelperProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaSessionHelperProxy.messages.in; sourceTree = "<group>"; };
 		CDAC207823FB1E210021DEE3 /* RemoteCDMFactoryProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCDMFactoryProxy.h; sourceTree = "<group>"; };
 		CDAC207923FB1E210021DEE3 /* RemoteCDMFactoryProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMFactoryProxy.cpp; sourceTree = "<group>"; };
 		CDAC207C23FB1EF90021DEE3 /* RemoteCDMFactoryProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCDMFactoryProxy.messages.in; sourceTree = "<group>"; };
@@ -5406,6 +5412,7 @@
 			isa = PBXGroup;
 			children = (
 				1DAF5A4D23EC9F7900B7B518 /* cocoa */,
+				CDA959392412B17500910EEF /* ios */,
 				071BC57923C93BB900680D7C /* AudioTrackPrivateRemote.cpp */,
 				071BC57723C93BB700680D7C /* AudioTrackPrivateRemote.h */,
 				07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */,
@@ -5460,6 +5467,7 @@
 			isa = PBXGroup;
 			children = (
 				1D0ECEA923FC84BB00D172F6 /* cocoa */,
+				CDA959442412C4DA00910EEF /* ios */,
 				9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */,
 				9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */,
 				9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */,
@@ -10152,6 +10160,26 @@
 				CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */,
 			);
 			name = FullScreen;
+			sourceTree = "<group>";
+		};
+		CDA959392412B17500910EEF /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				CDA9593A2412B17500910EEF /* RemoteMediaSessionHelper.cpp */,
+				CDA9593B2412B17500910EEF /* RemoteMediaSessionHelper.h */,
+				CDA9593C2412B64500910EEF /* RemoteMediaSessionHelper.messages.in */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		CDA959442412C4DA00910EEF /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				CDA959462412C4F500910EEF /* RemoteMediaSessionHelperProxy.cpp */,
+				CDA959452412C4F500910EEF /* RemoteMediaSessionHelperProxy.h */,
+				CDA959472412C91900910EEF /* RemoteMediaSessionHelperProxy.messages.in */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		CDC2831A201BD75600E6E745 /* fullscreen */ = {

@@ -172,6 +172,7 @@ platform/audio/cocoa/WebAudioBufferList.cpp
 platform/audio/ios/AudioDestinationIOS.cpp @no-unify
 platform/audio/ios/AudioFileReaderIOS.cpp @no-unify
 platform/audio/ios/AudioSessionIOS.mm @no-unify
+platform/audio/ios/MediaSessionHelperIOS.mm @no-unify
 platform/audio/ios/MediaSessionManagerIOS.mm @no-unify
 
 platform/audio/mac/CAAudioStreamDescription.cpp

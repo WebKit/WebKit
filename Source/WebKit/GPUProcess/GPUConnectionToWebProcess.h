@@ -51,6 +51,7 @@ class RemoteCDMFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
+class RemoteMediaSessionHelperProxy;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct RemoteAudioSessionConfiguration;
@@ -87,7 +88,9 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
 #endif
-
+#if PLATFORM(IOS_FAMILY)
+    RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
+#endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
@@ -122,6 +125,10 @@ private:
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    void ensureMediaSessionHelper();
 #endif
 
     // IPC::Connection::Client
@@ -166,6 +173,9 @@ private:
 #endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     std::unique_ptr<RemoteAudioSessionProxy> m_audioSessionProxy;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    std::unique_ptr<RemoteMediaSessionHelperProxy> m_mediaSessionHelperProxy;
 #endif
 };
 

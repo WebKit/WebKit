@@ -4152,6 +4152,8 @@
 		CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
 		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA9593524123CB800910EEF /* MediaSessionHelperIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD875A752411B79800B09F58 /* MediaSessionHelperIOS.mm */; };
+		CDA9593F2412BAE000910EEF /* MediaSessionHelperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CD875A742411B79800B09F58 /* MediaSessionHelperIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA98E0B1603CD6000FEA3B1 /* LegacyCDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98E091603CD5900FEA3B1 /* LegacyCDM.cpp */; };
 		CDAB6D2917C7DE6C00C60B34 /* MediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2717C7DE6C00C60B34 /* MediaControlsHost.h */; };
 		CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2C17C814EE00C60B34 /* JSMediaControlsHost.h */; };
@@ -13899,6 +13901,8 @@
 		CD871C681FB52B6900F0B965 /* ISOBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOBox.cpp; sourceTree = "<group>"; };
 		CD871C691FB52B6900F0B965 /* ISOVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOVTTCue.cpp; sourceTree = "<group>"; };
 		CD871C6A1FB52B6A00F0B965 /* ISOOriginalFormatBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOOriginalFormatBox.cpp; sourceTree = "<group>"; };
+		CD875A742411B79800B09F58 /* MediaSessionHelperIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionHelperIOS.h; sourceTree = "<group>"; };
+		CD875A752411B79800B09F58 /* MediaSessionHelperIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionHelperIOS.mm; sourceTree = "<group>"; };
 		CD8A7BB9197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSourceProviderAVFObjC.mm; sourceTree = "<group>"; };
 		CD8A7BBA197735FE00CBD643 /* AudioSourceProviderAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceProviderAVFObjC.h; sourceTree = "<group>"; };
 		CD8ACA861D237AA200ECC59E /* RemoteCommandListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteCommandListenerMac.mm; sourceTree = "<group>"; };
@@ -26228,6 +26232,8 @@
 				CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */,
 				CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */,
 				CDA79825170A279000D45C55 /* AudioSessionIOS.mm */,
+				CD875A742411B79800B09F58 /* MediaSessionHelperIOS.h */,
+				CD875A752411B79800B09F58 /* MediaSessionHelperIOS.mm */,
 				07638A971884487200E15A1B /* MediaSessionManagerIOS.h */,
 				07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */,
 			);
@@ -31561,6 +31567,7 @@
 				C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */,
 				C9F87CFE1B28F40E00979B83 /* MediaSessionEvents.h in Headers */,
 				414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */,
+				CDA9593F2412BAE000910EEF /* MediaSessionHelperIOS.h in Headers */,
 				C96F5EC81B5872260091EA9D /* MediaSessionInterruptionProvider.h in Headers */,
 				C96F5EC51B5872260091EA9D /* MediaSessionInterruptionProviderMac.h in Headers */,
 				C90F65561B2253BE002163A1 /* MediaSessionManager.h in Headers */,
@@ -33731,6 +33738,7 @@
 				150524F51B712FF900696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm in Sources */,
 				1B124D8F1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm in Sources */,
 				CDBEAEAC19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm in Sources */,
+				CDA9593524123CB800910EEF /* MediaSessionHelperIOS.mm in Sources */,
 				C96F5EC71B5872260091EA9D /* MediaSessionInterruptionProvider.cpp in Sources */,
 				C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,

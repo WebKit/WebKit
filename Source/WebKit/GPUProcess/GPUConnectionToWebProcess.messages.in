@@ -30,6 +30,9 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo);
 #endif
     EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
+#if PLATFORM(IOS_FAMILY)
+    EnsureMediaSessionHelper()
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

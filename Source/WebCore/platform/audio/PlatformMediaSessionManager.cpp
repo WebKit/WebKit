@@ -44,8 +44,10 @@ static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionM
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
 {
     auto& manager = sharedPlatformMediaSessionManager();
-    if (!manager)
+    if (!manager) {
         manager = PlatformMediaSessionManager::create();
+        manager->resetRestrictions();
+    }
     return *manager;
 }
 
@@ -72,7 +74,6 @@ PlatformMediaSessionManager::PlatformMediaSessionManager()
     : m_logger(AggregateLogger::create(this))
 #endif
 {
-    resetRestrictions();
 }
 
 static inline unsigned indexFromMediaType(PlatformMediaSession::MediaType type)

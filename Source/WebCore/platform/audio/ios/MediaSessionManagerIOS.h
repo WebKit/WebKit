@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include "MediaSessionHelperIOS.h"
 #include "MediaSessionManagerCocoa.h"
 #include <wtf/RetainPtr.h>
 
@@ -41,18 +42,13 @@ extern NSString* WebUIApplicationDidEnterBackgroundNotification;
 
 namespace WebCore {
 
-class MediaSessionManageriOS : public MediaSessionManagerCocoa {
+class MediaSessionManageriOS
+    : public MediaSessionManagerCocoa
+    , public MediaSessionHelperClient {
 public:
     virtual ~MediaSessionManageriOS();
 
-    void externalOutputDeviceAvailableDidChange();
     bool hasWirelessTargetsAvailable() override;
-#if HAVE(CELESTIAL)
-    void carPlayServerDied();
-    void updateCarPlayIsConnected(Optional<bool>&&);
-    void activeAudioRouteDidChange(Optional<bool>&&);
-    void activeVideoRouteDidChange(Optional<bool>&&);
-#endif
     static WEBCORE_EXPORT void providePresentingApplicationPID();
 
 private:
@@ -66,14 +62,22 @@ private:
     void providePresentingApplicationPIDIfNecessary() final;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 
+    // MediaSessionHelperClient
+    void receivedInterruption(InterruptionType, ShouldResume) final;
+    void applicationWillEnterForeground(SuspendedUnderLock) final;
+    void applicationDidEnterBackground(SuspendedUnderLock) final;
+    void applicationWillBecomeInactive() final;
+    void applicationDidBecomeActive() final;
+    void externalOutputDeviceAvailableDidChange(HasAvailableTargets) final;
+    void activeAudioRouteDidChange(ShouldPause) final;
+    void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) final;
+    void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit) final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaSessionManageriOS"; }
 #endif
 
-    RetainPtr<WebMediaSessionHelper> m_objcObserver;
-#if HAVE(CELESTIAL)
+    bool m_isMonitoringWirelessRoutes { false };
     bool m_havePresentedApplicationPID { false };
-#endif
 };
 
 } // namespace WebCore

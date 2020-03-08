@@ -179,6 +179,10 @@
 #include "RemoteCDMFactory.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "RemoteMediaSessionHelper.h"
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
@@ -2013,6 +2017,13 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         AudioSession::setSharedSession(RemoteAudioSession::create(*this));
     else
         AudioSession::setSharedSession(AudioSession::create());
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (useGPUProcessForMedia)
+        MediaSessionHelper::setSharedHelper(makeUniqueRef<RemoteMediaSessionHelper>(*this));
+    else
+        MediaSessionHelper::resetSharedHelper();
 #endif
 }
 #endif
