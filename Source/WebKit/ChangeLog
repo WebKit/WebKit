@@ -1,3 +1,14 @@
+2020-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Generalize setSynchronousScrollingReasons() to take a ScrollingNodeID
+        https://bugs.webkit.org/show_bug.cgi?id=208774
+
+        Reviewed by Zalan Bujtas.
+
+        Whitespace.
+
+        * WebProcess/WebPage/EventDispatcher.h:
+
 2020-03-07  Brady Eidson  <beidson@apple.com>
 
         Make PDF range requests to the network.

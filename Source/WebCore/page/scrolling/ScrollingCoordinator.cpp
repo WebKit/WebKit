@@ -346,7 +346,7 @@ OptionSet<SynchronousScrollingReason> ScrollingCoordinator::synchronousScrolling
 void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameView)
 {
     ASSERT(coordinatesScrollingForFrameView(frameView));
-    setSynchronousScrollingReasons(frameView, synchronousScrollingReasons(frameView));
+    setSynchronousScrollingReasons(frameView.scrollingNodeID(), synchronousScrollingReasons(frameView));
 }
 
 void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()

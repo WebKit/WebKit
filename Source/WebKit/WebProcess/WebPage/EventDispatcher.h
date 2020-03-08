@@ -84,7 +84,6 @@ private:
     void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);
 #endif
 
-
     // This is called on the main thread.
     void dispatchWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&);
 #if ENABLE(IOS_TOUCH_EVENTS)
