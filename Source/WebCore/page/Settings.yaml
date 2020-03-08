@@ -922,6 +922,9 @@ legacyGetUserMediaEnabled:
 isInAppBrowserPrivacyEnabled:
   initial: false
 
+NeedsInAppBrowserPrivacyQuirks:
+  initial: false
+
 isAccessibilityIsolatedTreeEnabled:
   initial: false
 

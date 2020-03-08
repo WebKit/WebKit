@@ -640,6 +640,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (BOOL)isInAppBrowserPrivacyEnabled;
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag;
 
+- (BOOL)needsInAppBrowserPrivacyQuirks;
+- (void)setNeedsInAppBrowserPrivacyQuirks:(BOOL)flag;
+
 - (void)setWebSQLEnabled:(BOOL)flag;
 - (BOOL)webSQLEnabled;
 

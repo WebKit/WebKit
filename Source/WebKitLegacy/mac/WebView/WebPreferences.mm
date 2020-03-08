@@ -710,9 +710,10 @@ public:
         @NO, WebKitAsyncClipboardAPIEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
-        @NO, WebKitInAppBrowserPrivacyEnabledPreferenceKey,
+        @NO, WebKitInternalDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
         @NO, WebKitWebSQLEnabledPreferenceKey,
+        @YES, WebKitInternalDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3641,12 +3642,22 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)isInAppBrowserPrivacyEnabled
 {
-    return [self _boolValueForKey:WebKitInAppBrowserPrivacyEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitInternalDebugInAppBrowserPrivacyEnabledPreferenceKey];
 }
 
 - (void)setInAppBrowserPrivacyEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitInAppBrowserPrivacyEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitInternalDebugInAppBrowserPrivacyEnabledPreferenceKey];
+}
+
+- (BOOL)needsInAppBrowserPrivacyQuirks
+{
+    return [self _boolValueForKey:WebKitInternalDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey];
+}
+
+- (void)setNeedsInAppBrowserPrivacyQuirks:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitInternalDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey];
 }
 
 - (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled

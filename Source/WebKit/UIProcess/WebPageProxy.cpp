@@ -7742,6 +7742,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     }
 #endif
 
+    parameters.needsInAppBrowserPrivacyQuirks = preferences().needsInAppBrowserPrivacyQuirks();
+
     return parameters;
 }
 

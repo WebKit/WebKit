@@ -394,6 +394,9 @@ public:
     void setIsInAppBrowserPrivacyEnabled(bool isEnabled) { m_isInAppBrowserPrivacyEnabled = isEnabled; }
     bool isInAppBrowserPrivacyEnabled() const { return m_isInAppBrowserPrivacyEnabled; }
 
+    void setNeedsInAppBrowserPrivacyQuirks(bool isEnabled) { m_needsInAppBrowserPrivacyQuirks = isEnabled; }
+    bool needsInAppBrowserPrivacyQuirks() const { return m_needsInAppBrowserPrivacyQuirks; }
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { m_accessibilityIsolatedTree = isEnabled; }
     bool isAccessibilityIsolatedTreeEnabled() const { return m_accessibilityIsolatedTree; }
@@ -607,6 +610,7 @@ private:
     bool m_isCSSShadowPartsEnabled { true };
 
     bool m_isInAppBrowserPrivacyEnabled { false };
+    bool m_needsInAppBrowserPrivacyQuirks { false };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };

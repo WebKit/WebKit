@@ -365,6 +365,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setIsInAppBrowserPrivacyEnabled(enabled);
 }
 
+- (BOOL)_needsInAppBrowserPrivacyQuirks
+{
+    return _preferences->needsInAppBrowserPrivacyQuirks();
+}
+
+- (void)_setNeedsInAppBrowserPrivacyQuirks:(BOOL)enabled
+{
+    _preferences->setNeedsInAppBrowserPrivacyQuirks(enabled);
+}
+
 - (BOOL)_animatedImageAsyncDecodingEnabled
 {
     return _preferences->animatedImageAsyncDecodingEnabled();

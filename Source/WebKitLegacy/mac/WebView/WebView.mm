@@ -3208,7 +3208,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextIntegrationEnabled([preferences layoutFormattingContextIntegrationEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setIsInAppBrowserPrivacyEnabled([preferences isInAppBrowserPrivacyEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(![preferences webSQLEnabled]);
-
+    RuntimeEnabledFeatures::sharedFeatures().setNeedsInAppBrowserPrivacyQuirks([preferences needsInAppBrowserPrivacyQuirks]);
+    
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RuntimeEnabledFeatures::sharedFeatures().setLegacyEncryptedMediaAPIEnabled(preferences.legacyEncryptedMediaAPIEnabled);
 #endif

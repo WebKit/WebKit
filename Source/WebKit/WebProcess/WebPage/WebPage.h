@@ -1752,6 +1752,7 @@ private:
     bool m_alwaysShowsVerticalScroller { false };
 
     bool m_shouldRenderCanvasInGPUProcess { false };
+    bool m_needsInAppBrowserPrivacyQuirks { false };
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin { false };

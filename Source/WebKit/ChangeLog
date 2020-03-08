@@ -1,3 +1,39 @@
+2020-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Create a flag to disable in-app browser quirks
+        https://bugs.webkit.org/show_bug.cgi?id=208777
+        <rdar://problem/60062197>
+
+        Reviewed by Simon Fraser.
+
+        This patch makes the following changes:
+
+        1. Adds a new flag 'NeedsInAppBrowserPrivacyQuirks' to allow quirks to be toggled
+           during testing.
+        2. Reclassify this new flag, and the existing 'InAppBrowserPrivacyEnabled' flag from 
+           'settings' to Internal Debug settings
+
+        The renamed flags are covered by existing tests.
+
+        * FeatureFlags/WebKit.plist:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultInAppBrowserPrivacy):
+        (WebKit::defaultNeedsInAppBrowserPrivacyQuirks):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _needsInAppBrowserPrivacyQuirks]):
+        (-[WKPreferences _setNeedsInAppBrowserPrivacyQuirks:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Generalize setSynchronousScrollingReasons() to take a ScrollingNodeID

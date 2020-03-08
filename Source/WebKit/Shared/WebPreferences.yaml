@@ -1261,6 +1261,22 @@ ShouldUseServiceWorkerShortTimeout:
   defaultValue: false
   type: bool
 
+IsInAppBrowserPrivacyEnabled:
+    type: bool
+    defaultValue: defaultInAppBrowserPrivacy()
+    humanReadableName: "In-App Browser Privacy"
+    humanReadableDescription: "Enable In-App Browser Privacy"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: debug
+
+NeedsInAppBrowserPrivacyQuirks:
+    type: bool
+    defaultValue: true
+    humanReadableName: "Needs In-App Browser Privacy Quirks"
+    humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: debug
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They
@@ -1928,14 +1944,6 @@ UseGPUProcessForMedia:
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   category: internal
   webcoreName: useGPUProcessForMedia
-
-IsInAppBrowserPrivacyEnabled:
-    type: bool
-    defaultValue: defaultInAppBrowserPrivacy()
-    humanReadableName: "In-App Browser Privacy"
-    humanReadableDescription: "Enable In-App Browser Privacy"
-    webcoreBinding: RuntimeEnabledFeatures
-    category: internal
 
 DialogElementEnabled:
     type: bool

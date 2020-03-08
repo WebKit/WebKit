@@ -1,3 +1,28 @@
+2020-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Create a flag to disable in-app browser quirks
+        https://bugs.webkit.org/show_bug.cgi?id=208777
+        <rdar://problem/60062197>
+
+        Reviewed by Simon Fraser.
+
+        This patch makes the following changes:
+
+        1. Adds a new flag 'NeedsInAppBrowserPrivacyQuirks' to allow quirks to be toggled
+           during testing.
+        2. Reclassify this new flag, and the existing 'InAppBrowserPrivacyEnabled' flag from 
+           'settings' to Internal Debug settings
+
+        The renamed flags are covered by existing tests.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Add new flag.
+        (-[WebPreferences needsInAppBrowserPrivacyQuirks]): Ditto.
+        (-[WebPreferences setNeedsInAppBrowserPrivacyQuirks:]): Ditto.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+
 2020-03-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement support for dictation alternatives

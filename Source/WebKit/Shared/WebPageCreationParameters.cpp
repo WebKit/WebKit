@@ -147,6 +147,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
     encoder << shouldRenderCanvasInGPUProcess;
+    encoder << needsInAppBrowserPrivacyQuirks;
 
 #if PLATFORM(GTK)
     encoder << themeName;
@@ -474,6 +475,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))
         return WTF::nullopt;
 
+    if (!decoder.decode(parameters.needsInAppBrowserPrivacyQuirks))
+        return WTF::nullopt;
+    
 #if PLATFORM(GTK)
     if (!decoder.decode(parameters.themeName))
         return WTF::nullopt;
