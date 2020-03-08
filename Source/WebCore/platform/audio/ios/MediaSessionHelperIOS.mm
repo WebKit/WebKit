@@ -206,7 +206,9 @@ void MediaSessionHelperiOS::startMonitoringWirelessRoutes()
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
+#if !PLATFORM(WATCHOS)
     [m_objcObserver startMonitoringAirPlayRoutes];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -221,7 +223,9 @@ void MediaSessionHelperiOS::stopMonitoringWirelessRoutes()
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
+#if !PLATFORM(WATCHOS)
     [m_objcObserver stopMonitoringAirPlayRoutes];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
