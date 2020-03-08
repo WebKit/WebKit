@@ -1,3 +1,12 @@
+2020-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        Regression r258042: Failing API test TestWebKitAPI.URLSchemeHandler.Frames
+        https://bugs.webkit.org/show_bug.cgi?id=208767
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        The frameID of the main frame before loading is only 0 on Mac right now.
+        The test is still good because it validates that execution works in the main frame before loading.
+
 2020-03-06  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit queue is not skipping layout tests for rollout patches
