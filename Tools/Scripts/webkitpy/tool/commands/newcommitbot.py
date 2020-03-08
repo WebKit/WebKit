@@ -106,7 +106,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         return True
 
     _patch_by_regex = re.compile(r'^Patch\s+by\s+(?P<author>.+?)\s+on(\s+\d{4}-\d{2}-\d{2})?\n?', re.MULTILINE | re.IGNORECASE)
-    _rollout_regex = re.compile(r'(rolling out|reverting) (?P<revisions>r?\d+((,\s*|,?\s*and\s+)?r?\d+)*)\.?\s*', re.MULTILINE | re.IGNORECASE)
+    _revert_regex = re.compile(r'(rolling out|reverting) (?P<revisions>r?\d+((,\s*|,?\s*and\s+)?r?\d+)*)\.?\s*', re.MULTILINE | re.IGNORECASE)
     _requested_by_regex = re.compile(r'^\"?(?P<reason>.+?)\"? \(Requested\s+by\s+(?P<author>.+?)\s+on\s+#webkit\)\.', re.MULTILINE | re.IGNORECASE)
     _bugzilla_url_regex = re.compile(r'http(s?)://bugs\.webkit\.org/show_bug\.cgi\?id=(?P<id>\d+)', re.MULTILINE)
     _trac_url_regex = re.compile(r'http(s?)://trac.webkit.org/changeset/(?P<revision>\d+)', re.MULTILINE)
@@ -128,8 +128,8 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         patch_by = self._patch_by_regex.search(commit_log)
         commit_log = self._patch_by_regex.sub('', commit_log, count=1)
 
-        rollout = self._rollout_regex.search(commit_log)
-        commit_log = self._rollout_regex.sub('', commit_log, count=1)
+        revert = self._revert_regex.search(commit_log)
+        commit_log = self._revert_regex.sub('', commit_log, count=1)
 
         requested_by = self._requested_by_regex.search(commit_log)
 
@@ -148,15 +148,15 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         linkified_revision = 'https://trac.webkit.org/%s' % firstline.group('revision')
         lines[0] = '%s by %s' % (linkified_revision, author)
 
-        if rollout:
+        if revert:
             if requested_by:
                 author = requested_by.group('author')
                 contributor = committer_list.contributor_by_irc_nickname(author)
                 if contributor:
                     author = "%s (%s)" % (contributor.full_name, contributor.irc_nicknames[0])
-                return '%s rolled out %s in %s : %s' % (author, rollout.group('revisions'),
+                return '%s reverted %s in %s : %s' % (author, revert.group('revisions'),
                     linkified_revision, requested_by.group('reason'))
-            lines[0] = '%s rolled out %s in %s' % (author, rollout.group('revisions'), linkified_revision)
+            lines[0] = '%s reverted %s in %s' % (author, revert.group('revisions'), linkified_revision)
 
         return ' '.join(list(filter(lambda line: len(line), lines))[0:4])
 

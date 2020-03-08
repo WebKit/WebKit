@@ -262,8 +262,8 @@ controllers.UnexpectedFailures = base.extends(FailureStreamController, {
         var failure = new ui.notifications.FailingTestsSummary();
         model.commitDataListForRevisionRange(this._impliedFirstFailingRevision(failureAnalysis), failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
             var suspiciousCommit = failure.addCommitData(commitData);
-            $(suspiciousCommit).bind('rollout', function() {
-                this.onRollout(commitData.revision, failure.testNameList());
+            $(suspiciousCommit).bind('revert', function() {
+                this.onRevert(commitData.revision, failure.testNameList());
             }.bind(this));
             $(failure).bind('blame', function() {
                 this.onBlame(failure, commitData);
@@ -290,9 +290,9 @@ controllers.UnexpectedFailures = base.extends(FailureStreamController, {
                 this.disabled = true;
         });
     },
-    onRollout: function(revision, testNameList)
+    onRevert: function(revision, testNameList)
     {
-        checkout.rollout(revision, ui.rolloutReasonForTestNameList(testNameList), $.noop, function() {
+        checkout.revert(revision, ui.revertReasonForTestNameList(testNameList), $.noop, function() {
             // FIXME: We should have a better error UI.
             alert(kCheckoutUnavailableMessage);
         });

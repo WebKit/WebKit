@@ -65,7 +65,7 @@ _webkit-patch_complete()
     esac
 
     if [ $COMP_CWORD -eq 1 ]; then
-        __webkit-patch_generate_reply "--help apply-from-bug bugs-to-commit commit-message land land-from-bug obsolete-attachments patches-to-commit post upload tree-status rollout reviewed-patches"
+        __webkit-patch_generate_reply "--help apply-from-bug bugs-to-commit commit-message land land-from-bug obsolete-attachments patches-to-commit post upload tree-status revert reviewed-patches"
         return
     fi
 

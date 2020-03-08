@@ -80,7 +80,7 @@ class CommitQueueTask(PatchAnalysisTask):
             return self.report_failure()
         if not self._validate_changelog():
             return self.report_failure()
-        if not self._patch.is_rollout():
+        if not self._patch.is_revert():
             if not self._build():
                 if not self._build_without_patch():
                     return False

@@ -56,8 +56,8 @@ class CommitQueueFeeder(AbstractFeeder):
         patches = self._patches_with_acceptable_review_flag(patches)
         patches = sorted(patches, key=lambda patch: patch.attach_date() or 0)
 
-        high_priority_item_ids = [patch.id() for patch in patches if patch.is_rollout()]
-        item_ids = [patch.id() for patch in patches if not patch.is_rollout()]
+        high_priority_item_ids = [patch.id() for patch in patches if patch.is_revert()]
+        item_ids = [patch.id() for patch in patches if not patch.is_revert()]
 
         _log.info("Feeding %s high priority items %s, regular items %s" % (self.queue_name, high_priority_item_ids, item_ids))
         self._tool.status_server.update_work_items(self.queue_name, high_priority_item_ids, item_ids)

@@ -402,7 +402,7 @@ and the reviewers listed in the ChangeLogs look reasonable.
     ]
 
 
-class AbstractRolloutPrepCommand(AbstractSequencedCommand):
+class AbstractRevertPrepCommand(AbstractSequencedCommand):
     argument_names = "REVISION [REVISIONS] REASON"
 
     def _commit_info(self, revision):
@@ -410,9 +410,9 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
         if commit_info and commit_info.bug_id():
             # Note: Don't print a bug URL here because it will confuse the
             #       SheriffBot because the SheriffBot just greps the output
-            #       of create-rollout for bug URLs.  It should do better
+            #       of create-revert for bug URLs.  It should do better
             #       parsing instead.
-            _log.info("Preparing rollout for bug %s." % commit_info.bug_id())
+            _log.info("Preparing revert for bug %s." % commit_info.bug_id())
         else:
             _log.info("Unable to parse bug number from diff.")
         return commit_info
@@ -456,12 +456,12 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
         return state
 
 
-class PrepareRollout(AbstractRolloutPrepCommand):
-    name = "prepare-rollout"
+class PrepareRevert(AbstractRevertPrepCommand):
+    name = "prepare-revert"
     help_text = "Revert the given revision(s) in the working copy and prepare ChangeLogs with revert reason"
     long_help = """Updates the working copy.
 Applies the inverse diff for the provided revision(s).
-Creates an appropriate rollout ChangeLog, including a trac link and bug link.
+Creates an appropriate revert ChangeLog, including a trac link and bug link.
 """
     steps = [
         steps.DiscardLocalChanges,
@@ -471,9 +471,17 @@ Creates an appropriate rollout ChangeLog, including a trac link and bug link.
     ]
 
 
-class CreateRollout(AbstractRolloutPrepCommand):
-    name = "create-rollout"
-    help_text = "Creates a bug to track the broken SVN revision(s) and uploads a rollout patch."
+class PrepareRollout(PrepareRevert):
+    name = "prepare-rollout"
+
+    def _prepare_state(self, options, args, tool):
+        _log.warning("prepare-rollout is deprecated, use prepare-revert instead.")
+        return PrepareRevert._prepare_state(self, options, args, tool)
+
+
+class CreateRevert(AbstractRevertPrepCommand):
+    name = "create-revert"
+    help_text = "Creates a bug to track the broken SVN revision(s) and uploads a revert patch."
     steps = [
         steps.DiscardLocalChanges,
         steps.Update,
@@ -484,7 +492,7 @@ class CreateRollout(AbstractRolloutPrepCommand):
     ]
 
     def _prepare_state(self, options, args, tool):
-        state = AbstractRolloutPrepCommand._prepare_state(self, options, args, tool)
+        state = AbstractRevertPrepCommand._prepare_state(self, options, args, tool)
         state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
         state["bug_description"] = "%s broke the build:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
@@ -500,13 +508,21 @@ so that we can track how often these flaky tests fail.
         return state
 
 
-class Rollout(AbstractRolloutPrepCommand):
-    name = "rollout"
+class CreateRollout(CreateRevert):
+    name = "create-rollout"
+
+    def _prepare_state(self, options, args, tool):
+        _log.warning("create-rollout is deprecated, use create-revert instead.")
+        return CreateRevert._prepare_state(self, options, args, tool)
+
+
+class Revert(AbstractRevertPrepCommand):
+    name = "revert"
     show_in_main_help = True
     help_text = "Revert the given revision(s) in the working copy and optionally commit the revert and re-open the original bug"
     long_help = """Updates the working copy.
 Applies the inverse diff for the provided revision.
-Creates an appropriate rollout ChangeLog, including a trac link and bug link.
+Creates an appropriate revert ChangeLog, including a trac link and bug link.
 Opens the generated ChangeLogs in $EDITOR.
 Shows the prepared diff for confirmation.
 Commits the revert and updates the bug (including re-opening the bug if necessary)."""
@@ -519,5 +535,14 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
         steps.ConfirmDiff,
         steps.Build,
         steps.Commit,
-        steps.ReopenBugAfterRollout,
+        steps.ReopenBugAfterRevert,
     ]
+
+
+class Rollout(Revert):
+    name = "rollout"
+    show_in_main_help = False
+
+    def _prepare_state(self, options, args, tool):
+        _log.warning("rollout is deprecated, use revert instead.")
+        return Revert._prepare_state(self, options, args, tool)

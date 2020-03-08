@@ -36,14 +36,14 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.common.checkout.checkout_mock import MockCheckout
 
 
-class AbstractRolloutPrepCommandTest(unittest.TestCase):
+class AbstractRevertPrepCommandTest(unittest.TestCase):
     def test_commit_info(self):
-        command = AbstractRolloutPrepCommand()
+        command = AbstractRevertPrepCommand()
         tool = MockTool()
         command.bind_to_tool(tool)
         output = OutputCapture()
 
-        expected_logs = "Preparing rollout for bug 50000.\n"
+        expected_logs = "Preparing revert for bug 50000.\n"
         commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_logs=expected_logs)
         self.assertTrue(commit_info)
 
@@ -55,7 +55,7 @@ class AbstractRolloutPrepCommandTest(unittest.TestCase):
         self.assertEqual(commit_info, mock_commit_info)
 
     def test_prepare_state(self):
-        command = AbstractRolloutPrepCommand()
+        command = AbstractRevertPrepCommand()
         mock_commit_info = MockCheckout().commit_info_for_revision(123)
         command._commit_info = lambda revision: mock_commit_info
 
@@ -272,12 +272,15 @@ Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more
 """
         self.assert_execute_outputs(LandFromURL(), ["https://bugs.webkit.org/show_bug.cgi?id=50000"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_prepare_rollout(self):
-        expected_logs = "Preparing rollout for bug 50000.\nUpdating working directory\n"
+    def test_prepare_revert(self):
+        expected_logs = "Preparing revert for bug 50000.\nUpdating working directory\n"
+        self.assert_execute_outputs(PrepareRevert(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+
+        expected_logs = "prepare-rollout is deprecated, use prepare-revert instead.\n" + expected_logs
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_create_rollout(self):
-        expected_logs = """Preparing rollout for bug 50000.
+    def test_create_revert(self):
+        expected_logs = """Preparing revert for bug 50000.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
@@ -286,22 +289,25 @@ Reason
 component: MOCK component
 cc: MOCK cc
 blocked: 50000
-MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=REVERT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
-Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the revert will be successful.  This process takes approximately 15 minutes.
 
-If you would like to land the rollout faster, you can use the following command:
+If you would like to land the revert faster, you can use the following command:
 
   webkit-patch land-attachment ATTACHMENT_ID
 
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
+        self.assert_execute_outputs(CreateRevert(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+
+        expected_logs = "create-rollout is deprecated, use create-revert instead.\n" + expected_logs
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_create_rollout_multiple_revision(self):
-        expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50000.
+    def test_create_revert_multiple_revision(self):
+        expected_logs = """Preparing revert for bug 50000.
+Preparing revert for bug 50000.
 Unable to parse bug number from diff.
 Updating working directory
 MOCK create_bug
@@ -311,23 +317,23 @@ Reason
 component: MOCK component
 cc: MOCK cc
 blocked: 50000, 50000
-MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=REVERT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
-Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the revert will be successful.  This process takes approximately 15 minutes.
 
-If you would like to land the rollout faster, you can use the following command:
+If you would like to land the revert faster, you can use the following command:
 
   webkit-patch land-attachment ATTACHMENT_ID
 
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRevert(), ["855 852 854", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_create_rollout_multiple_revision_with_one_resolved(self):
-        expected_logs = """Preparing rollout for bug 50000.
+    def test_create_revert_multiple_revision_with_one_resolved(self):
+        expected_logs = """Preparing revert for bug 50000.
 Unable to parse bug number from diff.
-Preparing rollout for bug 50004.
+Preparing revert for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r852): Reason
@@ -337,21 +343,21 @@ component: MOCK component
 cc: MOCK cc
 blocked: 50000, 50004
 MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
-MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=REVERT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
-Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the revert will be successful.  This process takes approximately 15 minutes.
 
-If you would like to land the rollout faster, you can use the following command:
+If you would like to land the revert faster, you can use the following command:
 
   webkit-patch land-attachment ATTACHMENT_ID
 
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        self.assert_execute_outputs(CreateRollout(), ["855 852 3001", "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRevert(), ["855 852 3001", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_create_rollout_resolved(self):
-        expected_logs = """Preparing rollout for bug 50004.
+    def test_create_revert_resolved(self):
+        expected_logs = """Preparing revert for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r3001): Reason
@@ -361,23 +367,23 @@ component: MOCK component
 cc: MOCK cc
 blocked: 50004
 MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
-MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r3001, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=REVERT of r3001, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
-Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the revert will be successful.  This process takes approximately 15 minutes.
 
-If you would like to land the rollout faster, you can use the following command:
+If you would like to land the revert faster, you can use the following command:
 
   webkit-patch land-attachment ATTACHMENT_ID
 
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        self.assert_execute_outputs(CreateRollout(), [3001, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRevert(), [3001, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_create_rollout_multiple_resolved(self):
-        expected_logs = """Preparing rollout for bug 50005.
-Preparing rollout for bug 50006.
-Preparing rollout for bug 50004.
+    def test_create_revert_multiple_resolved(self):
+        expected_logs = """Preparing revert for bug 50005.
+Preparing revert for bug 50006.
+Preparing revert for bug 50004.
 Updating working directory
 MOCK create_bug
 bug_title: REGRESSION(r963): Reason
@@ -389,21 +395,21 @@ blocked: 50005, 50006, 50004
 MOCK reopen_bug 50005 with comment 'Re-opened since this is blocked by bug 60001'
 MOCK reopen_bug 50006 with comment 'Re-opened since this is blocked by bug 60001'
 MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
-MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r963, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=REVERT of r963, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
-Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the revert will be successful.  This process takes approximately 15 minutes.
 
-If you would like to land the rollout faster, you can use the following command:
+If you would like to land the revert faster, you can use the following command:
 
   webkit-patch land-attachment ATTACHMENT_ID
 
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        self.assert_execute_outputs(CreateRollout(), ["987 3001 963", "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRevert(), ["987 3001 963", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_rollout(self):
-        expected_logs = """Preparing rollout for bug 50000.
+    def test_revert(self):
+        expected_logs = """Preparing revert for bug 50000.
 Updating working directory
 MOCK: user.open_url: file://...
 Was that diff correct?
@@ -415,11 +421,14 @@ Reason
 
 Committed r49824: <https://trac.webkit.org/changeset/49824>'
 """
+        self.assert_execute_outputs(Revert(), [852, "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+
+        expected_logs = "rollout is deprecated, use revert instead.\n" + expected_logs
         self.assert_execute_outputs(Rollout(), [852, "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_rollout_two_revisions(self):
-        expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50005.
+    def test_revert_two_revisions(self):
+        expected_logs = """Preparing revert for bug 50000.
+Preparing revert for bug 50005.
 Updating working directory
 MOCK: user.open_url: file://...
 Was that diff correct?
@@ -436,12 +445,12 @@ Reason
 
 Committed r49824: <https://trac.webkit.org/changeset/49824>'
 """
-        self.assert_execute_outputs(Rollout(), ["852 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(Revert(), ["852 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_rollout_multiple_revisions(self):
-        expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50005.
-Preparing rollout for bug 50004.
+    def test_revert_multiple_revisions(self):
+        expected_logs = """Preparing revert for bug 50000.
+Preparing revert for bug 50005.
+Preparing revert for bug 50004.
 Updating working directory
 MOCK: user.open_url: file://...
 Was that diff correct?
@@ -463,11 +472,11 @@ Reason
 
 Committed r49824: <https://trac.webkit.org/changeset/49824>'
 """
-        self.assert_execute_outputs(Rollout(), ["852 3001 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(Revert(), ["852 3001 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
 
-    def test_rollout_multiple_revisions_with_a_missing_bug_id(self):
-        expected_logs = """Preparing rollout for bug 50000.
-Preparing rollout for bug 50005.
+    def test_revert_multiple_revisions_with_a_missing_bug_id(self):
+        expected_logs = """Preparing revert for bug 50000.
+Preparing revert for bug 50005.
 Unable to parse bug number from diff.
 Updating working directory
 MOCK: user.open_url: file://...
@@ -485,4 +494,4 @@ Reason
 
 Committed r49824: <https://trac.webkit.org/changeset/49824>'
 """
-        self.assert_execute_outputs(Rollout(), ["852 999 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(Revert(), ["852 999 963", "Reason", "Description"], options=self._default_options(), expected_logs=expected_logs)

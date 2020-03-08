@@ -58,7 +58,7 @@ ui.urlForEmbeddedFlakinessDashboard = function(opt_testNameList)
     return 'about:blank';
 }
 
-ui.rolloutReasonForTestNameList = function(testNameList)
+ui.revertReasonForTestNameList = function(testNameList)
 {
     return 'Broke:\n' + testNameList.map(function(testName) {
         return '* ' + testName;

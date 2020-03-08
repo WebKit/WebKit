@@ -122,7 +122,7 @@ _patch6 = {  # Valid committer, but no reviewer.
     "id": 10005,
     "bug_id": 50003,
     "url": "http://example.com/10002",
-    "name": "ROLLOUT of r3489",
+    "name": "REVERT of r3489",
     "is_obsolete": False,
     "is_patch": True,
     "commit-queue": "+",
@@ -236,7 +236,7 @@ _bug4 = {
                   },
                  {"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Rolled out in <https://trac.webkit.org/changeset/26",
+                  "text": "Reverted in <https://trac.webkit.org/changeset/26",
                   },
                  ],
 }

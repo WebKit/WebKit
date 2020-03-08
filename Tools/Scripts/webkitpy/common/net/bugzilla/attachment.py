@@ -39,7 +39,7 @@ _log = logging.getLogger(__name__)
 
 
 class Attachment(object):
-
+    revert_preamble = "REVERT of r"
     rollout_preamble = "ROLLOUT of r"
 
     def __init__(self, attachment_dictionary, bug):
@@ -80,8 +80,8 @@ class Attachment(object):
     def is_obsolete(self):
         return not not self._attachment_dictionary.get("is_obsolete")
 
-    def is_rollout(self):
-        return self.name().startswith(self.rollout_preamble)
+    def is_revert(self):
+        return self.name().startswith(self.revert_preamble) or self.name().startswith(self.rollout_preamble)
 
     def name(self):
         return self._attachment_dictionary.get("name")

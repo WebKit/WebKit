@@ -29,9 +29,9 @@ module('ui.actions');
 
 test('Buttons', 6, function() {
     var buttonInfos = [{
-        view: new ui.actions.Rollout(),
-        text: 'Roll out',
-        event: 'rollout'
+        view: new ui.actions.Revert(),
+        text: 'Revert',
+        event: 'revert'
     }, {
         view: new ui.actions.Examine(),
         text: 'Examine',

@@ -115,7 +115,7 @@ _changelog5 = u"""2014-07-17  David Kilzer  <ddkilzer@apple.com>
 
 _changelog6 = u"""2014-06-23  Daniel Bates  <dabates@apple.com>
 
-        Rolling out r170340 and r170339.
+        Reverting r170340 and r170339.
 
         Changeset r170339 broke the Apple Windows Debug and Release builds.
 
@@ -279,8 +279,8 @@ Filler change.
         commit_message.message_lines = commit_message.message_lines[1:]
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
-    def test_commit_message_for_one_rollout_changelog(self):
-        expected_commit_message = u"""Rolling out r170340 and r170339.
+    def test_commit_message_for_one_revert_changelog(self):
+        expected_commit_message = u"""Reverting r170340 and r170339.
 
 Changeset r170339 broke the Apple Windows Debug and Release builds.
 
@@ -305,8 +305,8 @@ Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
         commit_message.message_lines = commit_message.message_lines[1:]
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
-    def test_commit_message_for_rollout_changelogs_with_different_directories(self):
-        expected_commit_message = u"""Rolling out r170340 and r170339.
+    def test_commit_message_for_revert_changelogs_with_different_directories(self):
+        expected_commit_message = u"""Reverting r170340 and r170339.
 
 Changeset r170339 broke the Apple Windows Debug and Release builds.
 

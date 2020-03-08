@@ -383,7 +383,7 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY.', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY - Build Fix.', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY, layout tests fix.', None)
-        self._assert_parse_reviewer_text_list('Reviewed by NOBODY(rollout)', None)
+        self._assert_parse_reviewer_text_list('Reviewed by NOBODY(revert)', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Build fix, forgot to svn add this file)', None)
         self._assert_parse_reviewer_text_list('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.', None)
 

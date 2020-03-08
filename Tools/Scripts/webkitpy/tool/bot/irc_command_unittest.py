@@ -82,44 +82,44 @@ class IRCCommandTest(unittest.TestCase):
         self.assertEqual("tom: Failed to create bug:\nException from bugzilla!",
                           create_bug.execute("tom", example_args, tool, None))
 
-    def test_rollout_updates_working_copy(self):
-        rollout = Rollout()
+    def test_revert_updates_working_copy(self):
+        revert = Revert()
         tool = MockTool()
         tool.executive = MockExecutive(should_log=True)
         expected_logs = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, rollout._update_working_copy, [tool], expected_logs=expected_logs)
+        OutputCapture().assert_outputs(self, revert._update_working_copy, [tool], expected_logs=expected_logs)
 
-    def test_rollout(self):
-        rollout = Rollout()
+    def test_revert(self):
+        revert = Revert()
         self.assertEqual(([1234], "testing foo"),
-                          rollout._parse_args(["1234", "testing", "foo"]))
+                         revert._parse_args(["1234", "testing", "foo"]))
 
         self.assertEqual(([554], "testing foo"),
-                          rollout._parse_args(["r554", "testing", "foo"]))
+                         revert._parse_args(["r554", "testing", "foo"]))
 
         self.assertEqual(([556, 792], "testing foo"),
-                          rollout._parse_args(["r556", "792", "testing", "foo"]))
+                         revert._parse_args(["r556", "792", "testing", "foo"]))
 
         self.assertEqual(([128, 256], "testing foo"),
-                          rollout._parse_args(["r128,r256", "testing", "foo"]))
+                         revert._parse_args(["r128,r256", "testing", "foo"]))
 
         self.assertEqual(([512, 1024, 2048], "testing foo"),
-                          rollout._parse_args(["512,", "1024,2048", "testing", "foo"]))
+                         revert._parse_args(["512,", "1024,2048", "testing", "foo"]))
 
         # Test invalid argument parsing:
-        self.assertEqual((None, None), rollout._parse_args([]))
-        self.assertEqual((None, None), rollout._parse_args(["--bar", "1234"]))
+        self.assertEqual((None, None), revert._parse_args([]))
+        self.assertEqual((None, None), revert._parse_args(["--bar", "1234"]))
 
         # Invalid arguments result in the USAGE message.
-        self.assertEqual("tom: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON",
-                          rollout.execute("tom", [], None, None))
+        self.assertEqual("tom: Usage: revert SVN_REVISION [SVN_REVISIONS] REASON",
+                         revert.execute("tom", [], None, None))
 
         tool = MockTool()
         tool.filesystem.files["/mock-checkout/test/file/one"] = ""
         tool.filesystem.files["/mock-checkout/test/file/two"] = ""
         self.assertEqual("Failed to apply reverse diff for files: test/file/one, test/file/two",
-                          rollout._check_diff_failure("""
-Preparing rollout for bug 123456.
+                         revert._check_diff_failure("""
+Preparing revert for bug 123456.
 Updating working directory
 Failed to apply reverse diff for revision 123456 because of the following conflicts:
 test/file/one
@@ -132,8 +132,8 @@ Current branch master is up to date.
         """, tool))
 
         self.assertEqual("Failed to apply reverse diff for file: test/file/one",
-                          rollout._check_diff_failure("""
-Preparing rollout for bug 123456.
+                         revert._check_diff_failure("""
+Preparing revert for bug 123456.
 Updating working directory
 Failed to apply reverse diff for revision 123456 because of the following conflicts:
 test/file/one
@@ -141,8 +141,8 @@ Updating OpenSource
 Current branch master is up to date.
         """, tool))
 
-        self.assertEqual(None, rollout._check_diff_failure("""
-Preparing rollout for bug 123456.
+        self.assertEqual(None, revert._check_diff_failure("""
+Preparing revert for bug 123456.
 Updating working directory
 Some other error report involving file paths:
 test/file/one

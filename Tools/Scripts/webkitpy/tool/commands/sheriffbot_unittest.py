@@ -29,7 +29,7 @@
 from webkitpy.tool.commands.queuestest import QueuesTest, MockQueueEngine
 from webkitpy.tool.commands import SheriffBot
 from webkitpy.tool.mocktool import MockTool, MockOptions
-from webkitpy.tool.bot.irc_command import Rollout
+from webkitpy.tool.bot.irc_command import Revert
 
 
 class SheriffBotTest(QueuesTest):
@@ -42,6 +42,6 @@ class SheriffBotTest(QueuesTest):
         sheriffbot.execute(options, [], tool, MockQueueEngine)
         sheriffbot.begin_work_queue()
         irc_bot = sheriffbot._irc_bot
-        # Test Rollout command aliases
-        revert_command, args = irc_bot._parse_command_and_args("revert")
-        self.assertEqual(revert_command, Rollout)
+        # Test Revert command aliases
+        rollout_command, args = irc_bot._parse_command_and_args("rollout")
+        self.assertEqual(rollout_command, Revert)

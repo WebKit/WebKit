@@ -91,10 +91,10 @@ class GardeningServerTest(unittest.TestCase):
         handler.body = body
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
-    def disabled_test_rollout(self):
-        expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason'], cwd=/mock-checkout\n"
+    def disabled_test_revert(self):
+        expected_stderr = "MOCK run_command: ['echo', 'revert', '--force-clean', '--non-interactive', '2314', 'MOCK revert reason'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
-        self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+        self._post_to_path("/revert?revision=2314&reason=MOCK+revert+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def disabled_test_rebaselineall(self):
         expected_stderr = "MOCK run_command: ['echo', 'rebaseline-json'], cwd=/mock-checkout, input={\"user-scripts/another-test.html\":{\"%s\": [%s]}}\n"

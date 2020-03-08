@@ -151,9 +151,9 @@ class Restart(IRCCommand):
         raise TerminateQueue()
 
 
-class Rollout(IRCCommand):
-    usage_string = "rollout SVN_REVISION [SVN_REVISIONS] REASON"
-    help_string = "Opens a rollout bug, CCing author + reviewer, and attaching the reverse-diff of the given revisions marked as commit-queue=?."
+class Revert(IRCCommand):
+    usage_string = "revert SVN_REVISION [SVN_REVISIONS] REASON"
+    help_string = "Opens a bug to revert the specified revision, CCing author + reviewer, and attaching the reverse-diff of the given revisions marked as commit-queue=?."
 
     def _extract_revisions(self, arg):
         revision_list = []
@@ -189,8 +189,8 @@ class Rollout(IRCCommand):
             return (None, None)
 
         # Everything left is the reason.
-        rollout_reason = " ".join(remaining_args)
-        return svn_revision_list, rollout_reason
+        revert_reason = " ".join(remaining_args)
+        return svn_revision_list, revert_reason
 
     def _responsible_nicknames_from_revisions(self, tool, sheriff, svn_revision_list):
         commit_infos = map(tool.checkout().commit_info_for_revision, svn_revision_list)
@@ -223,13 +223,13 @@ class Rollout(IRCCommand):
         return None
 
     def execute(self, nick, args, tool, sheriff):
-        svn_revision_list, rollout_reason = self._parse_args(args)
+        svn_revision_list, revert_reason = self._parse_args(args)
 
-        if (not svn_revision_list or not rollout_reason):
+        if (not svn_revision_list or not revert_reason):
             return self.usage(nick)
 
         revision_urls_string = join_with_separators([urls.view_revision_url(revision) for revision in svn_revision_list])
-        tool.irc().post("%s: Preparing rollout for %s ..." % (nick, revision_urls_string))
+        tool.irc().post("%s: Preparing revert for %s ..." % (nick, revision_urls_string))
 
         self._update_working_copy(tool)
 
@@ -239,12 +239,12 @@ class Rollout(IRCCommand):
 
         try:
             complete_reason = "%s (Requested by %s on %s)." % (
-                rollout_reason, nick, config_irc.channel)
-            bug_id = sheriff.post_rollout_patch(svn_revision_list, complete_reason)
+                revert_reason, nick, config_irc.channel)
+            bug_id = sheriff.post_revert_patch(svn_revision_list, complete_reason)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
-            tool.irc().post("%s: Created rollout: %s" % (nicks_string, bug_url))
+            tool.irc().post("%s: Created a revert patch: %s" % (nicks_string, bug_url))
         except ScriptError as e:
-            tool.irc().post("%s: Failed to create rollout patch:" % nicks_string)
+            tool.irc().post("%s: Failed to create revert patch:" % nicks_string)
             diff_failure = self._check_diff_failure(e.output, tool)
             if diff_failure:
                 return "%s: %s" % (nicks_string, diff_failure)
@@ -295,16 +295,13 @@ visible_commands = {
     "hi": Hi,
     "ping": PingPong,
     "restart": Restart,
-    "rollout": Rollout,
+    "revert": Revert,
     "whois": Whois,
     "yt?": YouThere,
 }
 
-# Add revert as an "easter egg" command. Why?
-# revert is the same as rollout and it would be confusing to list both when
-# they do the same thing. However, this command is a very natural thing for
-# people to use and it seems silly to have them hunt around for "rollout" instead.
+# Add "rollout" as an command alias for "revert", since it was the standard term for so many years.
 commands = visible_commands.copy()
-commands["revert"] = Rollout
+commands["rollout"] = Revert
 # "hello" Alias for "hi" command for the purposes of testing aliases
 commands["hello"] = Hi

@@ -60,11 +60,11 @@ ui.actions.Close = base.extends(Action, {
     }
 });
 
-ui.actions.Rollout = base.extends(Action, {
+ui.actions.Revert = base.extends(Action, {
     init: function() {
-        this.textContent = 'Roll out';
-        this._eventName = 'rollout';
-        this.title = 'Rolls out this revision.'
+        this.textContent = 'Revert';
+        this._eventName = 'revert';
+        this.title = 'Reverts this revision.'
     }
 });
 

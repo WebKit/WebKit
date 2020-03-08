@@ -198,12 +198,12 @@ var kExampleCommitDataXML =
     '    </item><item>\n' +
     '          <author>commit-queue@webkit.org</author>\n' +
     '      <pubDate>Wed, 03 Aug 2011 04:26:52 GMT</pubDate>\n' +
-    '      <title>Revision 92259: Unreviewed, rolling out r92256.\n' +
+    '      <title>Revision 92259: Unreviewed, reverting r92256.\n' +
     'http://trac.webkit.org/changeset/92256 ...</title>\n' +
     '      <link>http://trac.webkit.org/changeset/92259/trunk</link>\n' +
     '      <guid isPermaLink="false">http://trac.webkit.org/changeset/92259/trunk</guid>\n' +
     '      <description>&lt;p&gt;\n' +
-    'Unreviewed, rolling out &lt;a class="changeset" href="http://trac.webkit.org/changeset/92256" title="Make EventDispatchMediator RefCounted. ..."&gt;r92256&lt;/a&gt;.\n' +
+    'Unreviewed, reverting &lt;a class="changeset" href="http://trac.webkit.org/changeset/92256" title="Make EventDispatchMediator RefCounted. ..."&gt;r92256&lt;/a&gt;.\n' +
     '&lt;a class="ext-link" href="http://trac.webkit.org/changeset/92256"&gt;&lt;span class="icon"&gt; &lt;/span&gt;http://trac.webkit.org/changeset/92256&lt;/a&gt;\n' +
     '&lt;a class="ext-link" href="https://bugs.webkit.org/show_bug.cgi?id=65593"&gt;&lt;span class="icon"&gt; &lt;/span&gt;https://bugs.webkit.org/show_bug.cgi?id=65593&lt;/a&gt;\n' +
     '&lt;/p&gt;\n' +
@@ -276,9 +276,9 @@ var kExampleCommitDataList = [{
     "revertedRevision": undefined
 }, {
     "revision": 92259,
-    "title": "Revision 92259: Unreviewed, rolling out r92256.\nhttp://trac.webkit.org/changeset/92256 ...",
+    "title": "Revision 92259: Unreviewed, reverting r92256.\nhttp://trac.webkit.org/changeset/92256 ...",
     "time": "Wed, 03 Aug 2011 04:26:52 GMT",
-    "summary": "Unreviewed, rolling out r92256.",
+    "summary": "Unreviewed, reverting r92256.",
     "author": "Sheriff Bot",
     "reviewer": null,
     "bugID": 65593,

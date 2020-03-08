@@ -67,29 +67,29 @@ class Sheriff(object):
             irc_message += " (and %s more...)" % (failure_count - test_list_limit)
         self._tool.irc().post(irc_message)
 
-    def post_rollout_patch(self, svn_revision_list, rollout_reason):
+    def post_revert_patch(self, svn_revision_list, revert_reason):
         # Ensure that svn revisions are numbers (and not options to
-        # create-rollout).
+        # create-revert).
         try:
             svn_revisions = " ".join([str(int(revision)) for revision in svn_revision_list])
         except:
             raise ScriptError(message="Invalid svn revision number \"%s\"."
                               % " ".join(svn_revision_list))
 
-        if rollout_reason.startswith("-"):
-            raise ScriptError(message="The rollout reason may not begin "
-                              "with - (\"%s\")." % rollout_reason)
+        if revert_reason.startswith("-"):
+            raise ScriptError(message="The revert reason may not begin "
+                              "with - (\"%s\")." % revert_reason)
 
         output = self._sheriffbot.run_webkit_patch([
-            "create-rollout",
+            "create-revert",
             "--force-clean",
             # In principle, we should pass --non-interactive here, but it
-            # turns out that create-rollout doesn't need it yet.  We can't
+            # turns out that create-revert doesn't need it yet.  We can't
             # pass it prophylactically because we reject unrecognized command
             # line switches.
             "--parent-command=sheriff-bot",
             svn_revisions,
-            rollout_reason,
+            revert_reason,
         ])
         return urls.parse_bug_id(output)
 

@@ -83,11 +83,11 @@ Reviewed by Sam Weinig.
             "https://trac.webkit.org/r211085 by Joseph Pecoraro (JoePeck)"
             " Remove always true openGLMultisamplingEnabled setting https://webkit.org/b/167364 Reviewed by Sam Weinig (weinig).")
 
-    def test_summarize_commit_log_rollout(self):
+    def test_summarize_commit_log_revert(self):
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r143104 | commit-queue@webkit.org | 2013-02-16 09:09:01 -0800 (Sat, 16 Feb 2013) | 27 lines
 
-Unreviewed, rolling out r142734.
+Unreviewed, reverting r142734.
 https://trac.webkit.org/changeset/142734
 https://bugs.webkit.org/show_bug.cgi?id=110018
 
@@ -99,7 +99,7 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2013-02-16
 Source/WebCore:
 
 ------------------------------------------------------------------------"""),
-            "Geoffrey Garen (ggaren) rolled out r142734 in https://trac.webkit.org/r143104 : Triggered crashes on lots of websites")
+                         "Geoffrey Garen (ggaren) reverted r142734 in https://trac.webkit.org/r143104 : Triggered crashes on lots of websites")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r139884 | kov@webkit.org | 2013-01-16 08:26:10 -0800 (Wed, 16 Jan 2013) | 23 lines
@@ -116,14 +116,14 @@ Reverting 139877. It made a couple of API tests fail.
 (_WebKitWebSrcPrivate):
 
 ------------------------------------------------------------------------"""),
-            "Gustavo Noronha Silva (kov) rolled out 139877 in https://trac.webkit.org/r139884"
-            " [GStreamer][Soup] Let GStreamer provide the buffer data is downloaded to, to avoid copying"
-            " https://webkit.org/b/105552 It made a couple of API tests fail.")
+                         "Gustavo Noronha Silva (kov) reverted 139877 in https://trac.webkit.org/r139884"
+                         " [GStreamer][Soup] Let GStreamer provide the buffer data is downloaded to, to avoid copying"
+                         " https://webkit.org/b/105552 It made a couple of API tests fail.")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r135487 | commit-queue@webkit.org | 2012-11-22 00:09:25 -0800 (Thu, 22 Nov 2012) | 52 lines
 
-Unreviewed, rolling out r134927 and r134944.
+Unreviewed, reverting r134927 and r134944.
 https://trac.webkit.org/changeset/134927
 https://trac.webkit.org/changeset/134944
 https://bugs.webkit.org/show_bug.cgi?id=103028
@@ -141,8 +141,8 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2012-11-22
 * inspector/front-end/CallStackSidebarPane.js:
 
 ------------------------------------------------------------------------"""),
-            "Vsevolod Vlasov (vsevik) rolled out r134927 and r134944 in https://trac.webkit.org/r135487 :"
-            " Reverting the reverts after merging.")
+                         "Vsevolod Vlasov (vsevik) reverted r134927 and r134944 in https://trac.webkit.org/r135487 :"
+                         " Reverting the reverts after merging.")
 
     # Miguel <magomez@igalia.com> is not to be confused with Andres <agomez@igalia.com>.
     def test_email_substring_problem(self):

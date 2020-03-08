@@ -35,7 +35,7 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 _log = logging.getLogger(__name__)
 
 
-class ReopenBugAfterRollout(AbstractStep):
+class ReopenBugAfterRevert(AbstractStep):
     def run(self, state):
         commit_comment = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
         revision_list = join_with_separators(['r' + str(revision) for revision in state["revision_list"]])

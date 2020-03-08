@@ -990,11 +990,11 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.runStep()
 
-    def test_skip_for_rollout_patches_on_commit_queue(self):
+    def test_skip_for_revert_patches_on_commit_queue(self):
         self.setupStep(CompileWebKit())
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('configuration', 'debug')
-        self.setProperty('rollout', True)
+        self.setProperty('revert', True)
         self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
         return self.runStep()
 
@@ -1518,12 +1518,12 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectOutcome(result=WARNINGS, state_string='2 flakes')
         return self.runStep()
 
-    def test_skip_for_rollout_patches_on_commit_queue(self):
+    def test_skip_for_revert_patches_on_commit_queue(self):
         self.configureStep()
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
-        self.setProperty('rollout', True)
+        self.setProperty('revert', True)
         self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 
@@ -1762,12 +1762,12 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.runStep()
 
-    def test_skip_for_rollout_patches_on_commit_queue(self):
+    def test_skip_for_revert_patches_on_commit_queue(self):
         self.setupStep(RunWebKit1Tests())
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
-        self.setProperty('rollout', True)
+        self.setProperty('revert', True)
         self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 

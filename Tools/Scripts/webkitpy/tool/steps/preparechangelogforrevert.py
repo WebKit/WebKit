@@ -34,10 +34,10 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 
 class PrepareChangeLogForRevert(AbstractStep):
     @classmethod
-    def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, rollout_bug_url=None):
-        message = "Unreviewed, rolling out %s.\n" % grammar.join_with_separators(['r' + str(revision) for revision in revision_list])
-        if rollout_bug_url:
-            message += "%s\n" % rollout_bug_url
+    def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, revert_bug_url=None):
+        message = "Unreviewed, reverting %s.\n" % grammar.join_with_separators(['r' + str(revision) for revision in revision_list])
+        if revert_bug_url:
+            message += "%s\n" % revert_bug_url
         message += "\n"
         if reason:
             message += "%s\n" % reason
@@ -56,10 +56,10 @@ class PrepareChangeLogForRevert(AbstractStep):
         # This could move to prepare-ChangeLog by adding a --revert= option.
         self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().prepare_changelog_command(), cwd=self._tool.scm().checkout_root)
         changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
-        rollout_bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
+        revert_bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
         for bug_id in state["bug_id_list"]:
             reverted_bug_url_list.append(self._tool.bugs.bug_url_for_bug_id(bug_id))
-        message = self._message_for_revert(state["revision_list"], state["reason"], state["description_list"], reverted_bug_url_list, rollout_bug_url)
+        message = self._message_for_revert(state["revision_list"], state["reason"], state["description_list"], reverted_bug_url_list, revert_bug_url)
         for changelog_path in changelog_paths:
             # FIXME: Seems we should prepare the message outside of changelogs.py and then just pass in
             # text that we want to use to replace the reviewed by line.

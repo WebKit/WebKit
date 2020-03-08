@@ -66,10 +66,10 @@ checkout.isAvailable = function(callback)
     });
 };
 
-checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
+checkout.revert = function(revision, reason, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
-        net.post('/rollout?' + $.param({
+        net.post('/revert?' + $.param({
             'revision': revision,
             'reason': reason
         }), function() {

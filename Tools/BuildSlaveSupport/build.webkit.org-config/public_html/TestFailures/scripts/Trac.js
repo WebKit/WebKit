@@ -78,7 +78,7 @@ function findSummary(message)
 
 function findRevert(message)
 {
-    var regexp = /rolling out r(\d+)\./;
+    var regexp = /(?:rolling out|reverting) r(\d+)\./;
     var revision = findUsingRegExp(message, regexp);
     if (!revision)
         return undefined;

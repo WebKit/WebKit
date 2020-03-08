@@ -326,7 +326,7 @@ MOCK: release_work_item: commit-queue 10000
         queue.run_webkit_patch = mock_run_webkit_patch
         self.assert_queue_outputs(queue, expected_logs=expected_logs)
 
-    def test_rollout(self):
+    def test_revert(self):
         tool = MockTool()
         tool.filesystem.write_text_file('/tmp/layout-test-results/full_results.json', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
@@ -355,11 +355,11 @@ MOCK: release_work_item: commit-queue 10000
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
-    def test_rollout_lands(self):
+    def test_revert_lands(self):
         tool = MockTool()
         tool.buildbot.light_tree_on_fire()
-        rollout_patch = tool.bugs.fetch_attachment(10005)  # _patch6, a rollout patch.
-        assert(rollout_patch.is_rollout())
+        revert_patch = tool.bugs.fetch_attachment(10005)  # _patch6, a revert patch.
+        assert(revert_patch.is_revert())
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
             "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
@@ -378,7 +378,7 @@ MOCK: release_work_item: commit-queue 10005
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.\n\nMock error message'\n",
         }
-        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_logs=expected_logs)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=revert_patch, expected_logs=expected_logs)
 
     def test_non_valid_patch(self):
         tool = MockTool()

@@ -329,7 +329,7 @@ class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-    rollout_preamble = 'ROLLOUT of r'
+    revert_preamble = 'REVERT of r'
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -407,8 +407,8 @@ class BugzillaMixin(object):
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
         patch_title = patch_json.get('summary')
-        if patch_title.startswith(self.rollout_preamble):
-            self.setProperty('rollout', True)
+        if patch_title.startswith(self.revert_preamble):
+            self.setProperty('revert', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
         return patch_json.get('is_obsolete')
@@ -1230,7 +1230,7 @@ class CompileWebKit(shell.Compile):
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
-        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
+        return not (self.getProperty('revert') and self.getProperty('buildername', '').lower() == 'commit-queue')
 
     def start(self):
         platform = self.getProperty('platform')
@@ -1619,7 +1619,7 @@ class RunWebKitTests(shell.Test):
         self.incorrectLayoutLines = []
 
     def doStepIf(self, step):
-        return not (self.getProperty('rollout') and self.getProperty('buildername', '').lower() == 'commit-queue')
+        return not (self.getProperty('revert') and self.getProperty('buildername', '').lower() == 'commit-queue')
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)

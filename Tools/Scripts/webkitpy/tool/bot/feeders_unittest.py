@@ -51,9 +51,9 @@ MOCK: update_work_items: commit-queue [10005, 10000]
 """
         OutputCapture().assert_outputs(self, feeder.feed, expected_logs=expected_logs)
 
-    def _mock_attachment(self, is_rollout, attach_date):
+    def _mock_attachment(self, is_revert, attach_date):
         attachment = Mock()
-        attachment.is_rollout = lambda: is_rollout
+        attachment.is_revert = lambda: is_revert
         attachment.attach_date = lambda: attach_date
         return attachment
 
