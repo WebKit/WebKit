@@ -36,8 +36,6 @@
 #import <CoreServices/CoreServices.h>
 #endif
 
-#define CAN_SECURELY_ARCHIVE_FILE_WRAPPER (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-
 namespace API {
 
 static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
@@ -160,12 +158,7 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     if (!fileWrapper || !m_webPage)
         return nullptr;
 
-#if CAN_SECURELY_ARCHIVE_FILE_WRAPPER
-    constexpr BOOL secureCoding = YES;
-#else
-    constexpr BOOL secureCoding = NO;
-#endif
-    NSData *serializedData = [NSKeyedArchiver archivedDataWithRootObject:fileWrapper requiringSecureCoding:secureCoding error:nullptr];
+    NSData *serializedData = [NSKeyedArchiver archivedDataWithRootObject:fileWrapper requiringSecureCoding:YES error:nullptr];
     if (!serializedData)
         return nullptr;
 
@@ -181,13 +174,7 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
     if (!serializedData)
         return;
 
-#if CAN_SECURELY_ARCHIVE_FILE_WRAPPER
     NSFileWrapper *fileWrapper = [NSKeyedUnarchiver unarchivedObjectOfClasses:m_webPage->pageClient().serializableFileWrapperClasses() fromData:serializedData.get() error:nullptr];
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSFileWrapper *fileWrapper = [NSKeyedUnarchiver unarchiveObjectWithData:serializedData.get()];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     if (![fileWrapper isKindOfClass:NSFileWrapper.class])
         return;
 

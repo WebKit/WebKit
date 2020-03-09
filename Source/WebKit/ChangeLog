@@ -1,3 +1,19 @@
+2020-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        CAN_SECURELY_ARCHIVE_FILE_WRAPPER incorrectly excludes watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=208791
+
+        Reviewed by Tim Horton.
+
+        This is one of several places where a __IPHONE_OS_VERSION_MIN_REQUIRED check unintentionally caused a compiler
+        flag to not be defined on watchOS, when it really should apply to all iOS family targets. Now that we don't
+        care about building for any iOS family targets aligned with iOS 11 or prior, and also don't build for 10.13 and
+        prior, we can simply remove the !CAN_SECURELY_ARCHIVE_FILE_WRAPPER codepath.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::createSerializedRepresentation const):
+        (API::Attachment::updateFromSerializedRepresentation):
+
 2020-03-08  Brent Fulgham  <bfulgham@apple.com>
 
         Revise In-App Browser Privacy checks to better reflect the meaning of the flag
