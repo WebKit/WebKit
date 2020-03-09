@@ -1,3 +1,11 @@
+2020-03-08  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Mark some tests as crashing
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Verification] Use the table wrapper box's offset when matching out-of-flow tables
