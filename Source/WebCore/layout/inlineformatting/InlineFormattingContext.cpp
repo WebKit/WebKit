@@ -222,15 +222,17 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIn
             auto contentWidth = (availableWidth ? intrinsicWidths->maximum : intrinsicWidths->minimum) - displayBox.horizontalMarginBorderAndPadding();
             displayBox.setContentBoxWidth(contentWidth);
         }
-        return computedIntrinsicWidthForConstraint({ 0_lu, toLayoutUnit(availableWidth) });
+        return computedIntrinsicWidthForConstraint(availableWidth);
     };
 
-    auto constraints = geometry().constrainByMinMaxWidth(root(), { toLayoutUnit(maximumLineWidth(0)), toLayoutUnit(maximumLineWidth(maxInlineLayoutUnit())) });
+    auto minimumContentWidth = ceiledLayoutUnit(maximumLineWidth(0));
+    auto maximumContentWidth = ceiledLayoutUnit(maximumLineWidth(maxInlineLayoutUnit()));
+    auto constraints = geometry().constrainByMinMaxWidth(root(), { minimumContentWidth, maximumContentWidth });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
 
-InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(const HorizontalConstraints& horizontalConstraints) const
+InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const
 {
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
@@ -239,7 +241,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(co
     auto layoutRange = LineLayoutContext::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
-        lineBuilder.initialize(LineBuilder::Constraints { { }, horizontalConstraints.logicalWidth, false, { } });
+        lineBuilder.initialize(LineBuilder::Constraints { { }, availableWidth, false, { } });
         auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, { });
         layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
         // FIXME: Use line logical left and right to take floats into account.

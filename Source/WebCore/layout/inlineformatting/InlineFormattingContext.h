@@ -80,7 +80,7 @@ private:
     void lineLayout(InlineItems&, LineLayoutContext::InlineItemRange, const HorizontalConstraints&, const VerticalConstraints&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(const HorizontalConstraints&) const;
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const;
 
     void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
     void computeHeightAndMargin(const Box&, const HorizontalConstraints&);

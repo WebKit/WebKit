@@ -185,6 +185,11 @@ inline LayoutUnit toLayoutUnit(InlineLayoutUnit value)
     return LayoutUnit { value };
 }
 
+inline LayoutUnit ceiledLayoutUnit(InlineLayoutUnit value)
+{
+    return LayoutUnit::fromFloatCeil(value);
+}
+
 inline LayoutPoint toLayoutPoint(const InlineLayoutPoint& point)
 {
     return LayoutPoint { point };
