@@ -3980,7 +3980,7 @@
 		C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */ = {isa = PBXBuildFile; fileRef = 14813BF309EDF88E00F757E1 /* IDLParser.pm */; settings = {ATTRIBUTES = (Private, ); }; };
-		C0E2F3272412BF29009C73EC /* libAccessibility.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0E2F3252412BF29009C73EC /* libAccessibility.tbd */; };
+		C0E2F3272412BF29009C73EC /* libAccessibility.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0E2F3252412BF29009C73EC /* libAccessibility.tbd */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */ = {isa = PBXBuildFile; fileRef = C0F2A43F13869A280066C534 /* preprocessor.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C11A9ECE21403A5C00CFB20A /* SwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -31591,8 +31591,8 @@
 				A17D275E1EAC579800BF01E7 /* MediaSelectionOption.h in Headers */,
 				C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */,
 				C9F87CFE1B28F40E00979B83 /* MediaSessionEvents.h in Headers */,
-				414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */,
 				CDA9593F2412BAE000910EEF /* MediaSessionHelperIOS.h in Headers */,
+				414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */,
 				C96F5EC81B5872260091EA9D /* MediaSessionInterruptionProvider.h in Headers */,
 				C96F5EC51B5872260091EA9D /* MediaSessionInterruptionProviderMac.h in Headers */,
 				C90F65561B2253BE002163A1 /* MediaSessionManager.h in Headers */,
