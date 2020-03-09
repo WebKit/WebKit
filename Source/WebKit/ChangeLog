@@ -1,3 +1,19 @@
+2020-03-09  Rob Buis  <rbuis@igalia.com>
+
+        Rename urlSelected to changeLocation
+        https://bugs.webkit.org/show_bug.cgi?id=208529
+
+        Reviewed by Darin Adler.
+
+        Adapt to API change.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2020-03-09  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r258129: include WebCore/SimpleRange.h where VisibleSelection is used.
