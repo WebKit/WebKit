@@ -107,21 +107,21 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
 
     if (selection.isContentEditable()) {
         auto selectionStart = selection.visibleStart();
-        auto paragraphStart = startOfParagraph(selectionStart);
-        auto paragraphEnd = endOfParagraph(selectionStart);
-        auto paragraphRange = makeRange(paragraphStart, paragraphEnd);
+        auto surroundingStart = startOfEditableContent(selectionStart);
+        auto surroundingEnd = endOfEditableContent(selectionStart);
+        auto surroundingRange = makeRange(surroundingStart, surroundingEnd);
         auto compositionRange = frame.editor().compositionRange();
-        if (compositionRange && paragraphRange->contains(*compositionRange)) {
-            auto clonedRange = paragraphRange->cloneRange();
-            paragraphRange->setEnd(compositionRange->startPosition());
+        if (compositionRange && surroundingRange->contains(*compositionRange)) {
+            auto clonedRange = surroundingRange->cloneRange();
+            surroundingRange->setEnd(compositionRange->startPosition());
             clonedRange->setStart(compositionRange->endPosition());
-            postLayoutData.paragraphContext = plainText(paragraphRange.get()) + plainText(clonedRange.ptr());
-            postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(paragraphRange.get());
-            postLayoutData.paragraphContextSelectionPosition = postLayoutData.paragraphContextCursorPosition;
+            postLayoutData.surroundingContext = plainText(surroundingRange.get()) + plainText(clonedRange.ptr());
+            postLayoutData.surroundingContextCursorPosition = TextIterator::rangeLength(surroundingRange.get());
+            postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
-            postLayoutData.paragraphContext = plainText(paragraphRange.get());
-            postLayoutData.paragraphContextCursorPosition = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
-            postLayoutData.paragraphContextSelectionPosition = TextIterator::rangeLength(makeRange(paragraphStart, selection.visibleEnd()).get());
+            postLayoutData.surroundingContext = plainText(surroundingRange.get());
+            postLayoutData.surroundingContextCursorPosition = TextIterator::rangeLength(makeRange(surroundingStart, selectionStart).get());
+            postLayoutData.surroundingContextSelectionPosition = TextIterator::rangeLength(makeRange(surroundingStart, selection.visibleEnd()).get());
         }
     }
 }
