@@ -1,3 +1,9 @@
+2020-03-09  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r258129: include WebCore/SimpleRange.h where VisibleSelection is used.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+
 2020-03-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] AsyncScrolling: scrolling with the mouse wheel over sub-scrollable areas scrolls the main frame
