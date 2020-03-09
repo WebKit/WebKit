@@ -883,6 +883,7 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
+		C13D82D92416F13200A62793 /* EnableAccessibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = C13D82D82416F13200A62793 /* EnableAccessibility.mm */; };
 		C145CC0C23DA5A1F003A5EEB /* MimeTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */; };
 		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */; };
@@ -2457,6 +2458,7 @@
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
+		C13D82D82416F13200A62793 /* EnableAccessibility.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnableAccessibility.mm; sourceTree = "<group>"; };
 		C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypes.mm; sourceTree = "<group>"; };
 		C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BacklightLevelNotification.mm; sourceTree = "<group>"; };
 		C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceChanges.mm; sourceTree = "<group>"; };
@@ -2911,6 +2913,7 @@
 			children = (
 				C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */,
 				C1692DC923D10DAE006E88F7 /* Battery.mm */,
+				C13D82D82416F13200A62793 /* EnableAccessibility.mm */,
 				E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */,
 				E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */,
 				E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */,
@@ -4807,6 +4810,7 @@
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
 				F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */,
 				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
+				C13D82D92416F13200A62793 /* EnableAccessibility.mm in Sources */,
 				F4CF32802366552200D3AD07 /* EnterKeyHintTests.mm in Sources */,
 				07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */,
 				448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */,

@@ -1,3 +1,14 @@
+2020-03-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Notification observer is not removed
+        https://bugs.webkit.org/show_bug.cgi?id=208834
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm: Added.
+        (TEST):
+
 2020-03-06  Brian Burg  <bburg@apple.com>
 
         upload.py gets confused by git-svn checkouts, unable to upload test results from my desk build
