@@ -66,7 +66,7 @@ private:
 
     void ensureTableGrid();
     void computePreferredWidthForColumns();
-    void computeAndDistributeExtraHorizontalSpace();
+    void computeAndDistributeExtraHorizontalSpace(LayoutUnit containingBlockWidth);
     enum class WidthConstraintsType { Minimum, Maximum };
     void useAsContentLogicalWidth(WidthConstraintsType);
 
