@@ -29,14 +29,18 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "DataReference.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include "TextTrackPrivateRemoteMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/ISOVTTCue.h>
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
+
+using namespace WebCore;
 
 RemoteTextTrackProxy::RemoteTextTrackProxy(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, InbandTextTrackPrivate& trackPrivate)
     : m_player(player)

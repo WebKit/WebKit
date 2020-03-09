@@ -48,6 +48,7 @@ class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
 class RemoteCDMFactoryProxy;
+class RemoteLegacyCDMFactoryProxy;
 class RemoteMediaPlayerManagerProxy;
 class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
@@ -91,7 +92,11 @@ public:
 #if PLATFORM(IOS_FAMILY)
     RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
 #endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
+#endif
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
+
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
@@ -176,6 +181,9 @@ private:
 #endif
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<RemoteMediaSessionHelperProxy> m_mediaSessionHelperProxy;
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    std::unique_ptr<RemoteLegacyCDMFactoryProxy> m_legacyCdmFactoryProxy;
 #endif
 };
 

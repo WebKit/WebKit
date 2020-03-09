@@ -78,6 +78,10 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     InitializationDataEncountered(String initDataType, IPC::DataReference initData)
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    MediaPlayerKeyNeeded(IPC::DataReference message)
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     CurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
 #endif

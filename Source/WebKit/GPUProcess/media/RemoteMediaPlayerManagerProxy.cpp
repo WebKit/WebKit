@@ -204,6 +204,14 @@ void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
         player->didReceiveSyncMessage(connection, decoder, encoder);
 }
 
+RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerPrivateRemoteIdentifier& id)
+{
+    auto results = m_proxies.find(id);
+    if (results != m_proxies.end())
+        return results->value.get();
+    return nullptr;
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& RemoteMediaPlayerManagerProxy::logger() const
 {

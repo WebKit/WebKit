@@ -326,6 +326,9 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMFactory.h"
 #endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "RemoteLegacyCDMFactory.h"
+#endif
 #endif
 
 namespace WebKit {

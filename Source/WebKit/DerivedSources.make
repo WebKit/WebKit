@@ -160,6 +160,10 @@ MESSAGE_RECEIVERS = \
     RemoteCDMInstanceProxy \
     RemoteCDMInstanceSession \
     RemoteCDMInstanceSessionProxy \
+    RemoteLegacyCDMProxy \
+    RemoteLegacyCDMFactoryProxy \
+    RemoteLegacyCDMSession \
+    RemoteLegacyCDMSessionProxy \
     RemoteMediaPlayerManager \
     RemoteMediaPlayerManagerProxy \
     RemoteMediaPlayerProxy \

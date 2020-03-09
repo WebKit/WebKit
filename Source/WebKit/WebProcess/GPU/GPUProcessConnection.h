@@ -41,6 +41,8 @@ class DataReference;
 namespace WebKit {
 
 class RemoteCDMFactory;
+class RemoteMediaPlayerManager;
+class RemoteLegacyCDMFactory;
 
 class GPUProcessConnection : public RefCounted<GPUProcessConnection>, IPC::Connection::Client {
 public:
@@ -61,8 +63,14 @@ public:
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 
+    RemoteMediaPlayerManager& mediaPlayerManager();
+
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
 
 private:

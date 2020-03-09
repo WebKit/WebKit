@@ -68,6 +68,8 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    RemoteMediaPlayerProxy* getProxy(const MediaPlayerPrivateRemoteIdentifier&);
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

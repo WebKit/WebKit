@@ -87,6 +87,13 @@
 #include "RemoteMediaSessionHelperProxy.h"
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "RemoteLegacyCDMFactoryProxy.h"
+#include "RemoteLegacyCDMFactoryProxyMessages.h"
+#include "RemoteLegacyCDMProxyMessages.h"
+#include "RemoteLegacyCDMSessionProxyMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -307,6 +314,16 @@ void GPUConnectionToWebProcess::ensureMediaSessionHelper()
 }
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
+{
+    if (!m_legacyCdmFactoryProxy)
+        m_legacyCdmFactoryProxy = makeUnique<RemoteLegacyCDMFactoryProxy>(*this);
+
+    return *m_legacyCdmFactoryProxy;
+}
+#endif
+
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
@@ -390,6 +407,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return true;
+    }
+#endif
 
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
@@ -444,6 +467,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
         audioSessionProxy().didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
         return true;
     }
 #endif

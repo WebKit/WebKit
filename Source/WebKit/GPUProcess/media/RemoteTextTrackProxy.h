@@ -32,15 +32,22 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/TrackBase.h>
 
+namespace IPC {
+
+class Connection;
+
+}
+
 namespace WebKit {
 
+class RemoteMediaPlayerProxy;
 struct TextTrackPrivateRemoteConfiguration;
 
 class RemoteTextTrackProxy final
     : public ThreadSafeRefCounted<RemoteTextTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::InbandTextTrackPrivateClient {
 public:
-    static Ref<RemoteTextTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, InbandTextTrackPrivate& trackPrivate)
+    static Ref<RemoteTextTrackProxy> create(RemoteMediaPlayerProxy& player, TrackPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, WebCore::InbandTextTrackPrivate& trackPrivate)
     {
         return adoptRef(*new RemoteTextTrackProxy(player, id, WTFMove(connection), trackPrivate));
     }
@@ -50,15 +57,15 @@ public:
     void setMode(WebCore::InbandTextTrackPrivate::Mode mode) { m_trackPrivate->setMode(mode); }
 
 private:
-    RemoteTextTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, InbandTextTrackPrivate&);
+    RemoteTextTrackProxy(RemoteMediaPlayerProxy&, TrackPrivateRemoteIdentifier, Ref<IPC::Connection>&&, WebCore::InbandTextTrackPrivate&);
 
     // InbandTextTrackPrivateClient
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned);
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
-    virtual void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
-    virtual void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformDataCue&);
+    virtual void addDataCue(const MediaTime& start, const MediaTime& end, Ref<WebCore::SerializedPlatformDataCue>&&, const String&);
+    virtual void updateDataCue(const MediaTime& start, const MediaTime& end, WebCore::SerializedPlatformDataCue&);
+    virtual void removeDataCue(const MediaTime& start, const MediaTime& end, WebCore::SerializedPlatformDataCue&);
 #endif
 
     virtual void addGenericCue(WebCore::InbandGenericCue&);
@@ -67,7 +74,7 @@ private:
 
     virtual void parseWebVTTFileHeader(String&&);
     virtual void parseWebVTTCueData(const char* data, unsigned length);
-    virtual void parseWebVTTCueData(ISOWebVTTCue&&);
+    virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;
@@ -81,7 +88,7 @@ private:
     RemoteMediaPlayerProxy& m_player;
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<IPC::Connection> m_webProcessConnection;
-    Ref<InbandTextTrackPrivate> m_trackPrivate;
+    Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
 };
 
 } // namespace WebKit

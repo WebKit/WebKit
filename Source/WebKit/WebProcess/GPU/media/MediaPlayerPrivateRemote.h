@@ -305,8 +305,10 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<WebCore::LegacyCDMSession> createSession(const String&, WebCore::LegacyCDMSessionClient*) final;
+    void setCDM(WebCore::LegacyCDM*) final;
     void setCDMSession(WebCore::LegacyCDMSession*) final;
     void keyAdded() final;
+    void mediaPlayerKeyNeeded(IPC::DataReference&&);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

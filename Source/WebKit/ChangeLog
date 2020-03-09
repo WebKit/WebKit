@@ -1,3 +1,134 @@
+2020-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement Legacy EME API in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208402
+
+        Reviewed by Eric Carlson.
+
+        Add support for RemoteLegacyCDMFactory, RemateLegacyCDM,RemoteLegacyCDMSession, and all
+        of their associated Proxy objects.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::legacyCdmFactoryProxy):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp: Added.
+        (WebKit::RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::createCDM):
+        (WebKit::RemoteLegacyCDMFactoryProxy::supportsKeySystem):
+        (WebKit::RemoteLegacyCDMFactoryProxy::didReceiveCDMMessage):
+        (WebKit::RemoteLegacyCDMFactoryProxy::didReceiveCDMSessionMessage):
+        (WebKit::RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMMessage):
+        (WebKit::RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage):
+        (WebKit::RemoteLegacyCDMFactoryProxy::addProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeProxy):
+        (WebKit::RemoteLegacyCDMFactoryProxy::addSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::getSession const):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h: Added.
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in: Added.
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp: Added.
+        (WebKit::RemoteLegacyCDMProxy::create):
+        (WebKit::RemoteLegacyCDMProxy::RemoteLegacyCDMProxy):
+        (WebKit::RemoteLegacyCDMProxy::supportsMIMEType):
+        (WebKit::RemoteLegacyCDMProxy::createSession):
+        (WebKit::RemoteLegacyCDMProxy::setPlayerId):
+        (WebKit::RemoteLegacyCDMProxy::cdmMediaPlayer const):
+        * GPUProcess/media/RemoteLegacyCDMProxy.h: Added.
+        (WebKit::RemoteLegacyCDMProxy::factory const):
+        * GPUProcess/media/RemoteLegacyCDMProxy.messages.in: Added.
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp: Added.
+        (WebKit::RemoteLegacyCDMSessionProxy::create):
+        (WebKit::RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy):
+        (WebKit::convertToUint8Array):
+        (WebKit::convertToOptionalDataReference):
+        (WebKit::RemoteLegacyCDMSessionProxy::generateKeyRequest):
+        (WebKit::RemoteLegacyCDMSessionProxy::releaseKeys):
+        (WebKit::RemoteLegacyCDMSessionProxy::update):
+        (WebKit::RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId):
+        (WebKit::RemoteLegacyCDMSessionProxy::cachedKeyForKeyID):
+        (WebKit::RemoteLegacyCDMSessionProxy::sendMessage):
+        (WebKit::RemoteLegacyCDMSessionProxy::sendError):
+        (WebKit::RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory const):
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h: Added.
+        (WebKit::RemoteLegacyCDMSessionProxy::factory const):
+        (WebKit::RemoteLegacyCDMSessionProxy::session const):
+        (WebKit::RemoteLegacyCDMSessionProxy::setPlayer):
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in: Added.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::getProxy):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId const):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerKeyNeeded):
+        (WebKit::RemoteMediaPlayerProxy::setLegacyCDMSession):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::mediaPlayerManager):
+        (WebKit::GPUProcessConnection::legacyCDMFactory):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setCDM):
+        (WebKit::MediaPlayerPrivateRemote::setCDMSession):
+        (WebKit::MediaPlayerPrivateRemote::mediaPlayerKeyNeeded):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/RemoteLegacyCDM.cpp: Added.
+        (WebKit::RemoteLegacyCDM::create):
+        (WebKit::RemoteLegacyCDM::RemoteLegacyCDM):
+        (WebKit::RemoteLegacyCDM::supportsMIMEType):
+        (WebKit::RemoteLegacyCDM::createSession):
+        (WebKit::RemoteLegacyCDM::setPlayerId):
+        * WebProcess/GPU/media/RemoteLegacyCDM.h: Added.
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp: Added.
+        (WebKit::RemoteLegacyCDMFactory::RemoteLegacyCDMFactory):
+        (WebKit::RemoteLegacyCDMFactory::registerFactory):
+        (WebKit::RemoteLegacyCDMFactory::supplementName):
+        (WebKit::RemoteLegacyCDMFactory::gpuProcessConnection):
+        (WebKit::RemoteLegacyCDMFactory::supportsKeySystem):
+        (WebKit::RemoteLegacyCDMFactory::supportsKeySystemAndMimeType):
+        (WebKit::RemoteLegacyCDMFactory::createCDM):
+        (WebKit::RemoteLegacyCDMFactory::addSession):
+        (WebKit::RemoteLegacyCDMFactory::removeSession):
+        (WebKit::RemoteLegacyCDMFactory::findCDM const):
+        (WebKit::RemoteLegacyCDMFactory::didReceiveSessionMessage):
+        * WebProcess/GPU/media/RemoteLegacyCDMFactory.h: Added.
+        * WebProcess/GPU/media/RemoteLegacyCDMIdentifier.h: Added.
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp: Added.
+        (WebKit::convertToArrayBuffer):
+        (WebKit::convertToUint8Array):
+        (WebKit::convertToOptionalDataReference):
+        (WebKit::convertToDataReference):
+        (WebKit::RemoteLegacyCDMSession::create):
+        (WebKit::RemoteLegacyCDMSession::RemoteLegacyCDMSession):
+        (WebKit::RemoteLegacyCDMSession::generateKeyRequest):
+        (WebKit::RemoteLegacyCDMSession::releaseKeys):
+        (WebKit::RemoteLegacyCDMSession::update):
+        (WebKit::RemoteLegacyCDMSession::cachedKeyForKeyID const):
+        (WebKit::RemoteLegacyCDMSession::sendMessage):
+        (WebKit::RemoteLegacyCDMSession::sendError):
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.h: Added.
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in: Added.
+        * WebProcess/GPU/media/RemoteLegacyCDMSessionIdentifier.h: Added.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::findRemotePlayerId):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        * WebProcess/GPU/media/WebMediaStrategy.cpp:
+        (WebKit::WebMediaStrategy::registerLegacyCDMFactories):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+
 2020-03-08  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Mapping to UTI from tag and tag class should be performed in the UI process

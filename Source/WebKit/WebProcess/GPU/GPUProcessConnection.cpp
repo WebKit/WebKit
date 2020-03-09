@@ -35,6 +35,7 @@
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
+#include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "SampleBufferDisplayLayerMessages.h"
@@ -82,10 +83,22 @@ SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerM
 }
 #endif
 
+RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
+{
+    return *WebProcess::singleton().supplement<RemoteMediaPlayerManager>();
+}
+
 #if ENABLE(ENCRYPTED_MEDIA)
 RemoteCDMFactory& GPUProcessConnection::cdmFactory()
 {
     return *WebProcess::singleton().supplement<RemoteCDMFactory>();
+}
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+RemoteLegacyCDMFactory& GPUProcessConnection::legacyCDMFactory()
+{
+    return *WebProcess::singleton().supplement<RemoteLegacyCDMFactory>();
 }
 #endif
 

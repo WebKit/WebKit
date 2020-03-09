@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MediaPlayerPrivateRemoteIdentifier.h"
 #include "MessageReceiver.h"
+#include "RemoteLegacyCDMSessionIdentifier.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
@@ -144,6 +145,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setLegacyCDMSession(RemoteLegacyCDMSessionIdentifier&& instanceId);
     void keyAdded();
 #endif
 
@@ -174,6 +176,8 @@ public:
 
     Ref<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void removeResource(RemoteMediaResourceIdentifier);
+
+    RefPtr<WebCore::MediaPlayer> mediaPlayer() { return m_player; }
 
 private:
     // MediaPlayerClient
@@ -293,6 +297,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };
+    RemoteLegacyCDMSessionIdentifier m_legacySession;
 #endif
 
 #if !RELEASE_LOG_DISABLED

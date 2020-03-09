@@ -33,6 +33,8 @@
 #include "LayerHostingContext.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioTrackProxy.h"
+#include "RemoteLegacyCDMFactoryProxy.h"
+#include "RemoteLegacyCDMSessionProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
 #include "RemoteMediaPlayerState.h"
@@ -523,15 +525,19 @@ void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const String&) const
+RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const String& keyId) const
 {
-    notImplemented();
+    if (auto cdmSession = m_manager.gpuConnectionToWebProcess().legacyCdmFactoryProxy().getSession(m_legacySession))
+        return cdmSession->getCachedKeyForKeyId(keyId);
     return nullptr;
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array*)
+void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(Uint8Array* message)
 {
-    notImplemented();
+    IPC::DataReference messageReference;
+    if (message)
+        messageReference = { message->data(), message->byteLength() };
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MediaPlayerKeyNeeded(WTFMove(messageReference)), m_id);
 }
 #endif
 
@@ -723,6 +729,28 @@ void RemoteMediaPlayerProxy::sendCachedState()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void RemoteMediaPlayerProxy::setLegacyCDMSession(RemoteLegacyCDMSessionIdentifier&& instanceId)
+{
+    if (m_legacySession == instanceId)
+        return;
+
+    if (m_legacySession) {
+        if (auto cdmSession = m_manager.gpuConnectionToWebProcess().legacyCdmFactoryProxy().getSession(m_legacySession)) {
+            m_player->setCDMSession(nullptr);
+            cdmSession->setPlayer(nullptr);
+        }
+    }
+
+    m_legacySession = instanceId;
+
+    if (m_legacySession) {
+        if (auto cdmSession = m_manager.gpuConnectionToWebProcess().legacyCdmFactoryProxy().getSession(m_legacySession)) {
+            m_player->setCDMSession(cdmSession->session());
+            cdmSession->setPlayer(makeWeakPtr(this));
+        }
+    }
+}
+
 void RemoteMediaPlayerProxy::keyAdded()
 {
     m_player->keyAdded();

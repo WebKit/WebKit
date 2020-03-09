@@ -43,6 +43,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
 #include "RemoteAudioSession.h"
+#include "RemoteLegacyCDMFactory.h"
 #include "StatisticsData.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -2024,6 +2025,13 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         MediaSessionHelper::setSharedHelper(makeUniqueRef<RemoteMediaSessionHelper>(*this));
     else
         MediaSessionHelper::resetSharedHelper();
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (useGPUProcessForMedia)
+        ensureGPUProcessConnection().legacyCDMFactory().registerFactory();
+    else
+        LegacyCDM::resetFactories();
 #endif
 }
 #endif

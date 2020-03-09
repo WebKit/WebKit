@@ -30,6 +30,9 @@
 
 #include "AudioTrackPrivateRemote.h"
 #include "Logging.h"
+#include "RemoteLegacyCDM.h"
+#include "RemoteLegacyCDMFactory.h"
+#include "RemoteLegacyCDMSession.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 #include "SandboxExtension.h"
@@ -38,6 +41,8 @@
 #include "VideoTrackPrivateRemote.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/TypedArrayType.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
@@ -51,6 +56,10 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstance.h"
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include <WebCore/LegacyCDM.h>
 #endif
 
 namespace WebCore {
@@ -910,14 +919,37 @@ std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const 
     return nullptr;
 }
 
-void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession*)
+void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
 {
-    notImplemented();
+    if (!cdm)
+        return;
+
+    auto remoteCDM = m_manager.gpuProcessConnection().legacyCDMFactory().findCDM(cdm->cdmPrivate());
+    if (!remoteCDM)
+        return;
+
+    remoteCDM->setPlayerId(m_id);
+}
+
+void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession* session)
+{
+    if (!session || session->type() != CDMSessionTypeRemote) {
+        connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession({ }), m_id);
+        return;
+    }
+
+    auto remoteSession = static_cast<RemoteLegacyCDMSession*>(session);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession(remoteSession->identifier()), m_id);
 }
 
 void MediaPlayerPrivateRemote::keyAdded()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::KeyAdded(), m_id);
+}
+
+void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(IPC::DataReference&& message)
+{
+    m_player->keyNeeded(Uint8Array::create(message.data(), message.size()).ptr());
 }
 #endif
 

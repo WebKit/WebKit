@@ -183,6 +183,17 @@ void RemoteMediaPlayerManager::deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteI
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::DeleteMediaPlayer(id), 0);
 }
 
+MediaPlayerPrivateRemoteIdentifier RemoteMediaPlayerManager::findRemotePlayerId(const MediaPlayerPrivateInterface* player)
+{
+    for (auto pair : m_players) {
+        if (pair.value == player)
+            return pair.key;
+    }
+
+    return { };
+}
+
+
 void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>& result)
 {
     auto& cache = typeCache(remoteEngineIdentifier);

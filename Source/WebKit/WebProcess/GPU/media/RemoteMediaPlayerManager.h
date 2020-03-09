@@ -69,6 +69,8 @@ public:
 
     void deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
 
+    MediaPlayerPrivateRemoteIdentifier findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
+
 private:
     std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
