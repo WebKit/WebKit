@@ -1,3 +1,18 @@
+2020-03-09  Rob Buis  <rbuis@igalia.com>
+
+        Fix WPT test redirect-mode.any.html
+        https://bugs.webkit.org/show_bug.cgi?id=208801
+
+        Reviewed by Youenn Fablet.
+
+        Fix WPT test redirect-mode.any.html by also specifying the server port, this
+        is needed for WebKit local test runs.
+
+        * web-platform-tests/fetch/api/redirect/redirect-mode.any-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.any.js:
+        (testRedirect):
+        * web-platform-tests/fetch/api/redirect/redirect-mode.any.worker-expected.txt:
+
 2020-03-06  Rob Buis  <rbuis@igalia.com>
 
         Fix original-crossorigin-applied.sub.html WPT test
