@@ -101,6 +101,14 @@ void Path::createCGPath() const
             if (arc.hasOffset)
                 CGPathMoveToPoint(m_path.get(), nullptr, arc.offset.x(), arc.offset.y());
             CGPathAddArc(m_path.get(), nullptr, arc.center.x(), arc.center.y(), arc.radius, arc.startAngle, arc.endAngle, arc.clockwise);
+        },
+        [&](const QuadCurveData& curve) {
+            CGPathMoveToPoint(m_path.get(), nullptr, curve.startPoint.x(), curve.startPoint.y());
+            CGPathAddQuadCurveToPoint(m_path.get(), nullptr, curve.controlPoint.x(), curve.controlPoint.y(), curve.endPoint.x(), curve.endPoint.y());
+        },
+        [&](const BezierCurveData& curve) {
+            CGPathMoveToPoint(m_path.get(), nullptr, curve.startPoint.x(), curve.startPoint.y());
+            CGPathAddCurveToPoint(m_path.get(), nullptr, curve.controlPoint1.x(), curve.controlPoint1.y(), curve.controlPoint2.x(), curve.controlPoint2.y(), curve.endPoint.x(), curve.endPoint.y());
         }
     );
 }
@@ -316,12 +324,12 @@ void Path::addLineToSlowCase(const FloatPoint& p)
     CGPathAddLineToPoint(ensurePlatformPath(), nullptr, p.x(), p.y());
 }
 
-void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
+void Path::addQuadCurveToSlowCase(const FloatPoint& cp, const FloatPoint& p)
 {
     CGPathAddQuadCurveToPoint(ensurePlatformPath(), nullptr, cp.x(), cp.y(), p.x(), p.y());
 }
 
-void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
+void Path::addBezierCurveToSlowCase(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
 {
     CGPathAddCurveToPoint(ensurePlatformPath(), nullptr, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
 }

@@ -236,6 +236,8 @@ private:
     void moveToSlowCase(const FloatPoint&);
     void addLineToSlowCase(const FloatPoint&);
     void addArcSlowCase(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
+    void addQuadCurveToSlowCase(const FloatPoint& controlPoint, const FloatPoint& endPoint);
+    void addBezierCurveToSlowCase(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint);
 
     FloatRect boundingRectSlowCase() const;
     FloatRect fastBoundingRectSlowCase() const;

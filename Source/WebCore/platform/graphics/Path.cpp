@@ -192,6 +192,33 @@ void Path::apply(const PathApplierFunction& function) const
         function(element);
         return;
     }
+
+    if (hasInlineData<BezierCurveData>()) {
+        auto& curve = WTF::get<BezierCurveData>(m_inlineData);
+        PathElement element;
+        element.type = PathElement::Type::MoveToPoint;
+        element.points[0] = curve.startPoint;
+        function(element);
+        element.type = PathElement::Type::AddCurveToPoint;
+        element.points[0] = curve.controlPoint1;
+        element.points[1] = curve.controlPoint2;
+        element.points[2] = curve.endPoint;
+        function(element);
+        return;
+    }
+
+    if (hasInlineData<QuadCurveData>()) {
+        auto& curve = WTF::get<QuadCurveData>(m_inlineData);
+        PathElement element;
+        element.type = PathElement::Type::MoveToPoint;
+        element.points[0] = curve.startPoint;
+        function(element);
+        element.type = PathElement::Type::AddQuadCurveToPoint;
+        element.points[0] = curve.controlPoint;
+        element.points[1] = curve.endPoint;
+        function(element);
+        return;
+    }
 #endif
 
     applySlowCase(function);
@@ -226,6 +253,12 @@ FloatPoint Path::currentPoint() const
 
     if (hasInlineData<LineData>())
         return WTF::get<LineData>(m_inlineData).end;
+
+    if (hasInlineData<BezierCurveData>())
+        return WTF::get<BezierCurveData>(m_inlineData).endPoint;
+
+    if (hasInlineData<QuadCurveData>())
+        return WTF::get<QuadCurveData>(m_inlineData).endPoint;
 #endif
 
     return currentPointSlowCase();
@@ -237,7 +270,7 @@ size_t Path::elementCount() const
     if (hasInlineData<MoveData>())
         return 1;
 
-    if (hasInlineData<LineData>())
+    if (hasInlineData<LineData>() || hasInlineData<BezierCurveData>() || hasInlineData<QuadCurveData>())
         return 2;
 #endif
 
@@ -287,6 +320,39 @@ void Path::addLineTo(const FloatPoint& point)
 #endif
 
     addLineToSlowCase(point);
+}
+
+void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
+{
+#if ENABLE(INLINE_PATH_DATA)
+    if (isNull() || hasInlineData<MoveData>()) {
+        QuadCurveData curve;
+        curve.startPoint = hasAnyInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.controlPoint = controlPoint;
+        curve.endPoint = endPoint;
+        m_inlineData = { WTFMove(curve) };
+        return;
+    }
+#endif
+
+    addQuadCurveToSlowCase(controlPoint, endPoint);
+}
+
+void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
+{
+#if ENABLE(INLINE_PATH_DATA)
+    if (isNull() || hasInlineData<MoveData>()) {
+        BezierCurveData curve;
+        curve.startPoint = hasAnyInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.controlPoint1 = controlPoint1;
+        curve.controlPoint2 = controlPoint2;
+        curve.endPoint = endPoint;
+        m_inlineData = { WTFMove(curve) };
+        return;
+    }
+#endif
+
+    addBezierCurveToSlowCase(controlPoint1, controlPoint2, endPoint);
 }
 
 void Path::moveTo(const FloatPoint& point)

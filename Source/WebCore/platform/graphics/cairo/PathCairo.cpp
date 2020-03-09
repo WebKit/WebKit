@@ -158,7 +158,7 @@ void Path::addRect(const FloatRect& rect)
 /*
  * inspired by libsvg-cairo
  */
-void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& point)
+void Path::addQuadCurveToSlowCase(const FloatPoint& controlPoint, const FloatPoint& point)
 {
     cairo_t* cr = ensurePlatformPath()->context();
     double x, y;
@@ -173,7 +173,7 @@ void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& poin
                    x2, y2);
 }
 
-void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
+void Path::addBezierCurveToSlowCase(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
 {
     cairo_t* cr = ensurePlatformPath()->context();
     cairo_curve_to(cr, controlPoint1.x(), controlPoint1.y(),

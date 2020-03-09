@@ -61,6 +61,25 @@ struct MoveData {
     template<class Decoder> static Optional<MoveData> decode(Decoder&);
 };
 
+struct QuadCurveData {
+    FloatPoint startPoint;
+    FloatPoint controlPoint;
+    FloatPoint endPoint;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<QuadCurveData> decode(Decoder&);
+};
+
+struct BezierCurveData {
+    FloatPoint startPoint;
+    FloatPoint controlPoint1;
+    FloatPoint controlPoint2;
+    FloatPoint endPoint;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<BezierCurveData> decode(Decoder&);
+};
+
 template<class Encoder> void MoveData::encode(Encoder& encoder) const
 {
     encoder << location;
@@ -130,7 +149,55 @@ template<class Decoder> Optional<ArcData> ArcData::decode(Decoder& decoder)
     return data;
 }
 
-using InlinePathData = Variant<Monostate, MoveData, LineData, ArcData>;
+template<class Encoder> void QuadCurveData::encode(Encoder& encoder) const
+{
+    encoder << startPoint;
+    encoder << controlPoint;
+    encoder << endPoint;
+}
+
+template<class Decoder> Optional<QuadCurveData> QuadCurveData::decode(Decoder& decoder)
+{
+    QuadCurveData data;
+    if (!decoder.decode(data.startPoint))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.controlPoint))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.endPoint))
+        return WTF::nullopt;
+
+    return data;
+}
+
+template<class Encoder> void BezierCurveData::encode(Encoder& encoder) const
+{
+    encoder << startPoint;
+    encoder << controlPoint1;
+    encoder << controlPoint2;
+    encoder << endPoint;
+}
+
+template<class Decoder> Optional<BezierCurveData> BezierCurveData::decode(Decoder& decoder)
+{
+    BezierCurveData data;
+    if (!decoder.decode(data.startPoint))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.controlPoint1))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.controlPoint2))
+        return WTF::nullopt;
+
+    if (!decoder.decode(data.endPoint))
+        return WTF::nullopt;
+
+    return data;
+}
+
+using InlinePathData = Variant<Monostate, MoveData, LineData, ArcData, QuadCurveData, BezierCurveData>;
 
 } // namespace WebCore
 

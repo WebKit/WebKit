@@ -394,13 +394,13 @@ void Path::addLineToSlowCase(const FloatPoint& point)
     m_activePath->AddLine(point);
 }
 
-void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
+void Path::addQuadCurveToSlowCase(const FloatPoint& cp, const FloatPoint& p)
 {
     openFigureAtCurrentPointIfNecessary();
     m_activePath->AddQuadraticBezier(D2D1::QuadraticBezierSegment(cp, p));
 }
 
-void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
+void Path::addBezierCurveToSlowCase(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
 {
     openFigureAtCurrentPointIfNecessary();
     m_activePath->AddBezier(D2D1::BezierSegment(cp1, cp2, p));
