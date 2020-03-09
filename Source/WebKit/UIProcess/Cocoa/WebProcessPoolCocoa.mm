@@ -432,7 +432,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
     parameters.localizedDeviceModel = localizedDeviceModel();
 #if USE(UTTYPE_SWIZZLER)
-    parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
+    if (WebCore::IOSApplication::isMobileSafari())
+        parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
 #endif
 #endif
     

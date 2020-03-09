@@ -299,8 +299,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
         
 #if USE(UTTYPE_SWIZZLER)
-    swizzleUTTypeRecord();
-    setVectorOfUTTypeItem(WTFMove(parameters.vectorOfUTTypeItem));
+    if (!parameters.vectorOfUTTypeItem.isEmpty()) {
+        swizzleUTTypeRecord();
+        setVectorOfUTTypeItem(WTFMove(parameters.vectorOfUTTypeItem));
+    }
 #endif
 }
 
