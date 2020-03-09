@@ -1569,7 +1569,6 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 
 # A lot of GPU hardware simply crashes with these tests, since they allocate a lot of memory.
 # They are enabled on systems that instead return GL_OUT_OF_MEMORY.
-[ Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 [ Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
 
 webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
@@ -2027,7 +2026,6 @@ webkit.org/b/207859 fast/images/slower-decoding-than-animation-image.html [ Pass
 webkit.org/b/207858 fast/canvas/webgl/program-test.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/readPixels-float.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
-webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 webkit.org/b/207858 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
 
@@ -2061,3 +2059,5 @@ webkit.org/b/208574 mathml/scripts-removeChild.html [ Pass ImageOnlyFailure ]
 webkit.org/b/208718 [ Debug ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html [ Pass Crash ]
 
 webkit.org/b/208722 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm [ Pass Failure ]
+
+webkit.org/b/208817 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]

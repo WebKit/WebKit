@@ -1,3 +1,13 @@
+2020-03-09  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS and Mac Debug ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html is flaky timing out and crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=208817
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not floor the computed intrinsic width values
