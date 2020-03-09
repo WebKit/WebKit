@@ -229,7 +229,7 @@ TEST(TLSVersion, DISABLED_NavigationDelegateSPI)
     }
 }
 
-#if HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate()
 {
@@ -242,10 +242,6 @@ static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webVie
     }];
     return { webView, delegate };
 }
-
-#endif // HAVE(TLS_PROTOCOL_VERSION_T) || HAVE(NETWORK_FRAMEWORK)
-
-#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(TLSVersion, NegotiatedLegacyTLS)
 {

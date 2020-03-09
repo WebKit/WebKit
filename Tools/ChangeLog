@@ -1,3 +1,12 @@
+2020-03-09  Antoine Quint  <graouts@apple.com>
+
+        TestWebKitAPI fails to build on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=208820
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+
 2020-03-09  Jonathan Bedard  <jbedard@apple.com>
 
         resultsdbpy: Add tool to manage resultsdbpy container
