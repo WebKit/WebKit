@@ -86,7 +86,7 @@ private:
 SpellingCorrectionCommand::SpellingCorrectionCommand(Range& rangeToBeCorrected, const String& correction)
     : CompositeEditCommand(rangeToBeCorrected.startContainer().document(), EditAction::InsertReplacement)
     , m_rangeToBeCorrected(rangeToBeCorrected)
-    , m_selectionToBeCorrected(m_rangeToBeCorrected)
+    , m_selectionToBeCorrected(m_rangeToBeCorrected.get())
     , m_correction(correction)
 {
 }
@@ -124,7 +124,7 @@ String SpellingCorrectionCommand::inputEventData() const
 
 Vector<RefPtr<StaticRange>> SpellingCorrectionCommand::targetRanges() const
 {
-    return { 1, StaticRange::createFromRange(m_rangeToBeCorrected) };
+    return { 1, StaticRange::create(m_rangeToBeCorrected) };
 }
 
 RefPtr<DataTransfer> SpellingCorrectionCommand::inputEventDataTransfer() const

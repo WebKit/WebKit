@@ -86,6 +86,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollView.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>

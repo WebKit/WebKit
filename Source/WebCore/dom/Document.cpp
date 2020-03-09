@@ -2752,7 +2752,7 @@ void Document::updateHighlightPositions()
             for (auto& rangeData : highlight.value->rangesData()) {
                 if (rangeData->startPosition && rangeData->endPosition)
                     continue;
-                if (&rangeData->range->startContainer()->treeScope() != &rangeData->range->endContainer()->treeScope())
+                if (&rangeData->range->startContainer().treeScope() != &rangeData->range->endContainer().treeScope())
                     continue;
                 rangesData.append(makeWeakPtr(rangeData.ptr()));
             }

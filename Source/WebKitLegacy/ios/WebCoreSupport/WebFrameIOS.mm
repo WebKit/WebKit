@@ -44,6 +44,7 @@
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/SelectionRect.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextBoundaries.h>
 #import <WebCore/TextFlags.h>
 #import <WebCore/VisiblePosition.h>

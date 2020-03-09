@@ -226,6 +226,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SimpleRange.h>
 #include <WebCore/StyleProperties.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>

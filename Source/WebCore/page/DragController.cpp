@@ -30,6 +30,7 @@
 #include "SVGAElement.h"
 
 #if ENABLE(DRAG_SUPPORT)
+
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "DataTransfer.h"
@@ -79,6 +80,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "StyleProperties.h"
 #include "Text.h"
 #include "TextEvent.h"

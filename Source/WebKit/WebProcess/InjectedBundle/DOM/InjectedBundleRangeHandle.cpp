@@ -42,6 +42,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/SimpleRange.h>
 #include <WebCore/VisibleSelection.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

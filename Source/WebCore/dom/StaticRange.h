@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +26,25 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include <wtf/Ref.h>
+#include "SimpleRange.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Node;
-class Range;
-
-class StaticRange : public RefCounted<StaticRange> {
+class StaticRange : public RefCounted<StaticRange>, public SimpleRange {
 public:
-    ~StaticRange();
-
-    static Ref<StaticRange> createFromRange(const Range&);
-    static Ref<StaticRange> create(Ref<Node>&& startContainer, unsigned startOffset, Ref<Node>&& endContainer, unsigned endOffset);
-
     struct Init {
         RefPtr<Node> startContainer;
-        unsigned long startOffset { 0 };
+        unsigned startOffset { 0 };
         RefPtr<Node> endContainer;
-        unsigned long endOffset { 0 };
+        unsigned endOffset { 0 };
     };
 
     static ExceptionOr<Ref<StaticRange>> create(Init&&);
-
-    unsigned startOffset() const { return m_startOffset; }
-    unsigned endOffset() const { return m_endOffset; }
-    Node* startContainer() const;
-    Node* endContainer() const;
-    bool collapsed() const;
-    
-    bool operator==(const StaticRange&) const;
+    static Ref<StaticRange> create(SimpleRange&&);
 
 private:
-    StaticRange(Ref<Node>&& startContainer, unsigned startOffset, Ref<Node>&& endContainer, unsigned endOffset);
-
-    Ref<Node> m_startContainer;
-    unsigned m_startOffset;
-    Ref<Node> m_endContainer;
-    unsigned m_endOffset;
+    StaticRange(SimpleRange&&);
 };
 
 }

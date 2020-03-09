@@ -499,7 +499,7 @@ bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextG
     if (!range || isEditingTextAreaOrTextInput())
         return frame().editor().willApplyEditing(*this, CompositeEditCommand::targetRangesForBindings());
 
-    return frame().editor().willApplyEditing(*this, { 1, StaticRange::createFromRange(*range) });
+    return frame().editor().willApplyEditing(*this, { 1, StaticRange::create(*range) });
 }
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)

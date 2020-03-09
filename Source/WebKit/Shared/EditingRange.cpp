@@ -67,7 +67,7 @@ RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const Editin
     if (!paragraphRange)
         return nullptr;
 
-    WebCore::ContainerNode& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
+    auto& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
     int paragraphStartIndex = WebCore::TextIterator::rangeLength(WebCore::Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());
     return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + static_cast<int>(range.location), length);
 }
@@ -76,8 +76,8 @@ EditingRange EditingRange::fromRange(WebCore::Frame& frame, const WebCore::Range
 {
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 
-    size_t location;
-    size_t length;
+    size_t location = 0;
+    size_t length = 0;
     if (!range || !WebCore::TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range, location, length))
         return { };
 

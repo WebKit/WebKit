@@ -43,6 +43,7 @@
 #include "RenderElement.h"
 #include "RenderObject.h"
 #include "RenderText.h"
+#include "SimpleRange.h"
 #include "TextIterator.h"
 #include "TextPaintStyle.h"
 
@@ -82,7 +83,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     temporarySelectionOptions.add(TemporarySelectionOption::IgnoreSelectionChanges);
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
-    TemporarySelectionChange selectionChange(*frame, { range }, temporarySelectionOptions);
+    TemporarySelectionChange selectionChange(*frame, { SimpleRange { range } }, temporarySelectionOptions);
 
     TextIndicatorData data;
 

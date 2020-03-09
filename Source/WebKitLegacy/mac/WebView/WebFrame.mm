@@ -100,6 +100,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/SubframeLoader.h>
@@ -806,8 +807,8 @@ static NSURL *createUniqueWebDataURL();
     if (!range)
         return NSMakeRange(NSNotFound, 0);
 
-    size_t location;
-    size_t length;
+    size_t location = 0;
+    size_t length = 0;
     if (!WebCore::TextIterator::getLocationAndLengthFromRange(_private->coreFrame->selection().rootEditableElementOrDocumentElement(), range, location, length))
         return NSMakeRange(NSNotFound, 0);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,45 +24,45 @@
  */
 
 #include "config.h"
-#include "StaticRange.h"
+#include "SimpleRange.h"
 
 #include "Range.h"
 
 namespace WebCore {
 
-StaticRange::StaticRange(SimpleRange&& range)
-    : SimpleRange(WTFMove(range))
+SimpleRange::SimpleRange(const BoundaryPoint& start, const BoundaryPoint& end)
+    : start(start)
+    , end(end)
 {
 }
 
-Ref<StaticRange> StaticRange::create(SimpleRange&& range)
+SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
+    : start(WTFMove(start))
+    , end(WTFMove(end))
 {
-    return adoptRef(*new StaticRange(WTFMove(range)));
 }
 
-static bool isDocumentTypeOrAttr(Node& node)
+SimpleRange::SimpleRange(const Range& other)
+    : start(other.startContainer(), other.startOffset())
+    , end(other.endContainer(), other.endOffset())
 {
-    // Before calling nodeType, do two fast non-virtual checks that cover almost all normal nodes, but are false for DocumentType and Attr.
-    if (is<ContainerNode>(node) || is<Text>(node))
-        return false;
-
-    // Call nodeType explicitly and use a switch so we don't have to call it twice.
-    switch (node.nodeType()) {
-    case Node::ATTRIBUTE_NODE:
-    case Node::DOCUMENT_TYPE_NODE:
-        return true;
-    default:
-        return false;
-    }
 }
 
-ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
+bool operator==(const SimpleRange& a, const SimpleRange& b)
 {
-    ASSERT(init.startContainer);
-    ASSERT(init.endContainer);
-    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
-        return Exception { InvalidNodeTypeError };
-    return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
+    return a.start == b.start && a.end == b.end;
+}
+
+Ref<Range> createLiveRange(const SimpleRange& range)
+{
+    return Range::create(range.start.document(), range.start.container.ptr(), range.start.offset, range.end.container.ptr(), range.end.offset);
+}
+
+RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)
+{
+    if (!range)
+        return nullptr;
+    return createLiveRange(*range);
 }
 
 }

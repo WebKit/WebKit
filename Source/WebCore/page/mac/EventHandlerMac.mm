@@ -64,6 +64,7 @@
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "WheelEventDeltaFilter.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/BlockObjCExceptions.h>

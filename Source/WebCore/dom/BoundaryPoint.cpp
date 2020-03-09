@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,45 +24,30 @@
  */
 
 #include "config.h"
-#include "StaticRange.h"
+#include "BoundaryPoint.h"
 
-#include "Range.h"
+#include "Node.h"
 
 namespace WebCore {
 
-StaticRange::StaticRange(SimpleRange&& range)
-    : SimpleRange(WTFMove(range))
+BoundaryPoint::BoundaryPoint(const BoundaryPoint& other)
+    : container(other.container.copyRef())
+    , offset(other.offset)
 {
 }
 
-Ref<StaticRange> StaticRange::create(SimpleRange&& range)
+BoundaryPoint& BoundaryPoint::operator=(const BoundaryPoint& other)
 {
-    return adoptRef(*new StaticRange(WTFMove(range)));
+    container = other.container.copyRef();
+    offset = other.offset;
+    return *this;
 }
 
-static bool isDocumentTypeOrAttr(Node& node)
-{
-    // Before calling nodeType, do two fast non-virtual checks that cover almost all normal nodes, but are false for DocumentType and Attr.
-    if (is<ContainerNode>(node) || is<Text>(node))
-        return false;
+BoundaryPoint& BoundaryPoint::operator=(BoundaryPoint&&) = default;
 
-    // Call nodeType explicitly and use a switch so we don't have to call it twice.
-    switch (node.nodeType()) {
-    case Node::ATTRIBUTE_NODE:
-    case Node::DOCUMENT_TYPE_NODE:
-        return true;
-    default:
-        return false;
-    }
-}
-
-ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
+Document& BoundaryPoint::document() const
 {
-    ASSERT(init.startContainer);
-    ASSERT(init.endContainer);
-    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
-        return Exception { InvalidNodeTypeError };
-    return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
+    return container->document();
 }
 
 }

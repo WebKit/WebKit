@@ -55,7 +55,7 @@ bool ReplaceRangeWithTextCommand::willApplyCommand()
 
 void ReplaceRangeWithTextCommand::doApply()
 {
-    VisibleSelection selection = *m_rangeToBeReplaced;
+    VisibleSelection selection { *m_rangeToBeReplaced };
 
     if (!m_rangeToBeReplaced)
         return;
@@ -89,7 +89,7 @@ RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
 
 Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
 {
-    return { 1, StaticRange::createFromRange(*m_rangeToBeReplaced) };
+    return { 1, StaticRange::create(*m_rangeToBeReplaced) };
 }
 
 } // namespace WebCore

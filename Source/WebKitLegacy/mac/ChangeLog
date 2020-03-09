@@ -1,3 +1,14 @@
+2020-03-07  Darin Adler  <darin@apple.com>
+
+        Begin moving off of live ranges for WebKit internals
+        https://bugs.webkit.org/show_bug.cgi?id=208432
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebContextMenuClient.mm: Added include.
+        * WebView/WebFrame.mm: Ditto.
+        (-[WebFrame _convertToNSRange:]): Initialized out arguments.
+
 2020-03-07  Brent Fulgham  <bfulgham@apple.com>
 
         Create a flag to disable in-app browser quirks

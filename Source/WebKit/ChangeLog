@@ -1,3 +1,18 @@
+2020-03-07  Darin Adler  <darin@apple.com>
+
+        Begin moving off of live ranges for WebKit internals
+        https://bugs.webkit.org/show_bug.cgi?id=208432
+
+        Reviewed by Daniel Bates.
+
+        * Shared/EditingRange.cpp:
+        (WebKit::EditingRange::fromRange): Initialize out arguments.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp: Added include.
+        * WebProcess/WebPage/FindController.cpp: Ditto.
+        * WebProcess/WebPage/WebPage.cpp: Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm: Ditto.
+
 2020-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         CAN_SECURELY_ARCHIVE_FILE_WRAPPER incorrectly excludes watchOS and tvOS

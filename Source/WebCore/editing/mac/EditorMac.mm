@@ -50,6 +50,7 @@
 #import "RenderImage.h"
 #import "RuntimeApplicationChecks.h"
 #import "RuntimeEnabledFeatures.h"
+#import "SimpleRange.h"
 #import "StyleProperties.h"
 #import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
@@ -58,8 +59,6 @@
 #import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 void Editor::showFontPanel()
 {

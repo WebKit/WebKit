@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StaticRange.h"
+#pragma once
 
-#include "Range.h"
+#include "BoundaryPoint.h"
 
 namespace WebCore {
 
-StaticRange::StaticRange(SimpleRange&& range)
-    : SimpleRange(WTFMove(range))
+class Range;
+
+struct SimpleRange {
+    BoundaryPoint start;
+    BoundaryPoint end;
+
+    Node& startContainer() const { return start.container.get(); }
+    unsigned startOffset() const { return start.offset; }
+    Node& endContainer() const { return end.container.get(); }
+    unsigned endOffset() const { return end.offset; }
+
+    bool collapsed() const { return start == end; }
+
+    SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
+    SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
+
+    WEBCORE_EXPORT SimpleRange(const Range&);
+
+    // Convenience overloads to help with transition from using a lot of live ranges. Consider removing these eventually.
+    SimpleRange(const Range*); // Crashes if passed a nullptr.
+    SimpleRange(const Ref<Range>&);
+};
+
+bool operator==(const SimpleRange&, const SimpleRange&);
+
+WEBCORE_EXPORT Ref<Range> createLiveRange(const SimpleRange&);
+WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
+
+inline SimpleRange::SimpleRange(const Range* range)
+    : SimpleRange(*range)
 {
 }
 
-Ref<StaticRange> StaticRange::create(SimpleRange&& range)
+inline SimpleRange::SimpleRange(const Ref<Range>& range)
+    : SimpleRange(range.get())
 {
-    return adoptRef(*new StaticRange(WTFMove(range)));
-}
-
-static bool isDocumentTypeOrAttr(Node& node)
-{
-    // Before calling nodeType, do two fast non-virtual checks that cover almost all normal nodes, but are false for DocumentType and Attr.
-    if (is<ContainerNode>(node) || is<Text>(node))
-        return false;
-
-    // Call nodeType explicitly and use a switch so we don't have to call it twice.
-    switch (node.nodeType()) {
-    case Node::ATTRIBUTE_NODE:
-    case Node::DOCUMENT_TYPE_NODE:
-        return true;
-    default:
-        return false;
-    }
-}
-
-ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
-{
-    ASSERT(init.startContainer);
-    ASSERT(init.endContainer);
-    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
-        return Exception { InvalidNodeTypeError };
-    return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
 }
 
 }

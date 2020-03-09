@@ -824,6 +824,7 @@ dom/Attr.cpp
 dom/BeforeLoadEvent.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
+dom/BoundaryPoint.cpp
 dom/CDATASection.cpp
 dom/CharacterData.cpp
 dom/ChildListMutationScope.cpp
@@ -949,6 +950,7 @@ dom/SecurityOriginPolicy.cpp
 dom/SecurityPolicyViolationEvent.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
+dom/SimpleRange.cpp
 dom/SimulatedClick.cpp
 dom/SlotAssignment.cpp
 dom/SpaceSplitString.cpp

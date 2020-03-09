@@ -46,6 +46,7 @@
 #include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/TextIndicatorWindow.h>

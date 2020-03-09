@@ -356,6 +356,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ActiveDOMObject.h
     dom/Attr.h
     dom/Attribute.h
+    dom/BoundaryPoint.h
     dom/CDATASection.h
     dom/CallbackResult.h
     dom/CharacterData.h
@@ -451,8 +452,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/SecurityPolicyViolationEvent.h
     dom/ShadowRoot.h
     dom/ShadowRootMode.h
+    dom/SimpleRange.h
     dom/SimulatedClickOptions.h
     dom/SpaceSplitString.h
+    dom/StaticRange.h
     dom/StyledElement.h
     dom/SuccessOr.h
     dom/TaskSource.h

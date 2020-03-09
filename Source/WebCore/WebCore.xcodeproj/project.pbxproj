@@ -2605,6 +2605,8 @@
 		93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BD914181F7A00FCF5BE /* missingImage@2x.png */; };
 		93153BDC141959BC00FCF5BE /* textAreaResizeCorner.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */; };
 		93153BE214195A5700FCF5BE /* missingImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BE114195A5700FCF5BE /* missingImage.png */; };
+		9316DDFB240C64B4009340AA /* SimpleRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9316DDF8240C64B3009340AA /* SimpleRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9316DE00240C64F9009340AA /* BoundaryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9316DDFE240C64F8009340AA /* BoundaryPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD07161A44E900E4C874 /* ScrollingStateNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10643,6 +10645,10 @@
 		93153BD914181F7A00FCF5BE /* missingImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@2x.png"; sourceTree = "<group>"; };
 		93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = textAreaResizeCorner.png; sourceTree = "<group>"; };
 		93153BE114195A5700FCF5BE /* missingImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = missingImage.png; sourceTree = "<group>"; };
+		9316DDF8240C64B3009340AA /* SimpleRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleRange.h; sourceTree = "<group>"; };
+		9316DDFA240C64B3009340AA /* SimpleRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleRange.cpp; sourceTree = "<group>"; };
+		9316DDFD240C64F8009340AA /* BoundaryPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryPoint.cpp; sourceTree = "<group>"; };
+		9316DDFE240C64F8009340AA /* BoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryPoint.h; sourceTree = "<group>"; };
 		931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSValueInWrappedObject.h; sourceTree = "<group>"; };
 		931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCanStartListener.h; sourceTree = "<group>"; };
 		931CBD06161A44E900E4C874 /* ScrollingStateNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateNode.cpp; sourceTree = "<group>"; };
@@ -28051,6 +28057,8 @@
 				85031B260A44EFC700F992E0 /* BeforeUnloadEvent.cpp */,
 				85031B270A44EFC700F992E0 /* BeforeUnloadEvent.h */,
 				7C1E8CFF1ED0C2BE00B1D983 /* BeforeUnloadEvent.idl */,
+				9316DDFD240C64F8009340AA /* BoundaryPoint.cpp */,
+				9316DDFE240C64F8009340AA /* BoundaryPoint.h */,
 				7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */,
 				6550B693099DF0270090D781 /* CDATASection.cpp */,
 				6550B694099DF0270090D781 /* CDATASection.h */,
@@ -28445,6 +28453,8 @@
 				9B19B67E1B964E5200348745 /* ShadowRoot.idl */,
 				46DFF4961DC2601300B80B48 /* ShadowRootMode.h */,
 				46DFF4971DC2601300B80B48 /* ShadowRootMode.idl */,
+				9316DDFA240C64B3009340AA /* SimpleRange.cpp */,
+				9316DDF8240C64B3009340AA /* SimpleRange.h */,
 				572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */,
 				572A7F201C6E5719009C6149 /* SimulatedClick.h */,
 				31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */,
@@ -29256,6 +29266,7 @@
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				589556ED18D4A44000764B03 /* BorderEdge.h in Headers */,
 				BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */,
+				9316DE00240C64F9009340AA /* BoundaryPoint.h in Headers */,
 				6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */,
 				93309DDB099E64920056E581 /* BreakBlockquoteCommand.h in Headers */,
 				C2E1F43F1D6254E10094625C /* BreakLines.h in Headers */,
@@ -32429,6 +32440,7 @@
 				112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */,
 				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,
 				582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h in Headers */,
+				9316DDFB240C64B4009340AA /* SimpleRange.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */,
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
