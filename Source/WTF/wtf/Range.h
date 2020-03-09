@@ -138,6 +138,3 @@ private:
 };
 
 } // namespace WTF
-
-using WTF::Range;
-

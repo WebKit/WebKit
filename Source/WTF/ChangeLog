@@ -1,3 +1,13 @@
+2020-03-08  Brady Eidson  <beidson@apple.com>
+
+        Remember completed subranges during incremental PDF loading.
+        https://bugs.webkit.org/show_bug.cgi?id=208785
+
+        Reviewed by Tim Horton.
+
+        * wtf/Range.h: Don't include the typical 'using WTF::Range' as that makes it almost impossible
+          to use in the stack at WebCore or higher (Because of WebCore::Range)
+
 2020-03-08  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix.

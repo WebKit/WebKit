@@ -29,6 +29,8 @@
 
 #include <wtf/Range.h>
 
+using WTF::Range;
+
 namespace JSC { namespace B3 {
 
 // Alias analysis in B3 is done by checking if two integer ranges overlap. This is powerful enough

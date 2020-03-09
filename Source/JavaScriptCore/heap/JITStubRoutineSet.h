@@ -31,6 +31,8 @@
 #include <wtf/Range.h>
 #include <wtf/Vector.h>
 
+using WTF::Range;
+
 namespace JSC {
 
 class GCAwareJITStubRoutine;

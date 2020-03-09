@@ -828,11 +828,31 @@ void PDFPlugin::ByteRangeRequest::completeWithAccumulatedData(PDFPlugin& plugin)
     
     if (m_streamLoader)
         plugin.forgetLoader(*m_streamLoader);
+
+    // Fold this data into the main data buffer so that if something in its range is requested again (which happens quite often)
+    // we do not need to hit the network layer again.
+
+    auto length = CFDataGetLength(plugin.m_data.get());
+    CFIndex targetSize = m_position + m_accumulatedData.size();
+    auto delta = targetSize - length;
+    if (delta > 0)
+        CFDataIncreaseLength(plugin.m_data.get(), delta);
+
+    if (m_accumulatedData.size()) {
+        memcpy(CFDataGetMutableBytePtr(plugin.m_data.get()) + m_position, m_accumulatedData.data(), m_accumulatedData.size());
+        plugin.m_completedRanges.add({ m_position, m_position + m_accumulatedData.size() - 1});
+    }
 }
 
 bool PDFPlugin::ByteRangeRequest::maybeComplete(PDFPlugin& plugin)
 {
     if (plugin.m_streamedBytes >= m_position + m_count) {
+        completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, m_count, plugin);
+        return true;
+    }
+
+    if (plugin.m_completedRanges.contains({ m_position, m_position + m_count - 1 })) {
+        LOG(PDF, "Completing request %llu with a previously completed range", identifier());
         completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, m_count, plugin);
         return true;
     }
@@ -1287,6 +1307,8 @@ void PDFPlugin::convertPostScriptDataIfNeeded()
 
 void PDFPlugin::pdfDocumentDidLoad()
 {
+    LOG(PDF, "PDF document finished loading with a total of %llu bytes", m_streamedBytes);
+
     addArchiveResource();
 
     m_documentFinishedLoading = true;
@@ -1396,6 +1418,10 @@ void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
     m_streamedBytes += length;
 
 #if HAVE(INCREMENTAL_PDF_APIS)
+    // Keep our ranges-lookup-table compact by continuously updating its first range
+    // as the entire document streams in from the network.
+    m_completedRanges.add({ 0, m_streamedBytes - 1 });
+    
     if (m_incrementalPDFLoadingEnabled) {
         HashSet<uint64_t> handledRequests;
         for (auto& request : m_outstandingByteRangeRequests.values()) {

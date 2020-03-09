@@ -38,6 +38,8 @@
 #include <WebCore/ScrollableArea.h>
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
+#include <wtf/Range.h>
+#include <wtf/RangeSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
@@ -368,6 +370,7 @@ private:
     RefPtr<Thread> m_pdfThread;
     HashMap<uint64_t, ByteRangeRequest> m_outstandingByteRangeRequests;
     HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, uint64_t> m_streamLoaderMap;
+    RangeSet<WTF::Range<uint64_t>> m_completedRanges;
     bool m_incrementalPDFLoadingEnabled;
 #endif
 };

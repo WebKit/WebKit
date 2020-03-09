@@ -1,3 +1,19 @@
+2020-03-08  Brady Eidson  <beidson@apple.com>
+
+        Remember completed subranges during incremental PDF loading.
+        https://bugs.webkit.org/show_bug.cgi?id=208785
+
+        Reviewed by Tim Horton.
+
+        Move 'using WTF::Range' from the WTF/Range.h header to these JSC users.
+        
+        The alternative to making these 3 changes was to make over 20 changes up in the WebCore/WebKits
+        to resolve the conflict with WebCore::Range.
+        
+        * b3/B3HeapRange.h:
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * heap/JITStubRoutineSet.h:
+
 2020-03-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r258049): Unchecked JS exception in jsc::Stringifier::toJSON

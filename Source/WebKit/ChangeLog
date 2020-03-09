@@ -1,3 +1,25 @@
+2020-03-08  Brady Eidson  <beidson@apple.com>
+
+        Remember completed subranges during incremental PDF loading.
+        https://bugs.webkit.org/show_bug.cgi?id=208785
+
+        Reviewed by Tim Horton.
+
+        When a range request from a stream loader completes, we will now extend the main resource buffer
+        to be large enough to hold that range, then we memcpy the data into the main buffer.
+        
+        We then keep a RangeSet to remember which ranges we've loaded.
+        Any future range request that comes in we first check against that RangeSet to see if we can handle it from memory.
+        
+        This is a necessary optimization because PDFKit tends to ask for the same (or overlapping) ranges quite often.
+        
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::ByteRangeRequest::maybeComplete):
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData):
+
 2020-02-28  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Legacy EME API in the GPU Process

@@ -44,6 +44,8 @@
 #include <wtf/ListDump.h>
 #include <wtf/Range.h>
 
+using WTF::Range;
+
 namespace JSC { namespace B3 { namespace Air {
 
 namespace {
