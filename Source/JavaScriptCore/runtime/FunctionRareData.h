@@ -123,15 +123,15 @@ public:
     bool hasReifiedName() const { return m_hasReifiedName; }
     void setHasReifiedName() { m_hasReifiedName = true; }
 
-    bool hasModifiedLength() const { return m_hasModifiedLength; }
-    void setHasModifiedLength()
+    bool hasModifiedLengthForNonHostFunction() const { return m_hasModifiedLengthForNonHostFunction; }
+    void setHasModifiedLengthForNonHostFunction()
     {
-        m_hasModifiedLength = true;
+        m_hasModifiedLengthForNonHostFunction = true;
     }
-    bool hasModifiedName() const { return m_hasModifiedName; }
-    void setHasModifiedName()
+    bool hasModifiedNameForNonHostFunction() const { return m_hasModifiedNameForNonHostFunction; }
+    void setHasModifiedNameForNonHostFunction()
     {
-        m_hasModifiedName = true;
+        m_hasModifiedNameForNonHostFunction = true;
     }
 
     bool hasAllocationProfileClearingWatchpoint() const { return !!m_allocationProfileClearingWatchpoint; }
@@ -166,8 +166,8 @@ private:
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
     bool m_hasReifiedLength : 1;
     bool m_hasReifiedName : 1;
-    bool m_hasModifiedLength : 1;
-    bool m_hasModifiedName : 1;
+    bool m_hasModifiedLengthForNonHostFunction : 1;
+    bool m_hasModifiedNameForNonHostFunction : 1;
 };
 
 class FunctionRareData::AllocationProfileClearingWatchpoint final : public Watchpoint {

@@ -288,12 +288,19 @@ static EncodedJSValue JSC_HOST_CALL makeBoundFunction(JSGlobalObject* globalObje
 static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
     JSFunction* function = jsDynamicCast<JSFunction*>(vm, target);
-    if (function)
-        return JSValue::encode(jsBoolean(function->areNameAndLengthOriginal(vm)));
-    return JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length)));
+    if (function && function->canAssumeNameAndLengthAreOriginal(vm)) {
+#if ASSERT_ENABLED
+        bool result = target->hasOwnProperty(globalObject, vm.propertyNames->length);
+        RETURN_IF_EXCEPTION(scope, { });
+        ASSERT(result);
+#endif
+        return JSValue::encode(jsBoolean(true));
+    }
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length))));
 }
 
 #if !ASSERT_DISABLED

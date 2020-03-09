@@ -1,5 +1,48 @@
 2020-03-09  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/60183769
+
+    2020-03-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] @hasOwnLengthProperty returns wrong value if "length" is attempted to be modified
+            https://bugs.webkit.org/show_bug.cgi?id=208497
+            <rdar://problem/59913544>
+
+            Reviewed by Mark Lam.
+
+            When "length" of JSFunction is attempted to be modified, we put a flag. And @hasOwnLengthProperty
+            does not correctly use this flag to return a value for the fast path. This affects on "length"
+            property of bound functions. For example,
+
+                function userFunction(a) { }
+                userFunction.length = 20; // This field is read-only. So, it is not changed.
+                userFunction.bind().length; // Should be 1, but it returns 0.
+
+            1. We rename m_hasModifiedLength to m_hasModifiedLengthForNonHostFunction and m_hasModifiedName
+               to m_hasModifiedNameForNonHostFunction since we are not tracking these states for host-functions
+               which can eagerly initialize them.
+            2. We rename areNameAndLengthOriginal to canAssumeNameAndLengthAreOriginal to allow it to return
+               "false" for host functions. If it returns true, we go to the fast path.
+            3. Correctly use canAssumeNameAndLengthAreOriginal information in @hasOwnLengthProperty.
+
+            * runtime/FunctionRareData.cpp:
+            (JSC::FunctionRareData::FunctionRareData):
+            * runtime/FunctionRareData.h:
+            * runtime/JSFunction.cpp:
+            (JSC::JSFunction::put):
+            (JSC::JSFunction::deleteProperty):
+            (JSC::JSFunction::defineOwnProperty):
+            * runtime/JSFunction.h:
+            * runtime/JSFunctionInlines.h:
+            (JSC::JSFunction::canAssumeNameAndLengthAreOriginal):
+            (JSC::JSFunction::areNameAndLengthOriginal): Deleted.
+            * runtime/JSGlobalObject.cpp:
+            (JSC::hasOwnLengthProperty):
+            * tools/JSDollarVM.cpp:
+            (JSC::functionHasOwnLengthProperty):
+
+2020-03-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r257605. rdar://problem/59870340
 
     Poly proto should work with property delete transitions

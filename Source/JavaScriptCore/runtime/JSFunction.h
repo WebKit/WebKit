@@ -164,7 +164,7 @@ public:
     };
     PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
-    bool areNameAndLengthOriginal(VM&);
+    bool canAssumeNameAndLengthAreOriginal(VM&);
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
