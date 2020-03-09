@@ -219,7 +219,7 @@ void MediaSessionManagerCocoa::clearNowPlayingInfo()
         UNUSED_PARAM(error);
 #else
         if (error)
-            WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error ", error);
+            WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %d", error);
 #endif
     });
 }
@@ -260,7 +260,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
-        WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error ", error);
+        WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %d", error);
 #endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());
