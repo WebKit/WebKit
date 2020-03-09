@@ -447,7 +447,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
     bool hasRunningTransition = runningTransitionsByProperty.contains(property);
-    auto& beforeChangeStyle = [&]() -> const RenderStyle& {
+    auto beforeChangeStyle = [&]() {
         if (hasRunningTransition && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property)) {
             // In case we have an accelerated transition running for this element, we need to get its computed style as the before-change style
             // since otherwise the animated value for that property won't be visible.
@@ -455,9 +455,9 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             if (is<KeyframeEffect>(runningTransition->effect())) {
                 auto& keyframeEffect = *downcast<KeyframeEffect>(runningTransition->effect());
                 if (keyframeEffect.isRunningAccelerated()) {
-                    auto animatedStyle = RenderStyle::clonePtr(currentStyle);
-                    runningTransition->resolve(*animatedStyle);
-                    return *animatedStyle;
+                    auto animatedStyle = RenderStyle::clone(currentStyle);
+                    runningTransition->resolve(animatedStyle);
+                    return animatedStyle;
                 }
             }
         }
@@ -467,17 +467,17 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             // start value of the transition shoud be to make sure that we don't account for animated values that would have been blended onto
             // the style applied during the last style resolution.
             if (auto* unanimatedStyle = keyframeEffect->unanimatedStyle())
-                return *unanimatedStyle;
+                return RenderStyle::clone(*unanimatedStyle);
 
             // If we have a keyframe effect targeting this property, but it doesn't yet have an unanimated style, this is because it has not
             // had a chance to apply itself with a non-null progress. In this case, the before-change and after-change styles should be the
             // same in order to prevent a transition from being triggered as the unanimated style for this keyframe effect will most likely
             // be this after-change style, or any future style change that may happen before the keyframe effect starts blending animated values.
-            return afterChangeStyle;
+            return RenderStyle::clone(afterChangeStyle);
         }
 
         // In any other scenario, the before-change style should be the previously resolved style for this element.
-        return currentStyle;
+        return RenderStyle::clone(currentStyle);
     }();
 
     if (!hasRunningTransition
