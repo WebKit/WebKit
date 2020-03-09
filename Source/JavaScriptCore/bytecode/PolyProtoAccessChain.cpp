@@ -61,7 +61,7 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
         // To save memory, we don't include the base in the chain. We let
         // AccessCase provide the base to us as needed.
         if (iterationNumber)
-            result->m_chain.append(structure);
+            result->m_chain.append(structure->id());
         else
             RELEASE_ASSERT(current == base);
 
@@ -82,10 +82,10 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
     return result;
 }
 
-bool PolyProtoAccessChain::needImpurePropertyWatchpoint() const
+bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM& vm) const
 {
-    for (Structure* structure : m_chain) {
-        if (structure->needImpurePropertyWatchpoint())
+    for (StructureID structureID : m_chain) {
+        if (vm.getStructure(structureID)->needImpurePropertyWatchpoint())
             return true;
     }
     return false;
@@ -99,7 +99,7 @@ bool PolyProtoAccessChain::operator==(const PolyProtoAccessChain& other) const
 void PolyProtoAccessChain::dump(Structure* baseStructure, PrintStream& out) const
 {
     out.print("PolyPolyProtoAccessChain: [\n");
-    forEach(baseStructure, [&] (Structure* structure, bool) {
+    forEach(baseStructure->vm(), baseStructure, [&] (Structure* structure, bool) {
         out.print("\t");
         structure->dump(out);
         out.print("\n");

@@ -351,7 +351,7 @@ bool StructureStubInfo::propagateTransitions(SlotVisitor& visitor)
     return true;
 }
 
-StubInfoSummary StructureStubInfo::summary() const
+StubInfoSummary StructureStubInfo::summary(VM& vm) const
 {
     StubInfoSummary takesSlowPath = StubInfoSummary::TakesSlowPath;
     StubInfoSummary simple = StubInfoSummary::Simple;
@@ -359,7 +359,7 @@ StubInfoSummary StructureStubInfo::summary() const
         PolymorphicAccess* list = u.stub;
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
-            if (access.doesCalls()) {
+            if (access.doesCalls(vm)) {
                 takesSlowPath = StubInfoSummary::TakesSlowPathAndMakesCalls;
                 simple = StubInfoSummary::MakesCalls;
                 break;
@@ -376,12 +376,12 @@ StubInfoSummary StructureStubInfo::summary() const
     return simple;
 }
 
-StubInfoSummary StructureStubInfo::summary(const StructureStubInfo* stubInfo)
+StubInfoSummary StructureStubInfo::summary(VM& vm, const StructureStubInfo* stubInfo)
 {
     if (!stubInfo)
         return StubInfoSummary::NoInformation;
     
-    return stubInfo->summary();
+    return stubInfo->summary(vm);
 }
 
 bool StructureStubInfo::containsPC(void* pc) const
