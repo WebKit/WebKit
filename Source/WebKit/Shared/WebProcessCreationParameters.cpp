@@ -498,7 +498,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     
 #if USE(UTTYPE_SWIZZLER)
-    Optional<Vector<UTTypeItem>> vectorOfUTTypeItem;
+    Optional<Vector<WebCore::UTTypeItem>> vectorOfUTTypeItem;
     decoder >> vectorOfUTTypeItem;
     if (!vectorOfUTTypeItem)
         return false;

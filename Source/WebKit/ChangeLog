@@ -1,3 +1,10 @@
+2020-03-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+
 2020-03-09  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Implement Legacy EME API in the GPU Process
