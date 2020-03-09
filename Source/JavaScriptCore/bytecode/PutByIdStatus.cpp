@@ -129,7 +129,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
     if (!isInlineable(summary))
         return PutByIdStatus(summary);
     

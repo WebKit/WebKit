@@ -166,9 +166,9 @@ public:
         return false;
     }
 
-    StubInfoSummary summary() const;
+    StubInfoSummary summary(VM&) const;
     
-    static StubInfoSummary summary(const StructureStubInfo*);
+    static StubInfoSummary summary(VM&, const StructureStubInfo*);
 
     bool containsPC(void* pc) const;
 
