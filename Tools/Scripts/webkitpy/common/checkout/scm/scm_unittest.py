@@ -564,6 +564,11 @@ OcmYex&reD$;sO8*F9L)B
     def _shared_test_head_svn_revision(self):
         self.assertEqual(self.scm.head_svn_revision(), '5')
 
+    def _shared_test_svn_revision(self, scm):
+        self.assertEqual(scm.svn_revision(scm.checkout_root), '5')
+
+    def _shared_test_svn_branch(self, scm):
+        self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
 
 # Context manager that overrides the current timezone.
 class TimezoneOverride(object):
@@ -919,6 +924,12 @@ END
 
     def test_head_svn_revision(self):
         self._shared_test_head_svn_revision()
+
+    def test_svn_revision(self):
+        self._shared_test_svn_revision(self.scm)
+
+    def test_svn_branch(self):
+        self._shared_test_svn_branch(self.scm)
 
     def test_native_revision(self):
         self.assertEqual(self.scm.head_svn_revision(), self.scm.native_revision('.'))
@@ -1749,3 +1760,16 @@ MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MO
 
         scm._run_git = lambda args: '1360317321'
         self.assertEqual(scm.timestamp_of_native_revision('some-path', '1a1c3b08814bc2a8c15b0f6db63cdce68f2aaa7a'), '2013-02-08T09:55:21Z')
+
+    def test_svn_data_from_git_svn_id(self):
+        scm = self.make_scm()
+        scm.find_checkout_root = lambda path: ''
+        scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@258024 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
+        self.assertEqual(scm.svn_revision(scm.checkout_root), '258024')
+        self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
+        self.assertEqual(scm.svn_url(scm.checkout_root), 'http://svn.webkit.org/repository/webkit/trunk')
+
+        scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: http://svn.webkit.org/repository/webkit/branch/specialSubmission@258000 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
+        self.assertEqual(scm.svn_revision(scm.checkout_root), '258000')
+        self.assertEqual(scm.svn_branch(scm.checkout_root), 'specialSubmission')
+        self.assertEqual(scm.svn_url(scm.checkout_root), 'http://svn.webkit.org/repository/webkit/branch/specialSubmission')

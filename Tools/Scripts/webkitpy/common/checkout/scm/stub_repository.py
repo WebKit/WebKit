@@ -63,6 +63,9 @@ class StubRepository(SCM):
     def svn_revision(self, path):
         return self.native_revision(path)
 
+    def svn_branch(self, path):
+        return self.native_branch(path)
+
     def native_revision(self, path):
         return self._find_parent_path_matching_callback_condition(path, lambda path: self._decode_json(path)['id'], filesystem=self._filesystem)
 

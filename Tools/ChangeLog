@@ -1,3 +1,41 @@
+2020-03-06  Brian Burg  <bburg@apple.com>
+
+        upload.py gets confused by git-svn checkouts, unable to upload test results from my desk build
+        https://bugs.webkit.org/show_bug.cgi?id=208729
+        <rdar://problem/60105447>
+
+        Reviewed by Jonathan Bedard.
+
+        Improve upload.py to look for the svn branch and revision for the 'webkit'
+        project and prefer those to the git equivalents (eg, prefer trunk/rNNNNN to master/<hash>).
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git):
+        (Git.git_svn_id_regexp):
+        (Git._field_from_git_svn_id):
+        (Git.svn_revision):
+        (Git.svn_branch):
+        (Git.svn_url):
+        (Git.native_branch):
+        Refactor svn revision, branch, url to use the same regexp and helper code.
+
+        * Scripts/webkitpy/common/checkout/scm/stub_repository.py:
+        (StubRepository.svn_branch):
+        Expose a stub since this is used unconditionally by Port.commits_for_upload.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.svn_branch):
+        (SVN.native_revision):
+        (SVN):
+        (SVN.native_branch):
+        Refactor so the actual implementation is contained in svn_revision / svn_branch.
+        The native_* methods call out to the SVN equivalents since this is an SVN repository.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.commits_for_upload):
+        Add special git-svn handling for the WebKit repository so that SVN branch and revision
+        is preferred over the git equivalents.
+
 2020-03-09  Antoine Quint  <graouts@apple.com>
 
         TestWebKitAPI fails to build on watchOS
