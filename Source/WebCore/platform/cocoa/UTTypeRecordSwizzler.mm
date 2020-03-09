@@ -32,6 +32,7 @@
 
 #import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/NSUTTypeRecordSPI.h>
+#import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/SoftLinking.h>
