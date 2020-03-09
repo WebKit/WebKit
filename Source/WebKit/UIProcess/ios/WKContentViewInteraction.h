@@ -305,7 +305,7 @@ struct WKAutoCorrectionData {
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
 
     CGPoint _lastInteractionLocation;
-    WebKit::TransactionID _layerTreeTransactionIdAtLastTouchStart;
+    WebKit::TransactionID _layerTreeTransactionIdAtLastInteractionStart;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 

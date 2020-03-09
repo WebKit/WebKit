@@ -998,7 +998,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 #endif
 
-    _layerTreeTransactionIdAtLastTouchStart = { };
+    _layerTreeTransactionIdAtLastInteractionStart = { };
 
 #if ENABLE(DATA_INTERACTION)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
@@ -1448,7 +1448,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
     if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
-        _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
 #if ENABLE(TOUCH_EVENTS)
         _page->resetPotentialTapSecurityOrigin();
@@ -2612,7 +2612,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_doubleTapRecognizedForDoubleClick:(UITapGestureRecognizer *)gestureRecognizer
 {
-    _page->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint(gestureRecognizer.location), WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart);
+    _page->handleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint(gestureRecognizer.location), WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastInteractionStart);
 }
 
 - (void)_twoFingerSingleTapGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
@@ -2779,7 +2779,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         m_commitPotentialTapPointerId = pointerId;
     }
 #endif
-    _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart, pointerId);
+    _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastInteractionStart, pointerId);
 
     if (!_isExpectingFastSingleTapCommit)
         [self _finishInteraction];
@@ -2820,7 +2820,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [self becomeFirstResponder];
 
     [_inputPeripheral endEditing];
-    _page->handleTap(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastTouchStart);
+    _page->handleTap(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastInteractionStart);
 }
 
 - (void)setUpTextSelectionAssistant
@@ -8012,8 +8012,12 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if (!_page->hasRunningProcess())
         return;
 
-    if (auto event = gestureRecognizer.lastMouseEvent)
+    if (auto event = gestureRecognizer.lastMouseEvent) {
+        if (event->type() == WebKit::WebEvent::MouseDown)
+            _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
         _page->handleMouseEvent(*event);
+    }
 }
 #endif
 
