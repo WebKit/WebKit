@@ -143,9 +143,9 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << stringForCandidateRequest;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    encoder << paragraphContext;
-    encoder << paragraphContextCursorPosition;
-    encoder << paragraphContextSelectionPosition;
+    encoder << surroundingContext;
+    encoder << surroundingContextCursorPosition;
+    encoder << surroundingContextSelectionPosition;
 #endif
     encoder << fontAttributes;
     encoder << canCut;
@@ -220,11 +220,11 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    if (!decoder.decode(result.paragraphContext))
+    if (!decoder.decode(result.surroundingContext))
         return false;
-    if (!decoder.decode(result.paragraphContextCursorPosition))
+    if (!decoder.decode(result.surroundingContextCursorPosition))
         return false;
-    if (!decoder.decode(result.paragraphContextSelectionPosition))
+    if (!decoder.decode(result.surroundingContextSelectionPosition))
         return false;
 #endif
 

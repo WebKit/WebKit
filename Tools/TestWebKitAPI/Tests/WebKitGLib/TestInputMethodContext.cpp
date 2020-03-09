@@ -52,7 +52,7 @@ typedef struct _WebKitInputMethodContextMockClass {
 
 G_DEFINE_TYPE(WebKitInputMethodContextMock, webkit_input_method_context_mock, WEBKIT_TYPE_INPUT_METHOD_CONTEXT)
 
-static const char* testHTML = "<html><body><input id='editable' contenteditable onkeydown='logKeyDown()' onkeyup='logKeyUp()' onkeypress='logKeyPress()'></input><script>"
+static const char* testHTML = "<html><body><textarea id='editable' rows='3', cols='50' onkeydown='logKeyDown()' onkeyup='logKeyUp()' onkeypress='logKeyPress()'></textarea><script>"
     "var input = document.getElementById('editable');"
     "input.addEventListener('compositionstart', logCompositionEvent);"
     "input.addEventListener('compositionupdate', logCompositionEvent);"
@@ -860,6 +860,16 @@ static void testWebKitInputMethodContextSurrounding(InputMethodTest* test, gcons
     g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK😀️");
     g_assert_cmpuint(test->surroundingCursorIndex(), ==, 37);
     g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
+    test->m_events.clear();
+
+    // Check multiline context.
+    test->keyStrokeAndWaitForEvents(KEY(Return), 3);
+    test->keyStrokeAndWaitForEvents(KEY(a), 6);
+    test->waitForSurroundingText("WebKitGTKWPEWebKitabcWebKitGTK😀️\na");
+    g_assert_cmpstr(test->surroundingText(), ==, "WebKitGTKWPEWebKitabcWebKitGTK😀️\na");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 39);
+    g_assert_cmpuint(test->surroundingSelectionIndex(), ==, test->surroundingCursorIndex());
+    test->m_events.clear();
 }
 
 static void testWebKitInputMethodContextReset(InputMethodTest* test, gconstpointer)

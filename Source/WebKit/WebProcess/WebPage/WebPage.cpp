@@ -5485,9 +5485,9 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
         return;
 
     auto selectionStart = selection.visibleStart();
-    auto paragraphRange = makeRange(startOfParagraph(selectionStart), selectionStart);
-    auto cursorPosition = TextIterator::rangeLength(paragraphRange.get());
-    auto& rootNode = paragraphRange->startContainer().treeScope().rootNode();
+    auto surroundingRange = makeRange(startOfEditableContent(selectionStart), selectionStart);
+    auto cursorPosition = TextIterator::rangeLength(surroundingRange.get());
+    auto& rootNode = surroundingRange->startContainer().treeScope().rootNode();
     auto selectionRange = TextIterator::rangeFromLocationAndLength(&rootNode, cursorPosition + offset, characterCount);
     if (!selectionRange)
         return;

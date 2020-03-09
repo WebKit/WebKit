@@ -1,3 +1,25 @@
+2020-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Surrounding text for input methods should not be limited to the current paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=208706
+
+        Reviewed by Žan Doberšek.
+
+        It should include all the text around the cursor position.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const): Rename paragraphContext* as surroundingContext*.
+        (WebKit::EditorState::PostLayoutData::decode): Ditto.
+        * Shared/EditorState.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdateTextInputState): Ditto.
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::selectionDidChange): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::deleteSurrounding): Use content editable text as context instead of just paragraph.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformEditorState const): Ditto.
+
 2020-03-07  Darin Adler  <darin@apple.com>
 
         Begin moving off of live ranges for WebKit internals

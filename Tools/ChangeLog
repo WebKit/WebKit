@@ -1,3 +1,15 @@
+2020-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Surrounding text for input methods should not be limited to the current paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=208706
+
+        Reviewed by Žan Doberšek.
+
+        Add test case to check surrounding text in multiline context.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        (testWebKitInputMethodContextSurrounding):
+
 2020-03-08  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Mapping to UTI from tag and tag class should be performed in the UI process
