@@ -1,3 +1,18 @@
+2020-03-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] AsyncScrolling: scrolling with the mouse wheel over sub-scrollable areas scrolls the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=208635
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rework the default values for the async frame and overflow scrolling
+        so that the latter stays disabled for Nicosia-using ports as it
+        undergoes bigger changes.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAsyncFrameAndOverflowScrollingEnabled):
+        (WebKit::defaultAsyncFrameScrollingEnabled):
+
 2020-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Surrounding text for input methods should not be limited to the current paragraph

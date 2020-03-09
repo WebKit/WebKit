@@ -83,7 +83,7 @@ bool defaultDisallowSyncXHRDuringPageDismissalEnabled()
 
 static bool defaultAsyncFrameAndOverflowScrollingEnabled()
 {
-#if PLATFORM(IOS_FAMILY) || USE(NICOSIA)
+#if PLATFORM(IOS_FAMILY)
     return true;
 #endif
 
@@ -96,6 +96,10 @@ static bool defaultAsyncFrameAndOverflowScrollingEnabled()
 
 bool defaultAsyncFrameScrollingEnabled()
 {
+#if USE(NICOSIA)
+    return true;
+#endif
+
     return defaultAsyncFrameAndOverflowScrollingEnabled();
 }
 
