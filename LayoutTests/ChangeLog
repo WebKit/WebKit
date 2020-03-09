@@ -1,5 +1,14 @@
 2020-03-09  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ iPadOS wk2 Release ] fast/css-custom-paint/constructor.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=208837
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-03-09  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk1 Debug ] inspector/script-profiler/event-type-Microtask.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=208825
 
