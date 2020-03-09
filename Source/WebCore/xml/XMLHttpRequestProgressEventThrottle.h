@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class Event;
-class EventTarget;
 class XMLHttpRequest;
 
 enum ProgressEventAction {
