@@ -1,3 +1,22 @@
+2020-03-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise In-App Browser Privacy checks to better reflect the meaning of the flag
+        https://bugs.webkit.org/show_bug.cgi?id=208793
+        <rdar://problem/60206256>
+
+        Reviewed by John Wilander.
+
+        The 'isInAppBrowserPrivacyEnabled' seems like a feature, but it's really an internal debugging flag.
+
+        Revise the use of these calls to make it clearer.
+
+        Tested by existing test cases.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
 2020-03-08  Brady Eidson  <beidson@apple.com>
 
         Remember completed subranges during incremental PDF loading.

@@ -61,6 +61,8 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/NetworkSessionCocoaAdditions.h>
+#else
+#define NETWORK_SESSION_COCOA_ADDITIONS false
 #endif
 
 #import "DeviceManagementSoftLink.h"
@@ -1213,8 +1215,10 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::Resour
         ASSERT_NOT_REACHED();
 #endif
 
-    if (m_isInAppBrowserPrivacyEnabled && isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes)
-        return appBoundSession(storedCredentialsPolicy);
+    if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes) {
+        if (m_isInAppBrowserPrivacyEnabled || NETWORK_SESSION_COCOA_ADDITIONS)
+            return appBoundSession(storedCredentialsPolicy);
+    }
 
     switch (storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:

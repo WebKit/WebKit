@@ -280,6 +280,7 @@
 #include <WebKitAdditions/WebPageProxyAdditions.h>
 #else
 #define WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
+#define WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2 false
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -3096,7 +3097,7 @@ private:
 
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
-    if (m_preferences->isInAppBrowserPrivacyEnabled() && isMainFrame) {
+    if (isMainFrame && (m_preferences->isInAppBrowserPrivacyEnabled() || WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2)) {
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
         if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
