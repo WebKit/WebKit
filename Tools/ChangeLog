@@ -1,3 +1,19 @@
+2020-03-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        WebKitTestRunner bundleID should not be cleared before every test
+        https://bugs.webkit.org/show_bug.cgi?id=208823
+        <rdar://problem/60204539>
+
+        Reviewed by Per Arne Vollan.
+
+        This is causing test failures for layout tests which rely on the Info.plist 
+        bundle identifier (not the one set via the override method).
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+
 2020-03-09  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Notification observer is not removed

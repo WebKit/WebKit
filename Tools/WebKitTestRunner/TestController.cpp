@@ -640,6 +640,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         exit(1);
     }
     if (!options.applicationBundleIdentifier.isEmpty()) {
+        clearApplicationBundleIdentifierTestingOverride();
         setApplicationBundleIdentifier(options.applicationBundleIdentifier);
         m_hasSetApplicationBundleIdentifier = true;
     }
@@ -812,9 +813,6 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_createdOtherPage = false;
     }
 
-#if PLATFORM(COCOA)
-    clearApplicationBundleIdentifierTestingOverride();
-#endif
 
     createWebViewWithOptions(options);
 
