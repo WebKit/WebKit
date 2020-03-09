@@ -1,3 +1,16 @@
+2020-03-09  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Implement Legacy EME API in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=208402
+        <rdar://problem/60178488>
+
+        Reviewed by Eric Carlson.
+
+        Follow-up: adding the RemoteLegacyCDMFactory as a suppliment got dropped from the initial patch by
+        a merge/rebase mistake.
+
+        * WebProcess/WebProcess.cpp:
+
 2020-03-09  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] WebPageProxy::dataSelectionForPasteboard should check the result of SharedMemory::map

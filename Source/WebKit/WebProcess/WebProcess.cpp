@@ -254,6 +254,10 @@ WebProcess::WebProcess()
     addSupplement<RemoteCDMFactory>();
 #endif
 
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    addSupplement<RemoteLegacyCDMFactory>();
+#endif
+
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
 
