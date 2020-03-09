@@ -35,7 +35,6 @@ imported/mozilla/svg/blend-saturation.svg [ Skip ]
 imported/mozilla/svg/blend-screen.svg [ Skip ]
 inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
-legacy-animation-engine/transitions/blendmode-transitions.html [ Skip ]
 
 # CSS_IMAGE_ORIENTATION is disabled
 fast/css/image-orientation [ Skip ]
@@ -1365,37 +1364,27 @@ webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [
 ################################################################################
 
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
-webkit.org/b/49182 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
-legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 animations/animation-delay-changed.html [ Pass Failure ]
-legacy-animation-engine/animations/animation-delay-changed.html [ Pass Failure ]
 
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
-legacy-animation-engine/animations/font-variations/font-stretch.html [ Skip ]
 animations/font-variations/font-style.html [ Skip ]
-legacy-animation-engine/animations/font-variations/font-style.html [ Skip ]
 
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
 
 webkit.org/b/176998 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
-webkit.org/b/176998 legacy-animation-engine/fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
 
 webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
 
 animations/needs-layout.html [ Pass ImageOnlyFailure ]
-legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
 animations/resume-after-page-cache.html [ Pass Failure ]
-legacy-animation-engine/animations/resume-after-page-cache.html [ Pass Failure ]
 
 fast/animation/request-animation-frame-within-callback.html [ Pass Failure ]
-
-[ Debug ] legacy-animation-engine/animations/animation-welcome-safari.html [ Pass Failure ]
 
 webkit.org/b/178341 animations/play-state-in-shorthand.html [ Failure ]
 
@@ -1405,9 +1394,6 @@ webkit.org/b/191584 animations/dynamic-stylesheet-loading.html [ Failure ]
 webkit.org/b/191584 animations/play-state-paused.html [ Failure ]
 webkit.org/b/191584 animations/transform-non-accelerated.html [ Failure ]
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
-webkit.org/b/191584 legacy-animation-engine/animations/animation-direction-normal.html [ Failure ]
-webkit.org/b/191584 legacy-animation-engine/animations/animation-direction-reverse.html [ Failure ]
-webkit.org/b/191584 legacy-animation-engine/animations/transform-non-accelerated.html [ Failure ]
 
 ################################################################################
 ###########################   End Animation Issues   ###########################
@@ -1420,33 +1406,8 @@ webkit.org/b/191584 legacy-animation-engine/animations/transform-non-accelerated
 
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
-legacy-animation-engine/compositing/visible-rect/ [ Skip ]
 
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Skip ]
-
-webkit.org/b/184482 legacy-animation-engine/compositing/animation/animation-backing.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/animation/animation-compositing.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/backing/backface-visibility-flip.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/contents-scale/animating.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
-webkit.org/b/116564 legacy-animation-engine/compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/multiple-keyframes-animation-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/overlap-animation-clipping.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/overlap-animation-container.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/overlap-animation.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/scale-rotation-animation-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-animation-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-scale-animation-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-scale-transition-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-transition-overlap.html [ Failure ]
-webkit.org/b/184482 legacy-animation-engine/compositing/reflections/load-video-in-reflection.html [ Skip ]
-
-legacy-animation-engine/compositing/backing/backing-store-attachment-empty-keyframe.html [ Failure ]
 
 ################################################################################
 ##########################   End Compositing Issues   ##########################
@@ -1496,7 +1457,6 @@ css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 # TODO HW filters not yet supported on Windows
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
-webkit.org/b/74716 legacy-animation-engine/css3/filters/backdrop [ Skip ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
@@ -1902,11 +1862,6 @@ inspector/cpu-profiler/threads.html [ Failure ]
 js/dom/deep-recursion-test.html [ Failure ]
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 js/dom/regress-157246.html [ Failure ]
-legacy-animation-engine/fast/layers [ Skip ]
-legacy-animation-engine/fast/shadow-dom [ Skip ]
-legacy-animation-engine/imported/blink/transitions/unprefixed-transform.html [ Skip ]
-legacy-animation-engine/media [ Skip ]
-legacy-animation-engine/transitions [ Skip ]
 loader/reload-subresource-when-type-changes.html [ Skip ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ]
 loader/stateobjects/pushstate-size.html [ Skip ]

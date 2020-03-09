@@ -663,11 +663,8 @@ fast/images/imagemap-dynamic-area-updates.html [ Skip ]
 fast/inline/layout-after-inserting-nested-br.html [ Skip ]
 fast/inline/relative-positioned-overflow.html [ Skip ]
 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ]
-legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ]
 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ Skip ]
-legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ Skip ]
 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Skip ]
-legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Skip ]
 fast/loader/child-frame-add-after-back-forward.html [ Skip ]
 fast/loader/document-with-fragment-url-1.html [ Skip ]
 fast/loader/document-with-fragment-url-3.html [ Skip ]
@@ -1237,7 +1234,6 @@ compositing/layer-creation/deep-tree.html
 # <rdar://problem/19193263> compositing/geometry/outline-change.html: ASSERTION FAILED: loader->identifier() in DocumentLoader::removeSubresourceLoader()
 compositing/geometry/outline-change.html
 compositing/geometry/partial-layout-update.html
-legacy-animation-engine/compositing/geometry/partial-layout-update.html
 fast/dom/HTMLObjectElement/children-changed.html
 fast/events/menu-keydown-on-hidden-element.html
 
@@ -1248,7 +1244,6 @@ webkit.org/b/178487 compositing/checkerboard.html [ Failure ]
 webkit.org/b/178487 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 webkit.org/b/178487 compositing/fixed-with-fixed-layout.html [ Failure ]
 webkit.org/b/178487 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
-webkit.org/b/178487 legacy-animation-engine/compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 webkit.org/b/178487 compositing/geometry/video-fixed-scrolling.html [ Pass Failure ]
 webkit.org/b/178487 compositing/iframes/composited-iframe-scroll.html [ Failure ]
 webkit.org/b/178487 compositing/iframes/iframe-content-flipping.html [ Failure ]
@@ -2242,16 +2237,13 @@ compositing/visible-rect/coverage-scrolling.html [ Failure Pass ]
 
 # Imported Blink tests.
 imported/blink/animations/background-shorthand-crash.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/animations/background-shorthand-crash.html [ Pass Timeout ]
 imported/blink/animations/base-render-style-font-selector-version-assert.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/animations/base-render-style-font-selector-version-assert.html [ Pass Timeout ]
 imported/blink/compositing/draws-content/canvas-simple-background.html [ ImageOnlyFailure Pass ]
 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
 imported/blink/compositing/overflow/body-switch-composited-scrolling.html [ ImageOnlyFailure Pass ]
 imported/blink/compositing/squashing/invalidate-on-grouped-mapping-reorder.html [ Pass Timeout ]
 imported/blink/css3/calc/transition-asan-crash.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/css3/calc/transition-asan-crash.html [ Pass Timeout ]
 imported/blink/editing/execCommand/4128080-2.html [ Failure Pass ]
 imported/blink/fast/canvas/bug382588.html [ Pass Timeout ]
 imported/blink/fast/css-grid-layout/grid-item-margins-and-writing-modes.html [ ImageOnlyFailure Pass ]
@@ -2287,7 +2279,6 @@ imported/blink/svg/text/selection-partial-gradient.html [ ImageOnlyFailure Pass 
 imported/blink/svg/text/text-outline-2.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/text/tspan-outline-crash.html [ ImageOnlyFailure Pass ]
 imported/blink/transitions/transition-shape-outside-crash.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/transitions/transition-shape-outside-crash.html [ Pass Timeout ]
 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 # Failing tests related to picture element
@@ -2317,9 +2308,7 @@ webkit.org/b/152442 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 webkit.org/b/152701 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 webkit.org/b/152282 css3/filters/composited-during-animation-layertree.html [ Failure ]
-webkit.org/b/152282 legacy-animation-engine/css3/filters/composited-during-animation-layertree.html [ Failure ]
 webkit.org/b/152282 css3/filters/composited-during-transition-layertree.html [ Failure ]
-webkit.org/b/152282 legacy-animation-engine/css3/filters/composited-during-transition-layertree.html [ Failure ]
 
 webkit.org/b/152935 fast/scrolling/scroll-position-on-reload-rtl.html [ Failure ]
 
@@ -2361,7 +2350,6 @@ webkit.org/b/154055 perf/adding-radio-buttons.html [ Pass Timeout Failure ]
 webkit.org/b/76121 imported/blink/fast/events/event-trusted.html [ Skip ]
 
 webkit.org/b/154253 animations/animation-delay-changed.html [ Pass Failure ]
-webkit.org/b/154253 legacy-animation-engine/animations/animation-delay-changed.html [ Pass Failure ]
 
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
 webkit.org/b/184608 [ Debug ] transitions/created-while-suspended.html [ Skip ]
@@ -2386,7 +2374,6 @@ fast/overflow/overflow-hidden-scroll-into-view.html [ Pass ImageOnlyFailure ]
 fast/sub-pixel/table-with-subpixel-cell-size.html [ ImageOnlyFailure ]
 svg/text/tspan-multiple-outline.svg [ ImageOnlyFailure ]
 fast/animation/height-auto-transition-computed-value.html [ ImageOnlyFailure ]
-legacy-animation-engine/fast/animation/height-auto-transition-computed-value.html [ ImageOnlyFailure ]
 
 webkit.org/b/155174 svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html [ Skip ]
 
@@ -2482,7 +2469,6 @@ media/video-volume-slider-drag.html
 media/video-webkit-playsinline.html
 media/volume-bar-empty-when-muted.html
 
-webkit.org/b/103926 legacy-animation-engine/media/track/opera
 webkit.org/b/103926 media/track/opera
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
@@ -2596,7 +2582,6 @@ css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 webkit.org/b/161949 imported/w3c/web-platform-tests/xhr/response-method.htm [ Failure ]
 
 webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Timeout ]
-webkit.org/b/130972 legacy-animation-engine/transitions/3d/interrupted-transition.html [ Pass Timeout ]
 
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ Pass ]
@@ -2623,7 +2608,6 @@ webkit.org/b/149264 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavi
 # Variation fonts are not implemented earlier than iOS 11.
 fast/text/variations [ Pass Failure ImageOnlyFailure ]
 animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
-legacy-animation-engine/animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
@@ -3323,7 +3307,6 @@ media/audio-concurrent-supported.html [ Pass Failure ]
 webkit.org/b/201190 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
 
 # rdar://53468934
-legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/international/system-language/system-font-punctuation.html [ Failure ]
 

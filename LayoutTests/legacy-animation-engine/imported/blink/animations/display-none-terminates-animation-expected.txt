@@ -1,5 +1,0 @@
-Tests that setting the display property of a running animation to 'none' terminates the animation, and that setting it a value other than 'none' causes it to re-start from the start.
-
-INFO: Start event fired
-INFO: Start event fired again
-PASS: Left property was reset correctly

@@ -1,4 +1,0 @@
-Test for DRT numberOfActiveAnimations() API
-
-Number of active animations before transition is (1) as expected
-Number of active animations after transition is (0) as expected

@@ -1,3 +1,0 @@
-PASS: Saw iteration event. The animation did start.
-PASS: Elapsed time is large. The animation thinks it started a long time ago.
-

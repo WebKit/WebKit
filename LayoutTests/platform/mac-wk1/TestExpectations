@@ -439,10 +439,8 @@ imported/blink/fast/canvas/bug382588.html [ Pass Timeout ImageOnlyFailure ]
 
 # Blink tests that time out waiting on requestAnimationFrame callbacks. http://webkit.org/b/150050
 imported/blink/animations/background-shorthand-crash.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/animations/background-shorthand-crash.html [ Pass Timeout ]
 imported/blink/compositing/squashing/invalidate-on-grouped-mapping-reorder.html [ Pass Timeout ]
 imported/blink/css3/calc/transition-asan-crash.html [ Pass Timeout ]
-legacy-animation-engine/imported/blink/css3/calc/transition-asan-crash.html [ Pass Timeout ]
 imported/blink/fast/images/image-hover-display-alt.html [ Pass Timeout ]
 imported/blink/fast/inline/reparent-inline-box.html [ Pass Timeout ]
 imported/blink/fast/text-autosizing/print-autosizing.html  [ Pass Timeout ]
@@ -505,7 +503,6 @@ fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.h
 http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
 webkit.org/b/157007 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
-webkit.org/b/157007 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
 # This test relies on a settings option that we can only set with WKRT.
 js/dom/regress-157246.html
@@ -667,8 +664,6 @@ webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failur
 [ HighSierra+ ] fast/forms/textarea-maxlength.html [ Crash ]
 [ HighSierra+ ] fast/text/system-font-fallback-emoji.html [ Crash ]
 
-webkit.org/b/172397 [ Debug ] legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html [ Pass Failure ]
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
@@ -697,7 +692,6 @@ http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
-webkit.org/b/182554 legacy-animation-engine/transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/181834 [ Debug ] fast/block/positioning/fixed-container-with-relative-parent.html [ Pass ImageOnlyFailure ]
 
@@ -934,8 +928,6 @@ webkit.org/b/207566 imported/w3c/web-platform-tests/web-animations/timing-model/
 
 webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
 
-webkit.org/b/207569 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
-
 webkit.org/b/207847 resize-observer/delete-observers-in-callbacks.html [ Pass Failure ]
 
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]
@@ -947,10 +939,6 @@ webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass
 
 webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
 
-webkit.org/b/208059 [ Debug ] legacy-animation-engine/compositing/transitions/add-remove-transition.html [ Pass Failure ]
-
-webkit.org/b/208065 [ Debug ] legacy-animation-engine/animations/animation-direction-normal.html [ Pass Failure ]
-
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
 
@@ -960,10 +948,6 @@ webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208518 [ Debug ] legacy-animation-engine/animations/animation-direction-reverse.html [ Pass Failure ]
-
 webkit.org/b/208524 [ Release ] webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Timeout ]
-
-webkit.org/b/208572 [ Release ] legacy-animation-engine/animations/play-state-start-paused.html [ Pass Failure ]
 
 webkit.org/b/208532 svg/custom/textPath-change-id-pattern.svg [ Pass Failure ]

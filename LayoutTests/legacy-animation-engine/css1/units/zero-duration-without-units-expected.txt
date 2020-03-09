@@ -1,3 +1,0 @@
-Box should start moving left after left style is reset after 500ms
-
-PASS

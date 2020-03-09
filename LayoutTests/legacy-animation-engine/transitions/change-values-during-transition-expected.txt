@@ -1,3 +1,0 @@
-Test changes -webkit-transition-duration while the transition is running to ensure that the running transition is not affected
-
-PASS

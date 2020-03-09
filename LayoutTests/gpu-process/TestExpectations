@@ -175,7 +175,6 @@ svg/custom/crash-inline-container-client.html [ Skip ]
 
 compositing [ Skip ]
 imported/blink/compositing [ Skip ]
-legacy-animation-engine/imported/blink/compositing/squashing/remove-from-grouped-mapping-on-reassignment.html [ Skip ]
 inspector/layers/layers-compositing-reasons.html [ Skip ]
 
 

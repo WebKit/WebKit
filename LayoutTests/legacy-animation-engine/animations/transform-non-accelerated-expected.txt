@@ -1,4 +1,0 @@
-During the animation, the box should flip in the horizontal axis. It should not disappear into a single point (i.e. the visual width should not change).
-
-PASS - "webkitTransform" property for "box" element at 0.5s saw something close to: 1,0,0,0,0,0
-

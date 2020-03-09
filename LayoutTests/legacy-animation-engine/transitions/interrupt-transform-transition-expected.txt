@@ -1,3 +1,0 @@
-Interrupted transition should not jump back to pre-transition transform
-
-PASS
