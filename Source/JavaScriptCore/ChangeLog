@@ -1,3 +1,25 @@
+2020-03-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        @putByValDirect does not perform [[DefineOwnProperty]] correctly
+        https://bugs.webkit.org/show_bug.cgi?id=208708
+
+        Reviewed by Yusuke Suzuki.
+
+        This change adds inSparseIndexingMode() check to canDoFastPutDirectIndex(), fixing slow path
+        of @putByValDirect() to perform [[DefineOwnProperty]] according to spec [1] and aligning JSC
+        with V8 and SpiderMonkey.
+
+        This patch preserves existing behavior for Arguments exotic objects (thus the checks order)
+        and aligns slow path checks in JSObject::putDirectIndexSlowOrBeyondVectorLength
+        with JSObject::defineOwnIndexedProperty.
+
+        JetStream2 benchmark is neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor
+
+        * runtime/JSObject.cpp:
+        (JSC::canDoFastPutDirectIndex):
+
 2020-03-09  Antoine Quint  <graouts@apple.com>
 
         Remove the compile-time flag for Pointer Events

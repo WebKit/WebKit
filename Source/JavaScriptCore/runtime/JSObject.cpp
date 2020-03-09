@@ -2588,9 +2588,14 @@ static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueM
 
 ALWAYS_INLINE static bool canDoFastPutDirectIndex(VM& vm, JSObject* object)
 {
+    if (TypeInfo::isArgumentsType(object->type()))
+        return true;
+
+    if (object->inSparseIndexingMode())
+        return false;
+
     return (isJSArray(object) && !isCopyOnWrite(object->indexingMode()))
-        || jsDynamicCast<JSFinalObject*>(vm, object)
-        || TypeInfo::isArgumentsType(object->type());
+        || jsDynamicCast<JSFinalObject*>(vm, object);
 }
 
 // Defined in ES5.1 8.12.9

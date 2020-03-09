@@ -615,24 +615,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
 test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/from/iter-set-elem-prop-err.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/from/iter-set-elem-prop-non-writable.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/from/source-object-length-set-elem-prop-err.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/from/source-object-length-set-elem-prop-non-writable.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/of/does-not-use-set-for-indices.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/of/return-abrupt-from-data-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/proto-from-ctor-realm-one.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
@@ -645,45 +627,9 @@ test/built-ins/Array/proto-from-ctor-realm-zero.js:
 test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
-test/built-ins/Array/prototype/concat/create-species-with-non-configurable-property-spreadable.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/concat/create-species-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/concat/create-species-with-non-writable-property-spreadable.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/concat/create-species-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/concat/is-concat-spreadable-get-order.js:
   default: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
   strict mode: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
-test/built-ins/Array/prototype/filter/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/flat/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/flat/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/flatMap/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/flatMap/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/map/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/map/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/pop/S15.4.4.6_A2_T2.js:
   default: 'Test262Error: #4: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 9007199254740990. Actual: 4294967294'
   strict mode: 'Test262Error: #4: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 9007199254740990. Actual: 4294967294'
@@ -714,12 +660,6 @@ test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-arra
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
   strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
-test/built-ins/Array/prototype/slice/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/splice/S15.4.4.12_A3_T1.js:
   default: 'Test262Error: #1: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr.length === 1. Actual: 0'
   strict mode: 'Test262Error: #1: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr.length === 1. Actual: 0'
@@ -741,12 +681,6 @@ test/built-ins/Array/prototype/splice/length-exceeding-integer-limit-shrink-arra
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
   default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
   strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
-test/built-ins/Array/prototype/splice/target-array-with-non-configurable-property.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Array/prototype/splice/target-array-with-non-writable-property.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/splice/throws-if-integer-limit-exceeded.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected a TypeError but got a Error'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected a TypeError but got a Error'
@@ -1089,9 +1023,6 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
-test/built-ins/JSON/parse/reviver-array-non-configurable-prop-create.js:
-  default: 'Test262Error: Expected SameValue(«22», «2») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
