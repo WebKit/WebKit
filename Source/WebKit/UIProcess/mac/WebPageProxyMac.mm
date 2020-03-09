@@ -255,6 +255,8 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     if (handle.isNull())
         return nullptr;
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return nullptr;
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 

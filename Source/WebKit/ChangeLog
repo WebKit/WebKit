@@ -1,3 +1,15 @@
+2020-03-09  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] WebPageProxy::dataSelectionForPasteboard should check the result of SharedMemory::map
+        <https://webkit.org/b/208735>
+        <rdar://problem/58701732>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard): Add null
+        check.
+
 2020-03-09  Antoine Quint  <graouts@apple.com>
 
         Remove the compile-time flag for Pointer Events
