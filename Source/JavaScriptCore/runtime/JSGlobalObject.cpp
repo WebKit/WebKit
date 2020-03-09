@@ -293,7 +293,7 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalO
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
     JSFunction* function = jsDynamicCast<JSFunction*>(vm, target);
     if (function && function->canAssumeNameAndLengthAreOriginal(vm)) {
-#if ASSERT_ENABLED
+#if !ASSERT_DISABLED
         bool result = target->hasOwnProperty(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(result);
