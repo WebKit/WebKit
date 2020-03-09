@@ -1,5 +1,20 @@
 2020-03-09  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Only map UTI from tags in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=208829
+        <rdar://problem/60234672>
+
+        Reviewed by Tim Horton.
+
+        Since this mapping caused regressions in other apps, only enable it for Safari as a temporary workaround.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2020-03-09  Per Arne Vollan  <pvollan@apple.com>
+
         Unreviewed build fix.
 
         * Shared/WebProcessCreationParameters.cpp:
