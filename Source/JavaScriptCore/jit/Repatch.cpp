@@ -688,7 +688,10 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                         prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, slot.base());
                         if (!prototypeAccessChain)
                             return GiveUpOnCache;
-                        offset = prototypeAccessChain->slotBaseStructure(vm, baseCell->structure(vm))->get(vm, ident.impl());
+                        unsigned attributes;
+                        offset = prototypeAccessChain->slotBaseStructure(vm, baseCell->structure(vm))->get(vm, ident.impl(), attributes);
+                        if (!isValidOffset(offset) || !(attributes & PropertyAttribute::Accessor))
+                            return RetryCacheLater;
                     } else {
                         prototypeAccessChain = nullptr;
                         conditionSet = generateConditionsForPrototypePropertyHit(
