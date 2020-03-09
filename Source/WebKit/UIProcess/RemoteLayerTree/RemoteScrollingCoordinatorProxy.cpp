@@ -259,7 +259,6 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
     return rootNode->canHaveScrollbars() || rootNode->visualViewportIsSmallerThanLayoutViewport();
 }
 
-#if ENABLE(POINTER_EVENTS)
 OptionSet<TouchAction> RemoteScrollingCoordinatorProxy::activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const
 {
     auto iterator = m_touchActionsByTouchIdentifier.find(touchIdentifier);
@@ -277,8 +276,6 @@ void RemoteScrollingCoordinatorProxy::clearTouchActionsForTouchIdentifier(unsign
 {
     m_touchActionsByTouchIdentifier.remove(touchIdentifier);
 }
-
-#endif
 
 } // namespace WebKit
 

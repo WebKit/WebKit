@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import <WebCore/TouchAction.h>

@@ -1360,7 +1360,6 @@ style
 scroll-position
 //contents
 
-#if defined(ENABLE_POINTER_EVENTS) && ENABLE_POINTER_EVENTS
 // touch-action
 // auto
 // none
@@ -1368,7 +1367,6 @@ manipulation
 pan-x
 pan-y
 pinch-zoom
-#endif
 
 // scroll-behavior
 // auto

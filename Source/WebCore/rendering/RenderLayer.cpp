@@ -7007,11 +7007,9 @@ void RenderLayer::invalidateEventRegion()
         // UI side scroll overlap testing.
         if (!compositingLayer->isRenderViewLayer())
             return true;
-#if ENABLE(POINTER_EVENTS)
         // UI side touch-action resolution.
         if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
             return true;
-#endif
         return false;
     };
 

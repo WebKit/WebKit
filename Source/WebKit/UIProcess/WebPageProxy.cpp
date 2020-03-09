@@ -3040,7 +3040,6 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-#if ENABLE(POINTER_EVENTS)
 void WebPageProxy::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
     send(Messages::WebPage::CancelPointer(pointerId, documentPoint));
@@ -3050,7 +3049,6 @@ void WebPageProxy::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
 {
     send(Messages::WebPage::TouchWithIdentifierWasRemoved(pointerId));
 }
-#endif
 
 void WebPageProxy::scrollBy(ScrollDirection direction, ScrollGranularity granularity)
 {

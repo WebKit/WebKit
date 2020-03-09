@@ -1438,10 +1438,8 @@ private:
     void touchEvent(const WebTouchEvent&);
 #endif
 
-#if ENABLE(POINTER_EVENTS)
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }

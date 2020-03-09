@@ -257,10 +257,8 @@ private:
     RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
 #endif
 
-#if ENABLE(POINTER_EVENTS)
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
-#endif
 
 #if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t dictationContext) override;

@@ -1238,7 +1238,7 @@ public:
     bool hasTouchEventHandlers() const { return false; }
     bool touchEventTargetsContain(Node&) const { return false; }
 #endif
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
     bool mayHaveElementsWithNonAutoTouchAction() const { return m_mayHaveElementsWithNonAutoTouchAction; }
     void setMayHaveElementsWithNonAutoTouchAction() { m_mayHaveElementsWithNonAutoTouchAction = true; }
 #endif
@@ -1846,7 +1846,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
     bool m_mayHaveElementsWithNonAutoTouchAction { false };
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;

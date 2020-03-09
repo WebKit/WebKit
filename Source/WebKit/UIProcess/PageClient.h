@@ -518,7 +518,7 @@ public:
     virtual RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) { return nullptr; }
 #endif
 
-#if ENABLE(POINTER_EVENTS) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
     virtual WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) { return WTF::nullopt; }
 #endif

@@ -24,8 +24,6 @@
 
 #pragma once
 
-#if ENABLE(POINTER_EVENTS)
-
 #include "ExceptionOr.h"
 #include "PointerID.h"
 #include <wtf/HashMap.h>
@@ -98,5 +96,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(POINTER_EVENTS)

@@ -5208,7 +5208,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextZoom textZoom)
     m_value.valueID = CSSValueNormal;
 }
 
-#if ENABLE(POINTER_EVENTS)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TouchAction touchAction)
     : CSSValue(PrimitiveClass)
 {
@@ -5257,7 +5256,6 @@ template<> inline CSSPrimitiveValue::operator OptionSet<TouchAction>() const
     ASSERT_NOT_REACHED();
     return TouchAction::Auto;
 }
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
 

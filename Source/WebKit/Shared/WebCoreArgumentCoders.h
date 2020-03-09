@@ -137,9 +137,7 @@ struct ResourceLoadStatistics;
 struct ScrollableAreaParameters;
 struct TextCheckingResult;
 struct TextIndicatorData;
-#if ENABLE(POINTER_EVENTS)
 struct TouchActionData;
-#endif
 struct VelocityData;
 struct ViewportAttributes;
 struct WindowFeatures;
@@ -228,12 +226,10 @@ template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static Optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
 };
 
-#if ENABLE(POINTER_EVENTS)
 template<> struct ArgumentCoder<WebCore::TouchActionData> {
     static void encode(Encoder&, const WebCore::TouchActionData&);
     static Optional<WebCore::TouchActionData> decode(Decoder&);
 };
-#endif
 
 template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
     static void encode(Encoder&, const WebCore::EventTrackingRegions&);

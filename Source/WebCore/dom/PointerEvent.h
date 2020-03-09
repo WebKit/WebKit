@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(POINTER_EVENTS)
-
 #include "EventNames.h"
 #include "MouseEvent.h"
 #include "Node.h"
@@ -144,5 +142,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_EVENT(PointerEvent)
-
-#endif // ENABLE(POINTER_EVENTS)

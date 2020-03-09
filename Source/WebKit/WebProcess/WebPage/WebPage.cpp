@@ -3046,7 +3046,6 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 }
 #endif
 
-#if ENABLE(POINTER_EVENTS)
 void WebPage::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
     m_page->pointerCaptureController().cancelPointer(pointerId, documentPoint);
@@ -3056,7 +3055,6 @@ void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
 {
     m_page->pointerCaptureController().touchWithIdentifierWasRemoved(pointerId);
 }
-#endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 static bool handleGestureEvent(const WebGestureEvent& event, Page* page)

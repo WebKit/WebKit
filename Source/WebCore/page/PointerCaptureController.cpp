@@ -25,8 +25,6 @@
 #include "config.h"
 #include "PointerCaptureController.h"
 
-#if ENABLE(POINTER_EVENTS)
-
 #include "Document.h"
 #include "Element.h"
 #include "EventHandler.h"
@@ -528,5 +526,3 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(POINTER_EVENTS)

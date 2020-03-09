@@ -73,12 +73,10 @@ public:
 
     const Region& region() const { return m_region; }
 
-#if ENABLE(POINTER_EVENTS)
     bool hasTouchActions() const { return !m_touchActionRegions.isEmpty(); }
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
 
     const Region* regionForTouchAction(TouchAction) const;
-#endif
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<EventRegion> decode(Decoder&);
@@ -86,15 +84,11 @@ public:
     template<class Decoder> static bool decode(Decoder&, EventRegion&);
 
 private:
-#if ENABLE(POINTER_EVENTS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
-#endif
     friend TextStream& operator<<(TextStream&, const EventRegion&);
 
     Region m_region;
-#if ENABLE(POINTER_EVENTS)
     Vector<Region> m_touchActionRegions;
-#endif
 };
 
 TextStream& operator<<(TextStream&, const EventRegion&);
@@ -103,9 +97,7 @@ template<class Encoder>
 void EventRegion::encode(Encoder& encoder) const
 {
     encoder << m_region;
-#if ENABLE(POINTER_EVENTS)
     encoder << m_touchActionRegions;
-#endif
 }
 
 template<class Decoder>
@@ -119,14 +111,12 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     EventRegion eventRegion;
     eventRegion.m_region = WTFMove(*region);
 
-#if ENABLE(POINTER_EVENTS)
     Optional<Vector<Region>> touchActionRegions;
     decoder >> touchActionRegions;
     if (!touchActionRegions)
         return WTF::nullopt;
 
     eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
-#endif
 
     return eventRegion;
 }

@@ -1320,7 +1320,6 @@ static RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode cs
     return CSSValuePool::singleton().createValue(WTFMove(rect));
 }
 
-#if ENABLE(POINTER_EVENTS)
 static RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -1341,7 +1340,6 @@ static RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
         return nullptr;
     return list;
 }
-#endif
 
 static RefPtr<CSSPrimitiveValue> consumeLineClamp(CSSParserTokenRange& range)
 {
@@ -3917,10 +3915,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeScrollBehavior(m_range);
     case CSSPropertyClip:
         return consumeClip(m_range, m_context.mode);
-#if ENABLE(POINTER_EVENTS)
     case CSSPropertyTouchAction:
         return consumeTouchAction(m_range);
-#endif
     case CSSPropertyObjectPosition:
         return consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
     case CSSPropertyWebkitLineClamp:

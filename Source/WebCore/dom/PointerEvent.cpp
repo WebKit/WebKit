@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PointerEvent.h"
 
-#if ENABLE(POINTER_EVENTS)
-
 #include "EventNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -132,5 +130,3 @@ EventInterface PointerEvent::eventInterface() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(POINTER_EVENTS)

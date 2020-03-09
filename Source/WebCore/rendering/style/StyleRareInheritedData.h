@@ -154,9 +154,7 @@ public:
     unsigned hasSetStrokeWidth : 1;
     unsigned hasSetStrokeColor : 1;
 
-#if ENABLE(POINTER_EVENTS)
     unsigned effectiveTouchActions : 6; // OptionSet<TouchAction>
-#endif
 
     Length strokeWidth;
     Color strokeColor;

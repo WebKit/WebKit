@@ -56,12 +56,10 @@ public:
 
     void getStorageUpdates();
 
-#if ENABLE(POINTER_EVENTS)
 #if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
     int maxTouchPoints() const { return 5; }
 #else
     int maxTouchPoints() const { return 0; }
-#endif
 #endif
 
 private:

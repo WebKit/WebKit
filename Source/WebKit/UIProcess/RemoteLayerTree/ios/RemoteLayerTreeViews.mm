@@ -96,7 +96,6 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     return false;
 }
 
-#if ENABLE(POINTER_EVENTS)
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
 {
     Vector<UIView *, 16> viewsAtPoint;
@@ -129,7 +128,6 @@ OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const Web
 
     return node->eventRegion().touchActionsForPoint(WebCore::IntPoint(hitViewPoint));
 }
-#endif
 
 UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayerTreeHost& host)
 {

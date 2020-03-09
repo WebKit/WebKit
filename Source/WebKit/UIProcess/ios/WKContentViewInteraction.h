@@ -54,6 +54,7 @@
 #import <WebCore/ActivityState.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/PointerID.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
@@ -61,10 +62,6 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
-
-#if ENABLE(POINTER_EVENTS)
-#import <WebCore/PointerID.h>
-#endif
 
 namespace API {
 class OpenPanelParameters;
@@ -212,10 +209,8 @@ struct WKAutoCorrectionData {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _touchEventsCanPreventNativeGestures;
-#if ENABLE(POINTER_EVENTS)
     BOOL _preventsPanningInXAxis;
     BOOL _preventsPanningInYAxis;
-#endif
 
     RetainPtr<WKSyntheticTapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<WKHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
@@ -228,13 +223,11 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _stylusSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
-#if ENABLE(POINTER_EVENTS)
     RetainPtr<WKTouchActionGestureRecognizer> _touchActionGestureRecognizer;
     RetainPtr<UISwipeGestureRecognizer> _touchActionLeftSwipeGestureRecognizer;
     RetainPtr<UISwipeGestureRecognizer> _touchActionRightSwipeGestureRecognizer;
     RetainPtr<UISwipeGestureRecognizer> _touchActionUpSwipeGestureRecognizer;
     RetainPtr<UISwipeGestureRecognizer> _touchActionDownSwipeGestureRecognizer;
-#endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
@@ -345,9 +338,7 @@ struct WKAutoCorrectionData {
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
 
-#if ENABLE(POINTER_EVENTS)
     WebCore::PointerID m_commitPotentialTapPointerId;
-#endif
 
     BOOL _keyboardDidRequestDismissal;
 
@@ -411,7 +402,7 @@ struct WKAutoCorrectionData {
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
     , WKTouchActionGestureRecognizerDelegate
 #endif
 >
@@ -427,10 +418,8 @@ struct WKAutoCorrectionData {
 @property (nonatomic, readonly) UITextInputAssistantItem *inputAssistantItemForWebView;
 @property (nonatomic, readonly) UIView *inputViewForWebView;
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
-#if ENABLE(POINTER_EVENTS)
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
@@ -455,10 +444,8 @@ struct WKAutoCorrectionData {
 
 - (void)_zoomToRevealFocusedElement;
 
-#if ENABLE(POINTER_EVENTS)
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 - (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
-#endif
 
 #define DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_action) \
     - (void)_action ## ForWebView:(id)sender;

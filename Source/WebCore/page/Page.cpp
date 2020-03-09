@@ -222,9 +222,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
     , m_userInputBridge(makeUnique<UserInputBridge>(*this))
     , m_inspectorController(makeUnique<InspectorController>(*this, pageConfiguration.inspectorClient))
-#if ENABLE(POINTER_EVENTS)
     , m_pointerCaptureController(makeUnique<PointerCaptureController>(*this))
-#endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(makeUnique<PointerLockController>(*this))
 #endif
@@ -2821,9 +2819,7 @@ void Page::didChangeMainDocument()
 #if ENABLE(WEB_RTC)
     m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
-#if ENABLE(POINTER_EVENTS)
     m_pointerCaptureController->reset();
-#endif
 }
 
 RenderingUpdateScheduler& Page::renderingUpdateScheduler()

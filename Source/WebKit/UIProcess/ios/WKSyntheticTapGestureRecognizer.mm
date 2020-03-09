@@ -74,9 +74,7 @@
 {
     [super reset];
     [_resetTarget performSelector:_resetAction withObject:self];
-#if ENABLE(POINTER_EVENTS) 
     _lastActiveTouchIdentifier = nil;
-#endif
     _lastTouchedScrollView = nil;
 }
 
@@ -95,7 +93,6 @@
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
-#if ENABLE(POINTER_EVENTS)
     if (!_supportingWebTouchEventsGestureRecognizer)
         return;
 
@@ -108,7 +105,6 @@
             break;
         }
     }
-#endif
 }
 
 - (UIScrollView *)lastTouchedScrollView

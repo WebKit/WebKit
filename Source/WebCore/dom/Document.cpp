@@ -152,6 +152,7 @@
 #include "PlatformStrategies.h"
 #include "PlugInsResources.h"
 #include "PluginDocument.h"
+#include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
@@ -323,10 +324,6 @@
 #endif
 #if ENABLE(WEBGPU)
 #include "GPUCanvasContext.h"
-#endif
-
-#if ENABLE(POINTER_EVENTS)
-#include "PointerCaptureController.h"
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -3824,7 +3821,6 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     auto captureElementChanged = CaptureChange::No;
     if (!request.readOnly()) {
         auto targetElement = makeRefPtr(result.targetElement());
-#if ENABLE(POINTER_EVENTS)
         if (auto* page = this->page()) {
             // Before we dispatch a new mouse event, we must run the Process Pending Capture Element steps as defined
             // in https://w3c.github.io/pointerevents/#process-pending-pointer-capture.
@@ -3841,7 +3837,6 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
             if (captureElement)
                 targetElement = captureElement;
         }
-#endif
         updateHoverActiveState(request, targetElement.get(), captureElementChanged);
     }
 
@@ -4236,7 +4231,7 @@ void Document::invalidateRenderingDependentRegions()
     setTouchEventRegionsNeedUpdate();
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
     if (auto* page = this->page()) {
         if (auto* frameView = view()) {
             if (auto* scrollingCoordinator = page->scrollingCoordinator())

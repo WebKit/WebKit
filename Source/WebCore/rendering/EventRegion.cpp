@@ -98,10 +98,8 @@ EventRegion::EventRegion() = default;
 
 bool EventRegion::operator==(const EventRegion& other) const
 {
-#if ENABLE(POINTER_EVENTS)
     if (m_touchActionRegions != other.m_touchActionRegions)
         return false;
-#endif
     return m_region == other.m_region;
 }
 
@@ -109,24 +107,16 @@ void EventRegion::unite(const Region& region, const RenderStyle& style)
 {
     m_region.unite(region);
 
-#if ENABLE(POINTER_EVENTS)
     uniteTouchActions(region, style.effectiveTouchActions());
-#else
-    UNUSED_PARAM(style);
-#endif
 }
 
 void EventRegion::translate(const IntSize& offset)
 {
     m_region.translate(offset);
 
-#if ENABLE(POINTER_EVENTS)
     for (auto& touchActionRegion : m_touchActionRegions)
         touchActionRegion.translate(offset);
-#endif
 }
-
-#if ENABLE(POINTER_EVENTS)
 
 static inline unsigned toIndex(TouchAction touchAction)
 {
@@ -235,13 +225,10 @@ TextStream& operator<<(TextStream& ts, TouchAction touchAction)
     return ts;
 }
 
-#endif // ENABLE(POINTER_EVENTS)
-
 TextStream& operator<<(TextStream& ts, const EventRegion& eventRegion)
 {
     ts << eventRegion.m_region;
 
-#if ENABLE(POINTER_EVENTS)
     if (!eventRegion.m_touchActionRegions.isEmpty()) {
         TextStream::IndentScope indentScope(ts);
         ts << indent << "(touch-action\n";
@@ -255,7 +242,6 @@ TextStream& operator<<(TextStream& ts, const EventRegion& eventRegion)
         }
         ts << indent << ")\n";
     }
-#endif
 
     return ts;
 }

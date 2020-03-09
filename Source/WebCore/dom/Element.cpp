@@ -305,8 +305,6 @@ static bool isForceEvent(const PlatformMouseEvent& platformEvent)
     return platformEvent.type() == PlatformEvent::MouseForceChanged || platformEvent.type() == PlatformEvent::MouseForceDown || platformEvent.type() == PlatformEvent::MouseForceUp;
 }
 
-#if ENABLE(POINTER_EVENTS)
-
 static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 {
     // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
@@ -314,12 +312,9 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
     return type != eventNames().clickEvent && type != eventNames().mouseoverEvent && type != eventNames().mouseoutEvent && type != eventNames().mouseenterEvent && type != eventNames().mouseleaveEvent;
 }
 
-#endif
-
 enum class ShouldIgnoreMouseEvent : bool { No, Yes };
 static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, const MouseEvent& mouseEvent, const PlatformMouseEvent& platformEvent, bool& didNotSwallowEvent)
 {
-#if ENABLE(POINTER_EVENTS)
     if (auto* page = element.document().page()) {
         auto& pointerCaptureController = page->pointerCaptureController();
 #if ENABLE(TOUCH_EVENTS)
@@ -342,12 +337,6 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
             }
         }
     }
-#else
-    UNUSED_PARAM(element);
-    UNUSED_PARAM(mouseEvent);
-    UNUSED_PARAM(platformEvent);
-    UNUSED_PARAM(didNotSwallowEvent);
-#endif
 
     return ShouldIgnoreMouseEvent::No;
 }
@@ -1899,10 +1888,8 @@ URL Element::absoluteLinkURL() const
 
 bool Element::allowsDoubleTapGesture() const
 {
-#if ENABLE(POINTER_EVENTS)
     if (renderStyle() && renderStyle()->touchActions() != TouchAction::Auto)
         return false;
-#endif
 
     Element* parent = parentElement();
     return !parent || parent->allowsDoubleTapGesture();
@@ -2197,10 +2184,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (document().page())
         document().page()->pointerLockController().elementRemoved(*this);
 #endif
-#if ENABLE(POINTER_EVENTS)
     if (document().page())
         document().page()->pointerCaptureController().elementWasRemoved(*this);
-#endif
 
     setSavedLayerScrollPosition(ScrollPosition());
 
@@ -3683,8 +3668,6 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
 
 #endif
 
-#if ENABLE(POINTER_EVENTS)
-
 ExceptionOr<void> Element::setPointerCapture(int32_t pointerId)
 {
     if (document().page())
@@ -3705,8 +3688,6 @@ bool Element::hasPointerCapture(int32_t pointerId)
         return document().page()->pointerCaptureController().hasPointerCapture(this, pointerId);
     return false;
 }
-
-#endif
 
 #if ENABLE(POINTER_LOCK)
 

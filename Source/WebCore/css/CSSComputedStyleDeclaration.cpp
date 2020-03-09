@@ -1433,7 +1433,6 @@ static Ref<CSSPrimitiveValue> valueForFamily(const AtomString& family)
     return CSSValuePool::singleton().createFontFamilyValue(family);
 }
 
-#if ENABLE(POINTER_EVENTS)
 static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActions)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -1457,7 +1456,6 @@ static Ref<CSSValue> touchActionFlagsToCSSValue(OptionSet<TouchAction> touchActi
         return cssValuePool.createIdentifierValue(CSSValueAuto);
     return list;
 }
-#endif
 
 static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(OptionSet<TextDecoration> textDecoration)
 {
@@ -3403,10 +3401,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(&style, style.tapHighlightColor());
 #endif
-#if ENABLE(POINTER_EVENTS)
         case CSSPropertyTouchAction:
             return touchActionFlagsToCSSValue(style.touchActions());
-#endif
 #if PLATFORM(IOS_FAMILY)
         case CSSPropertyWebkitTouchCallout:
             return cssValuePool.createIdentifierValue(style.touchCalloutEnabled() ? CSSValueDefault : CSSValueNone);

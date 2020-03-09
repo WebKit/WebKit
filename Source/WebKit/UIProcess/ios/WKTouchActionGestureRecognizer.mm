@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTouchActionGestureRecognizer.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/HashMap.h>

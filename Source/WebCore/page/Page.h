@@ -242,9 +242,7 @@ public:
 #endif
     UserInputBridge& userInputBridge() const { return *m_userInputBridge; }
     InspectorController& inspectorController() const { return *m_inspectorController; }
-#if ENABLE(POINTER_EVENTS)
     PointerCaptureController& pointerCaptureController() const { return *m_pointerCaptureController; }
-#endif
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
@@ -776,9 +774,7 @@ private:
 #endif
     const std::unique_ptr<UserInputBridge> m_userInputBridge;
     const std::unique_ptr<InspectorController> m_inspectorController;
-#if ENABLE(POINTER_EVENTS)
     const std::unique_ptr<PointerCaptureController> m_pointerCaptureController;
-#endif
 #if ENABLE(POINTER_LOCK)
     const std::unique_ptr<PointerLockController> m_pointerLockController;
 #endif

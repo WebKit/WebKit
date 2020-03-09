@@ -34,12 +34,9 @@
 #include "EventNames.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PointerCaptureController.h"
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
-
-#if ENABLE(POINTER_EVENTS)
-#include "PointerCaptureController.h"
-#endif
 
 namespace WebCore {
 
@@ -74,9 +71,7 @@ void PointerLockController::requestPointerLock(Element* target)
         }
         m_element = target;
         enqueueEvent(eventNames().pointerlockchangeEvent, target);
-#if ENABLE(POINTER_EVENTS)
         m_page.pointerCaptureController().pointerLockWasApplied();
-#endif
     } else {
         m_lockPending = true;
         m_element = target;

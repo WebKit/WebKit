@@ -154,14 +154,11 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element
         || style.isFloating() || style.hasOutOfFlowPosition();
 }
 
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH) || ENABLE(POINTER_EVENTS)
 static bool isScrollableOverflow(Overflow overflow)
 {
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
-#endif
 
-#if ENABLE(POINTER_EVENTS)
 static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& style, OptionSet<TouchAction> effectiveTouchActions)
 {
     // https://w3c.github.io/pointerevents/#determining-supported-touch-behavior
@@ -192,7 +189,6 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
 
     return sharedTouchActions;
 }
-#endif
 
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
@@ -437,9 +433,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (m_parentBoxStyle.justifyItems().positionType() == ItemPositionType::Legacy && style.justifyItems().position() == ItemPosition::Legacy)
         style.setJustifyItems(m_parentBoxStyle.justifyItems());
 
-#if ENABLE(POINTER_EVENTS)
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, m_parentStyle.effectiveTouchActions()));
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
     if (m_element)

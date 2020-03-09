@@ -67,12 +67,10 @@ public:
 
     void repositionScrollingLayers();
 
-#if ENABLE(POINTER_EVENTS)
     OptionSet<WebCore::TouchAction> activeTouchActions() const { return m_activeTouchActions; }
     void computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer*);
     void clearActiveTouchActions() { m_activeTouchActions = { }; }
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*);
-#endif
 
     UIScrollView *findActingScrollParent(UIScrollView *);
     UIScrollView *scrollView() const;
@@ -81,9 +79,7 @@ private:
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;
     RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
-#if ENABLE(POINTER_EVENTS)
     OptionSet<WebCore::TouchAction> m_activeTouchActions { };
-#endif
     bool m_updatingFromStateNode { false };
 };
 

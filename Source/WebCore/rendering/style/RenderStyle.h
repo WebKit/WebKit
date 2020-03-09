@@ -698,11 +698,9 @@ public:
     int initialLetterDrop() const { return initialLetter().width(); }
     int initialLetterHeight() const { return initialLetter().height(); }
 
-#if ENABLE(POINTER_EVENTS)
     OptionSet<TouchAction> touchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareNonInheritedData->touchActions); }
     // 'touch-action' behavior depends on values in ancestors. We use an additional inherited property to implement that.
     OptionSet<TouchAction> effectiveTouchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareInheritedData->effectiveTouchActions); }
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
     // Scroll snap port style.
@@ -1235,10 +1233,8 @@ public:
     
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
     
-#if ENABLE(POINTER_EVENTS)
     void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions.toRaw()); }
     void setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareInheritedData, effectiveTouchActions, touchActions.toRaw()); }
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(const ScrollSnapType&);
@@ -1636,9 +1632,7 @@ public:
 
     static WillChangeData* initialWillChange() { return nullptr; }
 
-#if ENABLE(POINTER_EVENTS)
     static TouchAction initialTouchActions() { return TouchAction::Auto; }
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType();

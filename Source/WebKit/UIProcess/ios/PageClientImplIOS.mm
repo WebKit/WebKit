@@ -941,7 +941,6 @@ RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLaye
 }
 #endif
 
-#if ENABLE(POINTER_EVENTS)
 void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
     [m_contentView cancelPointersForGestureRecognizer:gestureRecognizer];
@@ -951,7 +950,6 @@ WTF::Optional<unsigned> PageClientImpl::activeTouchIdentifierForGestureRecognize
 {
     return [m_contentView activeTouchIdentifierForGestureRecognizer:gestureRecognizer];
 }
-#endif
 
 void PageClientImpl::handleAutocorrectionContext(const WebAutocorrectionContext& context)
 {

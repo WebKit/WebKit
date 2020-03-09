@@ -936,10 +936,8 @@ public:
     void handleTouchEvent(const NativeWebTouchEvent&);
 #endif
 
-#if ENABLE(POINTER_EVENTS)
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
-#endif
 
     void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
     void centerSelectionInVisibleArea();

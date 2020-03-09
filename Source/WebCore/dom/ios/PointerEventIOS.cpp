@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PointerEvent.h"
 
-#if ENABLE(POINTER_EVENTS) && ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 
 #import "EventNames.h"
 
@@ -92,4 +92,4 @@ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& eve
 
 } // namespace WebCore
 
-#endif // ENABLE(POINTER_EVENTS) && ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#endif // ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)

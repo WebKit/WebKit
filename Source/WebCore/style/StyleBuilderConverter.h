@@ -123,9 +123,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     static Color convertTapHighlightColor(BuilderState&, const CSSValue&);
 #endif
-#if ENABLE(POINTER_EVENTS)
     static OptionSet<TouchAction> convertTouchAction(BuilderState&, const CSSValue&);
-#endif
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     static bool convertOverflowScrolling(BuilderState&, const CSSValue&);
 #endif
@@ -1347,7 +1345,6 @@ inline Color BuilderConverter::convertTapHighlightColor(BuilderState& builderSta
 }
 #endif
 
-#if ENABLE(POINTER_EVENTS)
 inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value))
@@ -1367,7 +1364,6 @@ inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&
 
     return RenderStyle::initialTouchActions();
 }
-#endif
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
 inline bool BuilderConverter::convertOverflowScrolling(BuilderState&, const CSSValue& value)

@@ -1619,7 +1619,7 @@ void RenderLayerBacking::updateEventRegion()
         return;
 
     bool hasTouchActionElements = false;
-#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
     if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
@@ -2978,7 +2978,6 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
     return paintFlags;
 }
 
-#if ENABLE(POINTER_EVENTS)
 static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
 {
     auto toIndex = [](TouchAction touchAction) -> unsigned {
@@ -3052,7 +3051,6 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 
     return fillPattern;
 }
-#endif // ENABLE(POINTER_EVENTS)
 
 void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, GraphicsContext& context)
 {
@@ -3072,7 +3070,6 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     for (auto rect : eventRegion.region().rects())
         context.fillRect(rect);
 
-#if ENABLE(POINTER_EVENTS)
     const TouchAction touchActionList[] = {
         TouchAction::None,
         TouchAction::Manipulation,
@@ -3094,7 +3091,6 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
         for (auto rect : actionRegion->rects())
             context.fillRect(rect);
     }
-#endif // ENABLE(POINTER_EVENTS)
 }
 
 // Up-call from compositing layer drawing callback.

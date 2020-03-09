@@ -106,11 +106,9 @@ public:
 
     String scrollingTreeAsText() const;
 
-#if ENABLE(POINTER_EVENTS)
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
     void setTouchActionsForTouchIdentifier(OptionSet<WebCore::TouchAction>, unsigned);
     void clearTouchActionsForTouchIdentifier(unsigned);
-#endif
 
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
@@ -123,9 +121,7 @@ private:
 
     WebPageProxy& m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;
-#if ENABLE(POINTER_EVENTS)
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
-#endif
     RequestedScrollInfo* m_requestedScrollInfo;
 #if ENABLE(CSS_SCROLL_SNAP)
     unsigned m_currentHorizontalSnapPointIndex { 0 };
