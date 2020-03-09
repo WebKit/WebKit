@@ -2832,7 +2832,10 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     auto& blockFlow = downcast<RenderBlockFlow>(*renderer);
     auto position = frame->visiblePositionForPoint(view->rootViewToContents(request.point));
     auto lineRect = position.absoluteSelectionBoundsForLine();
-    lineRect.setWidth(blockFlow.contentWidth());
+    bool isEditable = node->hasEditableStyle();
+
+    if (isEditable)
+        lineRect.setWidth(blockFlow.contentWidth());
 
     info.lineCaretExtent = view->contentsToRootView(lineRect);
     info.caretHeight = info.lineCaretExtent.height();
@@ -2846,7 +2849,7 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
         auto approximateLineRectInContentCoordinates = renderer->absoluteBoundingBoxRect();
         approximateLineRectInContentCoordinates.setHeight(renderer->style().computedLineHeight());
         info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);
-        if (!info.lineCaretExtent.contains(request.point) || !node->hasEditableStyle())
+        if (!info.lineCaretExtent.contains(request.point) || !isEditable)
             info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
         info.caretHeight = info.lineCaretExtent.height();
     }
