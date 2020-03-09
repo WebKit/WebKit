@@ -1,5 +1,22 @@
 2020-03-09  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/60183769
+
+    2020-03-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] @hasOwnLengthProperty returns wrong value if "length" is attempted to be modified
+            https://bugs.webkit.org/show_bug.cgi?id=208497
+            <rdar://problem/59913544>
+
+            Reviewed by Mark Lam.
+
+            * stress/function-length-update.js: Added.
+            (shouldBe):
+            (userFunction):
+            (userFunction2):
+
+2020-03-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r257605. rdar://problem/59870340
 
     Poly proto should work with property delete transitions

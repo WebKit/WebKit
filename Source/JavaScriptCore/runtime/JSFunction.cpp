@@ -543,9 +543,9 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
-            rareData->setHasModifiedLength();
+            rareData->setHasModifiedLengthForNonHostFunction();
         else
-            rareData->setHasModifiedName();
+            rareData->setHasModifiedNameForNonHostFunction();
     }
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
@@ -594,9 +594,9 @@ bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Prop
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
-            rareData->setHasModifiedLength();
+            rareData->setHasModifiedLengthForNonHostFunction();
         else
-            rareData->setHasModifiedName();
+            rareData->setHasModifiedNameForNonHostFunction();
     }
 
     if (thisObject->isHostOrBuiltinFunction()) {
@@ -629,9 +629,9 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
-            rareData->setHasModifiedLength();
+            rareData->setHasModifiedLengthForNonHostFunction();
         else
-            rareData->setHasModifiedName();
+            rareData->setHasModifiedNameForNonHostFunction();
     }
 
     if (thisObject->isHostOrBuiltinFunction()) {
