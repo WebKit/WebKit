@@ -124,6 +124,8 @@ protected:
     virtual EventTargetData& ensureEventTargetData() = 0;
     const EventTargetData* eventTargetData() const;
 
+    virtual void eventListenersDidChange() { }
+
 private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;

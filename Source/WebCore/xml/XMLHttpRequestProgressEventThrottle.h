@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Event;
 class EventTarget;
+class XMLHttpRequest;
 
 enum ProgressEventAction {
     DoNotFlushProgressEvent,
@@ -44,7 +45,7 @@ enum ProgressEventAction {
 // about every 50ms or for every byte received, whichever is least frequent".
 class XMLHttpRequestProgressEventThrottle {
 public:
-    explicit XMLHttpRequestProgressEventThrottle(EventTarget&);
+    explicit XMLHttpRequestProgressEventThrottle(XMLHttpRequest&);
     virtual ~XMLHttpRequestProgressEventThrottle();
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
@@ -58,20 +59,16 @@ private:
     static const Seconds minimumProgressEventDispatchingInterval;
 
     void dispatchThrottledProgressEventTimerFired();
-    void dispatchDeferredEventsAfterResuming();
     void flushProgressEvent();
     void dispatchEventWhenPossible(Event&);
 
     // Weak pointer to our XMLHttpRequest object as it is the one holding us.
-    EventTarget& m_target;
+    XMLHttpRequest& m_target;
 
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };
 
-    RefPtr<Event> m_deferredProgressEvent;
-    Vector<Ref<Event>> m_eventsDeferredDueToSuspension;
     SuspendableTimer m_dispatchThrottledProgressEventTimer;
-    SuspendableTimer m_dispatchDeferredEventsAfterResumingTimer;
 
     bool m_hasPendingThrottledProgressEvent { false };
     bool m_lengthComputable { false };

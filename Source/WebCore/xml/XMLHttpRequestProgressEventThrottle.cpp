@@ -29,19 +29,18 @@
 
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 
 namespace WebCore {
 
 const Seconds XMLHttpRequestProgressEventThrottle::minimumProgressEventDispatchingInterval { 50_ms }; // 50 ms per specification.
 
-XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(EventTarget& target)
+XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(XMLHttpRequest& target)
     : m_target(target)
     , m_dispatchThrottledProgressEventTimer(target.scriptExecutionContext(), *this, &XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEventTimerFired)
-    , m_dispatchDeferredEventsAfterResumingTimer(target.scriptExecutionContext(), *this, &XMLHttpRequestProgressEventThrottle::dispatchDeferredEventsAfterResuming)
 {
     m_dispatchThrottledProgressEventTimer.suspendIfNeeded();
-    m_dispatchDeferredEventsAfterResumingTimer.suspendIfNeeded();
 }
 
 XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle() = default;
@@ -81,13 +80,9 @@ void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(Event& e
 
 void XMLHttpRequestProgressEventThrottle::dispatchEventWhenPossible(Event& event)
 {
-    if (m_shouldDeferEventsDueToSuspension) {
-        if (m_eventsDeferredDueToSuspension.size() > 1 && event.type() == eventNames().readystatechangeEvent && event.type() == m_eventsDeferredDueToSuspension.last()->type()) {
-            // Readystatechange events are state-less so avoid repeating two identical events in a row on resume.
-            return;
-        }
-        m_eventsDeferredDueToSuspension.append(event);
-    } else
+    if (m_shouldDeferEventsDueToSuspension)
+        m_target.queueTaskToDispatchEvent(m_target, TaskSource::Networking, makeRef(event));
+    else
         m_target.dispatchEvent(event);
 }
 
@@ -117,20 +112,6 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total));
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchDeferredEventsAfterResuming()
-{
-    ASSERT(m_shouldDeferEventsDueToSuspension);
-    m_shouldDeferEventsDueToSuspension = false;
-
-    // Take over the deferred events before dispatching them which can potentially add more.
-    auto eventsDeferredDueToSuspension = WTFMove(m_eventsDeferredDueToSuspension);
-
-    flushProgressEvent();
-
-    for (auto& deferredEvent : eventsDeferredDueToSuspension)
-        dispatchEventWhenPossible(deferredEvent);
-}
-
 void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEventTimerFired()
 {
     ASSERT(m_dispatchThrottledProgressEventTimer.isActive());
@@ -147,16 +128,19 @@ void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEventTimerFir
 void XMLHttpRequestProgressEventThrottle::suspend()
 {
     m_shouldDeferEventsDueToSuspension = true;
+
+    if (m_hasPendingThrottledProgressEvent) {
+        m_target.queueTaskKeepingObjectAlive(m_target, TaskSource::Networking, [this] {
+            flushProgressEvent();
+        });
+    }
 }
 
 void XMLHttpRequestProgressEventThrottle::resume()
 {
-    if (m_eventsDeferredDueToSuspension.isEmpty() && !m_hasPendingThrottledProgressEvent) {
+    m_target.queueTaskKeepingObjectAlive(m_target, TaskSource::Networking, [this] {
         m_shouldDeferEventsDueToSuspension = false;
-        return;
-    }
-
-    m_dispatchDeferredEventsAfterResumingTimer.startOneShot(0_s);
+    });
 }
 
 } // namespace WebCore

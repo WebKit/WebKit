@@ -94,6 +94,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (listenerCreatedFromScript)
         InspectorInstrumentation::didAddEventListener(*this, eventType, listenerRef.get(), options.capture);
 
+    eventListenersDidChange();
     return true;
 }
 
@@ -133,7 +134,11 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
 
     InspectorInstrumentation::willRemoveEventListener(*this, eventType, listener, options.capture);
 
-    return data->eventListenerMap.remove(eventType, listener, options.capture);
+    if (data->eventListenerMap.remove(eventType, listener, options.capture)) {
+        eventListenersDidChange();
+        return true;
+    }
+    return false;
 }
 
 bool EventTarget::setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&& listener, DOMWrapperWorld& isolatedWorld)
@@ -345,8 +350,10 @@ void EventTarget::removeAllEventListeners()
     threadData.setIsInRemoveAllEventListeners(true);
 
     auto* data = eventTargetData();
-    if (data)
+    if (data && !data->eventListenerMap.isEmpty()) {
         data->eventListenerMap.clear();
+        eventListenersDidChange();
+    }
 
     threadData.setIsInRemoveAllEventListeners(false);
 }
