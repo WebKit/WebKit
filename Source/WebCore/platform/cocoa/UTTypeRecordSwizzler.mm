@@ -36,6 +36,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
+#import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
 __attribute__((visibility("default")))
