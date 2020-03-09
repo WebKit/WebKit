@@ -3332,7 +3332,10 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
         return false;
 
     for (auto& element : composedTreeAncestors(const_cast<Element&>(*this))) {
-        if (element.existingComputedStyle()->display() == DisplayType::None)
+        auto* style = element.existingComputedStyle();
+        if (!style)
+            style = element.resolveComputedStyle(ResolveComputedStyleMode::RenderedOnly);
+        if (!style || style->display() == DisplayType::None)
             return false;
     }
 
