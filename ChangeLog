@@ -1,5 +1,17 @@
 2020-03-09  Don Olmstead  <don.olmstead@sony.com>
 
+        Add script to search for feature defines
+        https://bugs.webkit.org/show_bug.cgi?id=208726
+
+        Reviewed by Konstantin Tokarev.
+
+        Sync feature defines with the FeatureDefines.xcconfig files present in the
+        repository.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2020-03-09  Don Olmstead  <don.olmstead@sony.com>
+
         Remove obsolete feature flags
         https://bugs.webkit.org/show_bug.cgi?id=208830
 
