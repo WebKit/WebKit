@@ -1,3 +1,16 @@
+2020-03-10  Aakash Jain  <aakash_jain@apple.com>
+
+        Add ValidateCommiterAndReviewer and ValidateChangeLogAndReviewer build steps in commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=208861
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__): Remove verifycqplus parameter.
+        (CommitQueueFactory): Inherit from factory.BuildFactory base class instead of custom Factory class.
+        (CommitQueueFactory.__init__): Add required build steps, especially ValidateCommiterAndReviewer, 
+        UpdateWorkingDirectory and ValidateChangeLogAndReviewer.
+
 2020-03-10  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] API favicon test flaky timeouts

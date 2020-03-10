@@ -30,16 +30,17 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
                    RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
-                   RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, SetBuildSummary, UpdateWorkingDirectory, ValidatePatch)
+                   RunWebKitPyPython2Tests, RunWebKitPyPython3Tests, RunWebKitTests, SetBuildSummary, UpdateWorkingDirectory,
+                   ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer)
 
 
 class Factory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, remotes=None, additionalArguments=None, checkRelevance=False, verifycqplus=False, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
         if checkRelevance:
             self.addStep(CheckPatchRelevance())
-        self.addStep(ValidatePatch(verifycqplus=verifycqplus))
+        self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
         # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True. Without alwaysUseLatest Buildbot will
@@ -213,9 +214,17 @@ class ServicesFactory(Factory):
         self.addStep(RunBuildWebKitOrgUnitTests())
 
 
-class CommitQueueFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, verifycqplus=True)
+class CommitQueueFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
+        self.addStep(ValidatePatch(verifycqplus=True))
+        self.addStep(ValidateCommiterAndReviewer())
+        self.addStep(PrintConfiguration())
+        self.addStep(CheckOutSource())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ApplyPatch())
+        self.addStep(ValidateChangeLogAndReviewer())
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
