@@ -118,6 +118,9 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
             insertNodeBefore(*targetBlockquote, *outerBlock);
         startOfContents = positionInParentAfterNode(targetBlockquote.get());
     }
+    
+    if (startOfContents.deepEquivalent().containerNode() && !startOfContents.deepEquivalent().containerNode()->isDescendantOf(outerBlock.get()) && startOfContents.deepEquivalent().containerNode()->parentNode() != outerBlock->parentNode())
+        return;
 
     moveParagraphWithClones(startOfContents, end, targetBlockquote.get(), outerBlock.get());
 }

@@ -1,3 +1,16 @@
+2020-03-10  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in CompositeEditCommand::moveParagraphWithClones when indenting non-enclosed elements.
+        https://bugs.webkit.org/show_bug.cgi?id=208628
+        <rdar://problem/52011509>
+
+        Reviewed by Ryosuke Niwa.
+
+        When indenting a non-enclosed paragraph, quit if start of contents is not a descendant or sibling of outer block.
+
+        * fast/editing/indent-non-enclosed-element-crash-expected.txt: Added.
+        * fast/editing/indent-non-enclosed-element-crash.html: Added.
+
 2020-03-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS iOS ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm is flaky failing
