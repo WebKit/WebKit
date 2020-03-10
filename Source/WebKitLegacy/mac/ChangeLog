@@ -1,3 +1,25 @@
+2020-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT(!m_textCheckingRequest) on editing/spelling/spellcheck-async-remove-frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=126606
+
+        Reviewed by Wenson Hsieh.
+
+        SpellChecker's sequence numbers need to be unique between frames, because they are sent out
+        to EditorClient which may be one per web view, so use a static to hold the current
+        sequence number.
+
+        Also convert from int to TextCheckingSequence to make them easier to find, and use
+        Markable and Optional in TextCheckingRequestData to represent the unset state.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditorSpellCheckResponder initWithClient:identifier:results:]):
+        (-[WebEditorSpellCheckResponder perform]):
+        (WebEditorClient::didCheckSucceed):
+        (WebEditorClient::requestCheckingOfString):
+        (-[WebEditorSpellCheckResponder initWithClient:sequence:results:]): Deleted.
+
 2020-03-09  Don Olmstead  <don.olmstead@sony.com>
 
         Remove obsolete feature flags

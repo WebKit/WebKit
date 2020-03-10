@@ -45,7 +45,7 @@ SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& au
     , m_automaticReplacementRange(WTFMove(automaticReplacementRange))
     , m_paragraphRange(WTFMove(paragraphRange))
     , m_rootEditableElement(m_checkingRange->startContainer().rootEditableElement())
-    , m_requestData(unrequestedTextCheckingSequence, text, mask, processType)
+    , m_requestData(WTF::nullopt, text, mask, processType)
 {
 }
 
@@ -71,7 +71,7 @@ void SpellCheckRequest::didSucceed(const Vector<TextCheckingResult>& results)
         return;
 
     Ref<SpellCheckRequest> protectedThis(*this);
-    m_checker->didCheckSucceed(m_requestData.sequence(), results);
+    m_checker->didCheckSucceed(m_requestData.identifier().value(), results);
     m_checker = nullptr;
 }
 
@@ -81,16 +81,16 @@ void SpellCheckRequest::didCancel()
         return;
 
     Ref<SpellCheckRequest> protectedThis(*this);
-    m_checker->didCheckCancel(m_requestData.sequence());
+    m_checker->didCheckCancel(m_requestData.identifier().value());
     m_checker = nullptr;
 }
 
-void SpellCheckRequest::setCheckerAndSequence(SpellChecker* requester, int sequence)
+void SpellCheckRequest::setCheckerAndIdentifier(SpellChecker* requester, TextCheckingRequestIdentifier identifier)
 {
     ASSERT(!m_checker);
-    ASSERT(m_requestData.sequence() == unrequestedTextCheckingSequence);
+    ASSERT(!m_requestData.identifier());
     m_checker = requester;
-    m_requestData.m_sequence = sequence;
+    m_requestData.m_identifier = identifier;
 }
 
 void SpellCheckRequest::requesterDestroyed()
@@ -100,8 +100,6 @@ void SpellCheckRequest::requesterDestroyed()
 
 SpellChecker::SpellChecker(Frame& frame)
     : m_frame(frame)
-    , m_lastRequestSequence(0)
-    , m_lastProcessedSequence(0)
     , m_timerToProcessQueuedRequest(*this, &SpellChecker::timerFiredToProcessQueuedRequest)
 {
 }
@@ -156,12 +154,11 @@ void SpellChecker::requestCheckingFor(Ref<SpellCheckRequest>&& request)
     if (!canCheckAsynchronously(request->paragraphRange()))
         return;
 
-    ASSERT(request->data().sequence() == unrequestedTextCheckingSequence);
-    int sequence = ++m_lastRequestSequence;
-    if (sequence == unrequestedTextCheckingSequence)
-        sequence = ++m_lastRequestSequence;
+    ASSERT(!request->data().identifier());
+    auto identifier = TextCheckingRequestIdentifier::generate();
 
-    request->setCheckerAndSequence(this, sequence);
+    m_lastRequestIdentifier = identifier;
+    request->setCheckerAndIdentifier(this, identifier);
 
     if (m_timerToProcessQueuedRequest.isActive() || m_processingRequest) {
         enqueueRequest(WTFMove(request));
@@ -193,29 +190,29 @@ void SpellChecker::enqueueRequest(Ref<SpellCheckRequest>&& request)
     m_requestQueue.append(WTFMove(request));
 }
 
-void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& results)
+void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vector<TextCheckingResult>& results)
 {
     ASSERT(m_processingRequest);
-    ASSERT(m_processingRequest->data().sequence() == sequence);
-    if (m_processingRequest->data().sequence() != sequence) {
+    ASSERT(m_processingRequest->data().identifier() == identifier);
+    if (m_processingRequest->data().identifier() != identifier) {
         m_requestQueue.clear();
         return;
     }
 
     m_frame.editor().markAndReplaceFor(*m_processingRequest, results);
 
-    if (m_lastProcessedSequence < sequence)
-        m_lastProcessedSequence = sequence;
+    if (m_lastProcessedIdentifier.toUInt64() < identifier.toUInt64())
+        m_lastProcessedIdentifier = identifier;
 
     m_processingRequest = nullptr;
     if (!m_requestQueue.isEmpty())
         m_timerToProcessQueuedRequest.startOneShot(0_s);
 }
 
-void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult>& results)
+void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, const Vector<TextCheckingResult>& results)
 {
     TextCheckingRequestData requestData = m_processingRequest->data();
-    if (requestData.sequence() == sequence) {
+    if (requestData.identifier() == identifier) {
         OptionSet<DocumentMarker::MarkerType> markerTypes;
         if (requestData.checkingTypes().contains(TextCheckingType::Spelling))
             markerTypes.add(DocumentMarker::Spelling);
@@ -224,12 +221,12 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
         if (!markerTypes.isEmpty())
             m_frame.document()->markers().removeMarkers(m_processingRequest->checkingRange(), markerTypes);
     }
-    didCheck(sequence, results);
+    didCheck(identifier, results);
 }
 
-void SpellChecker::didCheckCancel(int sequence)
+void SpellChecker::didCheckCancel(TextCheckingRequestIdentifier identifier)
 {
-    didCheck(sequence, Vector<TextCheckingResult>());
+    didCheck(identifier, Vector<TextCheckingResult>());
 }
 
 } // namespace WebCore

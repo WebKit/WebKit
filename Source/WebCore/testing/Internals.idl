@@ -333,8 +333,8 @@ enum CompositingPolicy {
 
     [MayThrowException] void setDelegatesScrolling(boolean enabled);
 
-    [MayThrowException] long lastSpellCheckRequestSequence();
-    [MayThrowException] long lastSpellCheckProcessedSequence();
+    [MayThrowException] unsigned long long lastSpellCheckRequestSequence();
+    [MayThrowException] unsigned long long lastSpellCheckProcessedSequence();
 
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);

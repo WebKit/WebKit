@@ -2074,22 +2074,22 @@ ExceptionOr<void> Internals::setDelegatesScrolling(bool enabled)
     return { };
 }
 
-ExceptionOr<int> Internals::lastSpellCheckRequestSequence()
+ExceptionOr<uint64_t> Internals::lastSpellCheckRequestSequence()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    return document->frame()->editor().spellChecker().lastRequestSequence();
+    return document->frame()->editor().spellChecker().lastRequestIdentifier().toUInt64();
 }
 
-ExceptionOr<int> Internals::lastSpellCheckProcessedSequence()
+ExceptionOr<uint64_t> Internals::lastSpellCheckProcessedSequence()
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    return document->frame()->editor().spellChecker().lastProcessedSequence();
+    return document->frame()->editor().spellChecker().lastProcessedIdentifier().toUInt64();
 }
 
 Vector<String> Internals::userPreferredLanguages() const

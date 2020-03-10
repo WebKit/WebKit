@@ -52,7 +52,7 @@ public:
     Range& automaticReplacementRange() const { return m_automaticReplacementRange.get(); }
     Element* rootEditableElement() const { return m_rootEditableElement.get(); }
 
-    void setCheckerAndSequence(SpellChecker*, int sequence);
+    void setCheckerAndIdentifier(SpellChecker*, TextCheckingRequestIdentifier);
     void requesterDestroyed();
     bool isStarted() const { return m_checker; }
 
@@ -84,14 +84,14 @@ public:
 
     void requestCheckingFor(Ref<SpellCheckRequest>&&);
 
-    int lastRequestSequence() const
+    TextCheckingRequestIdentifier lastRequestIdentifier() const
     {
-        return m_lastRequestSequence;
+        return m_lastRequestIdentifier;
     }
 
-    int lastProcessedSequence() const
+    TextCheckingRequestIdentifier lastProcessedIdentifier() const
     {
-        return m_lastProcessedSequence;
+        return m_lastProcessedIdentifier;
     }
 
 private:
@@ -102,13 +102,13 @@ private:
     void timerFiredToProcessQueuedRequest();
     void invokeRequest(Ref<SpellCheckRequest>&&);
     void enqueueRequest(Ref<SpellCheckRequest>&&);
-    void didCheckSucceed(int sequence, const Vector<TextCheckingResult>&);
-    void didCheckCancel(int sequence);
-    void didCheck(int sequence, const Vector<TextCheckingResult>&);
+    void didCheckSucceed(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&);
+    void didCheckCancel(TextCheckingRequestIdentifier);
+    void didCheck(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&);
 
     Frame& m_frame;
-    int m_lastRequestSequence;
-    int m_lastProcessedSequence;
+    TextCheckingRequestIdentifier m_lastRequestIdentifier;
+    TextCheckingRequestIdentifier m_lastProcessedIdentifier;
 
     Timer m_timerToProcessQueuedRequest;
 

@@ -32,6 +32,7 @@
 #import <WebCore/TextCheckerClient.h>
 #import <WebCore/VisibleSelection.h>
 #import <wtf/Forward.h>
+#import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -50,7 +51,7 @@ public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
 
-    void didCheckSucceed(int sequence, NSArray *results);
+    void didCheckSucceed(WebCore::TextCheckingRequestIdentifier, NSArray *results);
 
 private:
     bool isGrammarCheckingEnabled() final;
@@ -195,7 +196,8 @@ private:
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations { false };
-    RefPtr<WebCore::TextCheckingRequest> m_textCheckingRequest;
+    
+    HashMap<WebCore::TextCheckingRequestIdentifier, Ref<WebCore::TextCheckingRequest>> m_requestsInFlight;
 
 #if PLATFORM(IOS_FAMILY)
     bool m_delayingContentChangeNotifications { false };

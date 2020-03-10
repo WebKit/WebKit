@@ -2076,7 +2076,7 @@ Optional<GrammarDetail> ArgumentCoder<GrammarDetail>::decode(Decoder& decoder)
 
 void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const TextCheckingRequestData& request)
 {
-    encoder << request.sequence();
+    encoder << request.identifier();
     encoder << request.text();
     encoder << request.checkingTypes();
     encoder.encodeEnum(request.processType());
@@ -2084,8 +2084,8 @@ void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const Text
 
 bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextCheckingRequestData& request)
 {
-    int sequence;
-    if (!decoder.decode(sequence))
+    Optional<TextCheckingRequestIdentifier> identifier;
+    if (!decoder.decode(identifier))
         return false;
 
     String text;
@@ -2100,7 +2100,7 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
     if (!decoder.decodeEnum(processType))
         return false;
 
-    request = TextCheckingRequestData { sequence, text, checkingTypes, processType };
+    request = TextCheckingRequestData { identifier, text, checkingTypes, processType };
     return true;
 }
 

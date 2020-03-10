@@ -304,8 +304,8 @@ public:
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
-    ExceptionOr<int> lastSpellCheckRequestSequence();
-    ExceptionOr<int> lastSpellCheckProcessedSequence();
+    ExceptionOr<uint64_t> lastSpellCheckRequestSequence();
+    ExceptionOr<uint64_t> lastSpellCheckProcessedSequence();
 
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
