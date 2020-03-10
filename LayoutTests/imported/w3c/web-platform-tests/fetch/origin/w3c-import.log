@@ -14,4 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/origin/no-cors.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/origin/assorted.window.js

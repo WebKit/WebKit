@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/origin/resources/redirect-and-stash.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/origin/resources/referrer-policy.py

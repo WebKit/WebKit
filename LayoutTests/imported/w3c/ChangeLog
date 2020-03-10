@@ -1,3 +1,34 @@
+2020-03-10  Rob Buis  <rbuis@igalia.com>
+
+        Align with Origin header changes
+        https://bugs.webkit.org/show_bug.cgi?id=199261
+
+        Reviewed by Darin Adler.
+
+        Import fetch/origin tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/fetch/origin/assorted.window-expected.txt: Added.
+        * web-platform-tests/fetch/origin/assorted.window.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/origin/no-cors.any.html.
+        * web-platform-tests/fetch/origin/assorted.window.js: Added.
+        (promise_test.async const):
+        (promise_test):
+        (await.new.Promise):
+        (async const):
+        (navigationReferrerPolicy):
+        (fetchReferrerPolicy):
+        (referrerPolicyTestString):
+        * web-platform-tests/fetch/origin/no-cors.any-expected.txt: Removed.
+        * web-platform-tests/fetch/origin/no-cors.any.js: Removed.
+        * web-platform-tests/fetch/origin/no-cors.any.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/origin/no-cors.any.worker.html: Removed.
+        * web-platform-tests/fetch/origin/resources/redirect-and-stash.py:
+        (main):
+        * web-platform-tests/fetch/origin/resources/referrer-policy.py: Added.
+        (main):
+        * web-platform-tests/fetch/origin/resources/w3c-import.log:
+        * web-platform-tests/fetch/origin/w3c-import.log:
+
 2020-03-09  Rob Buis  <rbuis@igalia.com>
 
         Fix WPT test redirect-mode.any.html

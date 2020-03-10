@@ -224,16 +224,19 @@ void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader&
 {
     // Implementing step 9 to 11 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 16 March 2018
     String outgoingReferrer = frameLoader.outgoingReferrer();
-    String outgoingOrigin = frameLoader.outgoingOrigin();
-    if (m_resourceRequest.hasHTTPReferrer()) {
+    if (m_resourceRequest.hasHTTPReferrer())
         outgoingReferrer = m_resourceRequest.httpReferrer();
-        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
-    }
     updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer);
-
-    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
-
     frameLoader.applyUserAgentIfNeeded(m_resourceRequest);
+
+    if (!m_resourceRequest.httpOrigin().isEmpty())
+        return;
+    String outgoingOrigin;
+    if (m_options.mode == FetchOptions::Mode::Cors)
+        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
+    else
+        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), SecurityOrigin::createFromString(outgoingReferrer));
+    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 }
 
 bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options)

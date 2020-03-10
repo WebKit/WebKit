@@ -1,3 +1,0 @@
-
-FAIL Origin header and 308 redirect assert_equals: second origin should be opaque and therefore null expected "null" but got "no Origin header"
-

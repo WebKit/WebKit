@@ -178,6 +178,7 @@
     "web-platform-tests/fetch": "import", 
     "web-platform-tests/fetch/api": "import", 
     "web-platform-tests/fetch/api/cors": "import", 
+    "web-platform-tests/fetch/origin": "import", 
     "web-platform-tests/fetch/range": "import", 
     "web-platform-tests/fetch/stale-while-revalidate": "import", 
     "web-platform-tests/fullscreen": "skip", 
