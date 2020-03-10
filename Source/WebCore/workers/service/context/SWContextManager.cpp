@@ -27,6 +27,7 @@
 #include "SWContextManager.h"
 
 #if ENABLE(SERVICE_WORKER)
+#include "FrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerClientIdentifier.h"
@@ -179,6 +180,17 @@ void SWContextManager::stopAllServiceWorkers()
     auto serviceWorkers = WTFMove(m_workerMap);
     for (auto& serviceWorker : serviceWorkers.values())
         stopWorker(serviceWorker, workerTerminationTimeout, [] { });
+}
+
+void SWContextManager::addServiceWorkerFrameLoaderClient(std::unique_ptr<FrameLoaderClient>&& client)
+{
+    m_serviceWorkerFrameLoaderClients.add(WTFMove(client));
+}
+
+void SWContextManager::removeServiceWorkerFrameLoaderClient(FrameLoaderClient& client)
+{
+    ASSERT(m_serviceWorkerFrameLoaderClients.contains(&client));
+    m_serviceWorkerFrameLoaderClients.remove(&client);
 }
 
 } // namespace WebCore

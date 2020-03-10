@@ -62,8 +62,6 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void removeFrameLoaderClient(ServiceWorkerFrameLoaderClient&);
-
 private:
     void updatePreferencesStore(const WebPreferencesStore&);
 
@@ -105,7 +103,6 @@ private:
     uint64_t m_pageGroupID;
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
-    uint64_t m_previousServiceWorkerID { 0 };
 
     WebCore::SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy { WebCore::SecurityOrigin::StorageBlockingPolicy::AllowAllStorage };
 
@@ -120,25 +117,27 @@ private:
 
 class ServiceWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
 public:
-    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection&, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+    static ServiceWorkerFrameLoaderClient& create(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+
+    WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 
     void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
-    
-    WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
-    Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
-    Optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
 
 private:
+    ServiceWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
 
-    void frameLoaderDestroyed() final { m_connection.removeFrameLoaderClient(*this); }
+    void frameLoaderDestroyed() final;
+
+    Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
+    Optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
 
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long) final { return true; }
     bool isServiceWorkerFrameLoaderClient() const final { return true; }
 
     String userAgent(const URL&) final { return m_userAgent; }
 
-    WebSWContextManagerConnection& m_connection;
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
     WebCore::FrameIdentifier m_frameID;

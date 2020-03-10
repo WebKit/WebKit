@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class FrameLoaderClient;
 class SerializedScriptValue;
 class ServiceWorkerGlobalScope;
 
@@ -102,6 +103,9 @@ public:
 
     WEBCORE_EXPORT void stopAllServiceWorkers();
 
+    WEBCORE_EXPORT void addServiceWorkerFrameLoaderClient(std::unique_ptr<FrameLoaderClient>&&);
+    WEBCORE_EXPORT void removeServiceWorkerFrameLoaderClient(FrameLoaderClient&);
+
     static constexpr Seconds workerTerminationTimeout { 10_s };
     static constexpr Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
 
@@ -126,6 +130,7 @@ private:
         Timer m_timeoutTimer;
     };
     HashMap<ServiceWorkerIdentifier, std::unique_ptr<ServiceWorkerTerminationRequest>> m_pendingServiceWorkerTerminationRequests;
+    HashSet<std::unique_ptr<FrameLoaderClient>> m_serviceWorkerFrameLoaderClients;
 };
 
 } // namespace WebCore

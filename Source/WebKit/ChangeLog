@@ -1,3 +1,25 @@
+2020-03-10  youenn fablet  <youenn@apple.com>
+
+        Make sure that ServiceWorkerFrameLoaderClient lifetime exceeds its frame lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=208855
+        <rdar://problem/60187332>
+
+        Reviewed by Geoffrey Garen.
+
+        In case connection is destroyed, for instance due to network process crashing,
+        we destroy all service worker frame loader clients.
+        This is too soon as service worker thread proxy is refcounted and can last longer.
+        For that reason, we now let the SWContextManager handle the lifetime of the frame loader clients.
+        Drive-by fix: generate a new frame identifier instead of using an internal counter which can be wrong in case of new connection
+        and might clash with other frame identifiers now that service workers can run in process with pages.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::ServiceWorkerFrameLoaderClient::create):
+        (WebKit::ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient):
+        (WebKit::ServiceWorkerFrameLoaderClient::frameLoaderDestroyed):
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2020-03-10  Youenn Fablet  <youenn@apple.com>
 
         Do not create a service worker connection if service worker is not enabled in network process
