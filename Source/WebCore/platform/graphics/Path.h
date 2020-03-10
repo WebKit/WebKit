@@ -55,11 +55,7 @@ class PlatformContextDirect2D;
 }
 
 #elif USE(CAIRO)
-
-namespace WebCore {
-class CairoPath;
-}
-typedef WebCore::CairoPath PlatformPath;
+#include "RefPtrCairo.h"
 
 #elif USE(WINGDI)
 
@@ -74,6 +70,7 @@ typedef void PlatformPath;
 
 #endif
 
+#if !USE(CAIRO)
 typedef PlatformPath* PlatformPathPtr;
 
 #if USE(CG)
@@ -82,6 +79,7 @@ using PlatformPathStorageType = RetainPtr<CGMutablePathRef>;
 using PlatformPathStorageType = COMPtr<ID2D1GeometryGroup>;
 #else
 using PlatformPathStorageType = PlatformPathPtr;
+#endif
 #endif
 
 namespace WTF {
@@ -188,11 +186,18 @@ public:
     PlatformPathPtr platformPath() const { return m_path.get(); }
 #elif USE(CG)
     WEBCORE_EXPORT PlatformPathPtr platformPath() const;
+#elif USE(CAIRO)
+    cairo_t* cairoPath() const { return m_path.get(); }
 #else
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
+
     // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
+#if USE(CAIRO)
+    cairo_t* ensureCairoPath();
+#else
     WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
+#endif
 
     WEBCORE_EXPORT void apply(const PathApplierFunction&) const;
     void transform(const AffineTransform&);
@@ -251,7 +256,11 @@ private:
     void swap(Path&);
 #endif
 
+#if USE(CAIRO)
+    RefPtr<cairo_t> m_path;
+#else
     mutable PlatformPathStorageType m_path;
+#endif
 
 #if USE(DIRECT2D)
     Vector<ID2D1Geometry*> m_geometries;

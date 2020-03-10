@@ -5,7 +5,7 @@
                   2005, 2007 Apple Inc. All Rights reserved.
                   2007 Alp Toker <alp@atoker.com>
                   2008 Dirk Schulze <krit@webkit.org>
-                  2011 Igalia S.L.
+                  2011, 2020 Igalia S.L.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -31,7 +31,6 @@
 #include "CairoUtilities.h"
 #include "FloatRect.h"
 #include "GraphicsContextImplCairo.h"
-#include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
@@ -39,40 +38,30 @@
 
 namespace WebCore {
 
-Path::Path()
-    : m_path(0)
-{
-}
+Path::Path() = default;
 
-Path::~Path()
-{
-    if (m_path)
-        delete m_path;
-}
+Path::~Path() = default;
+
+Path::Path(Path&&) = default;
+
+Path& Path::operator=(Path&&) = default;
 
 Path::Path(const Path& other)
-    : m_path(0)
 {
     if (other.isNull())
         return;
 
-    cairo_t* cr = ensurePlatformPath()->context();
-    auto pathCopy = cairo_copy_path(other.platformPath()->context());
+    cairo_t* cr = ensureCairoPath();
+    auto pathCopy = cairo_copy_path(other.m_path.get());
     cairo_append_path(cr, pathCopy);
     cairo_path_destroy(pathCopy);
 }
-    
-Path::Path(Path&& other)
-{
-    m_path = other.m_path;
-    other.m_path = nullptr;
-}
 
-PlatformPathPtr Path::ensurePlatformPath()
+cairo_t* Path::ensureCairoPath()
 {
     if (!m_path)
-        m_path = new CairoPath();
-    return m_path;
+        m_path = adoptRef(cairo_create(adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1)).get()));
+    return m_path.get();
 }
 
 Path& Path::operator=(const Path& other)
@@ -81,29 +70,16 @@ Path& Path::operator=(const Path& other)
         return *this;
 
     if (other.isNull()) {
-        if (m_path) {
-            delete m_path;
-            m_path = 0;
-        }
-    } else {
-        clear();
-        cairo_t* cr = ensurePlatformPath()->context();
-        auto pathCopy = cairo_copy_path(other.platformPath()->context());
-        cairo_append_path(cr, pathCopy);
-        cairo_path_destroy(pathCopy);
+        m_path = nullptr;
+        return *this;
     }
 
-    return *this;
-}
-    
-Path& Path::operator=(Path&& other)
-{
-    if (this == &other)
-        return *this;
-    if (m_path)
-        delete m_path;
-    m_path = other.m_path;
-    other.m_path = nullptr;
+    clear();
+    cairo_t* cr = ensureCairoPath();
+    auto pathCopy = cairo_copy_path(other.m_path.get());
+    cairo_append_path(cr, pathCopy);
+    cairo_path_destroy(pathCopy);
+
     return *this;
 }
 
@@ -112,14 +88,13 @@ void Path::clear()
     if (isNull())
         return;
 
-    cairo_t* cr = platformPath()->context();
-    cairo_identity_matrix(cr);
-    cairo_new_path(cr);
+    cairo_identity_matrix(m_path.get());
+    cairo_new_path(m_path.get());
 }
 
 bool Path::isEmptySlowCase() const
 {
-    return !cairo_has_current_point(platformPath()->context());
+    return !cairo_has_current_point(m_path.get());
 }
 
 FloatPoint Path::currentPointSlowCase() const
@@ -127,63 +102,54 @@ FloatPoint Path::currentPointSlowCase() const
     // FIXME: Is this the correct way?
     double x;
     double y;
-    cairo_get_current_point(platformPath()->context(), &x, &y);
+    cairo_get_current_point(m_path.get(), &x, &y);
     return FloatPoint(x, y);
 }
 
 void Path::translate(const FloatSize& p)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_translate(cr, -p.width(), -p.height());
+    cairo_translate(ensureCairoPath(), -p.width(), -p.height());
 }
 
 void Path::moveToSlowCase(const FloatPoint& p)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_move_to(cr, p.x(), p.y());
+    cairo_move_to(ensureCairoPath(), p.x(), p.y());
 }
 
 void Path::addLineToSlowCase(const FloatPoint& p)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_line_to(cr, p.x(), p.y());
+    cairo_line_to(ensureCairoPath(), p.x(), p.y());
 }
 
 void Path::addRect(const FloatRect& rect)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_rectangle(ensureCairoPath(), rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-/*
- * inspired by libsvg-cairo
- */
 void Path::addQuadCurveToSlowCase(const FloatPoint& controlPoint, const FloatPoint& point)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
     double x, y;
     double x1 = controlPoint.x();
     double y1 = controlPoint.y();
     double x2 = point.x();
     double y2 = point.y();
+    cairo_t* cr = ensureCairoPath();
     cairo_get_current_point(cr, &x, &y);
     cairo_curve_to(cr,
-                   x  + 2.0 / 3.0 * (x1 - x),  y  + 2.0 / 3.0 * (y1 - y),
-                   x2 + 2.0 / 3.0 * (x1 - x2), y2 + 2.0 / 3.0 * (y1 - y2),
-                   x2, y2);
+        x  + 2.0 / 3.0 * (x1 - x),  y  + 2.0 / 3.0 * (y1 - y),
+        x2 + 2.0 / 3.0 * (x1 - x2), y2 + 2.0 / 3.0 * (y1 - y2),
+        x2, y2);
 }
 
 void Path::addBezierCurveToSlowCase(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_curve_to(cr, controlPoint1.x(), controlPoint1.y(),
-                   controlPoint2.x(), controlPoint2.y(),
-                   controlPoint3.x(), controlPoint3.y());
+    cairo_curve_to(ensureCairoPath(), controlPoint1.x(), controlPoint1.y(),
+        controlPoint2.x(), controlPoint2.y(), controlPoint3.x(), controlPoint3.y());
 }
 
 void Path::addArcSlowCase(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
+    cairo_t* cr = ensureCairoPath();
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
     if ((sweep <= -twoPI || sweep >= twoPI)
@@ -213,17 +179,15 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     if (isEmpty())
         return;
 
-    cairo_t* cr = platformPath()->context();
-
     double x0, y0;
-    cairo_get_current_point(cr, &x0, &y0);
+    cairo_get_current_point(m_path.get(), &x0, &y0);
     FloatPoint p0(x0, y0);
 
     // Draw only a straight line to p1 if any of the points are equal or the radius is zero
     // or the points are collinear (triangle that the points form has area of zero value).
     if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || !radius
         || !areaOfTriangleFormedByPoints(p0, p1, p2)) {
-        cairo_line_to(cr, p1.x(), p1.y());
+        cairo_line_to(m_path.get(), p1.x(), p1.y());
         return;
     }
 
@@ -231,11 +195,10 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     FloatPoint p1p2((p2.x() - p1.x()),(p2.y() - p1.y()));
     float p1p0_length = std::hypot(p1p0.x(), p1p0.y());
     float p1p2_length = std::hypot(p1p2.x(), p1p2.y());
-
     double cos_phi = (p1p0.x() * p1p2.x() + p1p0.y() * p1p2.y()) / (p1p0_length * p1p2_length);
     // all points on a line logic
     if (cos_phi == -1) {
-        cairo_line_to(cr, p1.x(), p1.y());
+        cairo_line_to(m_path.get(), p1.x(), p1.y());
         return;
     }
     if (cos_phi == 1) {
@@ -243,7 +206,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
         unsigned int max_length = 65535;
         double factor_max = max_length / p1p0_length;
         FloatPoint ep((p0.x() + factor_max * p1p0.x()), (p0.y() + factor_max * p1p0.y()));
-        cairo_line_to(cr, ep.x(), ep.y());
+        cairo_line_to(m_path.get(), ep.x(), ep.y());
         return;
     }
 
@@ -283,14 +246,14 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     if ((sa < ea) && ((ea - sa) > piDouble))
         anticlockwise = true;
 
-    cairo_line_to(cr, t_p1p0.x(), t_p1p0.y());
+    cairo_line_to(m_path.get(), t_p1p0.x(), t_p1p0.y());
 
     addArc(p, radius, sa, ea, anticlockwise);
 }
 
 void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
+    cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());
     cairo_rotate(cr, rotation);
@@ -306,7 +269,7 @@ void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rota
 
 void Path::addEllipse(const FloatRect& rect)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
+    cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
     float xRadius = .5 * rect.width();
@@ -325,26 +288,24 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (cairo_matrix_invert(&matrix) != CAIRO_STATUS_SUCCESS)
         return;
 
-    cairo_t* cr = path.platformPath()->context();
+    cairo_t* cr = path.cairoPath();
     cairo_save(cr);
     cairo_transform(cr, &matrix);
     auto pathCopy = cairo_copy_path(cr);
     cairo_restore(cr);
-    cairo_append_path(ensurePlatformPath()->context(), pathCopy);
+    cairo_append_path(ensureCairoPath(), pathCopy);
     cairo_path_destroy(pathCopy);
 }
 
 void Path::closeSubpath()
 {
-    cairo_t* cr = ensurePlatformPath()->context();
-    cairo_close_path(cr);
+    cairo_close_path(ensureCairoPath());
 }
 
 FloatRect Path::boundingRectSlowCase() const
 {
-    cairo_t* cr = platformPath()->context();
     double x0, x1, y0, y1;
-    cairo_path_extents(cr, &x0, &y0, &x1, &y1);
+    cairo_path_extents(m_path.get(), &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
@@ -354,14 +315,13 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     if (isNull())
         return FloatRect();
 
-    cairo_t* cr = platformPath()->context();
     if (applier) {
-        GraphicsContext gc(GraphicsContextImplCairo::createFactory(cr));
+        GraphicsContext gc(GraphicsContextImplCairo::createFactory(m_path.get()));
         applier->strokeStyle(&gc);
     }
 
     double x0, x1, y0, y1;
-    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
+    cairo_stroke_extents(m_path.get(), &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
@@ -369,11 +329,11 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
     if (isNull() || !std::isfinite(point.x()) || !std::isfinite(point.y()))
         return false;
-    cairo_t* cr = platformPath()->context();
-    cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, rule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    bool contains = cairo_in_fill(cr, point.x(), point.y());
-    cairo_set_fill_rule(cr, cur);
+
+    cairo_fill_rule_t cur = cairo_get_fill_rule(m_path.get());
+    cairo_set_fill_rule(m_path.get(), rule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    bool contains = cairo_in_fill(m_path.get(), point.x(), point.y());
+    cairo_set_fill_rule(m_path.get(), cur);
     return contains;
 }
 
@@ -382,19 +342,17 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
     if (isNull())
         return false;
 
-    cairo_t* cr = platformPath()->context();
     {
-        GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(cr));
+        GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(m_path.get()));
         applier.strokeStyle(&graphicsContext);
     }
 
-    return cairo_in_stroke(cr, point.x(), point.y());
+    return cairo_in_stroke(m_path.get(), point.x(), point.y());
 }
 
 void Path::applySlowCase(const PathApplierFunction& function) const
 {
-    cairo_t* cr = platformPath()->context();
-    auto pathCopy = cairo_copy_path(cr);
+    auto pathCopy = cairo_copy_path(m_path.get());
     cairo_path_data_t* data;
     PathElement pathElement;
 
@@ -434,10 +392,9 @@ FloatRect Path::fastBoundingRectSlowCase() const
 
 void Path::transform(const AffineTransform& transform)
 {
-    cairo_t* cr = ensurePlatformPath()->context();
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
-    cairo_transform(cr, &matrix);
+    cairo_transform(ensureCairoPath(), &matrix);
 }
 
 bool Path::isNull() const

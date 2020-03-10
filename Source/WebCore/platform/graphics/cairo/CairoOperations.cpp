@@ -46,7 +46,6 @@
 #include "ImageBuffer.h"
 #include "Path.h"
 #include "PlatformContextCairo.h"
-#include "PlatformPathCairo.h"
 #include "ShadowBlur.h"
 #include <algorithm>
 #include <cairo.h>
@@ -780,7 +779,7 @@ void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatR
     cairo_t* cr = platformContext.cr();
 
     cairo_save(cr);
-    setPathOnCairoContext(platformContext.cr(), path.platformPath()->context());
+    setPathOnCairoContext(platformContext.cr(), path.cairoPath());
     fillCurrentCairoPath(platformContext, fillSource);
     cairo_restore(cr);
 }
@@ -789,7 +788,7 @@ void fillPath(PlatformContextCairo& platformContext, const Path& path, const Fil
 {
     cairo_t* cr = platformContext.cr();
 
-    setPathOnCairoContext(cr, path.platformPath()->context());
+    setPathOnCairoContext(cr, path.cairoPath());
     drawPathShadow(platformContext, fillSource, { }, shadowState, Fill);
     fillCurrentCairoPath(platformContext, fillSource);
 }
@@ -812,7 +811,7 @@ void strokePath(PlatformContextCairo& platformContext, const Path& path, const S
 {
     cairo_t* cr = platformContext.cr();
 
-    setPathOnCairoContext(cr, path.platformPath()->context());
+    setPathOnCairoContext(cr, path.cairoPath());
     drawPathShadow(platformContext, { }, strokeSource, shadowState, Stroke);
     prepareForStroking(cr, strokeSource, PreserveAlpha);
     cairo_stroke(cr);
@@ -1285,7 +1284,7 @@ void clipPath(PlatformContextCairo& platformContext, const Path& path, WindRule 
     cairo_t* cr = platformContext.cr();
 
     if (!path.isNull())
-        setPathOnCairoContext(cr, path.platformPath()->context());
+        setPathOnCairoContext(cr, path.cairoPath());
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, clipRule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);

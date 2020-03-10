@@ -35,7 +35,6 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "Path.h"
-#include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
 #include "Region.h"
 #include <wtf/Assertions.h>
@@ -109,7 +108,7 @@ void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
 {
     if (path.isEmpty())
         return;
-    appendPathToCairoContext(context, path.platformPath()->context());
+    appendPathToCairoContext(context, path.cairoPath());
 }
 
 void appendRegionToCairoContext(cairo_t* to, const cairo_region_t* region)
