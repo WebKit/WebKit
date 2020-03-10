@@ -169,6 +169,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     RetainPtr<UIViewController> _presentationViewController; // iPhone always. iPad for Fullscreen Camera.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<UIPopoverController> _presentationPopover; // iPad for action sheet and Photo Library.
+    BOOL _isPresentingSubMenu;
     ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;
@@ -436,11 +437,14 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
         if (!strongSelf)
             return nil;
         
+        self->_isPresentingSubMenu = NO;
         UIAction *browseAction = [UIAction actionWithTitle:[strongSelf _browseFilesButtonLabel] image:[UIImage systemImageNamed:@"ellipsis"] identifier:@"browse" handler:^(__kindof UIAction *action) {
+            self->_isPresentingSubMenu = YES;
             [self showFilePickerMenu];
         }];
 
         UIAction *photoAction = [UIAction actionWithTitle:[strongSelf _photoLibraryButtonLabel] image:[UIImage systemImageNamed:@"rectangle.on.rectangle"] identifier:@"photo" handler:^(__kindof UIAction *action) {
+            self->_isPresentingSubMenu = YES;
             [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         }];
 
@@ -448,6 +452,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
             NSString *cameraString = [strongSelf _cameraButtonLabelAllowingPhoto:allowsImageMediaType allowingVideo:allowsVideoMediaType];
             UIAction *cameraAction = [UIAction actionWithTitle:cameraString image:[UIImage systemImageNamed:@"camera.fill"] identifier:@"camera" handler:^(__kindof UIAction *action) {
                 _usingCamera = YES;
+                self->_isPresentingSubMenu = YES;
                 [self _showPhotoPickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
             }];
             actions = @[photoAction, cameraAction, browseAction];
@@ -464,7 +469,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     [animator addCompletion:^{
         [self removeContextMenuInteraction];
-        [self _cancel];
+        if (!self->_isPresentingSubMenu)
+            [self _cancel];
     }];
 }
 
@@ -481,6 +487,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     if (!_documentContextMenuInteraction) {
         _documentContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
         [_view addInteraction:_documentContextMenuInteraction.get()];
+        self->_isPresentingSubMenu = NO;
     }
 }
 

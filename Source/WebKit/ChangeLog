@@ -1,3 +1,20 @@
+2020-03-10  Megan Gardner  <megan_gardner@apple.com>
+
+        File upload cancels before files can be uploaded.
+        https://bugs.webkit.org/show_bug.cgi?id=208846
+        <rdar://problem/60244249>
+
+        Reviewed by Tim Horton.
+
+        With the new UIContextMenus, we needed to cancel in order for everything to be 
+        reset correctly in WebCore. But this can only be done in the animation completion
+        handler, but we only want to cancel if we aren't presenting a different picker.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKFileUploadPanel contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKFileUploadPanel ensureContextMenuInteraction]):
+
 2020-03-10  youenn fablet  <youenn@apple.com>
 
         Make sure that ServiceWorkerFrameLoaderClient lifetime exceeds its frame lifetime
