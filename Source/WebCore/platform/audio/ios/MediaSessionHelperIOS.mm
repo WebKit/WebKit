@@ -197,6 +197,8 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
     [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(pid) forKey:getAVSystemController_PIDToInheritApplicationStateFrom() error:&error];
     if (error)
         WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
+#else
+    UNUSED_PARAM(pid);
 #endif
 }
 
