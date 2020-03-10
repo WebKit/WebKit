@@ -687,12 +687,12 @@ void WebProcessPool::unregisterNotificationObservers()
 #elif !PLATFORM(MACCATALYST)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
 #if PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 #if ENABLE(REMOTE_INSPECTOR)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, CFSTR(WIRServiceEnabledNotification), nullptr);
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 }
 
 static CFURLStorageSessionRef privateBrowsingSession()
