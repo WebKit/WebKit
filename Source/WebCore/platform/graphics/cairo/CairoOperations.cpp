@@ -87,7 +87,7 @@ static void prepareCairoContextSource(cairo_t* cr, cairo_pattern_t* pattern, cai
 static void clipForPatternFilling(cairo_t* cr, const FloatSize& patternSize, const AffineTransform& patternTransform, bool repeatX, bool repeatY)
 {
     // Hold current cairo path in a variable for restoring it after configuring the pattern clip rectangle.
-    auto currentPath = cairo_copy_path(cr);
+    CairoUniquePtr<cairo_path_t> currentPath(cairo_copy_path(cr));
     cairo_new_path(cr);
 
     // Initialize clipping extent from current cairo clip extents, then shrink if needed according to pattern.
@@ -112,8 +112,7 @@ static void clipForPatternFilling(cairo_t* cr, const FloatSize& patternSize, con
     }
 
     // Restoring cairo path.
-    cairo_append_path(cr, currentPath);
-    cairo_path_destroy(currentPath);
+    cairo_append_path(cr, currentPath.get());
 }
 
 static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, PatternAdjustment patternAdjustment)
@@ -210,9 +209,7 @@ static inline void drawPathShadow(PlatformContextCairo& platformContext, const F
 
     // Calculate the extents of the rendered solid paths.
     cairo_t* cairoContext = platformContext.cr();
-    std::unique_ptr<cairo_path_t, void(*)(cairo_path_t*)> path(cairo_copy_path(cairoContext), [](cairo_path_t* path) {
-        cairo_path_destroy(path);
-    });
+    CairoUniquePtr<cairo_path_t> path(cairo_copy_path(cairoContext));
 
     FloatRect solidFigureExtents;
     double x0 = 0;

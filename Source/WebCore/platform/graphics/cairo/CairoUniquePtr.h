@@ -44,4 +44,11 @@ template<> struct CairoPtrDeleter<cairo_font_options_t> {
     }
 };
 
+template<> struct CairoPtrDeleter<cairo_path_t> {
+    void operator() (cairo_path_t* ptr) const
+    {
+        cairo_path_destroy(ptr);
+    }
+};
+
 } // namespace WebCore

@@ -28,6 +28,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "FloatRect.h"
 #include "GraphicsContextImplCairo.h"
@@ -51,10 +52,8 @@ Path::Path(const Path& other)
     if (other.isNull())
         return;
 
-    cairo_t* cr = ensureCairoPath();
-    auto pathCopy = cairo_copy_path(other.m_path.get());
-    cairo_append_path(cr, pathCopy);
-    cairo_path_destroy(pathCopy);
+    CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
+    cairo_append_path(ensureCairoPath(), pathCopy.get());
 }
 
 cairo_t* Path::ensureCairoPath()
@@ -75,10 +74,8 @@ Path& Path::operator=(const Path& other)
     }
 
     clear();
-    cairo_t* cr = ensureCairoPath();
-    auto pathCopy = cairo_copy_path(other.m_path.get());
-    cairo_append_path(cr, pathCopy);
-    cairo_path_destroy(pathCopy);
+    CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
+    cairo_append_path(ensureCairoPath(), pathCopy.get());
 
     return *this;
 }
@@ -291,10 +288,9 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     cairo_t* cr = path.cairoPath();
     cairo_save(cr);
     cairo_transform(cr, &matrix);
-    auto pathCopy = cairo_copy_path(cr);
+    CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(cr));
     cairo_restore(cr);
-    cairo_append_path(ensureCairoPath(), pathCopy);
-    cairo_path_destroy(pathCopy);
+    cairo_append_path(ensureCairoPath(), pathCopy.get());
 }
 
 void Path::closeSubpath()
@@ -352,7 +348,7 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
 
 void Path::applySlowCase(const PathApplierFunction& function) const
 {
-    auto pathCopy = cairo_copy_path(m_path.get());
+    CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(m_path.get()));
     cairo_path_data_t* data;
     PathElement pathElement;
 
@@ -382,7 +378,6 @@ void Path::applySlowCase(const PathApplierFunction& function) const
             break;
         }
     }
-    cairo_path_destroy(pathCopy);
 }
 
 FloatRect Path::fastBoundingRectSlowCase() const
