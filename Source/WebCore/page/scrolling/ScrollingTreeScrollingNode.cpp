@@ -29,6 +29,9 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "Logging.h"
+#if ENABLE(SCROLLING_THREAD)
+#include "ScrollingStateFrameScrollingNode.h"
+#endif
 #include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
