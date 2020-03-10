@@ -38,10 +38,12 @@ class RealtimeMediaSource;
 struct CaptureSourceOrError;
 struct MediaConstraints;
 
-class SingleSourceFactory {
+class WEBCORE_EXPORT SingleSourceFactory {
 public:
-    WEBCORE_EXPORT void setActiveSource(RealtimeMediaSource&);
-    WEBCORE_EXPORT void unsetActiveSource(RealtimeMediaSource&);
+    virtual ~SingleSourceFactory() = default;
+
+    virtual void setActiveSource(RealtimeMediaSource&);
+    void unsetActiveSource(RealtimeMediaSource&);
 
 protected:
     RealtimeMediaSource* activeSource() { return m_activeSource; }

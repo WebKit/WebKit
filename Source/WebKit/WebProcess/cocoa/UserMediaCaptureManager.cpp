@@ -534,6 +534,12 @@ void UserMediaCaptureManager::VideoFactory::setVideoCapturePageState(bool interr
             source->setInterrupted(interrupted, pageMuted);
     }
 }
+
+void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&)
+{
+    // Muting is done by GPUProcess factory. We do not want to handle it here in case of track cloning.
+}
+
 #endif
 
 }

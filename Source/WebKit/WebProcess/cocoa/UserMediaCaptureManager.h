@@ -83,6 +83,7 @@ private:
         WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 #if PLATFORM(IOS_FAMILY)
+        void setActiveSource(WebCore::RealtimeMediaSource&) final;
         void setVideoCapturePageState(bool interrupted, bool pageMuted) final;
 #endif
 

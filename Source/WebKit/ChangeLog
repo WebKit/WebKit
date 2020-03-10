@@ -1,5 +1,17 @@
 2020-03-10  youenn fablet  <youenn@apple.com>
 
+        [iOS] Make sure a MediStreamTrack clone does not interrupt the being cloned track
+        https://bugs.webkit.org/show_bug.cgi?id=208634
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::VideoFactory::setActiveSource):
+        Do nothing since GPUProcess will handle the muting itself if it creates multiple sources.
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
+2020-03-10  youenn fablet  <youenn@apple.com>
+
         Remove sync IPC when creating a remote capture source
         https://bugs.webkit.org/show_bug.cgi?id=208816
 

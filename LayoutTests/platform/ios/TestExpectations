@@ -103,10 +103,13 @@ fast/speechsynthesis
 gamepad
 mhtml
 
-# Some media stream tests crash because of OS issues, so skip all but one while we investigate.
+# Some media stream tests crash because of OS issues, so skip all but a few while we investigate.
 fast/mediastream [ Skip ]
 fast/mediastream/getUserMedia-default.html [ Pass ]
 fast/mediastream/captureInGPUProcess.html [ Pass ]
+fast/mediastream/MediaStreamTrack-clone.html [ Pass ]
+fast/mediastream/MediaStream-clone.html [ Pass ]
+fast/mediastream/mediastreamtrack-video-clone.html [ Pass ]
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

@@ -1,3 +1,20 @@
+2020-03-10  youenn fablet  <youenn@apple.com>
+
+        [iOS] Make sure a MediStreamTrack clone does not interrupt the being cloned track
+        https://bugs.webkit.org/show_bug.cgi?id=208634
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-clone.html:
+        * fast/mediastream/MediaStreamTrack-clone.html:
+        * fast/mediastream/mediastreamtrack-video-clone.html:
+        * platform/ios/TestExpectations:
+        * platform/ios/mediastream/getUserMedia-single-capture.html:
+        muting is now longer synchronous in WebProcess since it relies on GPUProcess factory to mute the remote track.
+        Update the test to account for this.
+        Also, make sure to use a different device, so that we do not use a track cloning under the hood.
+        * webrtc/multi-video.html:
+
 2020-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutTests] Do not expose didAddHorizontal/VerticalScrollbar and willRemoveHorizontal/VerticalScrollbar
