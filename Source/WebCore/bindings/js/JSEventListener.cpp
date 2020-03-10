@@ -51,11 +51,13 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_isAttribute(isAttribute)
     , m_isolatedWorld(isolatedWorld)
 {
-    if (wrapper) {
-        JSC::Heap::heap(wrapper)->writeBarrier(wrapper, function);
+    if (function) {
+        ASSERT(wrapper);
+        JSC::VM& vm = m_isolatedWorld->vm();
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
-    } else
-        ASSERT(!function);
+        vm.heap.writeBarrier(wrapper, function);
+        m_isInitialized = true;
+    }
 }
 
 JSEventListener::~JSEventListener() = default;
@@ -80,7 +82,7 @@ JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
 
 void JSEventListener::visitJSFunction(SlotVisitor& visitor)
 {
-    // If m_wrapper is null, then m_jsFunction is zombied, and should never be accessed.
+    // If m_wrapper is null, we are not keeping m_jsFunction alive.
     if (!m_wrapper)
         return;
 

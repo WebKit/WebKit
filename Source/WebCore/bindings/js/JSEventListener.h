@@ -52,7 +52,6 @@ public:
     DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
 
     JSC::JSObject* wrapper() const { return m_wrapper.get(); }
-    void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
     virtual String sourceURL() const { return String(); }
     virtual TextPosition sourcePosition() const { return TextPosition(); }
@@ -66,10 +65,12 @@ private:
 protected:
     JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
     void handleEvent(ScriptExecutionContext&, Event&) override;
+    void setWrapperWhenInitializingJSFunction(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
 private:
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;
     mutable JSC::Weak<JSC::JSObject> m_wrapper;
+    mutable bool m_isInitialized { false };
 
     bool m_isAttribute;
     Ref<DOMWrapperWorld> m_isolatedWorld;
@@ -95,28 +96,34 @@ inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext& script
 {
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return null in this case.
+    JSC::VM& vm = m_isolatedWorld->vm();
     auto protect = makeRef(const_cast<JSEventListener&>(*this));
-    JSC::Strong<JSC::JSObject> wrapper(m_isolatedWorld->vm(), m_wrapper.get());
+    JSC::Strong<JSC::JSObject> wrapper(vm, m_wrapper.get());
 
-    if (!m_jsFunction) {
+    if (!m_isInitialized) {
+        ASSERT(!m_jsFunction);
         auto* function = initializeJSFunction(scriptExecutionContext);
-        if (auto* wrapper = m_wrapper.get())
-            JSC::Heap::heap(wrapper)->writeBarrier(wrapper, function);
-        m_jsFunction = JSC::Weak<JSC::JSObject>(function);
+        if (function) {
+            m_jsFunction = JSC::Weak<JSC::JSObject>(function);
+            // When JSFunction is initialized, initializeJSFunction must ensure that m_wrapper should be initialized too.
+            ASSERT(m_wrapper);
+            vm.heap.writeBarrier(m_wrapper.get(), function);
+            m_isInitialized = true;
+        }
     }
 
-    // Verify that we have a valid wrapper protecting our function from
-    // garbage collection. That is except for when we're not in the normal
-    // world and can have zombie m_jsFunctions.
-    ASSERT(!m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction);
-
-    // If m_wrapper is null, then m_jsFunction is zombied, and should never be accessed.
-    if (!m_wrapper)
+    // m_wrapper and m_jsFunction are Weak<>. nullptr of these fields do not mean that this event-listener is not initialized yet.
+    // If this is initialized once, m_isInitialized should be true, and then m_wrapper and m_jsFunction must be alive. m_wrapper's
+    // liveness should be kept correctly by using ActiveDOMObject, output-constraints, etc. And m_jsFunction must be alive if m_wrapper
+    // is alive since JSEventListener marks m_jsFunction in JSEventListener::visitJSFunction if m_wrapper is alive.
+    // If the event-listener is not initialized yet, we should skip invoking this event-listener.
+    if (!m_isInitialized)
         return nullptr;
 
-    // Try to verify that m_jsFunction wasn't recycled. (Not exact, since an
-    // event listener can be almost anything, but this makes test-writing easier).
-    ASSERT(!m_jsFunction || static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
+    ASSERT(m_wrapper);
+    ASSERT(m_jsFunction);
+    // Ensure m_jsFunction is live JSObject as a quick sanity check (while it is already ensured by Weak<>). If this fails, this is possibly JSC GC side's bug.
+    ASSERT(static_cast<JSC::JSCell*>(m_jsFunction.get())->isObject());
 
     return m_jsFunction.get();
 }

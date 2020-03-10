@@ -173,7 +173,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         if (!wrapper()) {
             // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
             // FIXME: Should pass the global object associated with the node
-            setWrapper(vm, asObject(toJS(lexicalGlobalObject, globalObject, *m_originalNode)));
+            setWrapperWhenInitializingJSFunction(vm, asObject(toJS(lexicalGlobalObject, globalObject, *m_originalNode)));
         }
 
         // Add the event's home element to the scope
