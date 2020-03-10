@@ -33,8 +33,9 @@ namespace WebCore {
 namespace DisplayList {
 
 class DrawingContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, Recorder::Observer*);
+    WEBCORE_EXPORT DrawingContext(const FloatSize& logicalSize, Recorder::Observer* = nullptr);
 
     GraphicsContext& context() const { return const_cast<DrawingContext&>(*this).m_context; }
     WEBCORE_EXPORT Recorder& recorder();

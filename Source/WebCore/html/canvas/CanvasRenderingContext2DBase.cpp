@@ -42,6 +42,7 @@
 #include "CanvasPattern.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
+#include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
 #include "FloatQuad.h"
@@ -86,33 +87,6 @@ const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Med
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const char* const CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif";
 const char* const CanvasRenderingContext2DBase::DefaultFont = "10px sans-serif";
-
-struct DisplayListDrawingContext {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    GraphicsContext context;
-    DisplayList::DisplayList displayList;
-    
-    DisplayListDrawingContext(GraphicsContext& context, const FloatRect& clip)
-        : DisplayListDrawingContext(context.state(), clip)
-    {
-    }
-
-    DisplayListDrawingContext(const GraphicsContextState& state, const FloatRect& clip)
-        : context([&](GraphicsContext& displayListContext) {
-            return makeUnique<DisplayList::Recorder>(displayListContext, displayList, state, clip, AffineTransform());
-        })
-    {
-    }
-};
-
-typedef HashMap<const CanvasRenderingContext2DBase*, std::unique_ptr<DisplayList::DisplayList>> ContextDisplayListHashMap;
-
-static ContextDisplayListHashMap& contextDisplayListMap()
-{
-    static NeverDestroyed<ContextDisplayListHashMap> sharedHashMap;
-    return sharedHashMap;
-}
 
 class CanvasStrokeStyleApplier : public StrokeStyleApplier {
 public:
@@ -163,9 +137,6 @@ CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 #if ASSERT_ENABLED
     unwindStateStack();
 #endif
-
-    if (UNLIKELY(tracksDisplayListReplay()))
-        contextDisplayListMap().remove(this);
 }
 
 bool CanvasRenderingContext2DBase::isAccelerated() const
@@ -2065,31 +2036,6 @@ void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, unsigned options)
     canvasBase().didDraw(dirtyRect);
 }
 
-void CanvasRenderingContext2DBase::setTracksDisplayListReplay(bool tracksDisplayListReplay)
-{
-    if (tracksDisplayListReplay == m_tracksDisplayListReplay)
-        return;
-
-    m_tracksDisplayListReplay = tracksDisplayListReplay;
-    if (!m_tracksDisplayListReplay)
-        contextDisplayListMap().remove(this);
-}
-
-String CanvasRenderingContext2DBase::displayListAsText(DisplayList::AsTextFlags flags) const
-{
-    if (!m_recordingContext)
-        return { };
-    return m_recordingContext->displayList.asText(flags);
-}
-
-String CanvasRenderingContext2DBase::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
-{
-    auto* displayList = contextDisplayListMap().get(this);
-    if (!displayList)
-        return { };
-    return displayList->asText(flags);
-}
-
 const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBase::stateStack()
 {
     realizeSaves();
@@ -2098,20 +2044,16 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 
 void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
 {
-    if (UNLIKELY(m_usesDisplayListDrawing)) {
-        if (!m_recordingContext)
-            return;
+    if (!m_recordingContext)
+        return;
 
-        FloatRect clip(FloatPoint::zero(), canvasBase().size());
-        DisplayList::Replayer replayer(*canvasBase().drawingContext(), m_recordingContext->displayList);
+    ASSERT(m_usesDisplayListDrawing);
 
-        if (UNLIKELY(m_tracksDisplayListReplay)) {
-            auto replayList = replayer.replay(clip, m_tracksDisplayListReplay);
-            contextDisplayListMap().add(this, WTFMove(replayList));
-        } else
-            replayer.replay(clip);
-
-        m_recordingContext->displayList.clear();
+    auto& displayList = m_recordingContext->displayList();
+    if (displayList.itemCount()) {
+        DisplayList::Replayer replayer(*canvasBase().drawingContext(), displayList);
+        replayer.replay({ FloatPoint::zero(), canvasBase().size() });
+        displayList.clear();
     }
 }
 
@@ -2119,8 +2061,8 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     if (UNLIKELY(m_usesDisplayListDrawing)) {
         if (!m_recordingContext)
-            m_recordingContext = makeUnique<DisplayListDrawingContext>(GraphicsContextState(), FloatRect(FloatPoint::zero(), canvasBase().size()));
-        return &m_recordingContext->context;
+            m_recordingContext = makeUnique<DisplayList::DrawingContext>(canvasBase().size());
+        return &m_recordingContext->context();
     }
 
     return canvasBase().drawingContext();

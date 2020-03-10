@@ -219,12 +219,6 @@ public:
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
 
-    bool tracksDisplayListReplay() const { return m_tracksDisplayListReplay; }
-    void setTracksDisplayListReplay(bool);
-
-    String displayListAsText(DisplayList::AsTextFlags) const;
-    String replayDisplayListAsText(DisplayList::AsTextFlags) const;
-
     using Direction = CanvasDirection;
 
     class FontProxy : public FontSelectorClient {
@@ -384,8 +378,7 @@ protected:
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
-    bool m_tracksDisplayListReplay { false };
-    mutable std::unique_ptr<struct DisplayListDrawingContext> m_recordingContext;
+    mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
 };
 
 } // namespace WebCore
