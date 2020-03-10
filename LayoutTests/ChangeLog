@@ -1,5 +1,17 @@
 2020-03-10  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, emit new baselines of WebGL 1.0.3 conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=208854
+
+        Unreviewed gardening.
+
+        * platform/wpe/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt: Added.
+        * platform/wpe/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt: Added.
+        * platform/wpe/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt: Added.
+        * platform/wpe/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt: Added.
+
+2020-03-10  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=208853
 
