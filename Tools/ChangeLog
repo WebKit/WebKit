@@ -1,3 +1,13 @@
+2020-03-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should only display important messages in pop-over - part 3
+        https://bugs.webkit.org/show_bug.cgi?id=208865
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Added more strings to STEPS_TO_HIDE.
+
 2020-03-10  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] MiniBrowser: Close child WebViews when exiting

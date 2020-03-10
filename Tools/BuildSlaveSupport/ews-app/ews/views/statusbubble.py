@@ -58,7 +58,10 @@ class StatusBubble(View):
                      '^Downloaded built product$', '^Extracted built product$',
                      '^Cleaned and updated working directory$', '^Checked out required revision$', '^Updated working directory$',
                      '^Validated patch$', '^Killed old processes$', '^Configured build$', '^OS:.*Xcode:', '(skipped)',
-                     '^Printed configuration$', '^Checked patch relevance$']
+                     '^Printed configuration$', '^Checked patch relevance$', '^Deleted .git/index.lock$',
+                     '^triggered.*$', '^Found modified ChangeLogs$', '^Created local git commit$', '^Set build summary$',
+                     '^Validated commiter$', '^Validated commiter and reviewer$', '^Validated ChangeLog and Reviewer$',
+                     '^Removed flags on bugzilla patch$']
     DAYS_TO_CHECK = 3
     BUILDER_ICON = u'\U0001f6e0'
     TESTER_ICON = u'\U0001f52c'
