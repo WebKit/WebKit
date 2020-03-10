@@ -674,6 +674,10 @@ webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
 
+webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
+webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1299,6 +1303,7 @@ webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.htm
 
 webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
 webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure ]
+webkit.org/b/208139 http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html [ Failure Pass ]
 
 webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
 
@@ -1380,6 +1385,8 @@ webkit.org/b/207711 [ Debug ] http/tests/workers/service/serviceworkerclients-ma
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 
 webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
+
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -2284,6 +2291,9 @@ webkit.org/b/208696 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2
 webkit.org/b/208696 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba8-rgba-unsigned_byte.html [ Failure ]
 webkit.org/b/208696 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-srgb8-rgb-unsigned_byte.html [ Failure ]
 webkit.org/b/208696 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure ]
+
+imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Missing ]
+imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

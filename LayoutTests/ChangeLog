@@ -1,3 +1,12 @@
+2020-03-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=208853
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Flaky Test: svg/custom/object-sizing-explicit-height.xhtml
