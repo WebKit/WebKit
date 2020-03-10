@@ -160,6 +160,14 @@ static const char* vertexTemplateCommon =
     GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_STEP 0.2)
 
 
+#define OES_EGL_IMAGE_EXTERNAL_DIRECTIVE \
+    GLSL_DIRECTIVE(ifdef ENABLE_TextureExternalOES) \
+        GLSL_DIRECTIVE(extension GL_OES_EGL_image_external : require) \
+        GLSL_DIRECTIVE(define SamplerExternalOESType samplerExternalOES) \
+    GLSL_DIRECTIVE(else) \
+        GLSL_DIRECTIVE(define SamplerExternalOESType sampler2D) \
+    GLSL_DIRECTIVE(endif)
+
 // Common header for all versions. We define the matrices variables here to keep the precision
 // directives scope: the first one applies to the matrices variables and the next one to the
 // rest of them. The precision is only used in GLES.
@@ -167,10 +175,9 @@ static const char* fragmentTemplateHeaderCommon =
     RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
+    OES_EGL_IMAGE_EXTERNAL_DIRECTIVE
 #if USE(OPENGL_ES)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
-#endif
-#if USE(OPENGL_ES)
     STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
     )
@@ -211,6 +218,7 @@ static const char* fragmentTemplateCommon =
         uniform SamplerType s_samplerU;
         uniform SamplerType s_samplerV;
         uniform sampler2D s_contentTexture;
+        uniform SamplerExternalOESType s_externalOESTexture;
         uniform float u_opacity;
         uniform float u_filterAmount;
         uniform mat3 u_yuvToRgb;
@@ -374,6 +382,12 @@ static const char* fragmentTemplateCommon =
             color = sourceOver(contentColor, color);
         }
 
+        void applyTextureExternalOES(inout vec4 color, vec2 texCoord)
+        {
+            vec4 contentColor = texture2D(s_externalOESTexture, texCoord);
+            color = sourceOver(contentColor, color);
+        }
+
         void applySolidColor(inout vec4 color) { color *= u_color; }
 
         void main(void)
@@ -400,6 +414,7 @@ static const char* fragmentTemplateCommon =
             applyBlurFilterIfNeeded(color, texCoord);
             applyAlphaBlurIfNeeded(color, texCoord);
             applyContentTextureIfNeeded(color, texCoord);
+            applyTextureExternalOESIfNeeded(color, texCoord);
             gl_FragColor = color;
         }
     );
@@ -432,6 +447,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(AlphaBlur);
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
+    SET_APPLIER_FROM_OPTIONS(TextureExternalOES);
 
     StringBuilder vertexShaderBuilder;
 

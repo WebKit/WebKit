@@ -178,7 +178,11 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
                 options = TextureMapperShaderProgram::TextureYUV;
                 break;
             }
-        });
+        },
+        [&](const Buffer::ExternalOESTexture&) {
+            options = TextureMapperShaderProgram::TextureExternalOES;
+        }
+    );
 
     if (options != m_shaderOptions) {
         m_shaderProgram = TextureMapperShaderProgram::create(options);
@@ -252,6 +256,15 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
+        },
+        [&](const Buffer::ExternalOESTexture& texture) {
+            glUniform1i(m_shaderProgram->externalOESTextureLocation(), 0);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_EXTERNAL_OES, texture.id);
+            glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         });
 
     m_shaderProgram->setMatrix(m_shaderProgram->modelViewMatrixLocation(), m_modelViewMatrix);

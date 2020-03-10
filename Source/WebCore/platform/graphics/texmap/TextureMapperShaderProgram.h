@@ -66,6 +66,7 @@ public:
         TextureNV12      = 1L << 19,
         TextureNV21      = 1L << 20,
         TexturePackedYUV = 1L << 21,
+        TextureExternalOES = 1L << 22,
     };
 
     typedef unsigned Options;
@@ -96,6 +97,7 @@ public:
     TEXMAP_DECLARE_UNIFORM(blurRadius)
     TEXMAP_DECLARE_UNIFORM(shadowOffset)
     TEXMAP_DECLARE_SAMPLER(contentTexture)
+    TEXMAP_DECLARE_SAMPLER(externalOESTexture)
 
     void setMatrix(GLuint, const TransformationMatrix&);
 
