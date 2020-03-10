@@ -32,30 +32,74 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDM.h"
+#include "CDMLogging.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeySystemAccess.h"
 #include "Logging.h"
+#include <wtf/text/StringBuilder.h>
+
+namespace WTF {
+
+template<typename>
+struct LogArgument;
+
+template<typename T>
+struct LogArgument<Vector<T>> {
+    static String toString(const Vector<T>& value)
+    {
+        StringBuilder builder;
+        builder.append("[");
+        for (auto item : value)
+            builder.append(LogArgument<T>::toString(item));
+        builder.append("]");
+        return builder.toString();
+    }
+};
+
+template<typename T>
+struct LogArgument<Optional<T>> {
+    static String toString(const Optional<T>& value)
+    {
+        return value ? "nullopt"_s : LogArgument<T>::toString(value.value());
+    }
+};
+
+}
 
 namespace WebCore {
 
-static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&&);
+template<typename... Arguments>
+inline void infoLog(Logger& logger, const Arguments&... arguments)
+{
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    logger.info(LogEME, arguments...);
+#else
+    UNUSED_PARAM(logger);
+#endif
+}
 
-void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, const String& keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&&, Ref<Logger>&&, WTF::Logger::LogSiteIdentifier&&);
+
+void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& document, const String& keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-navigator-requestmediakeysystemaccess
     // W3C Editor's Draft 09 November 2016
-    LOG(EME, "EME - request media key system access for %s", keySystem.utf8().data());
+    auto identifier = WTF::Logger::LogSiteIdentifier("NavigatorEME", __func__, &navigator);
+    Ref<Logger> logger = document.logger();
+
+    infoLog(logger, identifier, "keySystem(", keySystem, "), supportedConfigurations(", supportedConfigurations, ")");
 
     // When this method is invoked, the user agent must run the following steps:
     // 1. If keySystem is the empty string, return a promise rejected with a newly created TypeError.
     // 2. If supportedConfigurations is empty, return a promise rejected with a newly created TypeError.
     if (keySystem.isEmpty() || supportedConfigurations.isEmpty()) {
+        infoLog(logger, identifier, "Rejected: empty keySystem(", keySystem.isEmpty(), ") or empty supportedConfigurations(", supportedConfigurations.isEmpty(), ")");
         promise->reject(TypeError);
         return;
     }
 
-    document.postTask([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), promise = WTFMove(promise), &document] (ScriptExecutionContext&) mutable {
+    document.postTask([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), promise = WTFMove(promise), &document, logger = WTFMove(logger), identifier = WTFMove(identifier)] (ScriptExecutionContext&) mutable {
         // 3. Let document be the calling context's Document.
         // 4. Let origin be the origin of document.
         // 5. Let promise be a new promise.
@@ -63,18 +107,18 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, c
         // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
         //      String comparison is case-sensitive.
         if (!CDM::supportsKeySystem(keySystem)) {
-            LOG(EME, "EME - %s is not supported", keySystem.utf8().data());
+            infoLog(logger, identifier, "Rejected: keySystem(", keySystem, ") not supported");
             promise->reject(NotSupportedError);
             return;
         }
 
         // 6.2. Let implementation be the implementation of keySystem.
         auto implementation = CDM::create(document, keySystem);
-        tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise));
+        tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
     });
 }
 
-static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise)
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise, Ref<Logger>&& logger, WTF::Logger::LogSiteIdentifier&& identifier)
 {
     // 6.3. For each value in supportedConfigurations:
     if (!supportedConfigurations.isEmpty()) {
@@ -84,7 +128,7 @@ static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<M
         MediaKeySystemConfiguration candidateConfiguration = WTFMove(supportedConfigurations.first());
         supportedConfigurations.remove(0);
 
-        CDM::SupportedConfigurationCallback callback = [implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise] (Optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
+        CDM::SupportedConfigurationCallback callback = [implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise, logger = WTFMove(logger), identifier = WTFMove(identifier)] (Optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
             // 6.3.3. If supported configuration is not NotSupported, run the following steps:
             if (supportedConfiguration) {
                 // 6.3.3.1. Let access be a new MediaKeySystemAccess object, and initialize it as follows:
@@ -97,18 +141,19 @@ static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<M
                 auto access = MediaKeySystemAccess::create(keySystem, WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
 
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
+                infoLog(logger, identifier, "Resolved: keySystem(", keySystem, "), supportedConfiguration(", supportedConfiguration, ")");
                 promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTFMove(access));
                 return;
             }
 
-            tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise));
+            tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise), WTFMove(logger), WTFMove(identifier));
         };
         implementation->getSupportedConfiguration(WTFMove(candidateConfiguration), WTFMove(callback));
         return;
     }
 
-
     // 6.4. Reject promise with a NotSupportedError.
+    infoLog(logger, identifier, "Rejected: empty supportedConfigurations");
     promise->reject(NotSupportedError);
 }
 

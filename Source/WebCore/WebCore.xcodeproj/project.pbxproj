@@ -4134,6 +4134,7 @@
 		CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A45180DFF4E008B8E65 /* VideoTrackMediaSource.h */; };
 		CD8B5A49180E138B008B8E65 /* TextTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */; };
 		CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */; };
+		CD8D306F23AD4FA8006C3975 /* CDMLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8D306D23AD4FA8006C3975 /* CDMLogging.h */; };
 		CD92F5132260FFEE00F87BB3 /* DocumentFullscreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CD92F5102260FFEE00F87BB3 /* DocumentFullscreen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD92F5182261038200F87BB3 /* FullscreenManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD92F5162261038200F87BB3 /* FullscreenManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD94A5DD1F71D5D800F525C5 /* CDMClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */; };
@@ -13934,6 +13935,8 @@
 		CD8C6C2722FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemotePlaybackAvailabilityCallback.cpp; sourceTree = "<group>"; };
 		CD8C6C2822FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRemotePlaybackAvailabilityCallback.h; sourceTree = "<group>"; };
 		CD8C6C2922FDDA9100A720AB /* JSRemotePlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRemotePlayback.h; sourceTree = "<group>"; };
+		CD8D306D23AD4FA8006C3975 /* CDMLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDMLogging.h; sourceTree = "<group>"; };
+		CD8D306E23AD4FA8006C3975 /* CDMLogging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CDMLogging.cpp; sourceTree = "<group>"; };
 		CD92F50F2260FFEE00F87BB3 /* DocumentFullscreen.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentFullscreen.idl; sourceTree = "<group>"; };
 		CD92F5102260FFEE00F87BB3 /* DocumentFullscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentFullscreen.h; sourceTree = "<group>"; };
 		CD92F5162261038200F87BB3 /* FullscreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FullscreenManager.h; sourceTree = "<group>"; };
@@ -26376,6 +26379,8 @@
 				CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */,
 				CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */,
 				CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */,
+				CD8D306D23AD4FA8006C3975 /* CDMLogging.h */,
+				CD8D306E23AD4FA8006C3975 /* CDMLogging.cpp */,
 			);
 			path = encryptedmedia;
 			sourceTree = "<group>";
@@ -30426,6 +30431,7 @@
 				07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */,
 				07941792166E855F009416C2 /* InbandTextTrack.h in Headers */,
 				07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */,
+				CD8D306F23AD4FA8006C3975 /* CDMLogging.h in Headers */,
 				07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */,
 				07AA6B6C166D2C1300D45671 /* InbandTextTrackPrivateAVFObjC.h in Headers */,
 				07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */,

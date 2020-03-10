@@ -43,8 +43,8 @@ class CDMClient;
 class CDMInstance;
 class BufferSource;
 class DeferredPromise;
+class Document;
 class MediaKeySession;
-class ScriptExecutionContext;
 
 class MediaKeys : public RefCounted<MediaKeys>, public CanMakeWeakPtr<MediaKeys> {
 public:
@@ -57,8 +57,8 @@ public:
 
     ~MediaKeys();
 
-    ExceptionOr<Ref<MediaKeySession>> createSession(ScriptExecutionContext&, MediaKeySessionType);
-    void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
+    ExceptionOr<Ref<MediaKeySession>> createSession(Document&, MediaKeySessionType);
+    void setServerCertificate(Document&, const BufferSource&, Ref<DeferredPromise>&&);
 
     void attachCDMClient(CDMClient&);
     void detachCDMClient(CDMClient&);

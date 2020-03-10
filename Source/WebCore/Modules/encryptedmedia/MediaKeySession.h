@@ -43,6 +43,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class Logger;
+}
+
 namespace WebCore {
 
 class BufferSource;
@@ -57,7 +61,7 @@ template<typename IDLType> class DOMPromiseProxy;
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMInstanceSessionClient {
     WTF_MAKE_ISO_ALLOCATED(MediaKeySession);
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
+    static Ref<MediaKeySession> create(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     virtual ~MediaKeySession();
 
     using RefCounted<MediaKeySession>::ref;
@@ -84,7 +88,7 @@ public:
     bool hasPendingActivity() const override;
 
 private:
-    MediaKeySession(ScriptExecutionContext&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
+    MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
     void updateExpiration(double);
     void sessionClosed();
@@ -104,6 +108,15 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const override;
 
+#if !RELEASE_LOG_DISABLED
+    // LoggerHelper
+    const WTF::Logger& logger() const { return m_logger; }
+    const char* logClassName() const { return "MediaKeySession"; }
+    WTFLogChannel& logChannel() const;
+    const void* logIdentifier() const { return this; }
+#endif
+
+    Ref<WTF::Logger> m_logger;
     WeakPtr<MediaKeys> m_keys;
     String m_sessionId;
     double m_expiration;

@@ -1826,6 +1826,7 @@ platform/audio/VectorMath.cpp
 platform/audio/ZeroPole.cpp
 
 platform/encryptedmedia/CDMFactory.cpp
+platform/encryptedmedia/CDMLogging.cpp
 platform/encryptedmedia/CDMPrivate.cpp
 platform/encryptedmedia/CDMProxy.cpp
 

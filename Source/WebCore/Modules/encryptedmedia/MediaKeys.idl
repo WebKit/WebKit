@@ -32,6 +32,6 @@
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     ImplementationLacksVTable,
 ] interface MediaKeys {
-    [CallWith=ScriptExecutionContext, MayThrowException] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
-    Promise<bool> setServerCertificate(BufferSource serverCertificate);
+    [CallWith=Document, MayThrowException] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
+    [CallWith=Document] Promise<bool> setServerCertificate(BufferSource serverCertificate);
 };
