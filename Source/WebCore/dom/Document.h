@@ -37,6 +37,7 @@
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
+#include "FrameIdentifier.h"
 #include "FrameLoaderTypes.h"
 #include "GenericTaskQueue.h"
 #include "GraphicsTypes.h"
@@ -424,6 +425,8 @@ public:
     void setReferrerPolicy(ReferrerPolicy);
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.valueOr(ReferrerPolicy::NoReferrerWhenDowngrade); }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
     WEBCORE_EXPORT DocumentType* doctype() const;
 
     WEBCORE_EXPORT DOMImplementation& implementation();
@@ -645,6 +648,8 @@ public:
     void clearAXObjectCache();
 
     WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
+    Optional<FrameIdentifier> frameID() const;
+
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }

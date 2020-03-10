@@ -330,6 +330,9 @@
 #include "HTMLVideoElement.h"
 #endif
 
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().valueOr(PageIdentifier { }).toUInt64(), frameID().valueOr(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().valueOr(PageIdentifier { }).toUInt64(), frameID().valueOr(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
@@ -3374,6 +3377,7 @@ bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
 
     if (isNavigationBlockedByThirdPartyIFrameRedirectBlocking(*targetFrame, destinationURL)) {
         printNavigationErrorMessage(*targetFrame, url(), "The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame."_s);
+        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Navigation was prevented because it was triggered by a cross-origin or untrusted iframe");
         return false;
     }
 
@@ -7913,6 +7917,11 @@ Optional<PageIdentifier> Document::pageID() const
     return m_frame->loader().client().pageID();
 }
 
+Optional<FrameIdentifier> Document::frameID() const
+{
+    return m_frame->loader().client().frameID();
+}
+
 void Document::registerArticleElement(Element& article)
 {
     m_articleElements.add(&article);
@@ -8397,6 +8406,11 @@ bool Document::shouldIgnoreSyncXHRs() const
     return m_numberOfRejectedSyncXHRs > maxRejectedSyncXHRsPerEventLoopIteration;
 }
 
+bool Document::isAlwaysOnLoggingAllowed() const
+{
+    return !m_frame || m_frame->isAlwaysOnLoggingAllowed();
+}
+
 #if ENABLE(APPLE_PAY)
 
 bool Document::isApplePayActive() const
@@ -8464,3 +8478,6 @@ LazyLoadImageObserver& Document::lazyLoadImageObserver()
 }
 
 } // namespace WebCore
+
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_ERROR_IF_ALLOWED
