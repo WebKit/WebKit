@@ -1439,3 +1439,5 @@ webkit.org/b/208739 http/tests/resourceLoadStatistics/third-party-cookie-blockin
 webkit.org/b/208817 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Pass Timeout ]
 
 webkit.org/b/208887 fast/css-custom-paint/image.html [ Pass Timeout ]
+
+webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
