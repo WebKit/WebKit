@@ -51,16 +51,15 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, R
     return MediaStreamPrivate::create(WTFMove(logger), MediaStreamTrackPrivateVector::from(MediaStreamTrackPrivate::create(WTFMove(loggerCopy), WTFMove(source))));
 }
 
-Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, const Vector<Ref<RealtimeMediaSource>>& audioSources, const Vector<Ref<RealtimeMediaSource>>& videoSources)
+Ref<MediaStreamPrivate> MediaStreamPrivate::create(Ref<const Logger>&& logger, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource)
 {
     MediaStreamTrackPrivateVector tracks;
-    tracks.reserveInitialCapacity(audioSources.size() + videoSources.size());
+    tracks.reserveInitialCapacity(2);
 
-    for (auto& source : audioSources)
-        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), source.copyRef()));
-
-    for (auto& source : videoSources)
-        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), source.copyRef()));
+    if (audioSource)
+        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), audioSource.releaseNonNull()));
+    if (videoSource)
+        tracks.uncheckedAppend(MediaStreamTrackPrivate::create(logger.copyRef(), videoSource.releaseNonNull()));
 
     return MediaStreamPrivate::create(WTFMove(logger), tracks);
 }

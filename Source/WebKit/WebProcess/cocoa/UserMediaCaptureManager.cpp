@@ -101,6 +101,28 @@ public:
         }
     }
 
+    void whenReady(CompletionHandler<void(String)>&& callback) final
+    {
+        if (m_isReady)
+            return callback(WTFMove(m_errorMessage));
+        m_callback = WTFMove(callback);
+    }
+
+    void didFail(String&& errorMessage)
+    {
+        m_isReady = true;
+        m_errorMessage = WTFMove(errorMessage);
+        if (m_callback)
+            m_callback(String(errorMessage));
+    }
+
+    void setAsReady()
+    {
+        m_isReady = true;
+        if (m_callback)
+            m_callback({ });
+    }
+
     SharedRingBufferStorage& storage()
     {
         ASSERT(type() == Type::Audio);
@@ -123,6 +145,10 @@ public:
     }
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
+    void setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
+    {
+        m_capabilities = WTFMove(capabilities);
+    }
 
     const RealtimeMediaSourceSettings& settings() final { return m_settings; }
     void setSettings(RealtimeMediaSourceSettings&& settings)
@@ -231,7 +257,7 @@ private:
 
     RealtimeMediaSourceIdentifier m_id;
     UserMediaCaptureManager& m_manager;
-    mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    RealtimeMediaSourceCapabilities m_capabilities;
     RealtimeMediaSourceSettings m_settings;
 
     CAAudioStreamDescription m_description;
@@ -242,6 +268,9 @@ private:
 
     Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
     bool m_shouldCaptureInGPUProcess { false };
+    bool m_isReady { false };
+    String m_errorMessage;
+    CompletionHandler<void(String)> m_callback;
 };
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
@@ -292,27 +321,31 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
         return { };
 
     auto id = RealtimeMediaSourceIdentifier::generate();
-    RealtimeMediaSourceSettings settings;
-    String errorMessage;
-    bool succeeded;
+
 #if ENABLE(GPU_PROCESS)
     auto* connection = shouldCaptureInGPUProcess ? &m_process.ensureGPUProcessConnection().connection() : m_process.parentProcessConnection();
 #else
     ASSERT(!shouldCaptureInGPUProcess);
     auto* connection = m_process.parentProcessConnection();
 #endif
-    if (!connection->sendSync(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, hashSalt, *constraints), Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints::Reply(succeeded, errorMessage, settings), 0))
-        return WTFMove(errorMessage);
-
-    if (!succeeded)
-        return WTFMove(errorMessage);
-
+    
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
-    auto source = adoptRef(*new Source(String::number(id.toUInt64()), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
+    auto source = adoptRef(*new Source(String::number(id.toUInt64()), type, device.type(), String { }, String { hashSalt }, id, *this));
     if (shouldCaptureInGPUProcess)
         source->setShouldCaptureInGPUProcess(shouldCaptureInGPUProcess);
-    source->setSettings(WTFMove(settings));
     m_sources.add(id, source.copyRef());
+
+    connection->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(id, device, hashSalt, *constraints), [source = source.copyRef()](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
+        if (!succeeded) {
+            source->didFail(WTFMove(errorMessage));
+            return;
+        }
+        source->setName(String { settings.label().string() });
+        source->setSettings(WTFMove(settings));
+        source->setCapabilities(WTFMove(capabilities));
+        source->setAsReady();
+    });
+
     return WebCore::CaptureSourceOrError(WTFMove(source));
 }
 
@@ -398,13 +431,7 @@ void UserMediaCaptureManager::Source::stopProducingData()
 
 const WebCore::RealtimeMediaSourceCapabilities& UserMediaCaptureManager::Source::capabilities()
 {
-    if (!m_capabilities) {
-        RealtimeMediaSourceCapabilities capabilities;
-        connection()->sendSync(Messages::UserMediaCaptureManagerProxy::Capabilities { m_id }, Messages::UserMediaCaptureManagerProxy::Capabilities::Reply(capabilities), 0);
-        m_capabilities = WTFMove(capabilities);
-    }
-
-    return m_capabilities.value();
+    return m_capabilities;
 }
 
 void UserMediaCaptureManager::Source::applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)

@@ -42,6 +42,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -106,6 +107,8 @@ public:
 
     enum class Type { None, Audio, Video };
     Type type() const { return m_type; }
+
+    virtual void whenReady(CompletionHandler<void(String)>&&);
 
     bool isProducingData() const { return m_isProducingData; }
     void start();
@@ -282,6 +285,11 @@ struct CaptureSourceOrError {
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);
+
+inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& callback)
+{
+    callback({ });
+}
 
 } // namespace WebCore
 

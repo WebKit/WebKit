@@ -177,7 +177,7 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_connectionProxy->removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&& completionHandler)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>&& completionHandler)
 {
     CaptureSourceOrError sourceOrError;
     switch (device.type()) {
@@ -203,17 +203,19 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     bool succeeded = !!sourceOrError;
     String invalidConstraints;
     WebCore::RealtimeMediaSourceSettings settings;
+    WebCore::RealtimeMediaSourceCapabilities capabilities;
     if (sourceOrError) {
         auto source = sourceOrError.source();
 #if !RELEASE_LOG_DISABLED
         source->setLogger(m_connectionProxy->logger(), LoggerHelper::uniqueLogIdentifier());
 #endif
         settings = source->settings();
+        capabilities = source->capabilities();
         ASSERT(!m_proxies.contains(id));
         m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
-    completionHandler(succeeded, invalidConstraints, WTFMove(settings));
+    completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities));
 }
 
 void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id)

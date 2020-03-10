@@ -1,5 +1,28 @@
 2020-03-10  youenn fablet  <youenn@apple.com>
 
+        Remove sync IPC when creating a remote capture source
+        https://bugs.webkit.org/show_bug.cgi?id=208816
+
+        Reviewed by Eric Carlson.
+
+        Use whenInitialized to wait for the async IPC that tells whether the remote source was created successfully.
+        Use the async response to gather the capabilities so as to remove the corresponding sync IPC.
+
+        * Platform/IPC/Connection.h:
+        (IPC::AsyncReplyError::create):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::didFail):
+        (WebKit::UserMediaCaptureManager::Source::setAsReady):
+        (WebKit::UserMediaCaptureManager::Source::setCapabilities):
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::Source::capabilities):
+
+2020-03-10  youenn fablet  <youenn@apple.com>
+
         Do not process RTC Network messages coming from NetworkProcess if LibWebRTCNetwork is not active
         https://bugs.webkit.org/show_bug.cgi?id=207376
 

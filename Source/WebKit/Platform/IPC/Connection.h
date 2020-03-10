@@ -85,7 +85,7 @@ enum class WaitForOption {
 while (0)
 
 template<typename AsyncReplyResult> struct AsyncReplyError {
-    static AsyncReplyResult create() { return { }; };
+    static AsyncReplyResult create() { return AsyncReplyResult { }; };
 };
 
 class MachMessage;

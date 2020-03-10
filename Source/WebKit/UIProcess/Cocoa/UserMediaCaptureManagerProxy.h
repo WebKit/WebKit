@@ -64,14 +64,12 @@ public:
     void setOrientation(uint64_t);
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void didReceiveSyncMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder) { didReceiveSyncMessage(connection, decoder, encoder); }
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&&);
+    void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>&&);
     void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void end(WebCore::RealtimeMediaSourceIdentifier);
