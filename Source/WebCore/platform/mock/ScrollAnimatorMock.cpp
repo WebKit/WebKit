@@ -47,27 +47,23 @@ ScrollAnimatorMock::~ScrollAnimatorMock() = default;
 void ScrollAnimatorMock::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
     m_verticalScrollbar = scrollbar;
-    m_logger("didAddVerticalScrollbar");
     ScrollAnimator::didAddVerticalScrollbar(scrollbar);
 }
 
 void ScrollAnimatorMock::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
     m_horizontalScrollbar = scrollbar;
-    m_logger("didAddHorizontalScrollbar");
     ScrollAnimator::didAddHorizontalScrollbar(scrollbar);
 }
 
 void ScrollAnimatorMock::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
-    m_logger("willRemoveVerticalScrollbar");
     ScrollAnimator::willRemoveVerticalScrollbar(scrollbar);
     m_verticalScrollbar = nullptr;
 }
 
 void ScrollAnimatorMock::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
-    m_logger("willRemoveHorizontalScrollbar");
     ScrollAnimator::willRemoveHorizontalScrollbar(scrollbar);
     m_horizontalScrollbar = nullptr;
 }

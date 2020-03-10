@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: MainFrameView: didAddVerticalScrollbar
-CONSOLE MESSAGE: FrameView: didAddVerticalScrollbar
-CONSOLE MESSAGE: FrameView: willRemoveVerticalScrollbar
-CONSOLE MESSAGE: line 14: FrameView: didAddVerticalScrollbar
-CONSOLE MESSAGE: line 14: FrameView: didAddHorizontalScrollbar
-CONSOLE MESSAGE: line 14: FrameView: willRemoveVerticalScrollbar
 CONSOLE MESSAGE: line 17: MainFrameView: mouseEnteredContentArea
 CONSOLE MESSAGE: line 17: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: line 18: FrameView: mouseEnteredHorizontalScrollbar

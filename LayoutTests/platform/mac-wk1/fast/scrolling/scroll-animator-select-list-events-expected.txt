@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: RenderListBox: didAddVerticalScrollbar
-CONSOLE MESSAGE: line 15: RenderListBox: mouseMovedInContentArea
-CONSOLE MESSAGE: line 16: RenderListBox: mouseEnteredVerticalScrollbar
-CONSOLE MESSAGE: line 16: RenderListBox: mouseMovedInContentArea
-CONSOLE MESSAGE: line 17: RenderListBox: mouseIsDownInVerticalScrollbar
-CONSOLE MESSAGE: line 18: RenderListBox: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: line 17: RenderListBox: mouseEnteredContentArea
+CONSOLE MESSAGE: line 17: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: line 18: RenderListBox: mouseEnteredVerticalScrollbar
 CONSOLE MESSAGE: line 18: RenderListBox: mouseMovedInContentArea
-CONSOLE MESSAGE: line 19: RenderListBox: mouseExitedVerticalScrollbar
-CONSOLE MESSAGE: line 19: RenderListBox: mouseExitedContentArea
+CONSOLE MESSAGE: line 19: RenderListBox: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: line 20: RenderListBox: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: line 20: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: line 21: RenderListBox: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: line 21: RenderListBox: mouseExitedContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -9,6 +9,8 @@
       testRunner.dumpAsText();
   }
   window.onload = function () {
+    if (window.internals)
+        internals.updateLayoutAndStyleForAllFrames();
       var list = document.getElementById("list");
       if (window.eventSender) {
           eventSender.mouseMoveTo(0, 0);

@@ -19,6 +19,8 @@
       testRunner.dumpAsText();
   }
   window.onload = function () {
+    if (window.internals)
+        internals.updateLayoutAndStyleForAllFrames();
       var div = document.querySelector('#scrollme');
       if (window.eventSender) {
           eventSender.mouseMoveTo(0, 0);

@@ -12,20 +12,18 @@ if (window.testRunner) {
 }
 
 function runTest() {
-    setTimeout(() => {
-        if (window.internals)
-            internals.updateLayoutAndStyleForAllFrames();
-        if (window.eventSender) {
-            eventSender.mouseMoveTo(0, 0);
-            // Move to a position that is over the vertical scrollbar and the iframe.
-            eventSender.mouseMoveTo(window.innerWidth - 4, 100);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-            eventSender.mouseMoveTo(0, 0);
-        }
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 0);
+    if (window.internals)
+        internals.updateLayoutAndStyleForAllFrames();
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(0, 0);
+        // Move to a position that is over the vertical scrollbar and the iframe.
+        eventSender.mouseMoveTo(window.innerWidth - 4, 100);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseMoveTo(0, 0);
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 <script src="../../resources/js-test-post.js"></script>

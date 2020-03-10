@@ -1,3 +1,20 @@
+2020-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutTests] Do not expose didAddHorizontal/VerticalScrollbar and willRemoveHorizontal/VerticalScrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=208833
+        <rdar://problem/60244801>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/scroll-animator-basic-events-expected.txt:
+        * fast/scrolling/scroll-animator-basic-events.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked-expected.txt:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered-expected.txt:
+        * fast/scrolling/scroll-animator-select-list-events-expected.txt:
+        * fast/scrolling/scroll-animator-select-list-events.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-09  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (257072) [ Mac wk2 Release ] fast/harness/uiscriptcontroller/concurrent-ui-side-scripts.html is flaky failing.
