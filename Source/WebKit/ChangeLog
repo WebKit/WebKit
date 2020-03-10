@@ -1,3 +1,17 @@
+2020-03-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Build Fix
+        https://bugs.webkit.org/show_bug.cgi?id=208838
+
+        Build fix of older iOS.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showDocumentPickerMenu]):
+
 2020-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERT(!m_textCheckingRequest) on editing/spelling/spellcheck-async-remove-frame.html

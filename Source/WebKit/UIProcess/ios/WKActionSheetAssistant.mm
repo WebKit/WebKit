@@ -689,7 +689,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([dataDetectorsActions count] == 0)
         return;
     
-#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU)
+#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
     auto delegate = _delegate.get();
     if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)]) {
         [self ensureContextMenuInteraction];

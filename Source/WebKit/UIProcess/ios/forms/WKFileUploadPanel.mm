@@ -499,16 +499,12 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)showDocumentPickerMenu
 {
-#if USE(UICONTEXTMENU)
-#if PLATFORM(MACCATALYST)
     // FIXME 49961589: Support picking media with UIImagePickerController
-    BOOL shouldPresentDocumentMenuViewController = NO;
-#else
+#if HAVE(UICONTEXTMENU_LOCATION)
     NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
     BOOL allowsImageMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeImage);
     BOOL allowsVideoMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeMovie);
     BOOL shouldPresentDocumentMenuViewController = allowsImageMediaType || allowsVideoMediaType;
-#endif
     if (shouldPresentDocumentMenuViewController) {
         [self ensureContextMenuInteraction];
         [_documentContextMenuInteraction _presentMenuAtLocation:CGPointMake(_interactionPoint.x, _interactionPoint.y)];
