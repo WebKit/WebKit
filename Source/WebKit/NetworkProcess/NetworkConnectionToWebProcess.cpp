@@ -408,11 +408,25 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
     return files;
 }
 
+#if ENABLE(SERVICE_WORKER)
+bool NetworkConnectionToWebProcess::isServiceWorkerAllowed() const
+{
+    return m_networkProcess->parentProcessHasServiceWorkerEntitlement();
+}
+
+std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
+{
+    if (!isServiceWorkerAllowed())
+        return nullptr;
+    return swConnection().createFetchTask(loader, request);
+}
+#endif
+
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
 {
 #if ENABLE(SERVICE_WORKER)
-    bool serviceWorkerAllowed = m_networkProcess->parentProcessHasServiceWorkerEntitlement();
-    if (serviceWorkerAllowed) {
+    bool isServiceWorkerAllowed = this->isServiceWorkerAllowed();
+    if (isServiceWorkerAllowed) {
         auto& server = m_networkProcess->swServerForSession(m_sessionID);
         if (!server.isImportCompleted()) {
             server.whenImportIsCompleted([this, protectedThis = makeRef(*this), loadParameters = WTFMove(loadParameters)]() mutable {
@@ -433,10 +447,10 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     auto& loader = m_networkResourceLoaders.add(identifier, NetworkResourceLoader::create(WTFMove(loadParameters), *this)).iterator->value;
 
 #if ENABLE(SERVICE_WORKER)
-    if (serviceWorkerAllowed) {
+    if (isServiceWorkerAllowed) {
         loader->startWithServiceWorker();
         return;
-    } else
+    }
 #endif
     loader->start();
 }
@@ -1013,6 +1027,7 @@ void NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
 
 WebSWServerConnection& NetworkConnectionToWebProcess::swConnection()
 {
+    ASSERT(isServiceWorkerAllowed());
     if (!m_swConnection)
         establishSWServerConnection();
     return *m_swConnection;

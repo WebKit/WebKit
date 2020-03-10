@@ -924,7 +924,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 #if ENABLE(SERVICE_WORKER)
     if (parameters().options.mode == FetchOptions::Mode::Navigate) {
-        if (auto serviceWorkerFetchTask = m_connection->swConnection().createFetchTask(*this, newRequest)) {
+        if (auto serviceWorkerFetchTask = m_connection->createFetchTask(*this, newRequest)) {
             RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
             m_networkLoad = nullptr;
             m_serviceWorkerFetchTask = WTFMove(serviceWorkerFetchTask);
@@ -1448,7 +1448,7 @@ void NetworkResourceLoader::startWithServiceWorker()
 {
     RELEASE_LOG_IF_ALLOWED("startWithServiceWorker:");
     ASSERT(!m_serviceWorkerFetchTask);
-    m_serviceWorkerFetchTask = m_connection->swConnection().createFetchTask(*this, originalRequest());
+    m_serviceWorkerFetchTask = m_connection->createFetchTask(*this, originalRequest());
     if (m_serviceWorkerFetchTask) {
         RELEASE_LOG_IF_ALLOWED("startWithServiceWorker: Created a ServiceWorkerFetchTask (fetchIdentifier=%" PRIu64 ")", m_serviceWorkerFetchTask->fetchIdentifier().toUInt64());
         return;

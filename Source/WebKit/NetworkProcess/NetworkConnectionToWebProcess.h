@@ -76,6 +76,7 @@ class NetworkResourceLoadParameters;
 class NetworkSession;
 class NetworkSocketChannel;
 class NetworkSocketStream;
+class ServiceWorkerFetchTask;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 typedef uint64_t ResourceLoadIdentifier;
@@ -169,6 +170,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void serverToContextConnectionNoLongerNeeded();
     WebSWServerConnection& swConnection();
+    std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
 #endif
 
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
@@ -234,6 +236,7 @@ private:
     void establishSWContextConnection(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
+    bool isServiceWorkerAllowed() const;
 #endif
 
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
