@@ -203,7 +203,7 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&& completio
 {
 #if ENABLE(SPELLCHECK)
     TextCheckingRequestData request = completion->textCheckingRequestData();
-    ASSERT(request.sequence() != unrequestedTextCheckingSequence);
+    ASSERT(request.identifier());
     ASSERT(request.checkingTypes());
 
     completion->didFinishCheckingText(checkTextOfParagraph(completion->spellDocumentTag(), request.text(), insertionPoint, request.checkingTypes(), false));

@@ -1,3 +1,16 @@
+2020-03-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION(r258182): [GTK] Remove reference to unrequestedTextCheckingSequence
+        https://bugs.webkit.org/show_bug.cgi?id=208852
+
+        Reviewed by Carlos Garcia Campos.
+        
+        unrequestedTextCheckingSequence was removed in r258182. This variable
+        was still used in an assertion, which broke GTK Debug build.
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+
 2020-03-10  Chris Dumez  <cdumez@apple.com>
 
         Drop unused DisableICECandidateFiltering / EnableICECandidateFiltering IPC messages
