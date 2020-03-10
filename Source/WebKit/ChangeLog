@@ -1,3 +1,19 @@
+2020-03-10  youenn fablet  <youenn@apple.com>
+
+        Do not process RTC Network messages coming from NetworkProcess if LibWebRTCNetwork is not active
+        https://bugs.webkit.org/show_bug.cgi?id=207376
+
+        Reviewed by Eric Carlson.
+
+        In case LibWebRTCNetwork is not active, we do not have instantiated any peer connection.
+        We do not have started any related RTC thread so we are not expecting any RTC message from Network Process.
+        Exit early in that case.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::isActive const):
+
 2020-03-10  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(r258182): [GTK] Remove reference to unrequestedTextCheckingSequence

@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(LIBWEBRTC)
+#include "LibWebRTCProvider.h"
 #include "LibWebRTCSocketFactory.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCResolver.h"
@@ -43,6 +44,8 @@ public:
     LibWebRTCNetwork() = default;
 
     void networkProcessCrashed();
+
+    bool isActive() const;
 
 #if USE(LIBWEBRTC)
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
@@ -72,6 +75,15 @@ inline void LibWebRTCNetwork::networkProcessCrashed()
 {
 #if USE(LIBWEBRTC)
     m_webNetworkMonitor.networkProcessCrashed();
+#endif
+}
+
+inline bool LibWebRTCNetwork::isActive() const
+{
+#if USE(LIBWEBRTC)
+    return WebCore::LibWebRTCProvider::hasWebRTCThreads();
+#else
+    return false;
 #endif
 }
 
