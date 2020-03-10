@@ -1,3 +1,12 @@
+2020-03-10  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r257944?) [ Mac wk2 ] fast/images/decode-render-animated-image.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208889
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-10  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] fast/css-custom-paint/image.html is flaky timing out
