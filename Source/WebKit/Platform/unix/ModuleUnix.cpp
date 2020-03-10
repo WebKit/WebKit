@@ -39,6 +39,7 @@ void Module::unload()
 
 void* Module::platformFunctionPointer(const char*) const
 {
+    return nullptr;
 }
 
 }
