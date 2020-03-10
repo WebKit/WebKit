@@ -1,3 +1,17 @@
+2020-03-10  Paulo Matos  <pmatos@igalia.com>
+
+        JSC 32bits is failing on new test stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js
+        https://bugs.webkit.org/show_bug.cgi?id=206864
+
+        Reviewed by Yusuke Suzuki.
+
+        Add new test to memory limited devices - behaviour is the same as 
+        numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js
+        but it creates 25 threads instead of 100.
+
+        * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access_memory-limited.js: Added.
+        (let.theCode):
+
 2020-03-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         @putByValDirect does not perform [[DefineOwnProperty]] correctly
