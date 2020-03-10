@@ -419,7 +419,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
 #endif
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
 #endif
 #if ENABLE(APPLE_PAY)

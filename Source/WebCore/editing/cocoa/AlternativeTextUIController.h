@@ -65,4 +65,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DICTATION_ALTERNATIVES)
+#endif // USE(DICTATION_ALTERNATIVES)

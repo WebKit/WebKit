@@ -246,4 +246,4 @@ GPUBindGroup::~GPUBindGroup()
     
 } // namespace WebCore
 
-#endif // ENABLE(WEBPGU)
+#endif // ENABLE(WEBGPU)

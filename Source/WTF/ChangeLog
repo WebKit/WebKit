@@ -1,3 +1,14 @@
+2020-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove obsolete feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=208830
+
+        Reviewed by Alex Christensen.
+
+        Remove ENABLE_CUSTOM_SCHEME_HANDLER as it is unused in source.
+
+        * wtf/PlatformEnable.h:
+
 2020-03-08  Brady Eidson  <beidson@apple.com>
 
         Remember completed subranges during incremental PDF loading.

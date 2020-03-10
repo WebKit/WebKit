@@ -5227,12 +5227,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     // FIXME: Add preferences for the runtime enabled features.
 
-#if ENABLE(FETCH_API)
     hr = prefsPrivate->fetchAPIEnabled(&enabled);
     if (FAILED(hr))
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(!!enabled);
-#endif
 
     hr = prefsPrivate->shadowDOMEnabled(&enabled);
     if (FAILED(hr))

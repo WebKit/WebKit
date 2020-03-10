@@ -194,9 +194,6 @@ my @features = (
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", value => \$accelerated2DCanvasSupport },
 
-    { option => "accelerated-overflow-scrolling", desc => "Toggle accelerated scrolling support",
-      define => "ENABLE_ACCELERATED_OVERFLOW_SCROLLING", value => \$acceleratedOverflowScrollingSupport },
-
     { option => "apple-pay", desc => "Toggle Apply Pay support",
       define => "ENABLE_APPLE_PAY", value => \$applePaySupport },
 
@@ -254,9 +251,6 @@ my @features = (
     { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
       define => "ENABLE_CSS_DEVICE_ADAPTATION", value => \$cssDeviceAdaptationSupport },
 
-    { option => "css-image-orientation", desc => "Toggle CSS image-orientation support",
-      define => "ENABLE_CSS_IMAGE_ORIENTATION", value => \$cssImageOrientationSupport },
-
     { option => "css-image-resolution", desc => "Toggle CSS image-resolution support",
       define => "ENABLE_CSS_IMAGE_RESOLUTION", value => \$cssImageResolutionSupport },
 
@@ -274,9 +268,6 @@ my @features = (
 
     { option => "cursor-visibility", desc => "Toggle cursor visibility support",
       define => "ENABLE_CURSOR_VISIBILITY", value => \$cursorVisibilitySupport },
-
-    { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
-      define => "ENABLE_CUSTOM_SCHEME_HANDLER", value => \$customSchemeHandlerSupport },
 
     { option => "dark-mode-css", desc => "Toggle Dark Mode CSS support",
       define => "ENABLE_DARK_MODE_CSS", value => \$darkModeCSSSupport },
@@ -307,9 +298,6 @@ my @features = (
 
     { option => "fast-jit-permissions", desc => "Toggle fast JIT permissions support",
       define => "ENABLE_FAST_JIT_PERMISSIONS", value => \$fastJITPermissionsSupport },
-
-    { option => "fetch-api", desc => "Toggle Fetch API support",
-      define => "ENABLE_FETCH_API", value => \$fetchAPISupport },
 
     { option => "filters-level-2", desc => "Toggle Filters Module Level 2",
       define => "ENABLE_FILTERS_LEVEL_2", value => \$filtersLevel2Support },

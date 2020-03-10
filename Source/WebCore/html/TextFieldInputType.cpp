@@ -406,7 +406,7 @@ void TextFieldInputType::destroyShadowSubtree()
     m_innerSpinButton = nullptr;
     m_capsLockIndicator = nullptr;
     m_autoFillButton = nullptr;
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     m_dataListDropdownIndicator = nullptr;
 #endif
     m_container = nullptr;

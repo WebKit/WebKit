@@ -1,3 +1,21 @@
+2020-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove obsolete feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=208830
+
+        Reviewed by Alex Christensen.
+
+        Remove ENABLE_CSS_IMAGE_ORIENTATION, ENABLE_CUSTOM_SCHEME_HANDLER, ENABLE_FETCH_API,
+        and ENABLE_WEB_PROCESS_SANDBOX from list of feature definitions since they're unused.
+        Rename ENABLE_ACCESSIBILITY_STATIC_TREE to ENABLE_ACCESSIBILITY_ISOLATED_TREE.
+        Sort the declarations within the block and always use Toggle instead of Enable within
+        the descriptions.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2020-03-09  Antoine Quint  <graouts@apple.com>
 
         Remove the compile-time flag for Pointer Events

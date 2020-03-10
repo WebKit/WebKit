@@ -1,3 +1,15 @@
+2020-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove obsolete feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=208830
+
+        Reviewed by Alex Christensen.
+
+        Remove ENABLE_CUSTOM_SCHEME_HANDLER and ENABLE_MAC_VIDEO_TOOLBOX since they
+        are no longer used.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-03-09  Antoine Quint  <graouts@apple.com>
 
         Remove the compile-time flag for Pointer Events

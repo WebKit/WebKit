@@ -563,7 +563,7 @@ public:
 
         @YES, WebKitShouldRespectImageOrientationKey,
 #endif // PLATFORM(IOS_FAMILY)
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
         @YES, WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
 #endif
         @YES, WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey,
@@ -1323,7 +1323,7 @@ public:
 
 - (BOOL)allowsAirPlayForMediaPlayback
 {
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     return [self _boolValueForKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
 #else
     return false;
@@ -1332,7 +1332,7 @@ public:
 
 - (void)setAllowsAirPlayForMediaPlayback:(BOOL)flag
 {
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
 #endif
 }
