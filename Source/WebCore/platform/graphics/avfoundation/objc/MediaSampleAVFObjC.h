@@ -44,10 +44,8 @@ public:
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 
     MediaTime presentationTime() const override;
-    MediaTime outputPresentationTime() const override;
     MediaTime decodeTime() const override;
     MediaTime duration() const override;
-    MediaTime outputDuration() const override;
 
     AtomString trackID() const override { return m_id; }
     void setTrackID(const String& id) override { m_id = id; }

@@ -378,9 +378,7 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(Optional<int> width, Option
 
 RefPtr<MediaSample> RealtimeVideoCaptureSource::adaptVideoSample(MediaSample& sample)
 {
-    MediaTime sampleTime = sample.outputPresentationTime();
-    if (!sampleTime || !sampleTime.isValid())
-        sampleTime = sample.presentationTime();
+    MediaTime sampleTime = sample.presentationTime();
 
     auto frameTime = sampleTime.toDouble();
     m_observedFrameTimeStamps.append(frameTime);

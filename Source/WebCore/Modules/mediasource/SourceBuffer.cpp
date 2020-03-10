@@ -2097,7 +2097,7 @@ void SourceBuffer::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffe
     }
 
     auto minPts = std::min_element(trackBuffer.decodeQueue.begin(), trackBuffer.decodeQueue.end(), [](auto& left, auto& right) -> bool {
-        return left.second->outputPresentationTime() < right.second->outputPresentationTime();
+        return left.second->presentationTime() < right.second->presentationTime();
     });
 
     if (minPts == trackBuffer.decodeQueue.end()) {
@@ -2106,7 +2106,7 @@ void SourceBuffer::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffe
         return;
     }
 
-    trackBuffer.minimumEnqueuedPresentationTime = minPts->second->outputPresentationTime();
+    trackBuffer.minimumEnqueuedPresentationTime = minPts->second->presentationTime();
     m_private->setMinimumUpcomingPresentationTime(trackID, trackBuffer.minimumEnqueuedPresentationTime);
 }
 
