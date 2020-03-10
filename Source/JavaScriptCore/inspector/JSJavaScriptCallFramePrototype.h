@@ -37,7 +37,7 @@ public:
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSInjectedScriptHostPrototype, Base);
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSJavaScriptCallFramePrototype, Base);
         return &vm.plainObjectSpace;
     }
 
