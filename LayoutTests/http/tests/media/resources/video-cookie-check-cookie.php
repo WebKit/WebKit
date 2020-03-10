@@ -16,6 +16,7 @@
 
         header("Cache-Control: no-store");
         header("Connection: close");
+        header("Content-Length: " . filesize($fileName));
 
         $fn = fopen($fileName, "r");
         fpassthru($fn);

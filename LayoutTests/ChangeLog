@@ -1,3 +1,16 @@
+2020-03-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        REGRESSION(r257977): [GTK] http/tests/media/hls/video-cookie.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=208803
+
+        Reviewed by Philippe Normand.
+
+        Supply Content-Length, so WebKit GStreamer can actually know when the download has finished
+        without mistaking EOF with a stall.
+
+        * http/tests/media/resources/video-cookie-check-cookie.php: Supply Content-Length.
+        * platform/gtk/TestExpectations: Removed the test as failing.
+
 2020-03-10  youenn fablet  <youenn@apple.com>
 
         [iOS] Make sure a MediStreamTrack clone does not interrupt the being cloned track
