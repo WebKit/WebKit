@@ -370,10 +370,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CaptureDevicesChanged()
 #endif
 
-#if ENABLE(WEB_RTC)
-    DisableICECandidateFiltering()
-    EnableICECandidateFiltering()
-#endif
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     EnableEnumeratingAllNetworkInterfaces()
     DisableEnumeratingAllNetworkInterfaces()

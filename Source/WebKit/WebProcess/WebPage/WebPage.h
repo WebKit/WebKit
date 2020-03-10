@@ -1578,11 +1578,6 @@ private:
 
 #endif
 
-#if ENABLE(WEB_RTC)
-    void disableICECandidateFiltering();
-    void enableICECandidateFiltering();
-#endif
-
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     void disableEnumeratingAllNetworkInterfaces();
     void enableEnumeratingAllNetworkInterfaces();

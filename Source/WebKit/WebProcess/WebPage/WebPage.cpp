@@ -707,7 +707,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(WEB_RTC)
     if (!parameters.iceCandidateFilteringEnabled)
-        disableICECandidateFiltering();
+        m_page->disableICECandidateFiltering();
 #if USE(LIBWEBRTC)
     if (parameters.enumeratingAllNetworkInterfacesEnabled)
         enableEnumeratingAllNetworkInterfaces();
@@ -750,15 +750,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 }
 
 #if ENABLE(WEB_RTC)
-void WebPage::disableICECandidateFiltering()
-{
-    m_page->disableICECandidateFiltering();
-}
-
-void WebPage::enableICECandidateFiltering()
-{
-    m_page->enableICECandidateFiltering();
-}
 
 #if USE(LIBWEBRTC)
 void WebPage::disableEnumeratingAllNetworkInterfaces()
