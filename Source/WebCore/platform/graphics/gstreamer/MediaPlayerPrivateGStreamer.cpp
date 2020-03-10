@@ -324,8 +324,10 @@ public:
 
         using Buffer = TextureMapperPlatformLayerBuffer;
 
+#if USE(GSTREAMER_GL)
         if (m_textureTarget == GST_GL_TEXTURE_TARGET_EXTERNAL_OES)
             return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::ExternalOESTexture { m_textureID } }, m_size, m_flags, GL_DONT_CARE);
+#endif
 
         if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))
             return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { m_textureID } }, m_size, m_flags, GL_RGBA);
@@ -391,7 +393,9 @@ private:
     Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     TextureMapperGL::Flags m_flags { };
     GLuint m_textureID { 0 };
+#if USE(GSTREAMER_GL)
     GstGLTextureTarget m_textureTarget { GST_GL_TEXTURE_TARGET_NONE };
+#endif
     bool m_isMapped { false };
     bool m_hasMappedTextures { false };
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
