@@ -9,6 +9,12 @@ webgl/2.0.0/conformance2/textures/video [ Skip ]
 # Run as much of DEQP as possible
 webgl/2.0.0/deqp [ Pass Slow ]
 
+# Flaky time outs
+webgl/2.0.0/deqp/functional/gles3/shaderoperator/angle_and_trigonometry_01.html [ Timeout Pass ]
+
+# DEQP flaky results
+webgl/2.0.0/deqp/functional/gles3/builtinprecision [ Pass Failure ]
+
 # DEQP crashes
 webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Skip ]
 webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Skip ]
@@ -165,3 +171,5 @@ webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.output.html [
 webgl/2.0.0/deqp/functional/gles3/framebufferblit/default_framebuffer_03.html [ Skip ]
 webgl/2.0.0/deqp/functional/gles3/shaderoperator/angle_and_trigonometry_00.html [ Skip ]
 webgl/2.0.0/deqp/functional/gles3/texturefiltering/cube_combinations_05.html [ Skip ]
+webgl/2.0.0/deqp/functional/gles3/framebufferblit/default_framebuffer_05.html [ Skip ]
+webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [ Skip ]
