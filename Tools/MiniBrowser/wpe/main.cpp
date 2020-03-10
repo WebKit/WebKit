@@ -49,6 +49,7 @@ static const char* cookiesPolicy;
 static const char* proxy;
 const char* bgColor;
 static gboolean printVersion;
+static GHashTable* openViews;
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -149,7 +150,8 @@ static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResul
 
 static void webViewClose(WebKitWebView* webView, gpointer)
 {
-    g_object_unref(webView);
+    // Hash table key delete func takes care of unref'ing the view
+    g_hash_table_remove(openViews, webView);
 }
 
 static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer)
@@ -168,6 +170,8 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
 
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), nullptr);
+
+    g_hash_table_add(openViews, newWebView);
 
     return newWebView;
 }
@@ -288,7 +292,6 @@ int main(int argc, char *argv[])
         "is-controlled-by-automation", automationMode,
         nullptr));
     g_object_unref(settings);
-    g_object_add_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&webView));
 
     backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
 #if defined(HAVE_ACCESSIBILITY) && HAVE_ACCESSIBILITY
@@ -297,11 +300,14 @@ int main(int argc, char *argv[])
         backendPtr->setAccessibleChild(ATK_OBJECT(accessible));
 #endif
 
+    openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
+
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), nullptr);
     g_signal_connect(webView, "close", G_CALLBACK(webViewClose), nullptr);
+    g_hash_table_add(openViews, webView);
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
@@ -327,10 +333,9 @@ int main(int argc, char *argv[])
 
     g_main_loop_run(loop);
 
-    if (webView) {
-        g_object_remove_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&webView));
-        g_object_unref(webView);
-    }
+    g_hash_table_destroy(openViews);
+
+
     if (privateMode || automationMode)
         g_object_unref(webContext);
     g_main_loop_unref(loop);

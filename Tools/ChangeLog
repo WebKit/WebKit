@@ -1,3 +1,17 @@
+2020-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] MiniBrowser: Close child WebViews when exiting
+        https://bugs.webkit.org/show_bug.cgi?id=208689
+
+        Reviewed by Carlos Garcia Campos.
+
+        Store created views so we can release them before exiting.
+
+        * MiniBrowser/wpe/main.cpp:
+        (webViewClose):
+        (createWebView):
+        (main):
+
 2020-03-10  Aakash Jain  <aakash_jain@apple.com>
 
         Add ValidateCommiterAndReviewer and ValidateChangeLogAndReviewer build steps in commit-queue
