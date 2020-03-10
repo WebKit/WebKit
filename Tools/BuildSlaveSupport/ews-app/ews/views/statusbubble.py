@@ -295,16 +295,24 @@ class StatusBubble(View):
         show_retry = False
         bubbles = []
 
-        if not (patch and patch.sent_to_buildbot):
+        if not patch:
             return (None, show_submit_to_ews, failed_to_apply, show_retry)
 
-        for queue in StatusBubble.ALL_QUEUES:
-            bubble = self._build_bubble(patch, queue, hide_icons)
-            if bubble:
-                show_submit_to_ews = False
-                bubbles.append(bubble)
-                if bubble['state'] in ('fail', 'error'):
-                    show_retry = True
+        if patch.sent_to_buildbot:
+            for queue in StatusBubble.ALL_QUEUES:
+                bubble = self._build_bubble(patch, queue, hide_icons)
+                if bubble:
+                    show_submit_to_ews = False
+                    bubbles.append(bubble)
+                    if bubble['state'] in ('fail', 'error'):
+                        show_retry = True
+
+        if patch.sent_to_commit_queue:
+            if not patch.sent_to_buildbot:
+                hide_icons = True
+            cq_bubble = self._build_bubble(patch, 'commit', hide_icons)
+            if cq_bubble:
+                bubbles.insert(0, cq_bubble)
 
         return (bubbles, show_submit_to_ews, failed_to_apply, show_retry)
 
