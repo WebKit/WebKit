@@ -40,9 +40,9 @@ void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& co
         layer->didReceiveMessage(connection, decoder);
 }
 
-std::unique_ptr<WebCore::SampleBufferDisplayLayer> SampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer::Client& client, bool hideRootLayer, WebCore::IntSize size)
+std::unique_ptr<WebCore::SampleBufferDisplayLayer> SampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer::Client& client)
 {
-    auto layer = SampleBufferDisplayLayer::create(*this, client, hideRootLayer, size);
+    auto layer = SampleBufferDisplayLayer::create(*this, client);
     if (!layer)
         return { };
 

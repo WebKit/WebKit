@@ -41,28 +41,29 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, Client& client, bool hideRootLayer, IntSize size)
+std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, Client& client)
 {
-    auto layer = std::unique_ptr<SampleBufferDisplayLayer>(new SampleBufferDisplayLayer(manager, client, hideRootLayer, size));
-    return layer->rootLayer() ? WTFMove(layer) : nullptr;
+    return std::unique_ptr<SampleBufferDisplayLayer>(new SampleBufferDisplayLayer(manager, client));
 }
 
-SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, Client& client, bool hideRootLayer, IntSize size)
+SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, Client& client)
     : WebCore::SampleBufferDisplayLayer(client)
     , m_manager(makeWeakPtr(manager))
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_identifier(SampleBufferDisplayLayerIdentifier::generate())
 {
     manager.addLayer(*this);
+}
 
-    Optional<LayerHostingContextID> contextId;
-    if (!m_connection->sendSync(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer::Reply { contextId }, 0))
-        return;
-
-    if (!contextId)
-        return;
-
-    m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*contextId);
+void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool)>&& callback)
+{
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto contextId) mutable {
+        if (!weakThis)
+            return callback(false);
+        if (contextId)
+            m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*contextId);
+        callback(!!m_videoLayer);
+    });
 }
 
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()

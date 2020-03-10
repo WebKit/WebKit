@@ -49,23 +49,24 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface WebRootSampleBufferBoundsChangeListener : NSObject {
-    WeakPtr<WebCore::MediaPlayerPrivateMediaStreamAVFObjC> _parent;
+    Function<void()> _callback;
+    RetainPtr<CALayer> _rootLayer;
 }
 
-- (id)initWithParent:(WebCore::MediaPlayerPrivateMediaStreamAVFObjC*)callback;
+- (id)initWithCallback:(Function<void()>&&) callback;
 - (void)invalidate;
-- (void)begin;
+- (void)begin:(CALayer*) layer;
 - (void)stop;
 @end
 
 @implementation WebRootSampleBufferBoundsChangeListener
 
-- (id)initWithParent:(WebCore::MediaPlayerPrivateMediaStreamAVFObjC*)parent
+- (id)initWithCallback:(Function<void()>&&) callback
 {
     if (!(self = [super init]))
         return nil;
 
-    _parent = makeWeakPtr(parent);
+    _callback = WTFMove(callback);
 
     return self;
 }
@@ -79,53 +80,44 @@
 - (void)invalidate
 {
     [self stop];
-    _parent = nullptr;
+    _callback = nullptr;
 }
 
-- (void)begin
+- (void)begin:(CALayer*) layer
 {
-    ASSERT(_parent);
-    ASSERT(_parent->rootLayer());
-
-    [_parent->rootLayer() addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
+    ASSERT(_callback);
+    _rootLayer = layer;
+    [_rootLayer addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)stop
 {
-    if (!_parent)
+    if (!_rootLayer)
         return;
 
-    if (_parent->rootLayer())
-        [_parent->rootLayer() removeObserver:self forKeyPath:@"bounds"];
+    [_rootLayer removeObserver:self forKeyPath:@"bounds"];
+    _rootLayer = nullptr;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(keyPath);
-    ASSERT(_parent);
-
-    if (!_parent)
-        return;
 
     if ([[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue])
         return;
 
-    if ((CALayer *)object == _parent->rootLayer()) {
+    if ((CALayer *)object == _rootLayer.get()) {
         if ([keyPath isEqualToString:@"bounds"]) {
-            if (!_parent)
-                return;
-
             if (isMainThread()) {
-                _parent->rootLayerBoundsDidChange();
+                if (_callback)
+                    _callback();
                 return;
             }
 
             callOnMainThread([protectedSelf = RetainPtr<WebRootSampleBufferBoundsChangeListener>(self)] {
-                if (!protectedSelf->_parent)
-                    return;
-
-                protectedSelf->_parent->rootLayerBoundsDidChange();
+                if (protectedSelf->_callback)
+                    protectedSelf->_callback();
             });
         }
     }
@@ -147,9 +139,13 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
-    , m_boundsChangeListener(adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithParent:this]))
 {
     INFO_LOG(LOGIDENTIFIER);
+    m_boundsChangeListener = adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithCallback:[this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+        rootLayerBoundsDidChange();
+    }]);
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
@@ -369,20 +365,25 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->activeVideoTrack() || !m_mediaStreamPrivate->activeVideoTrack()->enabled())
         return;
 
-    auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
-    m_sampleBufferDisplayLayer = SampleBufferDisplayLayer::create(*this, hideRootLayer(), size);
-
-    if (!m_sampleBufferDisplayLayer) {
-        ERROR_LOG(LOGIDENTIFIER, "Creating the SampleBufferDisplayLayer failed.");
+    m_sampleBufferDisplayLayer = SampleBufferDisplayLayer::create(*this);
+    ERROR_LOG_IF(!m_sampleBufferDisplayLayer, LOGIDENTIFIER, "Creating the SampleBufferDisplayLayer failed.");
+    if (!m_sampleBufferDisplayLayer)
         return;
-    }
 
-    updateRenderingMode();
-    updateDisplayLayer();
+    auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [this, weakThis = makeWeakPtr(this), size](auto didSucceed) {
+        if (!didSucceed) {
+            ERROR_LOG(LOGIDENTIFIER, "Initializing the SampleBufferDisplayLayer failed.");
+            m_sampleBufferDisplayLayer = nullptr;
+            return;
+        }
+        updateRenderingMode();
+        updateDisplayLayer();
 
-    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
+        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
 
-    [m_boundsChangeListener begin];
+        [m_boundsChangeListener begin:m_sampleBufferDisplayLayer->rootLayer()];
+    });
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -451,11 +452,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 {
     INFO_LOG(LOGIDENTIFIER);
-}
-
-PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::rootLayer() const
-{
-    return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->rootLayer() : nullptr;
 }
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
@@ -1046,7 +1042,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
     if (!m_sampleBufferDisplayLayer)
         return;
 
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(rootLayer().bounds, m_videoRotation);
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()

@@ -267,8 +267,8 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
     if (settings.useGPUProcessForMedia()) {
-        WebCore::SampleBufferDisplayLayer::setCreator([](auto& client, bool hideRootLayer, auto size) {
-            return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client, hideRootLayer, size);
+        WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) {
+            return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);
         });
     }
 #endif

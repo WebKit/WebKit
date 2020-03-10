@@ -42,7 +42,7 @@ public:
     void removeLayer(SampleBufferDisplayLayer&);
 
     void didReceiveLayerMessage(IPC::Connection&, IPC::Decoder&);
-    std::unique_ptr<WebCore::SampleBufferDisplayLayer> createLayer(SampleBufferDisplayLayer::Client&, bool hideRootLayer, WebCore::IntSize);
+    std::unique_ptr<WebCore::SampleBufferDisplayLayer> createLayer(SampleBufferDisplayLayer::Client&);
 
 private:
     HashMap<SampleBufferDisplayLayerIdentifier, WeakPtr<SampleBufferDisplayLayer>> m_layers;

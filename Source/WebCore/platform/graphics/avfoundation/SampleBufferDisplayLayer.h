@@ -27,6 +27,7 @@
 
 #include "MediaSample.h"
 #include "PlatformLayer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -46,12 +47,13 @@ public:
         virtual WTF::MediaTime streamTime() const = 0;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<SampleBufferDisplayLayer> create(Client&, bool hideRootLayer, IntSize);
-    using LayerCreator = std::unique_ptr<SampleBufferDisplayLayer> (*)(Client&, bool hideRootLayer, IntSize);
+    WEBCORE_EXPORT static std::unique_ptr<SampleBufferDisplayLayer> create(Client&);
+    using LayerCreator = std::unique_ptr<SampleBufferDisplayLayer> (*)(Client&);
     WEBCORE_EXPORT static void setCreator(LayerCreator);
 
     virtual ~SampleBufferDisplayLayer() = default;
 
+    virtual void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) = 0;
     virtual bool didFail() const = 0;
 
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;

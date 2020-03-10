@@ -431,12 +431,6 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         remoteMediaPlayerManagerProxy().didReceiveSyncPlayerMessage(connection, decoder, replyEncoder);
         return true;
     }
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
-    if (decoder.messageReceiverName() == Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName()) {
-        sampleBufferDisplayLayerManager().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
-        return true;
-    }
-#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
         cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);

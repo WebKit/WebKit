@@ -1,5 +1,33 @@
 2020-03-10  youenn fablet  <youenn@apple.com>
 
+        Remove SampleBufferDisplayLayer sync IPC
+        https://bugs.webkit.org/show_bug.cgi?id=208804
+
+        Reviewed by Eric Carlson.
+
+        Implement the initialize method as an async IPC.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::create):
+        (WebKit::SampleBufferDisplayLayer::SampleBufferDisplayLayer):
+        (WebKit::SampleBufferDisplayLayer::initialize):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp:
+        (WebKit::SampleBufferDisplayLayerManager::createLayer):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.h:
+
+2020-03-10  youenn fablet  <youenn@apple.com>
+
         [iOS] Make sure a MediStreamTrack clone does not interrupt the being cloned track
         https://bugs.webkit.org/show_bug.cgi?id=208634
 

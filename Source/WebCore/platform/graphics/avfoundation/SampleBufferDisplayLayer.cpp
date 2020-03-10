@@ -37,13 +37,13 @@ void SampleBufferDisplayLayer::setCreator(LayerCreator creator)
     m_layerCreator = creator;
 }
 
-std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Client& client, bool hideRootLayer, IntSize size)
+std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Client& client)
 {
     if (m_layerCreator)
-        return m_layerCreator(client, hideRootLayer, size);
+        return m_layerCreator(client);
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-    return LocalSampleBufferDisplayLayer::create(client, hideRootLayer, size);
+    return LocalSampleBufferDisplayLayer::create(client);
 #else
     return nullptr;
 #endif

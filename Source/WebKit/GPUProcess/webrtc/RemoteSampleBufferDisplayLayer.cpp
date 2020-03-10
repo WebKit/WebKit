@@ -37,32 +37,33 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection, bool hideRootLayer, IntSize size)
+std::unique_ptr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection)
 {
-    auto layer = std::unique_ptr<RemoteSampleBufferDisplayLayer>(new RemoteSampleBufferDisplayLayer(identifier, WTFMove(connection), hideRootLayer, size));
+    auto layer = std::unique_ptr<RemoteSampleBufferDisplayLayer>(new RemoteSampleBufferDisplayLayer(identifier, WTFMove(connection)));
     return layer->m_sampleBufferDisplayLayer ? WTFMove(layer) : nullptr;
 }
 
-RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection, bool hideRootLayer, IntSize size)
+RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_connection(WTFMove(connection))
-    , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this, hideRootLayer, size))
+    , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this))
 {
     ASSERT(m_sampleBufferDisplayLayer);
-    if (!m_sampleBufferDisplayLayer)
-        return;
+}
 
-    m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
-    m_layerHostingContext->setRootLayer(m_sampleBufferDisplayLayer->rootLayer());
+void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, LayerInitializationCallback&& callback)
+{
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer, size, [this, weakThis = makeWeakPtr(this), callback = WTFMove(callback)](bool didSucceed) mutable {
+        if (!weakThis || !didSucceed)
+            return callback({ });
+        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+        m_layerHostingContext->setRootLayer(m_sampleBufferDisplayLayer->rootLayer());
+        callback(m_layerHostingContext->contextID());
+    });
 }
 
 RemoteSampleBufferDisplayLayer::~RemoteSampleBufferDisplayLayer()
 {
-}
-
-Optional<LayerHostingContextID> RemoteSampleBufferDisplayLayer::contextID()
-{
-    return m_layerHostingContext->contextID();
 }
 
 CGRect RemoteSampleBufferDisplayLayer::bounds() const

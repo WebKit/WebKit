@@ -53,14 +53,13 @@ public:
 
     void didReceiveLayerMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder) { didReceiveSyncMessage(connection, decoder, encoder); }
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
-    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, Messages::RemoteSampleBufferDisplayLayerManager::CreateLayerDelayedReply&&);
+    using LayerCreationCallback = CompletionHandler<void(Optional<LayerHostingContextID>)>&&;
+    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 
     Ref<IPC::Connection> m_connection;

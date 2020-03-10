@@ -24,7 +24,7 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
 messages -> RemoteSampleBufferDisplayLayerManager NotRefCounted {
-    CreateLayer(WebKit::SampleBufferDisplayLayerIdentifier id, bool hideRootLayer, WebCore::IntSize size) -> (Optional<WebKit::LayerHostingContextID> contextID) Synchronous
+    CreateLayer(WebKit::SampleBufferDisplayLayerIdentifier id, bool hideRootLayer, WebCore::IntSize size) -> (Optional<WebKit::LayerHostingContextID> contextID) Async
     ReleaseLayer(WebKit::SampleBufferDisplayLayerIdentifier id)
 }
 

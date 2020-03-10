@@ -78,10 +78,10 @@ public:
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 
+private:
     PlatformLayer* rootLayer() const;
     void rootLayerBoundsDidChange();
 
-private:
     // MediaPlayerPrivateInterface
 
     // FIXME(146853): Implement necessary conformations to standard in HTMLMediaElement for MediaStream

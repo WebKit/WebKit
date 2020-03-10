@@ -145,19 +145,23 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client, bool hideRootLayer, IntSize size)
+std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client)
 {
     auto sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     if (!sampleBufferDisplayLayer)
         return nullptr;
 
-    return makeUnique<LocalSampleBufferDisplayLayer>(WTFMove(sampleBufferDisplayLayer), client, hideRootLayer, size);
+    return makeUnique<LocalSampleBufferDisplayLayer>(WTFMove(sampleBufferDisplayLayer), client);
 }
 
-LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, Client& client, bool hideRootLayer, IntSize size)
+LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, Client& client)
     : SampleBufferDisplayLayer(client)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_sampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer))
+{
+}
+
+void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool didSucceed)>&& callback)
 {
     m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
     m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
@@ -180,6 +184,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
     [m_sampleBufferDisplayLayer setName:@"LocalSampleBufferDisplayLayer AVSampleBufferDisplayLayer"];
     [m_rootLayer setName:@"LocalSampleBufferDisplayLayer AVSampleBufferDisplayLayer parent"];
 #endif
+    callback(true);
 }
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
