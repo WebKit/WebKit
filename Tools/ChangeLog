@@ -1,3 +1,17 @@
+2020-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] API favicon test flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=208189
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sometimes the favicon changes already during the load. Keeping
+        track of it in the WebView favicon property notification handler
+        gets us rid of the race.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testFaviconDatabaseGetFavicon):
+
 2020-03-10  Aakash Jain  <aakash_jain@apple.com>
 
         Generate commit-queue status bubble from new EWS

@@ -69,6 +69,7 @@ public:
     {
         g_assert_true(test->m_webView == webView);
         test->m_faviconNotificationReceived = true;
+        test->m_favicon = cairo_surface_reference(webkit_web_view_get_favicon(webView));
         if (test->m_loadFinished)
             test->quitMainLoop();
     }
@@ -101,6 +102,10 @@ public:
 
     void waitUntilLoadFinishedAndFaviconChanged()
     {
+        if (m_favicon) {
+            cairo_surface_destroy(m_favicon);
+            m_favicon = nullptr;
+        }
         m_faviconNotificationReceived = false;
         m_loadFinished = false;
         unsigned long faviconChangedID = g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(viewFaviconChangedCallback), this);
@@ -202,7 +207,8 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     test->loadURI(kServer->getURIForPath("/bar").data());
     test->waitUntilLoadFinishedAndFaviconChanged();
     // favicon changes twice, first to reset it and then when the new icon is loaded.
-    test->waitUntilFaviconChanged();
+    if (!test->m_favicon)
+        test->waitUntilFaviconChanged();
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/bar").data());
     g_assert_nonnull(test->m_favicon);
     g_assert_true(test->m_favicon == favicon);
