@@ -170,6 +170,20 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
     
     WebsiteDataStoreParameters parameters;
+
+    ResourceLoadStatisticsParameters resourceLoadStatisticsParameters {
+        WTFMove(resourceLoadStatisticsDirectory),
+        WTFMove(resourceLoadStatisticsDirectoryHandle),
+        resourceLoadStatisticsEnabled(),
+        isItpStateExplicitlySet(),
+        hasStatisticsTestingCallback(),
+        shouldIncludeLocalhostInResourceLoadStatistics,
+        enableResourceLoadStatisticsDebugMode,
+        thirdPartyCookieBlockingMode(),
+        firstPartyWebsiteDataRemovalMode,
+        WTFMove(resourceLoadStatisticsManualPrevalentResource),
+    };
+    
     parameters.networkSessionParameters = NetworkSessionCreationParameters {
         m_sessionID,
         configuration().boundInterfaceIdentifier(),
@@ -185,18 +199,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(alternativeServiceStorageDirectory),
         WTFMove(alternativeServiceStorageDirectoryExtensionHandle),
 #endif
-        WTFMove(resourceLoadStatisticsDirectory),
-        WTFMove(resourceLoadStatisticsDirectoryHandle),
-        resourceLoadStatisticsEnabled(),
-        isItpStateExplicitlySet(),
-        hasStatisticsTestingCallback(),
-        shouldIncludeLocalhostInResourceLoadStatistics,
-        enableResourceLoadStatisticsDebugMode,
-        thirdPartyCookieBlockingMode(),
-        firstPartyWebsiteDataRemovalMode,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
-        WTFMove(resourceLoadStatisticsManualPrevalentResource),
         WTFMove(networkCacheDirectory),
         WTFMove(networkCacheDirectoryExtensionHandle),
         m_configuration->dataConnectionServiceType(),
@@ -207,7 +211,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->testSpeedMultiplier(),
         m_configuration->suppressesConnectionTerminationOnSystemChange(),
         m_configuration->allowsServerPreconnect(),
-        isInAppBrowserPrivacyEnabled
+        isInAppBrowserPrivacyEnabled,
+        WTFMove(resourceLoadStatisticsParameters)
     };
 
     auto cookieFile = resolvedCookieStorageFile();

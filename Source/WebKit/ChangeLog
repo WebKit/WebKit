@@ -1,3 +1,31 @@
+2020-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce ResourceLoadStatisticsParameters and move members from NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=208895
+
+        Reviewed by Youenn Fablet.
+
+        No change in behavior yet, but this will help us organize things better.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/ResourceLoadStatisticsParameters.h: Added.
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-03-11  Chris Dumez  <cdumez@apple.com>
 
         Defer async scripts until DOMContentLoaded or first paint, whichever comes first
