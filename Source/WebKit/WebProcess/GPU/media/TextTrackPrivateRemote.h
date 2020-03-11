@@ -57,8 +57,8 @@ public:
 
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
 
-    using SerializedPlatformDataCueValue = WebCore::SerializedPlatformDataCueValue;
 #if ENABLE(DATACUE_VALUE)
+    using SerializedPlatformDataCueValue = WebCore::SerializedPlatformDataCueValue;
     void addDataCueWithType(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&, String&&);
     void updateDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);
     void removeDataCue(MediaTime&& start, MediaTime&& end, SerializedPlatformDataCueValue&&);

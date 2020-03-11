@@ -25,11 +25,11 @@
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
-#if PLATFORM(COCOA)
     void ClearNowPlayingInfo();
     void SetNowPlayingInfo(bool setAsNowPlayingApplication, struct WebCore::NowPlayingInfo nowPlayingInfo);
-#endif
+#if USE(AUDIO_SESSION)
     EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
+#endif
 #if PLATFORM(IOS_FAMILY)
     EnsureMediaSessionHelper()
 #endif

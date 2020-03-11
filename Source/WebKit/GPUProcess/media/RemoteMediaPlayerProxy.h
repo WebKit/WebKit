@@ -124,7 +124,6 @@ public:
     void setShouldMaintainAspectRatio(bool);
     void enterFullscreen(CompletionHandler<void()>&&);
     void exitFullscreen(CompletionHandler<void()>&&);
-    void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
     void setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity);
     void acceleratedRenderingStateChanged(bool);
     void setShouldDisableSleep(bool);
@@ -136,12 +135,14 @@ public:
 
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+    void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessVideoPlaybackDisabled(bool);
     void setShouldPlayToPlaybackTarget(bool);
     void setWirelessPlaybackTarget(const WebCore::MediaPlaybackTargetContext&);
+    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -218,8 +219,6 @@ private:
     void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
     void mediaPlayerWaitingForKeyChanged() final;
 #endif
-
-    void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
 
     String mediaPlayerReferrer() const final;
     String mediaPlayerUserAgent() const final;

@@ -28,10 +28,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/AudioTrackPrivate.h>
 
 namespace WebKit {
 
+class MediaPlayerPrivateRemote;
 struct TrackPrivateRemoteConfiguration;
 
 class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {

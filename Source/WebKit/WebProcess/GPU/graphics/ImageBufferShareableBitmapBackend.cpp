@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ShareableBitmap.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageData.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>

@@ -1128,6 +1128,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageSource.h
     platform/graphics/ImageTypes.h
     platform/graphics/InbandGenericCue.h
+    platform/graphics/InbandGenericCueIdentifier.h
     platform/graphics/InbandTextTrackPrivate.h
     platform/graphics/InbandTextTrackPrivateClient.h
     platform/graphics/InlinePathData.h
@@ -1142,12 +1143,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/LayoutRect.h
     platform/graphics/LayoutSize.h
     platform/graphics/LegacyCDMSession.h
+    platform/graphics/MIMETypeCache.h
     platform/graphics/MediaPlaybackTarget.h
     platform/graphics/MediaPlaybackTargetClient.h
     platform/graphics/MediaPlaybackTargetContext.h
     platform/graphics/MediaPlaybackTargetPicker.h
     platform/graphics/MediaPlayer.h
     platform/graphics/MediaPlayerEnums.h
+    platform/graphics/MediaPlayerPrivate.h
     platform/graphics/NativeImage.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
@@ -1178,7 +1181,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ExtensionsGLANGLE.h
 
     platform/graphics/displaylists/DisplayList.h
+    platform/graphics/displaylists/DisplayListDrawingContext.h
+    platform/graphics/displaylists/DisplayListImageBuffer.h
     platform/graphics/displaylists/DisplayListItems.h
+    platform/graphics/displaylists/DisplayListRecorder.h
+    platform/graphics/displaylists/DisplayListReplayer.h
 
     platform/graphics/cv/ImageTransferSessionVT.h
 
@@ -1191,6 +1198,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/iso/ISOSchemeInformationBox.h
     platform/graphics/iso/ISOSchemeTypeBox.h
     platform/graphics/iso/ISOTrackEncryptionBox.h
+    platform/graphics/iso/ISOVTTCue.h
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.h
 

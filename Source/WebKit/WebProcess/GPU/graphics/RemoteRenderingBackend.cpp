@@ -28,10 +28,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "WebProcess.h"
 
 namespace WebKit {
 

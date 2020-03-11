@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ImageBufferBackendHandle.h"
+#include "ImageBufferFlushIdentifier.h"
 #include "ImageBufferIdentifier.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>

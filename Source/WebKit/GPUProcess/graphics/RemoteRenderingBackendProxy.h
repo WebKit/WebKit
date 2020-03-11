@@ -42,6 +42,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+namespace DisplayList {
+class DisplayList;
+}
+}
+
 namespace WebKit {
 
 class GPUConnectionToWebProcess;

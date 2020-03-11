@@ -41,7 +41,6 @@
 #include "WebProcessPoolMessages.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
-#include <WebCore/MockAudioSharedUnit.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
@@ -52,8 +51,12 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
 #include "RemoteAudioSessionProxyManager.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include <WebCore/MockAudioSharedUnit.h>
 #endif
 
 namespace WebKit {

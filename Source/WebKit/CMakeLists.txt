@@ -17,6 +17,9 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WebKit_DERIVED_SOURCES_DIR}/include"
     "${WEBKIT_DIR}"
     "${WEBKIT_DIR}/GPUProcess"
+    "${WEBKIT_DIR}/GPUProcess/graphics"
+    "${WEBKIT_DIR}/GPUProcess/media"
+    "${WEBKIT_DIR}/GPUProcess/webrtc"
     "${WEBKIT_DIR}/NetworkProcess"
     "${WEBKIT_DIR}/NetworkProcess/Classifier"
     "${WEBKIT_DIR}/NetworkProcess/Cookies"
@@ -116,6 +119,32 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 )
 
 set(WebKit_MESSAGES_IN_FILES
+    GPUProcess/GPUConnectionToWebProcess.messages.in
+    GPUProcess/GPUProcess.messages.in
+
+    GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in
+
+    GPUProcess/media/RemoteAudioDestinationManager.messages.in
+    GPUProcess/media/RemoteAudioSessionProxy.messages.in
+    GPUProcess/media/RemoteCDMFactoryProxy.messages.in
+    GPUProcess/media/RemoteCDMInstanceProxy.messages.in
+    GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in
+    GPUProcess/media/RemoteCDMProxy.messages.in
+    GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in
+    GPUProcess/media/RemoteLegacyCDMProxy.messages.in
+    GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in
+    GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
+    GPUProcess/media/RemoteMediaPlayerProxy.messages.in
+    GPUProcess/media/RemoteMediaResourceManager.messages.in
+
+    GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
+    GPUProcess/webrtc/RemoteMediaRecorder.messages.in
+    GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+
     NetworkProcess/Cookies/WebCookieManager.messages.in
 
     NetworkProcess/IndexedDB/WebIDBServer.messages.in
@@ -165,6 +194,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     UIProcess/Downloads/DownloadProxy.messages.in
 
+    UIProcess/GPU/GPUProcessProxy.messages.in
+
     UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
     UIProcess/Inspector/WebInspectorProxy.messages.in
 
@@ -181,6 +212,21 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
 
     WebProcess/FullScreen/WebFullScreenManager.messages.in
+
+    WebProcess/GPU/GPUProcessConnection.messages.in
+
+    WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in
+
+    WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in
+    WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in
+    WebProcess/GPU/media/RemoteAudioSession.messages.in
+    WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
+    WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
+    WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in
+    WebProcess/GPU/media/TextTrackPrivateRemote.messages.in
+
+    WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
+    WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
 
     WebProcess/Geolocation/WebGeolocationManager.messages.in
 

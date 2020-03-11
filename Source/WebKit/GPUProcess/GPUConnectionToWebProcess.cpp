@@ -42,7 +42,6 @@
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteAudioMediaStreamTrackRendererManagerMessages.h"
 #include "RemoteAudioMediaStreamTrackRendererMessages.h"
-#include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -56,8 +55,6 @@
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
-#include "UserMediaCaptureManagerProxy.h"
-#include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
@@ -65,6 +62,7 @@
 #include <WebCore/NowPlayingManager.h>
 
 #if PLATFORM(COCOA)
+#include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include <WebCore/MediaSessionManagerCocoa.h>
 #include <WebCore/MediaSessionManagerIOS.h>
 #endif
@@ -77,7 +75,12 @@
 #include "RemoteCDMProxyMessages.h"
 #endif
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaCaptureManagerProxy.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
+#endif
+
+#if USE(AUDIO_SESSION)
 #include "RemoteAudioSessionProxy.h"
 #include "RemoteAudioSessionProxyManager.h"
 #include "RemoteAudioSessionProxyMessages.h"
@@ -151,10 +154,12 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection&)
 {
+#if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
         gpuProcess().audioSessionManager().removeProxy(webProcessIdentifier());
         m_audioSessionProxy = nullptr;
     }
+#endif
 }
 
 Logger& GPUConnectionToWebProcess::logger()

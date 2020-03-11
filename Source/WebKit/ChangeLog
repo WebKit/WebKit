@@ -1,3 +1,47 @@
+2020-03-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [GPU Process] Work towards compiling out on non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=208899
+
+        Reviewed by Darin Adler.
+
+        Work through some compilation issues on non-Cocoa ports when attempting to build
+        out the GPU Process. Fix platform guards for some methods. Fix compilation issues
+        for non-unified builds.
+
+        Add in CMake listing of messages.in and include directories required for building
+        with ENABLE_GPU_PROCESS.
+
+        * CMakeLists.txt:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.cpp:
+        * GPUProcess/graphics/RemoteImageBufferMessageHandlerProxy.h:
+        * GPUProcess/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.cpp:
+        * GPUProcess/graphics/RemoteRenderingBackendProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenGravity):
+        (WebKit::RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+        (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::notifyTrackModeChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackend.cpp:
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+
 2020-03-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] A syscall is denied by the sandbox

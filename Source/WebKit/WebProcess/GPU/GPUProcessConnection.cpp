@@ -39,8 +39,6 @@
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerMessages.h"
 #include "SampleBufferDisplayLayerMessages.h"
-#include "UserMediaCaptureManager.h"
-#include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageMessages.h"
@@ -50,6 +48,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionMessages.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerMessages.h"
 #endif
 
 namespace WebKit {

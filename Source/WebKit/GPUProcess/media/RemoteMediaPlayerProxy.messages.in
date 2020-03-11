@@ -47,7 +47,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     PrepareForRendering()
     SetVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
-    SetVideoFullscreenFrameFenced(WebCore::FloatRect rect, MachSendRight machSendRight)
     SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
@@ -65,6 +64,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
 #if PLATFORM(COCOA)
     SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+    SetVideoFullscreenFrameFenced(WebCore::FloatRect rect, MachSendRight machSendRight)
 #endif
 
     EnterFullscreen() -> () Async
@@ -106,7 +106,9 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     TracksChanged()
     SyncTextTrackBounds()
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
+#endif
 
     PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous

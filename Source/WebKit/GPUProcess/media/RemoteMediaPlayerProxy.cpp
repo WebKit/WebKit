@@ -103,7 +103,9 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.supportsFullscreen = m_player->supportsFullscreen();
     configuration.supportsPictureInPicture = m_player->supportsPictureInPicture();
     configuration.supportsAcceleratedRendering = m_player->supportsAcceleratedRendering();
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
+#endif
     configuration.shouldIgnoreIntrinsicSize = m_player->shouldIgnoreIntrinsicSize();
 }
 
@@ -201,7 +203,9 @@ void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)
 
 void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_player->setVideoFullscreenGravity(gravity);
+#endif
 }
 
 void RemoteMediaPlayerProxy::acceleratedRenderingStateChanged(bool renderingCanBeAccelerated)
@@ -242,12 +246,16 @@ void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remote
 // MediaPlayerClient
 void RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage()
 {
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_player->updateVideoFullscreenInlineImage();
+#endif
 }
 
 void RemoteMediaPlayerProxy::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_player->setVideoFullscreenMode(mode);
+#endif
 }
 
 void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
@@ -257,7 +265,9 @@ void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy pol
 
 void RemoteMediaPlayerProxy::videoFullscreenStandbyChanged()
 {
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_player->videoFullscreenStandbyChanged();
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -288,7 +298,9 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     m_cachedState.maxFastForwardRate = m_player->maxFastForwardRate();
     m_cachedState.minFastReverseRate = m_player->minFastReverseRate();
     m_cachedState.hasAvailableVideoFrame = m_player->hasAvailableVideoFrame();
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
+#endif
     m_cachedState.hasSingleSecurityOrigin = m_player->hasSingleSecurityOrigin();
     m_cachedState.didPassCORSAccessCheck = m_player->didPassCORSAccessCheck();
     m_cachedState.wouldTaintDocumentSecurityOrigin = m_player->wouldTaintOrigin(m_configuration.documentSecurityOrigin.securityOrigin());
@@ -812,7 +824,9 @@ void RemoteMediaPlayerProxy::applicationDidBecomeActive()
 
 void RemoteMediaPlayerProxy::notifyTrackModeChanged()
 {
+#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
     m_player->notifyTrackModeChanged();
+#endif
 }
 
 void RemoteMediaPlayerProxy::tracksChanged()

@@ -34,12 +34,12 @@
 namespace WebKit {
 
 template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy, public DisplayList::Replayer::Delegate {
+class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType>, public RemoteImageBufferMessageHandlerProxy, public WebCore::DisplayList::Replayer::Delegate {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::m_backend;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, ColorSpace colorSpace, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, ImageBufferIdentifier imageBufferIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::ColorSpace colorSpace, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, ImageBufferIdentifier imageBufferIdentifier)
     {
         return BaseConcreteImageBuffer::template create<RemoteImageBufferProxy>(size, resolutionScale, colorSpace, nullptr, remoteRenderingBackendProxy, imageBufferIdentifier);
     }
@@ -75,12 +75,12 @@ private:
         return BaseConcreteImageBuffer::getImageData(outputFormat, srcRect);
     }
 
-    bool apply(DisplayList::Item& item, GraphicsContext&) override
+    bool apply(WebCore::DisplayList::Item& item, WebCore::GraphicsContext&) override
     {
-        if (item.type() != DisplayList::ItemType::PutImageData)
+        if (item.type() != WebCore::DisplayList::ItemType::PutImageData)
             return false;
 
-        auto& putImageDataItem = static_cast<DisplayList::PutImageData&>(item);
+        auto& putImageDataItem = static_cast<WebCore::DisplayList::PutImageData&>(item);
         putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint());
         return true;
     }

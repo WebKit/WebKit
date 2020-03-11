@@ -358,10 +358,12 @@ void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
     connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_player->supportsAcceleratedRendering()), m_id);
 }
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
 {
     return m_configuration.canPlayToWirelessPlaybackTarget;
 }
+#endif
 
 void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
