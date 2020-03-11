@@ -74,6 +74,11 @@ void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid)
     MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid);
 }
 
+void RemoteMediaSessionHelperProxy::receivedInterruption(InterruptionType type, ShouldResume shouldResume)
+{
+    m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ReceivedInterruption(type, shouldResume), { });
+}
+
 void RemoteMediaSessionHelperProxy::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
     m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ApplicationWillEnterForeground(suspendedUnderLock), { });

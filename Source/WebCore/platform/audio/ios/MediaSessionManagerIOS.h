@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "AudioSession.h"
 #include "MediaSessionHelperIOS.h"
 #include "MediaSessionManagerCocoa.h"
 #include <wtf/RetainPtr.h>
@@ -45,16 +44,12 @@ namespace WebCore {
 
 class MediaSessionManageriOS
     : public MediaSessionManagerCocoa
-    , public MediaSessionHelperClient
-    , public AudioSession::InterruptionObserver {
+    , public MediaSessionHelperClient {
 public:
     virtual ~MediaSessionManageriOS();
 
     bool hasWirelessTargetsAvailable() override;
     static WEBCORE_EXPORT void providePresentingApplicationPID();
-
-    using WeakValueType = MediaSessionHelperClient::WeakValueType;
-    using MediaSessionHelperClient::weakPtrFactory;
 
 private:
     friend class PlatformMediaSessionManager;
@@ -67,11 +62,8 @@ private:
     void providePresentingApplicationPIDIfNecessary() final;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 
-    // AudioSession::InterruptionObserver
-    void beginAudioSessionInterruption(PlatformMediaSession::InterruptionType type) final { beginInterruption(type); }
-    void endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags flags) final { endInterruption(flags); }
-
     // MediaSessionHelperClient
+    void receivedInterruption(InterruptionType, ShouldResume) final;
     void applicationWillEnterForeground(SuspendedUnderLock) final;
     void applicationDidEnterBackground(SuspendedUnderLock) final;
     void applicationWillBecomeInactive() final;

@@ -76,6 +76,12 @@ void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
     connection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 
+void RemoteMediaSessionHelper::receivedInterruption(InterruptionType type, ShouldResume shouldResume)
+{
+    for (auto& client : m_clients)
+        client.receivedInterruption(type, shouldResume);
+}
+
 void RemoteMediaSessionHelper::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
     for (auto& client : m_clients)

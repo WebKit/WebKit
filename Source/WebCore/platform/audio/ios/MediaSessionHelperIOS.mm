@@ -79,6 +79,7 @@ class MediaSessionHelperiOS;
 - (id)initWithCallback:(MediaSessionHelperiOS*)callback;
 
 - (void)clearCallback;
+- (void)interruption:(NSNotification *)notification;
 - (void)applicationWillEnterForeground:(NSNotification *)notification;
 - (void)applicationWillResignActive:(NSNotification *)notification;
 - (void)applicationDidEnterBackground:(NSNotification *)notification;
@@ -97,6 +98,7 @@ public:
     ~MediaSessionHelperiOS();
 
     void externalOutputDeviceAvailableDidChange();
+    void receivedInterruption(MediaSessionHelperClient::InterruptionType, MediaSessionHelperClient::ShouldResume);
     void applicationWillEnterForeground(MediaSessionHelperClient::SuspendedUnderLock);
     void applicationDidEnterBackground(MediaSessionHelperClient::SuspendedUnderLock);
     void applicationWillBecomeInactive();
@@ -110,8 +112,10 @@ public:
 
 private:
     using HasAvailableTargets = MediaSessionHelperClient::HasAvailableTargets;
+    using InterruptionType = MediaSessionHelperClient::InterruptionType;
     using PlayingToAutomotiveHeadUnit = MediaSessionHelperClient::PlayingToAutomotiveHeadUnit;
     using ShouldPause = MediaSessionHelperClient::ShouldPause;
+    using ShouldResume = MediaSessionHelperClient::ShouldResume;
     using SupportsAirPlayVideo = MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = MediaSessionHelperClient::SuspendedUnderLock;
 
@@ -274,6 +278,12 @@ void MediaSessionHelperiOS::activeVideoRouteDidChange(Optional<bool>&& supportsA
 }
 #endif
 
+void MediaSessionHelperiOS::receivedInterruption(MediaSessionHelperClient::InterruptionType type, MediaSessionHelperClient::ShouldResume shouldResume)
+{
+    for (auto& client : m_clients)
+        client.receivedInterruption(type, shouldResume);
+}
+
 void MediaSessionHelperiOS::applicationDidBecomeActive()
 {
     for (auto& client : m_clients)
@@ -320,6 +330,8 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
     _callback = callback;
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(interruption:) name:AVAudioSessionInterruptionNotification object:[PAL::getAVAudioSessionClass() sharedInstance]];
+
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:PAL::get_UIKit_UIApplicationWillEnterForegroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:WebUIApplicationWillEnterForegroundNotification object:nil];
     [center addObserver:self selector:@selector(applicationDidBecomeActive:) name:PAL::get_UIKit_UIApplicationDidBecomeActiveNotification() object:nil];
@@ -432,6 +444,26 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
     _routeDetector.get().routeDetectionEnabled = NO;
 }
 #endif // !PLATFORM(WATCHOS)
+
+- (void)interruption:(NSNotification *)notification
+{
+    using InterruptionType = MediaSessionHelperClient::InterruptionType;
+    using ShouldResume = MediaSessionHelperClient::ShouldResume;
+
+    NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    InterruptionType interruptionType = (type == AVAudioSessionInterruptionTypeEnded ? InterruptionType::End : InterruptionType::Begin);
+    ShouldResume shouldResume = ShouldResume::No;
+
+    LOG(Media, "-[WebMediaSessionHelper interruption] - type = %i", (int)type);
+
+    if (interruptionType == InterruptionType::End && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume)
+        shouldResume = ShouldResume::Yes;
+
+    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), interruptionType, shouldResume]() mutable {
+        if (auto* callback = protectedSelf->_callback)
+            callback->receivedInterruption(interruptionType, shouldResume);
+    });
+}
 
 - (void)applicationWillEnterForeground:(NSNotification *)notification
 {

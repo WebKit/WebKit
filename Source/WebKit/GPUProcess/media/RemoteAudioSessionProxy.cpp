@@ -75,18 +75,18 @@ void RemoteAudioSessionProxy::setCategory(WebCore::AudioSession::CategoryType ca
 {
     m_category = category;
     m_routeSharingPolicy = policy;
-    audioSessionManager().setCategoryForProcess(*this, category, policy);
+    audioSessionManager().setCategoryForProcess(m_gpuConnection.webProcessIdentifier(), category, policy);
 }
 
 void RemoteAudioSessionProxy::setPreferredBufferSize(uint64_t size)
 {
     m_preferredBufferSize = size;
-    audioSessionManager().setPreferredBufferSizeForProcess(*this, size);
+    audioSessionManager().setPreferredBufferSizeForProcess(m_gpuConnection.webProcessIdentifier(), size);
 }
 
 void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& completion)
 {
-    m_active = audioSessionManager().tryToSetActiveForProcess(*this, active);
+    m_active = audioSessionManager().tryToSetActiveForProcess(m_gpuConnection.webProcessIdentifier(), active);
     completion(m_active);
 }
 

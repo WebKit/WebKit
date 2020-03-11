@@ -52,6 +52,7 @@ private:
     void providePresentingApplicationPID(int);
 
     // MediaSessionHelperClient
+    void receivedInterruption(InterruptionType, ShouldResume) final;
     void applicationWillEnterForeground(SuspendedUnderLock) final;
     void applicationDidEnterBackground(SuspendedUnderLock) final;
     void applicationWillBecomeInactive() final;

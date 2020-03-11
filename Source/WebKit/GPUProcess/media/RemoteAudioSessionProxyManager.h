@@ -29,36 +29,32 @@
 
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
-class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : public WebCore::AudioSession::InterruptionObserver {
+    : public CanMakeWeakPtr<RemoteAudioSessionProxyManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteAudioSessionProxyManager();
     ~RemoteAudioSessionProxyManager();
 
-    void addProxy(RemoteAudioSessionProxy&);
-    void removeProxy(RemoteAudioSessionProxy&);
+    void addProxy(WeakPtr<RemoteAudioSessionProxy>&&);
+    void removeProxy(const WebCore::ProcessIdentifier&);
+    RemoteAudioSessionProxy* getProxy(const WebCore::ProcessIdentifier&);
 
-    void setCategoryForProcess(RemoteAudioSessionProxy&, WebCore::AudioSession::CategoryType, WebCore::RouteSharingPolicy);
-    void setPreferredBufferSizeForProcess(RemoteAudioSessionProxy&, size_t);
+    void setCategoryForProcess(const WebCore::ProcessIdentifier&, WebCore::AudioSession::CategoryType, WebCore::RouteSharingPolicy);
+    void setPreferredBufferSizeForProcess(const WebCore::ProcessIdentifier&, size_t);
 
-    bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
+    bool tryToSetActiveForProcess(const WebCore::ProcessIdentifier&, bool);
 
     const WebCore::AudioSession& session() const { return m_session; }
 
 private:
-    void beginAudioSessionInterruption(WebCore::PlatformMediaSession::InterruptionType) final;
-    void endAudioSessionInterruption(WebCore::PlatformMediaSession::EndInterruptionFlags) final;
-
     UniqueRef<WebCore::AudioSession> m_session;
-    WeakHashSet<RemoteAudioSessionProxy> m_proxies;
+    HashMap<WebCore::ProcessIdentifier, WeakPtr<RemoteAudioSessionProxy>> m_proxies;
 };
 
 }
