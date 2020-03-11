@@ -928,7 +928,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     bool hasPendingReadyPromise = false;
 
     // 3. Perform the steps corresponding to the first matching condition from the following, if any:
-    if (effectivePlaybackRate() > 0 && autoRewind == AutoRewind::Yes && (!localTime || localTime.value() < 0_s || localTime.value() >= endTime)) {
+    if (effectivePlaybackRate() > 0 && autoRewind == AutoRewind::Yes && (!localTime || localTime.value() < 0_s || (localTime.value() + timeEpsilon) >= endTime)) {
         // If animation's effective playback rate > 0, the auto-rewind flag is true and either animation's:
         //     - current time is unresolved, or
         //     - current time < zero, or
