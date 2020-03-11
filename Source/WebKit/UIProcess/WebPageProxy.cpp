@@ -3093,10 +3093,18 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
+static bool shouldBeTreatedAsAppBound(const URL& requestURL)
+{
+    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile();
+}
+
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     if (isMainFrame && (m_preferences->isInAppBrowserPrivacyEnabled() || WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2)) {
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
+        if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No && shouldBeTreatedAsAppBound(requestURL))
+            isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
+
         if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;

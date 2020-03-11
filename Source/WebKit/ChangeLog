@@ -1,3 +1,18 @@
+2020-03-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Some common domains should always be App-bound domains
+        https://bugs.webkit.org/show_bug.cgi?id=208893
+         <rdar://problem/60280943>
+
+        Reviewed by Brent Fulgham.
+
+        Some domains, like about:blank and pages loaded from files should
+        always be considered app-bound.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::shouldBeTreatedAsAppBound):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
 2020-03-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: make `WebKit::WebInspectorProxy::m_isOpening` GTK only
