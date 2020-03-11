@@ -1,3 +1,15 @@
+2020-03-10  David Kilzer  <ddkilzer@apple.com>
+
+        [CoreIPC] WebPasteboardProxy::SetPasteboardBufferForType uses "0" for both uint64_t and a pointer value
+        <https://webkit.org/b/208879>
+        <rdar://problem/60165624>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        - Change 0 to nullptr to make code easier to read.
+
 2020-03-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Enable accessibility IsolatedTree in WebKit.

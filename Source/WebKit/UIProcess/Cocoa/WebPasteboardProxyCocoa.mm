@@ -178,7 +178,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
         return completionHandler(0);
 
     if (handle.isNull())
-        return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType));
+        return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(nullptr, pasteboardType));
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return completionHandler(0);
