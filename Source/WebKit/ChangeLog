@@ -1,3 +1,9 @@
+2020-03-11  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the macCatalyst build after r258250
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+
 2020-03-11  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit under WebPageProxy::suspendCurrentPageIfPossible() when bypassing certificate warning page

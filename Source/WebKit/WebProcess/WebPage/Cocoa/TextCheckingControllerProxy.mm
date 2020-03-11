@@ -40,6 +40,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderedDocumentMarker.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 
