@@ -1,3 +1,14 @@
+2020-03-10  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [OpenSSL] Implement WebCrypto APIs for AES-CTR and AES-KW
+        https://bugs.webkit.org/show_bug.cgi?id=208186
+
+        Reviewed by Fujii Hironori.
+
+        Enabled WebCrypto LayoutTests for AES-CTR and AES-KW along with the implementations.
+
+        * platform/wincairo/TestExpectations:
+
 2020-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         Track "scrolling scope" on RenderLayers

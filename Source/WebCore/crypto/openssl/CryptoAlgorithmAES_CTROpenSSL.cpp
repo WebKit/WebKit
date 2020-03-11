@@ -30,20 +30,114 @@
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
-#include "NotImplemented.h"
+#include "OpenSSLCryptoUniquePtr.h"
+#include <openssl/evp.h>
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const CryptoAlgorithmAesCtrParams&, const CryptoKeyAES&, const Vector<uint8_t>&)
+static const EVP_CIPHER* aesAlgorithm(size_t keySize)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    if (keySize * 8 == 128)
+        return EVP_aes_128_ctr();
+
+    if (keySize * 8 == 192)
+        return EVP_aes_192_ctr();
+
+    if (keySize * 8 == 256)
+        return EVP_aes_256_ctr();
+
+    return nullptr;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const CryptoAlgorithmAesCtrParams&, const CryptoKeyAES&, const Vector<uint8_t>&)
+static Optional<Vector<uint8_t>> crypt(int operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    constexpr size_t blockSize = 16;
+    const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
+    if (!algorithm)
+        return WTF::nullopt;
+
+    EvpCipherCtxPtr ctx;
+    int len;
+
+    // Create and initialize the context
+    if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
+        return WTF::nullopt;
+
+    const size_t blocks = roundUpToMultipleOf(blockSize, inputText.size()) / blockSize;
+
+    // Detect loop
+    if (counterLength < sizeof(size_t) * 8 && blocks > ((size_t)1 << counterLength))
+        return WTF::nullopt;
+
+    // Calculate capacity before overflow
+    CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
+    size_t capacity = counterBlockHelper.countToOverflowSaturating();
+
+    // Divide data into two parts if necessary
+    size_t headSize = inputText.size();
+    if (capacity < blocks)
+        headSize = capacity * blockSize;
+
+    Vector<uint8_t> outputText(inputText.size());
+    // First part
+    {
+        // Initialize the encryption(decryption) operation
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), counter.data(), operation))
+            return WTF::nullopt;
+
+        // Disable padding
+        if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
+            return WTF::nullopt;
+
+        // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
+        if (1 != EVP_CipherUpdate(ctx.get(), outputText.data(), &len, inputText.data(), headSize))
+            return WTF::nullopt;
+
+        // Finalize the encryption(decryption)
+        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + len, &len))
+            return WTF::nullopt;
+    }
+
+    // Sedond part
+    if (capacity < blocks) {
+        size_t tailSize = inputText.size() - headSize;
+
+        Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
+
+        // Initialize the encryption(decryption) operation
+        if (1 != EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.data(), remainingCounter.data(), operation))
+            return WTF::nullopt;
+
+        // Disable padding
+        if (1 != EVP_CIPHER_CTX_set_padding(ctx.get(), 0))
+            return WTF::nullopt;
+
+        // Provide the message to be encrypted(decrypted), and obtain the encrypted(decrypted) output
+        if (1 != EVP_CipherUpdate(ctx.get(), outputText.data() + headSize, &len, inputText.data() + headSize, tailSize))
+            return WTF::nullopt;
+
+        // Finalize the encryption(decryption)
+        if (1 != EVP_CipherFinal_ex(ctx.get(), outputText.data() + headSize + len, &len))
+            return WTF::nullopt;
+    }
+
+    return outputText;
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+{
+    auto output = crypt(1, key.key(), parameters.counterVector(), parameters.length, plainText);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+{
+    auto output = crypt(0, key.key(), parameters.counterVector(), parameters.length, cipherText);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
 } // namespace WebCore

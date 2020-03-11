@@ -30,7 +30,9 @@
 
 #include "CryptoAlgorithmAES_CBC.h"
 #include "CryptoAlgorithmAES_CFB.h"
+#include "CryptoAlgorithmAES_CTR.h"
 #include "CryptoAlgorithmAES_GCM.h"
+#include "CryptoAlgorithmAES_KW.h"
 #include "CryptoAlgorithmSHA1.h"
 #include "CryptoAlgorithmSHA224.h"
 #include "CryptoAlgorithmSHA256.h"
@@ -43,7 +45,9 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
     registerAlgorithm<CryptoAlgorithmAES_CBC>();
     registerAlgorithm<CryptoAlgorithmAES_CFB>();
+    registerAlgorithm<CryptoAlgorithmAES_CTR>();
     registerAlgorithm<CryptoAlgorithmAES_GCM>();
+    registerAlgorithm<CryptoAlgorithmAES_KW>();
     registerAlgorithm<CryptoAlgorithmSHA1>();
     registerAlgorithm<CryptoAlgorithmSHA224>();
     registerAlgorithm<CryptoAlgorithmSHA256>();

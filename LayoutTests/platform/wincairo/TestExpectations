@@ -829,40 +829,6 @@ webkit.org/b/206282 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyF
 #//////////////////////////////////////////////////////////////////////////////////////////
 # crypto
 #//////////////////////////////////////////////////////////////////////////////////////////
-# AES-CTR is not supported.
-crypto/subtle/aes-ctr-encrypt-malformed-parameters.html [ Skip ]
-crypto/subtle/aes-ctr-generate-export-key-jwk-length-128.html [ Skip ]
-crypto/subtle/aes-ctr-generate-export-key-jwk-length-192.html [ Skip ]
-crypto/subtle/aes-ctr-generate-export-key-jwk-length-256.html [ Skip ]
-crypto/subtle/aes-ctr-generate-export-raw-key.html [ Skip ]
-crypto/subtle/aes-ctr-generate-key-encrypt-decrypt.html [ Skip ]
-crypto/subtle/aes-ctr-generate-key.html [ Skip ]
-crypto/subtle/aes-ctr-import-jwk-key-length-128.html [ Skip ]
-crypto/subtle/aes-ctr-import-jwk-key-length-192.html [ Skip ]
-crypto/subtle/aes-ctr-import-jwk-key-length-256.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-decrypt.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-encrypt.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-unwrap-jwk-key.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-unwrap-raw-key.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-wrap-jwk-key.html [ Skip ]
-crypto/subtle/aes-ctr-import-key-wrap-raw-key.html [ Skip ]
-crypto/subtle/aes-ctr-import-raw-key.html [ Skip ]
-
-# AES-KW is not supported.
-crypto/subtle/aes-generate-key-malformed-parameters.html [ Skip ]
-crypto/subtle/aes-kw-wrap-key-malformed-parameters.html [ Skip ]
-crypto/subtle/aes-kw-generate-export-key-jwk-length-128.html [ Skip ]
-crypto/subtle/aes-kw-generate-export-key-jwk-length-192.html [ Skip ]
-crypto/subtle/aes-kw-generate-export-key-jwk-length-256.html [ Skip ]
-crypto/subtle/aes-kw-generate-export-raw-key.html [ Skip ]
-crypto/subtle/aes-kw-generate-key.html [ Skip ]
-crypto/subtle/aes-kw-generate-key-wrap-key-unwrap-key.html [ Skip ]
-crypto/subtle/aes-kw-import-jwk-key-length-128.html [ Skip ]
-crypto/subtle/aes-kw-import-jwk-key-length-192.html [ Skip ]
-crypto/subtle/aes-kw-import-jwk-key-length-256.html [ Skip ]
-crypto/subtle/aes-kw-import-key-unwrap-raw-key.html [ Skip ]
-crypto/subtle/aes-kw-import-key-wrap-raw-key.html [ Skip ]
-crypto/subtle/aes-kw-import-raw-key.html [ Skip ]
 
 # Crypts other than AES are not supported.
 crypto/subtle/aes-cbc-import-key-unwrap-jwk-rsa-key-private.html [ Skip ]
