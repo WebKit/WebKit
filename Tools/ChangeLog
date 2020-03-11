@@ -1,3 +1,19 @@
+2020-03-11  Keith Miller  <keith_miller@apple.com>
+
+        Test262-runner should always consider crashes as new failures
+        https://bugs.webkit.org/show_bug.cgi?id=208943
+
+        Reviewed by Yusuke Suzuki.
+
+        Right now the runner will consider crashes with no output as passes, which is obviously bad.
+        Since we should never crash on a conformance test we should consider a crash as a new failure
+        100% of the time.
+
+        * Scripts/test262/Runner.pm:
+        (processFile):
+        (runTest):
+        (processResult):
+
 2020-03-11  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit under WebPageProxy::suspendCurrentPageIfPossible() when bypassing certificate warning page

@@ -1,5 +1,19 @@
 2020-03-11  Keith Miller  <keith_miller@apple.com>
 
+        Test262-runner should always consider crashes as new failures
+        https://bugs.webkit.org/show_bug.cgi?id=208943
+
+        Reviewed by Yusuke Suzuki.
+
+        BigInt.asUintN() / BigInt.asIntN() should not crash when called even if we have
+        not implemented them yet...
+
+        * runtime/BigIntConstructor.cpp:
+        (JSC::bigIntConstructorFuncAsUintN):
+        (JSC::bigIntConstructorFuncAsIntN):
+
+2020-03-11  Keith Miller  <keith_miller@apple.com>
+
         Throws incorrectly a syntax error when declaring a top level catch variable the same as a parameter
         https://bugs.webkit.org/show_bug.cgi?id=189914
 

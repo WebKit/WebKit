@@ -684,9 +684,9 @@ sub processFile {
         my $args = getFeatureFlags($data);
 
         foreach my $scenario (@scenarios) {
-            my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data, $args);
+            my ($exitCode, $result, $execTime) = runTest($includesfile, $filename, $scenario, $data, $args);
 
-            $resultsdata = processResult($filename, $data, $scenario, $result, $execTime);
+            $resultsdata = processResult($filename, $data, $scenario, $exitCode, $result, $execTime);
             DumpFile($resultsfh, $resultsdata);
         }
 
@@ -823,14 +823,14 @@ sub runTest {
     chomp $result;
 
     if ($?) {
-        return ($result, $execTime);
+        return ($?, $result, $execTime);
     } else {
-        return (0, $execTime);
+        return ($?, 0, $execTime);
     }
 }
 
 sub processResult {
-    my ($path, $data, $scenario, $result, $execTime) = @_;
+    my ($path, $data, $scenario, $exitCode, $result, $execTime) = @_;
 
     # Report a relative path
     my $file = abs2rel( $path, $test262Dir );
@@ -844,12 +844,15 @@ sub processResult {
         && $expect->{$file}
         && $expect->{$file}->{$scenario};
 
-    if ($scenario ne 'skip' && $currentfailure) {
+    my $exitSignalNumber = $exitCode & 0x7f if $scenario ne 'skip';
 
-        # We have a new failure if we haven't loaded an expectation file
-        # (all fails are new) OR we have loaded an expectation fail and
-        # (there is no expected failure OR the failure has changed).
-        my $isnewfailure = ! $expect
+    if ($scenario ne 'skip' && ($currentfailure || $exitSignalNumber)) {
+
+        # We have a new failure if the process crashed OR we haven't loaded
+        # an expectation file (all fails are new) OR we have loaded an
+        # expectation fail and (there is no expected failure OR the failure
+        # has changed).
+        my $isnewfailure = $exitSignalNumber || !$expect
             || !$expectedfailure || $expectedfailure ne $currentfailure;
 
         # Print the failure if we haven't loaded an expectation file
@@ -858,6 +861,7 @@ sub processResult {
 
         my $newFail = '';
         $newFail = '! NEW ' if $isnewfailure;
+        $newFail = "$newFail (Exit code: $exitCode) " if $exitSignalNumber;
         my $failMsg = '';
         $failMsg = "FAIL $file ($scenario)\n";
 
@@ -871,6 +875,7 @@ sub processResult {
 
         $resultdata{result} = 'FAIL';
         $resultdata{error} = $currentfailure;
+        $resultdata{error} = "Bad exit code: $exitCode" if $exitSignalNumber;
         $resultdata{output} = $result;
     } elsif ($scenario ne 'skip' && !$currentfailure) {
         if ($expectedfailure) {

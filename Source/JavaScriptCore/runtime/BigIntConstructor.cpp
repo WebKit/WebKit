@@ -142,16 +142,14 @@ EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(JSGlobalObject*, CallF
 {
     // FIXME: [ESNext][BigInt] Implement BigInt.asIntN and BigInt.asUintN
     // https://bugs.webkit.org/show_bug.cgi?id=181144
-    CRASH();
-    return JSValue::encode(JSValue());
+    return encodedJSUndefined();
 }
 
 EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsIntN(JSGlobalObject*, CallFrame*)
 {
     // FIXME: [ESNext][BigInt] Implement BigInt.asIntN and BigInt.asUintN
     // https://bugs.webkit.org/show_bug.cgi?id=181144
-    CRASH();
-    return JSValue::encode(JSValue());
+    return encodedJSUndefined();
 }
 
 } // namespace JSC

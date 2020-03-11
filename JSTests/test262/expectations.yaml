@@ -726,6 +726,66 @@ test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
 test/built-ins/AsyncGeneratorFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncGeneratorFunction]», «[object AsyncGeneratorFunction]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncGeneratorFunction]», «[object AsyncGeneratorFunction]») to be true'
+test/built-ins/BigInt/asIntN/arithmetic.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asIntN/bigint-tobigint-errors.js:
+  default: 'Test262Error: ToBigInt: no argument => undefined => TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: ToBigInt: no argument => undefined => TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/BigInt/asIntN/bigint-tobigint-toprimitive.js:
+  default: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+  strict mode: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+test/built-ins/BigInt/asIntN/bigint-tobigint-wrapped-values.js:
+  default: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asIntN/bigint-tobigint.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asIntN/bits-toindex-errors.js:
+  default: 'Test262Error: ToIndex: throw when integerIndex < 0 Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: ToIndex: throw when integerIndex < 0 Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/BigInt/asIntN/bits-toindex-toprimitive.js:
+  default: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «-1») to be true'
+  strict mode: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «-1») to be true'
+test/built-ins/BigInt/asIntN/bits-toindex-wrapped-values.js:
+  default: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asIntN/bits-toindex.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asIntN/order-of-steps.js:
+  default: 'Test262Error: Expected SameValue(«0», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
+test/built-ins/BigInt/asUintN/arithmetic.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asUintN/bigint-tobigint-errors.js:
+  default: 'Test262Error: ToBigInt: no argument => undefined => TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: ToBigInt: no argument => undefined => TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/BigInt/asUintN/bigint-tobigint-toprimitive.js:
+  default: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+  strict mode: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+test/built-ins/BigInt/asUintN/bigint-tobigint-wrapped-values.js:
+  default: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asUintN/bigint-tobigint.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asUintN/bits-toindex-errors.js:
+  default: 'Test262Error: ToIndex: throw when integerIndex < 0 Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: ToIndex: throw when integerIndex < 0 Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/BigInt/asUintN/bits-toindex-toprimitive.js:
+  default: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+  strict mode: 'Test262Error: ToPrimitive: @@toPrimitive takes precedence Expected SameValue(«undefined», «1») to be true'
+test/built-ins/BigInt/asUintN/bits-toindex-wrapped-values.js:
+  default: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: ToPrimitive: unbox object with internal slot Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asUintN/bits-toindex.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «0») to be true'
+test/built-ins/BigInt/asUintN/order-of-steps.js:
+  default: 'Test262Error: Expected SameValue(«0», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
 test/built-ins/BigInt/constructor-integer.js:
   default: 'RangeError: Not safe integer'
   strict mode: 'RangeError: Not safe integer'
