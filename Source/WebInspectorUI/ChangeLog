@@ -1,3 +1,24 @@
+2020-03-10  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r253759): Web Inspector: Audits: results folder doesn't get selected by pressing Arrow Down key
+        https://bugs.webkit.org/show_bug.cgi?id=208679
+        <rdar://problem/60108942>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditManagerEditingChanged):
+        We do actually want to prevent repeat selection, as we may end up attempting to select the
+        same `WI.TreeElement` twice due to the nature of `WI.SelectionController`, which would call
+        through to `WI.NavigationSidebarPanel.prototype.showDefaultContentView()` which deselects
+        any selected `WI.TreeElement`. Reselecting the previously selected `WI.TreeElement` when
+        exiting edit mode is much more of a special case than any of the ways for moving selection
+        to a `WI.FolderTreeElement`, so add logic just for that case instead of affecting the entire
+        `WI.TreeOutline`. When restoring the selection after leaving edit mode, if the currently
+        selected `WI.TreeElement` was also the previously selected `WI.TreeElement`, deselect and
+        reselect it so we're "reset" back to a fresh state.
+
 2020-03-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: AXI: no way to expand/collapse sidebar sections with Tab navigation

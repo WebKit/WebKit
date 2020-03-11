@@ -77,6 +77,8 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     {
         super.initialLayout();
 
+        this.contentTreeOutline.allowsRepeatSelection = false;
+
         let controlsNavigationBar = new WI.NavigationBar;
 
         this._startStopButtonNavigationItem = new WI.ToggleButtonNavigationItem("audit-start-stop", WI.UIString("Start"), WI.UIString("Stop"), "Images/AuditStart.svg", "Images/AuditStop.svg", 13, 13);
@@ -235,8 +237,15 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             if (this._selectedTreeElementBeforeEditing)
                 this._selectedTreeElementBeforeEditing.deselect();
         } else if (this._selectedTreeElementBeforeEditing) {
-            if (!(this._selectedTreeElementBeforeEditing.representedObject instanceof WI.AuditTestBase) || !this._selectedTreeElementBeforeEditing.representedObject.disabled)
-                this._selectedTreeElementBeforeEditing.select();
+            if (this.contentTreeOutline.selectedTreeElement === this._selectedTreeElementBeforeEditing) {
+                const suppressNotification = true;
+                this._selectedTreeElementBeforeEditing.deselect(suppressNotification);
+            }
+            if (!(this._selectedTreeElementBeforeEditing.representedObject instanceof WI.AuditTestBase) || !this._selectedTreeElementBeforeEditing.representedObject.disabled) {
+                const omitFocus = false;
+                const selectedByUser = true;
+                this._selectedTreeElementBeforeEditing.select(omitFocus, selectedByUser);
+            }
             this._selectedTreeElementBeforeEditing = null;
         }
 
