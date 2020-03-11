@@ -90,6 +90,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
         settings.setVolume(volume());
         settings.setEchoCancellation(echoCancellation());
         settings.setSampleRate(sampleRate());
+        settings.setLabel(name());
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);

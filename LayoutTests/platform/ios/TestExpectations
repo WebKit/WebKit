@@ -103,14 +103,6 @@ fast/speechsynthesis
 gamepad
 mhtml
 
-# Some media stream tests crash because of OS issues, so skip all but a few while we investigate.
-fast/mediastream [ Skip ]
-fast/mediastream/getUserMedia-default.html [ Pass ]
-fast/mediastream/captureInGPUProcess.html [ Pass ]
-fast/mediastream/MediaStreamTrack-clone.html [ Pass ]
-fast/mediastream/MediaStream-clone.html [ Pass ]
-fast/mediastream/mediastreamtrack-video-clone.html [ Pass ]
-
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html
 
@@ -1083,33 +1075,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 
 # Not relevant for iOS.
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
-
-# Run webrtc tests on iOS 11
-fast/mediastream/RTCIceCandidate.html [ Pass ]
-fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Pass ]
-fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Pass ]
-fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Pass ]
-fast/mediastream/RTCPeerConnection-addTransceiver.html [ Pass ]
-fast/mediastream/RTCPeerConnection-createAnswer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-datachannel.html [ Pass ]
-fast/mediastream/RTCPeerConnection-have-local-offer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-inspect-answer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-inspect-offer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-localDescription.html [ Pass ]
-fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Pass ]
-fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass ]
-fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass ]
-fast/mediastream/RTCPeerConnection-remoteDescription.html [ Pass ]
-fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass ]
-fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Pass ]
-fast/mediastream/RTCPeerConnection-stable.html [ Pass ]
-fast/mediastream/RTCPeerConnection-statsSelector.html [ Pass ]
-fast/mediastream/RTCSessionDescription.html [ Pass ]
-fast/mediastream/RTCTrackEvent-constructor.html [ Pass ]
 
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
@@ -2907,6 +2872,19 @@ http/tests/multipart/load-last-non-html-frame.php [ Failure  ]
 webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html [ Pass Timeout ]
 
 webkit.org/b/177395 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Failure ]
+fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure ]
+fast/mediastream/getUserMedia-webaudio.html [ Pass Failure ]
+fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
+# These tests are timing out and should be investigated.
+fast/mediastream/device-change-event-2.html [ Skip ]
+fast/mediastream/get-display-media-muted.html [ Skip ]
+fast/mediastream/media-stream-page-muted.html [ Skip ]
+fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
+fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
+fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
+
+# screen capture not supported on iOS.
+fast/mediastream/screencapture-user-gesture.html [ Skip ]
 
 webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
 

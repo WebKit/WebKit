@@ -45,7 +45,9 @@
             function checkElementTrack(track)
             {
                 enumerateProperties(track, function(property, value) {
-                    if (property == "id")
+                     if (property == "sourceBuffer")
+                        return;
+                     if (property == "id")
                         value = "&lt;UUID>";
                     debug(`  track.${property} = ${value}`);
                 });

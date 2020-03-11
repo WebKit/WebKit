@@ -227,6 +227,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     else
         settings.setFacingMode(RealtimeMediaSourceSettings::Unknown);
 
+    settings.setLabel(name());
     settings.setFrameRate(frameRate());
 
     auto size = this->size();

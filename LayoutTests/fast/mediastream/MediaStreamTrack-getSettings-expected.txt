@@ -12,7 +12,7 @@ video track settings:
 
 audio track settings:
   settings.deviceId = <UUID>
-  settings.echoCancellation = false
+  settings.echoCancellation = true
   settings.sampleRate = 44100
   settings.volume = 1
 

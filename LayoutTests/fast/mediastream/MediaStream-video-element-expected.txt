@@ -36,7 +36,6 @@ video.videoTracks[0] properties:
   track.label = Mock video device 1
   track.language = 
   track.selected = true
-  track.sourceBuffer = null
 
 **** check audio tracks ****
 PASS video.audioTracks.length is 1
@@ -50,7 +49,6 @@ video.audioTracks[0] properties:
   track.label = Mock audio device 1
   track.language = 
   track.enabled = true
-  track.sourceBuffer = null
 
 PASS successfullyParsed is true
 

@@ -149,6 +149,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         return m_currentSettings.value();
 
     RealtimeMediaSourceSettings settings;
+    settings.setLabel(name());
     if (mockCamera()) {
         settings.setFacingMode(facingMode());
         settings.setDeviceId(hashedId());
