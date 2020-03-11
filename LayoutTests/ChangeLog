@@ -1,3 +1,12 @@
+2020-03-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update TestExpectations related with WebGL 2.0.0 tests
+        https://bugs.webkit.org/show_bug.cgi?id=208916
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-11  Jack Lee  <shihchieh_lee@apple.com>
 
         Crash in KeyframeEffect::getAnimatedStyle

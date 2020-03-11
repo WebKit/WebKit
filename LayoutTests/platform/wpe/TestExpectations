@@ -681,6 +681,22 @@ webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
 
+webkit.org/b/208914 webgl/2.0.0/conformance/context/context-lost-restored.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/extensions/webgl-depth-texture.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/glsl/misc/shaders-with-name-conflicts.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/limits/gl-line-width.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/misc/webgl-specific.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/programs/program-test.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/renderbuffers/feedback-loop.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/rendering/point-no-attributes.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/textures/misc/cube-incomplete-fbo.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Failure ]
+webkit.org/b/208914 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Failure ]
+
+webkit.org/b/208915 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
