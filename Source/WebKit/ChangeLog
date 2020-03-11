@@ -1,3 +1,10 @@
+2020-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix the macCatalyst build after r258250
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+
 2020-03-11  Chris Dumez  <cdumez@apple.com>
 
         Terminate the Network / Plugin processes when receiving invalid IPC from them
