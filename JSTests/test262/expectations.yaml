@@ -3643,9 +3643,6 @@ test/language/statements/try/early-catch-function.js:
 test/language/statements/try/early-catch-lex.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/try/scope-catch-param-lex-open.js:
-  default: "SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'."
-  strict mode: "SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'."
 test/language/statements/while/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/with/let-array-with-newline.js:

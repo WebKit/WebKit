@@ -1,2 +1,2 @@
-Exception: SyntaxError: Unexpected identifier 'a'. Cannot declare a lexical variable twice: 'a'.
+Exception: SyntaxError: new.target is only valid inside functions.
 at globalParamCatchNewTargetSyntaxError.js:7

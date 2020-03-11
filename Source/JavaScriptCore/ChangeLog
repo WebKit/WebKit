@@ -1,3 +1,16 @@
+2020-03-11  Keith Miller  <keith_miller@apple.com>
+
+        Throws incorrectly a syntax error when declaring a top level catch variable the same as a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=189914
+
+        Reviewed by Saam Barati.
+
+        When we are parsing catch block parameters we should increment the statement depth so we don't think
+        we are trying to shadow top level lexical variables in the same statement depth.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTryStatement):
+
 2020-03-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix iso-subspace static_assert for JSJavaScriptCallFramePrototype

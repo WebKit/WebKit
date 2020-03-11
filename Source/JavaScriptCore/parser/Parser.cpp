@@ -1761,6 +1761,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
             failIfFalse(catchBlock, "Unable to parse 'catch' block");
         } else {
             handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
+            DepthManager statementDepth(&m_statementDepth);
+            m_statementDepth++;
             AutoPopScopeRef catchScope(this, pushScope());
             catchScope->setIsLexicalScope();
             catchScope->preventVarDeclarations();

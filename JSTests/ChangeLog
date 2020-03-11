@@ -1,3 +1,26 @@
+2020-03-11  Keith Miller  <keith_miller@apple.com>
+
+        Throws incorrectly a syntax error when declaring a top level catch variable the same as a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=189914
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore/test/es6/globalParamCatchNewTargetSyntaxError.baseline-jsc:
+        * stress/catch-destructuring-shadow-lexical-const-variable-global.js: Added.
+        (catch):
+        * stress/catch-destructuring-shadow-lexical-variable-class.js: Added.
+        (Foo):
+        (Bar):
+        (Baz):
+        * stress/catch-destructuring-shadow-lexical-variable-function.js: Added.
+        (foo):
+        (bar):
+        * stress/catch-destructuring-shadow-lexical-variable-global.js: Added.
+        (catch):
+        * stress/catch-destructuring-shadow-var-global.js: Added.
+        (catch):
+        * test262/expectations.yaml:
+
 2020-03-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Re-import test262 to acquire DST fix
