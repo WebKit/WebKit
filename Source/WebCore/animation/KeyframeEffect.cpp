@@ -1158,7 +1158,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
 
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    if (!m_target || !animation())
+    if (!m_target || !renderer() || !animation())
         return;
 
     auto progress = getComputedTiming().progress;

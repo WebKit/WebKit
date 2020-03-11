@@ -1,3 +1,16 @@
+2020-03-11  Jack Lee  <shihchieh_lee@apple.com>
+
+        Crash in KeyframeEffect::getAnimatedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=208318
+        <rdar://problem/59848234>
+
+        Reviewed by Antoine Quint.
+
+        Quit getAnimatedStyle if element is rendererless. 
+
+        * fast/animation/keyframe-rendererless-element-crash-expected.txt: Added.
+        * fast/animation/keyframe-rendererless-element-crash.html: Added.
+
 2020-03-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update TestExpectations
