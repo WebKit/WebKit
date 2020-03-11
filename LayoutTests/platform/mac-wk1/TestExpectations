@@ -922,8 +922,6 @@ webkit.org/b/207560 media/airplay-target-availability.html [ Pass Failure ]
 
 webkit.org/b/207153 [ Debug ] animations/animation-callback-timestamp.html [ Pass Failure ]
 
-webkit.org/b/207566 imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html [ Pass Failure ]
-
 webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
 
 webkit.org/b/207847 resize-observer/delete-observers-in-callbacks.html [ Pass Failure ]

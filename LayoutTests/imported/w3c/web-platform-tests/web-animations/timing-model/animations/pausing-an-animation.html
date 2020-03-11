@@ -94,7 +94,7 @@ promise_test(async t => {
 
   const animation = createDiv(t).animate(null, 100 * MS_PER_SEC);
 
-  const originalReadyPromise = animation.ready;
+  const originalReadyPromise = animation.ready.catch(() => {});
   animation.cancel();
   assert_equals(animation.startTime, null);
   assert_equals(animation.currentTime, null);
