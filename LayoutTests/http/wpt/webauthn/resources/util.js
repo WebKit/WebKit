@@ -5,6 +5,7 @@ const testES256PrivateKeyBase64 =
     "RQ==";
 const testRpId = "localhost";
 const testUserhandleBase64 = "AAECAwQFBgcICQ==";
+const testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVwQUFFQ0F3UUZCZ2NJQ1E9PQ==";
 const testAttestationCertificateBase64 =
     "MIIB6jCCAZCgAwIBAgIGAWHAxcjvMAoGCCqGSM49BAMCMFMxJzAlBgNVBAMMHkJh" +
     "c2ljIEF0dGVzdGF0aW9uIFVzZXIgU3ViIENBMTETMBEGA1UECgwKQXBwbGUgSW5j" +
@@ -449,7 +450,7 @@ function checkU2fGetAssertionResult(credential, isAppID = false, appIDHash = "c2
 
 function generateUserhandleBase64()
 {
-    let buffer = new Uint8Array(16);
+    let buffer = new Uint8Array(8);
     crypto.getRandomValues(buffer);
     return btoa(String.fromCharCode.apply(0, buffer));
 }
@@ -485,4 +486,10 @@ async function calculateCredentialID(privateKeyBase64) {
     const privateKey = Base64URL.parse(privateKeyBase64);
     const publicKey = privateKey.slice(0, 65);
     return new Uint8Array(await crypto.subtle.digest("sha-1", publicKey));
+}
+
+function base64encode(binary)
+{
+    const unit8Array = new Uint8Array(binary);
+    return btoa(String.fromCharCode.apply(0, unit8Array));
 }

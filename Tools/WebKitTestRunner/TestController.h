@@ -316,8 +316,8 @@ public:
     void setServiceWorkerFetchTimeoutForTesting(double seconds);
 
     void addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64);
-    void cleanUpKeychain(const String& attrLabel, const String& applicationTagBase64);
-    bool keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64);
+    void cleanUpKeychain(const String& attrLabel, const String& applicationLabelBase64);
+    bool keyExistsInKeychain(const String& attrLabel, const String& applicationLabelBase64);
 
 #if PLATFORM(COCOA)
     NSString *overriddenCalendarIdentifier() const;

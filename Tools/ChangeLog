@@ -1,3 +1,26 @@
+2020-03-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Formalize the Keychain schema
+        https://bugs.webkit.org/show_bug.cgi?id=183533
+        <rdar://problem/43347926>
+
+        Reviewed by Brent Fulgham.
+
+        Modifies the test infra to use Credential ID as the unique identifier for a credential instead of
+        the original combination of RP ID and user handle.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::cleanUpKeychain):
+        (WTR::TestRunner::keyExistsInKeychain):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cleanUpKeychain):
+        (WTR::TestController::keyExistsInKeychain):
+
 2020-03-11  Keith Miller  <keith_miller@apple.com>
 
         Test262-runner should always consider crashes as new failures

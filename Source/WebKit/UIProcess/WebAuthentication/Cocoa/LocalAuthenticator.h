@@ -67,10 +67,13 @@ private:
     void continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&&, LocalConnection::UserVerification, LAContext *);
 
     void receiveException(WebCore::ExceptionData&&, WebAuthenticationStatus = WebAuthenticationStatus::LAError) const;
+    void deleteDuplicateCredential() const;
 
     State m_state { State::Init };
     UniqueRef<LocalConnection> m_connection;
+    // FIXME(183534): Combine these two.
     HashSet<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
+    Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_existingCredentials;
 };
 
 } // namespace WebKit

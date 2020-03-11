@@ -164,6 +164,7 @@ public:
     bool isSimple() const { return type() == Type::SimpleValue; }
     bool isBool() const { return isSimple() && (m_simpleValue == SimpleValue::TrueValue || m_simpleValue == SimpleValue::FalseValue); }
 
+    // FIXME(183535): Considering adding && getter for better performance.
     // These will all fatally assert if the type doesn't match.
     SimpleValue getSimpleValue() const;
     bool getBool() const;

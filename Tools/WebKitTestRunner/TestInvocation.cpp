@@ -1723,10 +1723,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKRetainPtr<WKStringRef> attrLabelKey = adoptWK(WKStringCreateWithUTF8CString("AttrLabel"));
         WKStringRef attrLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, attrLabelKey.get()));
 
-        WKRetainPtr<WKStringRef> applicationTagKey = adoptWK(WKStringCreateWithUTF8CString("ApplicationTag"));
-        WKStringRef applicationTagWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, applicationTagKey.get()));
+        WKRetainPtr<WKStringRef> applicationLabelKey = adoptWK(WKStringCreateWithUTF8CString("ApplicationLabel"));
+        WKStringRef applicationLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, applicationLabelKey.get()));
 
-        TestController::singleton().cleanUpKeychain(toWTFString(attrLabelWK), applicationTagWK ? toWTFString(applicationTagWK) : String());
+        TestController::singleton().cleanUpKeychain(toWTFString(attrLabelWK), applicationLabelWK ? toWTFString(applicationLabelWK) : String());
         return nullptr;
     }
 
@@ -1737,10 +1737,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKRetainPtr<WKStringRef> attrLabelKey = adoptWK(WKStringCreateWithUTF8CString("AttrLabel"));
         WKStringRef attrLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, attrLabelKey.get()));
 
-        WKRetainPtr<WKStringRef> applicationTagKey = adoptWK(WKStringCreateWithUTF8CString("ApplicationTag"));
-        WKStringRef applicationTagWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, applicationTagKey.get()));
+        WKRetainPtr<WKStringRef> applicationLabelKey = adoptWK(WKStringCreateWithUTF8CString("ApplicationLabel"));
+        WKStringRef applicationLabelWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(testDictionary, applicationLabelKey.get()));
 
-        bool keyExistsInKeychain = TestController::singleton().keyExistsInKeychain(toWTFString(attrLabelWK), toWTFString(applicationTagWK));
+        bool keyExistsInKeychain = TestController::singleton().keyExistsInKeychain(toWTFString(attrLabelWK), toWTFString(applicationLabelWK));
         WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(keyExistsInKeychain));
         return result;
     }

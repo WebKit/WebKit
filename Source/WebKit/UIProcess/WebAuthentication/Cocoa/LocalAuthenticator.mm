@@ -31,6 +31,7 @@
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/AuthenticatorAttestationResponse.h>
+#import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
@@ -47,6 +48,7 @@
 
 namespace WebKit {
 using namespace WebCore;
+using CBOR = cbor::CBORValue;
 
 namespace LocalAuthenticatorInternal {
 
@@ -55,12 +57,16 @@ const uint8_t makeCredentialFlags = 0b01000101; // UP, UV and AT are set.
 const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
+const char* const userEntityIdKey = "id";
+const char* const userEntityNameKey = "name";
+const uint64_t counter = 0;
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
     return transports.isEmpty() ? true : transports.contains(target);
 }
 
+// FIXME(183534): Find a better way of comparing credential id. Doing it with array seems fine given the list should be small.
 static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDescriptor>& credentialDescriptors)
 {
     HashSet<String> result;
@@ -98,6 +104,11 @@ static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
     return ArrayBuffer::create(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
 }
 
+static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
+{
+    return ArrayBuffer::create(data.data(), data.size());
+}
+
 // FIXME(<rdar://problem/60108131>): Remove this whitelist once testing is complete.
 static const HashSet<String>& whitelistedRpId()
 {
@@ -107,6 +118,57 @@ static const HashSet<String>& whitelistedRpId()
         "tlstestwebkit.org",
     };
     return whitelistedRpId;
+}
+
+static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredentials(const String& rpId)
+{
+    // Search Keychain for existing credential matched the RP ID.
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrLabel: rpId,
+        (id)kSecReturnAttributes: @YES,
+        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
+        (id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    if (status && status != errSecItemNotFound)
+        return WTF::nullopt;
+    auto retainAttributesArray = adoptCF(attributesArrayRef);
+    NSArray *nsAttributesArray = (NSArray *)attributesArrayRef;
+
+    Vector<Ref<AuthenticatorAssertionResponse>> result;
+    result.reserveInitialCapacity(nsAttributesArray.count);
+    for (NSDictionary *attributes in nsAttributesArray) {
+        auto decodedResponse = cbor::CBORReader::read(toVector(attributes[(id)kSecAttrApplicationTag]));
+        if (!decodedResponse || !decodedResponse->isMap()) {
+            ASSERT_NOT_REACHED();
+            return WTF::nullopt;
+        }
+        auto& responseMap = decodedResponse->getMap();
+
+        auto it = responseMap.find(CBOR(userEntityIdKey));
+        if (it == responseMap.end() || !it->second.isByteString()) {
+            ASSERT_NOT_REACHED();
+            return WTF::nullopt;
+        }
+        auto& userHandle = it->second.getByteString();
+
+        it = responseMap.find(CBOR(userEntityNameKey));
+        if (it == responseMap.end() || !it->second.isString()) {
+            ASSERT_NOT_REACHED();
+            return WTF::nullopt;
+        }
+        auto& username = it->second.getString();
+
+        result.uncheckedAppend(AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl]));
+    }
+    return result;
 }
 
 } // LocalAuthenticatorInternal
@@ -127,6 +189,7 @@ void LocalAuthenticator::makeCredential()
     // Skip Step 4-5 as requireResidentKey and requireUserVerification are enforced.
     // Skip Step 9 as extensions are not supported yet.
     // Step 8 is implicitly captured by all UnknownError exception receiveResponds.
+    // Skip Step 10 as counter is constantly 0.
     // Step 2.
     if (notFound == creationOptions.pubKeyCredParams.findMatching([] (auto& pubKeyCredParam) {
         return pubKeyCredParam.type == PublicKeyCredentialType::PublicKey && pubKeyCredParam.alg == COSE::ES256;
@@ -136,36 +199,22 @@ void LocalAuthenticator::makeCredential()
     }
 
     // Step 3.
+    auto existingCredentials = getExistingCredentials(creationOptions.rp.id);
+    if (!existingCredentials) {
+        receiveException({ UnknownError, makeString("Couldn't get existing credentials") });
+        return;
+    }
+    m_existingCredentials = WTFMove(*existingCredentials);
+
     auto excludeCredentialIds = produceHashSet(creationOptions.excludeCredentials);
     if (!excludeCredentialIds.isEmpty()) {
-        // Search Keychain for the RP ID.
-        NSDictionary *query = @{
-            (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-            (id)kSecAttrLabel: creationOptions.rp.id,
-            (id)kSecReturnAttributes: @YES,
-            (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
-            (id)kSecUseDataProtectionKeychain: @YES
-#else
-            (id)kSecAttrNoLegacy: @YES
-#endif
-        };
-        CFTypeRef attributesArrayRef = nullptr;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
-        if (status && status != errSecItemNotFound) {
-            receiveException({ UnknownError, makeString("Couldn't query Keychain: ", status) });
+        if (notFound != m_existingCredentials.findMatching([&excludeCredentialIds] (auto& credential) {
+            auto* rawId = credential->rawId();
+            ASSERT(rawId);
+            return excludeCredentialIds.contains(String(reinterpret_cast<const char*>(rawId->data()), rawId->byteLength()));
+        })) {
+            receiveException({ NotAllowedError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
-        }
-        auto retainAttributesArray = adoptCF(attributesArrayRef);
-
-        // FIXME: Need to obtain user consent and then return different error according to the result.
-        for (NSDictionary *nsAttributes in (NSArray *)attributesArrayRef) {
-            NSData *nsCredentialId = nsAttributes[(id)kSecAttrApplicationLabel];
-            if (excludeCredentialIds.contains(String(reinterpret_cast<const char*>(nsCredentialId.bytes), nsCredentialId.length))) {
-                receiveException({ NotAllowedError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
-                return;
-            }
         }
     }
 
@@ -228,35 +277,22 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         return;
     }
 
-    // FIXME(183533): A single kSecClassKey item couldn't store all meta data. The following schema is a tentative solution
-    // to accommodate the most important meta data, i.e. RP ID, Credential ID, and userhandle.
+    // Here is the keychain schema.
     // kSecAttrLabel: RP ID
     // kSecAttrApplicationLabel: Credential ID (auto-gen by Keychain)
-    // kSecAttrApplicationTag: userhandle
+    // kSecAttrApplicationTag: { "id": UserEntity.id, "name": UserEntity.name } (CBOR encoded)
     // Noted, the vale of kSecAttrApplicationLabel is automatically generated by the Keychain, which is a SHA-1 hash of
-    // the public key. We borrow it directly for now to workaround the stated limitations.
+    // the public key.
     const auto& secAttrLabel = creationOptions.rp.id;
-    auto secAttrApplicationTag = toNSData(creationOptions.user.idVector);
 
-    // Step 7.5.
-    // Failures after this point could block users' accounts forever. Should we follow the spec?
-    NSDictionary* deleteQuery = @{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: secAttrLabel,
-        (id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
-        (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
-    };
-    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
-    if (status && status != errSecItemNotFound) {
-        receiveException({ UnknownError, makeString("Couldn't delete older credential: ", status) });
-        return;
-    }
+    cbor::CBORValue::MapValue userEntityMap;
+    userEntityMap[cbor::CBORValue(userEntityIdKey)] = cbor::CBORValue(creationOptions.user.idVector);
+    userEntityMap[cbor::CBORValue(userEntityNameKey)] = cbor::CBORValue(creationOptions.user.name);
+    auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
+    ASSERT(userEntity);
+    auto secAttrApplicationTag = toNSData(*userEntity);
 
-    // Step 7.1-7.4.
+    // Step 7.
     // The above-to-create private key will be inserted into keychain while using SEP.
     auto privateKey = m_connection->createCredentialPrivateKey(context, accessControlRef, secAttrLabel, secAttrApplicationTag.get());
     if (!privateKey) {
@@ -264,58 +300,54 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         return;
     }
 
+    RetainPtr<CFDataRef> publicKeyDataRef;
+    {
+        auto publicKey = adoptCF(SecKeyCopyPublicKey(privateKey.get()));
+        CFErrorRef errorRef = nullptr;
+        publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef));
+        auto retainError = adoptCF(errorRef);
+        if (errorRef) {
+            receiveException({ UnknownError, makeString("Couldn't export the public key: ", String(((NSError*)errorRef).localizedDescription)) });
+            return;
+        }
+        ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
+    }
+    NSData *nsPublicKeyData = (NSData *)publicKeyDataRef.get();
+
+    // Query credentialId in the keychain could be racy as it is the only unique identifier
+    // of the key item. Instead we calculate that, and examine its equaity in DEBUG build.
     Vector<uint8_t> credentialId;
     {
+        auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
+        digest->addBytes(nsPublicKeyData.bytes, nsPublicKeyData.length);
+        credentialId = digest->computeHash();
+
+#ifndef NDEBUG
         NSDictionary *credentialIdQuery = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: secAttrLabel,
-            (id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
-            (id)kSecReturnAttributes: @YES,
+            (id)kSecAttrApplicationLabel: toNSData(credentialId).get(),
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
 #endif
         };
-        CFTypeRef attributesRef = nullptr;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)credentialIdQuery, &attributesRef);
-        if (status) {
-            receiveException({ UnknownError, makeString("Couldn't get Credential ID: ", status) });
-            return;
-        }
-        auto retainAttributes = adoptCF(attributesRef);
-
-        NSDictionary *nsAttributes = (NSDictionary *)attributesRef;
-        credentialId = toVector(nsAttributes[(id)kSecAttrApplicationLabel]);
+        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)credentialIdQuery, nullptr);
+        ASSERT(!status);
+#endif // NDEBUG
     }
-
-    // Step 10.
-    // FIXME(183533): store the counter.
-    uint32_t counter = 0;
 
     // Step 11. https://www.w3.org/TR/webauthn/#attested-credential-data
     // credentialPublicKey
     Vector<uint8_t> cosePublicKey;
     {
-        RetainPtr<CFDataRef> publicKeyDataRef;
-        {
-            auto publicKey = adoptCF(SecKeyCopyPublicKey(privateKey.get()));
-            CFErrorRef errorRef = nullptr;
-            publicKeyDataRef = adoptCF(SecKeyCopyExternalRepresentation(publicKey.get(), &errorRef));
-            auto retainError = adoptCF(errorRef);
-            if (errorRef) {
-                receiveException({ UnknownError, makeString("Couldn't export the public key: ", String(((NSError*)errorRef).localizedDescription)) });
-                return;
-            }
-            ASSERT(((NSData *)publicKeyDataRef.get()).length == (1 + 2 * ES256FieldElementLength)); // 04 | X | Y
-        }
-
         // COSE Encoding
         Vector<uint8_t> x(ES256FieldElementLength);
-        [(NSData *)publicKeyDataRef.get() getBytes: x.data() range:NSMakeRange(1, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes: x.data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
-        [(NSData *)publicKeyDataRef.get() getBytes: y.data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes: y.data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
     // FIXME(rdar://problem/38320512): Define Apple AAGUID.
@@ -326,6 +358,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
     // Skip Apple Attestation for none attestation, and non whitelisted RP ID for now.
     if (creationOptions.attestation == AttestationConveyancePreference::None || !whitelistedRpId().contains(creationOptions.rp.id)) {
+        deleteDuplicateCredential();
+
         auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
         receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
         return;
@@ -370,6 +404,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple", WTFMove(attestationStatementMap), creationOptions.attestation);
 
+    deleteDuplicateCredential();
     receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
 }
 
@@ -383,6 +418,7 @@ void LocalAuthenticator::getAssertion()
     // The following implements https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
     // Skip Step 2 as requireUserVerification is enforced.
     // Skip Step 8 as extensions are not supported yet.
+    // Skip Step 9 as counter is constantly 0.
     // Step 12 is implicitly captured by all UnknownError exception callbacks.
     // Step 3-5. Unlike the spec, if an allow list is provided and there is no intersection between existing ones and the allow list, we always return NotAllowedError.
     auto allowCredentialIds = produceHashSet(requestOptions.allowCredentials);
@@ -392,51 +428,32 @@ void LocalAuthenticator::getAssertion()
     }
 
     // Search Keychain for the RP ID.
-    NSDictionary *query = @{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-        (id)kSecAttrLabel: requestOptions.rpId,
-        (id)kSecReturnAttributes: @YES,
-        (id)kSecMatchLimit: (id)kSecMatchLimitAll,
-#if HAVE(DATA_PROTECTION_KEYCHAIN)
-        (id)kSecUseDataProtectionKeychain: @YES
-#else
-        (id)kSecAttrNoLegacy: @YES
-#endif
-    };
-    CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
-    if (status && status != errSecItemNotFound) {
-        receiveException({ UnknownError, makeString("Couldn't query Keychain: ", status) });
+    auto existingCredentials = getExistingCredentials(requestOptions.rpId);
+    if (!existingCredentials) {
+        receiveException({ UnknownError, makeString("Couldn't get existing credentials") });
         return;
     }
-    auto retainAttributesArray = adoptCF(attributesArrayRef);
+    m_existingCredentials = WTFMove(*existingCredentials);
 
-    NSArray *intersectedCredentialsAttributes = nil;
-    if (requestOptions.allowCredentials.isEmpty())
-        intersectedCredentialsAttributes = (NSArray *)attributesArrayRef;
-    else {
-        NSMutableArray *result = [NSMutableArray arrayWithCapacity:allowCredentialIds.size()];
-        for (NSDictionary *nsAttributes in (NSArray *)attributesArrayRef) {
-            NSData *nsCredentialId = nsAttributes[(id)kSecAttrApplicationLabel];
-            if (allowCredentialIds.contains(String(reinterpret_cast<const char*>(nsCredentialId.bytes), nsCredentialId.length)))
-                [result addObject:nsAttributes];
+    for (auto& credential : m_existingCredentials) {
+        if (allowCredentialIds.isEmpty()) {
+            auto addResult = m_assertionResponses.add(credential.copyRef());
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+            continue;
         }
-        intersectedCredentialsAttributes = result;
+
+        auto* rawId = credential->rawId();
+        if (allowCredentialIds.contains(String(reinterpret_cast<const char*>(rawId->data()), rawId->byteLength()))) {
+            auto addResult = m_assertionResponses.add(credential.copyRef());
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        }
     }
-    if (!intersectedCredentialsAttributes.count) {
+    if (m_assertionResponses.isEmpty()) {
         receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
         return;
     }
 
     // Step 6-7. User consent is implicitly acquired by selecting responses.
-    for (NSDictionary *attribute : intersectedCredentialsAttributes) {
-        auto addResult = m_assertionResponses.add(AuthenticatorAssertionResponse::create(
-            toArrayBuffer(attribute[(id)kSecAttrApplicationLabel]),
-            toArrayBuffer(attribute[(id)kSecAttrApplicationTag]),
-            (__bridge SecAccessControlRef)attribute[(id)kSecAttrAccessControl]));
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
     m_connection->filterResponses(m_assertionResponses);
 
     if (auto* observer = this->observer()) {
@@ -484,10 +501,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         return;
     }
 
-    // Step 9-10.
-    // FIXME(183533): Due to the stated Keychain limitations, we can't save the counter value.
-    // Therefore, it is always zero.
-    uint32_t counter = 0;
+    // Step 10.
     auto authData = buildAuthData(WTF::get<PublicKeyCredentialRequestOptions>(requestData().options).rpId, getAssertionFlags, counter, { });
 
     // Step 11.
@@ -539,6 +553,33 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
         observer->authenticatorStatusUpdated(status);
     receiveRespond(WTFMove(exception));
     return;
+}
+
+void LocalAuthenticator::deleteDuplicateCredential() const
+{
+    using namespace LocalAuthenticatorInternal;
+
+    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+    m_existingCredentials.findMatching([creationOptions] (auto& credential) {
+        auto* userHandle = credential->userHandle();
+        ASSERT(userHandle);
+        if (memcmp(userHandle->data(), creationOptions.user.idVector.data(), userHandle->byteLength()))
+            return false;
+
+        NSDictionary* deleteQuery = @{
+            (id)kSecClass: (id)kSecClassKey,
+            (id)kSecAttrApplicationLabel: toNSData(credential->rawId()).get(),
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
+            (id)kSecAttrNoLegacy: @YES
+#endif
+        };
+        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+        if (status && status != errSecItemNotFound)
+            LOG_ERROR(makeString("Couldn't delete older credential: "_s, status).utf8().data());
+        return true;
+    });
 }
 
 } // namespace WebKit

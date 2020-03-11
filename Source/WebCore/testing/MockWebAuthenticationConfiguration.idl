@@ -76,7 +76,7 @@
     DOMString privateKeyBase64;
     DOMString userCertificateBase64;
     DOMString intermediateCACertificateBase64;
-    DOMString preferredUserhandleBase64;
+    DOMString preferredCredentialIdBase64;
 };
 
 [

@@ -67,7 +67,7 @@ struct MockWebAuthenticationConfiguration {
         String privateKeyBase64;
         String userCertificateBase64;
         String intermediateCACertificateBase64;
-        String preferredUserhandleBase64;
+        String preferredCredentialIdBase64;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<LocalConfiguration> decode(Decoder&);
@@ -112,7 +112,7 @@ struct MockWebAuthenticationConfiguration {
 template<class Encoder>
 void MockWebAuthenticationConfiguration::LocalConfiguration::encode(Encoder& encoder) const
 {
-    encoder << acceptAuthentication << acceptAttestation << privateKeyBase64 << userCertificateBase64 << intermediateCACertificateBase64 << preferredUserhandleBase64;
+    encoder << acceptAuthentication << acceptAttestation << privateKeyBase64 << userCertificateBase64 << intermediateCACertificateBase64 << preferredCredentialIdBase64;
 }
 
 template<class Decoder>
@@ -150,11 +150,11 @@ Optional<MockWebAuthenticationConfiguration::LocalConfiguration> MockWebAuthenti
         return WTF::nullopt;
     result.intermediateCACertificateBase64 = WTFMove(*intermediateCACertificateBase64);
 
-    Optional<String> preferredUserhandleBase64;
-    decoder >> preferredUserhandleBase64;
-    if (!preferredUserhandleBase64)
+    Optional<String> preferredCredentialIdBase64;
+    decoder >> preferredCredentialIdBase64;
+    if (!preferredCredentialIdBase64)
         return WTF::nullopt;
-    result.preferredUserhandleBase64 = WTFMove(*preferredUserhandleBase64);
+    result.preferredCredentialIdBase64 = WTFMove(*preferredCredentialIdBase64);
 
     return result;
 }

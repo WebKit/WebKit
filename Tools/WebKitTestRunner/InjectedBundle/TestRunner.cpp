@@ -2788,7 +2788,7 @@ void TestRunner::addTestKeyToKeychain(JSStringRef privateKeyBase64, JSStringRef 
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64)
+void TestRunner::cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationLabelBase64)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
@@ -2796,9 +2796,9 @@ void TestRunner::cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationT
     keys.append(adoptWK(WKStringCreateWithUTF8CString("AttrLabel")));
     values.append(toWK(attrLabel));
 
-    if (applicationTagBase64) {
-        keys.append(adoptWK(WKStringCreateWithUTF8CString("ApplicationTag")));
-        values.append(toWK(applicationTagBase64));
+    if (applicationLabelBase64) {
+        keys.append(adoptWK(WKStringCreateWithUTF8CString("ApplicationLabel")));
+        values.append(toWK(applicationLabelBase64));
     }
 
     Vector<WKStringRef> rawKeys;
@@ -2817,7 +2817,7 @@ void TestRunner::cleanUpKeychain(JSStringRef attrLabel, JSStringRef applicationT
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64)
+bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationLabelBase64)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
@@ -2825,8 +2825,8 @@ bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicat
     keys.append(adoptWK(WKStringCreateWithUTF8CString("AttrLabel")));
     values.append(toWK(attrLabel));
 
-    keys.append(adoptWK(WKStringCreateWithUTF8CString("ApplicationTag")));
-    values.append(toWK(applicationTagBase64));
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("ApplicationLabel")));
+    values.append(toWK(applicationLabelBase64));
 
     Vector<WKStringRef> rawKeys;
     Vector<WKTypeRef> rawValues;

@@ -115,16 +115,16 @@ void MockLocalConnection::getAttestation(SecKeyRef, NSData *, NSData *, Attestat
 
 void MockLocalConnection::filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>& responses) const
 {
-    const auto& preferredUserhandleBase64 = m_configuration.local->preferredUserhandleBase64;
-    if (preferredUserhandleBase64.isEmpty())
+    const auto& preferredCredentialIdBase64 = m_configuration.local->preferredCredentialIdBase64;
+    if (preferredCredentialIdBase64.isEmpty())
         return;
 
     auto itr = responses.begin();
     for (; itr != responses.end(); ++itr) {
-        auto* userHandle = itr->get().userHandle();
-        ASSERT(userHandle);
-        auto userhandleBase64 = base64Encode(userHandle->data(), userHandle->byteLength());
-        if (userhandleBase64 == preferredUserhandleBase64)
+        auto* rawId = itr->get().rawId();
+        ASSERT(rawId);
+        auto rawIdBase64 = base64Encode(rawId->data(), rawId->byteLength());
+        if (rawIdBase64 == preferredCredentialIdBase64)
             break;
     }
     auto response = responses.take(itr);

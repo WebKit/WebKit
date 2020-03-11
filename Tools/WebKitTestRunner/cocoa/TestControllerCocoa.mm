@@ -430,7 +430,7 @@ void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const 
     ASSERT_UNUSED(status, !status);
 }
 
-void TestController::cleanUpKeychain(const String& attrLabel, const String& applicationTagBase64)
+void TestController::cleanUpKeychain(const String& attrLabel, const String& applicationLabelBase64)
 {
     auto deleteQuery = adoptNS([[NSMutableDictionary alloc] init]);
     [deleteQuery setObject:(id)kSecClassKey forKey:(id)kSecClass];
@@ -440,19 +440,19 @@ void TestController::cleanUpKeychain(const String& attrLabel, const String& appl
 #else
     [deleteQuery setObject:@YES forKey:(id)kSecAttrNoLegacy];
 #endif
-    if (!!applicationTagBase64)
-        [deleteQuery setObject:adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get() forKey:(id)kSecAttrApplicationTag];
+    if (!!applicationLabelBase64)
+        [deleteQuery setObject:adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get() forKey:(id)kSecAttrApplicationLabel];
 
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
 }
 
-bool TestController::keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64)
+bool TestController::keyExistsInKeychain(const String& attrLabel, const String& applicationLabelBase64)
 {
     NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrLabel: attrLabel,
-        (id)kSecAttrApplicationTag: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationTagBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
+        (id)kSecAttrApplicationLabel: adoptNS([[NSData alloc] initWithBase64EncodedString:applicationLabelBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
         (id)kSecUseDataProtectionKeychain: @YES
 #else
