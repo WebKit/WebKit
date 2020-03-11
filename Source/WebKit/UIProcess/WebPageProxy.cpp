@@ -832,7 +832,6 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
 
     if (fromItem && fromItem->url() != pageLoadState().url()) {
         RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because fromItem's URL does not match the page URL.", m_process->processIdentifier());
-        ASSERT_NOT_REACHED();
         return false;
     }
 

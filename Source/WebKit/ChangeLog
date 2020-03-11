@@ -1,3 +1,24 @@
+2020-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Assertion hit under WebPageProxy::suspendCurrentPageIfPossible() when bypassing certificate warning page
+        https://bugs.webkit.org/show_bug.cgi?id=208927
+        <rdar://problem/55448331>
+
+        Reviewed by Alex Christensen.
+
+        When suspending a previous page after a process-swap, we refuse to do the suspension if the currently
+        committed URL does not match the url of the current back/forward list item. This makes sense since we
+        will store the suspended page on the back/forward list item and restore that back when navigating back
+        to that item. I had a debug assertion in there to help me figure out how this could happen. It turns
+        out that calling loadAlternateHTML on the view will replace the content of the view with the provided
+        HTML string, update the committed URL but not create a new back/forward list item. This is so that
+        if you reload or go/back to this back/forward list item, we will attempt to load the original URL
+        again. This would however trip my assertion. I am therefore removing my debug assertion and adding API
+        test coverage.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+
 2020-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Introduce ResourceLoadStatisticsParameters and move members from NetworkSessionCreationParameters
