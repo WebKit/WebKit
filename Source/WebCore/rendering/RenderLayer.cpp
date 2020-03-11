@@ -1759,9 +1759,9 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
     }
 
     if (hasCompositedScrollableOverflow()) {
-        if (!m_contentsScrollingScope)
+        if (!m_contentsScrollingScope || m_contentsScrollingScope == m_boxScrollingScope)
             m_contentsScrollingScope = nextScrollingScope();
-    } else if (!m_contentsScrollingScope)
+    } else if (!m_contentsScrollingScope || m_contentsScrollingScope != m_boxScrollingScope)
         m_contentsScrollingScope = m_boxScrollingScope;
 
     bool positionOrOffsetChanged = false;
