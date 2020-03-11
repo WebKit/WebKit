@@ -455,7 +455,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    if (_AXSApplicationAccessibilityEnabled()) {
+    if (libAccessibilityLibrary() && _AXSApplicationAccessibilityEnabled()) {
         SandboxExtension::Handle preferencesExtensionHandle;
         SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", WTF::nullopt, preferencesExtensionHandle);
         parameters.preferencesExtensionHandle = WTFMove(preferencesExtensionHandle);

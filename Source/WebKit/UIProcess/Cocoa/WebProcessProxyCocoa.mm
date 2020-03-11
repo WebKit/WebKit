@@ -44,6 +44,10 @@
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif
 
+#if PLATFORM(COCOA)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+#endif
+
 namespace WebKit {
 
 static const Seconds unexpectedActivityDuration = 10_s;
@@ -229,6 +233,8 @@ void WebProcessProxy::enableRemoteInspectorIfNeeded()
 void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 {
     if (m_hasSentMessageToUnblockAccessibilityServer)
+        return;
+    if (!libAccessibilityLibrary())
         return;
     if (!_AXSApplicationAccessibilityEnabled())
         return;
