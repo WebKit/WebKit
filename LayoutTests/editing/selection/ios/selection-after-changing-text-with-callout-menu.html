@@ -36,6 +36,14 @@ async function runTest() {
 
     await UIHelper.activateElementAndWaitForInputSession(editor);
     await UIHelper.keyDown("a", ["metaKey"]);
+
+    let grabberRect = {};
+    while (!grabberRect.width && !grabberRect.height)
+        grabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    centerX = rect => rect.left + rect.width / 2;
+    centerY = rect => rect.top + rect.height / 2;
+    await UIHelper.activateAt(centerX(grabberRect), centerY(grabberRect));
+
     await UIHelper.waitForMenuToShow();
     await UIHelper.chooseMenuAction("Embiggen");
 
