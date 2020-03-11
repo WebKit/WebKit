@@ -61,6 +61,7 @@
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
 #include "Settings.h"
+#include "SimpleRange.h"
 #include "SpatialNavigation.h"
 #include "StyleProperties.h"
 #include "TypingCommand.h"

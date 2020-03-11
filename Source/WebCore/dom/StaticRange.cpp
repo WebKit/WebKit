@@ -26,7 +26,9 @@
 #include "config.h"
 #include "StaticRange.h"
 
+#include "ContainerNode.h"
 #include "Range.h"
+#include "Text.h"
 
 namespace WebCore {
 

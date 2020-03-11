@@ -35,6 +35,7 @@
 #include "HTTPHeaderValues.h"
 #include "ImageDecoder.h"
 #include "MemoryCache.h"
+#include "SecurityPolicy.h"
 #include "ServiceWorkerRegistrationData.h"
 #include <wtf/NeverDestroyed.h>
 

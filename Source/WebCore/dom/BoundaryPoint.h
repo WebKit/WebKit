@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "Node.h"
+
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Document;
-class Node;
 
 struct BoundaryPoint {
     Ref<Node> container;

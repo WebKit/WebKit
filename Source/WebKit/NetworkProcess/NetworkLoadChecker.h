@@ -50,6 +50,7 @@ namespace WebKit {
 
 class NetworkCORSPreflightChecker;
 class NetworkProcess;
+class NetworkResourceLoader;
 class NetworkSchemeRegistry;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {

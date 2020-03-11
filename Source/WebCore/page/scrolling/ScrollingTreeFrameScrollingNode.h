@@ -33,7 +33,6 @@ namespace WebCore {
 
 class PlatformWheelEvent;
 class ScrollingTree;
-class ScrollingStateScrollingNode;
 
 class WEBCORE_EXPORT ScrollingTreeFrameScrollingNode : public ScrollingTreeScrollingNode {
 public:
