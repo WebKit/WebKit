@@ -1,3 +1,17 @@
+2020-03-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Re-import test262 to acquire DST fix
+        https://bugs.webkit.org/show_bug.cgi?id=208901
+
+        Reviewed by Don Olmstead.
+
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/AggregateError/newtarget-proto-fallback.js:
+        * test262/test/built-ins/Array/prototype/filter/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/indexOf/15.4.4.14-4-4.js:
+        * test262/test/built-ins/Date/parse/without-utc-offset.js:
+        * test262/test262-Revision.txt:
+
 2020-03-10  Paulo Matos  <pmatos@igalia.com>
 
         JSC 32bits is failing on new test stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js

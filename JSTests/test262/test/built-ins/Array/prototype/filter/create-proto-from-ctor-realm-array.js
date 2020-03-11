@@ -37,7 +37,7 @@ array.constructor = OArray;
 Object.defineProperty(Array, Symbol.species, speciesDesc);
 Object.defineProperty(OArray, Symbol.species, speciesDesc);
 
-result = array.concat(function() {});
+result = array.filter(function() {});
 
 assert.sameValue(Object.getPrototypeOf(result), Array.prototype);
 assert.sameValue(callCount, 0, 'Species constructor is not referenced');

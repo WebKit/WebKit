@@ -30,33 +30,29 @@ info: |
 features: [AggregateError, Symbol]
 ---*/
 
-var custom = { x: 42 };
-var ctor = function() {};
-Object.setPrototypeOf(ctor, custom);
-
-var values = [
+const values = [
   undefined,
   null,
   42,
   false,
   true,
   Symbol(),
-  'string'
+  'string',
+  AggregateError.prototype,
 ];
 
+const NewTarget = new Function();
+
 for (const value of values) {
-  const newt = new Proxy(ctor, {
+  const NewTargetProxy = new Proxy(NewTarget, {
     get(t, p) {
       if (p === 'prototype') {
         return value;
       }
-
       return t[p];
     }
   });
 
-  const obj = Reflect.construct(AggregateError, [[]], newt);
-
-  assert.sameValue(Object.getPrototypeOf(obj), custom);
-  assert.sameValue(obj.x, 42);
+  const error = Reflect.construct(AggregateError, [[]], NewTargetProxy);
+  assert.sameValue(Object.getPrototypeOf(error), AggregateError.prototype);
 }
