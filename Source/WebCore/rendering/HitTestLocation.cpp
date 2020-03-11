@@ -44,6 +44,7 @@ HitTestLocation::HitTestLocation(const FloatPoint& point, const FloatQuad& quad)
     , m_boundingBox { quad.enclosingBoundingBox() }
     , m_transformedPoint { point }
     , m_transformedRect { quad }
+    , m_isRectBased { true }
     , m_isRectilinear { quad.isRectilinear() }
 {
 }
