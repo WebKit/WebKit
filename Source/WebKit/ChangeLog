@@ -2,6 +2,22 @@
 
         [macOS] Crash under WebKit::WebProcessPool::platformInitialize()
         https://bugs.webkit.org/show_bug.cgi?id=208945
+
+        Reviewed by Tim Horton.
+
+        Check that accessibility library is present before attempting to call functions in it.
+
+        No new tests, since I am not able to reproduce.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+
+2020-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash under WebKit::WebProcessPool::platformInitialize()
+        https://bugs.webkit.org/show_bug.cgi?id=208945
         <rdar://problem/60330751>
         
         Reviewed by Brent Fulgham.
