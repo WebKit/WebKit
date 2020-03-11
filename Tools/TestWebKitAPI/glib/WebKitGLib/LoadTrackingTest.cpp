@@ -65,7 +65,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
     }
 }
 
-static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError* error, LoadTrackingTest* test)
+static gboolean loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError* error, LoadTrackingTest* test)
 {
     test->m_loadFailed = true;
 
@@ -91,6 +91,7 @@ static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent
     default:
         g_assert_not_reached();
     }
+    return TRUE;
 }
 
 static gboolean loadFailedWithTLSErrorsCallback(WebKitWebView* webView, const char* failingURI, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors, LoadTrackingTest* test)

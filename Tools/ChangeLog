@@ -1,3 +1,21 @@
+2020-03-11 Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Failing API tests under the Flatpak SDK environment
+        https://bugs.webkit.org/show_bug.cgi?id=208871
+
+        Reviewed by Michael Catanzaro.
+
+        The load-failed signal callback should return a boolean result,
+        otherwise we enter in unknown territory depending on how the
+        toolchain compiles this, possibly triggering bad behavior (with
+        GCC 9.2 from the Flatpak SDK) or not caring at all (with current
+        GCC toolchain on buildbots).
+
+        Patch suggested by Michael Catanzaro.
+
+        * TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp:
+        (loadFailedCallback):
+
 2020-03-10  Don Olmstead  <don.olmstead@sony.com>
 
         Sync FeatureList.pm with CMake definitions
