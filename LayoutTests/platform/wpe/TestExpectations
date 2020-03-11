@@ -678,6 +678,9 @@ webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
 webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual.svg [ Failure ]
 
+webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
+webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1322,6 +1325,9 @@ webkit.org/b/208753 http/tests/referrer-policy-anchor/no-referrer/cross-origin-h
 webkit.org/b/208753 http/tests/cookies/same-site/popup-cross-site-post.html [ Pass Crash ]
 webkit.org/b/208753 http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http.html [ Pass Crash ]
 webkit.org/b/208753 http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html [ Pass Crash ]
+
+webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Failure Pass ]
+webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
