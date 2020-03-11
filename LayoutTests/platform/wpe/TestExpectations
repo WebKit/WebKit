@@ -1345,6 +1345,11 @@ webkit.org/b/208753 http/tests/referrer-policy-anchor/origin/cross-origin-http.h
 webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Failure Pass ]
 webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
 
+webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html [ Failure Pass ]
+webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html [ Failure Pass ]
+webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
+webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1409,6 +1414,13 @@ webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/t
 webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
+
+webkit.org/b/208921 fast/events/touch/basic-single-touch-events.html [ Timeout ]
+webkit.org/b/208921 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
+
+webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
+
+webkit.org/b/208934 inspector/console/console-screenshot.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -2181,8 +2193,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
-
-webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
 
 webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 
