@@ -156,7 +156,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection&)
 {
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
-        gpuProcess().audioSessionManager().removeProxy(webProcessIdentifier());
+        gpuProcess().audioSessionManager().removeProxy(*m_audioSessionProxy);
         m_audioSessionProxy = nullptr;
     }
 #endif
@@ -263,7 +263,7 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 {
     if (!m_audioSessionProxy) {
         m_audioSessionProxy = RemoteAudioSessionProxy::create(*this).moveToUniquePtr();
-        gpuProcess().audioSessionManager().addProxy(makeWeakPtr(m_audioSessionProxy.get()));
+        gpuProcess().audioSessionManager().addProxy(*m_audioSessionProxy);
     }
     return *m_audioSessionProxy;
 }

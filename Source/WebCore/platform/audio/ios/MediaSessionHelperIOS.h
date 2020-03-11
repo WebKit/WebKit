@@ -37,10 +37,6 @@ class MediaSessionHelperClient : public CanMakeWeakPtr<MediaSessionHelperClient>
 public:
     virtual ~MediaSessionHelperClient() = default;
 
-    enum class InterruptionType : bool { Begin, End };
-    enum class ShouldResume : bool { No, Yes };
-    virtual void receivedInterruption(InterruptionType, ShouldResume) = 0;
-
     enum class SuspendedUnderLock : bool { No, Yes };
     virtual void applicationWillEnterForeground(SuspendedUnderLock) = 0;
     virtual void applicationDidEnterBackground(SuspendedUnderLock) = 0;

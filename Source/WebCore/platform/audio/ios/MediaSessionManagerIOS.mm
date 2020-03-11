@@ -51,6 +51,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 MediaSessionManageriOS::MediaSessionManageriOS()
     : MediaSessionManagerCocoa()
 {
+    AudioSession::sharedSession().addInterruptionObserver(*this);
 }
 
 MediaSessionManageriOS::~MediaSessionManageriOS()
@@ -58,6 +59,7 @@ MediaSessionManageriOS::~MediaSessionManageriOS()
     if (m_isMonitoringWirelessRoutes)
         MediaSessionHelper::sharedHelper().stopMonitoringWirelessRoutes();
     MediaSessionHelper::sharedHelper().removeClient(*this);
+    AudioSession::sharedSession().removeInterruptionObserver(*this);
 }
 
 void MediaSessionManageriOS::resetRestrictions()
@@ -164,19 +166,6 @@ void MediaSessionManageriOS::activeVideoRouteDidChange(SupportsAirPlayVideo supp
 
     nowPlayingSession->setShouldPlayToPlaybackTarget(supportsAirPlayVideo == SupportsAirPlayVideo::Yes);
     nowPlayingSession->setPlaybackTarget(WTFMove(playbackTarget));
-}
-
-void MediaSessionManageriOS::receivedInterruption(InterruptionType type, ShouldResume shouldResume)
-{
-    if (willIgnoreSystemInterruptions())
-        return;
-
-    auto flags = shouldResume == ShouldResume::Yes ? PlatformMediaSession::MayResumePlaying : PlatformMediaSession::NoFlags;
-
-    if (type == InterruptionType::Begin)
-        beginInterruption(PlatformMediaSession::SystemInterruption);
-    else
-        endInterruption(flags);
 }
 
 void MediaSessionManageriOS::applicationWillEnterForeground(SuspendedUnderLock isSuspendedUnderLock)
