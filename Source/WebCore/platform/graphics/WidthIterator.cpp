@@ -105,9 +105,9 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     }
 
     GlyphBufferAdvance* advances = glyphBuffer->advances(0);
-    float widthDifference = 0;
+    float beforeWidth = 0;
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
-        widthDifference -= advances[i].width();
+        beforeWidth += advances[i].width();
 
     ASSERT(lastGlyphCount <= glyphBufferSize);
     if (!ltr)
@@ -137,11 +137,12 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     }
     charactersTreatedAsSpace.clear();
 
+    float afterWidth = 0;
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
-        widthDifference += advances[i].width();
+        afterWidth += advances[i].width();
 
     lastGlyphCount = glyphBufferSize;
-    return widthDifference;
+    return afterWidth - beforeWidth;
 }
 
 static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeadingExpansion, bool forbidTrailingExpansion, bool forceLeadingExpansion, bool forceTrailingExpansion)
