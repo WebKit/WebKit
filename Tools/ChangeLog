@@ -1,3 +1,14 @@
+2020-03-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add unit test to prevent multiple schedulers for a builder.
+        https://bugs.webkit.org/show_bug.cgi?id=208917
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.test_multiple_scheduers_for_builder): Added unit test.
+        (TagsForBuilderTest): Fixed a typo.
+
 2020-03-11 Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Failing API tests under the Flatpak SDK environment

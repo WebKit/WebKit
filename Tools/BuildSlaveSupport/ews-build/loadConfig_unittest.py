@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -45,8 +45,17 @@ class ConfigDotJSONTest(unittest.TestCase):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
 
+    def test_multiple_scheduers_for_builder(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        config = json.load(open(os.path.join(cwd, 'config.json')))
+        builder_to_schduler_map = {}
+        for scheduler in config.get('schedulers'):
+            for buildername in scheduler.get('builderNames'):
+                self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
+                builder_to_schduler_map[buildername] = scheduler.get('name')
 
-class TagsForBuilderTeest(unittest.TestCase):
+
+class TagsForBuilderTest(unittest.TestCase):
     def verifyTags(self, builderName, expectedTags):
         tags = loadConfig.getTagsForBuilder({'name': builderName})
         self.assertEqual(sorted(tags), sorted(expectedTags))
