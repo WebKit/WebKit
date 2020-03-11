@@ -3100,6 +3100,8 @@ static bool shouldBeTreatedAsAppBound(const URL& requestURL)
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     if (isMainFrame && (m_preferences->isInAppBrowserPrivacyEnabled() || WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2)) {
+        if (m_configuration->ignoresAppBoundDomains())
+            return;
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
         if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No && shouldBeTreatedAsAppBound(requestURL))
             isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;

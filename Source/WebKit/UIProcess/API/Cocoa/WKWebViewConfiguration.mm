@@ -1210,6 +1210,16 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
     _pageConfiguration->setWebViewCategory(toWebKitWebViewCategory(category));
 }
 
+- (BOOL)_ignoresAppBoundDomains
+{
+    return _pageConfiguration->ignoresAppBoundDomains();
+}
+
+- (void)_setIgnoresAppBoundDomains:(BOOL)ignoresAppBoundDomains
+{
+    _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
+}
+
 - (NSString *)_processDisplayName
 {
     return _pageConfiguration->processDisplayName();

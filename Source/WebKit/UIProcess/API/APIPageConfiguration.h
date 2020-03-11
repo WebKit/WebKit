@@ -147,6 +147,9 @@ public:
     WebKit::WebViewCategory webViewCategory() const { return m_webViewCategory; }
     void setWebViewCategory(WebKit::WebViewCategory category) { m_webViewCategory = category; }
 
+    bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
+    void setIgnoresAppBoundDomains(bool shouldIgnore) { m_ignoresAppBoundDomains = shouldIgnore; }
+    
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -187,6 +190,7 @@ private:
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
+    bool m_ignoresAppBoundDomains { false };
 };
 
 } // namespace API

@@ -1,3 +1,24 @@
+2020-03-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add a parameter to allow ignoring app-bound domain categorization
+        https://bugs.webkit.org/show_bug.cgi?id=208949
+        <rdar://problem/60239187>
+
+        Reviewed by Brent Fulgham.
+
+        Introduce a new parameter to ignore app-bound domain categorization
+        for specific WebViews.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::ignoresAppBoundDomains const):
+        (API::PageConfiguration::setIgnoresAppBoundDomains):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _ignoresAppBoundDomains]):
+        (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
 2020-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] _AXSApplicationAccessibilityEnabled should not be called
