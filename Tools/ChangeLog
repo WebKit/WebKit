@@ -1,3 +1,25 @@
+2020-03-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Switch EWS api-gtk bot from buildAndTest to testOnly
+        https://bugs.webkit.org/show_bug.cgi?id=208860
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Added 'api-gtk'.
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory.__init__): Call InstallGTKDependencies() if platform is
+        GTK.
+        (TestFactory.__init__): Call InstallGTKDependencies() if platform is
+        GTK.
+        (GTKBuildFactory):
+        (GTKBuildFactory.__init__): Deleted.
+        (GTKBuildAndTestFactory): Deleted.
+        (GTKBuildAndTestFactory.__init__): Deleted.
+        (GTKAPIBuildAndTestFactory): Deleted.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2020-03-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add unit test to prevent multiple schedulers for a builder.

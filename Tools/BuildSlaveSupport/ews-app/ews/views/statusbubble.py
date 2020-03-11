@@ -51,6 +51,7 @@ class StatusBubble(View):
         'mac-wk1': 'mac',
         'mac-wk2': 'mac',
         'mac-debug-wk1': 'mac-debug',
+        'api-gtk': 'gtk',
     }
 
     STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
