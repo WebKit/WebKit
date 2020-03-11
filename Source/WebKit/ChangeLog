@@ -1,3 +1,17 @@
+2020-03-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r258294.
+        https://bugs.webkit.org/show_bug.cgi?id=208957
+
+        Introduced API failure (Requested by perarne on #webkit).
+
+        Reverted changeset:
+
+        "[macOS] _AXSApplicationAccessibilityEnabled should not be
+        called"
+        https://bugs.webkit.org/show_bug.cgi?id=208953
+        https://trac.webkit.org/changeset/258294
+
 2020-03-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Add a parameter to allow ignoring app-bound domain categorization

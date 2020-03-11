@@ -46,6 +46,10 @@
 
 namespace WebKit {
 
+#if PLATFORM(MAC)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+#endif
+
 static const Seconds unexpectedActivityDuration = 10_s;
 
 const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
@@ -210,10 +214,12 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 {
     if (m_hasSentMessageToUnblockAccessibilityServer)
         return;
-#if PLATFORM(IOS_FAMILY)
-    if (!_AXSApplicationAccessibilityEnabled())
+#if PLATFORM(MAC)
+    if (!WebKit::libAccessibilityLibrary())
         return;
 #endif
+    if (!_AXSApplicationAccessibilityEnabled())
+        return;
     if (!processIdentifier())
         return;
     if (!canSendMessage())
