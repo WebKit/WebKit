@@ -118,6 +118,10 @@ SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
+#if PLATFORM(COCOA)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+#endif
+
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
@@ -662,12 +666,14 @@ void WebProcessPool::registerNotificationObservers()
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
-    m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
-        for (size_t i = 0; i < m_processes.size(); ++i) {
-            m_processes[i]->unblockPreferenceServiceIfNeeded();
-            m_processes[i]->unblockAccessibilityServerIfNeeded();
-        }
-    }];
+    if (libAccessibilityLibrary()) {
+        m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+            for (size_t i = 0; i < m_processes.size(); ++i) {
+                m_processes[i]->unblockPreferenceServiceIfNeeded();
+                m_processes[i]->unblockAccessibilityServerIfNeeded();
+            }
+        }];
+    }
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -692,7 +698,8 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+    if (m_accessibilityEnabledObserver.get())
+        [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 }
 
 static CFURLStorageSessionRef privateBrowsingSession()

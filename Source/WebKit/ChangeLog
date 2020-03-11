@@ -1,3 +1,19 @@
+2020-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash under WebKit::WebProcessPool::platformInitialize()
+        https://bugs.webkit.org/show_bug.cgi?id=208945
+        <rdar://problem/60330751>
+        
+        Reviewed by Brent Fulgham.
+
+        Check that accessibility library is present before attempting to use constants from it.
+
+        No new tests, since I am unable to reproduce.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+
 2020-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Enable safe browsing warnings in Mac Catalyst WebKit
