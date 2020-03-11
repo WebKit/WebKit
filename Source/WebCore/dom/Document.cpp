@@ -5524,7 +5524,10 @@ void Document::popCurrentScript()
 
 bool Document::shouldDeferAsynchronousScriptsUntilParsingFinishes() const
 {
-    return parsing() && settings().shouldDeferAsynchronousScriptsUntilAfterDocumentLoad();
+    if (!settings().shouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint())
+        return false;
+
+    return parsing() && !(view() && view()->hasEverPainted());
 }
 
 #if ENABLE(XSLT)

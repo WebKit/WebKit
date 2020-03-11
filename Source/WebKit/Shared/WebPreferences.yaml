@@ -1207,9 +1207,12 @@ IncompleteImageBorderEnabled:
   type: bool
   defaultValue: false
 
-ShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
+ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
   type: bool
-  defaultValue: false
+  defaultValue: true
+  humanReadableName: "Defer async scripts until DOMContentLoaded or first-paint"
+  humanReadableDescription: "Defer async scripts until DOMContentLoaded or first-paint"
+  category: experimental
 
 StorageAccessAPIEnabled:
   type: bool
