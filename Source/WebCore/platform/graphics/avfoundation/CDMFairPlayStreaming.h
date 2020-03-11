@@ -55,6 +55,10 @@ public:
     CDMPrivateFairPlayStreaming();
     virtual ~CDMPrivateFairPlayStreaming();
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(WTF::Logger&, const void* logIdentifier) final;
+#endif
+
     Vector<AtomString> supportedInitDataTypes() const override;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const override;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
@@ -80,6 +84,16 @@ public:
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
+
+private:
+#if !RELEASE_LOG_DISABLED
+    WTF::Logger* loggerPtr() const { return m_logger.get(); };
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
+
+    RefPtr<WTF::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 }

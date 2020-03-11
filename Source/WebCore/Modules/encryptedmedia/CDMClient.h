@@ -30,15 +30,20 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class CDMInstance;
+class SharedBuffer;
 
-class CDMClient {
+class CDMClient : public CanMakeWeakPtr<CDMClient> {
 public:
     virtual ~CDMClient() = default;
 
     virtual void cdmClientAttemptToResumePlaybackIfNecessary() = 0;
+    virtual void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
 };
 
 } // namespace WebCore

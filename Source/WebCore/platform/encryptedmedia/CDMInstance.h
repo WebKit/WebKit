@@ -36,6 +36,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
+
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
 
 namespace WebCore {
 
@@ -43,11 +50,25 @@ class SharedBuffer;
 class CDMInstanceSession;
 struct CDMKeySystemConfiguration;
 
+class CDMInstanceClient : public CanMakeWeakPtr<CDMInstanceClient> {
+public:
+    virtual ~CDMInstanceClient() = default;
+
+    virtual void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
+};
+
 // JavaScript's handle to a CDMInstance, must be used from the
 // main-thread only!
 class CDMInstance : public RefCounted<CDMInstance> {
 public:
     virtual ~CDMInstance() = default;
+
+    virtual void setClient(WeakPtr<CDMInstanceClient>&&) { }
+    virtual void clearClient() { }
+
+#if !RELEASE_LOG_DISABLED
+    virtual void setLogger(WTF::Logger&, const void*) { }
+#endif
 
     enum class ImplementationType {
         Mock,

@@ -32,6 +32,12 @@
 #include <memory>
 #include <wtf/Forward.h>
 
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
+
 namespace WebCore {
 
 class CDMPrivate;

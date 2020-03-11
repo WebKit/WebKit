@@ -174,6 +174,7 @@ NS_ASSUME_NONNULL_END
 @property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
 - (void)expire;
 - (void)processContentKeyRequestWithIdentifier:(nullable id)identifier initializationData:(nullable NSData *)initializationData options:(nullable NSDictionary<NSString *, id> *)options;
+- (void)associateContentKeyRequest:(nonnull AVContentKeyRequest *)contentKeyRequest;
 @end
 
 @interface AVContentKeySession (AVContentKeyGroup_Support)

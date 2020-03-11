@@ -35,6 +35,12 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
+
 namespace WebCore {
 
 class SharedBuffer;
@@ -57,6 +63,10 @@ public:
     using KeyStatus = CDMKeyStatus;
     using LicenseType = CDMSessionType;
     using MessageType = CDMMessageType;
+
+#if !RELEASE_LOG_DISABLED
+    virtual void setLogger(WTF::Logger&, const void*) { }
+#endif
 
     virtual void setClient(WeakPtr<CDMInstanceSessionClient>&&) { }
     virtual void clearClient() { }

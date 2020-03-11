@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "CDMInstance.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeys.h"
 #include "MediaKeys.h"
@@ -54,7 +55,7 @@ MediaKeySystemAccess::MediaKeySystemAccess(const String& keySystem, MediaKeySyst
 
 MediaKeySystemAccess::~MediaKeySystemAccess() = default;
 
-void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
+void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeysystemaccess-createmediakeys
     // W3C Editor's Draft 09 November 2016
@@ -62,7 +63,7 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
     // When this method is invoked, the user agent must run the following steps:
     // 1. Let promise be a new promise.
     // 2. Run the following steps in parallel:
-    m_taskQueue.enqueueTask([this, promise = WTFMove(promise)] () mutable {
+    m_taskQueue.enqueueTask([this, weakDocument = makeWeakPtr(document), promise = WTFMove(promise)] () mutable {
         // 2.1. Let configuration be the value of this object's configuration value.
         // 2.2. Let use distinctive identifier be true if the value of configuration's distinctiveIdentifier member is "required" and false otherwise.
         bool useDistinctiveIdentifier = m_configuration->distinctiveIdentifier == MediaKeysRequirement::Required;
@@ -86,8 +87,8 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
         auto allowDistinctiveIdentifiers = useDistinctiveIdentifier ? CDMInstance::AllowDistinctiveIdentifiers::Yes : CDMInstance::AllowDistinctiveIdentifiers::No;
         auto allowPersistentState = persistentStateAllowed ? CDMInstance::AllowPersistentState::Yes : CDMInstance::AllowPersistentState::No;
 
-        instance->initializeWithConfiguration(*m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [sessionTypes = m_configuration->sessionTypes, implementation = m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
-            if (successValue == CDMInstance::Failed) {
+        instance->initializeWithConfiguration(*m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTFMove(weakDocument), sessionTypes = m_configuration->sessionTypes, implementation = m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
+            if (successValue == CDMInstance::Failed || !weakDocument) {
                 promise->reject(NotAllowedError);
                 return;
             }
@@ -99,7 +100,7 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
             // 2.10.3. Let the supported session types value be be the value of configuration's sessionTypes member.
             // 2.10.4. Let the cdm implementation value be this object's cdm implementation value.
             // 2.10.5. Let the cdm instance value be instance.
-            auto mediaKeys = MediaKeys::create(useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTFMove(implementation), WTFMove(instance));
+            auto mediaKeys = MediaKeys::create(*weakDocument, useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTFMove(implementation), WTFMove(instance));
 
             // 2.11. Resolve promise with media keys.
             promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTFMove(mediaKeys));

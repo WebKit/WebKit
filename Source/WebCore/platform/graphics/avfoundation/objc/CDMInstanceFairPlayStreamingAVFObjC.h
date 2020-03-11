@@ -42,6 +42,12 @@ OBJC_CLASS NSError;
 OBJC_CLASS NSURL;
 OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
 
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
+
 namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
@@ -67,6 +73,10 @@ public:
     CDMInstanceFairPlayStreamingAVFObjC();
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(WTF::Logger&, const void* logIdentifier);
+#endif
+
     static bool supportsPersistableState();
     static bool supportsPersistentKeys();
     static bool supportsMediaCapability(const CDMMediaCapability&);
@@ -78,6 +88,8 @@ public:
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     RefPtr<CDMInstanceSession> createSession() final;
+    void setClient(WeakPtr<CDMInstanceClient>&&) final;
+    void clearClient() final;
 
     const String& keySystem() const final;
 
@@ -85,6 +97,8 @@ public:
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
     AVContentKeySession* contentKeySession();
+
+    RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, SharedBuffer& initData);
 
     // AVContentKeySessionDelegateClient
     void didProvideRequest(AVContentKeyRequest*) final;
@@ -101,20 +115,37 @@ public:
     using Keys = Vector<Ref<SharedBuffer>>;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(AVContentKeyReportGroup*) const;
+    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForRequest(AVContentKeyRequest*) const;
 
 private:
+#if !RELEASE_LOG_DISABLED
+    WTF::Logger* loggerPtr() const { return m_logger.get(); };
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"; }
+#endif
+
+    WeakPtr<CDMInstanceClient> m_client;
     RetainPtr<AVContentKeySession> m_session;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
+    HashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
+#if !RELEASE_LOG_DISABLED
+    RefPtr<WTF::Logger> m_logger;
+    const void* m_logIdentifier { nullptr };
+#endif
 };
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC final : public CDMInstanceSession, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC> {
 public:
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
+
+#if !RELEASE_LOG_DISABLED
+    void setLogger(WTF::Logger&, const void* logIdentifier);
+#endif
 
     // CDMInstanceSession
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
@@ -149,6 +180,8 @@ public:
         bool operator==(const Request& other) const { return initType == other.initType && requests == other.requests; }
     };
 
+    bool hasRequest(AVContentKeyRequest*) const;
+
 private:
     bool ensureSessionOrGroup();
     bool isLicenseTypeSupported(LicenseType) const;
@@ -156,6 +189,12 @@ private:
     KeyStatusVector keyStatuses() const;
     void nextRequest();
     AVContentKeyRequest* lastKeyRequest() const;
+
+#if !RELEASE_LOG_DISABLED
+    WTF::Logger* loggerPtr() const { return m_logger.get(); };
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"; }
+#endif
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
     RetainPtr<AVContentKeyReportGroup> m_group;
@@ -177,6 +216,11 @@ private:
     LicenseUpdateCallback m_updateLicenseCallback;
     CloseSessionCallback m_closeSessionCallback;
     RemoveSessionDataCallback m_removeSessionDataCallback;
+
+#if !RELEASE_LOG_DISABLED
+    RefPtr<WTF::Logger> m_logger;
+    const void* m_logIdentifier { nullptr };
+#endif
 };
 
 }

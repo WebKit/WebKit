@@ -42,6 +42,8 @@
 #include "SecurityOriginData.h"
 #include "Settings.h"
 #include <wtf/FileSystem.h>
+#include <wtf/Logger.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -62,12 +64,19 @@ Ref<CDM> CDM::create(Document& document, const String& keySystem)
 
 CDM::CDM(Document& document, const String& keySystem)
     : ContextDestructionObserver(&document)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document.logger())
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
     , m_keySystem(keySystem)
 {
     ASSERT(supportsKeySystem(keySystem));
     for (auto* factory : CDMFactory::registeredFactories()) {
         if (factory->supportsKeySystem(keySystem)) {
             m_private = factory->createCDM(keySystem);
+#if !RELEASE_LOG_DISABLED
+            m_private->setLogger(m_logger, m_logIdentifier);
+#endif
             break;
         }
     }

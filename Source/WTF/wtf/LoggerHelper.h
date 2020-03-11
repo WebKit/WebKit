@@ -56,7 +56,14 @@ public:
 #define INFO_LOG_IF(condition, ...)       if (condition) logger().info(logChannel(), __VA_ARGS__)
 #define DEBUG_LOG_IF(condition, ...)      if (condition) logger().debug(logChannel(), __VA_ARGS__)
 
-    const void* childLogIdentifier(const void* parentIdentifier, uint64_t childIdentifier) const
+#define ALWAYS_LOG_IF_POSSIBLE(...)     if (loggerPtr()) loggerPtr()->logAlways(logChannel(), __VA_ARGS__)
+#define ERROR_LOG_IF_POSSIBLE(...)      if (loggerPtr()) loggerPtr()->error(logChannel(), __VA_ARGS__)
+#define WARNING_LOG_IF_POSSIBLE(...)    if (loggerPtr()) loggerPtr()->warning(logChannel(), __VA_ARGS__)
+#define INFO_LOG_IF_POSSIBLE(...)       if (loggerPtr()) loggerPtr()->info(logChannel(), __VA_ARGS__)
+#define DEBUG_LOG_IF_POSSIBLE(...)      if (loggerPtr()) loggerPtr()->debug(logChannel(), __VA_ARGS__)
+#define WILL_LOG_IF_POSSIBLE(_level_)   if (loggerPtr()) loggerPtr()->willLog(logChannel(), _level_)
+
+    static const void* childLogIdentifier(const void* parentIdentifier, uint64_t childIdentifier)
     {
         static constexpr uint64_t parentMask = 0xffffffffffff0000ull;
         static constexpr uint64_t maskLowerWord = 0xffffull;
@@ -87,6 +94,13 @@ public:
 #define WARNING_LOG_IF(condition, ...)    ((void)0)
 #define INFO_LOG_IF(condition, ...)       ((void)0)
 #define DEBUG_LOG_IF(condition, ...)      ((void)0)
+
+#define ALWAYS_LOG_IF_POSSIBLE(...)     ((void)0)
+#define ERROR_LOG_IF_POSSIBLE(...)      ((void)0)
+#define WARNING_LOG_IF_POSSIBLE(...)    ((void)0)
+#define INFO_LOG_IF_POSSIBLE(...)       ((void)0)
+#define DEBUG_LOG_IF_POSSIBLE(...)      ((void)0)
+#define WILL_LOG_IF_POSSIBLE(_level_)   ((void)0)
 
 #endif // RELEASE_LOG_DISABLED
 

@@ -37,11 +37,13 @@
 #include "ISOSchemeTypeBox.h"
 #include "ISOTrackEncryptionBox.h"
 #include "InitDataRegistry.h"
+#include "Logging.h"
 #include "NotImplemented.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/DataView.h>
 #include <wtf/Algorithms.h>
 #include <wtf/JSONValues.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
@@ -54,6 +56,10 @@
 #endif
 
 namespace WebCore {
+
+#if !RELEASE_LOG_DISABLED
+static WTFLogChannel& logChannel() { return LogEME; }
+#endif
 
 const Vector<FourCC>& CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes()
 {
@@ -250,6 +256,14 @@ bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
 CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming() = default;
 CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 
+#if !RELEASE_LOG_DISABLED
+void CDMPrivateFairPlayStreaming::setLogger(Logger& logger, const void* logIdentifier)
+{
+    m_logger = makeRefPtr(logger);
+    m_logIdentifier = logIdentifier;
+}
+#endif
+
 Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 {
     return copyToVector(validInitDataTypes());
@@ -257,33 +271,47 @@ Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 
 bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
-    if (!WTF::anyOf(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); }))
+    if (!WTF::anyOf(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); })) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, " false, no initDataType supported");
         return false;
+    }
 
 #if HAVE(AVCONTENTKEYSESSION)
     // FIXME: verify that FairPlayStreaming does not (and cannot) expose a distinctive identifier to the client
-    if (configuration.distinctiveIdentifier == CDMRequirement::Required)
+    if (configuration.distinctiveIdentifier == CDMRequirement::Required) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, requried distinctiveIdentifier not supported");
         return false;
-    if (configuration.persistentState == CDMRequirement::Required && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState())
+    }
+
+    if (configuration.persistentState == CDMRequirement::Required && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState()) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, required persistentState not supported");
         return false;
+    }
 
     if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)
         && !configuration.sessionTypes.contains(CDMSessionType::Temporary)
-        && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys())
+        && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, sessionType PersistentLicense not supported");
         return false;
+    }
 
     if (!configuration.audioCapabilities.isEmpty()
         && !WTF::anyOf(configuration.audioCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
-        }))
+        })) {
+        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, no audio configuration supported");
         return false;
+    }
 
     if (!configuration.videoCapabilities.isEmpty()
         && !WTF::anyOf(configuration.videoCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
-        }))
+        })) {
+            DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, no video configuration supported");
         return false;
+    }
 
+    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "true, supported");
     return true;
 #else
     return false;

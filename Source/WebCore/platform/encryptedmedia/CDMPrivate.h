@@ -33,6 +33,12 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
+
 namespace WebCore {
 
 struct CDMKeySystemConfiguration;
@@ -42,6 +48,10 @@ struct CDMRestrictions;
 class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();
+
+#if !RELEASE_LOG_DISABLED
+    virtual void setLogger(WTF::Logger&, const void*) { };
+#endif
 
     enum class LocalStorageAccess : bool {
         NotAllowed,

@@ -40,6 +40,12 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if !RELEASE_LOG_DISABLED
+namespace WTF {
+class Logger;
+}
+#endif
+
 namespace WebCore {
 
 class CDMFactory;
@@ -80,6 +86,10 @@ public:
 private:
     CDM(Document&, const String& keySystem);
 
+#if !RELEASE_LOG_DISABLED
+    Ref<WTF::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
     String m_keySystem;
     std::unique_ptr<CDMPrivate> m_private;
 };

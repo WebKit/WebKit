@@ -43,9 +43,11 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if !RELEASE_LOG_DISABLED
 namespace WTF {
 class Logger;
 }
+#endif
 
 namespace WebCore {
 
@@ -113,10 +115,12 @@ private:
     const WTF::Logger& logger() const { return m_logger; }
     const char* logClassName() const { return "MediaKeySession"; }
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const { return this; }
-#endif
+    const void* logIdentifier() const { return m_logIdentifier; }
 
     Ref<WTF::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
+
     WeakPtr<MediaKeys> m_keys;
     String m_sessionId;
     double m_expiration;

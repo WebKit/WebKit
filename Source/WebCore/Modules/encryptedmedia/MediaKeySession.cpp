@@ -64,7 +64,10 @@ Ref<MediaKeySession> MediaKeySession::create(Document& document, WeakPtr<MediaKe
 
 MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstanceSession>&& instanceSession)
     : ActiveDOMObject(&document)
+#if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
+    , m_logIdentifier(keys ? keys->nextChildIdentifier() : nullptr)
+#endif
     , m_keys(WTFMove(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
     , m_closedPromise(makeUniqueRef<ClosedPromise>())
@@ -98,6 +101,9 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     UNUSED_PARAM(m_closed);
     UNUSED_PARAM(m_uninitialized);
 
+#if !RELEASE_LOG_DISABLED
+    m_instanceSession->setLogger(m_logger, m_logIdentifier);
+#endif
     m_instanceSession->setClient(makeWeakPtr(*this));
 }
 
