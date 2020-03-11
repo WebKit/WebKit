@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,15 +140,8 @@ private:
 
 // --------
 
-static const unsigned bitsInWord = sizeof(unsigned) * 8;
-static const unsigned bitInWordMask = bitsInWord - 1;
-
-BitStack::BitStack()
-    : m_size(0)
-{
-}
-
-BitStack::~BitStack() = default;
+static constexpr unsigned bitsInWord = sizeof(unsigned) * 8;
+static constexpr unsigned bitInWordMask = bitsInWord - 1;
 
 void BitStack::push(bool bit)
 {
@@ -179,11 +172,6 @@ bool BitStack::top() const
         return false;
     unsigned shift = (m_size - 1) & bitInWordMask;
     return m_words.last() & (1U << shift);
-}
-
-unsigned BitStack::size() const
-{
-    return m_size;
 }
 
 // --------
@@ -1128,29 +1116,25 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_hasEmitted = true;
 }
 
-Ref<Range> TextIterator::range() const
+SimpleRange TextIterator::range() const
 {
     ASSERT(!atEnd());
-
-    // use the current run information, if we have it
+    // Use the current run information, if we have it.
     if (m_positionOffsetBaseNode) {
         unsigned index = m_positionOffsetBaseNode->computeNodeIndex();
         m_positionStartOffset += index;
         m_positionEndOffset += index;
         m_positionOffsetBaseNode = nullptr;
     }
-    return Range::create(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    return { { *m_positionNode, static_cast<unsigned>(m_positionStartOffset) }, { *m_positionNode, static_cast<unsigned>(m_positionEndOffset) } };
 }
-    
+
 Node* TextIterator::node() const
 {
-    Ref<Range> textRange = range();
-
-    Node& node = textRange->startContainer();
-    if (node.isCharacterDataNode())
-        return &node;
-    
-    return node.traverseToChildAt(textRange->startOffset());
+    auto start = this->range().start;
+    if (start.container->isCharacterDataNode())
+        return start.container.ptr();
+    return start.container->traverseToChildAt(start.offset);
 }
 
 // --------
@@ -1422,19 +1406,17 @@ CharacterIterator::CharacterIterator(Position start, Position end, TextIteratorB
 
 Ref<Range> CharacterIterator::range() const
 {
-    Ref<Range> range = m_underlyingIterator.range();
+    SimpleRange range = m_underlyingIterator.range();
     if (!m_underlyingIterator.atEnd()) {
-        if (m_underlyingIterator.text().length() <= 1) {
+        if (m_underlyingIterator.text().length() <= 1)
             ASSERT(m_runOffset == 0);
-        } else {
-            Node& node = range->startContainer();
-            ASSERT(&node == &range->endContainer());
-            int offset = range->startOffset() + m_runOffset;
-            range->setStart(node, offset);
-            range->setEnd(node, offset + 1);
+        else {
+            Node& node = range.start.container;
+            unsigned offset = range.startOffset() + m_runOffset;
+            range = { { node, offset }, { node, offset + 1 } };
         }
     }
-    return range;
+    return createLiveRange(range);
 }
 
 void CharacterIterator::advance(int count)
@@ -2439,7 +2421,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
 
     for (; !it.atEnd(); it.advance()) {
         int length = it.text().length();
-        textRunRange = it.range();
+        textRunRange = createLiveRange(it.range());
 
         bool foundStart = rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + length;
         bool foundEnd = rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + length;
@@ -2450,8 +2432,8 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
             if (length == 1 && (it.text()[0] == '\n' || isInsideReplacedElement(it))) {
                 it.advance();
                 if (!it.atEnd()) {
-                    Ref<Range> range = it.range();
-                    textRunRange->setEnd(range->startContainer(), range->startOffset());
+                    auto start = it.range().start;
+                    textRunRange->setEnd(WTFMove(start.container), start.offset);
                 } else {
                     Position runStart = textRunRange->startPosition();
                     Position runEnd = VisiblePosition(runStart).next().deepEquivalent();

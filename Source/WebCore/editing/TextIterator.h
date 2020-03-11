@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,19 @@
 
 #pragma once
 
-// FIXME: Move each iterator class into a separate header file.
-
 #include "FindOptions.h"
 #include "LineLayoutTraversal.h"
-#include "Range.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-class InlineTextBox;
+class Range;
 class RenderText;
 class RenderTextFragment;
 
-namespace SimpleLineLayout {
-class RunResolver;
-}
+struct SimpleRange;
 
 WEBCORE_EXPORT String plainText(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
@@ -60,31 +55,21 @@ WEBCORE_EXPORT String foldQuoteMarks(const String&);
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
 bool isRendererReplacedElement(RenderObject*);
 
+// FIXME: Move each iterator class into a separate header file.
+
 class BitStack {
 public:
-    BitStack();
-    ~BitStack();
-
     void push(bool);
     void pop();
-
     bool top() const;
-    unsigned size() const;
 
 private:
-    unsigned m_size;
+    unsigned m_size { 0 };
     Vector<unsigned, 1> m_words;
 };
 
 class TextIteratorCopyableText {
 public:
-    TextIteratorCopyableText()
-        : m_singleCharacter(0)
-        , m_offset(0)
-        , m_length(0)
-    {
-    }
-
     StringView text() const { return m_singleCharacter ? StringView(&m_singleCharacter, 1) : StringView(m_string).substring(m_offset, m_length); }
     void appendToStringBuilder(StringBuilder&) const;
 
@@ -94,10 +79,10 @@ public:
     void set(UChar);
 
 private:
-    UChar m_singleCharacter;
+    UChar m_singleCharacter { 0 };
     String m_string;
-    unsigned m_offset;
-    unsigned m_length;
+    unsigned m_offset { 0 };
+    unsigned m_length { 0 };
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
@@ -107,7 +92,7 @@ private:
 class TextIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit TextIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT TextIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
     WEBCORE_EXPORT explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
     WEBCORE_EXPORT ~TextIterator();
 
@@ -115,7 +100,7 @@ public:
     WEBCORE_EXPORT void advance();
 
     StringView text() const { ASSERT(!atEnd()); return m_text; }
-    WEBCORE_EXPORT Ref<Range> range() const;
+    WEBCORE_EXPORT SimpleRange range() const;
     WEBCORE_EXPORT Node* node() const;
 
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }

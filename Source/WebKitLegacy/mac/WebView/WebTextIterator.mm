@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/Range.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextIterator.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -85,10 +87,10 @@
 
 - (DOMRange *)currentRange
 {
-    WebCore::TextIterator& textIterator = *_private->_textIterator;
+    auto& textIterator = *_private->_textIterator;
     if (textIterator.atEnd())
         return nullptr;
-    return kit(textIterator.range().ptr());
+    return kit(createLiveRange(textIterator.range()).ptr());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

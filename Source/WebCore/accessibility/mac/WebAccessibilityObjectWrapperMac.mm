@@ -70,6 +70,7 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "ScrollView.h"
+#import "SimpleRange.h"
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
@@ -79,12 +80,12 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/ObjCRuntimeExtras.h>
-#if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
+
+#if ENABLE(TREE_DEBUGGING)
 #import <wtf/text/StringBuilder.h>
 #endif
 
 using namespace WebCore;
-using namespace HTMLNames;
 
 // Cell Tables
 #ifndef NSAccessibilitySelectedCellsAttribute
@@ -1060,7 +1061,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     
     // Indicate background highlighting.
     for (Node* node = renderer->node(); node; node = node->parentNode()) {
-        if (node->hasTagName(markTag))
+        if (node->hasTagName(HTMLNames::markTag))
             AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
     }
 }
@@ -1256,20 +1257,17 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
         NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
         TextIterator it(range.get());
         while (!it.atEnd()) {
-            // locate the node and starting offset for this range
-            Node& node = it.range()->startContainer();
-            ASSERT(&node == &it.range()->endContainer());
-            int offset = it.range()->startOffset();
+            Node& node = it.range().start.container;
 
             // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
             if (it.text().length()) {
                 // Add the text of the list marker item if necessary.
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLiveRange(it.range())->startPosition()));
                 if (!listMarkerText.isEmpty())
                     AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
                 AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);
             } else {
-                Node* replacedNode = node.traverseToChildAt(offset);
+                Node* replacedNode = it.node();
                 NSString *attachmentString = nsStringForReplacedNode(replacedNode);
                 if (attachmentString) {
                     NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);
@@ -2193,6 +2191,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return @"AXSubscriptStyleGroup";
 
     if (self.axBackingObject->isStyleFormatGroup()) {
+        using namespace HTMLNames;
         auto tagName = self.axBackingObject->tagName();
         if (tagName == kbdTag)
             return @"AXKeyboardInputStyleGroup";

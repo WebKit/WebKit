@@ -28,6 +28,7 @@
 
 #import "WKDOMInternals.h"
 #import "WKDOMRange.h"
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextIterator.h>
 
 @interface WKDOMTextIterator () {
@@ -62,7 +63,7 @@
 
 - (WKDOMRange *)currentRange
 {
-    return WebKit::toWKDOMRange(_textIterator->range().ptr());
+    return WebKit::toWKDOMRange(createLiveRange(_textIterator->range()).ptr());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

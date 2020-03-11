@@ -38,20 +38,20 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
+#import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/RenderObject.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/TextIterator.h>
 
 #if PLATFORM(COCOA)
 
 namespace WebKit {
-using namespace WebCore;
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParameters)
 {
@@ -121,29 +121,28 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
 {
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
-    
+
     DictionaryPopupInfo dictionaryPopupInfo;
     if (range.text().stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;
     }
-    
+
     Vector<FloatQuad> quads;
     range.absoluteTextQuads(quads);
     if (quads.isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;
     }
-    
+
     IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
-    
+
     const RenderStyle* style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->fontMetrics().ascent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
     dictionaryPopupInfo.options = options;
 
 #if PLATFORM(MAC)
-
     NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
     
     RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
@@ -161,9 +160,8 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
         
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
-
 #endif // PLATFORM(MAC)
-    
+
     TextIndicatorOptions indicatorOptions = TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
         indicatorOptions |= TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
@@ -173,16 +171,14 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;
     }
-    
+
     dictionaryPopupInfo.textIndicator = textIndicator->data();
 #if PLATFORM(MAC)
     dictionaryPopupInfo.attributedString = scaledNSAttributedString;
-#endif // PLATFORM(MAC)
-    
-#if PLATFORM(MACCATALYST)
+#elif PLATFORM(MACCATALYST)
     dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:range.text()]);
-#endif // PLATFORM(MACCATALYST)
-    
+#endif
+
     editor.setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
 }

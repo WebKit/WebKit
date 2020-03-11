@@ -141,7 +141,7 @@ class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
         : m_iterator(start, end)
-        , m_iteratorNode(m_iterator.atEnd() ? nullptr : m_iterator.range()->firstNode())
+        , m_iteratorNode(m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode())
         , m_currentNodeForFindingInvisibleContent(start.firstNode())
         , m_pastEndNode(end.firstNode())
     {
@@ -161,7 +161,7 @@ public:
         auto previousIteratorNode = m_iteratorNode;
 
         m_iterator.advance();
-        m_iteratorNode = m_iterator.atEnd() ? nullptr : m_iterator.range()->firstNode();
+        m_iteratorNode = m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode();
         if (previousIteratorNode != m_iteratorNode)
             moveCurrentNodeForward();
     }
@@ -193,12 +193,12 @@ public:
 
     Position startPosition()
     {
-        return m_iterator.range()->startPosition();
+        return createLiveRange(m_iterator.range())->startPosition();
     }
 
     Position endPosition()
     {
-        return m_iterator.range()->endPosition();
+        return createLiveRange(m_iterator.range())->endPosition();
     }
 
     bool atEnd() const { return m_iterator.atEnd() && m_currentNodeForFindingInvisibleContent == m_pastEndNode; }

@@ -54,6 +54,7 @@
 #import "SVGNames.h"
 #import "SVGElement.h"
 #import "SelectionRect.h"
+#import "SimpleRange.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKWindow.h"
@@ -2257,11 +2258,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     NSMutableArray* array = [[NSMutableArray alloc] init];
     TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
     for (; !it.atEnd(); it.advance()) {
-        // locate the node and starting offset for this range
-        Node& node = it.range()->startContainer();
-        ASSERT(&node == &it.range()->endContainer());
-        int offset = it.range()->startOffset();
-        
+        Node& node = it.range().start.container;
+
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length() != 0) {
             if (!attributed) {
@@ -2269,22 +2267,20 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 AccessibilityObject* linkObject = AccessibilityObject::anchorElementForNode(&node);
                 if ([self _addAccessibilityObject:linkObject toTextMarkerArray:array])
                     continue;
-                
+
                 // Next check if this region is represented by a heading.
                 AccessibilityObject* headingObject = AccessibilityObject::headingElementForNode(&node);
                 if ([self _addAccessibilityObject:headingObject toTextMarkerArray:array])
                     continue;
-                
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
+
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLiveRange(it.range())->startPosition()));
                 
                 if (!listMarkerText.isEmpty()) 
                     [array addObject:listMarkerText];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
-            }
-            else
-            {
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
+            } else {
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLiveRange(it.range())->startPosition()));
 
                 if (!listMarkerText.isEmpty()) {
                     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
@@ -2292,14 +2288,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                     [array addObject:attrString];
                     [attrString release];
                 }
-                
+
                 NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
                 AXAttributedStringAppendText(attrString, &node, it.text().createNSStringWithoutCopying().get());
                 [array addObject:attrString];
                 [attrString release];
             }
         } else {
-            Node* replacedNode = node.traverseToChildAt(offset);
+            Node* replacedNode = it.node();
             if (replacedNode) {
                 AccessibilityObject* obj = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
                 if (obj && !obj->accessibilityIsIgnored())
@@ -2307,7 +2303,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
             }
         }
     }
-    
+
     return [array autorelease];
 }
 

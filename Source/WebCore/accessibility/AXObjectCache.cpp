@@ -99,6 +99,7 @@
 #include "SVGElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollView.h"
+#include "SimpleRange.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -1810,21 +1811,20 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
         }
     }
     
-    // Sometimes text contents in a node are splitted into several iterations, so that iterator.range()->startOffset()
-    // might not be the correct character count. Here we use a previousNode object to keep track of that.
+    // Sometimes text contents in a node are split into several iterations, so that iterator.range().startOffset()
+    // might not be the total character count. Here we use a previousNode object to keep track of that.
     Node* previousNode = nullptr;
     for (; !iterator.atEnd(); iterator.advance()) {
         int currentLength = iterator.text().length();
         bool hasReplacedNodeOrBR = false;
-        
-        Node& node = iterator.range()->startContainer();
+
+        Node& node = iterator.range().start.container;
         currentNode = &node;
         
         // When currentLength == 0, we check if there's any replaced node.
         // If not, we skip the node with no length.
         if (!currentLength) {
-            int subOffset = iterator.range()->startOffset();
-            Node* childNode = node.traverseToChildAt(subOffset);
+            Node* childNode = iterator.node();
             if (AccessibilityObject::replacedNodeNeedsCharacter(childNode)) {
                 cumulativeOffset++;
                 currentLength++;
@@ -1837,8 +1837,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
             if (currentLength == 1) {
                 if (isHTMLSpace(iterator.text()[0])) {
                     // If the node has BR tag, we want to set the currentNode to it.
-                    int subOffset = iterator.range()->startOffset();
-                    Node* childNode = node.traverseToChildAt(subOffset);
+                    Node* childNode = iterator.node();
                     if (childNode && childNode->renderer() && childNode->renderer()->isBR()) {
                         currentNode = childNode;
                         hasReplacedNodeOrBR = true;
@@ -1867,11 +1866,10 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
 
         if (currentNode == previousNode) {
             lastLength += currentLength;
-            lastStartOffset = iterator.range()->endOffset() - lastLength;
-        }
-        else {
+            lastStartOffset = iterator.range().end.offset - lastLength;
+        } else {
             lastLength = currentLength;
-            lastStartOffset = hasReplacedNodeOrBR ? 0 : iterator.range()->startOffset();
+            lastStartOffset = hasReplacedNodeOrBR ? 0 : iterator.range().start.offset;
         }
         
         // Break early if we have advanced enough characters.
@@ -1902,7 +1900,6 @@ int AXObjectCache::lengthForRange(Range* range)
 {
     if (!range)
         return -1;
-    
     int length = 0;
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
@@ -1910,13 +1907,10 @@ int AXObjectCache::lengthForRange(Range* range)
             length += it.text().length();
         else {
             // locate the node and starting offset for this replaced range
-            Node& node = it.range()->startContainer();
-            int offset = it.range()->startOffset();
-            if (AccessibilityObject::replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+            if (AccessibilityObject::replacedNodeNeedsCharacter(it.node()))
                 ++length;
         }
     }
-        
     return length;
 }
 

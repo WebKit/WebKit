@@ -64,7 +64,7 @@ Vector<RefPtr<Range>> DocumentMarkerController::collectTextRanges(const Range& r
 {
     Vector<RefPtr<Range>> textRange;
     for (TextIterator textIterator(&range); !textIterator.atEnd(); textIterator.advance())
-        textRange.append(textIterator.range());
+        textRange.append(createLiveRange(textIterator.range()));
     return textRange;
 }
 

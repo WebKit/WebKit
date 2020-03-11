@@ -1,3 +1,13 @@
+2020-03-08  Darin Adler  <darin@apple.com>
+
+        Make TextIterator::range return a SimpleRange
+        https://bugs.webkit.org/show_bug.cgi?id=208797
+
+        Reviewed by Don Olmstead.
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentRange]): Use createLiveRange.
+
 2020-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERT(!m_textCheckingRequest) on editing/spelling/spellcheck-async-remove-frame.html

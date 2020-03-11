@@ -1281,11 +1281,7 @@ String AccessibilityObject::stringForRange(RefPtr<Range> range) const
                 builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(range->startPosition())));
             it.appendTextToStringBuilder(builder);
         } else {
-            // locate the node and starting offset for this replaced range
-            Node& node = it.range()->startContainer();
-            ASSERT(&node == &it.range()->endContainer());
-            int offset = it.range()->startOffset();
-            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+            if (replacedNodeNeedsCharacter(it.node()))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -1308,10 +1304,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
-            Node& node = it.range()->startContainer();
-            ASSERT(&node == &it.range()->endContainer());
-            int offset = it.range()->startOffset();
-            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+            if (replacedNodeNeedsCharacter(it.node()))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -1324,7 +1317,7 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
     // FIXME: Multi-byte support
     if (visiblePositionRange.isNull())
         return -1;
-    
+
     int length = 0;
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
     for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
@@ -1332,16 +1325,11 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
         if (it.text().length())
             length += it.text().length();
         else {
-            // locate the node and starting offset for this replaced range
-            Node& node = it.range()->startContainer();
-            ASSERT(&node == &it.range()->endContainer());
-            int offset = it.range()->startOffset();
-
-            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+            if (replacedNodeNeedsCharacter(it.node()))
                 ++length;
         }
     }
-    
+
     return length;
 }
 
