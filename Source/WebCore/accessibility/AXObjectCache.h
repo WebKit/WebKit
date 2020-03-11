@@ -360,6 +360,7 @@ private:
     void setIsolatedTreeFocusedObject(Node*);
     static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
     void updateIsolatedTree(AXCoreObject*, AXNotification);
+    static void initializeSecondaryAXThread();
 #endif
 
 protected:
