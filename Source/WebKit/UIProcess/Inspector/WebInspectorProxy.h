@@ -280,7 +280,6 @@ private:
     bool m_ignoreFirstBringToFront { false };
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
-    bool m_isOpening { false };
     bool m_isActiveFrontend { false };
 
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
@@ -301,6 +300,7 @@ private:
     GtkWidget* m_inspectorWindow { nullptr };
     GtkWidget* m_headerBar { nullptr };
     String m_inspectedURLString;
+    bool m_isOpening { false };
 #elif PLATFORM(WIN)
     HWND m_inspectedViewWindow { nullptr };
     HWND m_inspectedViewParentWindow { nullptr };

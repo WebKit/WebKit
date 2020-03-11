@@ -1,3 +1,15 @@
+2020-03-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: make `WebKit::WebInspectorProxy::m_isOpening` GTK only
+        https://bugs.webkit.org/show_bug.cgi?id=208831
+        <rdar://problem/57720692>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::open):
+
 2020-03-10  David Kilzer  <ddkilzer@apple.com>
 
         [CoreIPC] WebPasteboardProxy::SetPasteboardBufferForType uses "0" for both uint64_t and a pointer value
