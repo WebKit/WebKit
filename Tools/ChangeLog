@@ -1,3 +1,24 @@
+2020-03-12  Jonathan Bedard  <jbedard@apple.com>
+
+        resultsdpy: Add script to run local instance
+        https://bugs.webkit.org/show_bug.cgi?id=208746
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/example: Added.
+        * resultsdbpy/resultsdbpy/example/__init__.py: Added.
+        * resultsdbpy/resultsdbpy/example/environment.py: Added.
+        (Environment): Organize environment variables used by results database.
+        (ModelFromEnvironment): Construct the database model from the environment.
+        (main): Create and drop tables, if required.
+        * resultsdbpy/resultsdbpy/example/main.py: Added.
+        (health): Web-server health check.
+        (handle_errors):
+        (main): Run results database web-server.
+        * resultsdbpy/resultsdbpy/example/worker.py: Added.
+        (main): Asynchronously process uploaded results.
+        * resultsdbpy/resultsdbpy/run: Added.
+
 2020-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         run-webkit-tests --use-gpu-process should enable GPU Process for canvas
