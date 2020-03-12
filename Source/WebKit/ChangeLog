@@ -1,3 +1,43 @@
+2020-03-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r258304. rdar://problem/60351239
+
+    [macOS] Register with accessibility when the WebContent process starts
+    https://bugs.webkit.org/show_bug.cgi?id=208960
+    
+    Reviewed by Brent Fulgham.
+    
+    When we reenabled CF prefs direct mode in <https://bugs.webkit.org/show_bug.cgi?id=208690>, we started to register
+    with accessibility when we received a message to do so from the UI process. This would typically happen when the user
+    enabled accessibility. On macOS, this notification does not work the same way as on iOS, and it is assumed that
+    accessibility should always be enabled. Therefore we should go back to registering with accessibility on startup of
+    the WebContent process on macOS.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeProcess):
+    (WebKit::WebProcess::unblockAccessibilityServer):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258304 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Register with accessibility when the WebContent process starts
+            https://bugs.webkit.org/show_bug.cgi?id=208960
+
+            Reviewed by Brent Fulgham.
+
+            When we reenabled CF prefs direct mode in <https://bugs.webkit.org/show_bug.cgi?id=208690>, we started to register
+            with accessibility when we received a message to do so from the UI process. This would typically happen when the user
+            enabled accessibility. On macOS, this notification does not work the same way as on iOS, and it is assumed that
+            accessibility should always be enabled. Therefore we should go back to registering with accessibility on startup of
+            the WebContent process on macOS.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeProcess):
+            (WebKit::WebProcess::unblockAccessibilityServer):
+
 2020-03-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258296. rdar://problem/60348995
