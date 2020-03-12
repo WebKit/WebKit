@@ -1088,3 +1088,5 @@ webkit.org/b/208889 fast/images/decode-render-animated-image.html [ Pass ImageOn
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
 
 webkit.org/b/209013 fast/scrolling/momentum-scroll-with-borders.html [ Pass Timeout ]
+
+webkit.org/b/209018 [ Catalina ] webrtc/video-autoplay1.html [ Pass Failure ]
