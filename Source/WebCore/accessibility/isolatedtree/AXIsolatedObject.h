@@ -337,7 +337,6 @@ private:
     struct AccessibilityIsolatedTreeText {
         String text;
         AccessibilityTextSource textSource;
-        Vector<AXID> textElements;
     };
 
     using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>>;

@@ -1313,14 +1313,14 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
             auto objectCache = axObjectCache();
             // Only use the <label> text if there's no ARIA override.
             if (objectCache && !innerText.isEmpty() && !ariaAccessibilityDescription())
-                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, objectCache->getOrCreate(label)));
+                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement));
             return;
         }
     }
     
     AccessibilityObject* titleUIElement = this->titleUIElement();
     if (titleUIElement)
-        textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement, titleUIElement));
+        textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement));
 }
 
 void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrder) const
@@ -1517,7 +1517,7 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
         for (const auto& element : elements)
             axElements.append(objectCache->getOrCreate(element));
         
-        textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative, axElements));
+        textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative));
     }
 }
     

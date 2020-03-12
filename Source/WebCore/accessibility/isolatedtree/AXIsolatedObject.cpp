@@ -317,8 +317,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         AccessibilityIsolatedTreeText isolatedText;
         isolatedText.text = text.text;
         isolatedText.textSource = text.textSource;
-        for (auto object : text.textElements)
-            isolatedText.textElements.append(object->objectID());
         isolatedTexts.uncheckedAppend(isolatedText);
     }
     setProperty(AXPropertyName::AccessibilityText, isolatedTexts);
@@ -520,10 +518,6 @@ void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
     auto isolatedTexts = vectorAttributeValue<AccessibilityIsolatedTreeText>(AXPropertyName::AccessibilityText);
     for (const auto& isolatedText : isolatedTexts) {
         AccessibilityText text(isolatedText.text, isolatedText.textSource);
-        for (const auto& axID : isolatedText.textElements) {
-            if (auto object = tree()->nodeForID(axID))
-                text.textElements.append(object);
-        }
         texts.append(text);
     }
 }

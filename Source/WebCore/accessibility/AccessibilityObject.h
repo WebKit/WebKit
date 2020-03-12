@@ -69,28 +69,11 @@ class ScrollableArea;
 struct AccessibilityText {
     String text;
     AccessibilityTextSource textSource;
-    Vector<RefPtr<AXCoreObject>> textElements;
     
     AccessibilityText(const String& t, const AccessibilityTextSource& s)
         : text(t)
         , textSource(s)
     { }
-
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<AXCoreObject*> elements)
-        : text(t)
-        , textSource(s)
-    {
-        textElements.reserveCapacity(elements.size());
-        for (auto element : elements)
-            textElements.uncheckedAppend(element);
-    }
-
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, AXCoreObject* element)
-        : text(t)
-        , textSource(s)
-    {
-        textElements.append(element);
-    }
 };
 
 bool nodeHasPresentationRole(Node*);
