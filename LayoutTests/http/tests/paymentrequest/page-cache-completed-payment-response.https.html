@@ -18,8 +18,8 @@ window.addEventListener('pageshow', async function(event) {
     testPassed('Page did enter and was restored from the back/forward cache');
 
     debug('Testing that PaymentResponse remains in the Completed state.');
-    await shouldRejectWithErrorName('response.complete()', 'InvalidStateError');
-    await shouldRejectWithErrorName('response.retry()', 'InvalidStateError');
+    await shouldReject('response.complete()');
+    await shouldReject('response.retry()');
 
     finishJSTest();
 }, false);

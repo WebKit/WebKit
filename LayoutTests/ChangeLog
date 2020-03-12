@@ -1,5 +1,17 @@
 2020-03-12  Chris Dumez  <cdumez@apple.com>
 
+        http/tests/paymentrequest/page-cache-completed-payment-response.https.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207385
+        <rdar://problem/59260167>
+
+        Unreviewed, address flakiness by only making sure that the promises get rejected, without checking
+        which error it is actually rejected with, since this is racy.
+
+        * http/tests/paymentrequest/page-cache-completed-payment-response.https.html:
+        * platform/mac-wk2/TestExpectations:
+
+2020-03-12  Chris Dumez  <cdumez@apple.com>
+
         [ Mac ] fast/history/page-cache-webdatabase-pending-transaction.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=207010
         <rdar://problem/59035295>
