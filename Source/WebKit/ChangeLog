@@ -1,5 +1,16 @@
 2020-03-11  Don Olmstead  <don.olmstead@sony.com>
 
+        Non-unified build fixes early March 2020 edition Take 2
+        https://bugs.webkit.org/show_bug.cgi?id=208968
+
+        Unreviewed build fix.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
+2020-03-11  Don Olmstead  <don.olmstead@sony.com>
+
         [GPUP] Add entry points for non-Cocoa ports
         https://bugs.webkit.org/show_bug.cgi?id=208965
 

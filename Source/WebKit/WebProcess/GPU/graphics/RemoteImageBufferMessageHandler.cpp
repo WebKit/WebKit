@@ -31,6 +31,7 @@
 #include "ImageDataReference.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include <WebCore/DisplayListItems.h>
 
 namespace WebKit {
 using namespace WebCore;

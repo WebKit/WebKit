@@ -27,6 +27,7 @@
 
 #include "FindOptions.h"
 #include "LineLayoutTraversal.h"
+#include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
@@ -36,8 +37,6 @@ namespace WebCore {
 class Range;
 class RenderText;
 class RenderTextFragment;
-
-struct SimpleRange;
 
 WEBCORE_EXPORT String plainText(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);

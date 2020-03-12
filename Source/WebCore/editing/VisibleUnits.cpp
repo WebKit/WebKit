@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
+#include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderObject.h"
 #include "RenderedPosition.h"

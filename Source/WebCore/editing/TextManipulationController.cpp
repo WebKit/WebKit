@@ -30,6 +30,7 @@
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "EventLoop.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"

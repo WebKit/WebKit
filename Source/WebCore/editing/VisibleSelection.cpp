@@ -30,6 +30,7 @@
 #include "Editing.h"
 #include "Element.h"
 #include "HTMLInputElement.h"
+#include "Range.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
