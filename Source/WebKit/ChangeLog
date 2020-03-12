@@ -1,3 +1,20 @@
+2020-03-12  Kate Cheney  <katherine_cheney@apple.com>
+
+        Resource load statistics data summary should return all third party data
+        https://bugs.webkit.org/show_bug.cgi?id=209000
+        <rdar://problem/60348306>
+
+        Reviewed by John Wilander.
+
+        No new tests, this patch adjusts old tests to test this new behavior
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setThirdPartyCookieBlockingMode:onlyOnSitesWithoutUserInteraction:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        Added new function _setThirdPartyCookieBlockingMode so API tests can
+        set this parameter.
+
 2020-03-12  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView.hasOnlySecureContent should be correct after back/forward navigations

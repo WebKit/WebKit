@@ -1,3 +1,23 @@
+2020-03-12  Kate Cheney  <katherine_cheney@apple.com>
+
+        Resource load statistics data summary should return all third party data
+        https://bugs.webkit.org/show_bug.cgi?id=209000
+        <rdar://problem/60348306>
+
+        Reviewed by John Wilander.
+
+        Marked only 2 of 3 domains prevalent in data summary tests to ensure
+        the call returns all third parties, not just prevalent ones.
+        Added a more aggressive check for the size of the array at the
+        beginning of the test to ensure the array is still returning 3 values. 
+        Also removed the ASSERT statements as they seem to cause timeouts (not
+        clear crashes) when they are not true, which is hard to debug.
+        If these values are nil, the test will fail in the EXPECT_WK_STREQ
+        checks, we don't need ASSERT statements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2020-03-12  Jonathan Bedard  <jbedard@apple.com>
 
         resultsdpy: Add script to run local instance

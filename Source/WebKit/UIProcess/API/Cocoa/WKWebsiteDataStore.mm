@@ -575,6 +575,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_setThirdPartyCookieBlockingMode:(BOOL)enabled onlyOnSitesWithoutUserInteraction:(BOOL)onlyOnSitesWithoutUserInteraction completionHandler:(void (^)(void))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(enabled, onlyOnSitesWithoutUserInteraction, [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
 - (bool)_hasRegisteredServiceWorker
 {
 #if ENABLE(SERVICE_WORKER)

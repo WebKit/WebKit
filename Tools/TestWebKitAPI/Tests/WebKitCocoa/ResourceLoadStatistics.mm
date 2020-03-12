@@ -982,11 +982,16 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
-
-    // set third parties to be prevalent
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(void) {
+    
+    doneFlag = false;
+    [dataStore _setThirdPartyCookieBlockingMode:true onlyOnSitesWithoutUserInteraction:false completionHandler: ^(void) {
         doneFlag = true;
     }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Set two third parties to be prevalent, leave evil1.com as non-prevalent to ensure
+    // this call returns all third parties.
     doneFlag = false;
     [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(void) {
         doneFlag = true;
@@ -1096,6 +1101,7 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     doneFlag = false;
     [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
     {
+        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 3);
         NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
 
         // evil3
@@ -1106,10 +1112,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty1 = [evil3Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty2 = [evil3Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty3 = [evil3Enumerator nextObject];
-
-        ASSERT_TRUE(evil3FirstParty1 != nil);
-        ASSERT_TRUE(evil3FirstParty2 != nil);
-        ASSERT_TRUE(evil3FirstParty3 != nil);
 
         EXPECT_WK_STREQ(evil3FirstParty1.firstPartyDomain, @"webkit2.org");
         EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit3.org");
@@ -1127,9 +1129,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
         _WKResourceLoadStatisticsFirstParty *evil1FirstParty1= [evil1Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil1FirstParty2 = [evil1Enumerator nextObject];
 
-        ASSERT_TRUE(evil1FirstParty1 != nil);
-        ASSERT_TRUE(evil1FirstParty2 != nil);
-
         EXPECT_WK_STREQ(evil1FirstParty1.firstPartyDomain, @"webkit2.org");
         EXPECT_WK_STREQ(evil1FirstParty2.firstPartyDomain, @"webkit.org");
 
@@ -1142,8 +1141,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
 
         NSEnumerator *evil2Enumerator = [evil2ThirdParty.underFirstParties objectEnumerator];
         _WKResourceLoadStatisticsFirstParty *evil2FirstParty1 = [evil2Enumerator nextObject];
-
-        ASSERT_TRUE(evil2FirstParty1 != nil);
 
         EXPECT_WK_STREQ(evil2FirstParty1.firstPartyDomain, @"webkit.org");
         EXPECT_FALSE(evil2FirstParty1.thirdPartyStorageAccessGranted);
@@ -1181,6 +1178,13 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
+    
+    doneFlag = false;
+    [dataStore _setThirdPartyCookieBlockingMode:true onlyOnSitesWithoutUserInteraction:false completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
 
     doneFlag = false;
     [dataStore _clearResourceLoadStatistics:^(void) {
@@ -1196,14 +1200,8 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 
     TestWebKitAPI::Util::run(&doneFlag);
 
-    // Teach ITP about bad origins.
-    doneFlag = false;
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-
+    // Set two third parties to be prevalent, leave evil1.com as non-prevalent to ensure
+    // this call returns all third parties.
     doneFlag = false;
     [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(void) {
         doneFlag = true;
@@ -1316,6 +1314,7 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
     doneFlag = false;
     [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
     {
+        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 3);
         NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
 
         // evil3
@@ -1326,10 +1325,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty1 = [evil3Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty2 = [evil3Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil3FirstParty3 = [evil3Enumerator nextObject];
-
-        ASSERT_TRUE(evil3FirstParty1 != nil);
-        ASSERT_TRUE(evil3FirstParty2 != nil);
-        ASSERT_TRUE(evil3FirstParty3 != nil);
 
         EXPECT_WK_STREQ(evil3FirstParty1.firstPartyDomain, @"webkit2.org");
         EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit3.org");
@@ -1366,9 +1361,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
         _WKResourceLoadStatisticsFirstParty *evil1FirstParty1= [evil1Enumerator nextObject];
         _WKResourceLoadStatisticsFirstParty *evil1FirstParty2 = [evil1Enumerator nextObject];
 
-        ASSERT_TRUE(evil1FirstParty1 != nil);
-        ASSERT_TRUE(evil1FirstParty2 != nil);
-
         EXPECT_WK_STREQ(evil1FirstParty1.firstPartyDomain, @"webkit2.org");
         EXPECT_WK_STREQ(evil1FirstParty2.firstPartyDomain, @"webkit.org");
 
@@ -1394,8 +1386,6 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 
         NSEnumerator *evil2Enumerator = [evil2ThirdParty.underFirstParties objectEnumerator];
         _WKResourceLoadStatisticsFirstParty *evil2FirstParty1 = [evil2Enumerator nextObject];
-
-        ASSERT_TRUE(evil2FirstParty1 != nil);
 
         EXPECT_WK_STREQ(evil2FirstParty1.firstPartyDomain, @"webkit.org");
         EXPECT_FALSE(evil2FirstParty1.thirdPartyStorageAccessGranted);
