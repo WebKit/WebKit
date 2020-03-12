@@ -687,7 +687,7 @@ function flakinessDashboardURLForTests(testObjects)
             testList += ",";
     }
 
-    return 'http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=' + encodeURIComponent(testList);
+    return 'https://results.webkit.org/?suite=layout-tests&test=' + encodeURIComponent(testList);
 }
 
 function tableRow(testObject)
