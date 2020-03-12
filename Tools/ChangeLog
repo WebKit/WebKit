@@ -1,5 +1,9 @@
 2020-03-12  Russell Epstein  <repstein@apple.com>
 
+        Revert r258037. rdar://problem/60382950
+
+2020-03-12  Russell Epstein  <repstein@apple.com>
+
         Revert r258093. rdar://problem/60382950
 
 2020-03-09  Russell Epstein  <repstein@apple.com>
