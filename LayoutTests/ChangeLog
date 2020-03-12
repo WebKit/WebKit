@@ -1,5 +1,14 @@
 2020-03-12  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, expected to fail but passed
+        https://bugs.webkit.org/show_bug.cgi?id=208987
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
+2020-03-12  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Gardening, update TestExpectations and baselines
         https://bugs.webkit.org/show_bug.cgi?id=208986
 
