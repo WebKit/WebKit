@@ -553,13 +553,13 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
             fontName = AtomString("-apple-status-bar", AtomString::ConstructFromLiteral);
             break;
         case CSSValueWebkitMiniControl:
-            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeMini]];
+            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeMini)];
             break;
         case CSSValueWebkitSmallControl:
-            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeSmall]];
+            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeSmall)];
             break;
         case CSSValueWebkitControl:
-            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
+            font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(NSControlSizeRegular)];
             break;
         default:
             font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
@@ -1101,7 +1101,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
     FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
 
-    NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
+    NSFont* font = [NSFont systemFontOfSize:ThemeMac::systemFontSizeFor(controlSize)];
     fontDescription.setOneFamily(AtomString("-apple-system", AtomString::ConstructFromLiteral));
     fontDescription.setComputedSize([font pointSize] * style.effectiveZoom());
     fontDescription.setSpecifiedSize([font pointSize] * style.effectiveZoom());
@@ -1117,12 +1117,12 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style)
 {
     int fontSize = style.computedFontPixelSize();
 #if HAVE(LARGE_CONTROL_SIZE)
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
+    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeLarge) && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
 #endif
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
+    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeRegular))
         return NSControlSizeRegular;
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
+    if (fontSize >= ThemeMac::systemFontSizeFor(NSControlSizeSmall))
         return NSControlSizeSmall;
     return NSControlSizeMini;
 }
@@ -1238,7 +1238,7 @@ const int* RenderThemeMac::popupButtonMargins() const
         { 0, 3, 1, 3 },
         { 0, 3, 2, 3 },
         { 0, 1, 0, 1 },
-        { 0, 3, 1, 3 },
+        { 0, 6, 2, 6 },
     };
     return margins[[popupButton() controlSize]];
 }
@@ -1706,7 +1706,7 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
 
 static const IntSize* menuListButtonSizes()
 {
-    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 24) };
+    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 28) };
     return sizes;
 }
 
