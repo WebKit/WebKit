@@ -1,3 +1,20 @@
+2020-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Register with accessibility when the WebContent process starts
+        https://bugs.webkit.org/show_bug.cgi?id=208960
+
+        Reviewed by Brent Fulgham.
+
+        When we reenabled CF prefs direct mode in <https://bugs.webkit.org/show_bug.cgi?id=208690>, we started to register
+        with accessibility when we received a message to do so from the UI process. This would typically happen when the user
+        enabled accessibility. On macOS, this notification does not work the same way as on iOS, and it is assumed that
+        accessibility should always be enabled. Therefore we should go back to registering with accessibility on startup of
+        the WebContent process on macOS.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::unblockAccessibilityServer):
+
 2020-03-11  Don Olmstead  <don.olmstead@sony.com>
 
         [GPUP] RemoteAudioDestination classes should require ENABLE(WEB_AUDIO)
