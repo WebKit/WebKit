@@ -1,3 +1,41 @@
+2020-03-12  youenn fablet  <youenn@apple.com>
+
+        GPUProcess should ensure UIProcess granted capture access to a WebProcess making a capture request
+        https://bugs.webkit.org/show_bug.cgi?id=208910
+
+        Reviewed by Eric Carlson.
+
+        When UIProcess receives a getUserMedia request, it will send to GPUProcess a notification of what is allowed.
+        GPUProcess stores for each connection to web process whether microphone, camera and/or display are allowed.
+        We do not disable access for a given process for now.
+        A future refactoring should probably streamline the implementation so that, in case capture happens in GPUProcess,
+        GPUProcess receives the getUserMedia request, asks permission to UIProcess and, upon granted permission, creates directly the sources.
+
+        Covered by existing tests.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::updateCaptureAccess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::allowsAudioCapture const):
+        (WebKit::GPUConnectionToWebProcess::allowsVideoCapture const):
+        (WebKit::GPUConnectionToWebProcess::allowsDisplayCapture const):
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        (WebKit::GPUProcess::updateCaptureAccess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::updateCaptureAccess):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+
 2020-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         Drop unused EnableEnumeratingAllNetworkInterfaces / DisableEnumeratingAllNetworkInterfaces IPC messages

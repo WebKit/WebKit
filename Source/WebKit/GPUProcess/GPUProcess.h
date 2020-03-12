@@ -98,10 +98,20 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
 #endif
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+
+#if ENABLE(MEDIA_STREAM)
+    struct MediaCaptureAccess {
+        bool allowAudioCapture { false };
+        bool allowVideoCapture { false };
+        bool allowDisplayCapture { false };
+    };
+    HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
+#endif
 
     struct GPUSession {
         String mediaCacheDirectory;

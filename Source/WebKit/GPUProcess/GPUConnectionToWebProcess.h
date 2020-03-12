@@ -84,6 +84,10 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setOrientationForMediaCapture(uint64_t orientation);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
+    bool allowsAudioCapture() const { return m_allowsAudioCapture; }
+    bool allowsVideoCapture() const { return m_allowsVideoCapture; }
+    bool allowsDisplayCapture() const { return m_allowsDisplayCapture; }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -169,6 +173,11 @@ private:
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
     std::unique_ptr<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
+#endif
+#if ENABLE(MEDIA_STREAM)
+    bool m_allowsAudioCapture { false };
+    bool m_allowsVideoCapture { false };
+    bool m_allowsDisplayCapture { false };
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;

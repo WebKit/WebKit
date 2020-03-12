@@ -7919,6 +7919,20 @@ void WebPageProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
 {
     userMediaPermissionRequestManager().setMockCaptureDevicesEnabledOverride(enabled);
 }
+
+void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& request, CompletionHandler<void()>&& callback)
+{
+#if ENABLE(GPU_PROCESS)
+    if (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureAudioInGPUProcessEnabled())
+        return callback();
+
+    auto& gpuProcess = GPUProcessProxy::singleton();
+    gpuProcess.updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_process->coreProcessIdentifier(), WTFMove(callback));
+#else
+    callback();
+#endif
+}
+
 #endif
 
 void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, FrameIdentifier frameID, const WebCore::SecurityOriginData&  userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, WebCore::MediaStreamRequest&& request)

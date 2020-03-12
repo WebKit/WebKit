@@ -295,23 +295,24 @@ class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
 class PlaybackSessionManagerProxy;
-class WebNavigationState;
+class UserMediaPermissionRequestProxy;
 class VideoFullscreenManagerProxy;
 class WebAuthenticatorCoordinatorProxy;
 class WebBackForwardCache;
+class WebDeviceOrientationUpdateProviderProxy;
 class WebKeyboardEvent;
-class WebURLSchemeHandler;
 class WebMouseEvent;
+class WebNavigationState;
 class WebOpenPanelResultListenerProxy;
 class WebPageDebuggable;
 class WebPageGroup;
 class WebPageInspectorController;
 class WebProcessProxy;
+class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
+class WebViewDidMoveToWindowObserver;
 class WebWheelEvent;
 class WebsiteDataStore;
-class WebDeviceOrientationUpdateProviderProxy;
-class WebViewDidMoveToWindowObserver;
 
 struct AttributedString;
 struct WebBackForwardListCounts;
@@ -1676,6 +1677,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabledOverride(Optional<bool>);
+    void willStartCapture(const UserMediaPermissionRequestProxy&, CompletionHandler<void()>&&);
 #endif
 
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, SandboxExtension::Handle&, bool checkAssumedReadAccessToResourceURL = true);

@@ -168,6 +168,11 @@ private:
         }
         return *m_logger;
     }
+    bool willStartCapture(CaptureDevice::DeviceType) const final
+    {
+        // FIXME: We should validate this is granted.
+        return true;
+    }
 
     RefPtr<Logger> m_logger;
     WebProcessProxy& m_process;

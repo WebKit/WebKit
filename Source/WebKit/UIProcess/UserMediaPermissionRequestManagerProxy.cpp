@@ -236,32 +236,39 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         return;
     }
 
-    if (request.requestType() == MediaStreamRequest::Type::UserMedia)
-        m_grantedRequests.append(makeRef(request));
-
-    // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
-    if (m_hasFilteredDeviceList)
-        captureDevicesChanged(PermissionInfo::Granted);
-    m_hasFilteredDeviceList = false;
-
-    ++m_hasPendingCapture;
-
-    SandboxExtension::Handle handle;
-#if PLATFORM(COCOA)
-    if (!m_hasCreatedSandboxExtensionForTCCD) {
-        SandboxExtension::createHandleForMachLookup("com.apple.tccd", m_page.process().connection()->getAuditToken(), handle);
-        m_hasCreatedSandboxExtensionForTCCD = true;
-    }
-#endif
-
-    m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt(), handle }, [this, weakThis = makeWeakPtr(this)] {
+    m_page.willStartCapture(request, [this, weakThis = makeWeakPtr(this), strongRequest = makeRef(request)]() mutable {
         if (!weakThis)
             return;
-        if (!--m_hasPendingCapture)
-            UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
-    }, m_page.webPageID());
 
-    processNextUserMediaRequestIfNeeded();
+        auto& request = strongRequest.get();
+
+        if (request.requestType() == MediaStreamRequest::Type::UserMedia)
+            m_grantedRequests.append(makeRef(request));
+
+        // FIXME: m_hasFilteredDeviceList will trigger ondevicechange events for various documents from different origins.
+        if (m_hasFilteredDeviceList)
+            captureDevicesChanged(PermissionInfo::Granted);
+        m_hasFilteredDeviceList = false;
+
+        ++m_hasPendingCapture;
+
+        SandboxExtension::Handle handle;
+#if PLATFORM(COCOA)
+        if (!m_hasCreatedSandboxExtensionForTCCD) {
+            SandboxExtension::createHandleForMachLookup("com.apple.tccd", m_page.process().connection()->getAuditToken(), handle);
+            m_hasCreatedSandboxExtensionForTCCD = true;
+        }
+#endif
+
+        m_page.process().connection()->sendWithAsyncReply(Messages::WebPage::UserMediaAccessWasGranted { request.userMediaID(), request.audioDevice(), request.videoDevice(), request.deviceIdentifierHashSalt(), handle }, [this, weakThis = WTFMove(weakThis)] {
+            if (!weakThis)
+                return;
+            if (!--m_hasPendingCapture)
+                UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
+        }, m_page.webPageID());
+
+        processNextUserMediaRequestIfNeeded();
+    });
 }
 
 void UserMediaPermissionRequestManagerProxy::resetAccess(Optional<FrameIdentifier> frameID)

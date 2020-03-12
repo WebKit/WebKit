@@ -154,6 +154,11 @@ void GPUProcessProxy::setOrientationForMediaCapture(uint64_t orientation)
     m_orientation = orientation;
     send(Messages::GPUProcess::SetOrientationForMediaCapture { orientation }, 0);
 }
+
+void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

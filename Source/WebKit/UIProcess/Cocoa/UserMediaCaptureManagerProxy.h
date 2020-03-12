@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "UserMediaCaptureManager.h"
+#include <WebCore/CaptureDevice.h>
 #include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
@@ -53,7 +54,7 @@ public:
         virtual void addMessageReceiver(IPC::StringReference, IPC::MessageReceiver&) = 0;
         virtual void removeMessageReceiver(IPC::StringReference) = 0;
         virtual IPC::Connection& connection() = 0;
-        virtual void willStartCameraCapture() { }
+        virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType) const = 0;
         virtual Logger& logger() = 0;
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);

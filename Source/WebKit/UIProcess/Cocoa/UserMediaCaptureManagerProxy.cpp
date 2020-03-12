@@ -179,6 +179,9 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
 
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>&& completionHandler)
 {
+    if (!m_connectionProxy->willStartCapture(device.type()))
+        return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { });
+
     CaptureSourceOrError sourceOrError;
     switch (device.type()) {
     case WebCore::CaptureDevice::DeviceType::Microphone:
@@ -186,10 +189,8 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     case WebCore::CaptureDevice::DeviceType::Camera:
         sourceOrError = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().createVideoCaptureSource(device, WTFMove(hashSalt), &constraints);
-        if (sourceOrError) {
+        if (sourceOrError)
             sourceOrError.captureSource->monitorOrientation(m_orientationNotifier);
-            m_connectionProxy->willStartCameraCapture();
-        }
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:

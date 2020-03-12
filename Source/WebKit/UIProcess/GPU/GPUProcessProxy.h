@@ -66,6 +66,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
     void setOrientationForMediaCapture(uint64_t orientation);
+    void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
 #endif
 
     void removeSession(PAL::SessionID);

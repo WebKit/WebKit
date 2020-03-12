@@ -117,17 +117,27 @@ private:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
     void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }
-#if PLATFORM(IOS)
-    void willStartCameraCapture() final
+    bool willStartCapture(CaptureDevice::DeviceType type) const final
     {
-        if (m_providedPresentingApplicationPID)
-            return;
-        m_providedPresentingApplicationPID = true;
-        MediaSessionManageriOS::providePresentingApplicationPID();
-    }
-
-    bool m_providedPresentingApplicationPID { false };
+        switch (type) {
+        case CaptureDevice::DeviceType::Unknown:
+            return false;
+        case CaptureDevice::DeviceType::Microphone:
+            return m_process.allowsAudioCapture();
+        case CaptureDevice::DeviceType::Camera:
+            if (!m_process.allowsVideoCapture())
+                return false;
+#if PLATFORM(IOS)
+            MediaSessionManageriOS::providePresentingApplicationPID();
 #endif
+            return true;
+            break;
+        case CaptureDevice::DeviceType::Screen:
+            return m_process.allowsDisplayCapture();
+        case CaptureDevice::DeviceType::Window:
+            return m_process.allowsDisplayCapture();
+        }
+    }
 
     GPUConnectionToWebProcess& m_process;
 };
@@ -498,6 +508,13 @@ const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
 void GPUConnectionToWebProcess::setOrientationForMediaCapture(uint64_t orientation)
 {
     userMediaCaptureManagerProxy().setOrientation(orientation);
+}
+
+void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture)
+{
+    m_allowsAudioCapture |= allowAudioCapture;
+    m_allowsVideoCapture |= allowVideoCapture;
+    m_allowsDisplayCapture |= allowDisplayCapture;
 }
 #endif
 

@@ -82,6 +82,12 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
 
     auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, ipcConnection->first, sessionID);
 
+#if ENABLE(MEDIA_STREAM)
+    // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
+    auto access = m_mediaCaptureAccessMap.take(identifier);
+    newConnection->updateCaptureAccess(access.allowAudioCapture, access.allowVideoCapture, access.allowDisplayCapture);
+#endif
+
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
@@ -181,6 +187,21 @@ void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
 {
     for (auto& connection : m_webProcessConnections.values())
         connection->setOrientationForMediaCapture(orientation);
+}
+
+void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* connection = webProcessConnection(processID)) {
+        connection->updateCaptureAccess(allowAudioCapture, allowVideoCapture, allowDisplayCapture);
+        return completionHandler();
+    }
+
+    auto& access = m_mediaCaptureAccessMap.add(processID, MediaCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture }).iterator->value;
+    access.allowAudioCapture |= allowAudioCapture;
+    access.allowVideoCapture |= allowVideoCapture;
+    access.allowDisplayCapture |= allowDisplayCapture;
+
+    completionHandler();
 }
 #endif
 

@@ -38,6 +38,7 @@ messages -> GPUProcess {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(uint64_t orientation);
+    UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> () Async
 #endif
 }
 
