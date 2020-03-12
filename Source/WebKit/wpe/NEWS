@@ -1,3 +1,15 @@
+=================
+WPE WebKit 2.28.0
+=================
+
+What's new in WPE WebKit 2.28.0?
+
+  - Enable the JavaScriptCore JIT for the MIPS platform.
+  - Do not limit the surrounding text for input methods to current paragraph.
+  - Add support in MiniBrowser for WebDriver close session commands.
+  - Fix the build on ppc64le if __unix is undefined.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.27.91
 ==================
