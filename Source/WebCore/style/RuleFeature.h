@@ -75,8 +75,10 @@ struct RuleFeatureSet {
     
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
+    HashMap<CSSSelector::PseudoClassType, std::unique_ptr<Vector<RuleFeature>>, WTF::IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
+    HashSet<CSSSelector::PseudoClassType, WTF::IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
@@ -90,6 +92,7 @@ private:
 
         Vector<std::pair<AtomString, MatchElement>, 32> classes;
         Vector<std::pair<const CSSSelector*, MatchElement>, 32> attributes;
+        Vector<std::pair<CSSSelector::PseudoClassType, MatchElement>, 32> pseudoClasses;
     };
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = MatchElement::Subject);
 };

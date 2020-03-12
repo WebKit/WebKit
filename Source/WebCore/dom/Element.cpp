@@ -86,6 +86,7 @@
 #include "PointerCaptureController.h"
 #include "PointerEvent.h"
 #include "PointerLockController.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -632,17 +633,15 @@ void Element::setActive(bool flag, bool pause)
 {
     if (flag == active())
         return;
-
-    document().userActionElements().setActive(*this, flag);
-
-    auto* renderStyle = renderOrDisplayContentsStyle();
-    bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || styleAffectedByActive();
-    if (reactsToPress)
-        invalidateStyleForSubtree();
+    {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive);
+        document().userActionElements().setActive(*this, flag);
+    }
 
     if (!renderer())
         return;
 
+    bool reactsToPress = false;
     if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(*renderer(), ControlStates::PressedState))
         reactsToPress = true;
 
@@ -681,9 +680,11 @@ void Element::setFocus(bool flag)
 {
     if (flag == focused())
         return;
-
-    document().userActionElements().setFocused(*this, flag);
-    invalidateStyleForSubtree();
+    {
+        Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, CSSSelector::PseudoClassFocus);
+        Style::PseudoClassChangeInvalidation directFocusStyleInvalidation(*this, CSSSelector::PseudoClassDirectFocus);
+        document().userActionElements().setFocused(*this, flag);
+    }
 
     // Shadow host with a slot that contain focused element is not considered focused.
     for (auto* root = containingShadowRoot(); root; root = root->host()->containingShadowRoot()) {
@@ -691,34 +692,30 @@ void Element::setFocus(bool flag)
         root->host()->invalidateStyle();
     }
 
-    for (Element* element = this; element; element = element->parentElementInComposedTree())
+    for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
+}
+
+void Element::setHasFocusWithin(bool flag)
+{
+    if (hasFocusWithin() == flag)
+        return;
+    {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin);
+        setFlag(flag, HasFocusWithin);
+    }
 }
 
 void Element::setHovered(bool flag)
 {
     if (flag == hovered())
         return;
-
-    document().userActionElements().setHovered(*this, flag);
-
-    auto* style = renderOrDisplayContentsStyle();
-    if (style && (style->affectedByHover() || childrenAffectedByHover()))
-        invalidateStyleForSubtree();
-
-    if (!renderer()) {
-        // When setting hover to false, the style needs to be recalc'd even when
-        // there's no renderer (imagine setting display:none in the :hover class,
-        // if a nil renderer would prevent this element from recalculating its
-        // style, it would never go back to its normal style and remain
-        // stuck in its hovered style).
-        if (!flag && !style)
-            invalidateStyleForSubtree();
-
-        return;
+    {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover);
+        document().userActionElements().setHovered(*this, flag);
     }
 
-    if (style->hasAppearance())
+    if (auto* style = renderStyle(); style && style->hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
 }
 

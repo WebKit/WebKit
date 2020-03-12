@@ -1,0 +1,82 @@
+<html>
+<style>
+.container {
+    background-color: blue;
+    width: 200px;
+    height: 600px;
+    position: absolute;
+}
+.inert {
+    background-color: yellow;
+        width: 100px;
+    height: 100px;
+    position: relative;
+}
+.target {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    position: relative;
+}
+.container:hover .target {
+    background-color: green;
+}
+.child {
+    width: 50px;
+    height: 50px;
+}
+</style>
+<div class=container>
+    <div class=inert>
+    </div>
+    <div class=target>
+    </div>
+    <div class=inert>
+    </div>
+    <div class=target>
+        <div class="inert child">
+        </div>
+    </div>
+    <div class=inert>
+        <div class="target child">
+        </div>
+    </div>
+</div>
+<pre id=log></pre>
+
+<script>
+function testStyleChangeType(selector, expectedType)
+{
+    let pass = true;
+    const elements = document.querySelectorAll(selector);
+    for (var i = 0; i < elements.length; ++i) {
+        const type = window.internals.styleChangeType(elements[i]);
+        if (type != expectedType) {
+            log.textContent += `FAIL ${selector} styleChangeType was ${type} expected ${expectedType}\n`;
+            pass = false;
+        }
+    }
+    if (pass)
+        log.textContent += "PASS\n";
+}
+
+window.onload = function () {
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+
+    document.body.offsetLeft;
+    eventSender.mouseMoveTo(50,50);
+
+    testStyleChangeType(".target", "InlineStyleChange");
+    testStyleChangeType(".container", "NoStyleChange");
+    testStyleChangeType(".inert", "NoStyleChange");
+
+    document.body.offsetLeft;
+    eventSender.mouseMoveTo(300,50);
+
+    testStyleChangeType(".target", "InlineStyleChange");
+    testStyleChangeType(".container", "NoStyleChange");
+    testStyleChangeType(".inert", "NoStyleChange");
+};
+</script>

@@ -1,3 +1,24 @@
+2020-03-12  Antti Koivisto  <antti@apple.com>
+
+        Accurate style invalidation for user action pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=208859
+        <rdar://problem/55196888>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/selectors/style-invalidation-focus-change-descendants-expected.txt: Added.
+        * fast/selectors/style-invalidation-focus-change-descendants.html: Added.
+        * fast/selectors/style-invalidation-focus-change-siblings-expected.txt: Added.
+        * fast/selectors/style-invalidation-focus-change-siblings.html: Added.
+        * fast/selectors/style-invalidation-focus-within-change-descendants-expected.txt: Added.
+        * fast/selectors/style-invalidation-focus-within-change-descendants.html: Added.
+        * fast/selectors/style-invalidation-focus-within-change-siblings-expected.txt: Added.
+        * fast/selectors/style-invalidation-focus-within-change-siblings.html: Added.
+        * fast/selectors/style-invalidation-hover-change-descendants-expected.txt: Added.
+        * fast/selectors/style-invalidation-hover-change-descendants.html: Added.
+        * fast/selectors/style-invalidation-hover-change-siblings-expected.txt: Added.
+        * fast/selectors/style-invalidation-hover-change-siblings.html: Added.
+
 2020-03-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, expected to fail but passed

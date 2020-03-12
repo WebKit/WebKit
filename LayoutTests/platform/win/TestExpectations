@@ -2863,6 +2863,14 @@ webkit.org/b/140519 [ Debug ] fast/selectors/querySelector-id-with-multiple-elem
 fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
 
+# Win port sometimes forces synchronous style recalc on focus/hover making these unreliable.
+fast/selectors/style-invalidation-focus-change-descendants.html [ Pass Failure ]
+fast/selectors/style-invalidation-focus-change-siblings.html [ Pass Failure ]
+fast/selectors/style-invalidation-focus-within-change-descendants.html [ Pass Failure ]
+fast/selectors/style-invalidation-focus-within-change-siblings.html [ Pass Failure ]
+fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
+fast/selectors/style-invalidation-hover-change-siblings.html [ Pass Failure ]
+
 fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html [ Pass ImageOnlyFailure ]
 
 fast/table/border-collapsing/cached-change-tbody-border-width.html [ Pass Failure ]

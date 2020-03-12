@@ -859,15 +859,6 @@ inline bool shouldIgnoreAttributeCase(const Element& element)
     return element.isHTMLElement() && element.document().isHTMLDocument();
 }
 
-inline void Element::setHasFocusWithin(bool flag)
-{
-    if (hasFocusWithin() == flag)
-        return;
-    setFlag(flag, HasFocusWithin);
-    if (styleAffectedByFocusWithin())
-        invalidateStyleForSubtree();
-}
-
 template<typename... QualifiedNames>
 inline const AtomString& Element::getAttribute(const QualifiedName& name, const QualifiedNames&... names) const
 {

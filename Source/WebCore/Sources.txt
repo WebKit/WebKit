@@ -2374,6 +2374,7 @@ style/InspectorCSSOMWrappers.cpp
 style/MatchedDeclarationsCache.cpp
 style/PageRuleCollector.cpp
 style/PropertyCascade.cpp
+style/PseudoClassChangeInvalidation.cpp
 style/RuleData.cpp
 style/RuleFeature.cpp
 style/RuleSet.cpp

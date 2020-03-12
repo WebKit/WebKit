@@ -4890,6 +4890,7 @@
 		E451C6322394031A00993190 /* MarginTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE7AA2621C37B6300296DCD /* MarginTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E451C6342394058F00993190 /* DisplayInlineContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E451C6332394058E00993190 /* DisplayInlineContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
+		E45A6C772417BA59006E4CD5 /* PseudoClassChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E45A6C762417BA59006E4CD5 /* PseudoClassChangeInvalidation.h */; };
 		E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E45BA6A82374926B004DFC07 /* MatchedDeclarationsCache.h */; };
 		E45BA6B6237622A3004DFC07 /* StyleAdjuster.h in Headers */ = {isa = PBXBuildFile; fileRef = E45BA6B52376229F004DFC07 /* StyleAdjuster.h */; };
 		E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4605FEA2166480800E53046 /* PrewarmInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15298,6 +15299,8 @@
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemMemoryIOS.cpp; sourceTree = "<group>"; };
+		E45A6C732417BA4C006E4CD5 /* PseudoClassChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoClassChangeInvalidation.cpp; sourceTree = "<group>"; };
+		E45A6C762417BA59006E4CD5 /* PseudoClassChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoClassChangeInvalidation.h; sourceTree = "<group>"; };
 		E45BA6A82374926B004DFC07 /* MatchedDeclarationsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchedDeclarationsCache.h; sourceTree = "<group>"; };
 		E45BA6AB2374927B004DFC07 /* MatchedDeclarationsCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MatchedDeclarationsCache.cpp; sourceTree = "<group>"; };
 		E45BA6B22376227E004DFC07 /* StyleAdjuster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleAdjuster.cpp; sourceTree = "<group>"; };
@@ -27273,6 +27276,8 @@
 				FBDB61A016D6037E00BB3394 /* PageRuleCollector.h */,
 				E4ABABE52361A34200FA4345 /* PropertyCascade.cpp */,
 				E4ABABE22361A32900FA4345 /* PropertyCascade.h */,
+				E45A6C732417BA4C006E4CD5 /* PseudoClassChangeInvalidation.cpp */,
+				E45A6C762417BA59006E4CD5 /* PseudoClassChangeInvalidation.h */,
 				E4863CFA23842E8700972158 /* RuleData.cpp */,
 				E4863CFD23842E9E00972158 /* RuleData.h */,
 				A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */,
@@ -31173,6 +31178,7 @@
 				B2FA3D570AB75A6F000E5AC4 /* JSSVGAnimationElement.h in Headers */,
 				B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */,
 				B2FA3D5B0AB75A6F000E5AC4 /* JSSVGClipPathElement.h in Headers */,
+				E45A6C772417BA59006E4CD5 /* PseudoClassChangeInvalidation.h in Headers */,
 				B2FA3D5F0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.h in Headers */,
 				B2FA3D610AB75A6F000E5AC4 /* JSSVGCursorElement.h in Headers */,
 				B2FA3D630AB75A6F000E5AC4 /* JSSVGDefsElement.h in Headers */,
