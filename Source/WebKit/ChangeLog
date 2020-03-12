@@ -1,3 +1,18 @@
+2020-03-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused GetWebCoreStatistics message
+        https://bugs.webkit.org/show_bug.cgi?id=209001
+        <rdar://problem/59682747>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::fromCountedSetToHashMap): Deleted.
+        (WebKit::getWebCoreMemoryCacheStatistics): Deleted.
+        (WebKit::WebProcess::getWebCoreStatistics): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-03-12  David Kilzer  <ddkilzer@apple.com>
 
         WebPasteboardProxy::SetPasteboardBufferForType should validate its `size` parameter

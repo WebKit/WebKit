@@ -67,7 +67,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     SetEnhancedAccessibility(bool flag)
 
-    GetWebCoreStatistics(uint64_t callbackID)
     GarbageCollectJavaScriptObjects()
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
 

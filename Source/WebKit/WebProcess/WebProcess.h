@@ -392,7 +392,6 @@ private:
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
     
-    void getWebCoreStatistics(uint64_t callbackID);
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
