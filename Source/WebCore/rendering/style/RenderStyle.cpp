@@ -817,6 +817,9 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
 
         if (m_boxData->boxSizing() != other.m_boxData->boxSizing())
             return true;
+
+        if (m_boxData->hasAutoUsedZIndex() != other.m_boxData->hasAutoUsedZIndex())
+            return true;
     }
 
     if (m_surroundData->margin != other.m_surroundData->margin)

@@ -1,3 +1,18 @@
+2020-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r254054): finance.google.com watch list renders initially then disappears for 5+ seconds before reappearing
+        https://bugs.webkit.org/show_bug.cgi?id=208972
+        <rdar://problem/59727171>
+
+        Reviewed by Zalan Bujtas.
+
+        Ref test, and some rebaselines where repaint order changed. 
+
+        * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+        * fast/overflow/animation-recompute-overflow-expected.html: Added.
+        * fast/overflow/animation-recompute-overflow.html: Added.
+        * platform/ios/css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt:
+
 2020-03-12  Antti Koivisto  <antti@apple.com>
 
         Accurate style invalidation for user action pseudo classes

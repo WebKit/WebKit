@@ -4614,14 +4614,14 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
         fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
-    // its overflow is internal to it, and we don't care about it.  layoutOverflowRectForPropagation takes care of this
+    // its overflow is internal to it, and we don't care about it. layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
     LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
-            
+
     // Add in visual overflow from the child.  Even if the child clips its overflow, it may still
-    // have visual overflow of its own set from box shadows or reflections.  It is unnecessary to propagate this
+    // have visual overflow of its own set from box shadows or reflections. It is unnecessary to propagate this
     // overflow if we are clipping our own overflow.
     if (child->hasSelfPaintingLayer() || hasOverflowClip())
         return;
@@ -4640,7 +4640,7 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     LayoutRect overflowRect(rect);
     if (hasOverflowClip() || isRenderView()) {
         // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
-        // writing modes.  At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
+        // writing modes. At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
         // and vertical-lr/rl as the same.
         bool hasTopOverflow = isTopLayoutOverflowAllowed();
         bool hasLeftOverflow = isLeftLayoutOverflowAllowed();
