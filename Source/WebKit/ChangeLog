@@ -1,5 +1,52 @@
 2020-03-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258296. rdar://problem/60348995
+
+    Add a parameter to allow ignoring app-bound domain categorization
+    https://bugs.webkit.org/show_bug.cgi?id=208949
+    <rdar://problem/60239187>
+    
+    Reviewed by Brent Fulgham.
+    
+    Introduce a new parameter to ignore app-bound domain categorization
+    for specific WebViews.
+    
+    * UIProcess/API/APIPageConfiguration.h:
+    (API::PageConfiguration::ignoresAppBoundDomains const):
+    (API::PageConfiguration::setIgnoresAppBoundDomains):
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration _ignoresAppBoundDomains]):
+    (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]):
+    * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258296 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-11  Kate Cheney  <katherine_cheney@apple.com>
+
+            Add a parameter to allow ignoring app-bound domain categorization
+            https://bugs.webkit.org/show_bug.cgi?id=208949
+            <rdar://problem/60239187>
+
+            Reviewed by Brent Fulgham.
+
+            Introduce a new parameter to ignore app-bound domain categorization
+            for specific WebViews.
+
+            * UIProcess/API/APIPageConfiguration.h:
+            (API::PageConfiguration::ignoresAppBoundDomains const):
+            (API::PageConfiguration::setIgnoresAppBoundDomains):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration _ignoresAppBoundDomains]):
+            (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]):
+            * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
+2020-03-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258289. rdar://problem/60341123
 
     [macOS] Crash under WebKit::WebProcessPool::platformInitialize()

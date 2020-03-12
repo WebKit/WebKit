@@ -94,6 +94,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_webViewCategory = this->m_webViewCategory;
 
     copy->m_processDisplayName = this->m_processDisplayName;
+    copy->m_ignoresAppBoundDomains = this->m_ignoresAppBoundDomains;
 
     return copy;
 }
