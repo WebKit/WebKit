@@ -30,11 +30,13 @@
 #include "PublicSuffix.h"
 #include "RegistrableDomain.h"
 #include "SQLiteFileSystem.h"
+#include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -377,7 +379,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
 
     const String sql =
         "SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
-        "(NOT ((session = 0) AND (datetime(expires, 'unixepoch') < datetime('now')))) "\
+        "(NOT ((session = 0) AND (expires < ?)))"
         "AND (httponly = COALESCE(NULLIF(?, -1), httponly)) "\
         "AND (secure = COALESCE(NULLIF(?, -1), secure)) "\
         "AND (session = COALESCE(NULLIF(?, -1), session)) "\
@@ -389,15 +391,16 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         return WTF::nullopt;
 
     pstmt->prepare();
-    pstmt->bindInt(1, httpOnly ? *httpOnly : -1);
-    pstmt->bindInt(2, secure ? *secure : -1);
-    pstmt->bindInt(3, session ? *session : -1);
-    pstmt->bindText(4, requestHost);
+    pstmt->bindInt64(1, WallTime::now().secondsSinceEpoch().milliseconds());
+    pstmt->bindInt(2, httpOnly ? *httpOnly : -1);
+    pstmt->bindInt(3, secure ? *secure : -1);
+    pstmt->bindInt(4, session ? *session : -1);
+    pstmt->bindText(5, requestHost);
 
     if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.') || registrableDomain.isEmpty())
-        pstmt->bindNull(5);
+        pstmt->bindNull(6);
     else
-        pstmt->bindText(5, String("*.") + registrableDomain.string());
+        pstmt->bindText(6, String("*.") + registrableDomain.string());
 
     if (!pstmt)
         return WTF::nullopt;
@@ -413,7 +416,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         String cookieValue = pstmt->getColumnText(1);
         String cookieDomain = pstmt->getColumnText(2).convertToASCIILowercase();
         String cookiePath = pstmt->getColumnText(3);
-        double cookieExpires = (double)pstmt->getColumnInt64(4) * 1000;
+        double cookieExpires = (double)pstmt->getColumnInt64(4);
         bool cookieHttpOnly = (pstmt->getColumnInt(5) == 1);
         bool cookieSecure = (pstmt->getColumnInt(6) == 1);
         bool cookieSession = (pstmt->getColumnInt(7) == 1);
@@ -434,7 +437,8 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         cookie.value = cookieValue;
         cookie.domain = cookieDomain;
         cookie.path = cookiePath;
-        cookie.expires = cookieExpires;
+        if (cookieExpires)
+            cookie.expires = cookieExpires;
         cookie.httpOnly = cookieHttpOnly;
         cookie.secure = cookieSecure;
         cookie.session = cookieSession;
@@ -461,7 +465,9 @@ Vector<Cookie> CookieJarDB::getAllCookies()
         cookie.value = pstmt->getColumnText(1);
         cookie.domain = pstmt->getColumnText(2).convertToASCIILowercase();
         cookie.path = pstmt->getColumnText(3);
-        cookie.expires = (double)pstmt->getColumnInt64(4) * 1000;
+        double cookieExpires = (double)pstmt->getColumnInt64(4);
+        if (cookieExpires)
+            cookie.expires = cookieExpires;
         cookie.httpOnly = (pstmt->getColumnInt(5) == 1);
         cookie.secure = (pstmt->getColumnInt(6) == 1);
         cookie.session = (pstmt->getColumnInt(7) == 1);
@@ -505,7 +511,7 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
     auto expires = cookie.expires.valueOr(0.0);
-    if (!cookie.session && MonotonicTime::fromRawSeconds(expires) <= MonotonicTime::now())
+    if (!cookie.session && MonotonicTime::fromRawSeconds(expires / WTF::msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
     auto& statement = preparedStatement(SET_COOKIE_SQL);

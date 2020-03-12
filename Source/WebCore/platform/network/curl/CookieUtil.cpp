@@ -31,6 +31,7 @@
 
 #include <wtf/DateMath.h>
 #include <wtf/Optional.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 /* This is the maximum line length we accept for a cookie line. RFC 2109
@@ -79,13 +80,13 @@ bool domainMatch(const String& cookieDomain, const String& host)
     return false;
 }
 
-static Optional<double> parseExpires(const char* expires)
+static Optional<double> parseExpiresMS(const char* expires)
 {
     double tmp = WTF::parseDateFromNullTerminatedCharacters(expires);
     if (isnan(tmp))
         return { };
 
-    return Optional<double> {tmp / WTF::msPerSecond};
+    return Optional<double> {tmp};
 }
 
 static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cookie& result)
@@ -117,9 +118,9 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 
     } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
         bool ok;
-        time_t expiryTime = time(0) + attributeValue.toInt64(&ok);
+        double maxAgeSeconds = attributeValue.toInt64(&ok);
         if (ok) {
-            result.expires = (double)expiryTime;
+            result.expires = (WallTime::now().secondsSinceEpoch().value() + maxAgeSeconds) * WTF::msPerSecond;
             result.session = false;
 
             // If there is a max-age attribute as well as an expires attribute
@@ -127,7 +128,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             hasMaxAge = true;
         }
     } else if (equalIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
-        if (auto expiryTime = parseExpires(attributeValue.utf8().data())) {
+        if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
             result.expires = expiryTime.value();
             result.session = false;
         }
