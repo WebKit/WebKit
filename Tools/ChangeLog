@@ -1,3 +1,16 @@
+2020-03-12  Daniel Bates  <dabates@apple.com>
+
+        FocusController::setFocusedElement() should tell client of refocused element
+        https://bugs.webkit.org/show_bug.cgi?id=208880
+
+        Reviewed by Wenson Hsieh.
+
+        Adds a test to ensure that calling -selectPositionAtPoint on an already focused element tries
+        to start an input session. Currently, it does not even try.
+
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (TEST):
+
 2020-03-12  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Use #!/usr/bin/python3 shebang to run generate-gtkdoc
