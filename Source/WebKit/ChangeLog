@@ -1,3 +1,19 @@
+2020-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Drop unused EnableEnumeratingAllNetworkInterfaces / DisableEnumeratingAllNetworkInterfaces IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=208973
+        <rdar://problem/59683940>
+
+        Reviewed by Youenn Fablet.
+
+        Remove two unused IPC messages.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::disableEnumeratingAllNetworkInterfaces): Deleted.
+        (WebKit::WebPage::enableEnumeratingAllNetworkInterfaces): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process] encodeNativeImage() should pass imageSize to GraphicsContext::drawNativeImage()

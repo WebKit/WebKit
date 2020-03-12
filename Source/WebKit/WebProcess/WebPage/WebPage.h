@@ -1578,11 +1578,6 @@ private:
 
 #endif
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
-    void disableEnumeratingAllNetworkInterfaces();
-    void enableEnumeratingAllNetworkInterfaces();
-#endif
-
     void stopAllMediaPlayback();
     void suspendAllMediaPlayback();
     void resumeAllMediaPlayback();

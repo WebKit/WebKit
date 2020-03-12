@@ -710,7 +710,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         m_page->disableICECandidateFiltering();
 #if USE(LIBWEBRTC)
     if (parameters.enumeratingAllNetworkInterfacesEnabled)
-        enableEnumeratingAllNetworkInterfaces();
+        m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces();
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
@@ -748,21 +748,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updateThrottleState();
 }
-
-#if ENABLE(WEB_RTC)
-
-#if USE(LIBWEBRTC)
-void WebPage::disableEnumeratingAllNetworkInterfaces()
-{
-    m_page->libWebRTCProvider().disableEnumeratingAllNetworkInterfaces();
-}
-
-void WebPage::enableEnumeratingAllNetworkInterfaces()
-{
-    m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces();
-}
-#endif
-#endif
 
 void WebPage::stopAllMediaPlayback()
 {
