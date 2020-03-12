@@ -669,7 +669,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
         return;
 
     AccessibilityReplacedText replacedText;
-    if (AXObjectCache::accessibilityEnabled() && editingAction == EditAction::Paste)
+    if (AXObjectCache::accessibilityEnabled() && (editingAction == EditAction::Paste || editingAction == EditAction::Insert))
         replacedText = AccessibilityReplacedText(selection);
 
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment };
@@ -699,6 +699,12 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
     if (AXObjectCache::accessibilityEnabled() && editingAction == EditAction::Paste) {
         String text = AccessibilityObject::stringForVisiblePositionRange(command->visibleSelectionForInsertedText());
         replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypePaste, text, m_frame.selection().selection());
+        command->composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
+    }
+
+    if (AXObjectCache::accessibilityEnabled() && editingAction == EditAction::Insert) {
+        String text = command->documentFragmentPlainText();
+        replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeInsert, text, m_frame.selection().selection());
         command->composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
     }
 

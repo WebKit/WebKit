@@ -1,3 +1,17 @@
+2020-03-11  Canhai Chen  <canhai_chen@apple.com>
+
+        AX: accessibilityReplaceRange:withText: doesn't post an AXValueChanged notification like when typing with kb
+        https://bugs.webkit.org/show_bug.cgi?id=208332
+        <rdar://problem/58489685>
+
+        Reviewed by Chris Fleizach.
+
+        Test text replacement value change notification in editable div, text input, and textarea,
+        including direct text insertion and replace-and-insert.
+
+        * accessibility/mac/replace-text-with-range-value-change-notification-expected.txt: Added.
+        * accessibility/mac/replace-text-with-range-value-change-notification.html: Added.
+
 2020-03-11  Justin Fan  <justin_fan@apple.com>
 
         [WebGL] Additional WebGL bot gardening
