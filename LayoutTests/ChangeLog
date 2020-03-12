@@ -1,3 +1,12 @@
+2020-03-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=208993
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-12  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Isolated tree: Crash in URL retrieval

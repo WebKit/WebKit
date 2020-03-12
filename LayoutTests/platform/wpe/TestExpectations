@@ -654,13 +654,9 @@ webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html [ Failure ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
 
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-modifications.html [ Failure ]
 
 webkit.org/b/208180 http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
 
@@ -703,6 +699,8 @@ webkit.org/b/208983 imported/w3c/web-platform-tests/html/rendering/widgets/appea
 webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
 
 webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ Failure ]
+
+webkit.org/b/208992 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -1055,6 +1053,8 @@ webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash
 
 Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/132279 perf/mouse-event.html [ Failure Pass ]
+
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
 
@@ -1315,6 +1315,21 @@ webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.
 
 webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure Timeout ]
 
+webkit.org/b/188041 http/wpt/crypto/unwrap-rsa-key-crash.any.worker.html [ Failure Pass ]
+
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html [ Failure ]
+
+webkit.org/b/202239 http/tests/cookies/cookie-with-multiple-level-path.html [ Pass Failure ]
+
+webkit.org/b/206065 imported/w3c/web-platform-tests/xhr/anonymous-mode-unsupported.htm [ Failure Pass ]
+
+webkit.org/b/208300 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeatx.outside.html [ Failure Pass ]
+
+webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html [ Failure Pass ]
+webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
+
+webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
+
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
 webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
@@ -1330,9 +1345,17 @@ webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure 
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
 webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Failure Pass ]
 
-webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
 webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure ]
 webkit.org/b/208139 http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html [ Failure Pass ]
+webkit.org/b/208139 http/wpt/prefetch/link-prefetch-skip-disk-cache.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/cors/304.htm [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/304-update.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/freshness.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/heuristic.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/status.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/vary.html [ Failure Pass ]
+webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
 
 webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
 
@@ -1353,6 +1376,8 @@ webkit.org/b/208753 http/tests/referrer-policy-anchor/origin-when-cross-origin/c
 webkit.org/b/208753 http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html [ Pass Crash ]
 
 webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Failure Pass ]
+webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-307-status-code.html [ Failure Pass ]
+webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-404-status-code.html [ Failure Pass ]
 webkit.org/b/208870 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
 
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html [ Failure Pass ]
@@ -2138,7 +2163,6 @@ webkit.org/b/193629 fast/css3-text/css3-text-decoration/text-underline-style.htm
 
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-005.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-bo-000.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ ImageOnlyFailure ]
 
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
 
