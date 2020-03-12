@@ -1,3 +1,19 @@
+2020-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Drop unused LogGlobalDiagnosticMessageWithValue IPC message
+        https://bugs.webkit.org/show_bug.cgi?id=208974
+        <rdar://problem/59682189>
+
+        Reviewed by Chris Dumez.
+
+        I added these messages for ITP, but we later switched to tracking network sessions
+        individually and no longer need this "global" message.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::logGlobalDiagnosticMessageWithValue): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2020-03-12  Chris Dumez  <cdumez@apple.com>
 
         Networking process should kill the WebContent process if an invalid IPC message is received from it
