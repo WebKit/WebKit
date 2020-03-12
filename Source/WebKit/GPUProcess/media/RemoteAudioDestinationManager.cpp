@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteAudioDestinationManager.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteAudioBusData.h"
@@ -174,4 +174,4 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

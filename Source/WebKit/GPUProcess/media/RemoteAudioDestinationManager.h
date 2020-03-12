@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "Connection.h"
 #include "RemoteAudioDestinationIdentifier.h"
@@ -67,4 +67,4 @@ private:
 
 } // namespace WebCore;
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

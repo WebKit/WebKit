@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteAudioDestinationProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
@@ -108,4 +108,4 @@ void RemoteAudioDestinationProxy::didChangeIsPlaying(bool isPlaying)
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

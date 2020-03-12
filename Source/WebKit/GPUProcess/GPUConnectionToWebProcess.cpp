@@ -37,8 +37,6 @@
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
-#include "RemoteAudioDestinationManager.h"
-#include "RemoteAudioDestinationManagerMessages.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteAudioMediaStreamTrackRendererManagerMessages.h"
 #include "RemoteAudioMediaStreamTrackRendererMessages.h"
@@ -78,6 +76,11 @@
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManagerProxy.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
+#endif
+
+#if ENABLE(WEB_AUDIO)
+#include "RemoteAudioDestinationManager.h"
+#include "RemoteAudioDestinationManagerMessages.h"
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -178,6 +181,7 @@ void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connec
     CRASH();
 }
 
+#if ENABLE(WEB_AUDIO)
 RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestinationManager()
 {
     if (!m_remoteAudioDestinationManager)
@@ -185,6 +189,7 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 
     return *m_remoteAudioDestinationManager;
 }
+#endif
 
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
@@ -331,10 +336,12 @@ RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
 
 bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+#if ENABLE(WEB_AUDIO)
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
         remoteAudioDestinationManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
+#endif
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
@@ -424,10 +431,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 
 bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
+#if ENABLE(WEB_AUDIO)
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
         remoteAudioDestinationManager().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
         return true;
     }
+#endif
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
         return true;
