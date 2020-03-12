@@ -1,3 +1,18 @@
+2020-03-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [GPUP] Add special handling of MediaTime within message generator
+        https://bugs.webkit.org/show_bug.cgi?id=208958
+
+        Reviewed by Eric Carlson.
+
+        When compiling the GPU Process sources without unified sources there were
+        numerous compilation errors around MediaTime. Only GPU Process .messages.in
+        files reference this type so there was no special handling within messages.py.
+        Adding explicit references to MediaTime so the proper header is used and all
+        sources compile.
+
+        * Scripts/webkit/messages.py:
+
 2020-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Register with accessibility when the WebContent process starts

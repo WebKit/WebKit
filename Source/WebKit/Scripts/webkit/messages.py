@@ -204,6 +204,7 @@ def forward_declarations_for_namespace(namespace, kind_and_types):
 def types_that_cannot_be_forward_declared():
     return frozenset([
         'MachSendRight',
+        'MediaTime',
         'String',
         'WebCore::ColorSpace',
         'WebCore::DocumentIdentifier',
@@ -279,6 +280,7 @@ def forward_declarations_and_headers(receiver):
 
     non_template_wtf_types = frozenset([
         'MachSendRight',
+        'MediaType',
         'String',
     ])
 
@@ -332,6 +334,7 @@ def forward_declarations_and_headers_for_replies(receiver):
 
     non_template_wtf_types = frozenset([
         'MachSendRight',
+        'MediaTime',
         'String',
     ])
 
@@ -562,6 +565,7 @@ def headers_for_type(type):
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
         'Inspector::InspectorTargetType': ['<JavaScriptCore/InspectorTarget.h>'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
+        'MediaTime': ['<wtf/MediaTime.h>'],
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
