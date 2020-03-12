@@ -51,9 +51,10 @@ MachMessage::~MachMessage()
         ::mach_msg_destroy(header());
 }
 
-size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
+Checked<size_t, RecordOverflow> MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
 {
-    size_t messageSize = sizeof(mach_msg_header_t) + bodySize;
+    Checked<size_t, RecordOverflow> messageSize = sizeof(mach_msg_header_t);
+    messageSize += bodySize;
 
     if (portDescriptorCount || memoryDescriptorCount) {
         messageSize += sizeof(mach_msg_body_t);
@@ -61,7 +62,11 @@ size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, siz
         messageSize += (memoryDescriptorCount * sizeof(mach_msg_ool_descriptor_t));
     }
 
-    return round_msg(messageSize);
+    size_t safeMessageSize;
+    if (UNLIKELY(messageSize.safeGet(safeMessageSize) == CheckedState::DidOverflow))
+        return messageSize;
+
+    return round_msg(safeMessageSize);
 }
 
 void MachMessage::leakDescriptors()

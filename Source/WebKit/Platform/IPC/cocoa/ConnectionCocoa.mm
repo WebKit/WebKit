@@ -297,16 +297,22 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
     bool messageBodyIsOOL = false;
     auto messageSize = MachMessage::messageSize(encoder->bufferSize(), numberOfPortDescriptors, messageBodyIsOOL);
+    if (UNLIKELY(messageSize.hasOverflowed()))
+        return false;
+
     if (messageSize > inlineMessageMaxSize) {
         messageBodyIsOOL = true;
         messageSize = MachMessage::messageSize(0, numberOfPortDescriptors, messageBodyIsOOL);
+        if (UNLIKELY(messageSize.hasOverflowed()))
+            return false;
     }
 
-    auto message = MachMessage::create(encoder->messageReceiverName().toString(), encoder->messageName().toString(), messageSize);
+    size_t safeMessageSize = messageSize.unsafeGet();
+    auto message = MachMessage::create(encoder->messageReceiverName().toString(), encoder->messageName().toString(), safeMessageSize);
 
     auto* header = message->header();
     header->msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
-    header->msgh_size = messageSize;
+    header->msgh_size = safeMessageSize;
     header->msgh_remote_port = m_sendPort;
     header->msgh_local_port = MACH_PORT_NULL;
     header->msgh_id = messageBodyIsOOL ? outOfLineBodyMessageID : inlineBodyMessageID;
