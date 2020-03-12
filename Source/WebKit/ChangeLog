@@ -1,3 +1,109 @@
+2020-03-12  youenn fablet  <youenn@apple.com>
+
+        FrameLoader should own its FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=208918
+
+        Reviewed by Geoffrey Garen.
+
+        Pass a UniqueRef to the PageConfiguration.
+        Update WebFrameLoaderClient according updated FrameLoaderClient interface.
+
+        WebFrame no longer needs to ref/unref itself to keep the loader client alive.
+        Update WebFrame construction to not need a static_cast at initialization of the main frame.
+
+        The ownership is now that a WebCore::FrameLoader owns a FrameLoaderClient who owns a WebFrame.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::tryLoadingUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebKit::WebFrameLoaderClient::~WebFrameLoaderClient):
+        (WebKit::WebFrameLoaderClient::webPageProxyID const):
+        (WebKit::WebFrameLoaderClient::pageID const):
+        (WebKit::WebFrameLoaderClient::frameID const):
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidDispatchOnloadEvents):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchWillPerformClientRedirect):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::dispatchShow):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        (WebKit::WebFrameLoaderClient::allowsContentJavaScriptFromMostRecentNavigation const):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendSubmitEvent):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::WebFrameLoaderClient::willReplaceMultipartContent):
+        (WebKit::WebFrameLoaderClient::didReplaceMultipartContent):
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+        (WebKit::WebFrameLoaderClient::didDetectXSS):
+        (WebKit::WebFrameLoaderClient::cancelledError const):
+        (WebKit::WebFrameLoaderClient::blockedError const):
+        (WebKit::WebFrameLoaderClient::blockedByContentBlockerError const):
+        (WebKit::WebFrameLoaderClient::cannotShowURLError const):
+        (WebKit::WebFrameLoaderClient::interruptedForPolicyChangeError const):
+        (WebKit::WebFrameLoaderClient::blockedByContentFilterError const):
+        (WebKit::WebFrameLoaderClient::cannotShowMIMETypeError const):
+        (WebKit::WebFrameLoaderClient::fileDoesNotExistError const):
+        (WebKit::WebFrameLoaderClient::pluginWillHandleLoadError const):
+        (WebKit::WebFrameLoaderClient::shouldFallBack const):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        (WebKit::WebFrameLoaderClient::didFinishLoad):
+        (WebKit::WebFrameLoaderClient::userAgent const):
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        (WebKit::WebFrameLoaderClient::webGLPolicyForURL const):
+        (WebKit::WebFrameLoaderClient::resolveWebGLPolicyForURL const):
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        (WebKit::WebFrameLoaderClient::overrideMediaType const):
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        (WebKit::WebFrameLoaderClient::dispatchGlobalObjectAvailable):
+        (WebKit::WebFrameLoaderClient::willInjectUserScript):
+        (WebKit::WebFrameLoaderClient::willCacheResponse const):
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::initWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::frameLoaderClient const):
+        (WebKit::WebFrame::fromCoreFrame):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::create):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+
 2020-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         Drop unused LogGlobalDiagnosticMessageWithValue IPC message

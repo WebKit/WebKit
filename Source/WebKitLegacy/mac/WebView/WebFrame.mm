@@ -305,7 +305,7 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(page);
 
     WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
-    auto coreFrame = WebCore::Frame::create(page, ownerElement, new WebFrameLoaderClient(frame));
+    auto coreFrame = WebCore::Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame));
     [frame release];
     frame->_private->coreFrame = coreFrame.ptr();
 
@@ -328,7 +328,7 @@ WebView *getWebView(WebFrame *webFrame)
 
     WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
     frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(frame);
+    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame);
     [frame release];
 
     page->mainFrame().tree().setName(name);
@@ -356,7 +356,7 @@ static NSURL *createUniqueWebDataURL();
     
     WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
     frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(frame);
+    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame);
     [frame release];
 
     frame->_private->coreFrame->initWithSimpleHTMLDocument(style, createUniqueWebDataURL());

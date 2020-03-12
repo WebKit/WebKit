@@ -37,11 +37,10 @@ struct WebsitePoliciesData;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:
-    WebFrameLoaderClient();
+    explicit WebFrameLoaderClient(Ref<WebFrame>&&);
     ~WebFrameLoaderClient();
 
-    void setWebFrame(WebFrame* webFrame) { m_frame = webFrame; }
-    WebFrame* webFrame() const { return m_frame; }
+    WebFrame& webFrame() const { return m_frame.get(); }
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
@@ -67,8 +66,6 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
 
 private:
-    void frameLoaderDestroyed() final;
-
     bool hasHTMLView() const final;
     bool hasWebView() const final;
     
@@ -166,20 +163,20 @@ private:
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
     void didDetectXSS(const URL&, bool didBlockEntirePage) final;
 
-    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) final;
-    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) final;
-    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) final;
-    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) final;
-    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) const final;
 #if ENABLE(CONTENT_FILTERING)
-    WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&) const final;
 #endif
     
-    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) final;
-    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) final;
-    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) final;
+    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
     
-    bool shouldFallBack(const WebCore::ResourceError&) final;
+    bool shouldFallBack(const WebCore::ResourceError&) const final;
     
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const String& MIMEType) const final;
@@ -199,7 +196,7 @@ private:
 
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
     
-    String userAgent(const URL&) final;
+    String userAgent(const URL&) const final;
 
     String overrideContentSecurityPolicy() const final;
 
@@ -280,12 +277,12 @@ private:
     void finishedLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&) final;
 #endif
 
-    WebFrame* m_frame;
+    Ref<WebFrame> m_frame;
     RefPtr<PluginView> m_pluginView;
-    bool m_hasSentResponseToPluginView;
-    bool m_didCompletePageTransition;
-    bool m_frameHasCustomContentProvider;
-    bool m_frameCameFromBackForwardCache;
+    bool m_hasSentResponseToPluginView { false };
+    bool m_didCompletePageTransition { false };
+    bool m_frameHasCustomContentProvider { false };
+    bool m_frameCameFromBackForwardCache { false };
     bool m_useIconLoadingClient { false };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
