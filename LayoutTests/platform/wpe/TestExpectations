@@ -697,6 +697,19 @@ webkit.org/b/208914 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Fa
 
 webkit.org/b/208915 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Failure ]
 
+webkit.org/b/208979 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html [ Failure ]
+
+webkit.org/b/208980 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.sub.tentative.html [ Failure ]
+webkit.org/b/208980 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.sub.tentative.html [ Failure ]
+
+webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
+
+webkit.org/b/208983 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles.html [ Failure ]
+
+webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
+
+webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

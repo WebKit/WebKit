@@ -1,3 +1,14 @@
+2020-03-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update TestExpectations and baselines
+        https://bugs.webkit.org/show_bug.cgi?id=208986
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/time-datalist-crash-expected.txt: Added.
+
 2020-03-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [GPU Process] GraphicsContextStateChange must accumulate fill and stroke fields as single properties
