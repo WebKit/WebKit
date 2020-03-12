@@ -36,6 +36,7 @@
 #import "Range.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -109,6 +110,15 @@ String Internals::getUTIFromMIMEType(const String& mimeType)
 String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
 {
     return UTIFromTag(tagClass, tag, conformingToUTI);
+}
+
+bool Internals::isRemoteUIAppForAccessibility()
+{
+#if PLATFORM(MAC)
+    return [NSAccessibilityRemoteUIElement isRemoteUIApp];
+#else
+    return false;
+#endif
 }
 
 }

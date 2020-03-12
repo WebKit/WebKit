@@ -856,4 +856,6 @@ enum CompositingPolicy {
     DOMString getUTIFromTag(DOMString tagClass, DOMString tag, DOMString conformingToUTI);
 
     boolean supportsPictureInPicture();
+
+    boolean isRemoteUIAppForAccessibility();
 };

@@ -949,6 +949,8 @@ public:
 
     String focusRingColor();
 
+    bool isRemoteUIAppForAccessibility();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

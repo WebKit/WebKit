@@ -1,3 +1,23 @@
+2020-03-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] _AXSApplicationAccessibilityEnabled should not be called
+        https://bugs.webkit.org/show_bug.cgi?id=208953
+
+        Reviewed by Brent Fulgham.
+
+        On macOS, stop using the function _AXSApplicationAccessibilityEnabled and listening to the notification
+        kAXSApplicationAccessibilityEnabledNotification, since they do not have the same behavior as on iOS.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::unblockAccessibilityServer):
+
 2020-03-12  Kate Cheney  <katherine_cheney@apple.com>
 
         Resource load statistics data summary should return all third party data
