@@ -1470,10 +1470,10 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
     if (!webPage)
         return;
 
-    HasInsecureContent hasInsecureContent;
+    // FIXME: Remember in the web process rather than send this sync message.
     UsedLegacyTLS usedLegacyTLS;
-    if (webPage->sendSync(Messages::WebPageProxy::HasInsecureContent(), Messages::WebPageProxy::HasInsecureContent::Reply(hasInsecureContent, usedLegacyTLS)))
-        cachedFrame->setHasInsecureContent(hasInsecureContent, usedLegacyTLS);
+    if (webPage->sendSync(Messages::WebPageProxy::UsedLegacyTLS(), Messages::WebPageProxy::UsedLegacyTLS::Reply(usedLegacyTLS)))
+        cachedFrame->setUsedLegacyTLS(usedLegacyTLS);
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)

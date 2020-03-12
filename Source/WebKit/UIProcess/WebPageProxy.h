@@ -1791,7 +1791,7 @@ private:
 
     void preconnectTo(const URL&);
 
-    void hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent, WebCore::UsedLegacyTLS)>&&);
+    void usedLegacyTLS(CompletionHandler<void(WebCore::UsedLegacyTLS)>&&);
 
     void didDestroyNavigation(uint64_t navigationID);
 

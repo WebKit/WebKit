@@ -63,7 +63,6 @@ protected:
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
-    Optional<HasInsecureContent> m_hasInsecureContent;
     Optional<UsedLegacyTLS> m_usedLegacyTLS;
 
     Vector<std::unique_ptr<CachedFrame>> m_childFrames;
@@ -81,8 +80,8 @@ public:
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
     WEBCORE_EXPORT CachedFramePlatformData* cachedFramePlatformData();
 
-    WEBCORE_EXPORT void setHasInsecureContent(HasInsecureContent, UsedLegacyTLS);
-    Optional<HasInsecureContent> hasInsecureContent() const { return m_hasInsecureContent; }
+    WEBCORE_EXPORT void setUsedLegacyTLS(UsedLegacyTLS);
+    HasInsecureContent hasInsecureContent() const;
     Optional<UsedLegacyTLS> usedLegacyTLS() const { return m_usedLegacyTLS; }
 
     using CachedFrameBase::document;

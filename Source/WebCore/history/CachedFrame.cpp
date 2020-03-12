@@ -302,9 +302,8 @@ CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
     return m_cachedFramePlatformData.get();
 }
 
-void CachedFrame::setHasInsecureContent(HasInsecureContent hasInsecureContent, UsedLegacyTLS usedLegacyTLS)
+void CachedFrame::setUsedLegacyTLS(UsedLegacyTLS usedLegacyTLS)
 {
-    m_hasInsecureContent = hasInsecureContent;
     m_usedLegacyTLS = usedLegacyTLS;
 }
 
@@ -315,6 +314,21 @@ int CachedFrame::descendantFrameCount() const
         count += m_childFrames[i]->descendantFrameCount();
     
     return count;
+}
+
+HasInsecureContent CachedFrame::hasInsecureContent() const
+{
+    if (auto* document = this->document()) {
+        if (!document->isSecureContext() || !document->foundMixedContent().isEmpty())
+            return HasInsecureContent::Yes;
+    }
+    
+    for (const auto& cachedFrame : m_childFrames) {
+        if (cachedFrame && cachedFrame->hasInsecureContent() == HasInsecureContent::Yes)
+            return HasInsecureContent::Yes;
+    }
+    
+    return HasInsecureContent::No;
 }
 
 } // namespace WebCore

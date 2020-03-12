@@ -2075,7 +2075,7 @@ void FrameLoader::commitProvisionalLoad()
         requestFromDelegate(mainResourceRequest, mainResourceIdentifier, mainResouceError);
         notifier().dispatchDidReceiveResponse(cachedPage->documentLoader(), mainResourceIdentifier, cachedPage->documentLoader()->response());
 
-        Optional<HasInsecureContent> hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
+        auto hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
         Optional<UsedLegacyTLS> usedLegacyTLS = cachedPage->cachedMainFrame()->usedLegacyTLS();
 
         dispatchDidCommitLoad(hasInsecureContent, usedLegacyTLS);

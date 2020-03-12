@@ -333,9 +333,43 @@ TEST(TLSVersion, Subresource)
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
 }
 
-#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+TEST(TLSVersion, BackForwardHasOnlySecureContent)
+{
+    HTTPServer secureServer({
+        { "/", { "hello" }}
+    }, HTTPServer::Protocol::Https);
+    HTTPServer insecureServer({
+        { "/", { "hello" } }
+    });
+    HTTPServer mixedContentServer({
+        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='http://127.0.0.1:", static_cast<unsigned>(insecureServer.port()), "/'></img>") } },
+    }, HTTPServer::Protocol::Https);
 
-// FIXME: Add some tests for WKWebView.hasOnlySecureContent
+    auto [webView, delegate] = webViewWithNavigationDelegate();
+    EXPECT_FALSE([webView hasOnlySecureContent]);
+
+    [webView loadRequest:secureServer.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE([webView hasOnlySecureContent]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", mixedContentServer.port()]]]];
+    [delegate waitForDidFinishNavigation];
+    while ([webView hasOnlySecureContent])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_FALSE([webView hasOnlySecureContent]);
+
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE([webView hasOnlySecureContent]);
+
+    [webView goForward];
+    [delegate waitForDidFinishNavigation];
+    while ([webView hasOnlySecureContent])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_FALSE([webView hasOnlySecureContent]);
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 }
 
