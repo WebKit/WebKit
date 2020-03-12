@@ -30,7 +30,6 @@
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "EventLoop.h"
-#include "HTMLNames.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -133,7 +132,10 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     m_callback = WTFMove(callback);
     m_exclusionRules = WTFMove(exclusionRules);
 
-    observeParagraphs(firstPositionInNode(m_document.get()), lastPositionInNode(m_document.get()));
+    VisiblePosition start = firstPositionInNode(m_document.get());
+    VisiblePosition end = lastPositionInNode(m_document.get());
+
+    observeParagraphs(start, end);
     flushPendingItemsForCallback();
 }
 
@@ -217,38 +219,17 @@ private:
     RefPtr<Node> m_pastEndNode;
 };
 
-static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
+void TextManipulationController::observeParagraphs(VisiblePosition& start, VisiblePosition& end)
 {
-    using namespace HTMLNames;
-    static const QualifiedName* const attributeNames[] = {
-        &titleAttr.get(),
-        &altAttr.get(),
-        &placeholderAttr.get(),
-        &aria_labelAttr.get(),
-        &aria_placeholderAttr.get(),
-        &aria_roledescriptionAttr.get(),
-        &aria_valuetextAttr.get(),
-    };
-    for (auto& entry : attributeNames) {
-        if (*entry == nameToCheck)
-            return true;
-    }
-    return false;
-}
-
-void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
-{
-    auto document = makeRefPtr(start.document());
+    auto document = makeRefPtr(start.deepEquivalent().document());
     ASSERT(document);
-    ParagraphContentIterator iterator { start, end };
-    VisiblePosition visibleStart = start;
-    VisiblePosition visibleEnd = end;
-    if (document != start.document() || document != end.document())
+    ParagraphContentIterator iterator { start.deepEquivalent(), end.deepEquivalent() };
+    if (document != start.deepEquivalent().document() || document != end.deepEquivalent().document())
         return; // TextIterator's constructor may have updated the layout and executed arbitrary scripts.
 
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
     Vector<ManipulationToken> tokensInCurrentParagraph;
-    Position startOfCurrentParagraph = visibleStart.deepEquivalent();
+    Position startOfCurrentParagraph = start.deepEquivalent();
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         if (content.node) {
@@ -257,23 +238,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                     return; // We can exit early here because scheduleObservartionUpdate calls this function on each paragraph separately.
             }
 
-            if (is<Element>(*content.node)) {
-                auto& currentElement = downcast<Element>(*content.node);
-                if (!content.isTextContent && (content.node->hasTagName(HTMLNames::titleTag) || content.node->hasTagName(HTMLNames::optionTag))) {
-                    addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), nullQName(),
-                        { ManipulationToken { m_tokenIdentifier.generate(), currentElement.textContent() } } });
-                }
-                if (currentElement.hasAttributes()) {
-                    for (auto& attribute : currentElement.attributesIterator()) {
-                        if (isAttributeForTextManipulation(attribute.name())) {
-                            addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), attribute.name(),
-                                { ManipulationToken { m_tokenIdentifier.generate(), attribute.value() } } });
-                        }
-                    }
-                }
-            }
-
-            if (startOfCurrentParagraph.isNull() && content.isTextContent)
+            if (startOfCurrentParagraph.isNull())
                 startOfCurrentParagraph = iterator.startPosition();
         }
 
@@ -301,7 +266,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                     endOfCurrentParagraph = Position(&textNode, offsetOfNextNewLine);
                     startOfCurrentParagraph = Position(&textNode, offsetOfNextNewLine + 1);
                 }
-                addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), WTFMove(tokensInCurrentParagraph) });
+                addItem(startOfCurrentParagraph, endOfCurrentParagraph, WTFMove(tokensInCurrentParagraph));
                 startOfCurrentParagraph.clear();
             }
             startOfCurrentLine = offsetOfNextNewLine + 1;
@@ -313,7 +278,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
     }
 
     if (!tokensInCurrentParagraph.isEmpty())
-        addItem(ManipulationItemData { startOfCurrentParagraph, visibleEnd.deepEquivalent(), nullptr, nullQName(), WTFMove(tokensInCurrentParagraph) });
+        addItem(startOfCurrentParagraph, end.deepEquivalent(), WTFMove(tokensInCurrentParagraph));
 }
 
 void TextManipulationController::didCreateRendererForElement(Element& element)
@@ -378,13 +343,13 @@ void TextManipulationController::scheduleObservartionUpdate()
             if (!controller)
                 return; // Finding the start/end of paragraph may have updated layout & executed arbitrary scripts.
 
-            controller->observeParagraphs(start.deepEquivalent(), end.deepEquivalent());
+            controller->observeParagraphs(start, end);
         }
         controller->flushPendingItemsForCallback();
     });
 }
 
-void TextManipulationController::addItem(ManipulationItemData&& itemData)
+void TextManipulationController::addItem(const Position& startOfParagraph, const Position& endOfParagraph, Vector<ManipulationToken>&& tokens)
 {
     const unsigned itemCallbackBatchingSize = 128;
 
@@ -392,9 +357,9 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
     auto newID = m_itemIdentifier.generate();
     m_pendingItemsForCallback.append(ManipulationItem {
         newID,
-        itemData.tokens.map([](auto& token) { return token; })
+        tokens.map([](auto& token) { return token; })
     });
-    m_items.add(newID, WTFMove(itemData));
+    m_items.add(newID, ManipulationItemData { startOfParagraph, endOfParagraph, WTFMove(tokens) });
 
     if (m_pendingItemsForCallback.size() >= itemCallbackBatchingSize)
         flushPendingItemsForCallback();
@@ -458,26 +423,6 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
     size_t currentTokenIndex = 0;
     HashMap<TokenIdentifier, TokenExchangeData> tokenExchangeMap;
-
-    if (item.start.isNull() && item.end.isNull()) {
-        RELEASE_ASSERT(item.tokens.size() == 1);
-        auto element = makeRefPtr(item.element.get());
-        if (!element)
-            return ManipulationFailureType::ContentChanged;
-        if (replacementTokens.size() > 1)
-            return ManipulationFailureType::InvalidToken;
-        String newValue;
-        if (!replacementTokens.isEmpty()) {
-            if (replacementTokens[0].identifier != item.tokens[0].identifier)
-                return ManipulationFailureType::InvalidToken;
-            newValue = replacementTokens[0].content;
-        }
-        if (item.attributeName == nullQName())
-            element->setTextContent(newValue);
-        else
-            element->setAttribute(item.attributeName, newValue);
-        return WTF::nullopt;
-    }
 
     RefPtr<Node> commonAncestor;
     ParagraphContentIterator iterator { item.start, item.end };
