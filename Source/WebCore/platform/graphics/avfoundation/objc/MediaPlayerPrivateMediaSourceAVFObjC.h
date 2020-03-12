@@ -41,6 +41,7 @@ OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
+OBJC_CLASS AVSampleBufferVideoOutput;
 OBJC_CLASS AVStreamSession;
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
@@ -261,6 +262,8 @@ private:
 
     bool shouldBePlaying() const;
 
+    bool isVideoOutputAvailable() const;
+
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
@@ -282,6 +285,9 @@ private:
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    RetainPtr<AVSampleBufferVideoOutput> m_videoOutput;
+#endif
 
     struct AudioRendererProperties {
         bool hasAudibleSample { false };

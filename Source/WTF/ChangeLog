@@ -1,5 +1,14 @@
 2020-03-11  Jer Noble  <jer.noble@apple.com>
 
+        Adopt AVSampleBufferVideoOutput
+        https://bugs.webkit.org/show_bug.cgi?id=208951
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
+2020-03-11  Jer Noble  <jer.noble@apple.com>
+
         [EME] Issue an "encrypted" event when a new encrypted initialization segment is encountered
         https://bugs.webkit.org/show_bug.cgi?id=208923
 

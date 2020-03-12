@@ -585,6 +585,17 @@ NativeImagePtr MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    if (m_videoOutput) {
+        CMTime outputTime;
+        if (auto pixelBuffer = [m_videoOutput copyPixelBufferForSourceTime:toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime]) {
+            INFO_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", toMediaTime(outputTime));
+            m_lastPixelBuffer = WTFMove(pixelBuffer);
+            return true;
+        }
+    }
+#endif
+
     if (m_sampleBufferDisplayLayer || !m_decompressionSession)
         return false;
 
@@ -670,7 +681,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 {
-    if (!m_hasBeenAskedToPaintGL) {
+    if (!m_hasBeenAskedToPaintGL || isVideoOutputAvailable()) {
         destroyDecompressionSession();
         ensureLayer();
     } else {
@@ -755,6 +766,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
 #endif
 
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    ASSERT(!m_videoOutput);
+    if (isVideoOutputAvailable()) {
+        m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
+        ASSERT(m_videoOutput);
+        [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
+    }
+#endif
+
     ASSERT(m_sampleBufferDisplayLayer);
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferDisplayLayer");
@@ -820,6 +840,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
     return m_playing && !seeking() && allRenderersHaveAvailableSamples() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::isVideoOutputAvailable() const
+{
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    return PAL::getAVSampleBufferVideoOutputClass;
+#else
+    return false;
+#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)

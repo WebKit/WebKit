@@ -355,3 +355,17 @@ typedef NS_ENUM(NSInteger, AVPlayerResourceConservationLevel) {
 
 @end
 #endif
+
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#if USE(APPLE_INTERNAL_SDK)
+#include <AVFoundation/AVSampleBufferVideoOutput.h>
+#else
+@interface AVSampleBufferVideoOutput : NSObject
+- (CVPixelBufferRef)copyPixelBufferForSourceTime:(CMTime)sourceTime sourceTimeForDisplay:(nullable CMTime *)outSourceTimeForDisplay;
+@end
+
+@interface AVSampleBufferDisplayLayer (VideoOutput)
+@property (nonatomic, nullable) AVSampleBufferVideoOutput *output;
+@end
+#endif
+#endif
