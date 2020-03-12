@@ -392,11 +392,7 @@ AXCoreObject* AXObjectCache::isolatedTreeFocusedObject(Document& document)
     auto tree = AXIsolatedTree::treeForPageID(*pageID);
     if (!tree) {
         tree = generateIsolatedTree(*pageID, document);
-        // Now that we have created our tree, initialize the secondary thread,
-        // so future requests come in on the other thread.
-        if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
-            _AXUIElementUseSecondaryAXThread(true);
-        _AXUIElementUseSecondaryAXThread(true);
+        initializeSecondaryAXThread();
     }
 
     if (tree)
@@ -749,6 +745,15 @@ AXCoreObject* AXObjectCache::rootObject()
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+void AXObjectCache::initializeSecondaryAXThread()
+{
+    // Now that we have created our tree, initialize the secondary thread,
+    // so future requests come in on the other thread.
+    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
+        _AXUIElementUseSecondaryAXThread(true);
+}
+
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()
 {
     if (!m_pageID)
@@ -759,11 +764,7 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
         tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
             return generateIsolatedTree(*m_pageID, m_document);
         });
-
-        // Now that we have created our tree, initialize the secondary thread,
-        // so future requests come in on the other thread.
-        if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
-            _AXUIElementUseSecondaryAXThread(true);
+        AXObjectCache::initializeSecondaryAXThread();
     }
 
     if (tree)
