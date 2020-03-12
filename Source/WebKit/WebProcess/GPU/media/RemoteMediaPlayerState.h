@@ -53,7 +53,7 @@ struct RemoteMediaPlayerState {
     double minFastReverseRate { 0 };
     double seekableTimeRangesLastModifiedTime { 0 };
     double liveUpdateInterval { 0 };
-    unsigned long long totalBytes { 0 };
+    uint64_t totalBytes { 0 };
     Optional<bool> wouldTaintDocumentSecurityOrigin { true };
     bool paused { true };
     bool loadingProgressed { false };
@@ -192,7 +192,7 @@ struct RemoteMediaPlayerState {
         if (!liveUpdateInterval)
             return WTF::nullopt;
 
-        Optional<unsigned long long> totalBytes;
+        Optional<uint64_t> totalBytes;
         decoder >> totalBytes;
         if (!totalBytes)
             return WTF::nullopt;

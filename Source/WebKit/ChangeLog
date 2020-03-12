@@ -1,3 +1,17 @@
+2020-03-12  Don Olmstead  <don.olmstead@sony.com>
+
+        [GPUP] Use standard int type in RemoteMediaPlayerState
+        https://bugs.webkit.org/show_bug.cgi?id=208962
+
+        Reviewed by Eric Carlson.
+
+        An unsigned long long is at least 64-bits so use uint64_t instead. This issue
+        was found when compiling out the GPU Process. No specialization of unsigned long
+        long was found which resulted in errors. This appears to be a non-Cocoa problem.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::decode):
+
 2020-03-12  youenn fablet  <youenn@apple.com>
 
         GPUProcess should ensure UIProcess granted capture access to a WebProcess making a capture request
