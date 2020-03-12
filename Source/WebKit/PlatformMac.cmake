@@ -128,6 +128,11 @@ set(PluginProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
+set(GPUProcess_SOURCES
+    GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
+    ${XPCService_SOURCES}
+)
+
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
     ${XPCService_SOURCES}

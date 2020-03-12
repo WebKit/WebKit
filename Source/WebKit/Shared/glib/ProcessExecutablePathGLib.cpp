@@ -91,4 +91,15 @@ String executablePathOfNetworkProcess()
 #endif
 }
 
+#if ENABLE(GPU_PROCESS)
+String executablePathOfGPUProcess()
+{
+#if PLATFORM(WPE)
+    return findWebKitProcess("WPEGPUProcess");
+#else
+    return findWebKitProcess("WebKitGPUProcess");
+#endif
+}
+#endif
+
 } // namespace WebKit

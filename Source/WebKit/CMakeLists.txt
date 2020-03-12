@@ -284,6 +284,10 @@ set(NetworkProcess_LIBRARIES
     WebKit
 )
 
+set(GPUProcess_LIBRARIES
+    WebKit
+)
+
 set(PluginProcess_LIBRARIES
     WebKit
 )
@@ -493,10 +497,24 @@ if (WebKit_NetworkProcess_OUTPUT_NAME)
     set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit_NetworkProcess_OUTPUT_NAME})
 endif ()
 
+if (ENABLE_GPU_PROCESS)
+    add_executable(GPUProcess ${GPUProcess_SOURCES})
+    ADD_WEBKIT_PREFIX_HEADER(GPUProcess)
+    target_link_libraries(GPUProcess ${GPUProcess_LIBRARIES})
+    target_include_directories(GPUProcess PRIVATE ${GPUProcess_INCLUDE_DIRECTORIES})
+
+    if (WebKit_GPUProcess_OUTPUT_NAME)
+        set_target_properties(GPUProcess PROPERTIES OUTPUT_NAME ${WebKit_GPUProcess_OUTPUT_NAME})
+    endif ()
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
+    if (ENABLE_GPU_PROCESS)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(GPUProcess -Wno-unused-parameter)
+    endif ()
 endif ()
 
 # FIXME: Mac should build a plugin process.

@@ -1,6 +1,7 @@
 set(WebKit_OUTPUT_NAME WebKit2)
 set(WebKit_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
+set(WebKit_GPUProcess_OUTPUT_NAME WebKitGPUProcess)
 set(WebKit_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
 add_definitions(-DBUILDING_WEBKIT)
@@ -130,6 +131,10 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp
+)
+
+list(APPEND GPUProcess_SOURCES
+    GPUProcess/EntryPoint/win/GPUProcessMain.cpp
 )
 
 if (${ENABLE_PLUGIN_PROCESS})

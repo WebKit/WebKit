@@ -130,6 +130,11 @@ void ProcessLauncher::launchProcess()
     case ProcessLauncher::ProcessType::Network:
         executablePath = executablePathOfNetworkProcess();
         break;
+#if ENABLE(GPU_PROCESS)
+    case ProcessLauncher::ProcessType::GPU:
+        executablePath = executablePathOfGPUProcess();
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return;

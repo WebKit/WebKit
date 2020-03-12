@@ -4,6 +4,7 @@ include(GNUInstallDirs)
 set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
 set(WebKit_WebProcess_OUTPUT_NAME WPEWebProcess)
 set(WebKit_NetworkProcess_OUTPUT_NAME WPENetworkProcess)
+set(WebKit_GPUProcess_OUTPUT_NAME WPEGPUProcess)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
@@ -69,6 +70,10 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
+)
+
+list(APPEND GPUProcess_SOURCES
+    GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
 )
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES

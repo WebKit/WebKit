@@ -1,5 +1,41 @@
 2020-03-11  Don Olmstead  <don.olmstead@sony.com>
 
+        [GPUP] Add entry points for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=208965
+
+        Reviewed by Michael Catanzaro.
+
+        Add a CMake target for the GPU Process that is optionally defined based on
+        whether the process is enabled.
+
+        Add an entry point for the GPU Process for unix and windows ports. Use this
+        as the source for the GPU Process by specifying it in the Platform CMake file.
+
+        Add in hooks for both Windows and GLib to launch the GPU Process if it is
+        enabled in the port.
+
+        * CMakeLists.txt:
+        * GPUProcess/EntryPoint/unix/GPUProcessMain.cpp: Added.
+        (main):
+        * GPUProcess/EntryPoint/win/GPUProcessMain.cpp: Added.
+        (main):
+        * GPUProcess/GPUProcessMain.h: Added.
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * Shared/ProcessExecutablePath.h:
+        * Shared/glib/ProcessExecutablePathGLib.cpp:
+        (WebKit::executablePathOfGPUProcess):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::processName):
+
+2020-03-11  Don Olmstead  <don.olmstead@sony.com>
+
         [GPUP] Add special handling of MediaTime within message generator
         https://bugs.webkit.org/show_bug.cgi?id=208958
 
