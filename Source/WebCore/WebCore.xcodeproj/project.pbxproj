@@ -2084,12 +2084,14 @@
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
 		71025EE21F99F1EC004A250C /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED81F99F1A6004A250C /* JSWebAnimation.h */; };
+		7108EEE62418ED5A005C3DA7 /* WebAnimationTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7108EEE42418ED53005C3DA7 /* WebAnimationTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7111243E216FA71100EB7B67 /* CompositeOperationOrAuto.h in Headers */ = {isa = PBXBuildFile; fileRef = 7111243B216FA6E000EB7B67 /* CompositeOperationOrAuto.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71112441216FA7CD00EB7B67 /* JSCompositeOperationOrAuto.h in Headers */ = {isa = PBXBuildFile; fileRef = 71112440216FA7BE00EB7B67 /* JSCompositeOperationOrAuto.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7116E2CC1FED75DC00C06FDE /* ComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CB1FED75D100C06FDE /* ComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7116E2CF1FED765B00C06FDE /* JSComputedEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
 		7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118FED315685CC60030B79A /* JSSVGViewSpec.h */; };
+		7119465624181EA100466C11 /* ElementAnimationRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7119465324181E8300466C11 /* ElementAnimationRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		711AD126236D86E5006FF37C /* AnimationEventBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 711AD123236D86D3006FF37C /* AnimationEventBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71207340216DFB0000C78329 /* OptionalEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 7120733D216DFAF100C78329 /* OptionalEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71207343216DFB4100C78329 /* JSOptionalEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71207341216DFB3100C78329 /* JSOptionalEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9419,6 +9421,7 @@
 		71025EDA1F99F1A7004A250C /* JSAnimationTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationTimeline.cpp; sourceTree = "<group>"; };
 		71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentTimeline.cpp; sourceTree = "<group>"; };
 		71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimeline.h; sourceTree = "<group>"; };
+		7108EEE42418ED53005C3DA7 /* WebAnimationTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimationTypes.h; sourceTree = "<group>"; };
 		710FA74B1DEE576D004C715E /* controls-bar.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-bar.js"; sourceTree = "<group>"; };
 		710FA74C1DEE577E004C715E /* controls-visibility-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-visibility-support.js"; sourceTree = "<group>"; };
 		7111243B216FA6E000EB7B67 /* CompositeOperationOrAuto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeOperationOrAuto.h; sourceTree = "<group>"; };
@@ -9433,6 +9436,8 @@
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
 		7118FED315685CC60030B79A /* JSSVGViewSpec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGViewSpec.h; sourceTree = "<group>"; };
+		7119465324181E8300466C11 /* ElementAnimationRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAnimationRareData.h; sourceTree = "<group>"; };
+		7119465524181E8400466C11 /* ElementAnimationRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementAnimationRareData.cpp; sourceTree = "<group>"; };
 		711AD123236D86D3006FF37C /* AnimationEventBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEventBase.h; sourceTree = "<group>"; };
 		711AD125236D86D4006FF37C /* AnimationEventBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEventBase.cpp; sourceTree = "<group>"; };
 		711FB0751DC7688F00C4C708 /* placard-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "placard-support.js"; sourceTree = "<group>"; };
@@ -21046,6 +21051,8 @@
 				71729F7920F3BA3900801CE6 /* DocumentTimelineOptions.idl */,
 				712BE47C1FE86448002031CC /* EffectTiming.h */,
 				712BE47A1FE86447002031CC /* EffectTiming.idl */,
+				7119465524181E8400466C11 /* ElementAnimationRareData.cpp */,
+				7119465324181E8300466C11 /* ElementAnimationRareData.h */,
 				712BE4811FE865D4002031CC /* FillMode.h */,
 				712BE4821FE865D5002031CC /* FillMode.idl */,
 				713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */,
@@ -21068,6 +21075,7 @@
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
 				71025EC21F99F096004A250C /* WebAnimation.h */,
 				71025EC81F99F096004A250C /* WebAnimation.idl */,
+				7108EEE42418ED53005C3DA7 /* WebAnimationTypes.h */,
 				71C25AF52392BF3C00D5C098 /* WebAnimationUtilities.cpp */,
 				7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */,
 			);
@@ -26370,6 +26378,8 @@
 				CD9D375A215163E40049657B /* CDMInstanceSession.h */,
 				CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */,
 				CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */,
+				CD8D306E23AD4FA8006C3975 /* CDMLogging.cpp */,
+				CD8D306D23AD4FA8006C3975 /* CDMLogging.h */,
 				CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */,
 				CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */,
 				CD3CE11C240451AF004BA01D /* CDMPrivate.cpp */,
@@ -26379,8 +26389,6 @@
 				CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */,
 				CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */,
 				CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */,
-				CD8D306D23AD4FA8006C3975 /* CDMLogging.h */,
-				CD8D306E23AD4FA8006C3975 /* CDMLogging.cpp */,
 			);
 			path = encryptedmedia;
 			sourceTree = "<group>";
@@ -29362,6 +29370,7 @@
 				CD3CE0FB2401AAD9004BA01D /* CDMInstanceSession.h in Headers */,
 				CD3CE0FC2401AAD9004BA01D /* CDMKeyStatus.h in Headers */,
 				CD3CE0FD2401AAD9004BA01D /* CDMKeySystemConfiguration.h in Headers */,
+				CD8D306F23AD4FA8006C3975 /* CDMLogging.h in Headers */,
 				CD3CE0FE2401AAD9004BA01D /* CDMMediaCapability.h in Headers */,
 				CD3CE0FF2401AADA004BA01D /* CDMMessageType.h in Headers */,
 				CD3CE1002401AADA004BA01D /* CDMPrivate.h in Headers */,
@@ -29904,6 +29913,7 @@
 				A8C4A80709D563270003AC8D /* Element.h in Headers */,
 				E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */,
 				E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */,
+				7119465624181EA100466C11 /* ElementAnimationRareData.h in Headers */,
 				E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */,
 				313BCE1C235E3BE500FC39E5 /* ElementContext.h in Headers */,
 				B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */,
@@ -30431,7 +30441,6 @@
 				07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */,
 				07941792166E855F009416C2 /* InbandTextTrack.h in Headers */,
 				07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */,
-				CD8D306F23AD4FA8006C3975 /* CDMLogging.h in Headers */,
 				07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */,
 				07AA6B6C166D2C1300D45671 /* InbandTextTrackPrivateAVFObjC.h in Headers */,
 				07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */,
@@ -33027,6 +33036,7 @@
 				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */,
 				71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */,
+				7108EEE62418ED5A005C3DA7 /* WebAnimationTypes.h in Headers */,
 				7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */,
 				E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */,
 				E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */,

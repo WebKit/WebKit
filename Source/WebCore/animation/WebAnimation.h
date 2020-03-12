@@ -30,7 +30,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
-#include "WebAnimationUtilities.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/Optional.h>

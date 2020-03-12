@@ -37,7 +37,7 @@
 #include "KeyframeList.h"
 #include "RenderStyle.h"
 #include "StyleProperties.h"
-#include "WebAnimationUtilities.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {

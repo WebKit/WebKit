@@ -46,6 +46,7 @@
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
 #include "Editing.h"
+#include "ElementAnimationRareData.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
@@ -3738,26 +3739,35 @@ IntersectionObserverData* Element::intersectionObserverDataIfExists()
 
 #endif
 
+ElementAnimationRareData* Element::animationRareData() const
+{
+    return hasRareData() ? elementRareData()->elementAnimationRareData() : nullptr;
+}
+
+ElementAnimationRareData& Element::ensureAnimationRareData()
+{
+    return ensureElementRareData().ensureAnimationRareData();
+}
+
 KeyframeEffectStack* Element::keyframeEffectStack() const
 {
-    return hasRareData() ? elementRareData()->keyframeEffectStack() : nullptr;
+    if (auto* animationData = animationRareData())
+        return animationData->keyframeEffectStack();
+    return nullptr;
 }
 
 KeyframeEffectStack& Element::ensureKeyframeEffectStack()
 {
-    auto& rareData = ensureElementRareData();
-    if (!rareData.keyframeEffectStack())
-        rareData.setKeyframeEffectStack(makeUnique<KeyframeEffectStack>());
-    return *rareData.keyframeEffectStack();
+    return ensureAnimationRareData().ensureKeyframeEffectStack();
 }
 
 bool Element::hasKeyframeEffects() const
 {
-    if (!hasRareData())
-        return false;
-
-    auto* keyframeEffectStack = elementRareData()->keyframeEffectStack();
-    return keyframeEffectStack && keyframeEffectStack->hasEffects();
+    if (auto* animationData = animationRareData()) {
+        if (auto* keyframeEffectStack = animationData->keyframeEffectStack())
+            return keyframeEffectStack->hasEffects();
+    }
+    return false;
 }
 
 OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyle)
@@ -3776,6 +3786,41 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
     }
 
     return impact;
+}
+
+AnimationCollection& Element::webAnimations()
+{
+    return ensureAnimationRareData().webAnimations();
+}
+
+AnimationCollection& Element::cssAnimations()
+{
+    return ensureAnimationRareData().cssAnimations();
+}
+
+AnimationCollection& Element::transitions()
+{
+    return ensureAnimationRareData().transitions();
+}
+
+CSSAnimationCollection& Element::animationsCreatedByMarkup()
+{
+    return ensureAnimationRareData().animationsCreatedByMarkup();
+}
+
+void Element::setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations)
+{
+    ensureAnimationRareData().setAnimationsCreatedByMarkup(WTFMove(animations));
+}
+
+PropertyToTransitionMap& Element::completedTransitionByProperty()
+{
+    return ensureAnimationRareData().completedTransitionByProperty();
+}
+
+PropertyToTransitionMap& Element::runningTransitionsByProperty()
+{
+    return ensureAnimationRareData().runningTransitionsByProperty();
 }
 
 #if ENABLE(RESIZE_OBSERVER)

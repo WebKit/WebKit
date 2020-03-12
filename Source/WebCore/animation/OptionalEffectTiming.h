@@ -27,7 +27,7 @@
 
 #include "FillMode.h"
 #include "PlaybackDirection.h"
-#include "WebAnimationUtilities.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 

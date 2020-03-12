@@ -128,6 +128,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "InteractionObserver";
     case NodeRareData::UseType::PseudoElements:
         return "PseudoElements";
+    case NodeRareData::UseType::Animations:
+        return "Animations";
     }
     return nullptr;
 }

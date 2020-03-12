@@ -32,6 +32,7 @@
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
+#include "WebAnimationTypes.h"
 #include <JavaScriptCore/Strong.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
 class DOMTokenList;
+class ElementAnimationRareData;
 class ElementRareData;
 class Frame;
 class HTMLDocument;
@@ -491,6 +493,14 @@ public:
     bool hasKeyframeEffects() const;
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);
 
+    AnimationCollection& webAnimations();
+    AnimationCollection& cssAnimations();
+    AnimationCollection& transitions();
+    CSSAnimationCollection& animationsCreatedByMarkup();
+    void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
+    PropertyToTransitionMap& completedTransitionByProperty();
+    PropertyToTransitionMap& runningTransitionsByProperty();
+
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;
     void setContainsFullScreenElement(bool);
@@ -704,6 +714,9 @@ private:
 
     ElementRareData* elementRareData() const;
     ElementRareData& ensureElementRareData();
+
+    ElementAnimationRareData* animationRareData() const;
+    ElementAnimationRareData& ensureAnimationRareData();
 
     virtual int defaultTabIndex() const;
 

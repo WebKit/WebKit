@@ -185,6 +185,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/KeyframeAnimationOptions.h
     animation/KeyframeEffectOptions.h
     animation/PlaybackDirection.h
+    animation/WebAnimationTypes.h
 
     bindings/IDLTypes.h
 

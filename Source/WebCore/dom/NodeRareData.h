@@ -248,7 +248,6 @@ public:
         ConnectedFrameCount = 1 << 0,
         NodeList = 1 << 1,
         MutationObserver = 1 << 2,
-
         TabIndex = 1 << 3,
         MinimumSize = 1 << 4,
         ScrollingPosition = 1 << 5,
@@ -260,6 +259,7 @@ public:
         AttributeMap = 1 << 11,
         InteractionObserver = 1 << 12,
         PseudoElements = 1 << 13,
+        Animations = 1 << 14,
     };
 #endif
 
