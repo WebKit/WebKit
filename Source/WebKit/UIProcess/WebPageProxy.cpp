@@ -7306,6 +7306,7 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     switch (reason) {
     case ProcessTerminationReason::ExceededMemoryLimit:
     case ProcessTerminationReason::ExceededCPULimit:
+    case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::Crash:
         return true;
     case ProcessTerminationReason::NavigationSwap:

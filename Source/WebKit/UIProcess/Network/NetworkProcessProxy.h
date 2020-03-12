@@ -277,6 +277,8 @@ private:
     void unregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
 #endif
 
+    void terminateWebProcess(WebCore::ProcessIdentifier);
+
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&&);
 
     WebsiteDataStore* websiteDataStoreFromSessionID(PAL::SessionID);

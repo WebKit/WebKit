@@ -1150,7 +1150,7 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
         return;
 
     auto protectedThis = makeRef(*this);
-    RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy::requestTermination - reason %d", this, reason);
+    RELEASE_LOG_ERROR_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy::requestTermination - PID %d - reason %d", this, processIdentifier(), reason);
 
     AuxiliaryProcessProxy::terminate();
 

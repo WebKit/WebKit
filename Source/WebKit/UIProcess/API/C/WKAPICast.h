@@ -248,6 +248,7 @@ inline WKProcessTerminationReason toAPI(ProcessTerminationReason reason)
         FALLTHROUGH;
     case ProcessTerminationReason::RequestedByClient:
         return kWKProcessTerminationReasonRequestedByClient;
+    case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::Crash:
         return kWKProcessTerminationReasonCrash;
     }

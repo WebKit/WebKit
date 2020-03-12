@@ -439,6 +439,12 @@ void NetworkProcessProxy::logDiagnosticMessage(WebPageProxyIdentifier pageID, co
     page->logDiagnosticMessage(message, description, shouldSample);
 }
 
+void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    if (auto* process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
+        process->requestTermination(ProcessTerminationReason::RequestedByNetworkProcess);
+}
+
 void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 {
     if (auto* process = WebProcessProxy::processForIdentifier(processIdentifier)) {

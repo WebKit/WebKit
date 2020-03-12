@@ -1,3 +1,40 @@
+2020-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Networking process should kill the WebContent process if an invalid IPC message is received from it
+        https://bugs.webkit.org/show_bug.cgi?id=208999
+
+        Reviewed by Geoffrey Garen.
+
+        If the NetworkProcess receives a bad IPC from a WebProcess, it now sends an IPC to the UIProcess
+        asking for said WebProcess to be terminated.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveInvalidMessage):
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessage):
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        I noticed when testing this patch that the decoder was sometimes not marked as invalid even though
+        decoding failed (verified this by not decoding enough data or decoding too much data). As a result,
+        the IPC message would get ignored but didReceiveInvalidMessage() would not get called. To address
+        this, I know mark the decoder as invalid anytime decoding fails, instead of asserting that it is
+        already invalid.
+
+        * Shared/ProcessTerminationReason.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::wkProcessTerminationReason):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminateWebProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+
 2020-03-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused GetWebCoreStatistics message

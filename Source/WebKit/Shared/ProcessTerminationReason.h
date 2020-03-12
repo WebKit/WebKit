@@ -33,6 +33,7 @@ enum class ProcessTerminationReason {
     RequestedByClient,
     Crash,
     NavigationSwap,
+    RequestedByNetworkProcess,
 };
 
 }

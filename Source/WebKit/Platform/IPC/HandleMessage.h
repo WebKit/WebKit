@@ -107,7 +107,7 @@ void handleMessage(Decoder& decoder, C* object, MF function)
     Optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (!arguments) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
 
@@ -120,7 +120,7 @@ void handleMessage(Connection& connection, Decoder& decoder, C* object, MF funct
     Optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (!arguments) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
     callMemberFunction(connection, WTFMove(*arguments), object, function);
@@ -132,7 +132,7 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, std::uni
     Optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (!arguments) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
 
@@ -148,7 +148,7 @@ void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
     Optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (!arguments) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
     
@@ -164,14 +164,14 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
     Optional<uint64_t> listenerID;
     decoder >> listenerID;
     if (!listenerID) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
     
     Optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (!arguments) {
-        ASSERT(decoder.isInvalid());
+        decoder.markInvalid();
         return;
     }
 

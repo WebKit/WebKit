@@ -57,6 +57,8 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
 
     RetrieveCacheStorageParameters(PAL::SessionID sessionID)
 
+    TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
     WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)

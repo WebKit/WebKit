@@ -1018,6 +1018,7 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
         FALLTHROUGH;
     case ProcessTerminationReason::RequestedByClient:
         return _WKProcessTerminationReasonRequestedByClient;
+    case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::Crash:
         return _WKProcessTerminationReasonCrash;
     }
