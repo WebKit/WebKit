@@ -37,7 +37,7 @@ class AccessibilityScrollView final : public AccessibilityObject {
 public:
     static Ref<AccessibilityScrollView> create(ScrollView*);
     AccessibilityRole roleValue() const override { return AccessibilityRole::ScrollArea; }
-    ScrollView* scrollView() const override { return m_scrollView; }
+    ScrollView* scrollView() const override { return m_scrollView.get(); }
 
     virtual ~AccessibilityScrollView();
 
@@ -54,6 +54,7 @@ private:
     bool isEnabled() const override { return true; }
     
     bool isAttachment() const override;
+    PlatformWidget platformWidget() const override;
     Widget* widgetForAttachmentView() const override;
     
     AccessibilityObject* scrollBar(AccessibilityOrientation) override;
@@ -76,7 +77,7 @@ private:
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
     
-    ScrollView* m_scrollView;
+    WeakPtr<ScrollView> m_scrollView;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
     bool m_childrenDirty;

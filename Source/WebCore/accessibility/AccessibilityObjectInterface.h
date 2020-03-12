@@ -868,6 +868,7 @@ public:
     virtual String accessKey() const = 0;
     virtual String actionVerb() const = 0;
     virtual Widget* widget() const = 0;
+    virtual PlatformWidget platformWidget() const = 0;
     virtual Widget* widgetForAttachmentView() const = 0;
     virtual Page* page() const = 0;
     virtual Document* document() const = 0;

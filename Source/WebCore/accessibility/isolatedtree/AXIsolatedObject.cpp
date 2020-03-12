@@ -375,7 +375,10 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setMathscripts(AXPropertyName::MathPrescripts, object);
         setMathscripts(AXPropertyName::MathPostscripts, object);
     }
-    
+
+    if (object.isScrollView())
+        m_platformWidget = object.platformWidget();
+
     if (isRoot) {
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
@@ -828,7 +831,7 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
     );
 }
 
-const String AXIsolatedObject::stringAttributeValue(AXPropertyName propertyName) const
+String AXIsolatedObject::stringAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -1558,6 +1561,15 @@ Widget* AXIsolatedObject::widget() const
     if (auto* object = associatedAXObject())
         return object->widget();
     return nullptr;
+}
+
+PlatformWidget AXIsolatedObject::platformWidget() const
+{
+#if PLATFORM(COCOA)
+    return m_platformWidget.get();
+#else
+    return m_platformWidget;
+#endif
 }
 
 Widget* AXIsolatedObject::widgetForAttachmentView() const

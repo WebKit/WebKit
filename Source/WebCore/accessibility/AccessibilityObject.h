@@ -442,6 +442,7 @@ public:
     String accessKey() const override { return nullAtom(); }
     String actionVerb() const override;
     Widget* widget() const override { return nullptr; }
+    PlatformWidget platformWidget() const override { return nullptr; }
     Widget* widgetForAttachmentView() const override { return nullptr; }
     Page* page() const override;
     Document* document() const override;

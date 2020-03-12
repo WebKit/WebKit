@@ -2269,25 +2269,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)scrollViewParent
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject || !backingObject->isScrollView())
-            return nil;
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject || !backingObject->isScrollView())
+        return nil;
 
-        // If this scroll view provides it's parent object (because it's a sub-frame), then
-        // we should not find the remoteAccessibilityParent.
-        if (backingObject->parentObject())
-            return nil;
+    // If this scroll view provides it's parent object (because it's a sub-frame), then
+    // we should not find the remoteAccessibilityParent.
+    if (backingObject->parentObject())
+        return nil;
 
-        auto* scroll = backingObject->scrollView();
-        if (!scroll)
-            return nil;
+    if (auto platformWidget = backingObject->platformWidget())
+        return NSAccessibilityUnignoredAncestor(platformWidget);
 
-        if (scroll->platformWidget())
-            return NSAccessibilityUnignoredAncestor(scroll->platformWidget());
-
-        return [protectedSelf remoteAccessibilityParentObject];
-    });
+    return [self remoteAccessibilityParentObject];
 }
 
 - (id)windowElement:(NSString*)attributeName

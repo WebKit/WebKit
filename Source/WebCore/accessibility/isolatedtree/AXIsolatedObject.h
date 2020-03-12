@@ -344,8 +344,9 @@ private:
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
 
+    // FIXME: consolidate all AttributeValue retrieval in a single template method.
     bool boolAttributeValue(AXPropertyName) const;
-    const String stringAttributeValue(AXPropertyName) const;
+    String stringAttributeValue(AXPropertyName) const;
     int intAttributeValue(AXPropertyName) const;
     unsigned unsignedAttributeValue(AXPropertyName) const;
     double doubleAttributeValue(AXPropertyName) const;
@@ -821,6 +822,7 @@ private:
     bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
     TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
     Widget* widget() const override;
+    PlatformWidget platformWidget() const override;
     Widget* widgetForAttachmentView() const override;
     Page* page() const override;
     Document* document() const override;
@@ -896,7 +898,12 @@ private:
     Vector<RefPtr<AXCoreObject>> m_children;
 
     HashMap<AXPropertyName, AttributeValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>> m_attributeMap;
-    Lock m_attributeMapLock;
+
+#if PLATFORM(COCOA)
+    RetainPtr<NSView> m_platformWidget;
+#else
+    PlatformWidget m_platformWidget;
+#endif
 };
 
 } // namespace WebCore
