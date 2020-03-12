@@ -96,7 +96,7 @@ private:
     // unpolluted, and therefore, it can be scanned by our conservative GC to keep the
     // cell alive when the CacheableIdentifier is on the stack.
     static constexpr uintptr_t s_uidTag = 1;
-    uintptr_t m_bits;
+    uintptr_t m_bits { 0 };
 };
 
 } // namespace JSC

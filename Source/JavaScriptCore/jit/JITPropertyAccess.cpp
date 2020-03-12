@@ -1285,14 +1285,14 @@ void JIT::emitWriteBarrier(JSCell* owner)
     ownerIsRememberedOrInEden.link(this);
 }
 
-void JIT::emitByValIdentifierCheck(ByValInfo* byValInfo, RegisterID cell, RegisterID scratch, const Identifier& propertyName, JumpList& slowCases)
+void JIT::emitByValIdentifierCheck(ByValInfo* byValInfo, RegisterID cell, RegisterID scratch, const Identifier&, JumpList& slowCases)
 {
-    if (propertyName.isSymbol())
-        slowCases.append(branchPtr(NotEqual, cell, TrustedImmPtr(byValInfo->cachedSymbol.get())));
+    if (byValInfo->cachedId.isSymbolCell())
+        slowCases.append(branchPtr(NotEqual, cell, TrustedImmPtr(byValInfo->cachedId.cell())));
     else {
         slowCases.append(branchIfNotString(cell));
         loadPtr(Address(cell, JSString::offsetOfValue()), scratch);
-        slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(propertyName.impl())));
+        slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(byValInfo->cachedId.uid())));
     }
 }
 

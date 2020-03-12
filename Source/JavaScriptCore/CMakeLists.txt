@@ -488,7 +488,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     bytecode/ArrayAllocationProfile.h
     bytecode/ArrayProfile.h
-    bytecode/ByValInfo.h
     bytecode/BytecodeConventions.h
     bytecode/BytecodeIndex.h
     bytecode/BytecodeIntrinsicRegistry.h

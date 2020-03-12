@@ -32,6 +32,7 @@
 #include "ArrayConstructor.h"
 #include "BasicBlockLocation.h"
 #include "BuiltinNames.h"
+#include "ByValInfo.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeUseDef.h"
 #include "CacheableIdentifierInlines.h"
@@ -7576,13 +7577,15 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
                 compiledAsPutById = true;
-                identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
+                identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.uid());
                 UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+                FrozenValue* frozen = nullptr;
+                if (byValInfo->cachedId.isCell())
+                    frozen = m_graph.freezeStrong(byValInfo->cachedId.cell());
 
-                if (Symbol* symbol = byValInfo->cachedSymbol.get()) {
-                    FrozenValue* frozen = m_graph.freezeStrong(symbol);
+                if (byValInfo->cachedId.isSymbolCell())
                     addToGraph(CheckCell, OpInfo(frozen), property);
-                } else {
+                else {
                     ASSERT(!uid->isSymbol());
                     addToGraph(CheckIdent, OpInfo(uid), property);
                 }

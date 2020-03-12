@@ -1,3 +1,39 @@
+2020-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use CacheableIdentifier in ByValInfo
+        https://bugs.webkit.org/show_bug.cgi?id=208978
+
+        Reviewed by Saam Barati.
+
+        CodeBlock::finalizeUnconditionally discards JITData. And this includes ByValInfo, which holds Identifier.
+        However, finalizeUnconditionally is only guaranteeing that the main thread is not working. It can be invoked
+        in the heap thread, and it is not not setting the AtomStringTable for this heap thread. If Identifier destroys
+        AtomStringImpl, which fails to unregister itself from the table.
+
+        In this patch,
+
+            1. We explicitly set nullptr for the current AtomStringTable to catch the bug as soon as possible in GC end phase.
+            2. We use CacheableIdentifier in ByValInfo to avoid destroying Identifier in CodeBlock::finalizeUnconditionally.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ByValInfo.cpp: Added.
+        (JSC::ByValInfo::visitAggregate):
+        * bytecode/ByValInfo.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitByValIdentifierCheck):
+        * runtime/CacheableIdentifier.h:
+
 2020-03-11  Keith Miller  <keith_miller@apple.com>
 
         Test262-runner should always consider crashes as new failures

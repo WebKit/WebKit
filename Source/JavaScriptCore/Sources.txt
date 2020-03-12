@@ -195,6 +195,7 @@ bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp
 bytecode/ArithProfile.cpp
 bytecode/ArrayAllocationProfile.cpp
 bytecode/ArrayProfile.cpp
+bytecode/ByValInfo.cpp
 bytecode/BytecodeBasicBlock.cpp
 bytecode/BytecodeDumper.cpp
 bytecode/BytecodeGeneratorification.cpp
