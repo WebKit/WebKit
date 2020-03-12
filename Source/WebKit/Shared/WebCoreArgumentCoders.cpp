@@ -1082,7 +1082,7 @@ static void encodeNativeImage(Encoder& encoder, NativeImagePtr image)
     if (!graphicsContext)
         return;
 
-    graphicsContext->drawNativeImage(image, { }, FloatRect({ }, imageSize), FloatRect({ }, imageSize));
+    graphicsContext->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize));
 
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);

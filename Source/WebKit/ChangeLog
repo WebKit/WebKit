@@ -1,5 +1,18 @@
 2020-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        [GPU Process] encodeNativeImage() should pass imageSize to GraphicsContext::drawNativeImage()
+        https://bugs.webkit.org/show_bug.cgi?id=208936
+
+        Reviewed by Myles C. Maxfield.
+
+        Passing an empty FloatSize makes drawNativeImage() draws nothing to
+        the ShareableBitmap
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeNativeImage):
+
+2020-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         RemoteImageBuffer::getImageData() has to clear its DisplayList after calling flushDrawingContext()
         https://bugs.webkit.org/show_bug.cgi?id=208931
 
