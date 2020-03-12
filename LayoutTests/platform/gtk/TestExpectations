@@ -370,7 +370,6 @@ webkit.org/b/169918 compositing/video/video-object-position.html [ Failure Crash
 webkit.org/b/169918 compositing/visibility/visibility-on-distant-descendant.html [ Failure Pass ]
 webkit.org/b/169918 compositing/visibility/visibility-image-layers.html [ Failure Pass ]
 webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
-webkit.org/b/169918 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ ImageOnlyFailure ]
@@ -581,7 +580,6 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
-webkit.org/b/205057 fast/mediastream/MediaStreamTrack-getSettings.html [ Failure ]
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
@@ -1315,11 +1313,8 @@ webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-modifications.html [ Failure ]
 
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 
@@ -2785,6 +2780,9 @@ Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
+
+webkit.org/b/134575 http/tests/media/hls/video-controls-live-stream.html [ Pass Slow ]
+
 webkit.org/b/204635 http/tests/navigation/image-load-in-pagehide-handler.html [ Failure Pass ]
 
 webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
@@ -3107,7 +3105,7 @@ webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin
 webkit.org/b/207711 [ Debug ] http/tests/multipart/multipart-async-image.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html [ Timeout ]
-webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Timeout ]
+webkit.org/b/207711 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass Slow ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ]
 webkit.org/b/207711 [ Release ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-fast.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Failure Timeout ]
@@ -3720,7 +3718,6 @@ webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 # web-platform-tests XHR tests
 imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Slow ]
 
-webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
@@ -4201,8 +4198,6 @@ webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.worker.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure ]
@@ -4373,7 +4368,6 @@ webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Time
 webkit.org/b/206367 storage/indexeddb/result-request-cycle.html [ Failure ]
 webkit.org/b/206367 storage/indexeddb/value-cursor-cycle.html [ Failure ]
 
-webkit.org/b/202235 http/tests/adClickAttribution/clear-through-website-data-removal.html [ Failure ]
 webkit.org/b/202236 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure ]
 webkit.org/b/202237 http/tests/appcache/document-cookie-http-only.php [ Failure ]
 
