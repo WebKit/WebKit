@@ -1622,12 +1622,14 @@ void RenderLayerBacking::updateEventRegion()
 #if PLATFORM(IOS_FAMILY)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
-    if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
-        return;
+    if (!hasTouchActionElements) {
+        if (m_owningLayer.isRenderViewLayer())
+            return;
 
-    auto& settings = renderer().settings();
-    if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
-        return;
+        auto& settings = renderer().settings();
+        if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
+            return;
+    }
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
         GraphicsContext nullContext(nullptr);

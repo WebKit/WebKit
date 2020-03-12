@@ -18,6 +18,9 @@
           (children 1
             (GraphicsLayer
               (bounds 200.00 200.00)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)

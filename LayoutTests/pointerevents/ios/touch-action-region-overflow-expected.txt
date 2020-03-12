@@ -18,6 +18,9 @@
           (children 1
             (GraphicsLayer
               (bounds 200.00 200.00)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)
@@ -46,6 +49,9 @@
             (GraphicsLayer
               (bounds origin 150.00 150.00)
               (bounds 200.00 200.00)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
               (children 1
                 (GraphicsLayer
                   (scrollOffset (150,150))
@@ -78,6 +84,9 @@
               (position 25.00 25.00)
               (bounds origin 150.00 150.00)
               (bounds 200.00 200.00)
+              (event region
+                (rect (0,0) width=200 height=200)
+              )
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=25 height=25)
