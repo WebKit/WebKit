@@ -56,7 +56,7 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, Option
     auto fetchResponse = adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response)));
     fetchResponse->updateContentType();
     if (!isSynthetic)
-        fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse);
+        fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse, ResourceResponse::PerformExposeAllHeadersCheck::Yes);
     if (isOpaque)
         fetchResponse->setBodyAsOpaque();
     return fetchResponse;
@@ -331,7 +331,8 @@ FetchResponse::BodyLoader::~BodyLoader()
 static uint64_t nextOpaqueLoadIdentifier { 0 };
 void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
-    m_response.m_filteredResponse = ResourceResponseBase::filter(resourceResponse);
+    auto performCheck = m_credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes;
+    m_response.m_filteredResponse = ResourceResponseBase::filter(resourceResponse, performCheck);
     m_response.m_internalResponse = resourceResponse;
     m_response.m_internalResponse.setType(m_response.m_filteredResponse->type());
     if (resourceResponse.tainting() == ResourceResponse::Tainting::Opaque) {
@@ -385,6 +386,7 @@ void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 
 bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
 {
+    m_credentials = request.fetchOptions().credentials;
     m_loader = makeUnique<FetchLoader>(*this, &m_response.m_body->consumer());
     m_loader->start(context, request);
     return m_loader->isStarted();

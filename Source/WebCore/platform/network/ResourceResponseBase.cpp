@@ -148,7 +148,7 @@ ResourceResponse ResourceResponseBase::syntheticRedirectResponse(const URL& from
     return redirectResponse;
 }
 
-ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
+ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, PerformExposeAllHeadersCheck performCheck)
 {
     if (response.tainting() == Tainting::Opaque) {
         ResourceResponse opaqueResponse;
@@ -169,10 +169,11 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
     // Let's initialize filteredResponse to remove some header fields.
     filteredResponse.lazyInit(AllFields);
 
+    filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie);
+    filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie2);
+
     if (response.tainting() == Tainting::Basic) {
         filteredResponse.setType(Type::Basic);
-        filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie);
-        filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie2);
         return filteredResponse;
     }
 
@@ -180,6 +181,9 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
     filteredResponse.setType(Type::Cors);
 
     auto accessControlExposeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders));
+    if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"))
+        return filteredResponse;
+
     filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {
         return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
     });
@@ -443,12 +447,15 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
     case ResourceResponse::Tainting::Basic:
         return;
     case ResourceResponse::Tainting::Cors: {
+        auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders));
+        if (corsSafeHeaderSet.contains("*"))
+            return;
+
         HTTPHeaderMap filteredHeaders;
         for (auto& header : m_httpHeaderFields.commonHeaders()) {
             if (isSafeCrossOriginResponseHeader(header.key))
                 filteredHeaders.add(header.key, WTFMove(header.value));
         }
-        auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders));
         for (auto& headerName : corsSafeHeaderSet) {
             if (!filteredHeaders.contains(headerName)) {
                 auto value = m_httpHeaderFields.get(headerName);

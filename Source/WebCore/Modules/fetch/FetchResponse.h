@@ -155,6 +155,7 @@ private:
         ConsumeDataByChunkCallback m_consumeDataCallback;
         std::unique_ptr<FetchLoader> m_loader;
         Ref<PendingActivity<FetchResponse>> m_pendingActivity;
+        FetchOptions::Credentials m_credentials;
     };
 
     mutable Optional<ResourceResponse> m_filteredResponse;

@@ -393,7 +393,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     }
 
     if (response.type() == ResourceResponse::Type::Default) {
-        m_client->didReceiveResponse(identifier, ResourceResponseBase::filter(response));
+        m_client->didReceiveResponse(identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
         if (response.tainting() == ResourceResponse::Tainting::Opaque) {
             clearResource();
             if (m_client)
@@ -466,7 +466,7 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
         } else {
             ASSERT(response.type() == ResourceResponse::Type::Default);
 
-            m_client->didReceiveResponse(identifier, ResourceResponseBase::filter(response));
+            m_client->didReceiveResponse(identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
             if (m_resource->resourceBuffer())
                 m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
         }

@@ -1,3 +1,26 @@
+2020-03-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement wildcard behavior for Cross-Origin-Expose-Headers
+        https://bugs.webkit.org/show_bug.cgi?id=208800
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test results and add a test for testing
+        xhr and wildcard behavior for Cross-Origin-Expose-Headers behavior.
+
+        * web-platform-tests/fetch/api/cors/cors-expose-star.sub.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-expose-star.sub.any.worker-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/window/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-exposed-header-names.https-expected.txt:
+        * web-platform-tests/xhr/cors-expose-star.sub.any-expected.txt: Added.
+        * web-platform-tests/xhr/cors-expose-star.sub.any.html: Added.
+        * web-platform-tests/xhr/cors-expose-star.sub.any.js: Added.
+        (sharedHeaders.string_appeared_here.async_test):
+        (string_appeared_here.async_test):
+        * web-platform-tests/xhr/resources/top.txt: Added.
+
 2020-03-11  Antoine Quint  <graouts@webkit.org>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html is flaky failing
